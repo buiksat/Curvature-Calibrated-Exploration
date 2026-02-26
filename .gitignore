@@ -1,0 +1,33 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*-blx.bib
+*.bcf
+
+# Compiled PDFs (rebuild with `make pdf` / `make two_pager`)
+paper/main.pdf
+paper/two_pager.pdf
+
+# Editor junk
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/

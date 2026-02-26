@@ -1,0 +1,54 @@
+% macros.tex — shared notation for main.tex and two_pager.tex
+% -----------------------------------------------------------------
+
+% --- math operators / shortcuts -------------------------------------------
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bCbar}{\bar{\bC}}
+\newcommand{\epsdrift}{\varepsilon_{\mathrm{drift}}}
+\newcommand{\epsdriftbar}{\bar\varepsilon_{\mathrm{drift}}}
+\newcommand{\epslin}{\varepsilon_{\mathrm{lin}}}
+\newcommand{\Eopt}{\mathcal{E}^{\mathrm{opt}}}
+
+% --- theorem environments -------------------------------------------------
+\usepackage{aliascnt}
+
+\newtheorem{theorem}{Theorem}
+
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+
+\newtheorem{assumption}{Assumption}
+
+% --- cleveref names -------------------------------------------------------
+\crefname{theorem}{Theorem}{Theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\Crefname{lemma}{Lemma}{Lemmas}
+\crefname{corollary}{Corollary}{Corollaries}
+\Crefname{corollary}{Corollary}{Corollaries}
+\crefname{assumption}{Assumption}{Assumptions}
+\Crefname{assumption}{Assumption}{Assumptions}
+\crefname{algorithm}{Algorithm}{Algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}

@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+
+% --- NeurIPS style: use official if present, else stub -------------------
+\IfFileExists{neurips_2026.sty}{%
+  \usepackage{neurips_2026}%
+}{%
+  \usepackage{neurips_2026_stub}%
+}
+
+% --- standard packages ----------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+% --- shared notation (same macros as main.tex) ----------------------------
+\input{macros}
+
+% ========================================
+% Collaborative comments (OFF by default for anonymous submission)
+% ========================================
+\newif\ifcomments
+\commentsfalse % SUBMISSION: keep OFF (set \commentstrue only for internal drafts)
+\ifcomments
+  \PackageWarningNoLine{main}{COMMENTS ARE ENABLED. Set commentsfalse before submission.}
+  \newcommand{\diego}[1]{{\color{red}\small[Diego: #1]}}
+  \newcommand{\bahram}[1]{{\color{blue}\small[Bahram: #1]}}
+  \newcommand{\houssam}[1]{{\color{green}\small[Houssam: #1]}}
+  \newcommand{\brett}[1]{{\color{Mulberry}\small[Brett: #1]}}
+\else
+  \newcommand{\diego}[1]{}
+  \newcommand{\bahram}[1]{}
+  \newcommand{\houssam}[1]{}
+  \newcommand{\brett}[1]{}
+\fi
+% --- title ----------------------------------------------------------------
+\title{Curvature-Calibrated Exploration for Foundation-Model Bandits\\
+     }
+\author{Anonymous Author(s)}
+
+\begin{document}
+\maketitle
+
+% --------------------------------------------------------------------------
+% 1. Problem and Method (condensed)
+% --------------------------------------------------------------------------
+\section{Problem Setup and Method}
+
+\paragraph{Protocol.}
+At each round $t=1,\dots,T$ the learner observes context~$\bx_t$, selects
+action $a_t\in\cA_t$, and receives reward
+$r_t=\mu^*(\bx_t,a_t)+\eta_t$ with $\eta_t$ being $\sigma$-sub-Gaussian.
+The goal is to minimize cumulative regret
+$R_T=\sum_{t}\bigl[\mu^*(\bx_t,a_t^*)-\mu^*(\bx_t,a_t)\bigr]$.
+A parametric model $\mu_{\btheta}(\bx,a)$, implemented by a foundation-model
+backbone plus reward head, is fit via regularized ERM with damping
+$\lambda>0$.
+
+\paragraph{Curvature matrices.}
+Define the gradient feature $\bg_t(\bx,a):=\nabla_{\btheta}\mu_{\btheta_t}(\bx,a)$.
+The algorithm uses the relinearized curvature matrix (damped empirical GGN):
+$\bC_t = \lambda\bI + \sigma^{-2}\sum_{s<t}\bg_t(\bx_s,a_s)\bg_t(\bx_s,a_s)^\top$.
+For the analysis we use the frozen-feature Gram matrix
+$\bCbar_t = \lambda\bI + \sigma^{-2}\sum_{s<t}\bg_s\bg_s^\top$
+(each $\bg_s$ evaluated at~$\btheta_s$), which admits rank-one sequential
+updates and has predictable design vectors.
+A feature-drift sandwich
+$(1{-}\epsdrift)\bCbar_t\preceq\bC_t\preceq(1{+}\epsdrift)\bCbar_t$
+bridges the two; the algorithm takes a known upper bound $\epsdriftbar
+\ge\epsdrift$ as input to restore optimism.
+
+\paragraph{Auxiliary linearized estimator.}
+Set $b_s:=\mu_{\btheta_s}(\bx_s,a_s)-\bg_s^\top\btheta_s$,
+$y_s:=r_s-b_s$, and define
+$\hat\btheta_t^{\mathrm{lin}}=\bCbar_t^{-1}\sigma^{-2}\sum_{s<t}\bg_s y_s$.
+The self-normalized bound applies to the noise part directly.
+
+\paragraph{Assumptions.}
+\textbf{(A1)}~$\eta_t$ is $\sigma$-sub-Gaussian.
+\textbf{(A2)}~$\|\bg_t(\bx,a)\|\le G$.
+\textbf{(A3)}~Local linearization:
+$\epslin(t)\le(L/2)\|\btheta^*{-}\btheta_t\|^2$;
+sublinear regret requires $E_T:=\sum_t\epslin(t)=o(T)$.
+\textbf{(A4)}~Prediction stability:
+$|\bg_t(a)^\top(\btheta_t-\hat\btheta_t^{\mathrm{lin}})|\le\eta_t^{\mathrm{pred}}$.
+\textbf{(A5)}~Feature drift: $\epsdrift\in[0,1)$ uniformly; known
+$\epsdriftbar\ge\epsdrift$.
+
+\begin{algorithm}[h]
+\caption{Curvature-Calibrated UCB (CC-UCB)}\label{alg:2p-ccucb}
+\begin{algorithmic}[1]
+\REQUIRE $\mu_{\btheta}$, $\lambda$, $\sigma$, $\{\beta_t\}$,
+         CG budget $I$ (or tolerance $\bar\varepsilon$),
+         drift bound $\epsdriftbar$
+\FOR{$t=1,\dots,T$}
+  \STATE Observe $\bx_t$, $\cA_t$; form $\hat\bC_t$ on buffer $\mathcal{S}_t$
+  \FOR{$a\in\cA_t$}
+    \STATE $\bg_t(a)\gets\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$;
+    $\tilde\bu\gets\mathrm{CG}(\hat\bC_t,\bg_t(a),I)$;
+    $\tilde{s}_t^2(a)\gets\bg_t(a)^\top\tilde\bu$
+  \ENDFOR
+  \STATE Play $a_t=\argmax_a\bigl[
+    \mu_{\btheta_t}(\bx_t,a)+\frac{\sqrt{1{+}\epsdriftbar}\;\beta_t}
+    {\sqrt{1{-}\bar\varepsilon}}\,\sqrt{\tilde{s}_t^2(a)}\bigr]$,
+    observe~$r_t$, update~$\btheta_{t+1}$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+% --------------------------------------------------------------------------
+% 2. Theory (condensed)
+% --------------------------------------------------------------------------
+\section{Regret Guarantee}
+
+Define the information gain
+$\gamma_T:=\log\det(\bCbar_{T+1})-d\log\lambda$
+$=\sum_{t=1}^T\log(1+\sigma^{-2}\bar s_t^2(a_t))$.
+The confidence radius is
+$\beta_t = \sqrt{\gamma_{t-1}+2\log(A_{\max}\,t^2/\delta)} + \sqrt{\lambda}S
++ \sigma^{-1}\sqrt{F_t}$
+where $F_t=\sum_{s<t}\epslin(s)^2$.
+
+\begin{theorem}[Informal]\label{thm:2p-regret}
+Under A1--A5, realizability, $\epsdriftbar\ge\epsdrift$,
+CG tolerance $\bar\varepsilon<1$, full-history curvature
+$\hat\bC_t{=}\bC_t$, and full action enumeration,
+CC-UCB satisfies w.p.\ $\ge 1{-}\delta$:
+\[
+  R_T
+  \;\le\;
+  2\,\alpha_I\,\alpha_{\mathrm{drift}}\,\beta_T
+  \sqrt{(\sigma^2{+}G^2/\lambda)\,T\,\gamma_T}
+  \;+\;
+  2\,E_T
+  \;+\;
+  2\,P_T,
+\]
+where
+$\alpha_I=\sqrt{(1{+}\bar\varepsilon)/(1{-}\bar\varepsilon)}$,
+$\alpha_{\mathrm{drift}}=\sqrt{(1{+}\epsdriftbar)/(1{-}\epsdriftbar)}$
+(depending only on the known input~$\epsdriftbar$),
+$E_T=\sum_t\epslin(t)$,
+$P_T=\sum_t\eta_t^{\mathrm{pred}}$.
+Drift enters only as the multiplicative constant
+$\alpha_{\mathrm{drift}}$ because the
+$\sqrt{1{+}\epsdriftbar}$ factor in the bonus restores true optimism.
+The condition $G^2\le\lambda\sigma^2$ is \emph{not} required;
+when it holds, $\sqrt{\sigma^2{+}G^2/\lambda}\le\sigma\sqrt{2}$.
+\end{theorem}
+The proof applies the self-normalized bound
+\citep{abbasi2011improved} to $\hat\btheta_t^{\mathrm{lin}}$ (valid
+because $\bg_s$ is predictable and $\bCbar_t$ admits rank-one updates);
+a triangle inequality with~(A4) bounds the full prediction error.
+The inflated bonus $w_t(a)\ge\beta_t\bar s_t(a)$ (optimism) and
+$w_t(a)\le\alpha_I\alpha_{\mathrm{drift}}\beta_t\bar s_t(a)$
+(upper bound) yield a standard optimistic decomposition.
+The elliptic potential gives
+$\sum_t\bar s_t^2(a_t)\le(\sigma^2{+}G^2/\lambda)\gamma_T$ and
+Cauchy--Schwarz yields
+$\sqrt{(\sigma^2{+}G^2/\lambda)T\gamma_T}$.
+If an $\varepsilon$-spectral approximation replaces~$\bCbar_t$,
+the exploration term inflates by
+$\sqrt{(1{+}\varepsilon)/(1{-}\varepsilon)}$.
+
+% --------------------------------------------------------------------------
+% 3. Experiments (condensed)
+% --------------------------------------------------------------------------
+\section{Experimental Protocol}
+
+We outline an experimental protocol for validating CC-UCB on
+(i)~synthetic squared-loss bandits (matching the analyzed regression
+framework),
+(ii)~a foundation-model scaling ladder (MLP$\to$ViT-B/16) on CIFAR-100/AG~News
+with frozen and partially fine-tuned backbones,
+and (iii)~offline-to-online conversion (UCI covertype).
+Baselines include NeuralUCB \citep{zhou2020neural}, NeuralTS
+\citep{zhang2021neural}, last-layer Laplace UCB
+\citep{ritter2018scalable,daxberger2021laplace},
+and bootstrapped ensembles \citep{osband2016deep}.
+Key ablations vary CG budget~$I$ (with adaptive stopping),
+curvature buffer strategy, and backbone depth;
+metrics are cumulative regret, variance calibration
+($\mathrm{ECE}_{\mathrm{var}}$), wall-clock cost, and empirical
+feature drift~$\epsdrift$.
+Implementation and results are in progress.
+
+% --------------------------------------------------------------------------
+% References
+% --------------------------------------------------------------------------
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

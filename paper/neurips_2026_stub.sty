@@ -1,0 +1,65 @@
+% neurips_2026_stub.sty
+% Minimal fallback style so the paper compiles without the official NeurIPS
+% style file.  Replace with the real neurips_2026.sty when available.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{neurips_2026_stub}[2025/01/01 Minimal NeurIPS stub]
+
+% ---- options (silently absorb common NeurIPS options) --------------------
+\newif\if@neuripsfinal  \@neuripsfinalfalse
+\newif\if@neuripspreprint \@neuripspreprintfalse
+\newif\if@neuripsnonatbib \@neuripsnonatbibfalse
+\DeclareOption{final}{\@neuripsfinaltrue}
+\DeclareOption{preprint}{\@neuripspreprinttrue}
+\DeclareOption{nonatbib}{\@neuripsnonatbibtrue}
+\ProcessOptions\relax
+
+% ---- geometry -----------------------------------------------------------
+\RequirePackage[
+  textwidth=5.5in,
+  textheight=9in,
+  top=1in,
+  left=1.5in,
+]{geometry}
+
+% ---- fonts / encoding ---------------------------------------------------
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+
+% ---- natbib (unless disabled) -------------------------------------------
+\if@neuripsnonatbib\else
+  \RequirePackage[numbers,sort&compress]{natbib}
+\fi
+
+% ---- title / author block -----------------------------------------------
+\RequirePackage{xcolor}
+\newcommand{\@neuripsauthor}{}
+\renewcommand{\author}[1]{\renewcommand{\@neuripsauthor}{#1}}
+
+\renewcommand{\maketitle}{%
+  \begin{center}%
+    {\LARGE\bfseries \@title \par}%
+    \vskip 0.5em%
+    {\large
+      \if@neuripsfinal
+        \@neuripsauthor
+      \else
+        Anonymous Author(s)
+      \fi
+    \par}%
+    \vskip 1em%
+  \end{center}%
+}
+
+% ---- abstract environment ------------------------------------------------
+\renewenvironment{abstract}{%
+  \centerline{\large\bfseries Abstract}%
+  \vspace{0.5ex}%
+  \begin{quote}\small
+}{%
+  \end{quote}%
+}
+
+% ---- section formatting (minimal) ----------------------------------------
+\RequirePackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
