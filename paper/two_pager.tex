@@ -25,7 +25,8 @@
 % Collaborative comments (OFF by default for anonymous submission)
 % ========================================
 \newif\ifcomments
-\commentsfalse % SUBMISSION: keep OFF (set \commentstrue only for internal drafts)
+%\commentsfalse % SUBMISSION: keep OFF (set \commentstrue only for internal drafts)
+\commentstrue
 \ifcomments
   \PackageWarningNoLine{main}{COMMENTS ARE ENABLED. Set commentsfalse before submission.}
   \newcommand{\diego}[1]{{\color{red}\small[Diego: #1]}}
