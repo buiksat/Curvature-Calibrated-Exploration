@@ -3,19 +3,17 @@ BIB      := bibtex
 TEXFLAGS := -interaction=nonstopmode -halt-on-error
 
 PAPERDIR := paper
-TWO_PAGER := two_pager
+MAIN     := main
 
-.PHONY: all two_pager pdf clean cleanall
+.PHONY: all pdf clean cleanall
 
-all: two_pager
+all: pdf
 
-pdf: two_pager
-
-two_pager:
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(TWO_PAGER)
-	cd $(PAPERDIR) && $(BIB) $(TWO_PAGER)
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(TWO_PAGER)
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(TWO_PAGER)
+pdf:
+	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
+	cd $(PAPERDIR) && $(BIB) $(MAIN)
+	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
+	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
 
 clean:
 	cd $(PAPERDIR) && rm -f *.aux *.bbl *.blg *.log *.out *.fdb_latexmk \
@@ -23,4 +21,4 @@ clean:
 		*.run.xml *-blx.bib *.bcf
 
 cleanall: clean
-	cd $(PAPERDIR) && rm -f $(TWO_PAGER).pdf
+	cd $(PAPERDIR) && rm -f $(MAIN).pdf
