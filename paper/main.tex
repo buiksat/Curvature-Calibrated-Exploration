@@ -31,7 +31,7 @@
   \newcommand{\diego}[1]{{\color{red}\small[Diego: #1]}}
   \newcommand{\bahram}[1]{{\color{blue}\small[Bahram: #1]}}
   \newcommand{\houssam}[1]{{\color{green}\small[Houssam: #1]}}
-  \newcommand{\brett}[1]{{\color{Mulberry}\small[Brett: #1]}}
+  \newcommand{\brett}[1]{{\color{Mulberry}\small[Khurshid: #1]}}
 \else
   \newcommand{\diego}[1]{}
   \newcommand{\bahram}[1]{}
@@ -49,28 +49,28 @@
 \begin{abstract}
 We study contextual bandits where expected reward is parameterized by a
 differentiable parametric model, with foundation-model deployments as
-one motivating example.  Efficient exploration requires calibrated epistemic
-uncertainty over model predictions, yet standard neural bandit methods
-approximate the loss curvature with diagonal or block-diagonal matrices,
-distorting exploration bonuses and degrading regret.  We propose
-\emph{Curvature-Calibrated UCB} (CC-UCB), which computes the
-Laplace-approximate predictive variance induced by the \emph{full}
-Gauss--Newton (GGN) curvature matrix via conjugate-gradient solves that
-access curvature only through curvature--vector products---without
-materializing or compressing the curvature matrix.
-For the Gaussian/squared-loss instantiation, we provide a conditional
-regret decomposition for exact-curvature CC-UCB under high-level
-local-linearization, prediction-stability, and feature-drift
-assumptions.  The result isolates the regret cost of CG truncation and
-spectral curvature distortion, but it is potentially nonvacuous mainly
-in frozen-backbone, near-NTK, or otherwise near-stationary fine-tuning
-regimes; we do not establish these conditions for unrestricted
-end-to-end optimization.
-A spectral-sandwich corollary quantifies how replacing the full
-curvature with a spectral approximation inflates the exploration term.
-The same matrix-free CG/CVP machinery extends algorithmically to
-exponential-family likelihoods via the Fisher/GGN curvature, but no
-regret guarantee beyond Gaussian squared loss is claimed in this draft.
+one motivating example.  Efficient exploration requires calibrated
+epistemic uncertainty over model predictions, yet standard neural bandit
+methods often replace the curvature with diagonal, block-diagonal, or
+last-layer surrogates.  We propose \emph{Curvature-Calibrated UCB}
+(CC-UCB), which computes the predictive variance induced by the full
+Gauss--Newton (GGN) / Fisher curvature through conjugate-gradient solves
+that access curvature only through curvature--vector products.
+For the Gaussian/squared-loss instantiation, we prove a conditional
+regret transfer theorem for CC-UCB.  The theorem converts externally
+supplied, diagnostically estimable, or separately provable bounds on
+local linearization error, prediction discrepancy, feature drift, CG
+error, and curvature spectral distortion into regret.
+This is a conditional guarantee for differentiable parametric reward
+models, motivated by foundation-model deployments; it is not a regret
+theorem for unrestricted end-to-end foundation-model fine-tuning.
+The result is most plausibly nonvacuous in frozen-backbone, linear-head,
+near-NTK, or otherwise near-stationary regimes.  The same matrix-free
+CG/CVP machinery extends algorithmically to exponential-family
+likelihoods via Fisher/GGN curvature, but no regret guarantee beyond
+Gaussian squared loss is claimed here.  Whether full curvature improves
+over diagonal, block, KFAC, or last-layer surrogates is treated as an
+empirical hypothesis, not a theorem.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -92,7 +92,7 @@ application class, not a requirement.
 In the \emph{white-box} setting, where gradient and
 curvature--vector product access to the model is available, one can in
 principle compute the
-Laplace-approximate predictive variance:
+GGN/Fisher-linearized predictive variance:
 \begin{equation}\label{eq:variance-intro}
   s_t^2(a) \;=\; \bg_t(a)^\top \bC_t^{-1}\,\bg_t(a),
 \end{equation}
@@ -120,9 +120,9 @@ working vectors for CG are maintained, with CVPs computed on the fly.
 Because the damped GGN is symmetric positive definite by
 construction, CG convergence is guaranteed.  Building on this observation, we
 propose \textbf{Curvature-Calibrated UCB (CC-UCB)}, a neural bandit
-algorithm that uses the full curvature matrix---accessed through implicit CG
+algorithm that uses the full GGN/Fisher curvature matrix---accessed through implicit CG
 solves---to produce exploration bonuses consistent with the uncompressed
-Laplace posterior.
+GGN/Fisher metric.
 
 \paragraph{Contributions.}
 \textbf{(1)}~We formalize the curvature-calibrated exploration framework for
@@ -132,15 +132,24 @@ a relinearized algorithmic curvature~$\bC_t$ and a frozen-feature Gram
 matrix~$\bCbar_t$ that satisfies the predictability and sequential-update
 properties required for rigorous self-normalized analysis
 (\Cref{sec:problem,sec:method}).
-\textbf{(2)}~We provide a modular conditional regret decomposition under
-explicit assumptions on local linearization, prediction stability, and
-feature drift.  The result converts externally supplied bounds on these
-quantities into regret; it is not a full nonlinear fine-tuning theorem
-(\Cref{sec:theory}).
-\textbf{(3)}~We outline an evaluation protocol designed to test when
-full-curvature exploration matters relative to last-layer and diagonal
-surrogates (deferred to \Cref{sec:experiments} in the appendix; no
-empirical results are included in this draft).
+\textbf{(2)}~We prove a conditional regret transfer theorem for
+Gaussian/squared-loss CC-UCB.  The theorem converts externally supplied,
+diagnostically estimable, or separately provable bounds on local
+linearization error, prediction discrepancy, feature drift, CG error,
+and curvature spectral distortion into regret.
+This is not a full nonlinear foundation-model bandit theorem; full
+end-to-end fine-tuning remains outside the proved regime unless these
+quantities are verified or bounded separately (\Cref{sec:theory}).
+\textbf{(3)}~We give primitive sufficient conditions that make the
+feature-drift and prediction-discrepancy assumptions measurable in terms
+of replayed-Jacobian drift and optimizer residuals.  These conditions are
+most plausible in frozen-backbone, near-NTK, or otherwise
+near-stationary regimes.
+\textbf{(4)}~We outline an evaluation protocol designed to test the
+empirical hypothesis that full-curvature exploration can matter relative
+to last-layer, diagonal, block, or KFAC surrogates (deferred to
+\Cref{sec:experiments} in the appendix; no empirical results are
+included in this draft).
 The regret analysis is carried out for the Gaussian/squared-loss
 instantiation; the underlying CG/CVP machinery applies algorithmically
 to exponential-family likelihoods via the Fisher/GGN curvature, but we
@@ -294,7 +303,10 @@ self-normalized martingale bound
 \citep{abbasi2011improved} applies to it directly
 (\Cref{lem:confidence}).
 
-\paragraph{GGN approximation quality.}
+\paragraph{GGN versus Hessian (context only).}
+The regret theorem uses the GGN/Fisher curvature as the exploration
+metric.  It does not require the GGN to be an accurate Hessian
+approximation.
 For squared loss~\eqref{eq:erm} the full Hessian of the data-fit term is
 \[
   \bH_t \;=\; \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
@@ -316,8 +328,9 @@ given in \Cref{app:ggn-approx}).
 This comparison is \emph{not} invoked in the regret analysis
 (\Cref{thm:regret} uses $\bC_t$ directly as the exploration metric);
 it serves only to contextualize $\bC_t$ as a proxy for the full
-Hessian.  Outside the small-residual regime, we treat $\bC_t$ as a PSD
-exploration metric rather than the exact Laplace covariance.
+Hessian.  Outside the small-residual regime, the GGN is not an exact
+Hessian approximation; it is the PSD Fisher/GGN metric used by the
+algorithm.
 
 \begin{quote}\small
 \emph{Remark (Fisher, empirical Fisher, and GGN).}
@@ -438,6 +451,9 @@ satisfy, for all actions $a\in\cA_t$,
   \eta_t^{\mathrm{pred}},
 \end{equation}
 for a known tolerance sequence $\{\eta_t^{\mathrm{pred}}\}$.
+The sequence may be deterministic or predictable from the pre-round
+history; equivalently, the regret theorem may be read on any event where
+these inequalities hold for the stated tolerances.
 This tolerance absorbs three sources of discrepancy:
 (i)~optimization error (if $\btheta_t$ is only an approximate
 stationary point of~$\cL_t$, the gradient residual
@@ -464,6 +480,147 @@ regimes, we do not know a primitive sufficient condition implying
 $\sum_{t=1}^T \eta_t^{\mathrm{pred}} = o(T)$.
 \end{remark}
 
+The next lemma gives a primitive upper bound for the prediction
+discrepancy in \Cref{asm:optim}.  It does not imply
+$P_T=o(T)$ by itself; that still requires a separate summability or
+stability argument for the optimizer residual and replayed-Jacobian
+drift terms.
+
+\begin{lemma}[Primitive upper bound for prediction discrepancy]\label{lem:primitive-pred}
+Let $z_s=(\bx_s,a_s)$,
+$\bg_s=\nabla_{\btheta}\mu_{\btheta_s}(z_s)$,
+$\bg_{s,t}=\nabla_{\btheta}\mu_{\btheta_t}(z_s)$, and
+$\delta_{s,t}=\bg_{s,t}-\bg_s$.  Define
+\[
+  \bar\mu_{s,t}
+  :=
+  \mu_{\btheta_s}(z_s)+\bg_s^\top(\btheta_t-\btheta_s),
+  \qquad
+  e_{s,t}:=\mu_{\btheta_t}(z_s)-\bar\mu_{s,t},
+  \qquad
+  \bar r_{s,t}:=\bar\mu_{s,t}-r_s .
+\]
+Let $\bar{\cL}_t$ be the frozen-feature linearized ridge objective whose
+minimizer is $\hat\btheta_t^{\mathrm{lin}}$, and define
+\[
+  M_t
+  :=
+  \frac{1}{\sigma^2}
+  \sum_{s<t}
+  \left[
+    \bar r_{s,t}\delta_{s,t}
+    +
+    e_{s,t}\bg_s
+    +
+    e_{s,t}\delta_{s,t}
+  \right].
+\]
+If the nonlinear optimizer satisfies
+$\|\nabla \cL_t(\btheta_t)\|_2\le\zeta_t$, then for every candidate
+action $a\in\cA_t$,
+\[
+  \left|
+  \bg_t(a)^\top
+  (\btheta_t-\hat\btheta_t^{\mathrm{lin}})
+  \right|
+  \;\le\;
+  \bar s_t(a)
+  \left(
+    \frac{\zeta_t}{\sqrt{\lambda}}
+    +
+    \|M_t\|_{\bCbar_t^{-1}}
+  \right),
+  \qquad
+  \bar s_t(a):=\sqrt{\bg_t(a)^\top\bCbar_t^{-1}\bg_t(a)} .
+\]
+Consequently, since $\bar s_t(a)\le G/\sqrt{\lambda}$ and
+$\|M_t\|_{\bCbar_t^{-1}}\le\|M_t\|_2/\sqrt{\lambda}$,
+\[
+  \eta_t^{\mathrm{pred}}
+  \;\le\;
+  \frac{G}{\lambda}\left(\zeta_t+\|M_t\|_2\right).
+\]
+If, in addition, on a fixed event,
+$\btheta\mapsto\nabla_{\btheta}\mu_{\btheta}(z)$ is $L_g$-Lipschitz,
+$|\bar r_{s,t}|\le B_{t,\delta}$ for all $s<t$, and
+$\Delta_{s,t}:=\|\btheta_t-\btheta_s\|$, then
+\[
+  \|M_t\|_2
+  \;\le\;
+  \frac{1}{\sigma^2}
+  \sum_{s<t}
+  \left[
+    B_{t,\delta} L_g\Delta_{s,t}
+    +
+    \frac{G L_g}{2}\Delta_{s,t}^2
+    +
+    \frac{L_g^2}{2}\Delta_{s,t}^3
+  \right].
+\]
+\end{lemma}
+\begin{proof}
+The linearized ridge objective satisfies
+$\nabla \bar{\cL}_t(\hat\btheta_t^{\mathrm{lin}})=0$ and, by its
+quadratic form,
+\[
+  \nabla \bar{\cL}_t(\btheta_t)
+  =
+  \bCbar_t(\btheta_t-\hat\btheta_t^{\mathrm{lin}}).
+\]
+Thus
+$\btheta_t-\hat\btheta_t^{\mathrm{lin}}
+=\bCbar_t^{-1}\nabla\bar{\cL}_t(\btheta_t)$.
+Using
+$\mu_{\btheta_t}(z_s)-r_s=\bar r_{s,t}+e_{s,t}$ and
+$\bg_{s,t}=\bg_s+\delta_{s,t}$, the gradients of the nonlinear loss
+and the frozen-feature linearized loss satisfy
+\[
+  \nabla \cL_t(\btheta_t)
+  =
+  \nabla \bar{\cL}_t(\btheta_t)+M_t,
+  \qquad
+  \text{so}\qquad
+  \nabla \bar{\cL}_t(\btheta_t)=\nabla \cL_t(\btheta_t)-M_t .
+\]
+Therefore, by Cauchy--Schwarz in the $\bCbar_t$-norm,
+\[
+  |\bg_t(a)^\top(\btheta_t-\hat\btheta_t^{\mathrm{lin}})|
+  \le
+  \bar s_t(a)
+  \|\nabla \bar{\cL}_t(\btheta_t)\|_{\bCbar_t^{-1}}
+  \le
+  \bar s_t(a)
+  \left(
+    \|\nabla \cL_t(\btheta_t)\|_{\bCbar_t^{-1}}
+    +
+    \|M_t\|_{\bCbar_t^{-1}}
+  \right).
+\]
+Since $\bCbar_t\succeq\lambda\bI$,
+$\|\nabla \cL_t(\btheta_t)\|_{\bCbar_t^{-1}}
+\le \zeta_t/\sqrt{\lambda}$, which proves the first bound.
+The second follows from
+$\bar s_t(a)\le\|\bg_t(a)\|/\sqrt{\lambda}\le G/\sqrt{\lambda}$
+and $\|M_t\|_{\bCbar_t^{-1}}\le\|M_t\|_2/\sqrt{\lambda}$.
+For the final display, Lipschitzness gives
+$\|\delta_{s,t}\|\le L_g\Delta_{s,t}$ and the Taylor remainder bound
+$|e_{s,t}|\le (L_g/2)\Delta_{s,t}^2$.  Applying these two inequalities
+term by term in the definition of $M_t$ gives the claimed bound.
+\end{proof}
+
+In frozen linear-head models, $M_t=0$ and exact optimization gives
+$\zeta_t=0$, hence $\eta_t^{\mathrm{pred}}=0$.  In near-NTK or
+small-update regimes, the displayed bound shows that the relevant
+quantity is accumulated replayed-Jacobian drift, such as
+$\sum_{s<t}\Delta_{s,t}$ and its higher-order analogues.  This does not
+solve unrestricted nonlinear fine-tuning; it converts
+\Cref{asm:optim} into measurable terms that must be verified or bounded
+by a separate optimization argument.
+The residual envelope $B_{t,\delta}$ should be read as a conditional
+high-probability event or as a predictable truncation/diagnostic
+quantity; it is not an additional bounded-noise assumption in the main
+regret theorem.
+
 \begin{assumption}[Feature drift bound]\label{asm:drift}
 There exists $\epsdrift \in [0,1)$ such that, for all $t \le T$,
 \begin{equation}\label{eq:drift-sandwich}
@@ -480,79 +637,132 @@ A uniform bound $\epsdrift<1$ is plausible whenever feature drift
 is controlled relative to the regularization level (e.g.\ frozen
 backbone plus trainable head, or small learning-rate fine-tuning); we
 do not claim it holds generically for unrestricted deep networks.
-The algorithm requires a known upper bound~$\epsdriftbar\in[\epsdrift,1)$
-as input (\Cref{alg:ccucb}); the strict inequality $\epsdriftbar<1$ is
-needed for $\alpha_{\mathrm{drift}}$ to be finite.
+The exact-curvature theorem requires a known upper bound
+~$\epsdriftbar\in[\epsdrift,1)$; the strict inequality
+$\epsdriftbar<1$ is needed for $\alpha_{\mathrm{drift}}$ to be finite.
 \end{assumption}
 
-The following lemma gives a concrete sufficient condition for
-\Cref{asm:drift} in terms of Jacobian Lipschitz continuity and
-parameter stability.
+The following lemma gives a sample-wise sufficient condition for
+\Cref{asm:drift}.  It depends on how far each replayed Jacobian moves
+between the time the sample was collected and the current round.
 
-\begin{lemma}[Sufficient condition for feature-drift bound]\label{lem:drift-sufficient}
+\begin{lemma}[Sample-wise sufficient condition for feature drift]\label{lem:drift-sufficient}
+Let
+$\bg_s := \nabla_{\btheta}\mu_{\btheta_s}(\bx_s,a_s)$,
+$\bg_{s,t}:=\nabla_{\btheta}\mu_{\btheta_t}(\bx_s,a_s)$, and
+$\Delta_{s,t}:=\|\btheta_t-\btheta_s\|$.
 Suppose $\btheta\mapsto\nabla_{\btheta}\mu_{\btheta}(\bx,a)$ is
-$L_g$-Lipschitz for all $(\bx,a)$, and
-$\|\btheta_t - \btheta_s\| \le \Delta$ for all $s \le t \le T$.
-Then for all $t$,
+$L_g$-Lipschitz for every $(\bx,a)$, and
+$\|\bg_s\|,\|\bg_{s,t}\|\le G$ for all $s<t\le T$.  Then, for every~$t$,
 \[
-  \|\bC_t - \bCbar_t\|_{\mathrm{op}}
+  \|\bC_t-\bCbar_t\|_{\mathrm{op}}
   \;\le\;
-  \frac{(t{-}1)}{\sigma^2}\,(2GL_g\Delta + L_g^2\Delta^2).
+  \frac{1}{\sigma^2}
+  \sum_{s<t}
+  \left(
+    2GL_g\Delta_{s,t}
+    +
+    L_g^2\Delta_{s,t}^2
+  \right).
 \]
-In particular, if
-$(t{-}1)(2GL_g\Delta + L_g^2\Delta^2)/(\sigma^2\lambda) \le \epsdrift$
-for all $t \le T$, then \Cref{asm:drift} holds.
+Consequently, if
+\[
+  \frac{1}{\sigma^2\lambda}
+  \sum_{s<t}
+  \left(
+    2GL_g\Delta_{s,t}
+    +
+    L_g^2\Delta_{s,t}^2
+  \right)
+  \;\le\; \varepsilon_t < 1,
+\]
+then
+\[
+  (1-\varepsilon_t)\bCbar_t
+  \;\preceq\;
+  \bC_t
+  \;\preceq\;
+  (1+\varepsilon_t)\bCbar_t .
+\]
 \end{lemma}
 \begin{proof}
-Write $\bg_t^{(s)} := \bg_t(\bx_s,a_s)$ and
-$\bg_s := \bg_s(\bx_s,a_s)$.
-Then $\bC_t - \bCbar_t
-= \sigma^{-2}\sum_{s<t}(\bg_t^{(s)}{\bg_t^{(s)}}^\top
-  - \bg_s\bg_s^\top)$.
-For each summand, write $\delta_s := \bg_t^{(s)} - \bg_s$ with
-$\|\delta_s\| \le L_g\Delta$.
-Then
-$\bg_t^{(s)}{\bg_t^{(s)}}^\top - \bg_s\bg_s^\top
-= \delta_s\delta_s^\top + \delta_s\bg_s^\top + \bg_s\delta_s^\top$,
-so
-$\|\bg_t^{(s)}{\bg_t^{(s)}}^\top - \bg_s\bg_s^\top\|
-\le \|\delta_s\|^2 + 2\|\bg_s\|\|\delta_s\|
-\le L_g^2\Delta^2 + 2GL_g\Delta$.
-Summing over $s<t$ gives the bound.
-Since $\bCbar_t \succeq \lambda\bI$, the additive bound
-$\|\bC_t-\bCbar_t\| \le \epsdrift\lambda$ implies the
-multiplicative sandwich~\eqref{eq:drift-sandwich} by the same
-standard Loewner argument (used also in the GGN approximation bound;
-see \Cref{app:ggn-approx}).
+Write $\delta_{s,t}:=\bg_{s,t}-\bg_s$.  Then
+\[
+  \bg_{s,t}\bg_{s,t}^{\top}-\bg_s\bg_s^{\top}
+  =
+  \delta_{s,t}\bg_s^\top
+  +
+  \bg_s\delta_{s,t}^\top
+  +
+  \delta_{s,t}\delta_{s,t}^{\top}.
+\]
+By Lipschitzness, $\|\delta_{s,t}\|\le L_g\Delta_{s,t}$, so
+\[
+  \|\bg_{s,t}\bg_{s,t}^{\top}-\bg_s\bg_s^{\top}\|_{\mathrm{op}}
+  \le
+  2G L_g\Delta_{s,t}
+  +
+  L_g^2\Delta_{s,t}^2 .
+\]
+Summing over $s<t$ and multiplying by $\sigma^{-2}$ gives the additive
+operator bound.  If the displayed normalized sum is at most
+$\varepsilon_t$, then
+$\|\bC_t-\bCbar_t\|_{\mathrm{op}}\le\varepsilon_t\lambda$.
+Since $\bCbar_t\succeq\lambda\bI$, we have
+$\varepsilon_t\lambda\bI\preceq\varepsilon_t\bCbar_t$, which converts
+the additive bound into the stated Loewner sandwich.
+
 \end{proof}
 
-Concretely, in the frozen-backbone regime ($\Delta=0$) or the NTK regime
-($L_g\Delta \ll G$), $\epsdrift$ is small.
-Under last-$k$-layer fine-tuning with SGD step size~$\eta_{\mathrm{lr}}$,
-$\Delta = O(\eta_{\mathrm{lr}}\sum \|\nabla\cL_s\|)$; bounding the
-gradient norms over training gives an explicit~$\epsdrift$ as a function
-of the learning rate and training budget.
+In particular, \Cref{asm:drift} holds with
+\[
+  \epsdrift
+  =
+  \max_{t\le T}
+  \frac{1}{\sigma^2\lambda}
+  \sum_{s<t}
+  \left(
+    2GL_g\Delta_{s,t}
+    +
+    L_g^2\Delta_{s,t}^2
+  \right),
+\]
+provided the maximum is strictly smaller than one.
 
-\begin{remark}[Implication of the drift sufficient condition]
-In the small-drift regime $L_g\Delta \ll G$,
-\Cref{lem:drift-sufficient} scales as
-$\epsdrift \gtrsim 2(t{-}1)GL_g\Delta/(\sigma^2\lambda)$.
-Thus a horizon-uniform bound $\epsdrift<1$ over $t\le T$ requires
-$\Delta = O(\sigma^2\lambda/(TGL_g))$ up to constants.
-This makes the lemma most plausible in frozen-backbone, NTK, or
-otherwise near-stationary regimes rather than unrestricted end-to-end
-fine-tuning.
-\end{remark}
+\begin{corollary}[Uniform-drift sufficient condition]\label{cor:drift-uniform}
+Under the assumptions of \Cref{lem:drift-sufficient}, if
+$\Delta_{s,t}\le\Delta$ for all $s<t\le T$, then
+\[
+  \|\bC_t-\bCbar_t\|_{\mathrm{op}}
+  \;\le\;
+  \frac{t-1}{\sigma^2}
+  (2GL_g\Delta+L_g^2\Delta^2).
+\]
+In particular, if
+$(t{-}1)(2GL_g\Delta+L_g^2\Delta^2)/(\sigma^2\lambda)
+\le\epsdrift$ for all $t\le T$, then \Cref{asm:drift} holds.
+\end{corollary}
+\begin{proof}
+Substitute $\Delta_{s,t}\le\Delta$ in
+\Cref{lem:drift-sufficient}.
+\end{proof}
 
-A heuristic route toward bounding $\eta_t^{\mathrm{pred}}$ under local
-strong convexity is sketched in the remark after \Cref{lem:discrepancy}:
-if $\nabla^2\cL_t \succeq \lambda\bI$ and the optimization residual satisfies
-$\|\nabla\cL_t(\btheta_t)\| \le \eta_t^{\mathrm{opt}}$, one expects
-$\eta_t^{\mathrm{pred}} \lesssim G\cdot[\eta_t^{\mathrm{opt}}/\lambda
-+ O(L_g\Delta/\lambda)]$.
-This is an informal decomposition, not a proved sufficient condition;
-deriving a formal sufficient condition for \Cref{asm:optim} from
-primitive assumptions remains future work.
+The sample-wise condition is more informative than the uniform bound:
+what must stay small is the accumulated drift of replayed Jacobians, not
+merely the movement between consecutive iterates.  It is realistic mainly
+when old examples retain nearly the same Jacobians on average, as in
+frozen-backbone, near-NTK, or otherwise near-stationary regimes.  The
+uniform corollary shows why a horizon-uniform drift sandwich is nearly
+vacuous for unrestricted end-to-end fine-tuning: in the small-drift
+regime $L_g\Delta\ll G$, it requires
+$\Delta=O(\sigma^2\lambda/(TGL_g))$ up to constants.
+
+Together, \Cref{lem:primitive-pred,lem:drift-sufficient} reduce the two
+main nonlinear assumptions to optimizer residuals and replayed-Jacobian
+drift terms.  These are checkable in small and medium models and can be
+estimated in large models, but they are still strong requirements.
+Deriving horizon-uniform bounds for realistic transformer fine-tuning
+remains open.
 
 Positive definiteness of both~$\bC_t$ and~$\bCbar_t$ follows from
 $\lambda>0$ and the outer-product form; it is not an independent assumption.
@@ -573,9 +783,9 @@ $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ and the
   \;=\;
   \bg_t(a)^\top\bC_t^{-1}\,\bg_t(a).
 \end{equation}
-Under the Laplace approximation with covariance $\bC_t^{-1}$, the quantity
-$s_t^2(a)$ is the predictive variance of the linearized reward at
-$(\bx_t,a)$.
+Under the GGN/Fisher-linearized Gaussian approximation with covariance
+$\bC_t^{-1}$, the quantity $s_t^2(a)$ is the predictive variance of the
+linearized reward at $(\bx_t,a)$.
 
 Because $\bC_t\succ 0$ by construction (see \S\ref{sec:problem}),
 conjugate gradients (CG) is guaranteed to converge on the system
@@ -619,6 +829,10 @@ bonus is then conservative.  Two strategies ensure this:
   grows with~$t$, so a fixed budget does \emph{not} guarantee
   $\varepsilon_I\le\bar\varepsilon$ uniformly; adaptive stopping or an
   increasing budget $I_t$ is required in that case (see \Cref{app:cg}).
+  For rescaled uniform subsampling with $w_s=(t{-}1)/n$, the same
+  caveat applies because $W_t=\sum_{s\in\mathcal{S}_t}w_s=t{-}1$; the
+  $W_t=n$ bound applies only to unrescaled fixed buffers such as
+  windowed or refresh operators.
 \end{enumerate}
 In the regret bound (\Cref{thm:regret}), $\alpha_I$ is evaluated at
 $\bar\varepsilon$:
@@ -645,8 +859,10 @@ parameter sample per round, avoiding the per-action loop entirely.
          predictable confidence upper-bound schedule $\{\bar\beta_t\}$
          (e.g.\ from an external predictable bound $\bar F_t \ge F_t$;
          see \Cref{cor:beta-constructive}),
-         CG budget $I$ (or target $\bar\varepsilon$),
-         drift bound $\epsdriftbar\in[0,1)$
+        curvature mode (exact full-history $\bC_t$ or approximate $\hat\bC_t$),
+        CG budget $I$ (or target $\bar\varepsilon_{\mathrm{CG}}$),
+        known upper spectral factor $\rho_+^{\mathrm{alg}}$
+        \hfill\COMMENT{exact drift-only: $\rho_+^{\mathrm{alg}}=1+\epsdriftbar$}
 \STATE Initialize $\btheta_1$ (pretrained weights), dataset $\mathcal{D}_0=\emptyset$
 \FOR{$t = 1, 2, \ldots, T$}
   \STATE Observe context $\bx_t$ and action set $\cA_t$
@@ -660,15 +876,16 @@ parameter sample per round, avoiding the per-action loop entirely.
     \STATE $\bg_t(a) \gets \nabla_{\btheta}\,\mu_{\btheta_t}(\bx_t, a)$
         \hfill\COMMENT{gradient feature}
     \STATE $\tilde\bu \gets \mathrm{CG}(\hat\bC_t,\;\bg_t(a),\;I)$;
-           stop early if $\|r_I\|/\|\bg\| \le \bar\varepsilon/\sqrt{\bar\kappa}$
-        \hfill\COMMENT{CG solve; Euclidean proxy for $\varepsilon_I\!\le\!\bar\varepsilon$} \label{line:cg}
+           stop early if $\|r_I\|/\|\bg\| \le \bar\varepsilon_{\mathrm{CG}}/\sqrt{\bar\kappa}$
+        \hfill\COMMENT{CG solve; proxy for $\varepsilon_I\!\le\!\bar\varepsilon_{\mathrm{CG}}$} \label{line:cg}
     \STATE $\tilde{s}_t^2(a) \gets \bg_t(a)^\top \tilde\bu$
         \hfill\COMMENT{approx.\ predictive variance}
   \ENDFOR
   \STATE $a_t \gets \argmax_{a\in\cA_t}\Bigl[\,m_t(a)
-    + \dfrac{\sqrt{1+\epsdriftbar}\;\bar\beta_t}{\sqrt{1-\bar\varepsilon}}\,
+    + \sqrt{\dfrac{\rho_+^{\mathrm{alg}}}{1-\bar\varepsilon_{\mathrm{CG}}}}\,
+      \bar\beta_t\,
       \sqrt{\tilde{s}_t^2(a)}\,\Bigr]$
-      \hfill\COMMENT{$\bar\beta_t\!\ge\!\beta_t$; $\bar\varepsilon$: known CG tolerance}
+      \hfill\COMMENT{$\bar\beta_t\!\ge\!\beta_t$; exact drift-only uses $\rho_+^{\mathrm{alg}}=1+\epsdriftbar$}
       \label{line:ucb}
   \STATE Play $a_t$, observe $r_t$
   \STATE $\mathcal{D}_t \gets \mathcal{D}_{t-1} \cup \{(\bx_t, a_t, r_t)\}$
@@ -676,6 +893,22 @@ parameter sample per round, avoiding the per-action loop entirely.
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
+
+For the exact-curvature theorem, Algorithm~\ref{alg:ccucb} is run with
+$\mathcal{S}_t=\{1,\ldots,t{-}1\}$, $w_s=1$, full action enumeration,
+$\hat\bC_t=\bC_t$, and
+$\rho_+^{\mathrm{alg}}=1+\epsdriftbar$.  For an approximate curvature
+operator whose sandwich is stated directly relative to $\bCbar_t$, use
+$\rho_+^{\mathrm{alg}}=\rho_+$ from
+\Cref{thm:spectral-distortion}.  In that case the drift factor is
+already included in $\rho_\pm$ and should not be multiplied again.
+The selection rule only needs a valid upper spectral factor
+$\rho_+^{\mathrm{alg}}$ for optimism; the regret bound in
+\Cref{thm:spectral-distortion} also needs a lower factor $\rho_-$ to
+control the sum of selected widths.
+Windowed/refresh curvature and action screening are practical heuristics
+unless the corresponding spectral sandwich or optimal-arm-survival
+condition is separately verified.
 
 \paragraph{Thompson-sampling variant (CC-TS).}
 An alternative draws a parameter perturbation
@@ -697,11 +930,11 @@ block-diagonal, or Kronecker-factored estimate---to make the variance
 computation tractable
 \citep{zhou2020neural,riquelme2018deep,zhang2021neural}.
 CC-UCB retains the linearization for analysis (\Cref{asm:linear}), but
-replaces the curvature approximation with the \emph{full} GGN
+replaces the curvature approximation with the \emph{full} GGN/Fisher metric
 accessed through implicit CG solves.
 
 The main algorithmic contribution is a matrix-free implementation recipe
-for full-curvature exploration via curvature--vector products and
+for full-GGN/Fisher exploration via curvature--vector products and
 conjugate gradients.
 The main theoretical contribution in this draft is a modular reduction,
 not a new structural regret theorem: standard self-normalized
@@ -730,9 +963,9 @@ CVPs:
 At each round draw a uniform subsample $\mathcal{S}_t\subset\{1,\dots,t{-}1\}$
 of size~$n$ (without replacement) and set $w_s=(t{-}1)/n$ to obtain the
 rescaled operator.
-The following lemma provides the spectral guarantee.
+The following lemma is a worst-case uniform spectral guarantee.
 
-\begin{lemma}[Subsampled GGN spectral sandwich]\label{lem:subsample}
+\begin{lemma}[Worst-case uniform spectral guarantee for subsampled GGN]\label{lem:subsample}
 Fix round~$t$ and set $m=t{-}1$.
 Let $Y_s = \sigma^{-2}\bg_t(\bx_s,a_s)\bg_t(\bx_s,a_s)^\top$ for
 $s=1,\dots,m$, so that $\bC_t = \lambda\bI + V$ with $V=\sum_{s=1}^m Y_s$.
@@ -851,11 +1084,16 @@ or fast spectral decay---leverage-score sampling or Frequent Directions
 sketching~\citep{kuzborskij2019efficient} can achieve
 $n=\widetilde{O}(d_{\mathrm{eff}}/\varepsilon^2)$ independent of~$m$,
 at the cost of more complex per-round bookkeeping.
-We leave such structure-aware sampling as future work and evaluate the
-effective spectral gap empirically (\Cref{sec:experiments}).
+The Bernstein guarantee is not the mechanism by which we expect
+practical savings at scale.  Practical savings require small buffers
+treated heuristically, spectral decay/effective dimension,
+ridge-leverage sampling, Frequent Directions, or empirical verification
+of the spectral sandwich.  We leave such structure-aware sampling as
+future work and evaluate the effective spectral gap empirically
+(\Cref{sec:experiments}).
 To obtain a spectral sandwich that holds simultaneously for all
 $t\le T$, union-bound over $t$ (replacing $\delta$ by $\delta/T$).
-\Cref{cor:approx} then translates
+\Cref{thm:spectral-distortion} then translates
 the spectral guarantee into a regret inflation factor.
 
 \paragraph{(ii) Windowed curvature (heuristic).}
@@ -980,6 +1218,22 @@ supplied, the regret follows with the stated multiplicative and
 additive factors; the paper does not prove those input bounds from
 primitive network assumptions.
 
+\begin{table}[h]
+\centering\small
+\caption{Theory/algorithm contract.}\label{tab:contract}
+\begin{tabular}{@{}p{3.2cm}p{2.4cm}p{3.0cm}p{3.4cm}@{}}
+\toprule
+Object & Used by algorithm? & Used by proof? & Covered by theorem? \\
+\midrule
+Full-history frozen Gram $\bCbar_t$ & No & Yes & Yes \\
+Relinearized full-history curvature $\bC_t$ & Yes & Bridged through drift & Yes, under \Cref{asm:drift} \\
+Approximate curvature $\hat\bC_t$ & Yes, optional & Only under spectral sandwich & Only through \Cref{thm:spectral-distortion} \\
+Windowed/refresh curvature & Yes, heuristic & No unless sandwich verified & No unconditional guarantee \\
+Action screening & Yes, heuristic & No & Only if the optimal arm survives screening \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{quote}\small
 \textbf{Objects and roles.}
 \emph{Curvature matrices:}
@@ -995,7 +1249,7 @@ $\tilde s_t(a)=\sqrt{\bg_t^\top\tilde\bu}$ (CG approximation to~$\hat s_t$).
 \emph{Which theorem covers which substitution:}
 \Cref{asm:drift}:~$\bC_t\leftrightarrow\bCbar_t$;\;
 \Cref{lem:cg}:~$\hat\bC_t\to\tilde s_t$;\;
-\Cref{cor:approx}:~$\bCbar_t\to\hat\bC_t$.
+\Cref{thm:spectral-distortion}:~$\bCbar_t\to\hat\bC_t$.
 \Cref{thm:regret} analyzes the exact-curvature case $\hat\bC_t{=}\bC_t$.
 \end{quote}
 
@@ -1044,8 +1298,9 @@ number $\kappa=\lambda_{\max}(\hat\bC_t)/\lambda_{\min}(\hat\bC_t)$
 (since $\lambda_{\min}\ge\lambda$);
 $W_t=\sum_{s\in\mathcal{S}_t}\!w_s$ with all weights $w_s\ge 0$
 (so $\hat\bC_t\succeq\lambda\bI\succ 0$, ensuring CG is well-posed);
-$W_t=n$ for windowed/refresh, giving $\bar\kappa$ and $\alpha_I$
-independent of~$T$; $W_t=t{-}1$ for full history.
+$W_t=n$ for unrescaled windowed/refresh buffers, giving $\bar\kappa$
+and $\alpha_I$ independent of~$T$; $W_t=t{-}1$ for full history and for
+rescaled uniform subsampling with $w_s=(t{-}1)/n$.
 The eigenvalue bound uses $\|\bg_t(\bx_s,a_s)\|\le G$
 from \Cref{asm:bounded} (which quantifies over all replayed samples).
 Write $\tilde{s}_t^2(a) = \bg^\top\tilde\bu$ and
@@ -1108,7 +1363,6 @@ where $\alpha_I := \sqrt{(1{+}\bar\varepsilon)/(1{-}\bar\varepsilon)}$
 \label{lem:confidence}
 Suppose \Cref{asm:noise,asm:bounded,asm:linear} hold and
 $\mu^*=\mu_{\btheta^*}$ with $\|\btheta^*\|\le S$.
-Assume $|\cA_t|\le A_{\max}$ for all~$t$.
 Define the linearized ridge estimator~$\hat\btheta_t^{\mathrm{lin}}$
 by~\eqref{eq:thetahat-lin}, the frozen-feature variance
 $\bar s_t(a)=\sqrt{\bg_t(a)^\top\bCbar_t^{-1}\bg_t(a)}$, and
@@ -1126,7 +1380,7 @@ where
 \begin{equation}\label{eq:beta}
   \beta_t
   \;:=\;
-  \sqrt{\gamma_{t-1} + 2\log\!\bigl(2\,A_{\max}\,t^2/\delta\bigr)}
+  \sqrt{\gamma_{t-1} + 2\log(1/\delta)}
   \;+\; \sqrt{\lambda}\,S
   \;+\; \frac{1}{\sigma}\sqrt{F_t}.
 \end{equation}
@@ -1175,24 +1429,29 @@ Therefore
 $|\bg_t(a)^\top\bCbar_t^{-1}\sigma^{-1}\Phi\hat\rho|
 \le \bar s_t(a)\sigma^{-1}\sqrt{F_t}$.
 \item\emph{Noise.}\;
-We apply the self-normalized martingale bound
-\citep{abbasi2011improved} with filtration $\{\cG_t\}_{t\ge 1}$
-(the pre-reward sigma-algebra defined in \S\ref{sec:problem}):
-the design vector $\bg_s/\sigma$ is $\cG_s$-measurable
-(since $\btheta_s,\bx_s,a_s$ are all determined before the reward),
-and $\xi_s=\eta_s/\sigma$ is conditionally $1$-sub-Gaussian
-given~$\cG_s$ (\Cref{asm:noise}).
-The bound gives, at confidence level $\delta_{t,a}$,
-$|\bg_t(a)^\top\bCbar_t^{-1}\sigma^{-2}\sum\bg_s\eta_s|
-\le \bar s_t(a)\sqrt{\gamma_{t-1}+2\log(1/\delta_{t,a})}$.
-A union bound over all $a\in\cA_t$ ($\le A_{\max}$ actions) and
-$t\ge 1$ with $\delta_{t,a} = \delta/(2\,A_{\max}\,t^2)$
-yields the simultaneous bound:
-$\sum_{t\ge 1}A_{\max}\delta_{t,a}
-= \tfrac{\delta}{2}\sum_{t\ge 1}t^{-2}
-< \tfrac{\delta}{2}\cdot 2 = \delta$
-(using $\sum_{t=1}^\infty t^{-2} < 2$), and
-$\log(1/\delta_{t,a})=\log(2\,A_{\max}\,t^2/\delta)$.
+\[
+  \left\|
+  \sum_{s<t}\frac{\bg_s}{\sigma}\frac{\eta_s}{\sigma}
+  \right\|_{\bCbar_t^{-1}}
+  \le
+  \sqrt{\gamma_{t-1}+2\log(1/\delta)}
+\]
+holds for all $t\ge 1$ with probability at least $1-\delta$ by the
+time-uniform vector self-normalized martingale bound
+\citep{abbasi2011improved}.  Here $x_s=\bg_s/\sigma$ is predictable
+with respect to the pre-reward sigma-algebra $\cG_s$, and
+$\xi_s=\eta_s/\sigma$ is conditionally $1$-sub-Gaussian given
+$\cG_s$.  For any candidate action $a$, Cauchy--Schwarz in the
+$\bCbar_t$-norm gives
+\[
+  \left|
+  \bg_t(a)^\top\bCbar_t^{-1}
+  \sum_{s<t}\frac{\bg_s\eta_s}{\sigma^2}
+  \right|
+  \le
+  \bar s_t(a)\sqrt{\gamma_{t-1}+2\log(1/\delta)} .
+\]
+
 \end{enumerate}
 Summing gives~\eqref{eq:conf-lin}--\eqref{eq:beta}.
 \end{proof}
@@ -1203,7 +1462,7 @@ satisfies $F_t \le \bar F_t$ for all~$t$.
 Then \Cref{alg:ccucb} may set
 \[
   \bar\beta_t \;:=\;
-  \sqrt{\gamma_{t-1} + 2\log(2A_{\max}t^2/\delta)}
+  \sqrt{\gamma_{t-1} + 2\log(1/\delta)}
   \;+\; \sqrt{\lambda}\,S
   \;+\; \sigma^{-1}\sqrt{\bar F_t},
 \]
@@ -1213,7 +1472,7 @@ which is predictable and satisfies $\bar\beta_t \ge \beta_t$.
 $\bar F_t \ge F_t$ term-by-term implies each summand in~\eqref{eq:beta}
 is dominated, so $\bar\beta_t \ge \beta_t$.
 Predictability holds because $\gamma_{t-1}$, $S$, $\bar F_t$, $\lambda$,
-$\sigma$, $A_{\max}$, $\delta$ are all determined before round~$t$.
+$\sigma$, and $\delta$ are all determined before round~$t$.
 \end{proof}
 
 \begin{lemma}[Prediction discrepancy]\label{lem:discrepancy}
@@ -1226,28 +1485,12 @@ Immediate from~\eqref{eq:pred-stab}.
 \end{proof}
 
 \begin{quote}\small
-\emph{Remark (informal decomposition of $\eta_t^{\mathrm{pred}}$).}
-Under the additional (informal) conditions that
-$\nabla^2\cL_t\succeq\lambda\bI$ (local strong convexity of the loss)
-and the optimization residual satisfies
-$\|\nabla\cL_t(\btheta_t)\|\le\eta_t^{\mathrm{opt}}$,
-one expects
-$\eta_t^{\mathrm{pred}} \lesssim G\cdot[\eta_t^{\mathrm{opt}}/\lambda
-+ O(L_g\Delta/\lambda)]$,
-where the second term captures feature drift between~$\bg_s$
-and~$\bg_t$ (see \Cref{lem:drift-sufficient} for explicit drift bounds).
-This decomposition is heuristic: the optimization-error contribution
-follows from strong convexity via
-$\|\btheta_t - \bar\btheta_t\| \le \eta_t^{\mathrm{opt}}/\lambda$
-(where $\bar\btheta_t$ is a global minimizer of~$\cL_t$
-at round~$t$, not to be confused with the realizability
-parameter~$\btheta^*$), while the drift
-contribution depends on problem-specific structure.  The formal
-regret bound (\Cref{thm:regret}) uses $\eta_t^{\mathrm{pred}}$
-directly without decomposing it.
-Accordingly, Theorem~\ref{thm:regret} should be interpreted strictly as
-a regret transfer lemma from externally controlled prediction
-discrepancy to cumulative regret.
+\emph{Remark (status of $\eta_t^{\mathrm{pred}}$).}
+\Cref{lem:primitive-pred} gives a primitive bound in terms of the
+optimizer residual $\zeta_t$ and the gradient-mismatch vector $M_t$.
+The regret theorem below uses $\eta_t^{\mathrm{pred}}$ directly, so it
+should still be read as a transfer result: prediction discrepancy must
+be verified empirically or bounded by a separate optimization argument.
 \end{quote}
 In the convex last-layer regime, $\btheta_t = \hat\btheta_t^{\mathrm{lin}}$
 and $\eta_t^{\mathrm{pred}}=0$.
@@ -1269,7 +1512,7 @@ linearization remainder $|\rho_t|\le\epslin(t)$.
 
 \begin{theorem}[Conditional regret bound for exact-curvature CC-UCB (Gaussian/squared-loss)]\label{thm:regret}
 Suppose \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:drift} hold,
-the model is realizable in the linearized sense
+the model is realizable and locally linearizable
 ($\mu^*(\bx,a) = \mu_{\btheta^*}(\bx,a)$ for some~$\btheta^*$ with
 $\|\btheta^*\|\le S$), $|\cA_t|\le A_{\max}$ for all~$t$, and
 $\epsdriftbar\in[\epsdrift,1)$.
@@ -1317,16 +1560,58 @@ $G^2\le\lambda\sigma^2$ (which would simplify this to
 $\sigma\sqrt{2}$) is \emph{not} required.
 \end{theorem}
 
+\paragraph{How to read the theorem.}
+The theorem is a conditional transfer result.  It does not prove that
+nonlinear fine-tuning is stable.  Rather, it says that if local
+linearization error, prediction discrepancy, and curvature drift are
+controlled, then the only additional regret costs of CC-UCB are the CG
+truncation factor and the spectral-distortion factor.  The sufficient
+conditions in \Cref{lem:primitive-pred,lem:drift-sufficient} make these
+requirements measurable in terms of replayed-Jacobian drift and
+optimizer residual, but they remain restrictive.  In particular,
+unrestricted end-to-end fine-tuning is not covered unless these terms are
+verified empirically or bounded by a separate optimization argument.
+
 \paragraph{Discussion of terms.}
 \begin{itemize}[nosep,leftmargin=1.5em]
 \item \emph{Exploration term.}
-Sublinear in~$T$ whenever $\gamma_T = o(T)$, which holds for finite
-effective dimension.
+The exploration term is
+$O\!\left(\alpha_I\alpha_{\mathrm{drift}}\bar\beta_{\max,T}
+\sqrt{T\gamma_T}\right)$, hiding the fixed factor
+$\sqrt{\sigma^2+G^2/\lambda}$.
+Bounded $\alpha_I$ and bounded spectral distortion are not enough for
+sublinear regret.  A sufficient condition is
+\[
+  \bar\beta_{\max,T}^2\gamma_T=o(T),
+  \qquad
+  E_T=o(T),
+  \qquad
+  P_T=o(T).
+\]
+Since $\bar\beta_{\max,T}$ contains the cumulative squared
+linearization error through
+$\bar F_{\max,T}:=\max_{t\le T}\bar F_t$, the condition
+$\gamma_T=o(T)$ alone is insufficient.  Since
+\[
+  \bar\beta_{\max,T}^2
+  =
+  O\!\left(
+    \gamma_T+\log(1/\delta)+\lambda S^2+\frac{\bar F_{\max,T}}{\sigma^2}
+  \right),
+\]
+a concrete sufficient condition is
+\[
+  \left(\gamma_T+\bar F_{\max,T}+\log(1/\delta)+\lambda S^2\right)\gamma_T=o(T),
+  \qquad
+  E_T=o(T),
+  \qquad
+  P_T=o(T).
+\]
 $\alpha_I$ is constant for any fixed CG tolerance;
 $\alpha_{\mathrm{drift}}$ is constant for any
 fixed~$\epsdriftbar<1$ (e.g.\ frozen backbone gives
 $\epsdriftbar=0$ and $\alpha_{\mathrm{drift}}=1$).
-By \Cref{lem:drift-sufficient}, a horizon-uniform drift bound over
+By \Cref{cor:drift-uniform}, a horizon-uniform drift bound over
 $t\le T$ requires $\Delta = O(\sigma^2\lambda/(TGL_g))$ in the
 small-drift regime, so the present guarantee should be read mainly as a
 near-stationarity result.
@@ -1335,7 +1620,8 @@ potential step; when $G^2 \le \lambda\sigma^2$ (well-regularized regime)
 it is at most $\sigma\sqrt{2}$, recovering the simpler form.
 \item \emph{Linearization remainder.}
 The bound involves $E_T=\sum_t\epslin(t)$, not $T\epslin$.
-Total regret is sublinear when $E_T=o(T)$.
+Near-linear regimes also require $\bar F_{\max,T}\gamma_T=o(T)$ because the
+cumulative squared linearization error enters the confidence radius.
 $\|\btheta^*{-}\btheta_t\|=O(1/t)$ gives $E_T=O(1)$;
 $\|\btheta^*{-}\btheta_t\|=O(t^{-1/4})$ gives $E_T=O(\sqrt{T})$.
 The squared-error sum $F_T=\sum\epslin(t)^2$ also enters through~$\bar\beta_{\max,T}$
@@ -1350,8 +1636,8 @@ lower regret than diagonal or last-layer methods in any specific regime;
 it provides an upper bound with explicit constants.
 \emph{Demonstrating regret improvement is an empirical hypothesis}
 (\Cref{sec:experiments}); the theory shows that the regret cost of
-curvature distortion is captured by the spectral-sandwich
-factor~$\alpha_{\mathrm{drift}}$ and \Cref{cor:approx}, providing a
+curvature distortion is captured by the spectral-distortion
+factor in \Cref{thm:spectral-distortion}, providing a
 diagnostic rather than a comparative guarantee.
 \item \emph{Scope.}
 The bound is proved for Gaussian/squared-loss rewards.
@@ -1361,7 +1647,7 @@ data-dependent Fisher weights~$\nabla^2 A(z)$ and is left as future work
 (\Cref{sec:expfam-ext}).
 \end{itemize}
 
-\begin{corollary}[Frozen-backbone / linear-head regime]\label{cor:frozen}
+\begin{corollary}[Sanity-check theorem: frozen features recover linear UCB]\label{cor:frozen}
 If the backbone is frozen and the reward head is linear in its
 parameters, then $\epslin(t)=0$ for all~$t$ (the model is linear in
 the trainable parameters, so $L=0$ in \Cref{asm:linear}),
@@ -1369,6 +1655,7 @@ $\eta_t^{\mathrm{pred}}=0$ for all~$t$
 (the MAP and linearized estimators coincide, so \Cref{asm:optim}
 holds with equality), and $\epsdrift=0$
 (features do not change, so \Cref{asm:drift} holds trivially).
+Thus $F_T=E_T=P_T=0$.
 Setting $\epsdriftbar=0$, \Cref{thm:regret} gives
 \[
   R_T
@@ -1384,16 +1671,18 @@ Substitute $\epsdriftbar=\epsdrift=0$,
 $\epslin(t)=\eta_t^{\mathrm{pred}}=0$ into~\eqref{eq:regret-bound}.
 Then $\alpha_{\mathrm{drift}}=1$, $E_T=0$, $P_T=0$, and $F_T=0$
 (so $\beta_t$ simplifies to
-$\sqrt{\gamma_{t-1}+2\log(2\,A_{\max}t^2/\delta)}+\sqrt{\lambda}\,S$).
+$\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt{\lambda}\,S$).
 \end{proof}
 
 \paragraph{Interpretation.}
-\Cref{cor:frozen} is a sanity check, not the main target regime for
-full-curvature exploration.  When only a modest-dimensional head is
-trained, explicit linear-bandit updates may be simpler than CG on the
-full network.  The main open question is whether similarly nonvacuous
-guarantees can be obtained when the backbone adapts enough for full
-curvature to matter.
+\Cref{cor:frozen} is the regime where the proof is fully standard and
+unconditional apart from the usual linear-bandit assumptions.  It is not
+the main empirical target because full-backbone curvature matters most
+when features adapt.  When only a modest-dimensional head is trained,
+explicit linear-bandit updates may be simpler than CG on the full
+network.  If $\gamma_T=O(d_{\mathrm{eff}}\log T)$, the sublinearity
+condition reduces to the usual $\gamma_T^2=o(T)$ type requirement, which
+holds for fixed or slowly growing effective dimension.
 
 \paragraph{Proof sketch.}
 The full proof (\Cref{app:proof}) proceeds in four steps.
@@ -1441,82 +1730,113 @@ Collecting terms yields~\eqref{eq:regret-bound}.
 
 \subsection{Cost of Approximate Curvature}
 
-\begin{corollary}[Spectral-sandwich regret inflation]\label{cor:approx}
-Assume an algorithm replaces $\bCbar_t$ with $\hat{\bC}_t$ satisfying, for
-some $\varepsilon\in[0,1)$ and \textbf{all $t\le T$ simultaneously}
-(with probability at least $1-\delta'$),
-\begin{equation}\label{eq:spectral-sandwich}
-  (1-\varepsilon)\,\bCbar_t \;\preceq\; \hat{\bC}_t \;\preceq\; (1+\varepsilon)\,\bCbar_t.
-\end{equation}
-Then the variance proxy is distorted as
-\begin{equation}\label{eq:sandwich}
-  \frac{1}{1+\varepsilon}\,\bar s_t^2(a)
+\begin{theorem}[General spectral-distortion regret inflation]\label{thm:spectral-distortion}
+Suppose \Cref{asm:noise,asm:bounded,asm:linear,asm:optim} hold, the
+model is realizable and locally linearizable
+($\mu^*(\bx,a)=\mu_{\btheta^*}(\bx,a)$ for some~$\btheta^*$ with
+$\|\btheta^*\|\le S$), full action enumeration is used, and the
+algorithm uses an approximate curvature $\hat\bC_t$ satisfying, for
+every $t\le T$ simultaneously,
+\[
+  \rho_{-,t}\bCbar_t
+  \;\preceq\;
+  \hat\bC_t
+  \;\preceq\;
+  \rho_{+,t}\bCbar_t,
+  \qquad
+  0<\rho_{-,t}\le\rho_{+,t}<\infty .
+\]
+Let
+$\rho_-:=\min_{t\le T}\rho_{-,t}$ and
+$\rho_+:=\max_{t\le T}\rho_{+,t}$.
+Then, for every candidate action~$a$,
+\[
+  \frac{1}{\rho_+}\bar s_t^2(a)
   \;\le\;
-  \hat{s}_t^2(a)
+  \hat s_t^2(a)
   \;\le\;
-  \frac{1}{1-\varepsilon}\,\bar s_t^2(a),
-\end{equation}
-and the exploration term
-in~\eqref{eq:regret-bound} inflates by at most
-$\sqrt{(1{+}\varepsilon)/(1{-}\varepsilon)}$.
-Since the sandwich is stated directly relative to~$\bCbar_t$,
-\emph{no separate $\alpha_{\mathrm{drift}}$ factor appears};
-the drift is already absorbed.
-With CG truncation, the total multiplicative factor on the exploration
-term is
-$\alpha_I\cdot\sqrt{(1{+}\varepsilon)/(1{-}\varepsilon)}$.
-The confidence guarantee holds with probability at least
-$1-\delta-\delta'$ by a union bound over the main-theorem event
-(probability $\ge 1-\delta$) and the spectral-sandwich event
-(probability $\ge 1-\delta'$).
-\end{corollary}
+  \frac{1}{\rho_-}\bar s_t^2(a).
+\]
+If the CG estimates satisfy
+$\varepsilon_I\le\bar\varepsilon_{\mathrm{CG}}<1$ and the UCB bonus is
+\[
+  w_t(a)
+  =
+  \bar\beta_t
+  \sqrt{\frac{\rho_+}{1-\bar\varepsilon_{\mathrm{CG}}}}\,
+  \sqrt{\tilde s_t^2(a)},
+\]
+for any predictable schedule $\bar\beta_t\ge\beta_t$, then, on the
+intersection of the self-normalized confidence event and the
+spectral-sandwich event,
+\[
+  R_T
+  \;\le\;
+  2\alpha_I\sqrt{\rho_+/\rho_-}\,
+  \bar\beta_{\max,T}
+  \sqrt{(\sigma^2+G^2/\lambda)T\gamma_T}
+  +
+  2E_T+2P_T,
+\]
+where
+$\alpha_I=\sqrt{(1+\bar\varepsilon_{\mathrm{CG}})/
+(1-\bar\varepsilon_{\mathrm{CG}})}$.
+If the confidence event has probability at least $1-\delta$ and the
+spectral-sandwich event has probability at least $1-\delta'$, the joint
+guarantee holds with probability at least $1-\delta-\delta'$.
+\end{theorem}
+\begin{proof}
+Inverting the Loewner sandwich gives
+$\rho_+^{-1}\bCbar_t^{-1}\preceq\hat\bC_t^{-1}
+\preceq\rho_-^{-1}\bCbar_t^{-1}$, which proves the variance
+distortion display by taking quadratic forms.  The lower bound
+$\hat s_t(a)\ge\rho_+^{-1/2}\bar s_t(a)$, together with the CG lower
+bound $\tilde s_t^2(a)\ge(1-\bar\varepsilon_{\mathrm{CG}})\hat s_t^2(a)$,
+shows that the displayed bonus dominates
+$\bar\beta_t\bar s_t(a)$ and hence preserves optimism up to the same
+additive $E_T$ and $P_T$ terms as in \Cref{thm:regret}.  The upper
+bound $\hat s_t(a)\le\rho_-^{-1/2}\bar s_t(a)$ and the CG upper bound
+give
+$w_t(a)\le
+\alpha_I\sqrt{\rho_+/\rho_-}\bar\beta_t\bar s_t(a)$.
+The proof then repeats the per-round regret and elliptic-potential
+steps of \Cref{thm:regret}.  The probability statement is a union bound.
+\end{proof}
 
 \paragraph{Composing subsampling with feature drift.}
 \Cref{lem:subsample} guarantees a sandwich for the \emph{relinearized}
 $\bC_t$:
 $(1{-}\varepsilon)\bC_t\preceq\hat\bC_t\preceq(1{+}\varepsilon)\bC_t$.
-To apply \Cref{cor:approx} (which requires a sandwich for~$\bCbar_t$),
-compose with the feature-drift bound (\Cref{asm:drift}):
+Composing it with the feature-drift sandwich gives a sandwich directly
+relative to~$\bCbar_t$:
 \[
-  (1{-}\varepsilon)(1{-}\epsdrift)\,\bCbar_t
-  \;\preceq\; \hat\bC_t
-  \;\preceq\; (1{+}\varepsilon)(1{+}\epsdrift)\,\bCbar_t.
+  \rho_-\,\bCbar_t
+  \;\preceq\;
+  \hat\bC_t
+  \;\preceq\;
+  \rho_+\,\bCbar_t,
+  \qquad
+  \rho_-=(1-\varepsilon)(1-\epsdrift),
+  \quad
+  \rho_+=(1+\varepsilon)(1+\epsdrift).
 \]
-The resulting sandwich is \emph{asymmetric}. Define the upper and lower
-distortion parameters:
-\begin{align*}
-  \varepsilon_+ &\;:=\; (1{+}\varepsilon)(1{+}\epsdrift) - 1
-    \;=\; \varepsilon + \epsdrift + \varepsilon\epsdrift, \\
-  \varepsilon_- &\;:=\; 1 - (1{-}\varepsilon)(1{-}\epsdrift)
-    \;=\; \varepsilon + \epsdrift - \varepsilon\epsdrift.
-\end{align*}
-Note $\varepsilon_+ > \varepsilon_-$ whenever $\varepsilon\epsdrift>0$.
-Inverting the composed sandwich gives
-\[
-  (1{+}\varepsilon_+)^{-1}\,\bCbar_t^{-1}
-  \;\preceq\; \hat\bC_t^{-1}
-  \;\preceq\; (1{-}\varepsilon_-)^{-1}\,\bCbar_t^{-1},
-\]
-which requires $\varepsilon_- < 1$ (equivalently,
-$(1{-}\varepsilon)(1{-}\epsdrift) > 0$, which holds
-since $\varepsilon,\epsdrift \in [0,1)$).
-The resulting exploration inflation factor in the composed
-subsampling-plus-drift case is the asymmetric quantity
-$\sqrt{(1{+}\varepsilon_+)/(1{-}\varepsilon_-)}$,
-applied on top of~$\alpha_I$ only---the drift is already folded into
-$\varepsilon_\pm$, so no separate $\alpha_{\mathrm{drift}}$ is
-multiplied.
-When $\varepsilon=0$ (exact $\bC_t$, drift only), this recovers
-$\alpha_{\mathrm{drift}}$; when $\epsdrift=0$ (subsampling, no drift),
-it recovers the symmetric factor
-$\sqrt{(1{+}\varepsilon)/(1{-}\varepsilon)}$, matching
-\Cref{cor:approx} and \Cref{thm:regret} as special cases.
+\Cref{thm:spectral-distortion} then gives exploration inflation
+$\alpha_I\sqrt{\rho_+/\rho_-}$.  When the spectral sandwich is stated
+directly relative to $\bCbar_t$, the drift factor is already included
+and should not be multiplied again.  The symmetric
+$(1\pm\varepsilon)$ result is the special case
+$\rho_-=1-\varepsilon$, $\rho_+=1+\varepsilon$; exact $\bC_t$ with
+feature drift is the special case
+$\rho_-=1-\epsdrift$, $\rho_+=1+\epsdrift$.
+Thus \Cref{thm:regret} is recovered from
+\Cref{thm:spectral-distortion} by taking $\hat\bC_t=\bC_t$ and using
+\Cref{asm:drift}.
 A union bound over $t\le T$ (replacing $\delta'$ by $\delta'/T$ in
-\Cref{lem:subsample}) gives the time-uniform guarantee.
+\Cref{lem:subsample}) gives the time-uniform subsampling event.
 
 For the \emph{windowed} and \emph{periodic-refresh} operators
 (\S\ref{sec:curvop}(ii)--(iii)), no unconditional spectral sandwich holds
-without a distributional stability assumption; the corollary does
+without a distributional stability assumption; \Cref{thm:spectral-distortion} does
 \emph{not} provide a regret guarantee for those operators unless
 an explicit sandwich is verified.
 We treat windowed and refresh operators as practical heuristics and
@@ -1525,6 +1845,16 @@ evaluate their effective spectral gap empirically.
 We omit empirical results in this draft; a detailed experimental
 protocol---covering benchmarks, baselines, ablations, and
 metrics---is provided in \Cref{sec:experiments}.
+
+\paragraph{What remains open.}
+The missing piece is a primitive theorem showing that
+$P_T=\sum_t\eta_t^{\mathrm{pred}}=o(T)$ and a horizon-uniform spectral
+drift sandwich hold for a genuinely adapting backbone.
+\Cref{lem:primitive-pred} reduces prediction discrepancy to optimizer
+residual and replayed-Jacobian drift terms, and
+\Cref{lem:drift-sufficient} gives a sample-wise drift condition, but
+those terms are still strong requirements.  Establishing them for
+realistic transformer fine-tuning is left open.
 
 \section{Related Work}\label{sec:related}
 
@@ -1564,7 +1894,7 @@ without materializing the covariance matrix.
 matrices and derive regret bounds tied to curvature constants.
 Their theoretical contribution is a deeper structural analysis of how
 curvature enters the regret, whereas our contribution is a concrete matrix-free route to
-full-curvature exploration together with a conditional regret
+full-GGN/Fisher exploration together with a conditional regret
 decomposition; this draft does not empirically demonstrate
 end-to-end scalability.
 
@@ -1586,7 +1916,7 @@ matrix is replaced by a Frequent Directions sketch, deriving regret
 bounds that depend on the spectral approximation quality.
 \citet{wen2024pitfalls} catalog failure modes of sketch-based
 bandits, showing that naive sketching can break optimism.
-Our spectral-sandwich corollary (\Cref{cor:approx}) instantiates the
+Our spectral-distortion theorem (\Cref{thm:spectral-distortion}) instantiates the
 same conceptual lever---quantifying regret inflation via spectral
 distortion---in the matrix-free GGN/CVP setting.
 We do not claim novelty for the sandwich-to-regret reduction itself;
@@ -1619,16 +1949,18 @@ we employ is the same computational primitive.
 Information-theoretic exploration objectives---such as maximizing
 $\log\det(\bCbar_t)$ or minimizing the trace of~$\bCbar_t^{-1}$---connect
 bandit exploration to the classical D-optimal and A-optimal design
-criteria \citep{valko2013finite}.  CC-UCB's use of the full curvature
+criteria \citep{valko2013finite}.  CC-UCB's use of the full GGN/Fisher curvature
 enables stochastic estimates of these quantities via Hutchinson-type trace
 estimators \citep{ubaru2017fast}, without forming the matrix.
 
 \section{Conclusion}\label{sec:conclusion}
 
 We introduced Curvature-Calibrated UCB, a contextual bandit algorithm that
-computes exploration bonuses by solving for inverse-GGN--vector products via
-conjugate gradients, avoiding the spectral distortion inherent in diagonal
-or block-diagonal curvature approximations.  The regret analysis is
+computes exploration bonuses by solving for inverse-GGN/Fisher--vector
+products via conjugate gradients.  CC-UCB avoids the uncontrolled spectral
+distortion introduced by diagonal or block-diagonal curvature
+approximations, while \Cref{thm:spectral-distortion} quantifies how any
+verified spectral distortion inflates the regret bound.  The regret analysis is
 conducted in terms of a frozen-feature Gram matrix~$\bCbar_t$ that satisfies
 the predictability and sequential-update properties required by
 self-normalized martingale arguments; the proof introduces an auxiliary
@@ -1658,7 +1990,7 @@ prediction-stability cost.
 Action screening is a practical heuristic not covered by the theory
 without an additional assumption that the optimal arm survives
 screening.
-A spectral-sandwich corollary quantifies the cost of approximate curvature
+A spectral-distortion theorem quantifies the cost of approximate curvature
 operators; we provide a formal matrix Bernstein guarantee (with explicit
 $(t{-}1)^2$-dependence in sample complexity for the variance term) for
 subsampled GGN and clearly delineate windowed/refresh operators as
@@ -1671,11 +2003,10 @@ whose quality degrades for highly nonlinear models or large parameter
 drift; the uniform feature-drift bound~$\epsdrift<1$ is plausible in
 frozen-backbone or NTK regimes but may not hold for unrestricted
 deep-network fine-tuning.
-The prediction-stability assumption (\Cref{asm:optim}) is a
-high-level condition; we sketch an informal decomposition under local
-strong convexity (see the remark after \Cref{lem:discrepancy}), but
-deriving a formal sufficient condition from primitive assumptions
-in the general nonconvex case remains open.
+The prediction-stability assumption (\Cref{asm:optim}) is still the main
+nonlinear bottleneck.  \Cref{lem:primitive-pred} reduces it to optimizer
+residual and replayed-Jacobian drift terms, but deriving small cumulative
+$P_T$ for the general nonconvex case remains open.
 The per-round cost scales linearly in the CG budget~$I$ and buffer
 size~$n$; preconditioning and warm-starting CG are important practical
 considerations not analyzed theoretically here.
@@ -1687,10 +2018,10 @@ Extending the analysis beyond the linearized regime---covering the
 relinearized GGN directly, without the frozen-feature bridge---remains
 an open direction that would require a non-standard potential argument
 for non-monotone design matrices.
-The main open problem left by this draft is to derive primitive
-sufficient conditions for small prediction discrepancy and
-horizon-uniform feature drift in a nontrivial partially adapting
-backbone regime.
+The missing piece is a primitive theorem showing that
+$P_T=\sum_t\eta_t^{\mathrm{pred}}=o(T)$ and a horizon-uniform spectral
+drift sandwich hold for a genuinely adapting backbone.  Establishing
+these conditions for realistic transformer fine-tuning is left open.
 
 % --- references -----------------------------------------------------------
 \bibliographystyle{plainnat}
@@ -1905,10 +2236,11 @@ requiring $\varepsilon_I\le\bar\varepsilon < 1$ gives the budget
   \right\rceil
   \;=\; O\!\bigl(\sqrt{\bar\kappa}\,\log(1/\bar\varepsilon)\bigr).
 \end{equation}
-For $W_t=n$ (fixed buffer size),
+For $W_t=n$ (unrescaled fixed buffer size),
 $\bar\kappa\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$,
 so $I_{\min}$ is constant.
-For full history ($W_t=t{-}1$),
+For full history, and for rescaled uniform subsampling with
+$w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so
 $\bar\kappa=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and maintaining
 $\varepsilon_I\le\bar\varepsilon$ requires
 $I=\Omega\!\bigl(G\sqrt{t/(\lambda\sigma^2)}\,\log(1/\bar\varepsilon)\bigr)$
@@ -1918,47 +2250,17 @@ In practice, the spectrum of~$\hat\bC_t$ is concentrated
 than the worst-case bound suggests; we measure this empirically in
 \Cref{sec:experiments}.
 
-\section{Proof of Corollary~\ref{cor:approx}}\label{app:cor}
+\section{Additional Note on Spectral Distortion}\label{app:cor}
 
-Assume the spectral sandwich~\eqref{eq:spectral-sandwich} holds for all
-$t\le T$ simultaneously (with probability $\ge 1-\delta'$).
-Inverting the Loewner ordering:
-\[
-(1{+}\varepsilon)^{-1}\bCbar_t^{-1}
-\;\preceq\;\hat\bC_t^{-1}
-\;\preceq\;(1{-}\varepsilon)^{-1}\bCbar_t^{-1}.
-\]
-Taking the quadratic form $\bg^\top(\cdot)\bg$ yields~\eqref{eq:sandwich}.
+The proof of \Cref{thm:spectral-distortion} is given in the main text.
+The time-uniform requirement is essential: a curvature sandwich that
+holds only at a single~$t$ does not suffice for a regret bound that sums
+over all rounds.  For the subsampled GGN in \Cref{lem:subsample}, a
+union bound over $t\le T$ (replacing $\delta'$ by $\delta'/T$ per round)
+gives a time-uniform sandwich with the sample size in
+\eqref{eq:subsample-n} evaluated at the worst-case $m=T{-}1$.
 
-\paragraph{Effect on the exploration term.}
-\emph{Confidence set validity:}
-From~\eqref{eq:sandwich},
-$\hat{s}_t(a)\ge(1{+}\varepsilon)^{-1/2}\bar s_t(a)$, so using
-$\hat s_t$ in place of~$\bar s_t$ requires inflating
-$\beta_t$ by $(1{+}\varepsilon)^{1/2}$.
 
-\emph{Sum of bonus widths:}
-From the upper bound in~\eqref{eq:sandwich},
-$\hat{s}_t(a)\le(1{-}\varepsilon)^{-1/2}\bar s_t(a)$, so the elliptic
-potential sum
-$\sum_t\hat{s}_t(a_t)\le(1{-}\varepsilon)^{-1/2}\sum_t \bar s_t(a_t)$.
-
-\emph{Combined factor:}
-$(1{+}\varepsilon)^{1/2}\cdot(1{-}\varepsilon)^{-1/2}
-= \sqrt{(1{+}\varepsilon)/(1{-}\varepsilon)}$,
-applied to the exploration term of~\eqref{eq:regret-bound}.
-
-The combined regret guarantee holds with probability at least
-$1-\delta-\delta'$ (union bound over the main-theorem confidence
-event and the spectral-sandwich event).
-The time-uniform requirement is essential: a sandwich that holds only at a
-single~$t$ does not suffice for the regret bound, which sums over all
-rounds.
-For the subsampled GGN (\Cref{lem:subsample}), a further union bound
-over $t\le T$ (replacing $\delta'$ by $\delta'/T$ per round) yields the
-time-uniform sandwich with
-the sample size in~\eqref{eq:subsample-n} evaluated at the worst-case
-$m=T{-}1$.\qed
 
 \section{GGN Approximation Error}\label{app:ggn-approx}
 
@@ -2029,11 +2331,14 @@ We outline an experimental protocol for a future empirical section.
 No experimental results are included in this draft; the purpose of
 this section is only to make the intended evaluation concrete,
 reproducible, and aligned with the theoretical claims.
-The protocol focuses on (i)~whether full-curvature
-exploration produces measurable regret improvements over diagonal and
-last-layer surrogates, (ii)~whether the variance-calibration diagnostic
-predicts failure modes, and (iii)~the computational cost of CG-based
-exploration at foundation-model scale.
+The protocol focuses on (i)~whether the assumptions behind the theorem
+are empirically plausible, (ii)~whether full-GGN/Fisher exploration
+produces measurable regret improvements over diagonal and last-layer
+surrogates, and (iii)~the computational cost of CG-based exploration at
+foundation-model scale.  Synthetic squared-loss bandits validate the
+theorem; Bernoulli/categorical foundation-model bandits test only the
+algorithmic Fisher/GGN extension; partial fine-tuning tests whether the
+near-stationarity assumptions are plausible.
 
 \subsection{Benchmarks}
 
@@ -2105,8 +2410,9 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
   vs.\ diagonal vs.\ block-diagonal vs.\ low-rank Lanczos ($k$-rank
   approximation of $\bC_t^{-1}$) vs.\ last-layer-only Laplace.
   This ablation directly tests whether diagonal/low-rank curvature
-  miscalibrates exploration where full curvature succeeds.
-  Metrics: cumulative regret and calibration error.
+  miscalibrates exploration where full GGN/Fisher succeeds.
+  Metrics: cumulative regret, calibration error, and spectral distortion
+  $\rho_+/\rho_-$ relative to the full GGN.
 \item \textbf{CG budget:} vary the iteration budget
   $I\in\{5,10,25,50,100\}$ and the adaptive stopping target
   $\bar\varepsilon\in\{0.01,0.1,0.3,0.5\}$;
@@ -2117,7 +2423,7 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
   compare subsampled vs.\ windowed vs.\ periodic refresh; sweep the buffer
   size $n\in\{64,256,1024,\text{all}\}$ and the refresh period
   $M\in\{1,5,20\}$.  For subsampled curvature, measure the empirical
-  spectral gap $\varepsilon$ to validate the matrix Bernstein prediction
+  spectral gap $(\rho_-,\rho_+)$ to validate the matrix Bernstein prediction
   (\Cref{lem:subsample}).
   For windowed/refresh, measure the same gap to quantify the heuristic
   approximation quality.
@@ -2144,8 +2450,24 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
   $\mathrm{ECE}_{\mathrm{var}}=\sum_{j=1}^{J}(n_j/T)\,\bigl|\mathrm{RMSE}_j - \bar{s}_j\bigr|$
   where $\bar{s}_j$ is the mean predicted std in bin~$j$.  We also plot
   the reliability diagram ($\bar{s}_j$ vs.\ $\mathrm{RMSE}_j$).
-  The diagnostic should correlate with regret: methods with lower
-  $\mathrm{ECE}_{\mathrm{var}}$ should achieve lower cumulative regret.
+  This is empirical support for the uncertainty estimates, not a theorem.
+\item \textbf{Empirical feature-drift sandwich:}
+  estimate extremal generalized eigenvalues of
+  $\bC_t\bCbar_t^{-1}$ on a small Krylov subspace and report
+  $\hat\rho_-$ and $\hat\rho_+$ over time.
+\item \textbf{Prediction-discrepancy diagnostic:}
+  in small and medium models, estimate
+  $|\bg_t(a)^\top(\btheta_t-\hat\btheta_t^{\mathrm{lin}})|$ directly.
+  In larger models, report the primitive proxies from
+  \Cref{lem:primitive-pred}: optimizer residual $\zeta_t$, average
+  replayed-Jacobian drift, and $M_t$-proxy norms.
+\item \textbf{Linearization diagnostic:}
+  in synthetic settings where $\btheta^*$ is known, measure
+  $\mu_{\btheta^*}(\bx_t,a)-\mu_{\btheta_t}(\bx_t,a)
+  -\bg_t(a)^\top(\btheta^*-\btheta_t)$ directly.
+\item \textbf{Curvature spectral distortion:}
+  compare full GGN against diagonal, block, KFAC, and last-layer
+  surrogates using $\rho_+/\rho_-$, not only regret.
 \item \textbf{Wall-clock overhead:} seconds per bandit round, broken down
   into forward pass, gradient, CVP/CG, and action selection, reported
   across the scaling ladder.
