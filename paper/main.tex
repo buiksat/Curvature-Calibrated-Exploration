@@ -39,7 +39,7 @@
   \newcommand{\brett}[1]{}
 \fi
 % --- title ----------------------------------------------------------------
-\title{Curvature-Calibrated Exploration for Foundation-Model Bandits}
+\title{Curvature-Calibrated Exploration for Differentiable-Model Bandits}
 \author{Anonymous Author(s)}
 
 \begin{document}
@@ -47,114 +47,116 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-We study contextual bandits where expected reward is parameterized by a
-differentiable parametric model, with foundation-model deployments as
-one motivating example.  Efficient exploration requires calibrated
-epistemic uncertainty over model predictions, yet standard neural bandit
-methods often replace the curvature with diagonal, block-diagonal, or
-last-layer surrogates.  We propose \emph{Curvature-Calibrated UCB}
-(CC-UCB), which computes the predictive variance induced by the full
-Gauss--Newton (GGN) / Fisher curvature through conjugate-gradient solves
-that access curvature only through curvature--vector products.
-For the Gaussian/squared-loss instantiation, we prove a conditional
-regret transfer theorem for CC-UCB.  The theorem converts externally
-supplied, diagnostically estimable, or separately provable bounds on
-local linearization error, prediction discrepancy, feature drift, CG
-error, and curvature spectral distortion into regret.
-This is a conditional guarantee for differentiable parametric reward
-models, motivated by foundation-model deployments; it is not a regret
-theorem for unrestricted end-to-end foundation-model fine-tuning.
-The result is most plausibly nonvacuous in frozen-backbone, linear-head,
-near-NTK, or otherwise near-stationary regimes.  The same matrix-free
-CG/CVP machinery extends algorithmically to exponential-family
-likelihoods via Fisher/GGN curvature, but no regret guarantee beyond
-Gaussian squared loss is claimed here.  Whether full curvature improves
-over diagonal, block, KFAC, or last-layer surrogates is treated as an
-empirical hypothesis, not a theorem.
+We study contextual bandits whose expected reward is a differentiable
+parametric model, with foundation-model reward heads as a motivating
+case.  Efficient exploration requires calibrated epistemic uncertainty,
+yet neural bandit methods routinely replace the curvature in the
+predictive variance with diagonal, block-diagonal, Kronecker-factored,
+or last-layer surrogates, which distort the exploration bonus.  We
+propose \emph{Curvature-Calibrated UCB} (CC-UCB), whose bonus is the
+predictive variance induced by the \emph{full} Gauss--Newton/Fisher
+(GGN) curvature, computed matrix-free by conjugate gradients (CG) that
+access the curvature only through curvature--vector products---no
+$d\times d$ matrix is formed and per-sample gradient features are not
+stored.  Our main result is a conditional regret transfer theorem for
+the Gaussian/squared-loss instantiation: it converts supplied (or
+separately proved) bounds on local linearization error, prediction
+discrepancy, feature drift, CG truncation, and curvature spectral
+distortion into regret, with each error source appearing as an explicit
+additive or multiplicative factor.  The same CG/CVP machinery extends
+algorithmically to exponential-family rewards via the Fisher/GGN
+curvature.  \emph{Scope.}  The regret guarantee is conditional and is
+most plausibly nonvacuous in frozen-backbone, linear-head, or
+near-NTK/near-stationary regimes; it is not a guarantee for
+unrestricted end-to-end fine-tuning; we claim nothing beyond Gaussian
+squared loss, and whether full curvature improves on compressed
+surrogates is posed as an empirical hypothesis.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
-Contextual bandits provide a principled framework for sequential
-decision-making under partial feedback.  When the reward predictor is a deep
-network---a setting addressed by \emph{neural bandits}
-\citep{zhou2020neural,riquelme2018deep}---the central algorithmic challenge is
-constructing an exploration bonus that faithfully reflects epistemic
-uncertainty over predictions.
+Contextual bandits are a standard framework for sequential
+decision-making under partial feedback, and increasingly the reward
+predictor is a large differentiable parametric model---a pretrained
+network for text, vision, or multimodal data composed with a reward head
+\citep{zhou2020neural,riquelme2018deep}.  The central algorithmic
+question is how to build an exploration bonus that faithfully reflects
+epistemic uncertainty over such a model's predictions.  Our theory
+applies to generic differentiable parametric models; foundation models
+are a motivating application, not a requirement.
 
-Large differentiable parametric models---including pretrained networks
-for text, vision, or multimodal domains---are increasingly deployed as
-reward predictors in recommendation, content selection, and scientific
-design loops.  The theory developed here applies to generic
-differentiable parametric models; foundation models are a motivating
-application class, not a requirement.
-In the \emph{white-box} setting, where gradient and
-curvature--vector product access to the model is available, one can in
-principle compute the
-GGN/Fisher-linearized predictive variance:
+In the \emph{white-box} setting---gradient and curvature--vector-product
+access to the model---the canonical bonus is the GGN/Fisher-linearized
+predictive variance
 \begin{equation}\label{eq:variance-intro}
   s_t^2(a) \;=\; \bg_t(a)^\top \bC_t^{-1}\,\bg_t(a),
 \end{equation}
-where $\bg_t(a) = \nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ is the gradient
-feature (Jacobian of the mean reward) and $\bC_t$ is the positive-definite
-curvature matrix---the damped Gauss--Newton (GGN)---at the
-current parameter estimate~$\btheta_t$.
+where $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ is the
+gradient feature (Jacobian of the mean reward) and $\bC_t$ is the
+damped Gauss--Newton (GGN) curvature at the current
+estimate~$\btheta_t$.  Computing~\eqref{eq:variance-intro} with the
+full curvature is widely viewed as intractable at scale, so neural
+bandit methods \emph{routinely} replace $\bC_t$ with a diagonal,
+block-diagonal, Kronecker-factored, or last-layer surrogate
+\citep{zhou2020neural,riquelme2018deep,ritter2018scalable}.  Each
+surrogate changes the \emph{spectrum} of~$\bC_t$ and thereby distorts
+$s_t^2(a)$---over-exploring where curvature is underestimated and
+under-exploring where it is overestimated.
 
-Existing neural bandit algorithms sidestep the cost of~\eqref{eq:variance-intro}
-by replacing $\bC_t$ with a tractable surrogate: a diagonal approximation, a
-block-diagonal or Kronecker-factored estimate, or a last-layer restriction
-that discards backbone curvature entirely
-\citep{zhou2020neural,riquelme2018deep,ritter2018scalable}.
-These approximations change the
-\emph{spectrum} of the curvature matrix, which in turn distorts the variance
-proxy~$s_t^2(a)$---over-exploring along directions where curvature is
-underestimated and under-exploring where it is overestimated.
+\textbf{We make this distortion explicit and, in the full-curvature
+setting, avoid it without materializing the matrix.}  Scalable
+curvature--vector products (CVPs), enabled by automatic differentiation
+and sharded layouts such as FSDP \citep{granziol2026hessian}, let us
+solve $\bC_t\,\bu = \bg_t(a)$ by conjugate gradients (CG)
+\emph{without forming}~$\bC_t$: only $O(d)$ working vectors are
+maintained and per-sample gradient features are never stored.  Because
+the damped GGN is symmetric positive definite, CG is guaranteed to
+converge.  Building on this, we propose \textbf{Curvature-Calibrated
+UCB (CC-UCB)}, a bandit algorithm whose exploration bonus is the
+predictive variance under the \emph{uncompressed} GGN/Fisher metric,
+accessed entirely through implicit CG solves.
 
-We argue that recent advances in scalable curvature--vector product
-computation---enabled by automatic differentiation and sharded parameter
-layouts (e.g., FSDP) \citep{granziol2026hessian}---make it practical to solve
-$\bC_t\,\bu = \bg_t(a)$ by conjugate gradients (CG) \emph{without
-forming}~$\bC_t$; per-sample gradient features are not stored---only $O(d)$
-working vectors for CG are maintained, with CVPs computed on the fly.
-Because the damped GGN is symmetric positive definite by
-construction, CG convergence is guaranteed.  Building on this observation, we
-propose \textbf{Curvature-Calibrated UCB (CC-UCB)}, a neural bandit
-algorithm that uses the full GGN/Fisher curvature matrix---accessed through implicit CG
-solves---to produce exploration bonuses consistent with the uncompressed
-GGN/Fisher metric.
+\textbf{Our analysis prices this exactly.}  For the
+Gaussian/squared-loss instantiation we prove a \emph{conditional regret
+transfer theorem} (\Cref{thm:regret}): once bounds on local
+linearization error, prediction discrepancy, feature drift, CG
+truncation, and curvature spectral distortion are supplied, regret
+follows with each error source appearing as an explicit
+factor---$\alpha_I$ for CG truncation, $\alpha_{\mathrm{drift}}$ for
+feature drift, and $\sqrt{\rho_+/\rho_-}$ for curvature approximation.
+The result is deliberately modular: it isolates the cost of every
+approximation a practitioner might make, rather than hiding them inside
+a single surrogate.  We do \emph{not} prove these input quantities are
+small for unrestricted fine-tuning; they vanish in
+frozen-backbone/linear-head/near-NTK regimes and are otherwise reduced
+to measurable diagnostics---replayed-Jacobian drift and optimizer
+residuals (\Cref{lem:primitive-pred,lem:drift-sufficient}).
 
 \paragraph{Contributions.}
-\textbf{(1)}~We formalize the curvature-calibrated exploration framework for
-contextual bandits with differentiable parametric reward predictors
-(motivated by foundation-model deployments), introducing both
-a relinearized algorithmic curvature~$\bC_t$ and a frozen-feature Gram
-matrix~$\bCbar_t$ that satisfies the predictability and sequential-update
-properties required for rigorous self-normalized analysis
-(\Cref{sec:problem,sec:method}).
+\textbf{(1)}~We formalize curvature-calibrated exploration for bandits
+with differentiable parametric reward models, introducing a relinearized
+algorithmic curvature~$\bC_t$ and a frozen-feature Gram matrix~$\bCbar_t$
+with the predictability and sequential-update properties required for
+self-normalized analysis (\Cref{sec:problem,sec:method}).
 \textbf{(2)}~We prove a conditional regret transfer theorem for
-Gaussian/squared-loss CC-UCB.  The theorem converts externally supplied,
-diagnostically estimable, or separately provable bounds on local
-linearization error, prediction discrepancy, feature drift, CG error,
-and curvature spectral distortion into regret.
-This is not a full nonlinear foundation-model bandit theorem; full
-end-to-end fine-tuning remains outside the proved regime unless these
-quantities are verified or bounded separately (\Cref{sec:theory}).
+Gaussian/squared-loss CC-UCB, converting supplied or separately proved
+bounds on linearization error, prediction discrepancy, feature drift, CG
+error, and spectral distortion into regret (\Cref{sec:theory}).  This is
+a reduction, not a guarantee for unrestricted fine-tuning.
 \textbf{(3)}~We give primitive sufficient conditions that make the
 feature-drift and prediction-discrepancy assumptions measurable in terms
-of replayed-Jacobian drift and optimizer residuals.  These conditions are
-most plausible in frozen-backbone, near-NTK, or otherwise
-near-stationary regimes.
-\textbf{(4)}~We outline an evaluation protocol designed to test the
-empirical hypothesis that full-curvature exploration can matter relative
-to last-layer, diagonal, block, or KFAC surrogates (deferred to
-\Cref{sec:experiments} in the appendix; no empirical results are
-included in this draft).
-The regret analysis is carried out for the Gaussian/squared-loss
-instantiation; the underlying CG/CVP machinery applies algorithmically
-to exponential-family likelihoods via the Fisher/GGN curvature, but we
-do not prove a regret theorem beyond the Gaussian case
-(\Cref{sec:expfam-ext}).
+of replayed-Jacobian drift and optimizer residuals---most plausible in
+frozen-backbone or near-NTK regimes
+(\Cref{lem:primitive-pred,lem:drift-sufficient}).
+\textbf{(4)}~We give a matrix-free CG/CVP implementation recipe with
+per-round cost accounting, and specify an evaluation protocol for the
+empirical hypothesis that full curvature improves on last-layer,
+diagonal, block, or KFAC surrogates (\Cref{sec:experiments}; no
+empirical results in this draft).  The regret analysis is for Gaussian
+squared loss; the CG/CVP machinery applies algorithmically to
+exponential-family likelihoods, but we prove no regret theorem beyond
+the Gaussian case (\Cref{sec:expfam-ext}).
 
 \section{Problem Setup}\label{sec:problem}
 
@@ -941,9 +943,8 @@ not a new structural regret theorem: standard self-normalized
 linear-bandit, CG-accuracy, and spectral-sandwich ingredients are
 assembled to isolate the costs of CG truncation, feature drift, and
 curvature approximation.
-An efficient UCB estimator for nonlinear contextual bandits was
-proposed by~\citet{kassraie2021rofu} using a different uncertainty
-quantification route (randomized OFU);
+Efficient estimators for nonlinear contextual bandits were proposed
+by~\citet{kassraie2022neural} using an NTK-based uncertainty route;
 we compare approaches in \Cref{sec:related}.
 
 \subsection{Computable Curvature Operator}\label{sec:curvop}
@@ -1899,16 +1900,17 @@ decomposition; this draft does not empirically demonstrate
 end-to-end scalability.
 
 \paragraph{Efficient nonlinear UCB.}
-\citet{kassraie2021rofu} propose ROFU (Randomized Optimistic Follow the
-Leader), an efficient UCB estimator for nonlinear contextual bandits
-that avoids explicit covariance inversion via randomized perturbation.
-Their uncertainty quantification route differs from ours (randomized
-OFU vs.\ Laplace/CG), and they work with the exact NTK Gram matrix
-rather than the GGN.
-CC-UCB targets the regime where the practitioner has a specific
-pretrained model and wants to use its curvature as-is, via
-curvature--vector products, rather than constructing a surrogate
-NTK-based estimator.
+\citet{kassraie2022neural} propose NN-UCB and NN-TS, neural contextual
+bandit algorithms whose confidence widths are built from the neural
+tangent kernel (NTK), and prove sublinear regret when the reward lies in
+the induced RKHS.
+Their uncertainty route differs from ours: they use the NTK Gram matrix
+(an initialization-anchored kernel object), whereas CC-UCB uses the
+GGN/Fisher curvature at the current parameter~$\btheta_t$, accessed
+matrix-free via CG.
+CC-UCB thus targets the regime where the practitioner has a specific
+pretrained model and wants to use its curvature as-is, rather than
+constructing a surrogate NTK-based estimator.
 
 \paragraph{Spectral sketching for linear bandits.}
 \citet{kuzborskij2019efficient} analyze linear bandits where the Gram
