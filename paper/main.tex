@@ -2429,7 +2429,7 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
   (\Cref{lem:subsample}).
   For windowed/refresh, measure the same gap to quantify the heuristic
   approximation quality.
-\item \textbf{Damping sweep:} $\lambda\in\{10^{-4},10^{-3},\dots,10^{1}\}$
+\item \textbf{Damping sweep:} $\lambda\in\{0.01,0.1,1,10,30,100\}$
   to quantify sensitivity of exploration to prior strength, CG
   conditioning, and the $\sqrt{\sigma^2+G^2/\lambda}$ factor
   in the regret bound.
@@ -2444,15 +2444,44 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
 
 \begin{itemize}[nosep,leftmargin=1.5em]
 \item \textbf{Cumulative regret} $R_T$ (lower is better).
-\item \textbf{Variance-calibration ECE} (adapted to regression):
-  bin rounds by the predicted standard deviation
-  $\tilde{s}_t(a_t)$ into $J$~equal-mass quantile bins, compute the
-  root-mean-square prediction error (RMSE) within each bin, and report
-  the weighted average gap
-  $\mathrm{ECE}_{\mathrm{var}}=\sum_{j=1}^{J}(n_j/T)\,\bigl|\mathrm{RMSE}_j - \bar{s}_j\bigr|$
-  where $\bar{s}_j$ is the mean predicted std in bin~$j$.  We also plot
-  the reliability diagram ($\bar{s}_j$ vs.\ $\mathrm{RMSE}_j$).
+\item \textbf{Variance-calibration ECE} (adapted to regression).
+  Bin rounds into $J$~equal-mass quantile bins by the predicted std, compute
+  the root-mean-square prediction error (RMSE) within each bin, and report the
+  weighted gap
+  $\mathrm{ECE}_{\mathrm{var}}=\sum_{j=1}^{J}(n_j/T)\,\bigl|\mathrm{RMSE}_j - \bar{s}_j\bigr|$,
+  where $\bar{s}_j$ is the mean predicted std in bin~$j$.
+  The predicted std must match the error it is compared against, so we report
+  two variants.
+  \emph{(i)~Reward calibration} compares the predictive std of the
+  \emph{reward}, $\sqrt{\tilde s_t^2(a_t)+\sigma^2}$, against the RMSE of the
+  reward residual $r_t-\mu_{\btheta_t}(\bx_t,a_t)$, which contains the
+  aleatoric noise~$\sigma$.
+  \emph{(ii)~Epistemic calibration} (synthetic, $\btheta^*$ known) compares the
+  epistemic std $\tilde s_t(a_t)$ against the noise-free mean error
+  $\mu_{\btheta^*}(\bx_t,a_t)-\mu_{\btheta_t}(\bx_t,a_t)$.
+  Comparing the epistemic $\tilde s_t(a_t)$ directly to the reward residual
+  (omitting the $\sigma$ term) pins $\mathrm{ECE}_{\mathrm{var}}$ near the noise
+  floor and fails to discriminate curvatures.
+  We also plot the reliability diagram ($\bar{s}_j$ vs.\ $\mathrm{RMSE}_j$).
   This is empirical support for the uncertainty estimates, not a theorem.
+\item \textbf{Coverage--regret Pareto} (the coverage-controlled
+  curvature-fidelity comparison; synthetic, $\btheta^*$ known).
+  Define the \emph{all-arm one-sided (optimism) coverage}
+  \[
+    \mathrm{cov}(\alpha)
+    \;=\;
+    \Pr_{(\bx,a)}\!\bigl[\,
+      \mu_{\btheta^*}(\bx,a)\le
+      \mu_{\btheta_t}(\bx,a)+\alpha\,\tilde s_t(a)
+    \,\bigr],
+  \]
+  the fraction of context--arm pairs whose optimistic upper bound covers the
+  true mean. Sweep the bonus scale~$\alpha$ per curvature and report the
+  \emph{cheapest valid bonus}: the minimum~$R_T$ among runs whose coverage
+  reaches each target. A surrogate cannot buy lower regret by under-covering,
+  since under-covering drops it below the target; this isolates curvature
+  quality from the (conservative) bonus scale that fixed-$\alpha$ regret
+  conflates.
 \item \textbf{Empirical feature-drift sandwich:}
   estimate extremal generalized eigenvalues of
   $\bC_t\bCbar_t^{-1}$ on a small Krylov subspace and report
@@ -2486,10 +2515,14 @@ Each ablation targets a specific claim tied to the novelty of CC-UCB.
   layer), CC-UCB should match or closely track the theoretical regret
   bound, and all curvature methods should perform similarly since
   the last-layer curvature is low-dimensional.
-\item In the partial fine-tuning regime, diagonal and last-layer curvature
-  should demonstrably miscalibrate exploration (high
-  $\mathrm{ECE}_{\mathrm{var}}$), leading to higher regret, while full-GGN
-  CC-UCB maintains calibration.
+\item In the partial fine-tuning regime, full-GGN curvature should lie on or
+  near the regret--coverage frontier when methods are compared at
+  \emph{matched optimism coverage}: among bonuses that reach a given coverage
+  target, full curvature should attain the lowest (or near-lowest) regret,
+  while diagonal/last-layer require a larger bonus to reach the same coverage.
+  Fixed-$\alpha$ regret alone may not separate the curvatures, as it conflates
+  curvature quality with bonus scale; the coverage--regret Pareto is the
+  intended primary diagnostic here.
 \item The CG budget ablation should exhibit a phase transition: below a
   critical~$I$, $\varepsilon_I$ exceeds~1 and regret degrades sharply;
   above it, regret is insensitive to~$I$ (as the theory predicts via the
