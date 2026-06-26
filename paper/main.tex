@@ -39,6 +39,11 @@
   \newcommand{\houssam}[1]{}
   \newcommand{\brett}[1]{}
 \fi
+
+% Result-dependent claims stay visibly provisional until the full sweep lands.
+\newif\iffinalresults
+\finalresultsfalse
+\newcommand{\resultTBD}[1]{\iffinalresults #1\else{\color{red}\textbf{[TBD: #1]}}\fi}
 % --- title ----------------------------------------------------------------
 \title{Curvature-Calibrated Exploration for Differentiable-Model Bandits}
 \author{Anonymous Author(s)}
@@ -53,7 +58,8 @@ parametric model, with foundation-model reward heads as a motivating
 case.  Efficient exploration requires calibrated epistemic uncertainty,
 yet neural bandit methods routinely replace the curvature in the
 predictive variance with diagonal, block-diagonal, Kronecker-factored,
-or last-layer surrogates, which distort the exploration bonus.  We
+or last-layer surrogates, which alter the curvature spectrum and hence
+the value of the exploration bonus.  We
 propose \emph{Curvature-Calibrated UCB} (CC-UCB), whose bonus is the
 predictive variance induced by the \emph{full} Gauss--Newton/Fisher
 (GGN) curvature, computed matrix-free by conjugate gradients (CG) that
@@ -68,8 +74,13 @@ additive or multiplicative factor.  The same CG/CVP machinery extends
 algorithmically to exponential-family rewards via the Fisher/GGN
 curvature.  \emph{Scope.} The guarantee is conditional, most plausibly nonvacuous
 in frozen-backbone, linear-head, or near-stationary regimes, and is
-proved only for Gaussian squared loss; whether full curvature improves
-on compressed surrogates is an empirical hypothesis.
+proved only for Gaussian squared loss.  \resultTBD{Empirically
+(\cref{sec:experiments}), on synthetic linear instances---including a
+regime constructed for large surrogate spectral distortion---we observe
+that full curvature does not reduce regret relative to diagonal, block,
+or last-layer surrogates once decision-level optimism coverage is
+matched across methods.  In these regimes the binding factor is
+optimism calibration, not curvature fidelity.}
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -99,12 +110,15 @@ full curvature is widely viewed as intractable at scale, so neural
 bandit methods \emph{routinely} replace $\bC_t$ with a diagonal,
 block-diagonal, Kronecker-factored, or last-layer surrogate
 \citep{zhou2020neural,riquelme2018deep,ritter2018scalable}.  Each
-surrogate changes the \emph{spectrum} of~$\bC_t$ and thereby distorts
-$s_t^2(a)$---over-exploring where curvature is underestimated and
-under-exploring where it is overestimated.
+surrogate changes the \emph{spectrum} of~$\bC_t$ and hence the value
+of~$s_t^2(a)$.  The spectral change does not by itself imply a change
+in the selected action, and therefore in regret; whether it does is an
+empirical question, which we make measurable and study directly.
 
-\textbf{We make this distortion explicit and, in the full-curvature
-setting, avoid it without materializing the matrix.}  Scalable
+\textbf{We make this distortion measurable and compute the
+full-curvature bonus directly---no surrogate---without materializing the
+matrix, which lets us isolate the effect of the surrogate approximation
+on regret.}  Scalable
 curvature--vector products (CVPs), enabled by automatic differentiation
 and sharded layouts such as FSDP \citep{granziol2026hessian}, let us
 solve $\bC_t\,\bu = \bg_t(a)$ by conjugate gradients (CG)
@@ -149,10 +163,14 @@ of replayed-Jacobian drift and optimizer residuals---most plausible in
 frozen-backbone or near-NTK regimes
 (\Cref{lem:primitive-pred,lem:drift-sufficient}).
 \textbf{(4)}~We give a matrix-free CG/CVP implementation recipe with
-per-round cost accounting, and specify an evaluation protocol for the
-empirical hypothesis that full curvature improves on last-layer,
-diagonal, block, or KFAC surrogates (\Cref{sec:experiments}; no
-empirical results in this draft).  The regret analysis is for Gaussian
+per-round cost accounting, and a protocol that compares curvature
+approximations at matched decision-level optimism coverage
+(\Cref{sec:experiments}).  \resultTBD{Using it we \emph{observe}, on
+synthetic linear instances including a constructed high-distortion
+regime, that full curvature does not reduce regret relative to
+last-layer, diagonal, or block surrogates at matched coverage; the
+binding factor is calibration, not curvature fidelity.}  The regret
+analysis is for Gaussian
 squared loss; the CG/CVP machinery applies algorithmically to
 exponential-family likelihoods, but we prove no regret theorem beyond
 the Gaussian case (\Cref{sec:expfam-ext}).
