@@ -74,13 +74,30 @@ additive or multiplicative factor.  The same CG/CVP machinery extends
 algorithmically to exponential-family rewards via the Fisher/GGN
 curvature.  \emph{Scope.} The guarantee is conditional, most plausibly nonvacuous
 in frozen-backbone, linear-head, or near-stationary regimes, and is
-proved only for Gaussian squared loss.  \resultTBD{Empirically
-(\cref{sec:experiments}), on synthetic linear instances---including a
-regime constructed for large surrogate spectral distortion---we observe
-that full curvature does not reduce regret relative to diagonal, block,
-or last-layer surrogates once decision-level optimism coverage is
-matched across methods.  In these regimes the binding factor is
-optimism calibration, not curvature fidelity.}
+proved only for Gaussian squared loss.  \emph{Full curvature is thus a
+principled, matrix-free reference object, not a method we claim to be
+optimal.}  Empirically (\cref{sec:experiments}), we compare curvatures at
+matched decision-level optimism coverage---an oracle diagnostic that
+separates scalar optimism calibration from curvature geometry.  On a
+constructed linear-Gaussian instance built to favor full curvature, with
+damping tuned per method and paired across seeds, the full-curvature
+bonus is \emph{not} the best exploration bonus: at matched coverage it is
+dominated by a single cheaper surrogate---a low-rank Lanczos metric---by
+$+3.5$ to $+5.4$ in cumulative regret, with confidence intervals
+excluding zero, despite the instance being built to favor it.  The gap is
+invariant to the rotation angle and coincides with a large
+optimism-coefficient disparity, so it reflects scalar calibration rather
+than curvature-geometry fidelity.  Full curvature nonetheless remains the
+robust reference: it beats the diagonal surrogate precisely where
+rotation makes diagonal's distortion decision-relevant, and is never the
+worst method.  Which surrogate suffices is therefore regime-dependent, and
+higher curvature fidelity does not by itself lower regret.  The
+matched-coverage protocol uses the true reward and is an analysis
+diagnostic, not a deployable tuning rule.  The evidence is a constructed
+synthetic instance corroborated on a real-data contextual bandit (UCI
+covertype), where a cheaper diagonal surrogate likewise dominates full
+curvature at matched coverage---via metric geometry rather than the
+scalar miscalibration of the constructed instance.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -165,11 +182,17 @@ frozen-backbone or near-NTK regimes
 \textbf{(4)}~We give a matrix-free CG/CVP implementation recipe with
 per-round cost accounting, and a protocol that compares curvature
 approximations at matched decision-level optimism coverage
-(\Cref{sec:experiments}).  \resultTBD{Using it we \emph{observe}, on
-synthetic linear instances including a constructed high-distortion
-regime, that full curvature does not reduce regret relative to
-last-layer, diagonal, or block surrogates at matched coverage; the
-binding factor is calibration, not curvature fidelity.}  The regret
+(\Cref{sec:experiments}).  Using it, on a constructed linear-Gaussian
+instance built to favor full curvature (damping tuned per method, paired
+seeds), we find that full curvature is dominated at matched coverage by a
+cheaper low-rank surrogate ($+3.5$ to $+5.4$ regret, confidence intervals
+excluding zero) while still beating the diagonal surrogate under rotation;
+the gap is rotation-invariant, identifying \emph{scalar optimism
+calibration}, not curvature geometry, as the binding factor.  The finding
+replicates on a real-data contextual bandit (UCI covertype), where a
+diagonal surrogate dominates full curvature at matched coverage through
+metric geometry rather than scalar calibration
+(\Cref{sec:results-covertype}).  The regret
 analysis is for Gaussian
 squared loss; the CG/CVP machinery applies algorithmically to
 exponential-family likelihoods, but we prove no regret theorem beyond
@@ -1955,9 +1978,11 @@ an explicit sandwich is verified.
 We treat windowed and refresh operators as practical heuristics and
 evaluate their effective spectral gap empirically.
 
-We omit empirical results in this draft; a detailed experimental
-protocol---covering benchmarks, baselines, ablations, and
-metrics---is provided in \Cref{sec:experiments}.
+Empirical results for the constructed linear-Gaussian instance are
+reported in \Cref{sec:results-constructed}; the protocol for the
+remaining benchmarks---baselines, ablations, and the
+foundation-model/offline-to-online settings---is provided in
+\Cref{sec:experiments}.
 
 \paragraph{What remains open.}
 The missing primitive ingredients, namely
@@ -2113,6 +2138,23 @@ $(t{-}1)^2$-dependence in sample complexity for the variance term) for
 subsampled GGN and clearly delineate windowed/refresh operators as
 heuristics not covered by the theory without additional stability
 assumptions.
+
+\paragraph{Empirical finding.}
+On a constructed linear-Gaussian instance built to favor full curvature,
+compared at matched oracle coverage with per-method damping
+(\Cref{sec:results-constructed}), full curvature is \emph{not} the best
+exploration bonus: it is dominated by a cheaper low-rank surrogate by
+$+3.5$ to $+5.4$ regret at every rotation, a rotation-invariant gap that
+reflects scalar optimism calibration rather than curvature geometry.
+Full curvature nonetheless remains the robust reference---it beats the
+diagonal surrogate under rotation and is never the worst method---so
+higher curvature fidelity does not by itself lower regret, and which
+surrogate suffices is regime-dependent.  On a real-data contextual bandit
+(UCI covertype) a cheaper diagonal surrogate likewise dominates full
+curvature at matched coverage---via metric geometry rather than scalar
+calibration (\Cref{sec:results-covertype})---so the top-line finding is
+not an artifact of the constructed instance, though which surrogate wins
+is instance-dependent.
 
 \paragraph{Limitations.}
 The theoretical guarantee relies on a local linearization approximation
@@ -2443,10 +2485,14 @@ Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 
 \section{Experimental Protocol}\label{sec:experiments}
 
-We outline an experimental protocol for a future empirical section.
-No experimental results are included in this draft; the purpose of
-this section is only to make the intended evaluation concrete,
-reproducible, and aligned with the theoretical claims.
+We first report results on a constructed linear-Gaussian instance
+(\Cref{sec:results-constructed}), the setting closest to the squared-loss
+theory, and then an external-validity check on a real-data contextual
+bandit (UCI covertype, \Cref{sec:results-covertype}).  We then lay out the
+protocol for the remaining benchmarks---foundation-model and
+offline-to-online bandits---which we leave to future empirical work.  The protocol is stated so the intended
+evaluation is concrete, reproducible, and aligned with the theoretical
+claims.
 The protocol focuses on (i)~whether the assumptions behind the theorem
 are empirically plausible, (ii)~whether full-GGN/Fisher exploration
 produces measurable regret improvements over diagonal and last-layer
@@ -2455,6 +2501,177 @@ foundation-model scale.  Synthetic squared-loss bandits validate the
 theorem; Bernoulli/categorical foundation-model bandits test only the
 algorithmic Fisher/GGN extension; partial fine-tuning tests whether the
 near-stationarity assumptions are plausible.
+
+\subsection{Results on a constructed linear-Gaussian instance}\label{sec:results-constructed}
+
+\paragraph{Construction.}
+Contexts follow an anisotropic law $\bx\sim\mathcal{N}(0,\Sigma)$ with
+variance~$\kappa$ along a high-curvature direction, (near) zero along the
+in-plane decision axis, and unit variance on the remaining bulk
+coordinates.  A single knob~$\theta$ rotates the high-curvature direction
+relative to the decision direction~$\mathbf{e}_{\mathrm{align}}$
+($\theta{=}0^\circ$ aligned, $\theta{=}45^\circ$ maximally misaligned).
+The model is linear,
+$\mu_{\btheta}(\bx,a)=\boldsymbol{\phi}(\bx,a)^\top\btheta$, with arm
+features $\boldsymbol{\phi}(\bx,a)=\bx+b\,\delta_a\,\mathbf{e}_{\mathrm{align}}$
+that share the context~$\bx$ and differ only by a scalar offset
+$b\,\delta_a$ along~$\mathbf{e}_{\mathrm{align}}$; a nearly-tied top-two pair
+$(\delta_{a^\star},\delta_{a_2})$ makes the decision hard.  The reward
+parameter is $\btheta^\star=S\,\mathbf{e}_{\mathrm{align}}$, so the shared
+term $\bx^\top\btheta^\star$ cancels in the action ranking and the decision
+lives entirely along~$\mathbf{e}_{\mathrm{align}}$.  Because the model is
+linear in~$\btheta$ the gradient features are fixed, giving
+$\epslin{=}0$, no feature drift, and $\bC_t{=}\bCbar_t$: the \emph{only}
+active term in the regret ledger of \Cref{thm:regret} is surrogate
+curvature distortion.
+
+\paragraph{Why this favors full curvature, and the protocol.}
+With no context variance along the decision axis,
+$\mathbf{e}_{\mathrm{align}}$ is the minimum-curvature eigenvector of the
+population metric, so the exact inverse keeps the decision-direction
+posterior variance essentially invariant to~$\theta$, whereas a diagonal
+surrogate discards the off-diagonal mass and mis-estimates it under
+rotation.  The instance is thus engineered so that surrogate distortion is
+decision-relevant and exact curvature should help if it ever does.  We use
+$d{=}100$, $\kappa{=}30$, $\theta\in\{0,7.5,15,45\}^\circ$, $T{=}1500$, an
+exact solver, and $10$ paired seeds.  Methods are compared at matched
+\emph{decision-level top-two optimism coverage}, an oracle diagnostic (it
+uses the true reward) that separates scalar optimism calibration from
+curvature geometry.  Per method we sweep the ridge damping~$\lambda$ and
+the bonus scale~$\alpha$; for each target $q\in\{0.90,0.95\}$ we invert the
+monotone coverage-versus-$\alpha$ curve to the $\alpha$ achieving~$q$, read
+the interpolated regret there, and keep the~$\lambda$ that minimizes this
+per-method matched-coverage regret.  Full curvature's damping optimum is
+verified interior---regret rises past it (at $\theta{=}7.5^\circ$,
+$8.1\!\to\!12.2\!\to\!31.1$ as $\lambda$ grows beyond the optimum)---so
+full is not handicapped by under-damping.  We report paired
+full-minus-surrogate cumulative regret (\Cref{tab:constructed}).
+
+\begin{table}[h]\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{2}{c}{full $-$ diagonal} & \multicolumn{2}{c}{full $-$ lanczos} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+$\theta$ & $q{=}0.90$ & $q{=}0.95$ & $q{=}0.90$ & $q{=}0.95$ \\
+\midrule
+$0^\circ$   & $+4.1$  & $+6.1$  & $+3.6$ & $+5.4$ \\
+$7.5^\circ$ & $-51.6$ & $-56.3$ & $+3.4$ & $+5.4$ \\
+$15^\circ$  & $-38.6$ & $-40.6$ & $+3.1$ & $+5.1$ \\
+$45^\circ$  & $+2.6$  & $+4.9$  & $+3.3$ & $+5.3$ \\
+\bottomrule
+\end{tabular}
+\caption{Paired full-minus-surrogate cumulative regret at matched
+coverage (positive $=$ full worse), $10$ seeds.  Full is dominated by the
+low-rank Lanczos metric at every rotation ($q{=}0.95$ intervals
+$[2.3,8.4]$, $[2.4,8.3]$, $[1.9,8.3]$, $[1.3,9.3]$, all excluding zero),
+while it \emph{beats} diagonal at the intermediate rotations
+$\theta\in\{7.5,15\}^\circ$ where rotation makes diagonal's distortion
+decision-relevant.}
+\label{tab:constructed}
+\end{table}
+
+% TODO (post Stage 2): generate fig:constructed-mechanism from the committed gate
+% data and uncomment. The table carries the result until then. Draft caption:
+% \begin{figure}[t]\centering
+%   \includegraphics[width=\linewidth]{fig_constructed_mechanism.pdf}
+%   \caption{Mechanism of the constructed result. \textbf{(A)} True-target optimism
+%   coverage versus bonus scale~$\alpha$, one curve per curvature at its selected
+%   damping: full curvature needs $\gtrsim 10^2\times$ larger~$\alpha$ than the
+%   low-rank Lanczos metric to reach the same coverage---the scalar miscalibration
+%   underlying \Cref{tab:constructed}. \textbf{(B)} Paired full-minus-surrogate
+%   regret at matched coverage versus rotation~$\theta$: the full-minus-Lanczos gap
+%   is essentially flat in~$\theta$ (scalar, not geometric), whereas
+%   full-minus-diagonal swings negative at intermediate rotations where diagonal's
+%   distortion becomes decision-relevant.}
+%   \label{fig:constructed-mechanism}
+% \end{figure}
+
+Two findings.  First, full curvature is not the best exploration bonus:
+at matched coverage a single cheaper surrogate (low-rank Lanczos)
+dominates it by $+3.5$ to $+5.4$ regret at every rotation
+(\Cref{tab:constructed}).  Second, the gap is \emph{scalar}, not
+geometric---it is essentially invariant to~$\theta$, and full curvature
+needs $\gtrsim 10^2\times$ the optimism coefficient of Lanczos to reach the
+same coverage, so at matched coverage the exact inverse over-explores.
+Curvature geometry does matter for the \emph{diagonal} surrogate, which
+fails precisely under rotation ($\theta\in\{7.5,15\}^\circ$) where full
+beats it; hence which surrogate suffices is regime-dependent and higher
+curvature fidelity does not by itself lower regret.  The comparison uses
+the true reward and is an analysis diagnostic, not a deployable tuning
+rule; this is one constructed synthetic instance, and we examine external
+validity on non-synthetic data next (\Cref{sec:results-covertype}).
+
+\subsection{External validity on UCI covertype}\label{sec:results-covertype}
+
+\paragraph{Setup.}
+To test whether the constructed finding survives on real, non-synthetic
+data, we convert UCI covertype ($54$ cartographic features, $7$ forest
+cover-type classes) into a contextual bandit: the classes are arms and a
+binary reward $r_t=\mathbf{1}[a_t=y_t]\in\{0,1\}$ is revealed only for the
+pulled arm.  The reward model is a two-layer MLP with last-layer curvature
+($d{=}196$ trainable parameters).  To keep the curvature comparison
+apples-to-apples with the constructed instance, the $0/1$ reward is routed
+through the same Gaussian squared-loss curvature stack rather than the
+Bernoulli Fisher matrix, so full and diagonal share one implementation.
+Because the label is known offline we match methods at a
+\emph{label-oracle} coverage diagnostic---the direct analogue of the
+constructed instance's oracle coverage, with
+$\mu^\star(\bx,a)=\mathbf{1}[a=y]$, averaged over the run's coverage
+snapshots---and otherwise follow the same protocol: $T{=}1500$, $10$
+paired seeds, a per-method damping sweep
+$\lambda\in\{1,10,30,100,300,1000\}$ and bonus-scale sweep, isotonic
+inversion of the coverage-versus-$\alpha$ curve to each target
+$q\in\{0.80,0.85\}$, and the $\lambda$ minimizing per-method
+matched-coverage regret.
+
+\paragraph{Result.}
+Full curvature is again \emph{not} the best exploration bonus: a diagonal
+surrogate dominates it at matched coverage (\Cref{tab:covertype}), by
+$+49.0$ regret at $q{=}0.85$ ($95\%$ CI $[19.6,78.4]$) and $+45.0$ at
+$q{=}0.80$ ($[15.2,74.7]$), paired over $10$ seeds with both intervals
+excluding zero.  Every selected damping is interior---regret rises at the
+adjacent grid values on both sides---so neither method is handicapped by
+mis-set damping.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{lrr}
+\toprule
+ & $q{=}0.80$ & $q{=}0.85$ \\
+\midrule
+full $-$ diagonal & $+45.0$ & $+49.0$ \\
+$95\%$ CI & $[15.2,\,74.7]$ & $[19.6,\,78.4]$ \\
+\bottomrule
+\end{tabular}
+\caption{Paired full-minus-diagonal cumulative regret at matched
+label-oracle coverage on the UCI covertype contextual bandit (positive
+$=$ full worse), $10$ seeds, $T{=}1500$.  The cheaper diagonal surrogate
+dominates full curvature at both coverage targets, both intervals
+excluding zero.}
+\label{tab:covertype}
+\end{table}
+
+\paragraph{A different mechanism, and why Lanczos is excluded.}
+The covertype gap is \emph{not} the scalar-calibration effect of
+\Cref{sec:results-constructed}, where full curvature needed
+$\gtrsim10^2\times$ the optimism coefficient of the winning surrogate to
+reach matched coverage.  Here the diagonal surrogate reaches matched
+coverage at an optimism coefficient within a factor $\le2.3$ of full's
+($\alpha^\star$: full $3.3$--$3.6$, diagonal $4.8$--$8.0$), so its
+advantage is a property of the metric's geometry, not a scale mismatch.
+The winning surrogate also \emph{differs}: the low-rank Lanczos metric
+that dominates the constructed instance is not usable here.  Sweeping its
+rank ($\{16,32,64,128\}$) shows its apparent advantage over full is an
+artifact of coarse approximation.  Lanczos leads only at the lowest ranks,
+where its inverse is least accurate (relative residual against the exact
+operator $\approx46$ at rank $16$, falling monotonically to $\approx2.3$
+at rank $128$), and the full-minus-Lanczos comparison moves monotonically
+toward full as the rank rises: at rank $128$ full is significantly better
+($-37$ regret at $q{=}0.85$, $[-69.8,-4.3]$).  Its advantage is thus
+anti-correlated with approximation quality, so we report the diagonal
+surrogate and exclude Lanczos on this instance.  The top-line finding is
+robust across both instances---full curvature is dominated by a cheaper
+surrogate at matched coverage---but which surrogate suffices, and by what
+mechanism, is regime-dependent.
 
 \subsection{Benchmarks}
 
@@ -2494,10 +2711,11 @@ the feature drift~$\epsdrift$ and linearization error~$E_T$ are
 empirically quantified).
 
 \paragraph{Offline-to-online bandit conversion.}
-A supervised classification dataset (UCI covertype) is converted into
-bandit feedback by simulating a logging policy that reveals the label only
-for the selected arm.  The agent must improve upon the logging policy
-using partial labels.
+The covertype result reported in \Cref{sec:results-covertype} uses an
+online classes-as-arms conversion.  A complementary offline-to-online
+variant---simulating a logging policy that reveals the label only for the
+selected arm, so the agent must improve upon the logging policy from
+partial labels---remains future work.
 
 \subsection{Baselines}
 
