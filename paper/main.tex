@@ -1,11 +1,22 @@
 \documentclass[11pt]{article}
 
-% --- NeurIPS style: use official if present, else stub -------------------
-\IfFileExists{neurips_2026.sty}{%
+% --- NeurIPS 2026 style ---------------------------------------------------
+% SUBMISSION BUILD requires the official neurips_2026.sty and must NEVER use a
+% stub.  For a local draft when the official style is unavailable, set
+% \draftmodetrue below (draft only --- do not submit the draft build).
+\newif\ifdraftmode
+\draftmodefalse % SUBMISSION: keep false.
+\ifdraftmode
+  \IfFileExists{neurips_2026.sty}{\usepackage[preprint]{neurips_2026}}%
+                                 {\usepackage{neurips_2026_stub}}%
+\else
+  \IfFileExists{neurips_2026.sty}{}{%
+    \PackageError{main}{Official neurips_2026.sty not found for the submission
+      build}{Place the official NeurIPS 2026 neurips_2026.sty next to main.tex,
+      or set \string\draftmodetrue for a local draft (never submit the draft
+      build).}}%
   \usepackage{neurips_2026}%
-}{%
-  \usepackage{neurips_2026_stub}%
-}
+\fi
 
 % --- standard packages ----------------------------------------------------
 \usepackage{amsmath,amssymb,amsthm}
@@ -13,6 +24,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{hyperref}
+\hypersetup{hidelinks,pdfauthor={},pdftitle={},pdfsubject={},pdfkeywords={}}
 \usepackage{cleveref}
 \usepackage{booktabs}
 \usepackage{enumitem}
@@ -31,6 +43,13 @@
 \newcommand{\Dmat}{\mathsf{D}}                  % whitened replayed-drift columns
 \newcommand{\cHist}{\mathcal{H}}                % pre-action history sigma-algebra H_t
 
+% Fallbacks for the NeurIPS checklist answer macros (official style defines them;
+% these are used only under the local draft/stub build).
+\providecommand{\answerYes}{\textbf{[Yes]}}
+\providecommand{\answerNo}{\textbf{[No]}}
+\providecommand{\answerNA}{\textbf{[NA]}}
+\providecommand{\answerPartial}{\textbf{[Partial]}}
+
 % --- title ----------------------------------------------------------------
 \title{Curvature-Calibrated Exploration for Differentiable-Model Bandits}
 \author{Anonymous Author(s)}
@@ -40,63 +59,32 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-We study contextual bandits whose expected reward is a differentiable
-parametric model, with foundation-model reward heads as a motivating
-case.  Efficient exploration requires calibrated epistemic uncertainty.
-While some neural bandit analyses use the full gradient-outer-product Gram, their
-scalable implementations commonly approximate the curvature in the predictive
-variance with diagonal, block-diagonal, Kronecker-factored, or last-layer
-surrogates, which alter the curvature spectrum and hence the value of the
-exploration bonus.  We
-propose \emph{Curvature-Calibrated UCB} (CC-UCB), whose bonus is the
-predictive variance induced by the \emph{full} Gauss--Newton/Fisher
-(GGN) curvature, computed matrix-free by conjugate gradients (CG) that
-access the curvature only through curvature--vector products---no
-$d\times d$ matrix is formed and per-sample gradient features are not
-stored.  Our main result is a conditional regret transfer theorem for the
-Gaussian/squared-loss instantiation that handles a \emph{general
-predictable SPD algorithmic curvature sequence} (exact, subsampled,
-windowed, refreshed, or sketched).  Optimism is transferred by a single
-\emph{one-sided} factor $u_t(a)$---not a two-sided spectral
-sandwich---supplied in the exact case by a whitened, relative
-feature-drift lemma with no smallness condition; the nonmonotonicity of the
-curvature sequence is priced pathwise by a \emph{dynamic log-determinant
-potential}, a pathwise determinant identity.  Time-varying CG, transfer, and
-calibration factors enter through a single \emph{sum of squares} rather
-than horizon maxima, and the previous additive prediction-stability term
-$P_T$ is removed---the centering discrepancy is now action-scaled and folds
-into the confidence width; a corrected-center variant removes it exactly,
-at the cost of frozen-feature access (so it departs from the $O(d)$-memory,
-no-stored-feature design unless a frozen-feature oracle or certified sketch is
-supplied).  The same CG/CVP machinery extends algorithmically
-to exponential-family rewards via the Fisher/GGN curvature.  \emph{Scope.}
-The guarantee is conditional---nonvacuous when the linearization bound
-$\bar F_t$, the centering certificate $\bar\psi_t$, and the transfer factor
-$u_t$ are certified and the realized dynamic complexity is controlled---most
-plausibly in frozen-backbone, linear-head, or near-stationary regimes, and
-is proved only for Gaussian squared loss; the confidence radius is not
-claimed fully computable unless these certificates are supplied.
-\emph{Full curvature is thus a principled, matrix-free reference object, not
-a method we claim to be optimal.}  Empirically (\cref{sec:experiments}), we
-compare curvatures at matched decision-level optimism coverage, a retrospective
-oracle diagnostic (it uses the true reward).  On a
-constructed linear-Gaussian instance, with damping tuned per method and paired
-across seeds, the full-curvature bonus is \emph{not} the best exploration bonus:
-at matched coverage it is dominated at all four rotations by a cheaper surrogate,
-a low-rank Lanczos metric, by $+3.1$ to $+5.4$ in cumulative regret, with
-confidence intervals excluding zero.  Full loses to both reported surrogates at
-$0^\circ$ and $45^\circ$, and beats the diagonal surrogate only at the
-intermediate rotations $7.5^\circ$ and $15^\circ$.  The full-minus-Lanczos gap is
-nearly rotation-invariant and coincides with a large optimism-coefficient
-disparity; the protocol does not identify a unique mechanism, and the gap is
-consistent with scale, damping, path-dependence, or selection effects.  Which
-surrogate suffices is therefore regime-dependent, and higher curvature fidelity
-does not by itself lower regret.  The matched-coverage protocol uses the true
-reward and is an analysis diagnostic, not a deployable tuning rule.  The same
-observation recurs on a real-data contextual bandit case study (UCI covertype),
-where a cheaper diagonal surrogate likewise dominates full curvature at matched
-coverage, though which surrogate dominates, and by what mechanism, differs by
-instance.
+We study contextual bandits whose expected reward is a differentiable parametric
+model, with foundation-model reward heads as a motivating case.  Efficient
+exploration needs calibrated epistemic uncertainty, yet scalable neural bandit
+implementations usually replace the Gauss--Newton/Fisher (GGN) curvature in the
+predictive-variance bonus with diagonal, Kronecker-factored, or last-layer
+surrogates, which change the bonus.  We propose \emph{Curvature-Calibrated UCB}
+(CC-UCB), whose bonus is the predictive variance under the \emph{full} GGN/Fisher
+curvature, computed matrix-free by conjugate gradients (CG) through
+curvature--vector products---forming no $d\times d$ matrix and storing no
+per-sample gradients.  Our main result is a conditional regret theorem for the
+Gaussian/squared-loss case that reduces regret to the \emph{realized width
+complexity} of the played bonuses under a general predictable SPD algorithmic
+curvature.  Its ingredients are modular: a self-normalized confidence bound on a
+predictable frozen-feature Gram; a \emph{one-sided} optimism transfer---with an
+\emph{unconditional} factor for unrescaled current-parameter windows/subsets and a
+whitened relative feature-drift certificate in the exact case; per-action CG
+truncation factors; and a pathwise determinant decomposition of the width
+complexity.  The guarantee is \emph{conditional}: nonvacuous only when the
+linearization, centering, and transfer certificates hold and the realized
+complexity is controlled, and proved only for Gaussian squared loss.  We position
+full curvature as a principled matrix-free reference object, not a method we claim
+optimal: at matched decision-level coverage---a retrospective oracle diagnostic
+using the true mean reward---on a constructed linear-Gaussian instance and a UCI
+covertype case study, a cheaper surrogate matches or beats it (nominal paired
+intervals, unadjusted for hyperparameter selection), so higher curvature fidelity
+does not by itself lower regret.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -154,18 +142,21 @@ Gaussian/squared-loss instantiation we prove a \emph{conditional regret
 transfer theorem} (\Cref{thm:regret}) for a \emph{general predictable SPD
 algorithmic curvature sequence}: optimism is transferred by a single
 \emph{one-sided} factor $u_t(a)$ (\Cref{asm:transfer}), the CG truncation
-enters through a per-round factor $\alpha_t$, and the nonmonotonicity of the
-curvature sequence is priced pathwise by a \emph{dynamic log-determinant
-potential} (\Cref{lem:dynamic-potential})---a pathwise determinant identity,
-which replaces the standard elliptic-potential/monotone-Gram argument and
-lets the analysis cover relinearized, subsampled, windowed, refreshed, or
-sketched operators.  The time-varying factors enter through a single sum of
-squares, not horizon maxima; there is no longer a horizon-uniform
-\emph{lower} feature-drift sandwich and no additive prediction-stability
-term.  The result is modular: it isolates the cost of every approximation.
+enters through a per-round factor $\alpha_t$, and the realized width complexity
+$\Lamalg_T$ of the nonmonotone curvature sequence admits a \emph{pathwise
+decomposition} (\Cref{lem:dynamic-potential}) into an endpoint log-determinant
+and a determinant-variation term.  This decomposition generalizes the standard
+elliptic-potential/monotone-Gram argument to relinearized, subsampled, windowed,
+refreshed, or sketched operators, but does not by itself bound $\Lamalg_T$, which
+remains an assumed or observed trajectory quantity.  The time-varying factors
+enter through a single sum of
+squares, not horizon maxima; the analysis uses no horizon-uniform
+\emph{lower} feature-drift sandwich and no additive stability term.  The
+result is modular: it isolates the cost of every approximation.
 We do \emph{not} prove these input quantities are small for unrestricted
-fine-tuning; they vanish in frozen-backbone/linear-head/near-NTK regimes
-and are otherwise reduced to measurable diagnostics---optimizer residuals
+fine-tuning; they vanish in the exactly linear frozen-feature regime and may be
+small under a separately justified near-NTK or near-stationary condition, and are
+otherwise reduced to measurable diagnostics---optimizer residuals
 and whitened replayed-Jacobian drift
 (\Cref{lem:primitive-pred,lem:whitened}).
 
@@ -176,25 +167,30 @@ predictable SPD algorithmic curvature~$\Calg_t$ and a frozen-feature Gram
 matrix~$\bCbar_t$ with the predictability and sequential-update properties
 required for self-normalized analysis (\Cref{sec:problem,sec:method}).
 \textbf{(2)}~We prove a conditional dynamic-transfer regret theorem for
-Gaussian/squared-loss CC-UCB whose central device is a \emph{dynamic
-log-determinant potential} for the nonmonotone algorithmic curvature
-sequence; it converts a one-sided optimism-transfer factor, a centering
-certificate, and a linearization bound into regret (\Cref{sec:theory}).
-This is a reduction, not a guarantee for unrestricted fine-tuning.
+Gaussian/squared-loss CC-UCB that reduces regret to the \emph{realized width
+complexity} $\Lamalg_T$ of the played widths, converting a one-sided
+optimism-transfer factor, a centering certificate, and a linearization bound into
+regret (\Cref{sec:theory}); a \emph{pathwise determinant decomposition} of
+$\Lamalg_T$ (\Cref{lem:dynamic-potential}) then handles a nonmonotone algorithmic
+curvature sequence, though bounding its endpoint and variation terms under
+primitive assumptions remains open.  This is a reduction, not a guarantee for
+unrestricted fine-tuning.
 \textbf{(3)}~We give a whitened, relative feature-drift lemma
 (\Cref{lem:whitened}) that supplies the one-sided transfer factor with no
 smallness condition, and primitive sufficient conditions that make the
 centering certificate and transfer factor measurable in terms of optimizer
-residuals and whitened replayed-Jacobian drift---most plausible in
-frozen-backbone or near-NTK regimes
+residuals and whitened replayed-Jacobian drift---exactly zero in the linear
+frozen-feature regime and plausibly small under a separately justified near-NTK
+or near-stationary condition
 (\Cref{lem:primitive-pred,lem:whitened}).
 \textbf{(4)}~We give a matrix-free CG/CVP implementation recipe with
 per-round cost accounting, and a protocol that compares curvature
 approximations at matched decision-level optimism coverage
 (\Cref{sec:experiments}).  Using it, on a constructed linear-Gaussian
 instance (damping tuned per method, paired seeds), we find that full
-curvature is dominated at matched coverage by a cheaper low-rank surrogate
-($+3.1$ to $+5.4$ regret, confidence intervals excluding zero) at all four
+curvature is higher-regret at matched coverage than a cheaper low-rank surrogate
+($+3.1$ to $+5.4$ pseudo-regret; nominal paired intervals, unadjusted for
+selection) at all four
 rotations, while beating the diagonal surrogate only at the intermediate
 rotations; the full-minus-Lanczos gap is rotation-invariant and coincides with a
 large optimism-coefficient disparity, but the protocol does not identify a unique
@@ -206,14 +202,14 @@ instance-dependent (\Cref{sec:results-covertype}).  The regret
 analysis is for Gaussian
 squared loss; the CG/CVP machinery applies algorithmically to
 exponential-family likelihoods, but we prove no regret theorem beyond
-the Gaussian case (\Cref{sec:expfam-ext}).
+the Gaussian case (\Cref{app:expfam}).
 
 \section{Problem Setup}\label{sec:problem}
 
 We present the problem setup for the \emph{Gaussian/squared-loss}
 instantiation, which is the setting analyzed in \Cref{thm:regret}.
 An extension to exponential-family likelihoods is discussed in
-\Cref{sec:expfam-ext}.
+\Cref{app:expfam}.
 
 \paragraph{Protocol.}
 At each round $t=1,\dots,T$ the learner observes a context
@@ -288,17 +284,24 @@ collected into a single \emph{certificate event} (\Cref{thm:regret}); a
 certificate that is deterministic or almost sure contributes zero failure
 probability.
 
-\paragraph{Reward model.}
-We maintain a parametric model $\mu_{\btheta}(\bx,a)$ with
-$\btheta\in\R^d$, implemented by a differentiable parametric model
-(e.g.\ a pretrained network composed with a reward head).
+\paragraph{Reward model and parameterization convention.}
+We fix a pretrained initialization $\btheta_0\in\R^d$ and parameterize the model
+by the \emph{displacement} $\btheta\in\R^d$ from it: the deployed predictor is
+$\mu_{\btheta_0+\btheta}(\bx,a)$, and we abbreviate
+$\mu_{\btheta}(\bx,a):=\mu_{\btheta_0+\btheta}(\bx,a)$ throughout.  The initial
+displacement is $\btheta_1=\mathbf 0$ (the deployed model starts at the pretrained
+weights $\btheta_0$).  With this convention the ridge penalty below is a penalty
+on the \emph{displacement from the pretrained weights}, not a zero-centered prior
+on the raw weights, and the realizability radius $S$ bounds
+$\|\btheta^\star\|=\|\btheta^\star_{\mathrm{orig}}-\btheta_0\|$, the distance of
+the true parameter from the pretrained initialization.
 Define the regularized loss at round~$t$:
 \begin{equation}\label{eq:erm}
   \cL_t(\btheta)
   \;:=\;
     \frac{1}{2\sigma^2}\sum_{s=1}^{t-1}
       \bigl(r_s - \mu_{\btheta}(\bx_s,a_s)\bigr)^2
-    \;+\; \frac{\lambda}{2}\|\btheta\|^2.
+    \;+\; \frac{\lambda}{2}\|\btheta\|^2 .
 \end{equation}
 We write $\btheta_t$ for the parameter returned by the warm-started
 optimizer on~$\cL_t$.
@@ -306,7 +309,7 @@ In convex settings (e.g.\ frozen backbone with a linear head) this
 coincides with the global minimizer; in nonconvex settings $\btheta_t$
 may be a local minimizer or approximate stationary point.
 The gap between $\btheta_t$ and an idealized global minimizer is absorbed
-by the prediction-stability assumption (\Cref{asm:optim}).
+by the action-scaled centering certificate (\Cref{asm:optim}).
 
 \paragraph{Gradient features and curvature matrices.}
 Define the \emph{gradient feature} (Jacobian of the mean reward) at the
@@ -458,7 +461,7 @@ $\nabla^2 A$ is the Hessian of the log-partition function
 \citep{martens2020new,pascanu2014revisiting}.
 Bernoulli rewards yield scalar weight~$p(1{-}p)$;
 categorical rewards yield $\mathrm{Diag}(\mathbf{p})-\mathbf{p}\mathbf{p}^\top$.
-See \Cref{sec:expfam-ext} for the extension.
+See \Cref{app:expfam} for the extension.
 \end{quote}
 
 We access $\bC_t$ only through curvature--vector products
@@ -467,7 +470,6 @@ products composed with reverse-mode vector--Jacobian products
 \citep{pearlmutter1994fast,schraudolph2002fast}.
 
 \paragraph{Extension to exponential-family likelihoods.}%
-\label{sec:expfam-ext}
 The same matrix-free CG/CVP machinery extends algorithmically to
 exponential-family likelihoods (e.g.\ Bernoulli or categorical rewards)
 via the Fisher/GGN curvature $J_t^\top(\nabla^2 A)\,J_t$, but no regret
@@ -890,9 +892,10 @@ legacy spectral-distortion corollary (\Cref{app:cor}) and by the
 windowed/refresh heuristics.
 The binding quantity is the \emph{whitened $\ell_2$ accumulation}
 $\chi_t\le\|\Dmat_t\|_F$ of replayed-Jacobian drift, measured in the
-$\bCbar_t^{-1}$ metric---strictly sharper than an $\ell_1$ sum normalized
-only by $\lambda$, because it credits directions the design has already
-explored.  Together,
+$\bCbar_t^{-1}$ metric---a relative, whitened $\ell_2$ bound that can be sharper
+than an $\ell_1$ sum normalized only by $\lambda$ when the drift occurs in
+well-observed directions (it credits directions the design has already
+explored), though it does not dominate uniformly.  Together,
 \Cref{lem:primitive-pred,lem:whitened} reduce the two nonlinear inputs
 (centering certificate $\bar\psi_t$, transfer factor $u_t=(1+\bar\chi_t)^2$)
 to optimizer residuals and whitened replayed-Jacobian drift.  These are
@@ -1042,7 +1045,7 @@ parameter sample per round, avoiding the per-action loop entirely.
          per-round CG tolerance $\{\bar\varepsilon_t\}$ (or budget $I$);
          one-sided transfer factor $u_t(a)\ge1$ (\Cref{asm:transfer})
          \hfill\COMMENT{exact case: $u_t=(1+\bar\chi_t)^2$, \Cref{lem:whitened}}
-\STATE Initialize $\btheta_1$ (pretrained weights), dataset $\mathcal{D}_0=\emptyset$
+\STATE Initialize displacement $\btheta_1=\mathbf 0$ (deployed model at pretrained $\btheta_0$), dataset $\mathcal{D}_0=\emptyset$
 \FOR{$t = 1, 2, \ldots, T$}
   \STATE Observe context $\bx_t$ and action set $\cA_t$; draw pre-action
          randomness $\Omega_t$ \hfill\COMMENT{$\cHist_t$ of~\eqref{eq:filtration}}
@@ -1108,17 +1111,9 @@ no-stored-feature design unless a frozen-feature oracle, replay mechanism, or
 certified sketch is supplied (see the remark after
 \Cref{cor:corrected-center}).
 
-\paragraph{Thompson-sampling variant (CC-TS).}
-An alternative draws a parameter perturbation
-$\delta\btheta\sim\mathcal{N}(\mathbf{0},\bC_t^{-1})$ by sampling in a
-Krylov subspace via the Lanczos algorithm, then selects the action maximizing
-$\mu_{\btheta_t+\delta\btheta}(\bx_t,a)$; Krylov-space Gaussian sampling
-with conjugate gradients is classical \citep{parker2012sampling}.
-CC-TS requires only \emph{one} sample per round regardless of $|\cA_t|$,
-making it attractive when action sets are large.
-We focus on CC-UCB for its deterministic analysis, but CC-TS is a natural
-companion whose sampling cost scales as $O(I)$ CG-equivalent iterations
-per round rather than $O(|\cA_t|\times I)$.
+CC-UCB is the analyzed method throughout; a one-sample Thompson-sampling
+companion (CC-TS), neither analyzed nor evaluated here, is described in
+\Cref{app:ccts}.
 
 \subsection{Novelty Relative to Prior Neural Bandits}\label{sec:novelty}
 
@@ -1143,15 +1138,21 @@ feature drift, and a changing (nonmonotone) operator.
 The main algorithmic contribution is a matrix-free implementation recipe
 for full-GGN/Fisher exploration via curvature--vector products and
 conjugate gradients.
-The main theoretical contribution is a \emph{dynamic log-determinant
-potential} (\Cref{lem:dynamic-potential}) that prices the nonmonotonicity
-of a general predictable SPD algorithmic curvature sequence pathwise,
-together with a one-sided optimism-transfer reduction: rather than a
-two-sided spectral sandwich, a single whitened, relative feature-drift
-factor (\Cref{lem:whitened}) transfers optimism, and the CG-accuracy and
-transfer costs enter through a sum of squares.  This replaces the standard
-monotone-Gram/elliptic-potential argument, which does not apply to the
-nonmonotone relinearized curvature.
+The main theoretical contribution is twofold.  First, the regret bound is a
+\emph{realized-width-complexity reduction}: it controls regret by the realized
+complexity $\Lamalg_T=\sum_t\log(1+\sigma^{-2}s_{\Calg,t}^2(a_t))$ of the widths
+actually played, whose width-sum inequality follows directly from the definition
+and the bounded-width cap.  Second, a \emph{pathwise decomposition for that
+complexity} (\Cref{lem:dynamic-potential}) writes $\Lamalg_T$ as an endpoint
+log-determinant minus a determinant-variation sum, generalizing the standard
+monotone-Gram/elliptic-potential argument to a nonmonotone predictable SPD
+sequence.  It does \emph{not} by itself show $\Lamalg_T$ is small: the resulting
+complexity remains an assumed or observed trajectory quantity, and bounding its
+endpoint and variation terms under primitive assumptions is left open.  These are
+paired with a one-sided optimism-transfer reduction: rather than a two-sided
+spectral sandwich, a single whitened, relative feature-drift factor
+(\Cref{lem:whitened}) transfers optimism, and the CG-accuracy and transfer costs
+enter through a sum of squares.
 Efficient estimators for nonlinear contextual bandits were proposed
 by~\citet{kassraie2022neural} using an NTK-based uncertainty route;
 we compare approaches in \Cref{sec:related}.
@@ -1307,28 +1308,34 @@ $t\le T$, union-bound over $t$ (replacing $\delta$ by $\delta/T$).
 \Cref{thm:spectral-distortion} then translates
 the spectral guarantee into a regret inflation factor.
 
-\paragraph{(ii) Windowed curvature (heuristic).}
-Maintain a sliding window of the most recent~$n$ interactions ($w_s=1$).
-No unconditional spectral sandwich between the windowed operator and the
-full~$\bCbar_t$ holds without distributional assumptions.
-Under a stability model (bounded feature drift and
-mixing context distribution), one can bound the spectral gap between
-$\bCbar_t$ and its windowed counterpart; we treat this as a practical
-heuristic and evaluate the effective spectral gap~$\varepsilon$ empirically.
-The regret theory of \Cref{thm:regret} does \emph{not} cover windowed
-curvature unless an explicit sandwich of the
-form~\eqref{eq:drift-sandwich} is verified.
+\paragraph{(ii) Windowed curvature (unrescaled, current parameter).}
+Maintain a sliding window $\mathcal{S}_t\subseteq\{1,\dots,t{-}1\}$ of the most
+recent~$n$ interactions with unit weights ($w_s{=}1$), \emph{re-evaluating the
+Jacobians at the current parameter}~$\btheta_t$.  This is a nonnegative-weighted
+\emph{subset} of the same current-parameter outer products, so
+$\hat\bC_t\preceq\bC_t$ (\Cref{prop:window}); \Cref{thm:spectral-distortion} then
+applies \emph{unconditionally} with $\kappa_{+,t}{=}1$ and
+$u_t=(1+\bar\chi_t)^2$---no two-sided sandwich is required.  The cost of the
+smaller operator is not hidden: it surfaces as larger realized widths
+$s_{\Calg,t}^2(a_t)$ and hence a larger dynamic width complexity~$\Lamalg_T$.  The
+same holds for any current-parameter downweighted subset with $w_s\in[0,1]$
+(including an unrescaled subsample).  A \emph{stale} window that reuses Jacobians
+from an older parameter is \emph{not} covered; see~(iii).
 
-\paragraph{(iii) Periodic refresh (heuristic).}
-Recompute the curvature operator ($w_s=1$) every~$M$ rounds on a cached
-buffer of size~$n$, reusing the same operator for~$M$ consecutive actions.
-As with windowing, no unconditional spectral sandwich holds; the stale
-curvature can both over- and under-estimate $\bCbar_t$ depending on how
-the data distribution evolves.
-We evaluate the spectral gap empirically; the regret theory applies
-only when the sandwich~\eqref{eq:drift-sandwich} is verified.
+\paragraph{(iii) Periodic refresh (heuristic; stale operator).}
+Recompute the curvature operator every~$M$ rounds on a cached buffer and reuse it
+for~$M$ consecutive actions.  Because the reused operator evaluates Jacobians at
+an \emph{older} parameter, it is no longer a subset of the current-parameter
+outer products, so the $\hat\bC_t\preceq\bC_t$ argument of \Cref{prop:window} does
+not apply and the stale operator can both over- and under-estimate $\bC_t$.  This
+remains a heuristic: \Cref{thm:spectral-distortion} covers it only when a
+one-sided factor $\kappa_{+,t}$ (an explicit bound
+$\hat\bC_t\preceq\kappa_{+,t}\bC_t$) is separately verified, which we evaluate
+empirically.  The rescaled subsample of~(i), with weights $w_s=(t{-}1)/n>1$, is
+likewise not covered by \Cref{prop:window}; it instead uses the two-sided matrix
+Bernstein bound of \Cref{lem:subsample}.
 
-\subsection{Systems Feasibility}\label{sec:systems}
+\subsection{Computational Cost Model}\label{sec:systems}
 
 \paragraph{Primitive assumptions.}
 CC-UCB requires a single computational primitive: the
@@ -1351,12 +1358,13 @@ Memory overhead is $O(d)$ for CG working vectors
 ($\tilde\bu$, residual, search direction); no $d\times d$ matrix is formed
 or stored.
 
-Recent work on Krylov methods for Hessian spectral analysis
-\citep{granziol2026hessian} demonstrates that these CVP primitives scale to
-networks with $>10^8$ parameters under standard distributed-training
-infrastructure, suggesting that the underlying CVP primitive may scale
-to large models.
-Warm-starting CG from the previous round's solution can further reduce the
+Krylov methods for Hessian spectral analysis have been run on networks with
+$>10^8$ parameters under distributed training \citep{granziol2026hessian}, which
+indicates that curvature--vector primitives of this general form are implementable
+at scale.  We do \emph{not} claim foundation-model feasibility from this: that
+work times Hessian--vector products, not the exact per-example GGN JVP/VJP used
+here, and we report no wall-clock benchmark of our primitive.
+Warm-starting CG from the previous round's solution can reduce the
 iteration count in practice.
 
 \paragraph{Cost accounting.}
@@ -1389,25 +1397,28 @@ paper reports no timing measurement of the per-example GGN JVP/VJP primitive.
 For a concrete configuration (GPT-2 124M, $K{=}10$ screened actions,
 $I{=}25$ CG steps, $n{=}256$ buffer) the CG cost is
 $10 \times 25 \times 256 = 64{,}000$ CVPs, each $\approx$ one
-gradient-equivalent.  Whether this is fast enough for a given deployment depends
-on the per-CVP wall-clock on the target hardware, which we do not measure here;
-reducing~$K$ via action screening (\S\ref{sec:method}) or switching to CC-TS
-(one sample, $O(In)$ cost) are the main practical levers.
+gradient-equivalent.  The total $KIn$ is a \emph{sample-equivalent FLOP count},
+not a wall-clock figure: batching over the buffer and parallelism across actions
+and shards change the realized time substantially, and we do not measure it here.
+Reducing~$K$ via action screening (\S\ref{sec:method}) is the main practical lever
+(a one-sample Thompson variant is deferred to \Cref{app:ccts}).
 
 \paragraph{Cost of the analyzed configuration.}
 The full-history instantiation $\Calg_t=\bC_t$,
 $\mathcal{S}_t=\{1,\dots,t-1\}$ with adaptive CG stopping has
 $\bar\kappa_t = 1+(t-1)G^2/(\lambda\sigma^2)$, so maintaining
-$\max_a\varepsilon_{t,a}\le\bar\varepsilon_t$ requires
+$\max_a\varepsilon_{t,a}\le\bar\varepsilon_t$ needs
 $I_t = O\bigl(\sqrt{t}\,G/(\sigma\sqrt{\lambda})\,
-\log(1/\bar\varepsilon_t)\bigr)$ iterations per solve (Eq.~\eqref{eq:cg-budget}), and
-the per-round CG cost is $K\,I_t\,(t-1)=O(K\,t^{3/2})$ CVPs, i.e.\
-$O(K\,T^{5/2})$ cumulatively.
-\Cref{tab:cost} and the numerical example above describe fixed-buffer
-operators ($n\ll t$); these are covered by \Cref{thm:regret} whenever a
-one-sided transfer certificate $u_t$ for the buffered operator is
-supplied (\Cref{thm:spectral-distortion}), and the protocol of
-\Cref{sec:experiments} measures the required transfer factor empirically.
+\log(1/\bar\varepsilon_t)\bigr)$ iterations per solve (Eq.~\eqref{eq:cg-budget}),
+so the per-round CG cost is $K\,I_t\,(t-1)=O(K\,t^{3/2})$ sample-CVPs, i.e.\
+$O(K\,T^{5/2})$ cumulatively---the worst-case cost of the exact analyzed method
+under the stated CG certificate.
+\Cref{tab:cost} and the numerical example describe fixed-buffer operators
+($n\ll t$), which are computationally practical but are covered by
+\Cref{thm:regret} only under the corrected window/subsample conditions of
+\S\ref{sec:curvop}: an unrescaled current-parameter buffer is covered
+unconditionally (\Cref{prop:window}), while a rescaled or stale buffer requires
+the verified transfer factor of \Cref{thm:spectral-distortion}.
 
 \section{Theoretical Analysis}\label{sec:theory}
 
@@ -1416,7 +1427,7 @@ enumeration $K{=}|\cA_t|$) under the Gaussian/squared-loss setup of
 \Cref{sec:problem} and
 \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.
 The analysis does not constitute a full exponential-family or generalized
-linear bandit proof; the extension in \Cref{sec:expfam-ext} is a
+linear bandit proof; the extension in \Cref{app:expfam} is a
 curvature-definition extension only.
 The analysis handles a \emph{general predictable SPD algorithmic curvature
 sequence} $\Calg_t$~\eqref{eq:calg-props}.  Confidence is proved for the
@@ -1450,7 +1461,8 @@ Centering certificate $\bar\psi_t$ & Yes ($\omega_t$) & Yes (Step~1) & Yes, unde
 Corrected center $m_t^{\mathrm{corr}}$ & Optional & Removes $\bar\psi_t$ & Yes, but needs frozen-feature access \\
 Dynamic complexity $\Lamalg_T$ / $\Gamdyn_T$ & --- & Yes (Step~6) & Yes (charges nonmonotonicity) \\
 CG tolerance $\alpha_t$ & Yes & Yes (\Cref{lem:cg}) & Yes \\
-Approximate $\hat\bC_t$ (windowed/refresh) & Yes, optional & Only with a one-sided $u_t$ & \Cref{thm:spectral-distortion} if $u_t$ verified \\
+Unrescaled current-param.\ window/subset $\hat\bC_t$ & Yes, optional & One-sided $u_t$ & Yes, unconditionally ($\kappa_{+,t}{=}1$, \Cref{prop:window}) \\
+Stale refresh / sketch $\hat\bC_t$ & Yes, optional & One-sided $u_t$ & \Cref{thm:spectral-distortion} only if $\kappa_{+,t}$ verified \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1619,10 +1631,12 @@ The charge $\Valg_T$ can be large for unstable curvature sequences: we do
 that the dynamic theorem automatically yields sublinear regret.  Note that
 $\Valg_T$ alone does not control $\Lamalg_T$ or $\Gamdyn_T$: by
 \eqref{eq:vdyn-def} the potential $\Gamdyn_T=\log\det(\Calg_{T+1}/\lambda\bI)
-+\Valg_T$ also carries the endpoint log-determinant term, so bounding
-$\Lamalg_T\le\Gamdyn_T$ requires controlling \emph{both} the variation charge
-$\Valg_T$ and the endpoint $\log\det(\Calg_{T+1}/\lambda\bI)$.  Controlling
-$\Lamalg_T$ (equivalently, bounding both of these terms) for a genuinely adapting
++\Valg_T$ also carries the endpoint log-determinant term.  Bounding \emph{both}
+the variation charge $\Valg_T$ and the endpoint $\log\det(\Calg_{T+1}/\lambda\bI)$
+is \emph{one sufficient route} to controlling $\Lamalg_T$, through
+$\Lamalg_T\le\Gamdyn_T$; it is not equivalent to it, since the exact identity
+\eqref{eq:lam-identity} can contain cancellation that makes $\Lamalg_T$ small even
+when $\Gamdyn_T$ is not.  Controlling $\Lamalg_T$ for a genuinely adapting
 backbone is one of the open certificate problems.
 \end{remark}
 
@@ -2002,10 +2016,14 @@ $a_t^*\in\cA_t$.
 Run \Cref{alg:ccucb} with full action enumeration ($K{=}|\cA_t|$), a
 predictable SPD algorithmic curvature sequence $\{\Calg_t\}$
 satisfying~\eqref{eq:calg-props} with $\Calg_1=\lambda\bI$ and a certified
-condition-number bound $\bar\kappa_t$, per-round CG solves satisfying
-$\max_{a\in\cA_t}\varepsilon_{t,a}\le\bar\varepsilon_t<1$ (\Cref{lem:cg}; the
-regret argument uses only $\varepsilon_{t,a_t}\le\bar\varepsilon_t$ for the
-played action), any predictable confidence schedule $\bar\beta_t\ge\beta_t$, the
+condition-number bound $\bar\kappa_t$, per-round CG solves satisfying the
+\emph{uniform} guarantee $\max_{a\in\cA_t}\varepsilon_{t,a}\le\bar\varepsilon_t<1$
+(\Cref{lem:cg}; the regret proof invokes the lower bonus bound at both the played
+action $a_t$ and the unknown optimal candidate $a_t^*$, so it needs
+$\varepsilon_{t,a}\le\bar\varepsilon_t$ at least at $a_t$ and $a_t^*$, which the
+uniform guarantee supplies under full enumeration; only the observable
+width-complexity surrogate of \Cref{cor:lam-observable} uses $\varepsilon_{t,a_t}$
+alone), any predictable confidence schedule $\bar\beta_t\ge\beta_t$, the
 centering certificate~$\bar\psi_t$ (\Cref{asm:optim}), the one-sided transfer
 factor~$u_t(a)\ge1$ (\Cref{asm:transfer}), and the bonus~\eqref{eq:bonus}.
 Let $E_T := \sum_{t=1}^T \epslin(t)$,
@@ -2018,8 +2036,10 @@ Collect into a single \emph{certificate event}
 $\cE_{\mathrm{cert}}$ every non-deterministic guarantee invoked by the algorithm
 or the analysis: the cumulative-linearization bound $\bar F_t\ge F_t$ (hence
 $\bar\beta_t\ge\beta_t$), the centering certificate $\bar\psi_t\ge\psi_t$, the
-one-sided transfer factor $u_t(a)$ (equivalently the whitened-drift certificate
-$\bar\chi_t\ge\chi_t$ and, for approximate operators, $\kappa_{+,t}$), the
+one-sided transfer factor $u_t(a)$ (for the sufficient construction of
+\Cref{lem:whitened} and \Cref{thm:spectral-distortion}, supplied by the
+whitened-drift certificate $\bar\chi_t\ge\chi_t$ and, for approximate operators,
+the one-sided factor $\kappa_{+,t}$), the
 certified condition-number bounds $\bar\kappa_t$ and the CG tolerances
 $\varepsilon_{t,a}\le\bar\varepsilon_t$, and any randomized-sketch or subsampling
 spectral guarantee.  Let $\cE_{\mathrm{conf}}$ be the self-normalized confidence
@@ -2055,7 +2075,9 @@ certificate that is deterministic or almost sure contributes zero to
 $\delta_{\mathrm{cert}}$; when all certificates are deterministic or almost sure,
 $\delta_{\mathrm{cert}}=0$ and the guarantee holds with probability at least
 $1-\delta$.
-The factor $\sqrt{\sigma^2 + G^2/\lambda}$ is exact; the condition
+The factor $\sqrt{\sigma^2 + G^2/\lambda}$ is an explicit valid consequence of
+the worst-case per-round width cap $s_{\Calg,t}^2(a_t)\le G^2/\lambda$
+(\Cref{lem:dynamic-potential}), not an optimal constant; the condition
 $G^2\le\lambda\sigma^2$ (which would reduce it to $\sigma\sqrt2$) is
 \emph{not} required.
 The time-varying CG, transfer, and calibration factors
@@ -2145,8 +2167,8 @@ therefore genuinely requires $\epslin(t)$ to decay, not merely to be
 uniformly small.
 \item \emph{Centering.}
 The centering certificate enters \emph{multiplicatively}, through
-$\omega_t=\bar\beta_t+\bar\psi_t$ inside the sum of squares $S_T$; there is
-no separate additive prediction-stability term.  It vanishes
+$\omega_t=\bar\beta_t+\bar\psi_t$ inside the sum of squares $S_T$, rather than as
+a separate additive term.  It vanishes
 ($\bar\psi_t=0$) when $\btheta_t=\hat\btheta_t^{\mathrm{lin}}$ (convex
 last-layer models with exact optimization), and the corrected-center
 variant (\Cref{cor:corrected-center}) removes it in general at the cost of
@@ -2165,7 +2187,7 @@ The bound is proved for Gaussian/squared-loss rewards.
 Extending it to exponential-family likelihoods (Bernoulli, categorical)
 would require a weighted frozen-feature analysis accounting for the
 data-dependent Fisher weights~$\nabla^2 A(z)$ and is left as future work
-(\Cref{sec:expfam-ext}).
+(\Cref{app:expfam}).
 \end{itemize}
 
 \begin{corollary}[Sanity-check: frozen features recover linear UCB]\label{cor:frozen}
@@ -2290,6 +2312,40 @@ theorem-backed variant.
 
 \subsection{Cost of Approximate Curvature}
 
+\begin{proposition}[Unrescaled current-parameter subset]\label{prop:window}
+Let $\mathcal{S}_t\subseteq\{1,\dots,t{-}1\}$ and $0\le w_s\le1$, and define the
+current-parameter operator
+\[
+  \hat\bC_t
+  \;=\;
+  \lambda\bI
+  +\sigma^{-2}\!\sum_{s\in\mathcal{S}_t} w_s\,
+  \bg_t(\bx_s,a_s)\bg_t(\bx_s,a_s)^\top ,
+\]
+using the same relinearized Jacobians $\bg_t(\bx_s,a_s)=\nabla_{\btheta}
+\mu_{\btheta_t}(\bx_s,a_s)$ that define $\bC_t$~\eqref{eq:curvature}.  Then
+$\hat\bC_t\preceq\bC_t$, so \Cref{thm:spectral-distortion} applies with
+$\kappa_{+,t}=1$ and, in the exact-transfer case, $u_t=(1+\bar\chi_t)^2$
+(\Cref{lem:whitened}).
+\end{proposition}
+\begin{proof}
+$\bC_t-\hat\bC_t=\sigma^{-2}\sum_{s\in\mathcal{S}_t}(1-w_s)\bg_t\bg_t^\top
++\sigma^{-2}\sum_{s\notin\mathcal{S}_t}\bg_t\bg_t^\top$, a sum of PSD outer
+products (each $1-w_s\ge0$), hence $\bC_t-\hat\bC_t\succeq0$.  With
+$\hat\bC_t\preceq\bC_t$ (so $\kappa_{+,t}=1$ in
+\eqref{eq:approx-onesided}) and $\hat\bC_t\succeq\lambda\bI$, the hypotheses of
+\Cref{thm:spectral-distortion} hold.
+\end{proof}
+
+\noindent
+This covers an unrescaled current-parameter sliding window, an unrescaled
+current-parameter subsample, and any current-parameter downweighted subset with
+weights in $[0,1]$.  It does \emph{not} cover rescaled subsampling with weights
+$(t{-}1)/n>1$ (\Cref{lem:subsample}), a stale periodic-refresh operator evaluated
+at an older parameter, or an arbitrary randomized sketch (e.g.\ the eigenspace
+Lanczos surrogate of \S\ref{sec:results-constructed}), for which a factor
+$\kappa_{+,t}$ must be certified separately.
+
 \begin{theorem}[Approximate curvature via one-sided transfer]\label{thm:spectral-distortion}
 Adopt the hypotheses of \Cref{thm:regret} with the algorithmic curvature
 $\Calg_t=\hat\bC_t$, an approximate operator that is symmetric,
@@ -2343,25 +2399,29 @@ yields $u_t=(1+\varepsilon)(1+\bar\chi_t)^2$ in
 $\delta'$ by $\delta'/T$ in \Cref{lem:subsample}) makes the subsampling
 event time-uniform and contributes to $\delta_{\mathrm{cert}}$.
 
-For the \emph{windowed} and \emph{periodic-refresh} operators
-(\S\ref{sec:curvop}(ii)--(iii)), no unconditional upper transfer factor
-$\kappa_{+,t}$ holds without a distributional stability assumption;
-\Cref{thm:spectral-distortion} then provides a guarantee only when such a
-$\kappa_{+,t}$ (equivalently an explicit one-sided bound) is verified.
-We treat windowed and refresh operators as practical heuristics and
-evaluate their effective transfer factor empirically.
+For an \emph{unrescaled current-parameter window} (or any current-parameter
+downweighted subset with weights in $[0,1]$), \Cref{prop:window} gives the
+unconditional upper factor $\kappa_{+,t}=1$ with \emph{no} distributional
+assumption, so \Cref{thm:spectral-distortion} applies directly with
+$u_t=(1+\bar\chi_t)^2$.  Only the \emph{stale periodic-refresh} operator
+(\S\ref{sec:curvop}(iii)), which reuses Jacobians from an older parameter, lacks
+an unconditional $\kappa_{+,t}$; there \Cref{thm:spectral-distortion} provides a
+guarantee only when a one-sided bound $\hat\bC_t\preceq\kappa_{+,t}\bC_t$ is
+separately verified, which we evaluate empirically.
 
 Empirical results for the constructed linear-Gaussian instance are
 reported in \Cref{sec:results-constructed}; the protocol for the
 remaining benchmarks---baselines, ablations, and the
 foundation-model/offline-to-online settings---is provided in
-\Cref{sec:experiments}.
+\Cref{app:protocol}.
 
 \paragraph{What remains open.}
 The remaining certificate gaps---an externally certified cumulative
 linearization bound $\bar F_t$, a certified centering bound $\bar\psi_t$
-for the original nonlinear center, a certified transfer factor $u_t$
-(equivalently $\bar\chi_t$), and control of the realized dynamic complexity
+for the original nonlinear center, a certified transfer factor $u_t$ (for which
+the whitened-drift certificate $\bar\chi_t$, with $\kappa_{+,t}$ for approximate
+operators, is one sufficient construction), and control of the realized dynamic
+complexity
 $\Lamalg_T$ (which, via $\Lamalg_T\le\Gamdyn_T$, requires bounding both the
 variation charge $\Valg_T$ and the endpoint $\log\det(\Calg_{T+1}/\lambda\bI)$)
 for a genuinely adapting backbone---are stated as open problems in the
@@ -2397,7 +2457,7 @@ Last-layer Laplace methods
 approximation to the final layer of a deep network, arguing that
 full-parameter covariance is computationally intractable for large models.
 While last-layer methods are practical and well-understood, they discard
-backbone curvature, which the experimental protocol in \Cref{sec:experiments}
+backbone curvature, which the proposed protocol in \Cref{app:protocol}
 is intended to test for miscalibration under partial fine-tuning.
 CC-UCB targets exactly this gap: accessing full-parameter curvature
 without materializing the covariance matrix.
@@ -2414,7 +2474,7 @@ spectral distortion of an explicit curvature metric, which yields
 deterministic widths, an optimism-style analysis, and a single solve
 reused across a screened action set.
 An empirical comparison at matched wall-clock is part of the protocol
-in \Cref{sec:experiments}.
+in \Cref{app:protocol}.
 
 \paragraph{Efficient nonlinear UCB.}
 \citet{kassraie2022neural} propose NN-UCB and NN-TS, neural contextual
@@ -2505,12 +2565,13 @@ feature-drift sandwich.
 Action screening is a practical heuristic not covered by the theory
 without an additional assumption that the optimal arm survives screening.
 The approximate-curvature theorem (\Cref{thm:spectral-distortion})
-quantifies the cost of subsampled/windowed/refreshed operators through
-their one-sided transfer factor and realized dynamic complexity; we provide
-a formal matrix Bernstein guarantee (with explicit $(t{-}1)^2$-dependence
-in sample complexity for the variance term) for subsampled GGN and
-delineate windowed/refresh operators as heuristics requiring a verified
-transfer factor.
+quantifies the cost of an approximate operator through its one-sided transfer
+factor and realized dynamic complexity.  An unrescaled current-parameter window
+or downweighted subset is covered \emph{unconditionally} ($\kappa_{+,t}{=}1$,
+\Cref{prop:window}); rescaled subsampling is covered by a formal matrix Bernstein
+guarantee (with explicit $(t{-}1)^2$-dependence in the variance-term sample
+complexity); and stale periodic-refresh operators or arbitrary sketches remain
+heuristics requiring a separately verified transfer factor.
 
 \paragraph{Empirical finding.}
 On a constructed linear-Gaussian instance, compared at matched oracle coverage
@@ -2535,13 +2596,15 @@ regret but does not prove those certificates for unrestricted fine-tuning.
 The remaining gaps, stated as open certificate problems, are:
 \begin{enumerate}[nosep,leftmargin=1.6em]
 \item certification of the cumulative-linearization bound $\bar F_t\ge F_t$
-  (equivalently, decay of $\epslin(t)$), which is not computable from data
-  alone;
+  (needed for \emph{validity} of the confidence radius, and not computable from
+  data alone) --- a distinct requirement from the \emph{growth} control
+  $E_T=\sum_t\epslin(t)=o(T)$ and $F_T=o(T)$ that sublinear regret separately
+  needs; certifying $\bar F_t$ does not by itself imply $\epslin(t)$ decays;
 \item certification of the centering certificate $\bar\psi_t$ for the
   original nonlinear center outside the convex last-layer regime;
-\item certification of the one-sided transfer factor $u_t(a)$ (equivalently
-  the whitened-drift bound $\bar\chi_t$, or the approximate-operator factor
-  $\kappa_{+,t}$);
+\item certification of the one-sided transfer factor $u_t(a)$, for which the
+  whitened-drift bound $\bar\chi_t$ (and, for approximate operators, the
+  one-sided factor $\kappa_{+,t}$) is one sufficient construction;
 \item controlling the realized dynamic complexity $\Lamalg_T$ (via
   $\Lamalg_T\le\Gamdyn_T$, which requires bounding \emph{both} the variation
   charge $\Valg_T$ and the endpoint $\log\det(\Calg_{T+1}/\lambda\bI)$) for a
@@ -2553,14 +2616,15 @@ The remaining gaps, stated as open certificate problems, are:
 \end{enumerate}
 The local-linearization approximation degrades for highly nonlinear models
 or large parameter drift; the whitened-drift certificate $\bar\chi_t$ is
-plausible in frozen-backbone or near-NTK regimes but may not hold for
+exactly zero in the linear frozen-feature regime and may be small under a
+separately justified near-NTK or near-stationary condition, but need not hold for
 unrestricted deep-network fine-tuning.  The per-round cost scales linearly
 in the CG budget~$I$ and buffer size~$n$; preconditioning and
 warm-starting CG are practical considerations not analyzed theoretically
 here.  The regret proof applies to the Gaussian/squared-loss instantiation;
 a full exponential-family Fisher/GGN regret analysis---requiring weighted
 frozen-feature arguments and non-Gaussian noise treatment---is future work
-(\Cref{sec:expfam-ext}).  We do not claim the theorem proves sublinear
+(\Cref{app:expfam}).  We do not claim the theorem proves sublinear
 regret for unrestricted fine-tuning; establishing the certificates above
 for realistic transformer fine-tuning is left open.
 
@@ -2722,7 +2786,11 @@ $\bar\kappa_t := \lambda_{\max}(\Calg_t)/\lambda
 \le 1+W_tG^2/(\lambda\sigma^2) \ge \kappa$, whereas a general SPD operator
 requires a separately certified $\bar\kappa_t$.
 
-Setting the right-hand side of the rate equal to $\epsCGbar$ and requiring
+If $\bar\kappa_t=1$ then $\Calg_t$ is a scalar multiple of the identity
+($\Calg_t=\lambda\bI$, since $\Calg_t\succeq\lambda\bI$ and
+$\lambda_{\max}\le\lambda$) and, for $\bg\ne\mathbf0$, a single CG iteration is
+\emph{exact} ($\varepsilon_{t,a}=0$).  For $\bar\kappa_t>1$, setting the
+right-hand side of the rate equal to $\epsCGbar$ and requiring
 $\epsCGbar < 1$ (where $\epsCGbar$ denotes the round-$t$ target tolerance
 $\bar\varepsilon_t$) gives the per-solve budget
 \begin{equation}\label{eq:cg-budget}
@@ -2739,15 +2807,16 @@ For $W_t=n$ (unrescaled fixed buffer size),
 $\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$,
 so $I_{\min}$ is constant.
 For full history, and for rescaled uniform subsampling with
-$w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so
-$\bar\kappa_t=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and maintaining
-$\max_a\varepsilon_{t,a}\le\epsCGbar$ requires
-$I=\Omega\!\bigl(G\sqrt{t/(\lambda\sigma^2)}\,\log(1/\epsCGbar)\bigr)$
---- growing as $\sqrt{t}$.
-In practice, the spectrum of~$\Calg_t$ is concentrated
-\citep{granziol2026hessian} and CG converges in far fewer iterations
-than the worst-case bound suggests; we measure this empirically in
-\Cref{sec:experiments}.
+$w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so the condition-number \emph{bound}
+$\bar\kappa_t=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and the worst-case
+certificate is then obtained with
+$I_{\min}=\Theta\!\bigl(G\sqrt{t/(\lambda\sigma^2)}\,\log(1/\epsCGbar)\bigr)$
+iterations per solve---i.e.\ $I=O(\sqrt{t}\,\log(1/\epsCGbar))$ suffices under this
+bound (this is an upper-bound certificate, not a lower bound on the number of
+iterations CG actually needs).
+CG may converge faster than this worst-case certificate suggests under favorable
+spectral clustering of~$\Calg_t$; the realized iteration counts are part of the
+CG-budget ablation proposed in \Cref{app:protocol}.
 
 \section{Legacy Two-Sided Spectral-Distortion Corollary}\label{app:cor}
 
@@ -2903,82 +2972,137 @@ for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
 Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
 Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 
-\section{Experimental Protocol}\label{sec:experiments}
+\section{Thompson-Sampling Companion (CC-TS)}\label{app:ccts}
+We record a one-sample Thompson-sampling companion to CC-UCB; it is
+\emph{not} analyzed or evaluated in this paper and is included only for
+completeness.  CC-TS draws a parameter perturbation
+$\delta\btheta\sim\mathcal{N}(\mathbf{0},\bC_t^{-1})$ by sampling in a
+Krylov subspace via the Lanczos algorithm, then selects the action maximizing
+$\mu_{\btheta_t+\delta\btheta}(\bx_t,a)$; Krylov-space Gaussian sampling
+with conjugate gradients is classical \citep{parker2012sampling}.
+CC-TS requires only \emph{one} sample per round regardless of $|\cA_t|$, so its
+sampling cost scales as $O(I)$ CG-equivalent iterations per round rather than
+$O(|\cA_t|\times I)$, making it attractive when action sets are large.  A regret
+analysis of CC-TS is left to future work.
 
-We first report results on a constructed linear-Gaussian instance
-(\Cref{sec:results-constructed}), the setting closest to the squared-loss
-theory, and then a real-data contextual bandit case study
-(UCI covertype, \Cref{sec:results-covertype}).  We then lay out the
-protocol for the remaining benchmarks---foundation-model and
-offline-to-online bandits---which we leave to future empirical work.  The protocol is stated so the intended
-evaluation is concrete, reproducible, and aligned with the theoretical
-claims.
-The protocol focuses on (i)~whether the assumptions behind the theorem
-are empirically plausible, (ii)~whether full-GGN/Fisher exploration
-produces measurable regret improvements over diagonal and last-layer
-surrogates, and (iii)~the computational cost of CG-based exploration at
-foundation-model scale.  Synthetic squared-loss bandits validate the
-theorem; Bernoulli/categorical foundation-model bandits test only the
-algorithmic Fisher/GGN extension; partial fine-tuning tests whether the
-near-stationarity assumptions are plausible.
+\section{Experiments (completed)}\label{sec:experiments}
+
+We report two \emph{completed} experiments: a constructed linear-Gaussian instance
+(\Cref{sec:results-constructed}), the setting closest to the squared-loss theory,
+and a real-data contextual bandit case study (UCI covertype,
+\Cref{sec:results-covertype}).  The foundation-model and offline-to-online
+benchmarks, baselines, ablations, and metrics are proposed protocols that we have
+\emph{not} run; they appear separately in \Cref{app:protocol}.  \emph{For the
+nine-page main-track build these two completed-experiment subsections are the
+material intended for the main body (before Related Work); everything in
+\Cref{app:protocol} stays in the appendix.}
 
 \subsection{Results on a constructed linear-Gaussian instance}\label{sec:results-constructed}
 
 \paragraph{Construction.}
-Contexts follow an anisotropic Gaussian $\bx\sim\mathcal{N}(0,\Sigma)$ with one
-high-variance direction (variance~$\kappa$), a near-zero-variance in-plane
-decision axis, and unit variance on the remaining bulk coordinates; a single
-knob~$\theta$ sets the angle between the high-variance direction and the decision
-direction~$\mathbf{e}_{\mathrm{align}}$.
-\emph{The exact covariance $\Sigma(\theta)$ and the $\theta$ angle convention are
-not reproducible from the materials available to this revision, and the
-high-level description is internally ambiguous---without the implementation it
-does not fix whether $\theta{=}0^\circ$ places the high-variance direction
-\emph{along} or \emph{orthogonal to} the near-zero-variance decision axis (the
-two readings are inconsistent, since the decision axis is stated to have near-zero
-variance).  We therefore do not rely on the precise population geometry and report
-the committed numerical outcomes only.}
+Contexts are Gaussian $\bx\sim\mathcal{N}(\mathbf 0,\Sigma(\theta))$ in
+$\R^{d}$, $d{=}100$, with the explicit covariance
+\begin{equation}\label{eq:constructed-sigma}
+  \Sigma(\theta)
+  \;=\;
+  \kappa\,\bh(\theta)\bh(\theta)^\top
+  \;+\;
+  \nu\,\mathbf{e}_{\mathrm{align}}(\theta)\mathbf{e}_{\mathrm{align}}(\theta)^\top
+  \;+\;
+  \rho_{\mathrm{bulk}}\,\bigl(\bI-\mathbf{e}_1\mathbf{e}_1^\top
+  -\mathbf{e}_2\mathbf{e}_2^\top\bigr),
+\end{equation}
+where the in-plane basis rotates with the single knob~$\theta$,
+$\bh(\theta)=(\cos\theta,\sin\theta,0,\dots,0)$ and
+$\mathbf{e}_{\mathrm{align}}(\theta)=(-\sin\theta,\cos\theta,0,\dots,0)$.
+Its eigenstructure is: the high-variance direction $\bh(\theta)$ with
+eigenvalue $\kappa{=}30$; the in-plane decision direction
+$\mathbf{e}_{\mathrm{align}}(\theta)$ with eigenvalue
+$\nu{=}0$ (exactly zero context variance along the decision axis); and $d{-}2{=}98$
+bulk directions each with eigenvalue $\rho_{\mathrm{bulk}}{=}1$.  The angle
+convention is explicit: at $\theta{=}0^\circ$ the high-variance direction is
+$\mathbf{e}_1$ and the decision direction is $\mathbf{e}_2$, so $\bh\perp
+\mathbf{e}_{\mathrm{align}}$ (\emph{orthogonal}), and the population Gram is
+already diagonal (no off-diagonal for a diagonal surrogate to drop); as~$\theta$
+grows the decision axis rotates toward the high-variance axis, creating the
+off-diagonal mass a diagonal surrogate discards.
 The model is linear,
 $\mu_{\btheta}(\bx,a)=\boldsymbol{\phi}(\bx,a)^\top\btheta$, with arm
-features $\boldsymbol{\phi}(\bx,a)=\bx+b\,\delta_a\,\mathbf{e}_{\mathrm{align}}$
-that share the context~$\bx$ and differ only by a scalar offset
-$b\,\delta_a$ along~$\mathbf{e}_{\mathrm{align}}$; a nearly-tied top-two pair
-$(\delta_{a^\star},\delta_{a_2})$ makes the decision hard.  The reward
-parameter is $\btheta^\star=S\,\mathbf{e}_{\mathrm{align}}$, so the shared
-term $\bx^\top\btheta^\star$ cancels in the action ranking and the decision
-lives along~$\mathbf{e}_{\mathrm{align}}$.  Because the model is
-linear in~$\btheta$ the gradient features are fixed, giving
-$\epslin{=}0$, no feature drift, and $\bC_t{=}\bCbar_t$: the \emph{only}
-active term in the regret ledger of \Cref{thm:regret} is surrogate
-curvature distortion.
+features $\boldsymbol{\phi}(\bx,a)=\bx+b\,\delta_a\,\mathbf{e}_{\mathrm{align}}(\theta)$
+($b{=}0.1$) that share the context~$\bx$ and differ only by a scalar offset
+$b\,\delta_a$ along~$\mathbf{e}_{\mathrm{align}}$.  The $|\cA|{=}10$ arm offsets
+are $\delta=(1,\,0.95,\,0,\,-\tfrac17,\dots,-1)$ with a nearly-tied top-two pair
+$\delta_{a^\star}{=}1,\ \delta_{a_2}{=}0.95$ (gap $0.05$).  The reward
+parameter is $\btheta^\star=S\,\mathbf{e}_{\mathrm{align}}(\theta)$, $S{=}10$, so
+the shared term $\bx^\top\btheta^\star$ cancels in the action ranking, the
+decision lives along~$\mathbf{e}_{\mathrm{align}}$, and the top-two mean gap is
+$S\,b\,(\delta_{a^\star}{-}\delta_{a_2})=0.05$.  Rewards are
+$r=\mu^\star(\bx,a)+\eta$ with $\eta\sim\mathcal{N}(0,\sigma^2)$, $\sigma{=}1$.
+Because the model is linear in~$\btheta$ the gradient feature equals the arm
+feature and is fixed, giving $\epslin{=}0$, no feature drift, and
+$\bC_t{=}\bCbar_t$: the \emph{only} active term in the regret ledger of
+\Cref{thm:regret} is surrogate curvature distortion.  Reported regret is
+pseudo-regret, $R_T=\sum_t[\mu^\star(\bx_t,a_t^\star)-\mu^\star(\bx_t,a_t)]$
+(true means, no noise).
 
-\paragraph{Protocol.}
-The instance uses anisotropic contexts and a nearly-tied top-two decision so that
-surrogate curvature distortion can be decision-relevant; absent the
-implementation we do \emph{not} assert it is provably engineered to favor full
-curvature.  We use $d{=}100$, $\kappa{=}30$, $\theta\in\{0,7.5,15,45\}^\circ$,
-$T{=}1500$, an exact solver, and $10$ paired seeds.  The low-rank Lanczos
-surrogate's precise construction (its rank, whether it approximates $\bC_t$ or
-$\bC_t^{-1}$, the treatment of the orthogonal complement, damping placement,
-normalization, refresh cadence, and stopping rule) is likewise not specified in
-the available materials; we do not infer these choices and report the committed
-outcomes as-is.  Methods are compared at matched \emph{decision-level top-two
-optimism coverage}, an oracle diagnostic that uses the true reward.  Per method we
-sweep the ridge damping~$\lambda$ and the bonus scale~$\alpha$; for each target
-$q\in\{0.90,0.95\}$ we \emph{isotonically project} the realized
-coverage-versus-$\alpha$ points and read the interpolated regret at the~$\alpha$
-meeting~$q$ (coverage need not be monotone in~$\alpha$ in an adaptive bandit,
-since changing~$\alpha$ changes the trajectory, so monotonicity is \emph{imposed}
-by the projection, not guaranteed), and keep the~$\lambda$ minimizing per-method
+\paragraph{Lanczos surrogate.}
+The low-rank Lanczos surrogate approximates $\bC_t$ by its top-$k$ eigenpairs
+from a $k$-step Lanczos run on the matrix-free operator $\bC_t$ (single seeded
+random start, block size one, full reorthogonalization with a final QR, and
+Rayleigh--Ritz on the symmetrized compression), and forms the inverse in closed
+form
+\begin{equation}\label{eq:lanczos-surrogate}
+  \hat\bC_t^{-1}\;\approx\;\bQ\Lambda^{-1}\bQ^\top
+  +\tfrac1\lambda\,(\bI-\bQ\bQ^\top),
+  \qquad
+  \hat\bC_t=\lambda\bI+\textstyle\sum_{i\le k}(\lambda_i-\lambda)\,\bu_i\bu_i^\top,
+\end{equation}
+with $\bQ=[\bu_1,\dots,\bu_k]$ the Ritz vectors and $\Lambda=\mathrm{diag}(\lambda_i)$
+the Ritz values (which include the damping~$\lambda$).  The orthogonal complement
+is set to the prior precision $\lambda^{-1}$.  We use rank $k{=}16$.  Since
+$\lambda_i\ge\lambda$, $\hat\bC_t\succeq\lambda\bI\succ0$ is SPD and
+$\cHist_t$-measurable (fixed seed), so it satisfies the standing hypotheses of
+\Cref{thm:spectral-distortion}.  It is \emph{not}, however, a nonnegative
+reweighting of the current gradient features (it is an eigenspace operator), and
+the implementation establishes no Loewner relation between $\hat\bC_t$ and
+$\bC_t$; the unrescaled-window bound of \Cref{prop:window} does not apply and a
+transfer factor $\kappa_{+,t}$ for it is not certified here.
+
+\paragraph{Protocol and matched-coverage metric.}
+We use $d{=}100$, $\kappa{=}30$, $\theta\in\{0,7.5,15,45\}^\circ$, $T{=}1500$, an
+exact solver, and $10$ paired seeds $\{0,\dots,9\}$.  Per method we sweep the
+ridge damping~$\lambda$ (full: $\{10^2,\dots,3\times10^5\}$; diagonal/lanczos:
+$\{1,10,30,100\}$) and the bonus scale~$\alpha$ (full: $\{16,\dots,1024\}$;
+diagonal: $\{0.25,\dots,80\}$; lanczos: $\{0.03125,\dots,80\}$).  Methods are
+compared at matched \emph{decision-level top-two optimism coverage}: on a fixed
+held-out batch of $1000$ context--arm pairs, restricting to the two arms with the
+largest \emph{true conditional mean} $\mu^\star(\bx,a)=\boldsymbol\phi(\bx,a)^\top
+\btheta^\star$, the coverage is
+\begin{equation}\label{eq:cov-top2}
+  \mathrm{cov}_{\mathrm{top2}}(\alpha)
+  =\Pr_{(\bx,a)\in\text{top-2 by }\mu^\star}\!\bigl[\,
+    \mu^\star(\bx,a)\le\mu_{\btheta_t}(\bx,a)+\alpha\,\tilde s_t(a)\,\bigr],
+\end{equation}
+i.e.\ the optimistic upper bound is compared against the true \emph{mean} reward
+(never a noisy realized reward).  Coverage is snapshotted at
+$t\in\{250,500,\dots,1500\}$ and averaged over these ticks per run, then treated
+per seed.  For each target $q\in\{0.90,0.95\}$ we isotonically project (pool
+adjacent violators) the coverage-versus-$\log_2\alpha$ points to a nondecreasing
+curve---monotonicity is \emph{imposed}, not guaranteed, since coverage need not be
+monotone in~$\alpha$ in an adaptive bandit---invert it by local linear
+interpolation to the $\alpha^\star$ meeting~$q$, read the piecewise-linearly
+interpolated pseudo-regret there, and keep the~$\lambda$ minimizing per-method
 matched-coverage regret.  The selected damping for full curvature is interior
 (regret rises past it: at $\theta{=}7.5^\circ$,
 $8.1\!\to\!12.2\!\to\!31.1$ as $\lambda$ grows), so full is not handicapped by
 under-damping.  We report paired full-minus-surrogate cumulative regret
-(\Cref{tab:constructed}).  This is a retrospective oracle diagnostic: the
-per-method $\lambda$ and $\alpha$ selection, the isotonic interpolation, and the
-reported confidence intervals all reuse the same run, so formal statistical
-inference would require independent tuning and evaluation data, and the intervals
-do not account for this model selection.
+(\Cref{tab:constructed}).  This is a retrospective oracle diagnostic (it uses the
+true mean reward): the per-method $\lambda$ and $\alpha$ selection, the isotonic
+projection, and the reported intervals all reuse the same $10$ seeds, so the
+intervals are \emph{nominal paired intervals, unadjusted for model and
+hyperparameter selection} (\S\ref{sec:results-covertype} details the estimator);
+formal post-selection inference would require independent tuning and evaluation
+seeds.
 
 \begin{table}[h]\centering\small
 \begin{tabular}{lrrrr}
@@ -2994,12 +3118,15 @@ $45^\circ$  & $+2.6$  & $+4.9$  & $+3.3$ & $+5.3$ \\
 \bottomrule
 \end{tabular}
 \caption{Paired full-minus-surrogate cumulative regret at matched
-coverage (positive $=$ full worse), $10$ seeds.  Full is dominated by the
-low-rank Lanczos metric at every rotation ($q{=}0.95$ intervals
-$[2.3,8.4]$, $[2.4,8.3]$, $[1.9,8.3]$, $[1.3,9.3]$, all excluding zero),
-while it \emph{beats} diagonal at the intermediate rotations
+decision-level top-two coverage (positive $=$ full worse), $10$ seeds.  Full is
+higher-regret than the low-rank Lanczos metric at every rotation, and
+lower-regret than diagonal at the intermediate rotations
 $\theta\in\{7.5,15\}^\circ$ where rotation makes diagonal's distortion
-decision-relevant.}
+decision-relevant.  Bracketed values are \emph{nominal $95\%$ paired Student-t
+intervals over per-seed differences, unadjusted for the per-method
+$\lambda/\alpha$ selection} (not post-selection valid).  full$-$lanczos:
+$q{=}0.90$ $[1.2,5.9],[1.3,5.4],[0.4,5.7],[0.2,6.5]$; $q{=}0.95$
+$[2.3,8.4],[2.4,8.3],[1.9,8.3],[1.3,9.3]$ (rows $\theta{=}0,7.5,15,45^\circ$).}
 \label{tab:constructed}
 \end{table}
 
@@ -3020,8 +3147,8 @@ nonproportional widths, approximation artifacts, or selection effects, which the
 current protocol does not separate.  The diagonal surrogate's losses concentrate
 under rotation ($\theta\in\{7.5,15\}^\circ$), the regime where full beats it;
 hence which surrogate suffices is regime-dependent and higher curvature fidelity
-does not by itself lower regret.  The comparison uses the true reward and is an
-analysis diagnostic, not a deployable tuning rule; this is one constructed
+does not by itself lower regret.  The comparison uses the true mean reward and is
+an analysis diagnostic, not a deployable tuning rule; this is one constructed
 synthetic instance, examined against non-synthetic data next
 (\Cref{sec:results-covertype}).
 
@@ -3038,28 +3165,32 @@ apples-to-apples with the constructed instance, the $0/1$ reward is routed
 through the same Gaussian squared-loss curvature stack rather than the
 Bernoulli Fisher matrix, so full and diagonal share one implementation.
 Because the label is known offline we match methods at a
-\emph{label-oracle} coverage diagnostic---the direct analogue of the
-constructed instance's oracle coverage, with
-$\mu^\star(\bx,a)=\mathbf{1}[a=y]$, averaged over the run's coverage
-snapshots---and otherwise follow the same protocol: $T{=}1500$, $10$
-paired seeds, a per-method damping sweep
+\emph{label-oracle} coverage diagnostic, the direct analogue of the constructed
+instance's top-two coverage with the true mean $\mu^\star(\bx,a)=\mathbf 1[a=y]$:
+on a held-out batch of $512$ contexts, the coverage of the \emph{true-label} arm
+$y$ is $\mathrm{cov}_{\mathrm{label}}(\alpha)=\Pr_{\bx}[\,1\le
+\mu_{\btheta_t}(\bx,y)+\alpha\,\tilde s_t(y)\,]$, snapshotted at
+$t\in\{250,\dots,1500\}$ and averaged over ticks per seed.  We otherwise follow
+the same protocol: $T{=}1500$, $10$ paired seeds, a per-method damping sweep
 $\lambda\in\{1,10,30,100,300,1000\}$ and bonus-scale sweep, an isotonic
 \emph{projection} of the coverage-versus-$\alpha$ points to each target
 $q\in\{0.80,0.85\}$ (monotonicity imposed, not guaranteed; see
 \S\ref{sec:results-constructed}), and the $\lambda$ minimizing per-method
-matched-coverage regret.  As in the constructed instance this is a
-retrospective oracle diagnostic whose per-method selection and confidence
-intervals reuse the run and would need independent tuning/evaluation data for
-formal inference.
+matched-coverage pseudo-regret.  As in the constructed instance this is a
+retrospective oracle diagnostic whose per-method $\lambda/\alpha$ selection and
+intervals reuse the same $10$ seeds and would need independent tuning/evaluation
+data for formal inference.
 
 \paragraph{Result.}
-Full curvature is again \emph{not} the best exploration bonus: a diagonal
-surrogate dominates it at matched coverage (\Cref{tab:covertype}), by
-$+49.0$ regret at $q{=}0.85$ ($95\%$ CI $[19.6,78.4]$) and $+45.0$ at
-$q{=}0.80$ ($[15.2,74.7]$), paired over $10$ seeds with both intervals
-excluding zero.  Every selected damping is interior---regret rises at the
+Full curvature is again higher-regret than a cheaper diagonal surrogate at
+matched coverage (\Cref{tab:covertype}), by $+49.0$ at $q{=}0.85$ and $+45.0$ at
+$q{=}0.80$, paired over $10$ seeds (nominal $95\%$ paired-t intervals
+$[19.6,78.4]$ and $[15.2,74.7]$, unadjusted for the per-method $\lambda/\alpha$
+selection).  Every selected damping is interior---regret rises at the
 adjacent grid values on both sides---so neither method is handicapped by
-mis-set damping.
+mis-set damping.  This $q{=}0.85$ cell uses the extended diagonal damping grid
+($\lambda$ up to $300$); a shorter grid selects a smaller diagonal $\lambda$ and a
+smaller gap, so the reported value is grid-dependent.
 
 \begin{table}[h]\centering\small
 \begin{tabular}{lrr}
@@ -3067,14 +3198,15 @@ mis-set damping.
  & $q{=}0.80$ & $q{=}0.85$ \\
 \midrule
 full $-$ diagonal & $+45.0$ & $+49.0$ \\
-$95\%$ CI & $[15.2,\,74.7]$ & $[19.6,\,78.4]$ \\
+nominal $95\%$ paired-t & $[15.2,\,74.7]$ & $[19.6,\,78.4]$ \\
 \bottomrule
 \end{tabular}
-\caption{Paired full-minus-diagonal cumulative regret at matched
+\caption{Paired full-minus-diagonal cumulative pseudo-regret at matched
 label-oracle coverage on the UCI covertype contextual bandit (positive
-$=$ full worse), $10$ seeds, $T{=}1500$.  The cheaper diagonal surrogate
-dominates full curvature at both coverage targets, both intervals
-excluding zero.}
+$=$ full worse), $10$ seeds, $T{=}1500$.  The cheaper diagonal surrogate is
+lower-regret at both coverage targets.  Bracketed values are nominal $95\%$
+paired Student-t intervals over per-seed differences, unadjusted for the
+per-method $\lambda/\alpha$ selection (not post-selection valid).}
 \label{tab:covertype}
 \end{table}
 
@@ -3097,11 +3229,22 @@ ranks, where its inverse is least accurate (relative residual against the exact
 operator $\approx46$ at rank $16$, falling monotonically to $\approx2.3$ at rank
 $128$), and the full-minus-Lanczos comparison moves monotonically toward full as
 the rank rises: at rank $128$ full is better ($-37$ regret at $q{=}0.85$,
-$[-69.8,-4.3]$).  We therefore report the diagonal surrogate and exclude Lanczos
-on this instance.  Across both instances the recurring observation is that full
+nominal $95\%$ paired-t interval $[-69.8,-4.3]$).  This rank-sensitivity sweep
+uses only $3$ seeds ($\{0,1,2\}$), so its intervals are wide and several span
+zero; we treat it as a qualitative check.  We therefore report the diagonal
+surrogate and exclude Lanczos on this instance.  Across both instances the
+recurring observation is that full
 curvature is dominated by a cheaper surrogate at matched coverage, but which
 surrogate does so, and by what mechanism, is instance-dependent and not
 identified here.
+
+\section{Future Experimental Protocol (not run)}\label{app:protocol}
+The following benchmarks, baselines, ablations, and metrics are \emph{proposed}
+and have not been run; they are stated so the intended evaluation is concrete and
+aligned with the theory.  They focus on (i)~whether the theorem's assumptions are
+empirically plausible, (ii)~whether full-GGN/Fisher exploration produces
+measurable regret improvements over diagonal and last-layer surrogates, and
+(iii)~the computational cost of CG-based exploration at scale.
 
 \subsection{Benchmarks}
 
@@ -3127,7 +3270,7 @@ problems by treating classes as arms with binary click/no-click reward
 $r_t=\mathbf{1}[a_t=y_t]\in\{0,1\}$.
 Unlike the synthetic benchmark above, this experiment uses a
 \emph{Bernoulli likelihood} with the Fisher/GGN curvature from
-\Cref{sec:expfam-ext}, testing the exponential-family extension in
+\Cref{app:expfam}, testing the exponential-family extension in
 practice (the regret theory does not cover this setting).
 We use a \emph{scaling ladder} of three model sizes:
 (i)~a 2-layer MLP (${\sim}10^4$ params, sanity check),
@@ -3150,25 +3293,38 @@ partial labels---remains future work.
 
 \subsection{Baselines}
 
+We distinguish each baseline's \emph{stated algorithm} from the \emph{benchmark
+implementation} actually run, since several standard methods are implemented here
+with a cheaper practical variant.
 \begin{itemize}[nosep,leftmargin=1.5em]
-\item \textbf{NeuralUCB / Neural-Linear UCB} \citep{zhou2020neural}:
-  last-layer features with diagonal or full last-layer covariance.
-\item \textbf{NeuralTS} \citep{zhang2021neural}: Thompson sampling with
-  diagonal approximation of the full-parameter GGN curvature.
+\item \textbf{NeuralUCB} \citep{zhou2020neural}: the stated algorithm uses
+  full-network neural-gradient features and a \emph{full} gradient Gram matrix.
+  Our benchmark implementation is a practical variant---a last-layer
+  Bayesian-linear UCB on frozen backbone features with a \emph{diagonal}
+  posterior variance---and is labeled ``Diagonal NeuralUCB (last-layer)''; it is
+  \emph{not} the full-network NTK-Gram algorithm of \citet{zhou2020neural}.
+\item \textbf{NeuralLinear} \citep{riquelme2018deep,xu2022shallow}: a learned
+  deep representation with a per-arm \emph{full} Bayesian-linear last layer,
+  explored by UCB (not Thompson sampling in our implementation).
+\item \textbf{NeuralTS} \citep{zhang2021neural}: the stated algorithm uses
+  full-network neural-tangent-gradient features and a full Gram matrix.  Our
+  benchmark implementation diagonalizes the full-parameter GGN and samples
+  Thompson-style from that diagonal posterior; we therefore label it
+  ``Diagonal NeuralTS implementation.''
 \item \textbf{Last-layer Laplace UCB}
   \citep{ritter2018scalable,daxberger2021laplace}:
-  exact Laplace covariance restricted to the last layer, discarding
-  backbone curvature.  This baseline isolates whether the ``full curvature''
-  component of CC-UCB contributes beyond last-layer methods.
-\item \textbf{$\varepsilon$-greedy}: exploration by uniform random action
-  with probability~$\varepsilon^{\mathrm{eg}}_t = c / \sqrt{t}$ (distinct from the
-  CG tolerance $\bar\varepsilon_t$ and the whitened-drift tolerance
-  $\varepsilon_t$ of \Cref{cor:drift-sandwich}).
-\item \textbf{Bootstrapped ensemble}: $M=10$ bootstrap heads
-  \citep{osband2016deep} with shared backbone.
+  a per-arm last-layer Laplace posterior (Bernoulli GGN weight $p(1{-}p)$),
+  discarding backbone curvature.  This baseline isolates whether the
+  full-curvature component of CC-UCB contributes beyond last-layer methods.
+\item \textbf{$\varepsilon$-greedy}: uniform random action with
+  probability~$\varepsilon^{\mathrm{eg}}_t = \min(c/\sqrt{t},1)$ ($c{=}1$),
+  distinct from the CG tolerance $\bar\varepsilon_t$ and the whitened-drift
+  tolerance $\varepsilon_t$ of \Cref{cor:drift-sandwich}.
+\item \textbf{Bootstrapped ensemble}: $M{=}10$ bootstrap heads
+  \citep{osband2016deep} with a shared backbone and Poisson$(1)$ replication.
 \item \textbf{LMC-TS} \citep{xu2022langevin}: Thompson sampling via
-Langevin posterior sampling over all parameters, run at a wall-clock
-budget matched to CC-UCB's CG budget.
+  Langevin posterior sampling over all parameters, run at a wall-clock
+  budget matched to CC-UCB's CG budget.
 \end{itemize}
 
 \subsection{Key Ablations}
@@ -3311,6 +3467,63 @@ induced $\hat\beta_t$ trajectory.
   bounded per-round factor~$\alpha_t$).
 \item Wall-clock cost should scale linearly in~$I$ and~$n$, with the
   per-CVP cost matching a single gradient evaluation.
+\end{enumerate}
+
+\section{Data and Code Availability}\label{app:availability}
+The completed experiments (the constructed linear-Gaussian instance of
+\S\ref{sec:results-constructed} and the UCI covertype case study of
+\S\ref{sec:results-covertype}) are backed by an anonymized research codebase that
+implements the environment $\Sigma(\theta)$ of~\eqref{eq:constructed-sigma}, the
+Gaussian and last-layer curvature operators, the Lanczos surrogate
+of~\eqref{eq:lanczos-surrogate}, and the dense-alpha matched-coverage analysis
+(isotonic projection, target inversion, and the paired Student-t intervals).  The
+code is not attached to this anonymous submission; a de-anonymized release is
+planned.  UCI covertype is public.  All quantities needed to reproduce the
+instance and surrogate are stated in \S\ref{sec:results-constructed}.
+
+\section*{NeurIPS Paper Checklist}
+\emph{The wording below follows the standard NeurIPS checklist; authors should
+reconcile it against the official NeurIPS~2026 checklist macros before
+submission.}
+\begin{enumerate}[leftmargin=1.4em,label=\arabic*.]
+\item \textbf{Claims.} Do the abstract and introduction accurately reflect the
+  paper's contributions and scope? \answerYes{} The abstract and
+  \S\ref{sec:intro} state the theorem is \emph{conditional} on explicit
+  certificates, proved only for Gaussian squared loss, and that full curvature is
+  a reference object, not a claimed-optimal method.
+\item \textbf{Limitations.} \answerYes{} \S\ref{sec:conclusion} (Limitations)
+  lists the open certificate problems and the conditions under which the
+  guarantee is vacuous.
+\item \textbf{Theory: assumptions and proofs.} \answerYes{} Every formal result
+  states its assumptions (\Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer})
+  and is proved in \Cref{app:proof,app:cg,app:cor,app:ggn-approx}.
+\item \textbf{Experimental reproducibility.} \answerPartial{} The instance,
+  surrogate, metric, grids, and seeds are fully specified
+  (\S\ref{sec:results-constructed}--\ref{sec:results-covertype}), but the code is
+  not attached to the anonymous submission (\S\ref{app:availability}); the
+  proposed foundation-model benchmarks are protocols, not run.
+\item \textbf{Open access to data and code.} \answerNo{} Not attached to this
+  anonymous submission; a de-anonymized release is planned
+  (\S\ref{app:availability}).  UCI covertype is public.
+\item \textbf{Experimental settings/details.} \answerYes{}
+  \S\ref{sec:results-constructed}--\ref{sec:results-covertype} give $d$, $\kappa$,
+  $\sigma$, $S$, $b$, arm offsets, damping/bonus grids, seeds, and the
+  matched-coverage procedure.
+\item \textbf{Error bars.} \answerYes{} Paired Student-t intervals over per-seed
+  differences are reported, and \emph{explicitly labeled} nominal and unadjusted
+  for the per-method $\lambda/\alpha$ selection (not post-selection valid).
+\item \textbf{Compute.} \answerPartial{} \S\ref{sec:systems} gives an operation
+  (sample-CVP FLOP) count; no wall-clock benchmark of the GGN primitive is
+  reported.
+\item \textbf{Code of ethics.} \answerYes{}
+\item \textbf{Broader impacts.} \answerNA{} The work is a theoretical/methodological
+  study of exploration in contextual bandits.
+\item \textbf{Safeguards.} \answerNA{}
+\item \textbf{Assets/licenses.} \answerYes{} UCI covertype is cited and public.
+\item \textbf{New assets.} \answerNA{} No new released assets in this submission.
+\item \textbf{Crowdsourcing / human subjects.} \answerNA{}
+\item \textbf{IRB.} \answerNA{}
+\item \textbf{LLM usage.} \answerNA{} No LLMs are a core component of the method.
 \end{enumerate}
 
 \end{document}

@@ -30,6 +30,7 @@ paper/two_pager.pdf
 # Backups
 *.bak
 *.bak-*
+*.presubmit-*
 
 # Python
 __pycache__/
