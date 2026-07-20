@@ -1,38 +1,23 @@
-# LaTeX auxiliary files
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.log
-*.out
-*.synctex.gz
-*.toc
-*.lof
-*.lot
-*.nav
-*.snm
-*.vrb
-*.run.xml
-*-blx.bib
-*.bcf
+# Overleaf synchronization surface: ignore everything except the paper inputs.
+/*
+!/.gitignore
+!/paper/
 
-# Compiled PDFs (rebuild with `make pdf` / `make two_pager`)
-paper/main.pdf
-paper/two_pager.pdf
+# Core manuscript sources.
+/paper/*
+!/paper/main.tex
+!/paper/macros.tex
+!/paper/references.bib
+!/paper/aistats*.sty
+!/paper/aistats*_checklist.tex
+!/paper/figures/
+!/paper/tables/
 
-# Editor junk
-*.swp
-*.swo
-*~
-.DS_Store
+# Only the figure and generated tables referenced by main.tex.
+/paper/figures/*
+!/paper/figures/theory_factor_drift.pdf
 
-# Backups
-*.bak
-*.bak-*
-*.presubmit-*
-
-# Python
-__pycache__/
-*.pyc
-.venv/
+/paper/tables/*
+!/paper/tables/executed_policy_results.tex
+!/paper/tables/linear_bound_ratios.tex
+!/paper/tables/covertype_horizon_results.tex
