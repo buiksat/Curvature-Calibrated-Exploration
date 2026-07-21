@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "name": "autodiff_systems",
+  "description": "Optional-PyTorch actual-autodiff squared-loss GGN systems benchmark; missing runtimes produce explicit not-run artifacts.",
+  "base": {
+    "task": "actual_autodiff_squared_loss_ggn_mlp",
+    "rounds": 1,
+    "architecture": [128, 512, 128, 1],
+    "minimum_parameter_count": 100000,
+    "activation": "tanh",
+    "dtype": "float32",
+    "device": "auto",
+    "history_size": 64,
+    "window_size": 16,
+    "action_count": 8,
+    "damping": 1.0,
+    "noise_variance": 1.0,
+    "cg_max_iterations": 20,
+    "cg_relative_tolerance": 0.0001,
+    "warmup_repetitions": 1,
+    "timing_repetitions": 3,
+    "measurements": [
+      "per_example_ggn_jvp_vjp_seconds",
+      "scalar_cg_seconds",
+      "row_batched_cg_seconds",
+      "diagonal_seconds",
+      "complete_action_scoring_seconds",
+      "peak_host_memory_bytes",
+      "peak_accelerator_memory_bytes",
+      "operator_matvec_count",
+      "sample_cvp_count",
+      "per_action_explicit_relative_residual",
+      "per_action_width_squared_relative_error"
+    ],
+    "output_root": "results/raw/autodiff_systems",
+    "provenance": {"packages": ["torch"]}
+  },
+  "profiles": {
+    "smoke": {
+      "architecture": [8, 16, 1],
+      "minimum_parameter_count": 0,
+      "dtype": "float64",
+      "device": "cpu",
+      "history_size": 6,
+      "window_size": 3,
+      "action_count": 2,
+      "cg_max_iterations": 4,
+      "warmup_repetitions": 0,
+      "timing_repetitions": 1,
+      "seed_sets": {
+        "development": [31],
+        "tuning": [41],
+        "evaluation": [141]
+      }
+    },
+    "full": {
+      "seed_sets": {
+        "development": [31],
+        "tuning": [41, 42, 43],
+        "evaluation": [141, 142, 143]
+      }
+    }
+  }
+}

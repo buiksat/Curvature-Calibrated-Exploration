@@ -1,0 +1,1931 @@
+{
+  "artifact": "results/derived/nonlinear_drift_results.csv",
+  "artifact_sha256": "cd66c2827a20ca17db9f0de50fb5337096cd5919bbb2d62a8066a70ef5a32a0c",
+  "inputs": [
+    {
+      "path": "results/derived/nonlinear_drift_full.json",
+      "sha256": "209e96b30877ca129eeb00c2ae5523919032d29affecc6af6dc1b39d03630912"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/corrected/manifest.jsonl",
+      "sha256": "3f5cabbe5da812786cf04b13f63af337449b8bb33b03883a5962f2e5e3b3f6e1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/corrected/raw.jsonl",
+      "sha256": "f58a894f2613f02785d9c6d6e963c5df4719e4510d323f356c29e366ff701dbc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/corrected/summary.jsonl",
+      "sha256": "3e6fe5ec47db660bc80514fc6c87ad2488b0624f5356394c8b011cd5700f3396"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/original/manifest.jsonl",
+      "sha256": "72db19e6de56b303d0bd1786992ad527420b6b6b1ae7ba826f622ed7eebbf8a0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/original/raw.jsonl",
+      "sha256": "8351ac20f3dc93dd2a3e944aff3654999796157f0021461b985c2718b6ba3ec8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/aggressive/original/summary.jsonl",
+      "sha256": "b9926b59cc76ecd4477c57fffb6dd6cf982edd65bdf793352ae10766cb6bab1e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/corrected/manifest.jsonl",
+      "sha256": "68ca8f78df2dec7f3813c4799ec7367f8e63ec8db0468e771d30c15d649d10a5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/corrected/raw.jsonl",
+      "sha256": "c13392f09bf4653e3c682e6c649ad0c5efb43155d40b98a0224754b36ddb8a87"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/corrected/summary.jsonl",
+      "sha256": "56abc0fb4d429aaf45759751d710c765ac51c839764387b9cc2c9d2179ed1c6e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/original/manifest.jsonl",
+      "sha256": "ac82516b751def6376da7db90314d9cd04b7d300e6b407e9cd6c3dc12684c619"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/original/raw.jsonl",
+      "sha256": "e729c0ccfa312c20b2ff1cc6f3d8be87330c6a3ac5f79d58c7d4237d1b0bd7fa"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/frozen_head/original/summary.jsonl",
+      "sha256": "f465599f04cce153d26d6d372b1dd8843094ca4d36f7adb3e409e75de581bb2f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/corrected/manifest.jsonl",
+      "sha256": "5a4afc998376bd67a4d0bc5cd6bda8ed75e9445d2233805fe84611ad4b9503eb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/corrected/raw.jsonl",
+      "sha256": "373de1df5a25cca68126e50ae36fdd01391207531842de068d329d823d760c56"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/corrected/summary.jsonl",
+      "sha256": "9c603703b6241606240db7aa2c58905a806a737e0f9e7857e0f85dd6ed5aed29"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/original/manifest.jsonl",
+      "sha256": "2e227cdb6e2966d44c48483f7451a821b80f05ed7be5019c352d80cdc9f8b8e6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/original/raw.jsonl",
+      "sha256": "8a7311d83ceac45d0fbedf038d1a41f595428ec343478e83756634b7dd531a8d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/medium/original/summary.jsonl",
+      "sha256": "1a7b639c242ca373ebeb4aac9e74e8a748c102e2e00c19a792993f8f9ce86102"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/corrected/manifest.jsonl",
+      "sha256": "9f369cdf7f807bdfa5db0f974ed158318bc7f889bf668b431aef7a6712867180"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/corrected/raw.jsonl",
+      "sha256": "7844996f620ce595bdb5835317acccfbd3c2bc4e1027ece95ded455a3b2a3cee"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/corrected/summary.jsonl",
+      "sha256": "ae581d6e421c328d885ab3f6404ae1a09ecefb70125e5ac279ef85b00e5e7ad9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/original/manifest.jsonl",
+      "sha256": "eb8e73ec684a05f56ec67cbf4b52f0f8abc7d831b2e58c82a07f142037a9f91e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/original/raw.jsonl",
+      "sha256": "1bd0f6dea00c18fcfbf9096a599446a8b2d601f05e1c4ac1c7935ed3ca8419f6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-110/mild/original/summary.jsonl",
+      "sha256": "53db7d4395113a8d6a2d8b51a0d1e80534e9f3b861c4be0c8f97163a198b7258"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/corrected/manifest.jsonl",
+      "sha256": "9ed5a561bb9580d7104860c3f659be6bed54da3b143157fe1c854dc62e2f6522"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/corrected/raw.jsonl",
+      "sha256": "3a632985887a6d4c6ec4d2adc4de1c370feadc5f7d9c872df4886713d9ed9f83"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/corrected/summary.jsonl",
+      "sha256": "89df77ba230890f1ff16109931c2ce1b95c17d66b85cb8f1cb160d536ed362c3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/original/manifest.jsonl",
+      "sha256": "fa0f023fab6765df520f8d78798d3450d8cbf9ae9fa20f2b672cfdb1cf2e3c6b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/original/raw.jsonl",
+      "sha256": "072e9006a94c20aaf8bb267f3014719982e398bb0583997314b15eaf3d6dec20"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/aggressive/original/summary.jsonl",
+      "sha256": "054336a650adb531c78e925e5ac9ee5bde0fa621a6d3a778efb9d4950e4b9ce5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/corrected/manifest.jsonl",
+      "sha256": "56add76edead3d9626347cfec272faa5bc6c972af54579db326a0b4ac9f1d8ef"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/corrected/raw.jsonl",
+      "sha256": "80393a8a3f07b3c9375b962f27889df58f073b0caeee1e4fcf3b0bdf2552de81"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/corrected/summary.jsonl",
+      "sha256": "c1c12bd0e869647c8f8473c87da68c6427285bc2e1791814f9f3db35ab246cb4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/original/manifest.jsonl",
+      "sha256": "2bf9f8c0dceb1b89a542b95f8f0f2dbe092457f117dbc6a59e11a8ea839d9610"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/original/raw.jsonl",
+      "sha256": "557b98d153bec26dc163ee3a08b70d05b3d751e6cd07363d813747e658ffa9eb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/frozen_head/original/summary.jsonl",
+      "sha256": "891b98bd2cbd9b96f3e94e6509f97a4981a7998adec15563a373443d36f55f6c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/corrected/manifest.jsonl",
+      "sha256": "074005406b3414469cc61fc8cc5768dabf24119201483bd1e0cd26d0426efc95"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/corrected/raw.jsonl",
+      "sha256": "2cc8321469f45bf86ffdb0262cb08bedddb886e90bae520a53605c91bab2b1fa"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/corrected/summary.jsonl",
+      "sha256": "bd7e7d91ad1f4498a5d01bf394df64fa0e58a88343222dd8836a6fbbdbe7a517"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/original/manifest.jsonl",
+      "sha256": "3c0b881bebd85ae34f047f6e69bee48b19fa343509853620248fc362c67166e8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/original/raw.jsonl",
+      "sha256": "7bd668cc0c5edba78341510a35034f8fa0ae0de9e2df887cd0e35a99a2619ba6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/medium/original/summary.jsonl",
+      "sha256": "9680c6f39e7254fbfe6c92b72209fb40a07d1ec46793015311b6a9a6dcec1c50"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/corrected/manifest.jsonl",
+      "sha256": "1036b0e0c5d393a8c34bc763676cc348a0d90b590c1cc3ff15618295c2110073"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/corrected/raw.jsonl",
+      "sha256": "5ed4e3c0b4d35cc18ccdabf0ffd0fd4ce6e5db1d84bbc7a99beb49078ef1d972"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/corrected/summary.jsonl",
+      "sha256": "a2ca6d152dff2496a8b33bdc8b9270efd1c7bbbf59dbdd5c54e7fe6034d81d3b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/original/manifest.jsonl",
+      "sha256": "fdc9a3330ecd3a1a732b63419473641cbb9f31874d3f2052ac93e8675636dfb6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/original/raw.jsonl",
+      "sha256": "6c03b5cdcb694c412c51dbdea4423a7cb0ce893188491ff7dabddd6d602a2826"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-111/mild/original/summary.jsonl",
+      "sha256": "c2cd3338396cca12799bed6771bf31414cce7dbefab194adb161ffdc6a36907a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/corrected/manifest.jsonl",
+      "sha256": "7f98f41d272bba19784462ce5c5784a4e1f3dcde20ea259137b76d789ce34eb6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/corrected/raw.jsonl",
+      "sha256": "de3d729f71ab0720bdf2660b2fc4dc4cccc4db801db406e13b58531564d2d986"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/corrected/summary.jsonl",
+      "sha256": "057ac6d7e74e068d0fce1b1f7618f62bebdde513223f97df4afe21c680d695c5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/original/manifest.jsonl",
+      "sha256": "ee0ce38565e462d4dd2b80850f5a8ce2549f24e0e94813665cc52d7283f41060"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/original/raw.jsonl",
+      "sha256": "cde0b4a931cee5fb559f7c5df4015ba07a70e7f7b09dd44431a91d13e6909be4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/aggressive/original/summary.jsonl",
+      "sha256": "93016482a33dc70a1114487916122bcba7da93fe84043e8bc1564c19a91d7620"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/corrected/manifest.jsonl",
+      "sha256": "f13e524d310f11a21cef03abf3d6b18b81fc081c1e1e13b747e753e6cd143d3a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/corrected/raw.jsonl",
+      "sha256": "4bc168fa5d376a85bddb327c585f7cc847f1b10e5adfcf0309bf622b2c3266d5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/corrected/summary.jsonl",
+      "sha256": "8bf0b77793e241fb9f8b27779b8beec3ec4c79ec22a5fb2dbbc6b9c97109f144"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/original/manifest.jsonl",
+      "sha256": "b5cd569ee2f8daac41e9d260fec4e140cdc1736f171f9424809b45e5a76dfb5a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/original/raw.jsonl",
+      "sha256": "68020fb1ffb715d745ac19559bad0ef7bcfa185efc456a8bbd7e00cd5a7aa970"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/frozen_head/original/summary.jsonl",
+      "sha256": "7339d5b37bacdcd0894d34e662ed0eb5a47903deccccf9598250c6e254b1e850"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/corrected/manifest.jsonl",
+      "sha256": "7a32a14e09f69d1d664cb67a2cb6a1e15e3c9b0271a98bcbdfc0e572e5d1336e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/corrected/raw.jsonl",
+      "sha256": "e25aeee323301960d68fa6e28d6aa43ce48aab3f85542aac6ba16166728ed2b6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/corrected/summary.jsonl",
+      "sha256": "8c87d3e6e747698c2284ac7e5484912043ff2a1c7846940e168a442255f44d1a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/original/manifest.jsonl",
+      "sha256": "90ec24194ace534f43d278415bb3e99b43698b92b56b08447f7b1838e7a7af1b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/original/raw.jsonl",
+      "sha256": "e4adc658ea2f2ab49a15e9498c9ceb995243eb6afb8b11efc492c3cfb71e21e1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/medium/original/summary.jsonl",
+      "sha256": "95a077f8902cabc10635f040b1b73bdbec28ad9615320909cc68802c11989829"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/corrected/manifest.jsonl",
+      "sha256": "995f5b58425d2bac56c67e945cc7ecc63c85ee9ba7d785bc5040613f6b2dff45"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/corrected/raw.jsonl",
+      "sha256": "a7fbb59071011d50d875af2f13b03d99e63d1eb4f9836782628fd4d9656ec3b4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/corrected/summary.jsonl",
+      "sha256": "26dd88e606a2a78cb3cfee6f8bb291c964cfcc7b53b1258ea0cdbb7020c43b8f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/original/manifest.jsonl",
+      "sha256": "de03f3326373c571b746bfabebfae888a3eea9cd42aef0bf123646413a126c71"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/original/raw.jsonl",
+      "sha256": "47df63336d79dd79aba65731a46145690fe864a9beb277917c5415fe9b529b41"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-112/mild/original/summary.jsonl",
+      "sha256": "5b6833914fbaac0e1aa1d6c50c229f1a2be753a1082958ac1dd3ce55a89bcc86"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/corrected/manifest.jsonl",
+      "sha256": "d7859a41b456f3fa4d8431bb4906fd7556335d5ce34a31bf5daceba1af475d79"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/corrected/raw.jsonl",
+      "sha256": "59fe15a33c6845a56bde3f47b0a7f81fbd9d1c8af039456b7126afb153a860e7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/corrected/summary.jsonl",
+      "sha256": "c4d1f51bd80c26ee95ab9b5a4a3fd71674cad659a14bafa527b71ad7d4167476"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/original/manifest.jsonl",
+      "sha256": "095a84207cd550740e4f1cfdbf8f2a2a539142c3d74ce5e4f12fbaf38ea3e947"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/original/raw.jsonl",
+      "sha256": "c23bf13c460b45561771a796354aefff4b286e868b2bbfbcf3873518f5a21df6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/aggressive/original/summary.jsonl",
+      "sha256": "fec674c4d4ca1a263555d152ff5bacc0769f058fc083b2c83c61d6f05835a6d0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/corrected/manifest.jsonl",
+      "sha256": "b49b735f8ff24b72f375b0dca88198121e22d28d97545ba95195157419620088"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/corrected/raw.jsonl",
+      "sha256": "30a71448c3d92df52e12358764b5e6f2dde98b6d8f0facef7151eb140a1a3fa7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/corrected/summary.jsonl",
+      "sha256": "62d8d423c977efacf1cf6ca4198b3b80db044ae122f225b7be82d0b2f1769ec1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/original/manifest.jsonl",
+      "sha256": "494fd6d1ea49d2e21ef886b3f1c1fdba093c5f2487fa3a7852e1b4ad111155c2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/original/raw.jsonl",
+      "sha256": "1b3362dfb43273f8c4649330c4be9a64721af57f0a7c9f2bff5da4c33cb5d738"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/frozen_head/original/summary.jsonl",
+      "sha256": "6eb7f9dca239d36cb34b446fb7078d2e5041bd248edaa0edc7525be94a1e80c7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/corrected/manifest.jsonl",
+      "sha256": "5dde79324a6654667877d93315ac51f6791ba4ee9c029dbb487efdf35471e25a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/corrected/raw.jsonl",
+      "sha256": "cf08d0993732ca751740eff00cbab91698764d61897476fcce78987b1d8e1d1a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/corrected/summary.jsonl",
+      "sha256": "af48c0f92a268d2c23049993701ac486e29de299d1c56c5733920cd714992414"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/original/manifest.jsonl",
+      "sha256": "c1931eca0d10cd32c2c9c4913a719b7fb456fee0b2dc54cdff283384d2cd4a3d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/original/raw.jsonl",
+      "sha256": "9e6b88a32f17b3c39e1d486a49e2860d810983f958864e4158f62b49c02acaef"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/medium/original/summary.jsonl",
+      "sha256": "6f927a848296741eec9ba3e5f6eb502ba2556554d1baf0fbf400e35f689ddc9f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/corrected/manifest.jsonl",
+      "sha256": "891c152dbf5ebe8b499115194675a4837333e0b4213fa16a37af102480d22f16"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/corrected/raw.jsonl",
+      "sha256": "93c2643b4d1a8180626f691fdaf6f55a506743e7dcb2d2f40710694cdcacdc60"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/corrected/summary.jsonl",
+      "sha256": "2596c3e0e601ae26618ce9c134e4c95584141b71bae2c298b74374c88e0421c0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/original/manifest.jsonl",
+      "sha256": "f5f498feae4447f6bd52ffc3457870336cf194988653dffaabaad2a5857995cc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/original/raw.jsonl",
+      "sha256": "0b8e8af009f2d8d65ec2e3e560e76593c95e5414e048521f34cd241a82d46f88"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-113/mild/original/summary.jsonl",
+      "sha256": "57a347796d8d3161bd3fdb07d2be003f3e817327a8ca2b20e610a8626233c9fc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/corrected/manifest.jsonl",
+      "sha256": "6b19984c36eddd5db5bc367f7eec7fa9b58bb03a7993861380cf6a7576dda631"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/corrected/raw.jsonl",
+      "sha256": "8122f8b6e328eeca1e652e22129476fb5f7fef32c276cd709c777403517717bd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/corrected/summary.jsonl",
+      "sha256": "6d048da227e481e852b428a91d3a78aa6ffa6d496c75e3822c3bdfda953ba844"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/original/manifest.jsonl",
+      "sha256": "1d7bd8ce732691a3a56b46e18f9140f1fc45624bc41bd709327c1ee9f8c62322"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/original/raw.jsonl",
+      "sha256": "bd8675a82c8808df03c5f0bcef1cdd36a1d6c608c2e82359b647012758c27fe3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/aggressive/original/summary.jsonl",
+      "sha256": "80676f70f265a0cbc6ba1da1275d6627bab907a01c8977f975a9e15b2efabcae"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/corrected/manifest.jsonl",
+      "sha256": "d0f8045e793c5c22e3b12c6c6c4b594456ea70849ce22150cb1a80b6548fe01f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/corrected/raw.jsonl",
+      "sha256": "8436dc8e5265c389b974e30e34198ff6076727de7695ece164cf44b4c57175c2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/corrected/summary.jsonl",
+      "sha256": "784201dc95bb793a225689ef0da4cb941c41eb6e0da8ee948132652773061a2e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/original/manifest.jsonl",
+      "sha256": "78f86d20943fb9473f9b216e5514d18dc875283b8734a5b81a6e6817f349c852"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/original/raw.jsonl",
+      "sha256": "bc27e2da8582771c06062675e6c1b93a286a487690fcdb2a43c90d469aab4743"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/frozen_head/original/summary.jsonl",
+      "sha256": "e5054993f60713f2f80c680b15045b0ec55074f8a9cd8fecd86f9bd1ee9a8788"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/corrected/manifest.jsonl",
+      "sha256": "fb1879cca7d292b8679acc3620346132ce59531e9836c923e1e9588928cc4dec"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/corrected/raw.jsonl",
+      "sha256": "60c8de6f809a538a876753286423a06f9cca9567c09714058e2b3e2da7474188"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/corrected/summary.jsonl",
+      "sha256": "8f93cd5cadada53b4ecfd408f66bcbe696d6d925c920f16b283f19332ee321a5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/original/manifest.jsonl",
+      "sha256": "f997fc01b0c00ede8ba344e8ab35e36ee629af08055ba3e2b21b4bec630e16bd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/original/raw.jsonl",
+      "sha256": "95b4252f99ab6563d4199914bc4316d431fd728be15b97d6c0e859cc18443958"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/medium/original/summary.jsonl",
+      "sha256": "79e93707f4fe46f898255e64c149534382f280b54286f9cbe6ecc04636a6b727"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/corrected/manifest.jsonl",
+      "sha256": "0a3e39dafb41fbcf54966a738984ccda95ed95b80111e720ac6fa57f8819717e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/corrected/raw.jsonl",
+      "sha256": "0bfd4ea3fb46d8dba9c80981fcd8e73516b5e7f3d55288e4e2c48d603cfe783e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/corrected/summary.jsonl",
+      "sha256": "4c18e766276c522eaa31faa07448e882cdaf426028aba4ac8ef8fae88c6ffc36"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/original/manifest.jsonl",
+      "sha256": "3008d6f8e8724a2fb72cf454ed322fb9fb1cc0c7fed6ef414ac433dec95bb800"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/original/raw.jsonl",
+      "sha256": "b122cf29aa31266f2cfe0019bd23e8ad508a4915981e1fa3eab5be6e41c2c281"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-114/mild/original/summary.jsonl",
+      "sha256": "00c27d05c4ba4a6c9222e8a7afc6266fbd54d07fbdd1690ac7dc0f9b31ca8fed"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/corrected/manifest.jsonl",
+      "sha256": "920f0fed04ae43212a08051cced517d6ff34159e1fab4e0ac93f1379fb97b76f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/corrected/raw.jsonl",
+      "sha256": "749c244d5b7afe25902030ecdfd95207a7b2c3514b9bc9fbb025453b9c5f4cf8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/corrected/summary.jsonl",
+      "sha256": "ab975b6368ec9cb2b507e5fb6733c0881dffac1771f617bdd69129ae0df3fbe0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/original/manifest.jsonl",
+      "sha256": "23e1e883a69fe449de3e32793d6af9f965f194a3a1af7a131570bc12b5f0f07c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/original/raw.jsonl",
+      "sha256": "5c1151fd8513ac95ee0cd56144fbc05d01a7575cee5d3987c40b65101b966c53"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/aggressive/original/summary.jsonl",
+      "sha256": "b33f30600d1490235ff4991efb3fb60d7132974b4e55413acc4a86bc473b8a5f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/corrected/manifest.jsonl",
+      "sha256": "d273f1999d3f28a5cf6708b5d86d7a15aa532c0284b570a6a05663a7e0d242b7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/corrected/raw.jsonl",
+      "sha256": "7509c942b7777e79730dc612f11ca5d68c7e2e5ae69c1d836bb323fff378514e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/corrected/summary.jsonl",
+      "sha256": "112f5ef8b33bed1326266b850b54102801f6d5ea1f90e307e14e17d15cb8ffcb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/original/manifest.jsonl",
+      "sha256": "43aad9814c3b2f81ff03f2a7a9d63b5b73b4743a499750a7312ade15a9574c6e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/original/raw.jsonl",
+      "sha256": "d591c4b2c5ae03cb2394e8ec46bcec36353540b9e7855c64307d885851378679"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/frozen_head/original/summary.jsonl",
+      "sha256": "488d7b5a46b0ef097cdba6e5e9bf562075b8b8106552bddd3f79b1d0ed43899d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/corrected/manifest.jsonl",
+      "sha256": "c3c8d026e7cb436b3d016ea88ecddb8e589e56ac4246e2fe841f4ea7fb3a3c04"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/corrected/raw.jsonl",
+      "sha256": "7f9b7980e0a2c8b977f4b961bd0618defbae1636a3db46aaf9a69f490d7b73a1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/corrected/summary.jsonl",
+      "sha256": "6d26266ccec5f5d58a1e277b3ed4886276713d22a262fe98ef5ed97ae9fb3e96"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/original/manifest.jsonl",
+      "sha256": "a9513b64c8783075bf52c660239118d57e3fc7f1f911342384f4b15abb63b9fa"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/original/raw.jsonl",
+      "sha256": "42ab5e4cffd8ab8b6f25705e799c37b87811ceb0f9543a4de3ddeb6c9375333e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/medium/original/summary.jsonl",
+      "sha256": "70025cef69a14f2b3b59fb123669d3f35ad592e56510650d9e7ad59a509e79ce"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/corrected/manifest.jsonl",
+      "sha256": "e2e5380f1b202595fd81010876ab6545c554d22722da9b4d3314ece2a179bc48"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/corrected/raw.jsonl",
+      "sha256": "64ad356db5d5226cf902e9bc809c0499f07d2988f96e4ee5554a5c6247f1335f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/corrected/summary.jsonl",
+      "sha256": "4d7c4d29fc5ea19cb8ae2a1c5779b09abba2c7ccbaa47040e112f69d8783cf57"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/original/manifest.jsonl",
+      "sha256": "10ddb4f5fae9cb386d9cd3f21831ca735c7d89a778b028ecd1d203eee9b90104"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/original/raw.jsonl",
+      "sha256": "982eeb6802c8b67a115554ba0e1597837e533005e6c0ac27a8e3c791f3c002dc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-115/mild/original/summary.jsonl",
+      "sha256": "c2f3f229fc43310d8ae9f2885af085cb189d1956e0d1d4d2dc32f4cdd13f5fe7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/corrected/manifest.jsonl",
+      "sha256": "db1d4f09fdedfef7b7d2fac92682cc65af5573989b55e372c9b3adf0bf8d4a48"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/corrected/raw.jsonl",
+      "sha256": "c2efb7314baa90cd4021c5c40917d196af627ec430480e56f0ca4d032ebf5f94"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/corrected/summary.jsonl",
+      "sha256": "17661837386ddad90e43a95ad61a53f0bff71a8e08f49fe22806d56fd6f9d794"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/original/manifest.jsonl",
+      "sha256": "d7f58c74d399b91bb91c2f311db131608ce1c17a200128a7e13eee6dcdde6b3a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/original/raw.jsonl",
+      "sha256": "877999a542c5ddb0ad613c480ce8b745339bee618e10b4007e537e2400163150"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/aggressive/original/summary.jsonl",
+      "sha256": "7bdea02b2a5ded66fec6db960b27b9e64d4804d6239e4580f769e5e4ca5ef2d6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/corrected/manifest.jsonl",
+      "sha256": "eca60b61482f8082f14212c545c75dc47cff2163dc7cd219e74e41e52a3e8961"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/corrected/raw.jsonl",
+      "sha256": "c329241c4b072586a9b862c3da1a7e7e4ec33c3f4c82355d8c5a52903580f3d7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/corrected/summary.jsonl",
+      "sha256": "dbf9d6cdf2e3002a1a4c679e0537ef8a876233d0783a768d0423edb8b79d1c20"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/original/manifest.jsonl",
+      "sha256": "72903ee8c09a8237bb122bf16d6e20ba61c9755a9b00a1dc7b37b09645937ec9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/original/raw.jsonl",
+      "sha256": "65785ab5ae475698eb6c1c579d707ce0ec06a135836b0bc8d3357451a0159ce4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/frozen_head/original/summary.jsonl",
+      "sha256": "66ea273d78b8b61b2be75631b3c7a525e168cd895fd207e62d4419659e7f4c50"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/corrected/manifest.jsonl",
+      "sha256": "f3dd8102289dae3e195e510859db22046377732450f60860ef59e385fddb2142"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/corrected/raw.jsonl",
+      "sha256": "846320f86e61bb98b8d78346cdbf302ee70fa7fbb3e6bd9fe237a06ee4949156"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/corrected/summary.jsonl",
+      "sha256": "1a244dcb277463dcf588b7fb5af4263a5248d6b88d8e8e4d670e1aef840c7df2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/original/manifest.jsonl",
+      "sha256": "5d933c3eb1bdc7bc5bec6cf92c220039acc6fd19ae79ef9daa7040962e443975"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/original/raw.jsonl",
+      "sha256": "cf38149bb9af25cd62bbd38d9ab7d24701c2437cc15f2ca3317d356a2e381abb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/medium/original/summary.jsonl",
+      "sha256": "5f25ae6602df02458dd6af59778f8d33bc818a7c2efde3e5aef8899648f3b060"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/corrected/manifest.jsonl",
+      "sha256": "6df647c40d5be888d7655d8876c123adcc7f2bdc20b8035a378bcc70a0f85a08"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/corrected/raw.jsonl",
+      "sha256": "12a8f2f097fb11b22a5de65637e2f9ea7c0eb08e2d89feb552e95a46d24273ab"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/corrected/summary.jsonl",
+      "sha256": "5b2ec4f1eb688601b6d8f4de90cdc191611a08c857d8a8fc3f6e08059c2331fb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/original/manifest.jsonl",
+      "sha256": "8a0947fec067bcb8d31dfb31c5dfbeea0e712651105ca04a1784bcfeb0189bce"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/original/raw.jsonl",
+      "sha256": "7d2a0c3ea71d89937a2e62355ee3d90f2432d7691be5d47a49ef751143235182"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-116/mild/original/summary.jsonl",
+      "sha256": "50cfeba926e1dcb0062f5a84d136dc2eae79301e40193d4f1ee170234a98bc1b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/corrected/manifest.jsonl",
+      "sha256": "2b26cbb79ef451bc50f55523272f4ac723185c4cb3794253715d17d8e26cb060"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/corrected/raw.jsonl",
+      "sha256": "450bc829d45abe63873379bb5cbece1911f581a5c04a1cdc2125ecdc25882f01"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/corrected/summary.jsonl",
+      "sha256": "fb4610b48fff6ed9f9fe5ae3772116b989658dd172b4d15f891b81e9957a5b35"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/original/manifest.jsonl",
+      "sha256": "08f463824d8993e5cf46bee59019d8262b852d81a1a7aad3db0d40b642d7fa65"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/original/raw.jsonl",
+      "sha256": "bffea8c3e55c8b4032de72dec383db26867eceab43bb017aaecbd30e89908326"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/aggressive/original/summary.jsonl",
+      "sha256": "86b0e1645012d5e8f6bf62c9c680a6d8ae13c3aa5fff8ca66a1803afe70039c8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/corrected/manifest.jsonl",
+      "sha256": "f3cfb8e16a2810a641029a0da85ad0336b966ce8d04d37f5d14745921273feda"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/corrected/raw.jsonl",
+      "sha256": "a78b08b4f7a6ac0c278faf08de823b46abc936602344685733ca2af2279d1438"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/corrected/summary.jsonl",
+      "sha256": "da10331d2a5b960d2d1c141fae9e4f26dd43705dc10b670d1302a4a80d73be63"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/original/manifest.jsonl",
+      "sha256": "4087a7388a2697437263706d53592ee305452b567c971c9dfd7d6419927750bb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/original/raw.jsonl",
+      "sha256": "9de2ad14ee279f940de786beed70f893d176aecb4fc4f24eeeff4ea8967043d1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/frozen_head/original/summary.jsonl",
+      "sha256": "4a78e82474b3e5386d2fca5ad9fcaeae8e12c8521141ad04f9c4191ae06d605b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/corrected/manifest.jsonl",
+      "sha256": "16b40c98e1bd0eaa21d0f0fd0936a31f3653dc58c8916395d489532a55121be0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/corrected/raw.jsonl",
+      "sha256": "6582bb0e849ebf531b2682b61fb5faa86840a31ab36e3f99d3459504393d24df"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/corrected/summary.jsonl",
+      "sha256": "f0cb7c0b5bc6aafdfacbe5ebc6ef465b6ac686ef3307db2165d28d0228f07014"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/original/manifest.jsonl",
+      "sha256": "781cc7e45ac57a6b1cabab91f6f4a03860452be330bfb73c7e0741a353f82b69"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/original/raw.jsonl",
+      "sha256": "11af3ed76a9d70f483d2697b26dca2e9382ec5e83c75e82481f69cd7278b7bde"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/medium/original/summary.jsonl",
+      "sha256": "14f6b2b5cf0e58ccca3430d040b91e52f700fd9fc49328c0dc06a09f5340ea73"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/corrected/manifest.jsonl",
+      "sha256": "f86ab310709fc0e04e0054e3b7efb4a6473d27b1941bd6e881667c3179256835"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/corrected/raw.jsonl",
+      "sha256": "0a2d595086434bfe33a6399f03d02d0e8da2ae686ae2aa12d00f6c6288895053"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/corrected/summary.jsonl",
+      "sha256": "30330e8fdcaf86a65568bede89bc9a7e630c953b82577c6c06cd502228349ddf"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/original/manifest.jsonl",
+      "sha256": "5ae5992364387525339d6c1543c6770d1f9b0d2429875cb323efe0c5eea3e51f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/original/raw.jsonl",
+      "sha256": "db25a01caf78447ba9345c23e3d796d3d74ab0378d4c2ca3722a4fa8021df73e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-117/mild/original/summary.jsonl",
+      "sha256": "b733a5aeb58fb44794eb80a20619de147cdcc47bf7f10a23bf0bab9ecebdae76"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/corrected/manifest.jsonl",
+      "sha256": "831e5b51e64ccb8fa2742baf2a2376a911e5cbb070170d6a070e0e44afa17364"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/corrected/raw.jsonl",
+      "sha256": "fbcfd2ab0ef116468898e3f073e0f605be077f3a44f092c8b4ba700bb50c544c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/corrected/summary.jsonl",
+      "sha256": "035538729846c57746bb89cba9b8ca87195e32da8b9e718b24ec5054c1f0a363"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/original/manifest.jsonl",
+      "sha256": "54d3c4ea790dfbe7a44e4ecf23cdb3ddd311d8321e727e4ac308bbcb46ae6f5c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/original/raw.jsonl",
+      "sha256": "2c9c6d741249026c701505cb25cb12861fb6ddbc1b0261bb899ad119fe8c48e0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/aggressive/original/summary.jsonl",
+      "sha256": "4c431ad5aedde99f872632036f25d1cec7fe8706af9d3c71d36edb5ecf5ce756"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/corrected/manifest.jsonl",
+      "sha256": "e50789001088e36a7dfd267a345d1cb5ddda49a76013070114d90be4fcf98dbf"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/corrected/raw.jsonl",
+      "sha256": "547d784d1864cc13aabed2585632e4e7b18ca0d25e0b21d22525eb574bb297fc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/corrected/summary.jsonl",
+      "sha256": "91a7815b1f3b966c3ce213f17ce19f98d7786011aa988a0e5c8c93c1bbbd6578"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/original/manifest.jsonl",
+      "sha256": "e24b5987bef8a097d20528092d7b220a48e9ac5135a743336271e6968cec5b28"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/original/raw.jsonl",
+      "sha256": "aff25cd07c628a80d7407cbbfdd10ea612fbbab537c9200579e2f09e74478562"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/frozen_head/original/summary.jsonl",
+      "sha256": "362241391c3cf8968bd33e0093208ecad06ecbc7eec6c71037d58829cbe514ae"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/corrected/manifest.jsonl",
+      "sha256": "275367003f3248642d17f2d989b266d461d7d0e6ff333ed96729ddd9ab921cbd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/corrected/raw.jsonl",
+      "sha256": "5a4846181300ed69874bb236c59abfdc9b658f2c5439593bfa5a6faac029f0a1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/corrected/summary.jsonl",
+      "sha256": "23c1721d3fcf45c621d89c1714db9b28776c549182147ea9d326141039afd3e0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/original/manifest.jsonl",
+      "sha256": "9c894a5df232aae3cdb2281c6ce88e93d786276ded816d3f8845c41dbce42272"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/original/raw.jsonl",
+      "sha256": "5622b1f5545f1400c2492861d0bda2be7b3c9086fbc144a503a9760fa7b16f88"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/medium/original/summary.jsonl",
+      "sha256": "c5f2d67cbe1dc54a4c319476a6064362114412ba066b06fa622f728e962ff08a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/corrected/manifest.jsonl",
+      "sha256": "6b760fdeb6a54986cbec86ce1416dc5b41025c6b35a7350bf4a7c3dcc31add5c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/corrected/raw.jsonl",
+      "sha256": "8d3f8fa076bd97e0d95059b706277cad02fd82de7214d3ec9b0d779c86218d04"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/corrected/summary.jsonl",
+      "sha256": "c14ef4be86943c4096be14ea9218cfbe24b9369c3a17afd446ab15057758232d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/original/manifest.jsonl",
+      "sha256": "b6f7fc05e7ffeb01f59734462ec99c4f48110f66000b9f5a675b032bea039608"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/original/raw.jsonl",
+      "sha256": "6f9d9a310a63d8be7d2269ed02d47a93b58d0b92942c2180d8d136ffa02868f9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-118/mild/original/summary.jsonl",
+      "sha256": "f875418c81358877177f70d069e635904839a625f6745f2a5fb0ad073f692c24"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/corrected/manifest.jsonl",
+      "sha256": "2f0a994e660536d0d541455855407570d52691c6dbe7ebcfd395ead98448f8a1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/corrected/raw.jsonl",
+      "sha256": "53c071f4112356e83cff02bfdd862f4374f67c0cf16a3891c6c36890e763c66d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/corrected/summary.jsonl",
+      "sha256": "4382f9ea68381c8086e2760ffbb0b5aae8465640aa8c9b150b9203b6070707c9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/original/manifest.jsonl",
+      "sha256": "e60b837d0f70500a0edc0478e37e19fac27638052fbcc65e2a21b1c2e93a38b6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/original/raw.jsonl",
+      "sha256": "915ae6564fa9e90ace9036e09e087b7263c4b9ab0f9d98e3d03edebea1d258cc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/aggressive/original/summary.jsonl",
+      "sha256": "209b96caae7d8a6393fa4629e2b230de4a23eb82344eb296ef3c5e6d8c72827b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/corrected/manifest.jsonl",
+      "sha256": "9bae29d90e4509a52c4fa91d1e1c1bb90fe14ae78d5c5e7e73c6acbea9a96c11"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/corrected/raw.jsonl",
+      "sha256": "8d40d932f3be69ba76230371171e3e6c44e0f49515b0ab003c83019b847bfab0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/corrected/summary.jsonl",
+      "sha256": "04beb0ec802df64124dfd951b1e3a399031ed5a87b159084b88040e40c6e7c91"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/original/manifest.jsonl",
+      "sha256": "89288aae5fb9d66e7928fc84338a4b51560cd854fbc0563cafe7313ef8f4c839"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/original/raw.jsonl",
+      "sha256": "c0444c029d8761584ccdb26a96d9b66d64b80f63735954c046e68ead27768b36"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/frozen_head/original/summary.jsonl",
+      "sha256": "025b7c918ed06a547b008b260d1410a54d16861dff40d969cc54b4f11f59fba8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/corrected/manifest.jsonl",
+      "sha256": "4a2f63672cb70ae55e07bcb42543350d0c41994417d65ce60007a3602f2a7e2d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/corrected/raw.jsonl",
+      "sha256": "8772b68582f1c9e8ca51ae18f5b79d9dd264c408d0f4d3b73f9e907f7d0c58ba"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/corrected/summary.jsonl",
+      "sha256": "b85d8bb8be2813244f27c79eee0fca5a2bfb660937cac9307e8ed6788d408deb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/original/manifest.jsonl",
+      "sha256": "4edf1899cc903667249e38ec9d78da81422afe8bbe72764fda423fff0b858cc4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/original/raw.jsonl",
+      "sha256": "1fb23e96c9e045c4a7b186a0a204884baab1e8132310189804e04eb2ca937e9c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/medium/original/summary.jsonl",
+      "sha256": "80466ad58a3682f88f6f68ef325a992b63f564d614cc6317e69638f7cc311d76"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/corrected/manifest.jsonl",
+      "sha256": "b0f825c8aec7c40c6a0fe428e4e6168a95491f573208f845f8990865d663f96f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/corrected/raw.jsonl",
+      "sha256": "1fc3eb503cc121fdd5b44ae85a72e366672c75e023e95eafdc37013e87db34a1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/corrected/summary.jsonl",
+      "sha256": "773b7a69d70283408e88387616daf8c657519237da5c0a65989d5b9b88e12af5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/original/manifest.jsonl",
+      "sha256": "9f9e8616c2c161eddd74f82a5fd61746f861d0595edb96c9a620d3d7ec6e0c22"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/original/raw.jsonl",
+      "sha256": "d1be74af81f63c9a09b02f1445e372bb2f51a886df308e89129095e0fe1794b6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-119/mild/original/summary.jsonl",
+      "sha256": "b42e1689d4bf72c075ef99abd9b62da7f69596bb7d5c3199e15878016fac15a3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/corrected/manifest.jsonl",
+      "sha256": "e2593d5911ed3503d0ba8e3043ade0c6f17257d6586f47b964ea54adf1495a1a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/corrected/raw.jsonl",
+      "sha256": "f0539c6a76987d2f730904c791d140f2a87dadcdc94e69b32ddae26b3490d576"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/corrected/summary.jsonl",
+      "sha256": "77e99e4ab99275573c62d807e4fdc06a9f3192a8fbd04a6d3be2b298fde7297c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/original/manifest.jsonl",
+      "sha256": "0e06455321dd0b32b56002d5dce546a67671d9382b4b5d647064ba112c2be300"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/original/raw.jsonl",
+      "sha256": "7b67e887926c3138d398169cc60156763517f266c542f145fcd4bcd594af9908"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/aggressive/original/summary.jsonl",
+      "sha256": "3d2484d18ed22cc7476e06f12d2b5bc5be59be335992ddb5b01515b6414308f7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/corrected/manifest.jsonl",
+      "sha256": "2094eaf3b5740fc1787c7663daaf4d851f9699b83b2d50151d3e953136eb9efe"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/corrected/raw.jsonl",
+      "sha256": "0bd26784bff0262d8c1502723d21dde78d193d53e5d0c6d9c09f917f7393aeb6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/corrected/summary.jsonl",
+      "sha256": "75070b16755acaaa8f07a09c0ee7e431f5beb64dfa677b70601a312f1203731b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/original/manifest.jsonl",
+      "sha256": "e98c74734ce06be539961ecbd4f7c26feaece4b5da2fc5b81d39020356bd10a2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/original/raw.jsonl",
+      "sha256": "c8823a26c1ec2f5ba24eb61a7cce3cfff553f05b456e93f42b60cbd3b897d15c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/frozen_head/original/summary.jsonl",
+      "sha256": "342c97eb371e668ad306ea317bd08ed5bf05a1f1d5a6df2d4ecce88d578851f3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/corrected/manifest.jsonl",
+      "sha256": "0046df71a38a4fa3cae2362097f7d73cd37d46c22e4d3b52a6ce7d1c5951c265"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/corrected/raw.jsonl",
+      "sha256": "c90532bf5f7759f62a9b435737899faa1526b0e888743d550f303a5a825ef968"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/corrected/summary.jsonl",
+      "sha256": "f5ee89784517f53a4c74541d70def06d57b2f5667b76b890e324cd434c8b7a86"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/original/manifest.jsonl",
+      "sha256": "17acfaa6f35ab581d1c341069e4de42f7fb18bf8d14dee4b8245588d6738be4a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/original/raw.jsonl",
+      "sha256": "ba1856f521d237ec1de16a6bf402bf8e628314fe223f79bba4717b9bd0036b6c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/medium/original/summary.jsonl",
+      "sha256": "58b3052bc376197f7e5ad9e810b7d7654133f036e4b8445f0ac6b311076a9350"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/corrected/manifest.jsonl",
+      "sha256": "cc3f2e3cac0484c12814b3d2aa78193efc5bfeb8141ada7ff82e7d9d6ccf6fe9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/corrected/raw.jsonl",
+      "sha256": "52e846415bffa5c5401f258b27774a776f3e3d3ce339698aeafc34350ff593c1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/corrected/summary.jsonl",
+      "sha256": "5ba475c9a73d1bed01f73c2f789347814820517a180b290f49ee908becfda3bf"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/original/manifest.jsonl",
+      "sha256": "8932d334338124f3662e615968650830656e60bcf1dc70b117abc40c47a08c42"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/original/raw.jsonl",
+      "sha256": "d62324fb32ba0496bd90a96624ac251df2fdfd6d7a8e2110754742eb52d941e1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-120/mild/original/summary.jsonl",
+      "sha256": "768aab19e47b8c26478b35d39ef189037861109996994132035098077a98bb47"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/corrected/manifest.jsonl",
+      "sha256": "8a580bf484684e3bf23352f8585c23cb2bdac4a693020aed8e5d9575cdb70d51"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/corrected/raw.jsonl",
+      "sha256": "901f2366e73cc5a27240caa8464e78e01fd25b156038fe99b7fafbf264b4470d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/corrected/summary.jsonl",
+      "sha256": "d983db1bb28e74f3621db0f6f16de8cf57c059fca5b10063accf7d14d14c54a2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/original/manifest.jsonl",
+      "sha256": "27facd2eea9b953856f6654b2399fc7248e4b4940b3e5cd13e377b8a53d7f842"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/original/raw.jsonl",
+      "sha256": "4159f67cdab66cdfe08f1c8ba1edf5da1d0c558484f5c8afd9115fd1a836a5cb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/aggressive/original/summary.jsonl",
+      "sha256": "4a719cd1ff7584fa45aea069cfe44ca5c904e2f34e9ed7ec9335e35b6225d175"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/corrected/manifest.jsonl",
+      "sha256": "3b8e6211a86d4fa42e6e1deb5d33acfb56bc8045d56dea748c817d9a61552c14"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/corrected/raw.jsonl",
+      "sha256": "bf9270141d2fb63dc27b059f360958df6285166a3cf1addd9968533f55b41c3d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/corrected/summary.jsonl",
+      "sha256": "1ea80582b6bc994555f18d095e1914908068bdd67653cafa501b46d59c39269e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/original/manifest.jsonl",
+      "sha256": "4d82d5eb0b919664b25ddc5a31ca894aa9339d1136d6e5bea4546ce80b536e59"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/original/raw.jsonl",
+      "sha256": "52f0a184cc4531affa5303c005c54cd5f1230383bd0a58f7e6123ff37c9b5857"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/frozen_head/original/summary.jsonl",
+      "sha256": "f9ecd43c33746aa469390c1901eefd752b5756a4d7878c3cda695e320c21b680"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/corrected/manifest.jsonl",
+      "sha256": "823f94f528ffb1ee9feeeb449c438472158d1e6e19d5b88585d2fa38865891cb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/corrected/raw.jsonl",
+      "sha256": "92fe1d01ecad6c8f054f3277acd1f151cc35a603fdf4fdf353deee34f4bbed57"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/corrected/summary.jsonl",
+      "sha256": "b53fb0f1e03f0b35639d9d7904182374f63fb943de7acd278b1d1dfa663b36e9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/original/manifest.jsonl",
+      "sha256": "c2fd2f12130ea304d68ab64ae4e5f2c9a9ea278515978a7253fb159148f13b43"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/original/raw.jsonl",
+      "sha256": "0dbee0203a269ee378105402d5a7fe80db8542529bb4cf50f9f9b8af805a9538"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/medium/original/summary.jsonl",
+      "sha256": "151d9dd6d937e38c4ea8d002aea11af361dfcf3f9be60e608494ec30a5486ef6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/corrected/manifest.jsonl",
+      "sha256": "513ddc8103dd05a69449a71c10570e731da64f2556b12735c0e952f60488cd19"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/corrected/raw.jsonl",
+      "sha256": "79d5018676b47b357ea797a12910fc95310806d6abf4a603969753682bd24258"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/corrected/summary.jsonl",
+      "sha256": "60a35ba5f796953ab72b52d224784dcc170d2de51efb1b8e8140f1e648ec3218"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/original/manifest.jsonl",
+      "sha256": "0a72caf8f9965591d12c72e37883e5c308c5a8aec89e2f0b64b17067d107bc40"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/original/raw.jsonl",
+      "sha256": "2416371d6c15c4825a856a285128d3fe6ca06be45d5030c6c5c696c4dbf270fb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-121/mild/original/summary.jsonl",
+      "sha256": "32bcf957fd1c71c9c7f3b1a09a41cee7256e9d778c6bcd57519efeb7dea9abd4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/corrected/manifest.jsonl",
+      "sha256": "0173141168b339a1af8b2d9bc03f665b85f59797f226d51e1a231749e62cb155"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/corrected/raw.jsonl",
+      "sha256": "0678e9f81ce7fb3dd6eeac634d575bc0bce24bcf2d099aae332574a5e9e387a1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/corrected/summary.jsonl",
+      "sha256": "1f36dcf883fe5e65c9c0f31d0b62504de7ae516c72e7d5fed1828537fea2ab09"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/original/manifest.jsonl",
+      "sha256": "0fc1da98f20ae892a8f92bc8c8755fd902bc76510a5c33fea78e0db799fcf03e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/original/raw.jsonl",
+      "sha256": "2cf8e5c8580ca12e2b752b7eaa2de801aa297d1202b09545dcd446f861891b0e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/aggressive/original/summary.jsonl",
+      "sha256": "4f862c8ebd5238a45a61cb0ee9ba9778349bb3dd767cf95bce00c40ca5b56455"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/corrected/manifest.jsonl",
+      "sha256": "b813b117d05375b3f2cce75a394a6d3b3019bb28914f57b93c1c2c030deae7b8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/corrected/raw.jsonl",
+      "sha256": "cf918fb43f0e488199627c5590341a9136d2e187d4ee72ec5576ca3dad68d914"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/corrected/summary.jsonl",
+      "sha256": "4a6d664d87a00a3be81b8945089610d47b6c3503475659578257231449a84ddb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/original/manifest.jsonl",
+      "sha256": "39b85b2fe274c0d1c8e8a058a5605234497cc01135cecd4e28bec9ea8cdccae7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/original/raw.jsonl",
+      "sha256": "945a78d07c60aeb1d9996f1f28193f81c425c404dc86db12ca85208285442324"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/frozen_head/original/summary.jsonl",
+      "sha256": "a7466ab176295ce381f3da0ff3e030e9a96d80e4a6dcb607f1691a02a668aa90"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/corrected/manifest.jsonl",
+      "sha256": "03b017caa1963b77fb143579841d529d1f8a12cf1500ce120e91381b92a6351d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/corrected/raw.jsonl",
+      "sha256": "bd76e9c29e562a4ff1a1a2425bed837ef6304d38cd6023ea6f1aab503516cdf7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/corrected/summary.jsonl",
+      "sha256": "850d988886d1296ce4e72944db3bbc2fca6092dec4dc711896c9932a1aeea986"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/original/manifest.jsonl",
+      "sha256": "c197691be1ba91b98f1f6787b2e4ad12257c15e3dea7504579eba0bfde4ac707"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/original/raw.jsonl",
+      "sha256": "aadb2a3aa5367cc072384394f81dc3b8b40b80fdd2bd94f9fc16d2c687751e0d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/medium/original/summary.jsonl",
+      "sha256": "a610c43acea4c2b65b7e2a2ac3a8527ffde727e6b434f5a658875324a0fc7a14"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/corrected/manifest.jsonl",
+      "sha256": "7857c467ab79e2839b21410acb932b5d834d7e5a61691ddbea0187f75391d6e0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/corrected/raw.jsonl",
+      "sha256": "84f60392495f6c28ec5954168a99cf07d8057c155015de8ed57dc73141f7c648"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/corrected/summary.jsonl",
+      "sha256": "2439db3dc7d8ff7c3de54d538b540f90379322b1ece21ec6b4b8b6329c0270bd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/original/manifest.jsonl",
+      "sha256": "703877445fde903771d25499bb836db7fbc65e1d395746e5b5f6080fc7df52d6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/original/raw.jsonl",
+      "sha256": "cbea6a6f6d7d993d0701de6279983db1ff07c637828e85b79d667d3a5f0fc8fe"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-122/mild/original/summary.jsonl",
+      "sha256": "858a2b3045dbeeb7d69e6b770da016c0e502c2f08c42b985f8d5fd644f916d56"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/corrected/manifest.jsonl",
+      "sha256": "3cc1826e1883b30d9c5f6063e900f352cfb1816ec68afdf010114fcbaa1f3f05"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/corrected/raw.jsonl",
+      "sha256": "c54e0f629b4e6d850ef075344a973be321c2c60d954c775c18189451022f14a7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/corrected/summary.jsonl",
+      "sha256": "f8944c2af786828e1939871a876227e552d37fbbe38d21880572157ec445baa0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/original/manifest.jsonl",
+      "sha256": "022f1b3b702205512125b0a4a3b9f3e479f3258e322f6dd328a70a8a8ab2de6e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/original/raw.jsonl",
+      "sha256": "54d70a0ae481a9b0dfc06cdfcdb21a55eb348d781318eacacc7d0b2df75ad20a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/aggressive/original/summary.jsonl",
+      "sha256": "b23599996fd072458c1a88bc9a736fcfbb3c777561c9b5ffd60c8033d487ce33"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/corrected/manifest.jsonl",
+      "sha256": "e5db01ba5a7bc4ddd4b153a6e6e2e5305b5b8ee079628f67a7c93ad9e9535e03"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/corrected/raw.jsonl",
+      "sha256": "2ea102e9429f0932eb25c6cc452e2286bfb5383766c3b71c589ef91ec88e0020"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/corrected/summary.jsonl",
+      "sha256": "199d00e818df3988b398ee9329bf08c95d317ee3f449d043423b20303ce86632"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/original/manifest.jsonl",
+      "sha256": "612975abf290aef5834ab59de6b22fae5b287f79c67873444d1a20fc48b60d89"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/original/raw.jsonl",
+      "sha256": "5d72f8cd3c6819a8ee072bb18bd76f22a0440db0a4d32447a83fdd20f7e892e1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/frozen_head/original/summary.jsonl",
+      "sha256": "726fb212bc141212489de7d4e978b6a8d439b3027e8ed8a691fe186f14791179"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/corrected/manifest.jsonl",
+      "sha256": "d328b565f71b5f60b74e221d953797a98c7bfe7e3101f414b9acefe0633e7b7b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/corrected/raw.jsonl",
+      "sha256": "fcca444921bbf141b17835591e4d1039a4fb83cc5638d451da0c378bc20b8401"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/corrected/summary.jsonl",
+      "sha256": "6809bcf654f15484c9b475a32b798c7926a27797712879518f793324f44cb347"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/original/manifest.jsonl",
+      "sha256": "a15bc19963e699c6876d19c1b67e3512bfc916038bdfe40ff69f7ba58297cd95"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/original/raw.jsonl",
+      "sha256": "bbb73cdee57a77bac6bb345dc5ebe4d326dba60bad44891d3ac98c060ba82ff2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/medium/original/summary.jsonl",
+      "sha256": "68ce8ceac5f52684960e8b55f8aae23fe26e2d3697e6696374d386d0d2d20a16"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/corrected/manifest.jsonl",
+      "sha256": "a5624e92d4ea01a73b457fc3c459146472c80aa4dd21ea684534704013ed0114"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/corrected/raw.jsonl",
+      "sha256": "5389f472c8e9e75abaf4484e7d771f8a2e729c5f927592debd9a42f0e7a0ea49"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/corrected/summary.jsonl",
+      "sha256": "bc624d2f555f6ddb5071f0536ce7584f8f1d20bd1b47febc3bf11888791184c9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/original/manifest.jsonl",
+      "sha256": "a101b001b74bb9a60979889a36755d3023db703818a189ec814bce8295105d79"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/original/raw.jsonl",
+      "sha256": "609471e15ac54b604d6b29540c21e4177cd477fd3d44fdcae6111c18b03e7f87"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-123/mild/original/summary.jsonl",
+      "sha256": "baf8b061aa071f9b5d6b7031825e9dd7854eee936e51b1fb0b106e375af4b75f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/corrected/manifest.jsonl",
+      "sha256": "80e401c281af18cd807cb5fd8e6eff60d564b4e9707646b7173482dac4a7f41f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/corrected/raw.jsonl",
+      "sha256": "8856bcc9135a9916ff8e217922f9eacf7976412868c8a8ae3e04c87bce512440"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/corrected/summary.jsonl",
+      "sha256": "560a498e6869e6b55e94c452fdf8cb51d931ca817352fb007a8748e3ededc015"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/original/manifest.jsonl",
+      "sha256": "57e0b0edaee066c01c763e18de248bfc01265dd384d7b1ac4a7c3b8f22556ab9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/original/raw.jsonl",
+      "sha256": "11fc259cea0fdf98f886012198047294c5e4ee2b7615d7c458374d3a87082f3c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/aggressive/original/summary.jsonl",
+      "sha256": "e46871ba3d131b590459af6b76003bee37a40f5ffaf76eeee683a50d4d79df0d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/corrected/manifest.jsonl",
+      "sha256": "cc8138fcf9c0543a2f0e70c1625b78737d191ec8bd7b3a02d9087b022751438c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/corrected/raw.jsonl",
+      "sha256": "db966d2541e971085db29664e1df4bf9ff1b6e5fc647c439169a4de9b60f24ed"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/corrected/summary.jsonl",
+      "sha256": "e7ef6ce1f13ef65c5f6887d8366655be2308fc7f0b6f0e4db537c66b8779fd60"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/original/manifest.jsonl",
+      "sha256": "b597e53fbe00fd04f4fb98ecfb44809e50c9237ea037721340eadf8f36b1ee9b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/original/raw.jsonl",
+      "sha256": "e8bc740f11be6f075f56640d2a515ed748780eda47a546a5d9b662641bc24cd4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/frozen_head/original/summary.jsonl",
+      "sha256": "e0048cf878bc4102f4b86712cbd50f87fad213edd9fc9742cbaec2665503b700"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/corrected/manifest.jsonl",
+      "sha256": "221ab258961c9ef93f44d5151adc9a85605c32db13e853b0f1aed9d668dccae7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/corrected/raw.jsonl",
+      "sha256": "ac2e385c7ebae7bbe4eb24a85fe8de03584cba2c5445694322eddfe7b2380b08"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/corrected/summary.jsonl",
+      "sha256": "7af7143b43a835b9e299f03d8a6d527b466000d54aee0eff7e51a778c87ee7d2"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/original/manifest.jsonl",
+      "sha256": "5eb9f4a71f891a996f5c67672cd57eb3965b73a0a2f2c063c3c5a1c25a754f5d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/original/raw.jsonl",
+      "sha256": "a4f99e8bdddd304966a5ac73abbfbf344e082933f115732241401642170a8605"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/medium/original/summary.jsonl",
+      "sha256": "5aebf2ceca16b20629bc579b3ac6c40219cf9b3db4f4ce1fbfb432aa0ff5d195"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/corrected/manifest.jsonl",
+      "sha256": "6eb44c3682ab4509c795d2d82e519d43fdac8b7de0c85373a0ffc54250578648"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/corrected/raw.jsonl",
+      "sha256": "7e9c0c9167f493b557fc643416334210b03a1736b7654f1a612bf0bb397d9087"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/corrected/summary.jsonl",
+      "sha256": "4431590a8403fda9b2b0da633fd8785eec856fc21f07e71e3ad224d892edf159"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/original/manifest.jsonl",
+      "sha256": "7c94379098be84b3c942afd8f24f0be6ba057498b903a251c3cbc008477bd332"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/original/raw.jsonl",
+      "sha256": "3d6048ad3d90e961e87cf6e4ec5da87f264690c6d31b6ce8ce39878c9c3df7ff"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-124/mild/original/summary.jsonl",
+      "sha256": "a5bcfcad10fd9d4fb210ca9a2de4357c4bc91cf2ad643a7fc449cbad492186c3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/corrected/manifest.jsonl",
+      "sha256": "b46cd039aa75a97c65381a4f7924d9c52ecfcb0f68220825198931192e334980"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/corrected/raw.jsonl",
+      "sha256": "821e79cf24c165a49f25a392ebd013a5b46ca99038cd24c5c6b6e22cbb7894b5"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/corrected/summary.jsonl",
+      "sha256": "384441829223a916df2d5ce3c0805f50a862abc1677c5a5e881c49f12fe557ce"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/original/manifest.jsonl",
+      "sha256": "38ddf7f46196f210839cd90c40ad839521f84324ff316988f20093027f137874"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/original/raw.jsonl",
+      "sha256": "984db60e0eb007ad0ad1cacbed4ff3eed9ba7580cb68cd30bcdea6c4462b5ccf"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/aggressive/original/summary.jsonl",
+      "sha256": "ff1b080e64ac26bbf1664f0734a5459f02377c79689fd7ccc412f923201f4bad"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/corrected/manifest.jsonl",
+      "sha256": "399d90bdfc408e5c73c6f2d13a3e734e537467b0058c06b9461452cee93faf65"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/corrected/raw.jsonl",
+      "sha256": "61c8a4e13c570af94caca7186873ad16a5a03df7db50640edaf7bc5491ab444a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/corrected/summary.jsonl",
+      "sha256": "587b9cc4bca826555a8d5181849e3e458183143eed1c0ba21f4ccd131f3ba244"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/original/manifest.jsonl",
+      "sha256": "94a73707ce925d10a9cee124d1b7cc56687aa676cdbe7768e6fb5ec048b4a730"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/original/raw.jsonl",
+      "sha256": "86bf4c052c8024e53fade5d8997d790c1982159dc063f10fc1d925b9e2a5c25c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/frozen_head/original/summary.jsonl",
+      "sha256": "1992ac458fc02261a6c5d7cd0595455dd9d688516803e8492f79049083c145b0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/corrected/manifest.jsonl",
+      "sha256": "36f09d7196fc1f2de77233a9d8d24ba69a2d4c2ea26b07737819e4960d62328f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/corrected/raw.jsonl",
+      "sha256": "aded88ab5f9673cd65c9ef3992c487f07f05466f4be7d3544dcad213efd1f5cd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/corrected/summary.jsonl",
+      "sha256": "c9672043879a4c45f82240c97b25b6f81e8beff152866395fe6ffffd6642041f"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/original/manifest.jsonl",
+      "sha256": "ad07d6008dfe24caf3064125b695502b6bfa666cf9889fc34c9747bad395afd3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/original/raw.jsonl",
+      "sha256": "1c8d7b0eeec1df9144bf483ecb950aaaa6b979bb73667c1bfcdcdadf4b9c2fc3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/medium/original/summary.jsonl",
+      "sha256": "e8a76aa56c92a8f259dda30d4f4451ac8d8a2030f172219646421ac8a018ce98"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/corrected/manifest.jsonl",
+      "sha256": "dce2783ecc30d9373c381a25213b0cdd9da3615bb743a54d5e5a9de58a8cb331"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/corrected/raw.jsonl",
+      "sha256": "de533a70fa258c3f27326d78c677aae3334174677b0dd56a7fd03b2adea71956"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/corrected/summary.jsonl",
+      "sha256": "497fbc33ea36011487f97f8b40db41828a2d91ffd0d97ea47670551ac7f51827"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/original/manifest.jsonl",
+      "sha256": "6b09b0aba4b2ba481da260acb896e8d13d23569d2e4335a269d47356a3ecd9b7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/original/raw.jsonl",
+      "sha256": "9c2977443ed0624f7cf5ec162cfd37033e909400dfefe069687719a32ca60328"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-125/mild/original/summary.jsonl",
+      "sha256": "440de9ac184417ee72d4289961970fbb7f83cdf283a60afced7251d3e63af4a9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/corrected/manifest.jsonl",
+      "sha256": "70f62956e40be39ee1bcd17ff0248523f6cf56c43007ab55d870ce9e162502d4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/corrected/raw.jsonl",
+      "sha256": "b8ceec406d287dd7175d1fae9bcf0039725fad95e415d586e93dbcb2ef7e32cb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/corrected/summary.jsonl",
+      "sha256": "584dffe858b32d83178236e288d1834ed2078d1c7fe70177516959854cac0824"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/original/manifest.jsonl",
+      "sha256": "1bdb616cfe5b7c8e1089e28bd808b794a30f406877c3526b37aca487ce25cd89"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/original/raw.jsonl",
+      "sha256": "a1d58b1e7a44fcdc5d0171c87fe98153373357c8b1967384e3b3f55a50815de9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/aggressive/original/summary.jsonl",
+      "sha256": "b07107be5cceef1e9385f95d11d19c8596ddabab180eebabc2923c0595fd82ef"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/corrected/manifest.jsonl",
+      "sha256": "451d9057d390e756296190aceff90122ec2c4c3ad82ac630c2e83f2ce71e6e72"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/corrected/raw.jsonl",
+      "sha256": "388c7ab14a905d3aae001f8b1bbee392dd19ad08335d9cfee2ceb181eccc8bbb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/corrected/summary.jsonl",
+      "sha256": "ed67ed5574cb54c09b806bfab8854bf0af1520f1fec9f5bb280fe41dd4ae59c1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/original/manifest.jsonl",
+      "sha256": "f593fb9bebbe38234528ff4e287800818b91320c490a5c36bf92dd0998dcfc72"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/original/raw.jsonl",
+      "sha256": "1faf89146261926393ce1e0676fa6b640e3f337540ea0ce6e47bf27d4bdf890c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/frozen_head/original/summary.jsonl",
+      "sha256": "379c6bf37b6a42c62aca36c0531460f7e2523394bae06c3b9280e90163ba1824"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/corrected/manifest.jsonl",
+      "sha256": "4504534306fda591b63faa30ec8a1d63a922effbba7370236ac836b3fef0a39e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/corrected/raw.jsonl",
+      "sha256": "951c7d78e829c778979e0dac3bbbb7133e973c339fb263a997f063402bb2ea10"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/corrected/summary.jsonl",
+      "sha256": "c3c25e1882825454e377ccda6c6141a75e46056a201907276a6858fdd9b056ea"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/original/manifest.jsonl",
+      "sha256": "791b87cdb03530e8dcaa1de0c52d4ad6ef320c6cb9227996d9c6d69e9a3edea9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/original/raw.jsonl",
+      "sha256": "88ce1d77ba8fed23cddbaf792b267657f9b5ccaccc288c25d8911744e5a0047e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/medium/original/summary.jsonl",
+      "sha256": "f24c9f669d7bfeecb5aee624441fd75f26a05eb365cbeae8f08795d2eea7f120"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/corrected/manifest.jsonl",
+      "sha256": "82653731b722b5b6e8de7c55f560f0741724c5ad6faf15081ac4cadf4264e4a4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/corrected/raw.jsonl",
+      "sha256": "dfb10e3378681e08869c04a08c666c26b3659410634bdc3fc4262a1b08d67c3d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/corrected/summary.jsonl",
+      "sha256": "684076b47e90ceb9c3e9f66d45fd6a88de7c5964a93314fdb5a9ff081d6a914c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/original/manifest.jsonl",
+      "sha256": "59397fde77e1ebb795841ec72883df28494b091337e61a00cd9aec5da5f2dbc3"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/original/raw.jsonl",
+      "sha256": "6cbda50cb1db42cdfcdd4bf96aa6e2cc188c2d466e60d9d5318691ddbb2129fb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-126/mild/original/summary.jsonl",
+      "sha256": "112ff10c90e65f1cad0b5381144a9f52421366d78ad6c7a7aa63a907de9ce9f6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/corrected/manifest.jsonl",
+      "sha256": "b49b5e514840f6761de0ebec56152297b9ee74a7b9162f043b9aa89ab0b6fc2a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/corrected/raw.jsonl",
+      "sha256": "e5ea41c6d4b519e7e4baca2265c95ec9c8ef73ea8c0300a5a3cab1aa9fabe400"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/corrected/summary.jsonl",
+      "sha256": "3a87360da4d95c5dd1ff9a17c86604bdf34882a8f7e1a09bc6d16cc7fbca72eb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/original/manifest.jsonl",
+      "sha256": "a90ff4075b0b583fac8b6da72491ec77158f1e7d1d5cce31ae35e023ea43bbdd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/original/raw.jsonl",
+      "sha256": "b5b7c33f948d8ae6c0062260483e03e6a9b09492a57e12b611ba0d08c131540a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/aggressive/original/summary.jsonl",
+      "sha256": "10edc6ce3a917668a3f201a6cfc5040bd9656f9bcc1826934aa18c2429272bc8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/corrected/manifest.jsonl",
+      "sha256": "e2af265355074d4d5edb3b839b92edf72c18fed08b668c769a281f772e178a9b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/corrected/raw.jsonl",
+      "sha256": "576356d9b100abb6e941a459d17eacd3785863c21819ea845eb214a37367c8dd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/corrected/summary.jsonl",
+      "sha256": "802a1931715456f1055500235a0fa41d956adeea1ba2da26a63d8299e526935d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/original/manifest.jsonl",
+      "sha256": "9eb95d42e296f4ba0568af66501d412a76f4b22de785afaa0d00ba0e66796486"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/original/raw.jsonl",
+      "sha256": "da313cb70c0331194fb95c11c80d6f02ad220c442803bb2de40aa41a2441a0ea"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/frozen_head/original/summary.jsonl",
+      "sha256": "57dd13e371d46f0bbb2374a517fe1f3a1c52e20d2c4e02d8c2ebf45f68c57b3a"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/corrected/manifest.jsonl",
+      "sha256": "d7c8b460116f515c29db37b5d17f489b6c37cad3cc463da697527b7e988bd26c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/corrected/raw.jsonl",
+      "sha256": "7b6fb8b735ba79d647050c1345269a6be5e07cc2ae9ccbdea546cc42c6d5f1ea"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/corrected/summary.jsonl",
+      "sha256": "5712b811f46a4a3ef2881664aa193653e9481913617b78e6503987cea1ac9d9e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/original/manifest.jsonl",
+      "sha256": "676dea0462636b37f796248d1ac74db69d4624196bf242fba0bd5f4f0c4901f7"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/original/raw.jsonl",
+      "sha256": "ca60cd7e6ad5d8c7686b0f51a03b97294ec44f5f94aa08cde89e1d713756e5b1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/medium/original/summary.jsonl",
+      "sha256": "c4b2e7bd83f981af3d3388fcee01003c23386278e8176cb5c3f31777a3983e36"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/corrected/manifest.jsonl",
+      "sha256": "fb9b163bc8bb1249d69f54aaf1125c1fce7fb838e4a24bf9560eae72f35e69d1"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/corrected/raw.jsonl",
+      "sha256": "775c2c7fa316b8d4a6b6ca6daf76544e8833ed5800d4eb28365a94e9e47a080e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/corrected/summary.jsonl",
+      "sha256": "010de781d1de22925cdfcb49450072e08c50821ffe8f19a05b2968cefa910990"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/original/manifest.jsonl",
+      "sha256": "3c9e480773c445f1311e7441c4401a9cf252fcda034128a9844eb2e0fd487d42"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/original/raw.jsonl",
+      "sha256": "9b3633216b34c5bacc6e45f6df9ac17803bc0d4248beefd25831a61a7d35ad48"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-127/mild/original/summary.jsonl",
+      "sha256": "c8b0cc09b4371a6f06b5990519f6433f54d10f1898d6c1b46dd5602bdb3b2dce"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/corrected/manifest.jsonl",
+      "sha256": "6a88c965a102354625b3267556ba110359dbd60fcba50b62c9740c20a37e37f4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/corrected/raw.jsonl",
+      "sha256": "01868540151a166939a1aaa56cd1514cf1c3e4b8521d46494ef31ed0ef092639"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/corrected/summary.jsonl",
+      "sha256": "d0345a27f3d2f5825426afc9eb10a193ed8b8526472310f62b6dfcc2da568c2b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/original/manifest.jsonl",
+      "sha256": "fe545085ca67e51c8bf2d60fde35adff3d56502f0a5e56f077355660741e3572"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/original/raw.jsonl",
+      "sha256": "5b8591e72d2ddeaffe907f5c22fd7bf1208a0914620a843e4c09fd074ee5afdf"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/aggressive/original/summary.jsonl",
+      "sha256": "db7777a68b8a7ad90cb90acae08deb60f3a1ef2b76b5e806d899ce86a836697c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/corrected/manifest.jsonl",
+      "sha256": "0ac295f304efb8747623bddeb895fd28d67c0d4e1ffec5b5e756d802866abb38"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/corrected/raw.jsonl",
+      "sha256": "18dbcdceef0007af0cde75eb2e20191ab9cdfbea942c710c71ed5a9d008e86bd"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/corrected/summary.jsonl",
+      "sha256": "ffe2fedd09c4bb2e80b69ed503c6b424a3dc65a7cb402cee30f685a75a3ce883"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/original/manifest.jsonl",
+      "sha256": "e26abd7b98ae70d69946df0a05cd2481aa46532913739eb70bfa18de2b145472"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/original/raw.jsonl",
+      "sha256": "ab78b224454aef55600b4c936ce81f22a0e18f1d39fabec32f0ed17d8364ebf9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/frozen_head/original/summary.jsonl",
+      "sha256": "b98ca114f3c675c21fff9ff26247c293b66d8a2ac8466ac552ba4d4471f8436d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/corrected/manifest.jsonl",
+      "sha256": "3fb78239be69a7e1cee242e435bce1798dd7153b020a1bf8d37679fccc6081a8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/corrected/raw.jsonl",
+      "sha256": "f8a6b58c2c6a81a73a0fbf242c5866c7b2e3e3ce5ce6f128e4820f1261331ec9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/corrected/summary.jsonl",
+      "sha256": "7cfb33dcde3a1d9aa452961eeefa1eb74e0851aedfe843e132bd6b8be40cffe8"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/original/manifest.jsonl",
+      "sha256": "e53b59189fde04d82b621e526d8be3722c435a105a8e945c85b3484a1840f2ca"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/original/raw.jsonl",
+      "sha256": "bf9ea970686172e889cb44389b9d682c19e7a4141307c12ac5f4ec2e612f4a59"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/medium/original/summary.jsonl",
+      "sha256": "84c054f24400dce4384a76de462386fe3870e5527a6a0e54ec6dfab62349de96"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/corrected/manifest.jsonl",
+      "sha256": "112c49c9b6c42413947d7318987aeaa90145dab9d206a1a2496a958a99815e68"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/corrected/raw.jsonl",
+      "sha256": "854bbd744b1228f9ea96e8438cb75d38bee55176131818d262975184db10003d"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/corrected/summary.jsonl",
+      "sha256": "2ee8b13686ac3a37b6e5949118e3d6ac3c462b40c8967f9974d082a62cd9765b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/original/manifest.jsonl",
+      "sha256": "35e6ae3023052cafa686a70c1b2f8b12e8d016ccdf018fb31d8b98e1cf5d5f4e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/original/raw.jsonl",
+      "sha256": "ef18442297e9a41b6f28dcdcb92f8df61b6de3899117a95b2b418a3a5c39a31c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-128/mild/original/summary.jsonl",
+      "sha256": "4e8b875ed6c30f76f87d0b3232a6c0ba0b75c6ef2a02d87cce74c1d9d7a577a9"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/corrected/manifest.jsonl",
+      "sha256": "24817a257605ee2de2c42c97c6a52cae26eb588599de156048c058af6505ca71"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/corrected/raw.jsonl",
+      "sha256": "e727c8d5b1c23e4c42e46b40035cd49e9b62be9c7275adfe948ea7d2e46682eb"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/corrected/summary.jsonl",
+      "sha256": "9f28e079107b83b7ce64b61912d079c062a43f1a8586efdb140e54df378cdd38"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/original/manifest.jsonl",
+      "sha256": "c4f1a3cda561aaed485c03d4533fbb5fce136b7d111bccec27f07f9744c24e35"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/original/raw.jsonl",
+      "sha256": "4b57616f895736cc5423932a25fdc2ca939870ed8d53b39cc67b57bc584ffb75"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/aggressive/original/summary.jsonl",
+      "sha256": "7c8684243b5606f8de86aeb41cccdbf0186cacdba9bc8ad847d68b5869e1f683"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/corrected/manifest.jsonl",
+      "sha256": "7c7a47bfa99573618d05e5877b0ad23e8997cbd895a358c341b391b044db0e2c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/corrected/raw.jsonl",
+      "sha256": "e3249b06bf59a736ec310edf7e174b7c23ff3cd2cdcb0d5e274260a6821bbd92"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/corrected/summary.jsonl",
+      "sha256": "f858778f1f93592d08cd645bb1f5922c4577493c397d75bf2b13de0b508e206c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/original/manifest.jsonl",
+      "sha256": "ed0b701b6f472d82abf5e44549552f6d9e054fe441ecb9450c36cfafa4499bfc"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/original/raw.jsonl",
+      "sha256": "166d0d7b1fb1d5c15d9073ed906a2d7896b88f53f1fe640041243a2eaeea364b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/frozen_head/original/summary.jsonl",
+      "sha256": "0195c95fceb5c0a1aea1ec84dcfe9eb8f6cff4159161bd8429859e2a9804bae6"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/corrected/manifest.jsonl",
+      "sha256": "3dae54773351a37f499aaf1892fd939dcb7b0d44900f91774d92ee86445a88ed"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/corrected/raw.jsonl",
+      "sha256": "3053b2f7953595efac38d5a39a6bc6f1a7f48d8388d55041e68aac45340772da"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/corrected/summary.jsonl",
+      "sha256": "b058a7906ef4bef98863df934e80955dc0d2b7b12d4987b5570a0ead99566404"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/original/manifest.jsonl",
+      "sha256": "861f59ffaf0822d5cec9d220fd27066635c832c782a9b5f4fc989835a1a08a26"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/original/raw.jsonl",
+      "sha256": "2ea9baa55571a33ccd8c9b163219aefe7964e025bcd2fa18bc738cfec7f4ef0b"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/medium/original/summary.jsonl",
+      "sha256": "de137c5c480cb6f547664093ba66a0fabe534aa224ea659e18767e731a397a0e"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/corrected/manifest.jsonl",
+      "sha256": "ef0b1e1d903c55b5256984bf393df9ae9bef33dd979b3d836c774ca054aa68b0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/corrected/raw.jsonl",
+      "sha256": "6f95d3e458891b2b7148abc810a11cb2d21fb7b970ef933ee34572b8a9692fab"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/corrected/summary.jsonl",
+      "sha256": "8b97c4d8d50d12e1cea257910c6ec882725bddb4c7ec9896beed98752545239c"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/original/manifest.jsonl",
+      "sha256": "39b5a3813ea014582e1a378b10c40b41e1440f1833b9a620ceb3215bdf15dae4"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/original/raw.jsonl",
+      "sha256": "ee35a3461ff3ecbb48ddcc71691b41a278e5719dfbcc584bcb4f9cc29fcca7d0"
+    },
+    {
+      "path": "results/raw/nonlinear_drift/nonlinear_audit/full/evaluation/seed-129/mild/original/summary.jsonl",
+      "sha256": "983dd420c801e6d8278708eae37e1f18fd7509ba0e64d864f63165ba505dc369"
+    }
+  ],
+  "schema_version": 1
+}

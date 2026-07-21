@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "name": "closed_rate_predictions",
+  "window_exponents": [
+    {"numerator": 1, "denominator": 2},
+    {"numerator": 2, "denominator": 3},
+    {"numerator": 1, "denominator": 1}
+  ]
+}

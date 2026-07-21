@@ -1,0 +1,20 @@
+{
+  "artifact": "results/derived/covertype_test_class_counts.json",
+  "artifact_sha256": "c4091936809ebf7fcae2df54767561cba28804aac3e6a52133ff2bfa30d23223",
+  "input_set_sha256": "8334504f7176785c2e6550f1486acff907be0dc80d3f6a3784751ab0e04ef768",
+  "inputs": [
+    {
+      "path": "/Users/buiksat/Curvature-Calibrated-Exploration/experiments/data/sklearn/covertype/samples_py3",
+      "sha256": "57934b5deb3276ff5ffb9fad89918c440d6e1c750b27968f9795060494432c14"
+    },
+    {
+      "path": "/Users/buiksat/Curvature-Calibrated-Exploration/experiments/data/sklearn/covertype/targets_py3",
+      "sha256": "50f777bc80e1e3a74bcfeb058b42e892e1778a7775118817fd61129ff63382d2"
+    },
+    {
+      "path": "/Users/buiksat/Curvature-Calibrated-Exploration/results/raw/covertype_rerun_1500/full/dataset_splits/test_indices.npy",
+      "sha256": "0a2dd3fc88ad259ec7c4d46c660b45c77a0137970a52d5a7104e47f6c1896a10"
+    }
+  ],
+  "schema_version": 1
+}

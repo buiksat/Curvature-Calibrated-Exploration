@@ -1,0 +1,1928 @@
+{
+  "artifact": "results/derived/certified_tanh_controlled_grid.json",
+  "artifact_sha256": "2222ca8c3fd71c7629c1fda5f56ae8f7c304aa313ca64fdb2312f20a1d88c876",
+  "input_set_sha256": "f98d83d7aadb1992422b55e6d61ac60c4ebdf6a7e6006723610bba018bfeedf8",
+  "inputs": [
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-60/manifest.jsonl",
+      "sha256": "f0df4bd40dbb9f3d9cee302a36605fc35c56bae59a850f15c11796bf7bae3950"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-60/raw.jsonl",
+      "sha256": "2646b918e245e37f8fd2d06fb1009193b9405dee2db8b2e64e6b06f7fa9cdc9f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-60/summary.jsonl",
+      "sha256": "8fd695a4c58df5f4b1f42fccba6d8588a0b9f0151e471aaeb019855b86b7f8e4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-61/manifest.jsonl",
+      "sha256": "968e25b2c78649120ad8bb84daed25d0b8f2a9fa0c7f0acba0229677f02e56f9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-61/raw.jsonl",
+      "sha256": "722adfa3b52c8bf813ca7bc223bd5c0ad0e3f8a0ef5abe93dd7431a916f879e7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-61/summary.jsonl",
+      "sha256": "7cee51aee6336c8a3baa0eb7fb59591dfd94bce7cb0059c3db3f0d0b7c0002ec"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-62/manifest.jsonl",
+      "sha256": "12cb6e93ac3683a3a38c62000526318ef744e061f26b63fb38f7cada12926d6c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-62/raw.jsonl",
+      "sha256": "e07685115883408f3716a7028ba93b773f74326d6f5f2f6d4dd8a1a03a2998a0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-62/summary.jsonl",
+      "sha256": "da5038a39b3a9edf226cdb74b37fc9ede84368a2c1fcb8b5e1289cbb53b8d8c9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-63/manifest.jsonl",
+      "sha256": "da555921a4518193ad17b30717dc6c9ce24000ee87985df070c8118c3acd08c8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-63/raw.jsonl",
+      "sha256": "d1346f263aa4f33cf0311441bf7ae473c560d35553aaa1704b736c458be298c9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-63/summary.jsonl",
+      "sha256": "a579753591641feb54dc518b75daebf795b0acd1ea08965d962696ccc1ac5010"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-64/manifest.jsonl",
+      "sha256": "9bbaf09b112b0a23693dff0ae8a48fb93a5480edd9ef7b975644272ccaf2a0c8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-64/raw.jsonl",
+      "sha256": "260bdb9c1245030959948d68b8402e8f7a6215bd2b035215da21e3fe09798125"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-64/summary.jsonl",
+      "sha256": "c58e839a0f0dbf745529c4e938f2d8e2f0fc22787c2858f5c14854ea17a3bfa9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-65/manifest.jsonl",
+      "sha256": "94e7843838545434a545acfb3e7dc94995d1350e34da7fab875774dbcc6caca4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-65/raw.jsonl",
+      "sha256": "f45feaba532d3a957cd84401e50202936c64fb3ac572ac86667cb6ac08e6daf2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-65/summary.jsonl",
+      "sha256": "549b1d0f4d0c2a6fefb3d84ee622050e3270493054fcfba40fbb2096bdf4bced"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-66/manifest.jsonl",
+      "sha256": "50025e499662f7543d580cb1aa79a0ff5799c403b616aea5e79e58ed4b238220"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-66/raw.jsonl",
+      "sha256": "c3838c2280dff950e966c6b30936e0ac8b9b085559d46e84f3d88c9413330e0f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-66/summary.jsonl",
+      "sha256": "ee97b3b9c771b0fe0d7b084faea06bd5350e99417bda37007fb30689c7bc9a2e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-67/manifest.jsonl",
+      "sha256": "29e57c4ce6eb1b05a5963eebc2e7d7c1b1a9190582ceb770382f72abc01b2429"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-67/raw.jsonl",
+      "sha256": "93a654fb5aec200f29334b40ee8f0aaac3d09c79ec8b1752e6b02e3696981740"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-67/summary.jsonl",
+      "sha256": "ff9e4b13c7edc5b115c0862adeec03d6975bfc887d102bdfb455a4c2a98bd6de"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-68/manifest.jsonl",
+      "sha256": "a964fe4576b63de345f8de4f1e55efbe31a33ef4e53a38d0f6854333f0267c91"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-68/raw.jsonl",
+      "sha256": "d093904f013234fc7cf278fea62045c81994bb4673070e7a195d2527813bf349"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-68/summary.jsonl",
+      "sha256": "dc541699c327f2f221f4d049ab7908d17138912cfcd1c4ae6abb070c21586543"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-69/manifest.jsonl",
+      "sha256": "3393934ae8f0d3268b71769e931bb5215579c902d469a4fc3451801cb349caac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-69/raw.jsonl",
+      "sha256": "9b8e4445e95d8aa27a194477afabed4e30bd6a52a1067254ee6444659f3b4aa7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/corrected/seed-69/summary.jsonl",
+      "sha256": "c7c790c10504a643167e7a7a605d3cf5939d3ed97847850e5ea2e17d1dc8d705"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-60/manifest.jsonl",
+      "sha256": "8cc961419fc4d22d4144b371109058fbb3d966957936cf4d20c553646bb829c4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-60/raw.jsonl",
+      "sha256": "8cb5254ef0f1de868378a5131b00a8c5aa858c063ef37eb846a8b0da2bfce27c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-60/summary.jsonl",
+      "sha256": "3eb1b7b3081be51b90965a24f14863453b5b1b939ad9ddc87e1c39602ddb8ef3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-61/manifest.jsonl",
+      "sha256": "a1b277ff2c0c490b0ea928276b33167d0e082a042a5bfc44c85389c3d7fe7b49"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-61/raw.jsonl",
+      "sha256": "2e29226119582ed0e52e8ebc9b89758ab6a52a69f32283a788036098b7afe3fc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-61/summary.jsonl",
+      "sha256": "8296b4b3659e3c931346899be4dd281251d01faadb66ace69e49605dc6daa098"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-62/manifest.jsonl",
+      "sha256": "31e1a552edabffed34f6ffddd149bd1fba1d63b6be333cb52ef310cf0f4b1d82"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-62/raw.jsonl",
+      "sha256": "96236108df6f9e8baa3108dc38ad62a0c8dd19ee9bb2de03bac1a26bf983ec55"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-62/summary.jsonl",
+      "sha256": "b8fc1a6bc3a6faefe2d37ee46c92c8cbf8b3a7791e7d14a1d14040fbedfa60f2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-63/manifest.jsonl",
+      "sha256": "8458e7952d8e8c9965a5529af252d412897050219fe3c190e96eb5337f7c7cd6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-63/raw.jsonl",
+      "sha256": "eb80249973305207da8116c6b1edb0fdb2342d2e19699885974b691799159473"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-63/summary.jsonl",
+      "sha256": "018fb4e08303f6daa162f9f1ac532a146787ee5ee4bcb0e9f2511ae24675aa99"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-64/manifest.jsonl",
+      "sha256": "0893ac57df5024b9385cd2fd99aee16448b53fd7d2b2b8d7d661776fff5fe436"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-64/raw.jsonl",
+      "sha256": "4d6d2530a8c46283ad04d6e664c4030d6a9b710d2cf4ff6b181b106a95bce84a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-64/summary.jsonl",
+      "sha256": "603ad416779a0ace66d1759c9bb032ebb2b521928f08e34419dfb733da62ed58"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-65/manifest.jsonl",
+      "sha256": "eff76074dafe31b235feaf7884fac898b9d1de89eabeface861aeef2ff4f19d2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-65/raw.jsonl",
+      "sha256": "472ccdde39810d15a5931f2fbd5a04cf9a87e463fe657aab4db2a70bb3ad2a24"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-65/summary.jsonl",
+      "sha256": "9f412103e6a7895d7ad5623671dda37bd9c2542d4cf50fa28dddf1c399a59b11"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-66/manifest.jsonl",
+      "sha256": "ed408ab494ada2997dc113bdfd43ff87eba1f1443b7536815477785920567491"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-66/raw.jsonl",
+      "sha256": "a88ec049adc89a45e009139060000e179582ce809ddac25d671c39d4b0ba0141"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-66/summary.jsonl",
+      "sha256": "16828ff23116eb10ce869547e8217001f1b3ccdbf6fad07f9a6ad402add6bef0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-67/manifest.jsonl",
+      "sha256": "4d7d9b4cd483d5e76f4398dba40412ef520259a09d821b841cd9a342784a901f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-67/raw.jsonl",
+      "sha256": "100f1f37a73e1eec7c1c500dfe7d428c6d70f95383c82da3dc8a82fbbe1a4237"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-67/summary.jsonl",
+      "sha256": "3b49b7a0bfa4b56ba02d73a10cc0f83886ac8aa1fe2a952653219fe47f59a06d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-68/manifest.jsonl",
+      "sha256": "d4a8cf48ff735d1d26fc114e0ca17c1bc0d04f795213c51db269a2f286f1ce98"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-68/raw.jsonl",
+      "sha256": "c8c3210380b82b72a7c07472d95cd83ad0bec4bd753e7847378b44e229ebda35"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-68/summary.jsonl",
+      "sha256": "c9bcc1621031cd4f0599de0e7154b431de0345d5d435f5f140b63b0ec9452236"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-69/manifest.jsonl",
+      "sha256": "6ef6aeace423b2c201e1927bc04277ee029eae1afa9a9281fc203014e92eddb3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-69/raw.jsonl",
+      "sha256": "69135dc049165854071971cb6b7c777a14865dc076640df74a33db4403e09fa8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/cg010/original/seed-69/summary.jsonl",
+      "sha256": "f95a222bb6bff6f9e03584af2df4b053c5ccf54782710e98964f271626e62b23"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-60/manifest.jsonl",
+      "sha256": "5506520a57f813f9a3bed7d8e569ed98297ee27f8eae841e6d557f07362fbf57"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-60/raw.jsonl",
+      "sha256": "69a18bcc3395070c8597fb6b4e3524118a4710d7c537de12135479a18634330d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-60/summary.jsonl",
+      "sha256": "12ac5b0111e95c3efa4485580bcf2697e0557ff1daf2dfb0cc75519e091286d3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-61/manifest.jsonl",
+      "sha256": "3cb043365cca2d5ec4da43855d60750bf29562cfdb3ad74df74381c520e8bd0e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-61/raw.jsonl",
+      "sha256": "3e6ef5acbb6ddcfb3f034bb5718f6e1b421ba06e0129cde1196ef007b5b090f5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-61/summary.jsonl",
+      "sha256": "e4c8d04e5d89820fed065759038fdb4802b2f94c82ccc51d442bc623ec82d0e2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-62/manifest.jsonl",
+      "sha256": "e122e34a2db952628bcc5c20fb0bd126604e367f845a0014479a4dc897f4c020"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-62/raw.jsonl",
+      "sha256": "fcf2f7228b1e600e90d96d6ebbdf1e84e1c7d6fdcc64dd9b1c0105b3a18acfb3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-62/summary.jsonl",
+      "sha256": "44e1be52ccb52342ad21036fb57abe1eaa6adfaf09e5da9847cd4a0d5d758c05"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-63/manifest.jsonl",
+      "sha256": "d618b50ba15ab842b15823221ff25816b6201bafeb58517edfabc40b84505f2d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-63/raw.jsonl",
+      "sha256": "fa520bb7f0ccff77e7080f573cb54522cafdd15aea521b26a2ff1e56c45a37c8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-63/summary.jsonl",
+      "sha256": "c69f4b28393d6cda06c3e2ee55ffcd9704c17e268428c26e00b2b28a384dc1b7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-64/manifest.jsonl",
+      "sha256": "796acff40cb0670e4a1e60563b9ca0b734cc5bb71520930253ed4dcebca2965c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-64/raw.jsonl",
+      "sha256": "ac5846f17aca64404d0435e05a0650ce0c552834f3321d572a73034c81cc1e3e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-64/summary.jsonl",
+      "sha256": "d78c55fca8c406cfababb68b90c2be8f333428afb25129c0035ec47ce7ca4ffc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-65/manifest.jsonl",
+      "sha256": "ae1a66c4ba6abaecb46d5808d1ac03e7b6e98247f2965e229600eafbe2560431"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-65/raw.jsonl",
+      "sha256": "5339647cf4090724b0f014de8118f694cf6fe50d3dad5963c6263a99a52fc250"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-65/summary.jsonl",
+      "sha256": "943f7ecf5798f205bc50e03b9cb3a153015b98ae78cb52f466680f1c317540f4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-66/manifest.jsonl",
+      "sha256": "c106a7332f15987c1ba4af37958b7dac598f90904abf6bc40413b271faabc53a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-66/raw.jsonl",
+      "sha256": "4b7db3e89281a5938e0ce546d3096bce9c28784c1e8ddf26ec95d8372478e181"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-66/summary.jsonl",
+      "sha256": "2069983e1f3154adbbc9564f86bcb3401ca251b57c523e9cac1b910308c74f58"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-67/manifest.jsonl",
+      "sha256": "5e2ebee3855b80076519bc35f6d673ed92bdb04b75e40eee8c3a0f85a533a55a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-67/raw.jsonl",
+      "sha256": "b7d7ea06ea82cb9d80f596896e8d6dce957ffcd261e820f875ba1ca58151e0b6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-67/summary.jsonl",
+      "sha256": "0b400a07cd0f0cccfdea53d713255aecfa6d61a3b955f271c81f3347359a4e50"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-68/manifest.jsonl",
+      "sha256": "ee6b2eb7caf670c3547ef8e1751a7043c2827cfbeb5f436b697f1a1fca13bee4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-68/raw.jsonl",
+      "sha256": "d268a9c0fde3ddd1657dd2d2ac3d6548f082712863ec927bc7f4119bdeef94d5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-68/summary.jsonl",
+      "sha256": "4fd8226608440cda545c2c5b22a201f8fb490bacdda36fcb829be34d4306f900"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-69/manifest.jsonl",
+      "sha256": "d97181a21271036d7331d1997ba6b61632dc1a57a1a684afa355c000f3d98cac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-69/raw.jsonl",
+      "sha256": "d38891f86cda07f7020b663e741ce4e6fad00c23dc49af7b41ab2963848bb10a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/corrected/seed-69/summary.jsonl",
+      "sha256": "eec99071e099b9a2abd447776ea0409bec83e23da58d8a228bfb3319a44c7b98"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-60/manifest.jsonl",
+      "sha256": "826fca8f64f9dd54eec0640aa87fb8862e1b07ae7490ac1029beaf586d0baa98"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-60/raw.jsonl",
+      "sha256": "3047ebf0f54835a2b1454fc7cd7f317e855a4f367e583fd76ad61774b4b937b0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-60/summary.jsonl",
+      "sha256": "89acb64e7bd6b03c26412493e50e48ef2b3f2eab55cab566e163ed233feaf898"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-61/manifest.jsonl",
+      "sha256": "7021aa0331b8cb562c878eaf889ba17e41a936e56f8d0b26720dcef108587933"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-61/raw.jsonl",
+      "sha256": "34ca1cd95d79b40aa867452b642e4f6d6d82c62d20485ec725a2a0423eecb737"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-61/summary.jsonl",
+      "sha256": "cc87e5aafb5f83cd697af9a8b2ee6c014a37b0f7ce055607ef122e94496e5dc5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-62/manifest.jsonl",
+      "sha256": "bf51ea9d60ddc231c9f802a53b0359a92e1083c394115a3cfdf37e3da229c1aa"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-62/raw.jsonl",
+      "sha256": "f9d12dadc3bf7ac89432c3115a2ae56144efc2e5fe9cd54078b2810c522342ad"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-62/summary.jsonl",
+      "sha256": "231b939e701c96dd1956d089ce714cf1b220d76fe24f89a4a5f329c68f529981"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-63/manifest.jsonl",
+      "sha256": "6b1445e021f096b719e538d67237ba8c2f13f0ddc1c8830dd97cf9c8970ef209"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-63/raw.jsonl",
+      "sha256": "6569930786a315991de7655b7abaacf3101ece0a2f2b71cab9653ae6c1e2582e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-63/summary.jsonl",
+      "sha256": "053a31e8f74b21c0d0027101f8eb978c14416dc29319f914db4ded374ba908f6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-64/manifest.jsonl",
+      "sha256": "52dfe97520cb873849df6f8f5d0cb5f2cba1aefb15c1738ebc3e069b1ea09c27"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-64/raw.jsonl",
+      "sha256": "4c5c230c83c0121018b20bc314f4d6fc0d32e87ee417bc74d094f938b87b83d9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-64/summary.jsonl",
+      "sha256": "228c35df67fb333a8149726b08117235ea32712c95cda4412265b47165188ed1"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-65/manifest.jsonl",
+      "sha256": "1e682343ea055640f89947a388051fb06888b766baa36c478bf11d80981ae3ae"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-65/raw.jsonl",
+      "sha256": "924be8c41dcb87224ae80dbdda734ef92a860558e3874d469d62c84aa10e42be"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-65/summary.jsonl",
+      "sha256": "1e5ddfab1556f8df0fb785d33179ca3e018de85b25314eb42ad508b2bb7deb6f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-66/manifest.jsonl",
+      "sha256": "a2cddefe7f03961f7a866f679a3ae7a7f5110b10c6c5ce175af5d43580d5d54c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-66/raw.jsonl",
+      "sha256": "9b4ef79d74e5e4c2d894052180449e712f1906d28cf945e7ed929ba4960c788e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-66/summary.jsonl",
+      "sha256": "b748839d8f2f9a7465c4cb429e1b2199eb2a769b66f219f1f65ea0c81848d559"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-67/manifest.jsonl",
+      "sha256": "1bb3313bc210280024137bf51c85e252308fa232d09ceab19ca3afc2ded230e4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-67/raw.jsonl",
+      "sha256": "6a3b24d4a674711139ccf007f4530187126ada50ed26bbf9f786bd0942ac4d6b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-67/summary.jsonl",
+      "sha256": "a8814d305aa48107aaabab7fffce33d3fc5e4f6af6c568622397d08b8e577fbf"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-68/manifest.jsonl",
+      "sha256": "570aa9414677da60f27976a05db44d9fec48f3aa1bb128f10febf0d151e8ccc6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-68/raw.jsonl",
+      "sha256": "623349ba30d4d6d65229765a5f6c415d44314f9ae60a5b65c9d74052a42e5e58"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-68/summary.jsonl",
+      "sha256": "7dd3adaf15b9224c46585206035167c1b98f26c792729c444b18705d8d9ba9d9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-69/manifest.jsonl",
+      "sha256": "03647879e707608e636126b578414f85636c19225c88b74baa431327e53b7a8a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-69/raw.jsonl",
+      "sha256": "68cfcbf7e26754790d6a04eb4507611d4b3673fd1966bce8665a40f752566959"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon050/original/seed-69/summary.jsonl",
+      "sha256": "b4cdd6af30eda68a0eeaeb7e4e71e229e3dbc0eace2a8ddfee969602cdddbafa"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-60/manifest.jsonl",
+      "sha256": "2d460ba2cf348bdf31ac88c4f21974776463c0e13f750416cab9131cfc241acc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-60/raw.jsonl",
+      "sha256": "c196c6b94b20a7aa401d1a83a00237d032fb5c655f2bd1560603179bdd952cfb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-60/summary.jsonl",
+      "sha256": "322b9b632a38202eab9a18d413b89539454878a4699c158b94ee42c7fac17a60"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-61/manifest.jsonl",
+      "sha256": "72bf6d39799077dcf9584f22b17bcfd7a31c2a4a3d5f5af41dbac3be1a9be668"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-61/raw.jsonl",
+      "sha256": "28066d4a11b67117606f13301a408393302cd261fd734bb3225f1597418112d7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-61/summary.jsonl",
+      "sha256": "84f1612f28a09fc8cc9966b9ae159b51d9955b6d7414c5bf891c3f362eb0678b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-62/manifest.jsonl",
+      "sha256": "abd7c3265f1919c6485cf0bd8e05943ba29a2eb3ff2f6fd6ae5e78423a8ac6c2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-62/raw.jsonl",
+      "sha256": "94e837ac209955dc0a6432a0ac9cd247b17c74e1ab379f686c44de2c19d92cee"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-62/summary.jsonl",
+      "sha256": "ab09f0475dd92ef69de478a11f3c2751fc58081a8e070cb93653ca6592afd69b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-63/manifest.jsonl",
+      "sha256": "f47eaa0f30c6ada309d020f5e56fc3d8cb51db14166f2fb2402bbbc37eb7190d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-63/raw.jsonl",
+      "sha256": "5517d591919c88a35f965f6e29083905b6dd7e254bb8d9fda2dc00bd950146b3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-63/summary.jsonl",
+      "sha256": "0278fa7d77e8ae55cc45fc04c3dbd1faab95875704732cb5128a0665c6c4da61"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-64/manifest.jsonl",
+      "sha256": "cb42f8858d7aad59ee494af57943cf6a0f410a360fc8793b7cf7a14e5e9b737f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-64/raw.jsonl",
+      "sha256": "d82b81ab4bead1ae4890fc6c4d8a3a2d92746c60a46f6245098deb6f00bd51a6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-64/summary.jsonl",
+      "sha256": "060b72c1aa346f45d191f261868e27b74ada7add35225d63460f8a05473e2235"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-65/manifest.jsonl",
+      "sha256": "369ea8103436d824a4b3845f7b16618b162dff4fd933299b2501df5ea4efa56c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-65/raw.jsonl",
+      "sha256": "2345a5880844e8541acb9167ea0ef235b1ddb01ad6d2ad3ca2fe9b475642d68d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-65/summary.jsonl",
+      "sha256": "43dce2603eecfa98727dbe7d09d30af136b63b0ec2d3f2acdcc9a2f5c8bc7749"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-66/manifest.jsonl",
+      "sha256": "6ea400a751494b020231ef2edc1190ee87fb9794b63db8b1e168754828824a97"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-66/raw.jsonl",
+      "sha256": "40ab85e49a04e5b6940bb402af981dadd9c929e5c38b8cad28590eef6d719b6a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-66/summary.jsonl",
+      "sha256": "d6eba75b243942d01ac1122cd22c14f6d18ed3f27c53567deca4e9e4c08a30fb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-67/manifest.jsonl",
+      "sha256": "8e79ca09cad4c845e53f03be82bf1f5e4dd8eecea8e4d5ac3ba3941b9d3a1182"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-67/raw.jsonl",
+      "sha256": "55b71ebbcbf78364bb53c878b7d7f35e9a2c77daf28bb2e130792a1dd5b634d6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-67/summary.jsonl",
+      "sha256": "b4fa65e4722a7a367d8547e637935482ce8e99fa024345b434e380b8c1599500"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-68/manifest.jsonl",
+      "sha256": "3c155d74c1d1c378c4145f9a18728cea4e93ff7180f7a6e455626ff7a0ff3416"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-68/raw.jsonl",
+      "sha256": "0088acb3db3bc86693aca094a1906e36c7f8d6b897786918166a45b9cc530df3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-68/summary.jsonl",
+      "sha256": "1decdc1c61f49f09ee5af247eb8acdd453e735e77aa79db32723fc079fedd9f3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-69/manifest.jsonl",
+      "sha256": "8d9ea6adde699feaf989c9b690c8b0adff3725f67bbd077a404020ff008dc2f8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-69/raw.jsonl",
+      "sha256": "6ae09b063b50c632622e9e547778dd316edac85b980c896b0757430160c521c4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/corrected/seed-69/summary.jsonl",
+      "sha256": "f59183fbd2e9ca0f69cb9b71afe779ab6f98f84df280bdeca4038940a3fba3c5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-60/manifest.jsonl",
+      "sha256": "27b1e3c246c10ee6e2fb03649c0ec7fa2a8559829b3b5d6bacabd0b47b50e9ab"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-60/raw.jsonl",
+      "sha256": "0072802444ba28ff281c9ecbad705b5ef25c50b14297aa06c4f3ad230373d735"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-60/summary.jsonl",
+      "sha256": "db969e9bf2b2c34c62d03b8399c4bb7bd55292f408c29fb12a39ade3b1a16f07"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-61/manifest.jsonl",
+      "sha256": "afe6f28da048127c1d848c6e1bcbf37b12399aa178d29213ecdc0b0d57d7c0ff"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-61/raw.jsonl",
+      "sha256": "3866182299f731c601d54ccf6b7bbcde6d62c6e1dc2c7277c85941898f669c0d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-61/summary.jsonl",
+      "sha256": "dc2f92e53d25be474a4a286362748d01ff21d19583e20764cfe0fcadcff951f4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-62/manifest.jsonl",
+      "sha256": "b75e338312ed3193aaa4a89c8dcf88d7311c7f6d042e1fa8834a97a5d570b7d6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-62/raw.jsonl",
+      "sha256": "f4ac5dfd6397b63f41823bdeda95478f94d1812ef9eacf7166e6676c2a78cc26"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-62/summary.jsonl",
+      "sha256": "31207590f73006c20b9b7a955b4ff10a35203cd4ad877ebbbed927dae071d06b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-63/manifest.jsonl",
+      "sha256": "8fb482d11f90eb4fd46616b7d43fff5ccd82d4f8c9183b7baa8da64a22ff41a4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-63/raw.jsonl",
+      "sha256": "a6916a664b68b6821f504378af98337b6e7f5af6182e3ccfbe4afb94517e009f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-63/summary.jsonl",
+      "sha256": "e38eb9fb53b9574bb94cace911af94b28f369ce6f811a4a20547321488eacb4e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-64/manifest.jsonl",
+      "sha256": "df74f7b70624010f2970849033e08435b415b2286eb0cd879f1a789b9a9926fb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-64/raw.jsonl",
+      "sha256": "ca08ec52c167e9380c91eb0425530a538f1c305bcacb82d9be3c04501b7d0be0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-64/summary.jsonl",
+      "sha256": "f24e6d9b4f356d9ddb055269719d20c9e6c1b89830c97fa40e1fdf83dd52df57"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-65/manifest.jsonl",
+      "sha256": "bbe26aa59d2d555d7ebe6c12ea10e4fdf2162ce99d99aa83019577c8dc207f1f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-65/raw.jsonl",
+      "sha256": "1b80ca3ad57ba628c6b38945fb58f524e90390018077a385ee111f757563a9f6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-65/summary.jsonl",
+      "sha256": "02b64ef37886392610520cfd6ac89d6fc0ce3cc388b4ebd34be57e84e863e953"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-66/manifest.jsonl",
+      "sha256": "566d6cf324ad2d1446ffd55a42e487e306c33dbb8411163a11555b613ff6be46"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-66/raw.jsonl",
+      "sha256": "944574925fb66548689e778dbcf762b22556175f78746517629878ad548f3930"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-66/summary.jsonl",
+      "sha256": "0543ade97516b09b102dd62ba9b3b2e2e4ae258ba3ad3e37e7282f85bef3ea86"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-67/manifest.jsonl",
+      "sha256": "e8cff10057e81a1c2859d1b7099e2abb7d0cd3c35887a861ad43c850d03432ef"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-67/raw.jsonl",
+      "sha256": "9e34e59f623d2a608587c53e1066873ef16bcaed6adffc5e484b2d99ca3ea277"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-67/summary.jsonl",
+      "sha256": "0afde2c8cc91308c5488dc7437d74d4ef0186d22a5c8974915d121d0ec05b60a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-68/manifest.jsonl",
+      "sha256": "6e24dfaa8e7a7a8ac53f4ee8f8c9c40e55c588c67a15bba6f7e96b4be8b77de4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-68/raw.jsonl",
+      "sha256": "e81a77c4afc0ed6297168dc80493fdbe45e109a2899d4c975791a27318c9b09d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-68/summary.jsonl",
+      "sha256": "e9c787a5806044070b9f8d085377c0f0e3d60eb4cf28fdf69660e51fcdeba04c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-69/manifest.jsonl",
+      "sha256": "6e607ab936a8d6aa570aef69c45858b53fbfe600b7bd854ce2a523966fc364c4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-69/raw.jsonl",
+      "sha256": "b34d3c18ab9aba43698337bd103084e9dd3db4f2307fd388c498bb6d7aea9d3b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/horizon200/original/seed-69/summary.jsonl",
+      "sha256": "8367f85a99af88ce0b9a6631e4b2326bef4ce363356e0728b27e43974a7b0844"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-60/manifest.jsonl",
+      "sha256": "a36381ab8c6d735526018c6231b3866677605128cf2138255cd67eb74785b6d7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-60/raw.jsonl",
+      "sha256": "08c9a312ff1ec0bf62f6350bcec9adf88d96a5c54e358f01351e4d1cb0842bd4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-60/summary.jsonl",
+      "sha256": "fe3f8fe5510c81ec754f6b5957a8402ec615fc654c6437406a71ac87fce54378"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-61/manifest.jsonl",
+      "sha256": "2711f59fb9ce713beb48eec628c590f055c18a94a8192a69cd228c87b1d5c04a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-61/raw.jsonl",
+      "sha256": "71bfef10657da59e3b5255adb11556f287a2e59a0c9a924fa7099d6ddbd263c7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-61/summary.jsonl",
+      "sha256": "a17631ec8e201d6b44b0d8221ad1166f608d348cc5ab65398717007e1a8754d0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-62/manifest.jsonl",
+      "sha256": "c39241118c5819068463744b0a04600b15e827b6b73e7d1757f1e75ce35293ba"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-62/raw.jsonl",
+      "sha256": "284877af650be1cea04cd93d94d089f71e0cd0c4c6cd83e028145d6442bb938a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-62/summary.jsonl",
+      "sha256": "54c2d21111cfb315d8f9301b393cd3df7305d0c63bc361a820dbcfbc9e508c55"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-63/manifest.jsonl",
+      "sha256": "e90ae20ec4f7fd18fe6c71a2fb6b0bf3cefdc85e54e7394e50e72a5dea1a8b67"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-63/raw.jsonl",
+      "sha256": "e7eff11c3172d32e008f92c616de62bfcd703dbf8e2385f2571a181b865766b3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-63/summary.jsonl",
+      "sha256": "404c14adc9cd24dec4a1c490df8c8da7ac5ff709aa6c500c191ae14b47769a6e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-64/manifest.jsonl",
+      "sha256": "915c06b7abbaf42bfea9f80ad1e371693f1b0658ff9e87674e910a027bc6b5f6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-64/raw.jsonl",
+      "sha256": "b06311e09eaa39fa6167a4c8dad64989342fe2e7ef7404d65a85f93515d168ac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-64/summary.jsonl",
+      "sha256": "cd76a2cb8b4b1449731a3f2dc01b2fab99812aca713bbca07c82f3356cbaf5f2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-65/manifest.jsonl",
+      "sha256": "00c65be048837de6dcf0e78b9419b420490baf9413fbc85c883898db8200c675"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-65/raw.jsonl",
+      "sha256": "12deb3a39498cfffb59013e8f517642b6d316188ab0dde48e6e5adeb0410cf1b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-65/summary.jsonl",
+      "sha256": "1dbac1c0382eb0902cafaf55d5696fcb90b784de3775609c1d27cae8f8943d73"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-66/manifest.jsonl",
+      "sha256": "accd7a80b538d972a9a0e9b5c6b60b9ff8bbe5e3d0e43d915fcfab845c12491d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-66/raw.jsonl",
+      "sha256": "ba471739437564dc6c8800e3ccf71fcc38a8dc2c8acd38a0bb024f6534259189"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-66/summary.jsonl",
+      "sha256": "84e58d5e71ba50d1730e57d0bc3ceea0402d717af5762e235c2adc25b23cf3d4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-67/manifest.jsonl",
+      "sha256": "039e9dfc1468692b59d0551cf01ea0643223090ef48b14d07c2e72fa82fac3d8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-67/raw.jsonl",
+      "sha256": "0e5604420715267224a4819c0162f726167e380acbac49643e26c7c170f07d00"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-67/summary.jsonl",
+      "sha256": "5d6696481fd0ca19a52a36865bc1c648df043841aa794d2dd9f6b43b1488e49d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-68/manifest.jsonl",
+      "sha256": "70429bb78a15094b02124668567d7c2826f7309b71d21bc955eb51073f2abef2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-68/raw.jsonl",
+      "sha256": "3ca3cd1d70074d586677cfd26f380a5e21e0b7e80fbcceec19336e4374188a30"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-68/summary.jsonl",
+      "sha256": "1dcd5ff0ea6990ed32dafc2c78a20b9e375d43569cbc30574b35ee680cdaddd7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-69/manifest.jsonl",
+      "sha256": "54555afa927e9a666fb41c1cc8d03ad3599427ed37901dd9c7732a10d592a224"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-69/raw.jsonl",
+      "sha256": "a750556441921deaeb568f62339b302d43010d8fbb630d621e792d0874fbd7d6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/corrected/seed-69/summary.jsonl",
+      "sha256": "3698756bcf64662d5ce8e6048eb2c82fc4753123d00cc9c171d87575c92d1fe6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-60/manifest.jsonl",
+      "sha256": "ec2952884f29b2fccc5cc73a00b0499d9f6edaac5b1315736aca4296442bb786"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-60/raw.jsonl",
+      "sha256": "469573a4a5b05bcad42cd6eccd9bc7010fecb81bf305753cc93971faa5ca1974"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-60/summary.jsonl",
+      "sha256": "48738da73c15ddbc9f846dee31b74f0a39b0f14d5b1fb099b691576cc21a3f91"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-61/manifest.jsonl",
+      "sha256": "d7c18ad3df55e9c48e1e7ddf478f65e3d1f14e3f9766c0654beace8359e6cd2f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-61/raw.jsonl",
+      "sha256": "025ede846006649147dad490ab9d2c222fbfd350abaf761029a9a8209cff1421"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-61/summary.jsonl",
+      "sha256": "bee7096750b7e12bf859890dd56fe1cffb85b6dff2199e24b01e09b38d773290"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-62/manifest.jsonl",
+      "sha256": "2bccf677295973a0fe9e7d32cf31531ca04f23df9c9f5b6f60a1f52c188ca205"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-62/raw.jsonl",
+      "sha256": "748ea6be60cd700c6581b95dc5dbba8d383af20412d4b32e5f5c52240777f895"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-62/summary.jsonl",
+      "sha256": "b19f180078f281a299093a1e6526649ee60720d06fef8cc76fcf51c437d0404b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-63/manifest.jsonl",
+      "sha256": "81649599269de08fc048edec29bb256f14c0c73c42ca4e0fd25db723c630849c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-63/raw.jsonl",
+      "sha256": "a498d5aaa5ffe6ae1b71871d2667feb839cf53b6470453dc6c24d5180f6514e9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-63/summary.jsonl",
+      "sha256": "de5c242b498466753769b39c1d2e0ff820ee104c163678088bad3267bce1aec6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-64/manifest.jsonl",
+      "sha256": "5cf53c38954393db70ea18851f506aae62f94ef3b366cf7120c9b9b5bc60ad7a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-64/raw.jsonl",
+      "sha256": "2d3965cf8d0e51ac6ff82798c5bf3076304e2d83ce1094f471b65fc0e62ff8d5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-64/summary.jsonl",
+      "sha256": "4e05892efc6b86b859fab2d1e35b71e4d66750f0fa76e0c9cb80550dc3c62895"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-65/manifest.jsonl",
+      "sha256": "e2a8e058a3b4fd907c148cc508de7ea7c2792397973b25aa9508e266b60ddb98"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-65/raw.jsonl",
+      "sha256": "943f76054c08b7777fa85c0ccd600913264203352d4ce39664f037e6cdc684e5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-65/summary.jsonl",
+      "sha256": "3e26e6025a477a8a85116907cf6d8abc210210330a7ac83a939b73f7f0d78fc0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-66/manifest.jsonl",
+      "sha256": "6bf1cb3d076b4f40c46c7845c32f152061002536c45bca7cb90b45ae6ef3521e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-66/raw.jsonl",
+      "sha256": "f3a954901119a6e1668c113ce4a1265038a841311d77c5ccc53505acb1b77654"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-66/summary.jsonl",
+      "sha256": "4b0f36a8f63f225cbdc6a2d0bfc0a2f618f9c4918c7971af87f8f4b3158f2f8a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-67/manifest.jsonl",
+      "sha256": "5a811b53f88032aec4a241463068abb2feb6c4f802f4b43507cd690ccffb87af"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-67/raw.jsonl",
+      "sha256": "5d3d6d8e2edf6f6b98a66f64bfb6b4e3d9410b73c875c9d3b973421105a4c60d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-67/summary.jsonl",
+      "sha256": "985c3e5f6fe3dccc00c656dbd861c5964cd22412fb181af854617486f9aa4859"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-68/manifest.jsonl",
+      "sha256": "7313a5fec9ca574ede3eaa14ccb802ce8feb90876d52c08d6aedf9b95703459a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-68/raw.jsonl",
+      "sha256": "e81d988430ca54b101f9b06dbc1885920334d244f252c56319b87f5c611f1ba5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-68/summary.jsonl",
+      "sha256": "9a6883f7938884bea5b7ffe84c7788848dd9ac62ad68b386b6caed9737936320"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-69/manifest.jsonl",
+      "sha256": "3ecb8df742c46cc78ee0cc3dc55ce445064c47d5308348ab0699df09e52d6de9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-69/raw.jsonl",
+      "sha256": "7322532f2d9d4a8e936544094c669e842b24a10192607e15db3c4b12ab7b94ee"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/reference/original/seed-69/summary.jsonl",
+      "sha256": "44a9db0c3e2bf53f3fb27c2367ed6b0cf1eac33b2d5e6e0dd5480c58c44c422a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-60/manifest.jsonl",
+      "sha256": "8f44a986c6a7f497785817ce2794fcb8520b74f0a8449c369459d85dc0f15c18"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-60/raw.jsonl",
+      "sha256": "02ecd52766f0a528873c83082d9b482a5db3fd1f6e80a97b53dfc38895a7b7f6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-60/summary.jsonl",
+      "sha256": "0ca9e071ad2e03f22b9c980180db1046eaf51852815c40b9a622c8eafe094b42"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-61/manifest.jsonl",
+      "sha256": "d2e2518ae19cf4489d3ab1cc5bb7dfeb97ad98c921f54442c061ccc9b17376b8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-61/raw.jsonl",
+      "sha256": "9ae330b29a56e032416e8ceab03426f3ecd76ceee43640d7ca2f2437d792116e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-61/summary.jsonl",
+      "sha256": "d8e4015b56b487f50e79276929ffed6cbea093827321972d3953a8acb96f8a08"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-62/manifest.jsonl",
+      "sha256": "efdddb131f827170fda3da10d48a865bee4844b38a429b0d1598de40b5d4b4bf"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-62/raw.jsonl",
+      "sha256": "923f2a4a7215ebad16d0b88f1c56c6522a7fdd9cacd0685bf53b02efc82a9c4f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-62/summary.jsonl",
+      "sha256": "a4b74b6e313e1445eafc7358ba96580c885fb3b2de1f1da3555a31cfa1686b4e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-63/manifest.jsonl",
+      "sha256": "0131213213bf7fbcced9555978838300dd4d48c32d4f53cf50d99d0c678c6cce"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-63/raw.jsonl",
+      "sha256": "e50ac35053d6a42ea788918cb76b6e7c8a359f49482b94975a0460aa28389144"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-63/summary.jsonl",
+      "sha256": "1271dbff7bf52115367e386cff918c3964b419b9159bd372d97109d7db014b0d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-64/manifest.jsonl",
+      "sha256": "25e489dc50745bb194f4d9a8bb024c1537a5361c375b94f2e87f8bcefa00cc7c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-64/raw.jsonl",
+      "sha256": "21f80447b8031d156430aab116dbdc2b094213e39422b6546599ccee5eeb564e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-64/summary.jsonl",
+      "sha256": "114906eef35ed44411eb0604724f85c69de89609d7682388900bde46964dbc26"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-65/manifest.jsonl",
+      "sha256": "fc382a80e5949d4bbf58f93a73e19c0af027a5256b3982f254ac4f85473a8911"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-65/raw.jsonl",
+      "sha256": "c78a17587a4631d720f7577ee6254a5a6087c320e8cf177ad3d00c58bbd02116"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-65/summary.jsonl",
+      "sha256": "8041175c1a1dd3f1c59df3b1f60d57ea1959a08bc906029ddee342fd62f17a04"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-66/manifest.jsonl",
+      "sha256": "281a6da2bd25010670d675233be9afb81728bd188af47efda10752c75e82e1ad"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-66/raw.jsonl",
+      "sha256": "9654663c6f27c09f83c6f1e571d6b3d648cb48aac6dcb38c59a61edad8c0e6a5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-66/summary.jsonl",
+      "sha256": "35176b78922146f15295db9d5936c8d55a7a686b12e6913263b6ff54de049bfb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-67/manifest.jsonl",
+      "sha256": "397f57662a4e486f0b293e5f5182625ba6055a8fd549f11ecf599fba4c4b80a7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-67/raw.jsonl",
+      "sha256": "b71b5fe1fbb804a6f3267c58a0ceeea2d316f66273ad4c8de366c508e550fe55"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-67/summary.jsonl",
+      "sha256": "2e1c18387ef94ac697363f5e5087d9c1ce1a2995823037a5b5e3373ecdfa877e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-68/manifest.jsonl",
+      "sha256": "573215e61c518be55af12ed342a82d9d1f5a20a99764378b559b7d0d187d14d0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-68/raw.jsonl",
+      "sha256": "1e4020f8ab0f0e9c2300ac03d333f73e3de64e1cdb963217bdb4bc379953a508"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-68/summary.jsonl",
+      "sha256": "409706c93981cdf965cdbf993e4cde0bd533c80ad30d60a30b550cfcfb581b93"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-69/manifest.jsonl",
+      "sha256": "c6d92146a424a4101f984cf5c005633c2a02619b640e7de662d762ac99380fad"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-69/raw.jsonl",
+      "sha256": "af8a33bbdc92abadafbbaf98290c0c956345a93ae512828cbb414793742b1b8a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/corrected/seed-69/summary.jsonl",
+      "sha256": "0d3dabc840630d2d2963df48dc8685b6fff24df5968b3e23061cb33f72ab3c9e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-60/manifest.jsonl",
+      "sha256": "57d655fe42f1895dfc4f742560fc060551949d780c82a9f36e5ce0af5e6fa72a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-60/raw.jsonl",
+      "sha256": "9d633ac6fed8f9907862f21347a60108e0d0e3b1e93b0da660b93f43eeb74eb3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-60/summary.jsonl",
+      "sha256": "d5b7526d3fd472dcd228bc4c434dca8346f874256af652dff217d33099a30209"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-61/manifest.jsonl",
+      "sha256": "9c772ec9af297f5d3ebc70eb6b735ca83741f9cd505a89282231b0842fdb1ac9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-61/raw.jsonl",
+      "sha256": "071d55f6c4dc56929a61291d5c1099d9400b6e6be7cf656069a3ab0b09a6bf4c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-61/summary.jsonl",
+      "sha256": "4e88e1193e6aa3d002b23beb84079638fc08488334f950f22b7cb9fe6c555aaf"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-62/manifest.jsonl",
+      "sha256": "354dbc0981fbfd5e9c44a422798126697fd062a1ae6976d8e56b8413af1fe0c5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-62/raw.jsonl",
+      "sha256": "e7cb0a166ef3f8bb387dc992421ecf9817c0be6296bf504122d020675534cc9c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-62/summary.jsonl",
+      "sha256": "def4775232ce0f17776bce38647dab55e04ebf2afff36cbca25411f5af47f999"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-63/manifest.jsonl",
+      "sha256": "15c6df66e6adbc41c265c694ec21e7165d3b821bf14ca0a170081aa43a822825"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-63/raw.jsonl",
+      "sha256": "a624bedeb9e3f347a22efb5be2b64f62e826425c46a25afad774468d6c46023d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-63/summary.jsonl",
+      "sha256": "acbc02f79ac481c502708da34e01a7d2a160055e88a8c3ea64691f23c07fcde8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-64/manifest.jsonl",
+      "sha256": "63af476a465bff12fce068b126f38658724a766bbcf831e284c58e0c4341068b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-64/raw.jsonl",
+      "sha256": "5cdf1eba610cde92fa5f6f194b9b7c027d88eda7e1261a7e72611a451c2514a9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-64/summary.jsonl",
+      "sha256": "ed7890b099aab3b7047e8559c59854903e921b05f766804a0e99e6ffb48f4075"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-65/manifest.jsonl",
+      "sha256": "3a6768afbc04742cfd9a9d0c129fede1e76083103cc1a58817515643b50304be"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-65/raw.jsonl",
+      "sha256": "252caa42be7223f9e374140cfaf189e8cc936e7a990f56e943adba3015d0a42d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-65/summary.jsonl",
+      "sha256": "b9f234ea7e33c97e6c0b54dd967d355b690be17d84641baa90debb8875649778"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-66/manifest.jsonl",
+      "sha256": "4f831b0d3dc5054b4359c2bd2f1a95bdd8213c03ba5e099088e55ae4d2e47110"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-66/raw.jsonl",
+      "sha256": "3dfb633395685369ca2947c2f6416ea5fe270a4065764c23b986f0ca83c3c797"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-66/summary.jsonl",
+      "sha256": "6e7356d05acae77409d7f61ee9cf738965c754efdc437cb0afe06ef01e8c1b7f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-67/manifest.jsonl",
+      "sha256": "d9f90b898ae4abe83c73f39f9e9c14e89063b815a1452ef49484efc13e6a716d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-67/raw.jsonl",
+      "sha256": "813ca0334b648b0c8e0a9013f3e463716c99a3a09ebcdf0dc5bc1eb80accb12d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-67/summary.jsonl",
+      "sha256": "2be52ed1ae871416debc5d70b9e3d79c2bd26ebe72979d00bcc903503c69dbc3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-68/manifest.jsonl",
+      "sha256": "dac29b9bdc8eab421c3bb1bb344cfcc7300099204f9c7196a251648b82b3ad3d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-68/raw.jsonl",
+      "sha256": "3c887ebed39ce927c265d4289298636678a348d794e9aeb17b6c7fdbb05a8ce7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-68/summary.jsonl",
+      "sha256": "a9bc323b882675770962952ede03c1217f35b9b8ec4a6fbfa50bfeb2f0397e20"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-69/manifest.jsonl",
+      "sha256": "edaf9c4f5b9451269ed087438b1e503d72cf037c975050b267f80857dc4f13b9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-69/raw.jsonl",
+      "sha256": "d4bf1c8f9242d819cd9616464e3d19916f7e803a8a989ecc19f23101c2f515fb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/refresh005/original/seed-69/summary.jsonl",
+      "sha256": "5b86835f1680a3f07b70c42207bf04aabce6aa21a4138298174525d3c781c0e4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-60/manifest.jsonl",
+      "sha256": "e2ef631efddf149e34c4f291a0690941b3124ba735f35f84192cac7d3ea3cced"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-60/raw.jsonl",
+      "sha256": "8220e046ba1907218e82878e545c3916721ce99b677a4cc53f8427b9031563a4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-60/summary.jsonl",
+      "sha256": "7afa4deb193a01e597a902225c07f90db44ca98536bf7ec15de94148a70d62d9"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-61/manifest.jsonl",
+      "sha256": "66a01c5ed13260a9102434e1f8ebdcc312c90fd1257b2c47724e8f93bedad587"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-61/raw.jsonl",
+      "sha256": "c0243e9a109fdb6124d676a37245184f6c887ee728a1fe4399144fdf4ef7301e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-61/summary.jsonl",
+      "sha256": "ff67340de2a20041962a293ccbfa38dbf6d04b4ebe531344bce762f220116b67"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-62/manifest.jsonl",
+      "sha256": "874d4d7a44deb26cb2c69b4c1a621acd1d67f0af49ed05d9c01b1a9c2b7a4bfa"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-62/raw.jsonl",
+      "sha256": "7d66a85af4f7372f6d28136a54b619c6801231e134de92966f1cd4cea80f5e3c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-62/summary.jsonl",
+      "sha256": "608f225024405e3d58a9730471ccb2c6e4087287cc5d7402cc48ce63527c9cbc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-63/manifest.jsonl",
+      "sha256": "e77a294e0bb8b31bc41eade8bc6c8c05a91c3a6f8b65aef6bcfd8ca21f0204f0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-63/raw.jsonl",
+      "sha256": "39a1a6040aacbf91a2ab9fc7e6a0dcd0c7a44a3517e79b1807a57dfdee832f80"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-63/summary.jsonl",
+      "sha256": "17267f949bb60bc55b268dc59b036b66c70575a2e1c9912f303a13ce2f808685"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-64/manifest.jsonl",
+      "sha256": "c9e657fd0b4b90cc58051fc617d7cd398230489c45f2fa6ac3fe18bcf5aaba12"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-64/raw.jsonl",
+      "sha256": "5198625e31c91c8e3b102a23ecd3019b18c931d82d0af4f0419838d7945b0301"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-64/summary.jsonl",
+      "sha256": "b3e3c86e23df988d81cc7d4b6d15e204b13462ec5a0656480ebfe9bbcdd4b111"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-65/manifest.jsonl",
+      "sha256": "40265bc0012ed79736c5410059896988104c309763a409b98b9f26fb72ef2851"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-65/raw.jsonl",
+      "sha256": "d117f26abcd757abf05dff74e5a7cf8e7230efca22b2b3600be45e54c6e026e1"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-65/summary.jsonl",
+      "sha256": "cd7c008dfdf3d10deaac0259db1f9f58a710e27cb505c709ec2d60092f6bc82c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-66/manifest.jsonl",
+      "sha256": "43cf09e6e71a9250b20eaa117add5b73a4839ccd074cb309d1638d837a68f5c6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-66/raw.jsonl",
+      "sha256": "a1cd322a6d990ab9600bead0ef01147c0787b15ece4532369ed541cd09d7a7b5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-66/summary.jsonl",
+      "sha256": "7c82ad4b6d93c23d37ff581fecd7147d39e084c6e0722d51d76948b6cc761b22"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-67/manifest.jsonl",
+      "sha256": "c57f84bd3be971101ade2aadc082011f83717d263ef9579568d52fa9824bbae2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-67/raw.jsonl",
+      "sha256": "641f1aa80a171307c9b5ae94b95d19145ccf9e883477c07ea260f722bcd1d128"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-67/summary.jsonl",
+      "sha256": "c3fd1e8fe7339f15d7b5c27bac9c4156a109169c398cf44d3596e1d4b6e049a8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-68/manifest.jsonl",
+      "sha256": "fc7c7d30777f1e7201ae5728aac86d20b94c5a8a402598105a5baa7f65f8a653"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-68/raw.jsonl",
+      "sha256": "6bc11973b293a5429c2d0a88fff05429288efedbc5e29e146e174ca7e17bc88b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-68/summary.jsonl",
+      "sha256": "4a1c5542105868935e50b402371fc633368877b303cc0a273a2deb8b605c1eec"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-69/manifest.jsonl",
+      "sha256": "4eb2b29bed53b9fb22787ab987703183f554bb8a9cd69c1a74e58b1baf82f807"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-69/raw.jsonl",
+      "sha256": "cb670fd1feb51c00d333184d94a6af22bad294ad5569686abfae6b915704b94f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/corrected/seed-69/summary.jsonl",
+      "sha256": "c8c2593e2c2e3b4f36120c8d56eca1c133261f33f03fb193ec0f3a63ba48a302"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-60/manifest.jsonl",
+      "sha256": "dfb68266cb2dd48acd38148aa235f5e4352d634278557714395147ba06bfb1d1"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-60/raw.jsonl",
+      "sha256": "48a212799287cd02e851984e8a92ab44a8fd72ca9d8eba210bb908a3e44935c6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-60/summary.jsonl",
+      "sha256": "138a3b515929aa0eb03538a8e02750f58a36609e906886a2af9bcb449028f2f8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-61/manifest.jsonl",
+      "sha256": "344614b2f1cdaad9cab98f24639f5ffb81f10c2f14a34e42075a7e367dbdd9dc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-61/raw.jsonl",
+      "sha256": "514b76d588c4603d1f37374db3c891caedbf33220e72d6390a285119201b8c15"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-61/summary.jsonl",
+      "sha256": "b5596fa1f264e0ad2b0e4649465d037509e0b6a843e490b4ff9ae12b341557fa"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-62/manifest.jsonl",
+      "sha256": "ad0db34edee5bb317894dc6643c469b58dbb866821d872d7bcb93a9c85859161"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-62/raw.jsonl",
+      "sha256": "a9b215e74713e0913fe12507b324105e842496789ea7a29fab3c7437c677f34a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-62/summary.jsonl",
+      "sha256": "09ff5929aff0e5c35e35cae8022207d8a6d18f9a8a9f56fe38483918b7f4390e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-63/manifest.jsonl",
+      "sha256": "46e7e1c16c90a1837bdeaa5a21004db458f10848e752d8f5f0163503d11a9a94"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-63/raw.jsonl",
+      "sha256": "0edbc4b10b5d4d1c74e72df18fafb42c9bf4e7b46aa5bb7f63758ccccf8b9449"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-63/summary.jsonl",
+      "sha256": "f8746b0e937535f391cbcc96d8769114aee0247bd5b000a2aa51c4862f09e1ac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-64/manifest.jsonl",
+      "sha256": "7c28620efbf69df7bc57dca843595667bd649af4bca1606b7e3a65b273733a5a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-64/raw.jsonl",
+      "sha256": "1f9d6fd49af711f94e04baafbc5366eae6cd7bcb84887b7541191bcfe1c47232"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-64/summary.jsonl",
+      "sha256": "66339d8a2e0cd0ad7c4eeba0efc7ac4b68f40fa366d6bbd70b334372f3cad3fd"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-65/manifest.jsonl",
+      "sha256": "4e0afd4f023c50d0728093e47c4480edc90834195a245cb5f90a1fb20c1a90a2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-65/raw.jsonl",
+      "sha256": "a63cddb92fe34cc0be09b99c7a748062e19a560d7d68cb7271ba48fc019cda12"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-65/summary.jsonl",
+      "sha256": "b86749c7f57948280378cea16b02bcb165b2545a7e11c13c0a00119401e7016a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-66/manifest.jsonl",
+      "sha256": "f0e0ecc2fd52226915d10bdc2d40015c5fd03b251ba8002497b20f7aef5cac64"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-66/raw.jsonl",
+      "sha256": "5634185837633bed362f496a0e89827c174bc379f896e9c7466c988e58ca192e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-66/summary.jsonl",
+      "sha256": "310e83c1a201b4dfc7fa141afa2a19043170acb31a909a6e4f847867e5c03746"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-67/manifest.jsonl",
+      "sha256": "27ffb56285da4905156d33b3488d10e6c54d066ba5e4cdd40ee38e0406a734b7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-67/raw.jsonl",
+      "sha256": "3552a6b7a5bae3ca7646467c8801e2291903a84bdd55a3b40a2e7741f92fabe2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-67/summary.jsonl",
+      "sha256": "c1a3c6af9fbfb2906a8826b9acc19fa869a2b8089cd2e0559e77debdda8e3b83"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-68/manifest.jsonl",
+      "sha256": "235640485122f67e2c14fb0a3a1ce72c0b9eb903793e841544878f4ea942dfac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-68/raw.jsonl",
+      "sha256": "ec924d4b30f655aa91c3d832be1715fdd6246399de3dcc7ac404cfbe7b0e7bb6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-68/summary.jsonl",
+      "sha256": "5f3b45924b3bfa92e065238267568be263bfe8439697c1fa3b44acd40b996039"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-69/manifest.jsonl",
+      "sha256": "86faf864e17786fbbf05edc8e99f7a743a487f5bbbb59846d73d7f6279a260de"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-69/raw.jsonl",
+      "sha256": "c515e9d64cf4efe6bb4f39162d85eff646608275cd41b73a51c67bfdca30b1bb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/ridge050/original/seed-69/summary.jsonl",
+      "sha256": "de95110b5fe7dd3c063c37a82f88024b2bcd4aa4e1feb6f95bc4bf43bc29c394"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-60/manifest.jsonl",
+      "sha256": "6961f700b43b99ba2785d24f3b721bb1cd85f06a8c53f44f1b7f053c9819a93a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-60/raw.jsonl",
+      "sha256": "c1a22b0cfae8fdb6249156544c28910623bd997b4e139c73bae5dad8c3c6d7b8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-60/summary.jsonl",
+      "sha256": "5274e58ee9574840e6c6fda1be69b300cd340ec48efb5819d92124e2bd67dfe3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-61/manifest.jsonl",
+      "sha256": "0dda1d6882fdf2160d35c07679f609fa6ef90e61424b03a471ab2e9c86b4d224"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-61/raw.jsonl",
+      "sha256": "6a4e70c2920f5f9b4d44d3165496767b92d6a43a2894b2784241b58edd4a6a8c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-61/summary.jsonl",
+      "sha256": "87abc88b1712c5a73cc145c784b68b4326a18dce3a6a3253ab18f51aa06e88d6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-62/manifest.jsonl",
+      "sha256": "7a5a6a2a603d3c96666df6ecb15e3d5839f0fc7f7b0eb9d298d454984827000a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-62/raw.jsonl",
+      "sha256": "274a503da8794bd2976a977c15ab95107926cd603d66f52b6e1c74f0ad18d489"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-62/summary.jsonl",
+      "sha256": "cc647ab73e29a0a44fe12fe7c6b7329125d2d7550efa0a2156a9c3cdd2bcd44c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-63/manifest.jsonl",
+      "sha256": "9b145d2ee8eb5995e51473cf075ba70dbd0fba819a1d56c2617852aff1e0754e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-63/raw.jsonl",
+      "sha256": "544b807ec63c65b3a321a5f3424504f178017616bd85c52599dd45aaf4a7d03a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-63/summary.jsonl",
+      "sha256": "cbc13c1bae5defcefde0adee0d90c87b240c7cf2e29a589f175d1c89a7afa644"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-64/manifest.jsonl",
+      "sha256": "68d41ec97b4303f1faff21f5d25c7040ae56cbe15ab11a9c991857f4042f6e41"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-64/raw.jsonl",
+      "sha256": "0f449624451179e7a954538471961ad07435b1dbec6c480409a39782f86c5c08"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-64/summary.jsonl",
+      "sha256": "229f92b1f0f251a1775b40195db0a37f3a36ed34f622ba4553f3f9604d079042"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-65/manifest.jsonl",
+      "sha256": "c2db05cdd0ced703b1e4f053b5928a79e98fd90d0a5558e82128881f4fff7f0c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-65/raw.jsonl",
+      "sha256": "71fd8d894ada620b438a86d867013ed052c1667df4ef01b599f8963b755bc1cf"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-65/summary.jsonl",
+      "sha256": "cbb0f8df49570c474dba33e58518760f42327f5e14f641c9d09dca6d8348386c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-66/manifest.jsonl",
+      "sha256": "6a537758b33d15249e47aa65121a9cc3fe3996f0cea70707c13f2af0814dcc95"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-66/raw.jsonl",
+      "sha256": "aa814885bf04b3a497405b2ea7d6c9e6be706715db9b9021bb1a47e8b1be7f78"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-66/summary.jsonl",
+      "sha256": "735b91a7e29bee01351315b75f0ce4515c7db04a97516aa93ab8e3b67a5d3585"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-67/manifest.jsonl",
+      "sha256": "daf59f132ed34943c0910d5c0408989f56dd0b1cf16a045168718a513599a2e7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-67/raw.jsonl",
+      "sha256": "a1ca64818e991fe9d5497f1760ecb204c0640dbd1d09cb999f736442716c2e0c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-67/summary.jsonl",
+      "sha256": "02bf757eeae2d4efb7083b14a5c40b54f5e4dc51ed025a4f253de323362f2c23"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-68/manifest.jsonl",
+      "sha256": "078c8e720258edb5175db2d7e2b1a453bca9034c0a23c1fd1580fdcd3bf36473"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-68/raw.jsonl",
+      "sha256": "718f9748ff172c29db5b41ee1ddb22e092348c0ba934efc71993443e2252332b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-68/summary.jsonl",
+      "sha256": "7e331780dcfaa1c395c1715dccb717f854fe7f391acd9b73afed54bb548a8277"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-69/manifest.jsonl",
+      "sha256": "9ff349c7640810297fe1ad142d0e377cf0c712e04424e4fa4118b9962c8fe60b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-69/raw.jsonl",
+      "sha256": "fe7023b7b8a39f249993cbf5783f5b0753efa31a40457683b84df829165ebeea"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/corrected/seed-69/summary.jsonl",
+      "sha256": "1d8cd86f4e89708d168ccb193c21bb5db0203dbfededec5f7a7a42cc697a1648"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-60/manifest.jsonl",
+      "sha256": "612664d9c4f9032a63f94589a7c20095ea6d342d7de9b49e6b1c8045142af22c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-60/raw.jsonl",
+      "sha256": "eeb2239d8c5dbbeb74f2c654815b14a486cde96507380fd3047271b9696d7259"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-60/summary.jsonl",
+      "sha256": "19b514827227152634b45720782f7c227d7a716d136f6358310841c60346f2e0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-61/manifest.jsonl",
+      "sha256": "dd678df4644728c62db513f7ca360ccc963152cb16224841057637aecea43795"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-61/raw.jsonl",
+      "sha256": "5d6808c0ffc3ee8e20b5ca076713f1edc086186076f32429479d2b047119b441"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-61/summary.jsonl",
+      "sha256": "0b80ab169423ab26bba85c4c74016feffc5d09adeee22e1df7ff775b2b7d9f7e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-62/manifest.jsonl",
+      "sha256": "b7dab2dfaa9e7e94b043a8e4d49b2c4e3646169b37bcc7cbe6e319ae78bea520"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-62/raw.jsonl",
+      "sha256": "ef073ca4d0051d472adcacf9afcf74e9cc838d5cb0e08e785f2bcfbffbe50ec2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-62/summary.jsonl",
+      "sha256": "143489f66fc601a7769486c9be732957af7af043cb961566e1237fceae46556c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-63/manifest.jsonl",
+      "sha256": "46a0adc95d9037bfa5c4ad12f6cae208a8a5934794e9d0f9c6e9ff72d26b1a2f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-63/raw.jsonl",
+      "sha256": "2e8e447dbc87f16194393596f5c6e4097b2f309b880b8752a720f3a6a553f007"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-63/summary.jsonl",
+      "sha256": "4318ac7bce0d9cd6eb6c1c4adbeb6317d03fa80077ed4e7f6cc3b2f1542ccba4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-64/manifest.jsonl",
+      "sha256": "03f3675f8e690fc62937a288d2cb80c077f223c00b9be7277c0fdab1289abeb4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-64/raw.jsonl",
+      "sha256": "7ac736635826a25d99fa59f4b3ab8c8e87b6de7659116b651714423c56372c20"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-64/summary.jsonl",
+      "sha256": "8f0a17807316c126fcd57a01ec07288495e998ec6ed36b1b646a82f3a4095bd6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-65/manifest.jsonl",
+      "sha256": "918232296ccd4c9043890b61dbfc0e096da6da70e5e1e5ae12b4f62a5a1c8daf"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-65/raw.jsonl",
+      "sha256": "65e128b5d4a6cdcf50e12b4e99d3f6b389acdeae080d26d5bd8aea6191bc42a8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-65/summary.jsonl",
+      "sha256": "e17a5643eb15644d7e208f420db37995e29c60199f8ca952d5785c660da097ef"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-66/manifest.jsonl",
+      "sha256": "a7359f7349f4ed7718cf05cd7dc080041066004f1407d38d1258b8aabb361eb4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-66/raw.jsonl",
+      "sha256": "b2c806cae85193a096049861bfac1a3ff75b417cd75a4bf5e7abaf251fb94258"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-66/summary.jsonl",
+      "sha256": "2a0aec1bb2be3c5000a799f4a3f3c2c9d4035791e874ae6f6c79c94bc8b9d63e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-67/manifest.jsonl",
+      "sha256": "e3ba38336622116f8d4dc1272468c42917e19f9803be1c753d7bb1405e3f725d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-67/raw.jsonl",
+      "sha256": "3d28c24206accfde63a342a159271016980f8a7ec424bc78bfc3ec2f87217094"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-67/summary.jsonl",
+      "sha256": "1588019164a7efceb451d0875ebf23f41a897f249f9a5808314f3a5bba8b4ae0"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-68/manifest.jsonl",
+      "sha256": "65af94dea573bafeb9ce42235746a377c877ad0ec5c7c54f53e4ce92297d9b0a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-68/raw.jsonl",
+      "sha256": "f41ac49dae6507fbb2da455977b3df5e7ce808cfc5e3b5c162f4afa50ae6799f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-68/summary.jsonl",
+      "sha256": "af55a36621bd862b9452324fe7b5c5cb5765bb0de5a0906275bc8898fd938d86"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-69/manifest.jsonl",
+      "sha256": "7a4dca349fb573ecd6713673b2d7dcfec559bc817fd67d8934aca5e8ca0dddca"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-69/raw.jsonl",
+      "sha256": "ad7dfa2987d4477271d7970320d5cca369d61c76efe95819b59157503e6c62f5"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/scale050/original/seed-69/summary.jsonl",
+      "sha256": "b1f56f25a60c88d94fd82da30eca9da013a7603ac341993a2e1c36e090280961"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-60/manifest.jsonl",
+      "sha256": "52c5ccb1e0e9a0c47fd5c3c429dfde5f475616e5447d5332f4556fb61b36eab2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-60/raw.jsonl",
+      "sha256": "778a5921718ae26aa79e6513ccc9f982fe108ed17d60c72cc74b81d8593bcced"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-60/summary.jsonl",
+      "sha256": "97e8db7c4b865aefd9c45b84b20a4b1d9d294c3cdbe46d0ef083f93131c3d724"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-61/manifest.jsonl",
+      "sha256": "00c2b2198122475b41bc14a78be4d3e5f6943077ce5e7ddde867d6c49fee9926"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-61/raw.jsonl",
+      "sha256": "be56302190791b85aaa1a945a1488f504f9684048e09ec64aab4b5e9d7c48090"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-61/summary.jsonl",
+      "sha256": "8ab51715349704dbbbe8dc832a59de529dafc8cbc27b7b254592f9e1423c6cf3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-62/manifest.jsonl",
+      "sha256": "cd728a5df1f330cfc36a5166c599fa348717d81ec53cc143e0cc7e11354ba13e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-62/raw.jsonl",
+      "sha256": "b10f8bea19327f7e34afd4d39619c0d156502977188d94f2c487b09081a7727a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-62/summary.jsonl",
+      "sha256": "1e9482aafeb3e0584f5b55b33fcdf40deca0a017f2e2b3e80f563b3e0b7fa93f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-63/manifest.jsonl",
+      "sha256": "a8c7ce871893b4412098c03d432c286853c792cc6efe744ba6c72e604ae66ca3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-63/raw.jsonl",
+      "sha256": "40bbbc49aeac06e02876004bc8be9badc06a2e94c0f7176056cf193a1606b39e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-63/summary.jsonl",
+      "sha256": "2df4dc85db23ebad198b9182994ca3bd5fe77adcf8f990f28b04e83531f7b845"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-64/manifest.jsonl",
+      "sha256": "45a4a6761e4d2025633710b4cd59a6c8b80835adf1b209cce0b89fac2bfdf99d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-64/raw.jsonl",
+      "sha256": "febc0cff3ba1bc38cebdbc64ba1d33ae9e2fd82365299d67e8f7a9aa396e9f9e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-64/summary.jsonl",
+      "sha256": "a9fb15a1aba5d0e81fa8a8f0734b3dd5f2b9ce21a3f9d7b68d578a3c2690657e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-65/manifest.jsonl",
+      "sha256": "1ca7973829ada7e16a349b27239807a649b47fa0fc0bd671b3f6675081d4be9e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-65/raw.jsonl",
+      "sha256": "683300f0615c468e9d314dfd18d706d89cfb7aafbcb61a920dc532d293738652"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-65/summary.jsonl",
+      "sha256": "8954e8c66d868b2966b35459c36787347748886233565260f8291efff77b4433"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-66/manifest.jsonl",
+      "sha256": "d6947e983f354cec5fec1c68a56f52837e67e8850911dda8486093df8ccfb33a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-66/raw.jsonl",
+      "sha256": "efaa74c2184788f307b9894b94438b0dc4b9906c9013411cdba1fa9de05d7109"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-66/summary.jsonl",
+      "sha256": "9ad662d31b1eb902b6299abe7fbe08cf0bedcea1193b2cbb288dc45acc3b7f57"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-67/manifest.jsonl",
+      "sha256": "0ce71736e13070b38ae9c428bc5e1ddef469bae9d314eed25c9cf22c6e25830a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-67/raw.jsonl",
+      "sha256": "1d1488d3db68472a2a71c5b9b12d7e25f1ddbf48ab2a9400b3e43127e706576d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-67/summary.jsonl",
+      "sha256": "36c8e897308bbb5f0f77a90b83c529ca5252d6e9e7913d9a52440cf6947b96fb"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-68/manifest.jsonl",
+      "sha256": "4ec27bd567de9eec69587cfe8068854d996d54c279eba6fea941076aa4246e7c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-68/raw.jsonl",
+      "sha256": "118e2a9bc956109ce9c5b6dfdbde6a6f9f43b616831dea0784c66d9d9abed43c"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-68/summary.jsonl",
+      "sha256": "33f5b86dc610f586bc78a60eb32226c3311a1d0aecc290dbbbd79608c36716e3"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-69/manifest.jsonl",
+      "sha256": "24af4113fd3408d8c3fbb115b04666685e4aa4edbb862fed1ed88b1b31e0983a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-69/raw.jsonl",
+      "sha256": "454540e4f5570887b2e69e27971c2b9e3aa04c0e451c57bad97978251b27a8a8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/corrected/seed-69/summary.jsonl",
+      "sha256": "e8e6105f82af6d6c0ca51867570e15d5c9a47264024ccd222d359d1eb78ffa8e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-60/manifest.jsonl",
+      "sha256": "32c99a7f2dd85c60a4bb371ac86f16c734518b5c21987cf9fd31eda5940cbc2d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-60/raw.jsonl",
+      "sha256": "02d784a8e28647a62b2c1810cf68d4323a75266beac9fc7df1eb411651f6fe1a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-60/summary.jsonl",
+      "sha256": "588c9f554e8c997e3bc07caf6fca9dc27b8ac2cbd68f225581abc1f03a0d740e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-61/manifest.jsonl",
+      "sha256": "d06cc11155bd00481ebd9241b9399bb93e49cc712d0f9522ea1c275a69da7ad8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-61/raw.jsonl",
+      "sha256": "67b4c07960a19b51f11cb475d0cc792a284e03de00643fc0fcb6665ebf03c7c7"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-61/summary.jsonl",
+      "sha256": "85648b46888413060c12692b0b9b2f0ba0f5804a7d9bb11ec68df7f72d7c6f29"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-62/manifest.jsonl",
+      "sha256": "fcce5c4ad5c6e429377f2b7ff2077238e42fe5c540fc32b8e7ae368d8fbdf2bc"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-62/raw.jsonl",
+      "sha256": "494fab60a059253a7e9eb48d0bcd25fe97edfd74fbc3533d6912c82d63d28acd"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-62/summary.jsonl",
+      "sha256": "3b3f88946f6aae79b62dbb8ccab59d970b1b90d821e5388cd732df94f970e69a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-63/manifest.jsonl",
+      "sha256": "8c8c3dedc9185ba9becfd3d506e023ea32aeb70db043eca1fe9ba317e1a9e4b6"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-63/raw.jsonl",
+      "sha256": "d5d500c7dca1ab11820ac4971ab24d213f7b616a8bd11b8d833bd20c54a4b914"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-63/summary.jsonl",
+      "sha256": "c943676ca08b4c4754702dbbd9741186b3052519a956bcb9d8e270ac2f919703"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-64/manifest.jsonl",
+      "sha256": "efce5c966482282ca06f9241f4248c847d518979ba90a12e45884a21dd752a24"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-64/raw.jsonl",
+      "sha256": "d3df2ab777ca909720c7ab6219144f0a2192c26773cf2e8a83a89f4fc913b380"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-64/summary.jsonl",
+      "sha256": "1cd215a0cdb8faed0e687c5f93a96b08002347e0b2ce33449dd38ebae0fe584a"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-65/manifest.jsonl",
+      "sha256": "4ccd0316fe7082f647fb32a9cc5ba0921205a222d2d10420f826ca45b1ab0531"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-65/raw.jsonl",
+      "sha256": "d8c506b7d8b012c0fe9e62dafbb1dfd274108f2f748160747c6964ee6f3ffe34"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-65/summary.jsonl",
+      "sha256": "1bff126ccc0d8b504fd57b58ccdbb6b571cc1db867b420739a308563aa7c427f"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-66/manifest.jsonl",
+      "sha256": "be60a353b976084efa4a8f2d8b8df968715baa5890a804e5469f9adb9afe7a70"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-66/raw.jsonl",
+      "sha256": "65d8615762ee61b53f6a97c9a196c5742dc4724a84043893b2ca4f9adac46375"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-66/summary.jsonl",
+      "sha256": "03200ce669b64927bcd273d47a93402e9203502e8dadf284fedf9161802cd02b"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-67/manifest.jsonl",
+      "sha256": "0699a31a52249df2586d1312981691c348e82532d349e9e668092be87c15f2f2"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-67/raw.jsonl",
+      "sha256": "fe943c5260265b76b16bca050c6ffb3feda126ddaf5ef54370860634d81e2790"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-67/summary.jsonl",
+      "sha256": "409887dbd35812ac5c26148c28f79b62cd444cfd0e6e22cdbdf7afdee3ab7755"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-68/manifest.jsonl",
+      "sha256": "834e4972e34e2b6e8ad85e81bc61e644046124a086224b3262bac875f8f8e6a8"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-68/raw.jsonl",
+      "sha256": "37e110475d72552ef931645c509258f42c5e499ca0ca8c2f463ea035174747ac"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-68/summary.jsonl",
+      "sha256": "d00e01a41566ffd526203126fd60b94920d3792fee98378f80905ce3bc18799d"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-69/manifest.jsonl",
+      "sha256": "3d63e92f4a65658f7442c2215e818b497549e7e4e386b992c8b528ed508584b4"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-69/raw.jsonl",
+      "sha256": "6fba46def1e1bada0565080f92c8a77b8e24bf1d2b38c0dfdfb96bc84340078e"
+    },
+    {
+      "path": "results/raw/certified_tanh/controlled_grid/full/tuning/trust035/original/seed-69/summary.jsonl",
+      "sha256": "db36f51fb30fc6f1509abcd4de1d9338d5a873e8c929e101160b96d700b8afd4"
+    }
+  ],
+  "schema_version": 1
+}

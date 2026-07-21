@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "name": "nonlinear_drift",
+  "description": "Executed small tanh-network policies with exact post-hoc audits of linearization, centering, feature drift, and dynamic width complexity.",
+  "base": {
+    "task": "realizable_smooth_nonlinear_contextual_bandit",
+    "rounds": 250,
+    "environment": {
+      "context_distribution": "normalized_rademacher",
+      "context_dimension": 4,
+      "action_count": 5,
+      "noise_std": 0.10,
+      "teacher_known_to_evaluator_only": true,
+      "context_dependent_ranking": true
+    },
+    "model": {
+      "architecture": "one_hidden_layer_tanh",
+      "hidden_width": 4,
+      "student_matches_teacher": true,
+      "dtype": "float64"
+    },
+    "drift_ladder": [
+      {"name": "frozen_head", "trainable": "head", "exact_head_ridge": true, "step_cap": 0.0},
+      {"name": "mild", "trainable": "full", "learning_rate": 0.002, "updates_per_round": 2, "step_cap": 0.005},
+      {"name": "medium", "trainable": "full", "learning_rate": 0.004, "updates_per_round": 3, "step_cap": 0.020},
+      {"name": "aggressive", "trainable": "full", "learning_rate": 0.008, "updates_per_round": 4, "step_cap": 0.080}
+    ],
+    "centers": ["original", "corrected_exact_frozen_feature"],
+    "ridge": 1.0,
+    "confidence": {
+      "delta": 0.05,
+      "policy_schedule": "predetermined_linear_radius_without_posthoc_certificate_inflation",
+      "policy_certification": "posthoc_audit_unless_all_predictable_schedules_are_supplied"
+    },
+    "curvature": {
+      "operator": "full_relinearized_ggn",
+      "solver": "cg",
+      "cg_residual_tolerance": 1e-10,
+      "cg_max_iterations": 128,
+      "audit_every": 1
+    },
+    "primary_outputs": [
+      "E_T",
+      "F_T",
+      "psi_t",
+      "chi_t",
+      "u_t",
+      "Lambda_alg_T",
+      "V_alg_T",
+      "Gamma_dynamic_T",
+      "cumulative_pseudo_regret",
+      "theorem_rhs_posthoc",
+      "optimism_violation_rate",
+      "runtime_seconds",
+      "peak_host_memory_bytes"
+    ],
+    "output_root": "results/raw/nonlinear_drift",
+    "provenance": {"packages": ["numpy", "scipy", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 8,
+      "drift_ladder": [
+        {"name": "frozen_head", "trainable": "head", "exact_head_ridge": true, "step_cap": 0.0},
+        {"name": "aggressive", "trainable": "full", "learning_rate": 0.05, "step_cap": 0.05}
+      ],
+      "seed_sets": {"tuning": [10], "evaluation": [110]}
+    },
+    "full": {
+      "rounds": 100,
+      "seed_sets": {
+        "tuning": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+        "evaluation": [110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129]
+      }
+    }
+  }
+}

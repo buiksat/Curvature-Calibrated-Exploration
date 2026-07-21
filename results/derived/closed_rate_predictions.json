@@ -1,0 +1,57 @@
+{
+  "artifact": "closed_rate_predictions",
+  "input_set_sha256": "525107f239ad4cf1d6eec910377eb2d6478c3152dca0df923abbde520a3204d7",
+  "inputs": [
+    {
+      "path": "experiments/configs/closed_rate_predictions.json",
+      "sha256": "14a4e66deea50e91538fb74fe6981bd4b94d0dec67b45f967e3ba9154aa24355"
+    }
+  ],
+  "regret_formula": "1-q/2",
+  "rows": [
+    {
+      "q": {
+        "denominator": 2,
+        "numerator": 1
+      },
+      "regret_exponent": {
+        "denominator": 4,
+        "numerator": 3
+      },
+      "sample_cvp_exponent": {
+        "denominator": 4,
+        "numerator": 7
+      }
+    },
+    {
+      "q": {
+        "denominator": 3,
+        "numerator": 2
+      },
+      "regret_exponent": {
+        "denominator": 3,
+        "numerator": 2
+      },
+      "sample_cvp_exponent": {
+        "denominator": 1,
+        "numerator": 2
+      }
+    },
+    {
+      "q": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "regret_exponent": {
+        "denominator": 2,
+        "numerator": 1
+      },
+      "sample_cvp_exponent": {
+        "denominator": 2,
+        "numerator": 5
+      }
+    }
+  ],
+  "sample_cvp_formula": "1+3q/2",
+  "schema_version": 1
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "name": "covertype_rerun",
+  "description": "Documented Covertype classes-as-arms rerun with contextual methods and deployable noncontextual Bernoulli bandit baselines.",
+  "base": {
+    "task": "covertype_classes_as_arms_executed_policy",
+    "rounds": 500,
+    "dataset": {
+      "loader": "sklearn.datasets.fetch_covtype",
+      "data_home": "experiments/data/sklearn",
+      "source": "UCI Covertype DOI 10.24432/C50K5N",
+      "feature_count": 54,
+      "class_count": 7,
+      "split_seed": 20260717,
+      "split_fractions": [0.6, 0.2, 0.2],
+      "standardize_from_training_only": true,
+      "continuous_columns": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "binary_columns_unchanged": true,
+      "tuning_environment_split": "validation",
+      "evaluation_environment_split": "test"
+    },
+    "reward": {"kind": "one_if_selected_class_matches_label", "likelihood_used_for_curvature": "gaussian_squared_loss"},
+    "model": {
+      "architecture": "one_hidden_layer_tanh",
+      "hidden_width": 4,
+      "initialization": "seeded_normal_fan_in",
+      "optimizer": "online_sgd",
+      "learning_rate": 0.01,
+      "ridge": 1.0,
+      "updates_per_round": 1,
+      "dtype": "float64"
+    },
+    "methods": [
+      "full_network_ggn_cg",
+      "frozen_full_gram",
+      "diagonal_full_network",
+      "last_layer_full",
+      "last_layer_diagonal",
+      "greedy_full_network",
+      "ucb1",
+      "thompson_sampling"
+    ],
+    "damping_grid": [1.0, 10.0],
+    "bonus_grid": [1.0, 2.0, 4.0],
+    "cg": {"relative_residual_tolerance": 0.001, "max_iterations": 80, "operator_fixed_within_solve": true},
+    "selection": {
+      "criterion": "mean_cumulative_pseudo_regret",
+      "hyperparameters_selected_on": "tuning_seeds_only",
+      "evaluation_policies_rerun_from_scratch": true,
+      "common_random_numbers_within_evaluation_seed": true
+    },
+    "output_root": "results/raw/covertype_rerun_1500",
+    "provenance": {"packages": ["numpy", "scipy", "scikit-learn", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 12,
+      "methods": ["full_network_ggn_cg", "diagonal_full_network", "last_layer_full", "greedy_full_network"],
+      "damping_grid": [1.0],
+      "bonus_grid": [2.0],
+      "seed_sets": {"tuning": [50], "evaluation": [150]}
+    },
+    "full": {
+      "rounds": 1500,
+      "tuning_rounds": 200,
+      "horizons": [200, 500, 1000, 1500],
+      "seed_sets": {
+        "tuning": [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+        "evaluation": [150, 151, 152, 153, 154, 155, 156, 157, 158, 159]
+      }
+    }
+  }
+}

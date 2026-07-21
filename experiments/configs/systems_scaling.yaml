@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "systems_scaling",
+  "description": "Synthetic CPU parameter-vector/operator scaling audit; no accelerator or foundation-model claim.",
+  "base": {
+    "task": "synthetic_cpu_float64_parameter_vector_operator_benchmark",
+    "rounds": 5,
+    "dimensions": [32, 64, 128],
+    "buffer_sizes": [32, 128, 512],
+    "action_counts": [5, 10],
+    "cg_iteration_budgets": [5, 15, 30],
+    "methods": [
+      "dense_exact",
+      "full_ggn_cg",
+      "diagonal",
+      "last_layer_block",
+      "lanczos_ritz",
+      "batched_cg",
+      "batched_jacobi_cg"
+    ],
+    "last_layer_fraction": 0.25,
+    "lanczos_rank": 16,
+    "ridge": 1.0,
+    "noise_std": 1.0,
+    "warmup_repetitions": 1,
+    "timing_repetitions": 3,
+    "cg_relative_tolerance": 1e-10,
+    "advanced_cpu_grid": {
+      "enabled": false,
+      "dimensions": [512, 2048, 8192],
+      "sample_counts": [32],
+      "action_counts": [4],
+      "iteration_budgets": [16],
+      "methods": ["batched_cg", "batched_jacobi_cg"]
+    },
+    "accelerator": "none_cpu_only",
+    "measurements": [
+      "wall_time_seconds",
+      "peak_host_memory_bytes",
+      "peak_accelerator_memory_bytes",
+      "curvature_vector_products",
+      "batch_operator_call_count",
+      "equivalent_sample_cvp_count",
+      "per_action_explicit_relative_residual",
+      "cg_iterations",
+      "predictive_width_relative_error"
+    ],
+    "output_root": "results/raw/systems_scaling",
+    "provenance": {"packages": ["numpy", "scipy", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 2,
+      "dimensions": [32, 64],
+      "buffer_sizes": [16, 64],
+      "action_counts": [3, 5],
+      "cg_iteration_budgets": [5, 15],
+      "timing_repetitions": 1,
+      "seed_sets": {"tuning": [40], "evaluation": [140]}
+    },
+    "full": {
+      "advanced_cpu_grid": {"enabled": true},
+      "seed_sets": {"tuning": [40, 41, 42], "evaluation": [140, 141, 142, 143, 144]}
+    }
+  }
+}

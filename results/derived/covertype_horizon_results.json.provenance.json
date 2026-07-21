@@ -1,0 +1,16 @@
+{
+  "artifact": "results/derived/covertype_horizon_results.json",
+  "artifact_sha256": "1b44295723862f0271b43c869d85226cdb6323d2bc09909fb66c2d6382c6f2eb",
+  "input_set_sha256": "5f5aca62099ead47c1acd086d019a49de2f8c4e98a23ffc29d53d875a66efef9",
+  "inputs": [
+    {
+      "path": "results/derived/covertype_rerun_1500_full_aggregate.json",
+      "sha256": "0c00c4ff2bf29d0fa47b1cf7128466da2540b6ebecaa943757ae91e34559c28b"
+    },
+    {
+      "path": "results/derived/covertype_test_class_counts.json",
+      "sha256": "c4091936809ebf7fcae2df54767561cba28804aac3e6a52133ff2bfa30d23223"
+    }
+  ],
+  "schema_version": 1
+}

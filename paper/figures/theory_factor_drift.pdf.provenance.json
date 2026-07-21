@@ -1,0 +1,53 @@
+{
+  "artifact": "paper/figures/theory_factor_drift.pdf",
+  "artifact_sha256": "cff3d0e5bf5654b9fda66e64bd267fbbe237536bfd449531dc97dc11405dbad4",
+  "generation_parameters": {
+    "log_axis_numerical_floor": null,
+    "phase_difference": "method_minus_full_cumulative_pseudo_regret",
+    "phase_methods": [
+      "diagonal",
+      "block_diagonal",
+      "low_rank_lanczos",
+      "unrescaled_window",
+      "stale_refresh"
+    ],
+    "tanh_metric_pairs": [
+      [
+        "final_chi_exact",
+        "final_chi_bar"
+      ],
+      [
+        "final_psi_exact",
+        "final_psi_bar"
+      ],
+      [
+        "final_F_exact_prior",
+        "final_F_bar_prior"
+      ],
+      [
+        "final_gamma_exact",
+        "final_gamma_hat"
+      ]
+    ]
+  },
+  "input_set_sha256": "20ea0d8070078bdd05c77b2dc9fbc60756590c2f3e22502c787cbc827882cc82",
+  "inputs": [
+    {
+      "path": "results/derived/certified_tanh_report.json",
+      "sha256": "011371faaa25a9ae1ff94e2514e9730f6b2392302c9435515da05211162117b6"
+    },
+    {
+      "path": "results/derived/certified_tanh_report.json.provenance.json",
+      "sha256": "5ea25385ab49bfff03ae96417d1d41b065bb9c22b41d3bfd86966701ba609579"
+    },
+    {
+      "path": "results/derived/curvature_phase_diagram_report.json",
+      "sha256": "86cba977dde6d6d3785e7ed3b657103cf51d64716e62a90b9b6cb2a20a908061"
+    },
+    {
+      "path": "results/derived/curvature_phase_diagram_report.json.provenance.json",
+      "sha256": "dc9b111f1082e71543160e864b42f894f3ede787e96e6d4e24de16b426f2dd46"
+    }
+  ],
+  "schema_version": 1
+}

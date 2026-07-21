@@ -1,0 +1,12 @@
+{
+  "artifact": "results/derived/closed_rate_predictions.json",
+  "artifact_sha256": "69ae4e79664a23e9a1e2973c8e4a95cb64efb9735c27cd8078c4898c1a4d7d04",
+  "input_set_sha256": "525107f239ad4cf1d6eec910377eb2d6478c3152dca0df923abbde520a3204d7",
+  "inputs": [
+    {
+      "path": "experiments/configs/closed_rate_predictions.json",
+      "sha256": "14a4e66deea50e91538fb74fe6981bd4b94d0dec67b45f967e3ba9154aa24355"
+    }
+  ],
+  "schema_version": 1
+}

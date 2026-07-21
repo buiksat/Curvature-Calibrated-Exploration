@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "name": "linear_audit",
+  "description": "Executed-policy, fully certified bounded linear audit of every term in the CC-UCB regret reduction.",
+  "base": {
+    "task": "bounded_context_dependent_linear_bandit",
+    "rounds": 1000,
+    "horizons": [250, 500, 1000, 2000],
+    "environment": {
+      "context_distribution": "normalized_rademacher",
+      "context_dimension": 8,
+      "action_count": 5,
+      "feature_map": "[x, one_hot(a), kron(x, one_hot(a))]",
+      "feature_dimension": 53,
+      "noise_std": 0.25,
+      "known_theta_star": true
+    },
+    "ridge": 1.0,
+    "confidence": {
+      "delta": 0.05,
+      "schedule": "deterministic_linear_ucb_dimension_upper_bound",
+      "bonus_scale": 1.0
+    },
+    "methods": [
+      "dense_full",
+      "cg_full",
+      "diagonal",
+      "unrescaled_window",
+      "rescaled_subsample",
+      "lanczos_ritz",
+      "stale_refresh"
+    ],
+    "curvature": {
+      "window_size": 64,
+      "subsample_size": 64,
+      "lanczos_rank": 16,
+      "refresh_period": 20
+    },
+    "cg": {
+      "tolerance": 0.05,
+      "max_iterations": 106,
+      "operator_fixed_within_solve": true,
+      "initialization": "zero"
+    },
+    "comparisons": ["fixed_reference", "validation_tuned"],
+    "tuning_rounds": 250,
+    "tuning_grid": {"ridge": [0.5, 1.0, 2.0], "bonus_scale": [1.0, 1.25]},
+    "primary_outputs": [
+      "cumulative_pseudo_regret",
+      "theorem_rhs",
+      "Lambda_alg_T",
+      "S_T",
+      "optimism_violation_rate",
+      "cg_iterations",
+      "runtime_seconds"
+    ],
+    "output_root": "results/raw/linear_audit",
+    "provenance": {"packages": ["numpy", "scipy", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 12,
+      "horizons": [6, 12],
+      "methods": ["dense_full", "cg_full", "diagonal", "unrescaled_window"],
+      "curvature": {"window_size": 4, "subsample_size": 4, "lanczos_rank": 4, "refresh_period": 3},
+      "seed_sets": {"tuning": [0], "evaluation": [100]}
+    },
+    "full": {
+      "seed_sets": {
+        "tuning": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "evaluation": [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119]
+      }
+    }
+  }
+}

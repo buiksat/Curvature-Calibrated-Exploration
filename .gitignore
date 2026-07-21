@@ -1,23 +1,74 @@
-# Overleaf synchronization surface: ignore everything except the paper inputs.
-/*
-!/.gitignore
-!/paper/
+# Local environments and caches.
+.DS_Store
+.venv/
+.pytest_cache/
+**/__pycache__/
+*.py[cod]
+*.swp
+*.swo
 
-# Core manuscript sources.
-/paper/*
-!/paper/main.tex
-!/paper/macros.tex
-!/paper/references.bib
-!/paper/aistats*.sty
-!/paper/aistats*_checklist.tex
-!/paper/figures/
-!/paper/tables/
+# LaTeX build intermediates. The compiled paper/main.pdf is retained.
+paper/.backups/
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.lof
+paper/*.log
+paper/*.lot
+paper/*.nav
+paper/*.out
+paper/*.run.xml
+paper/*.snm
+paper/*.synctex.gz
+paper/*.toc
+paper/*.vrb
+paper/*-blx.bib
+paper/main.txt
+paper/REVIEW_REQUEST_for_GPTPro.md
+paper/true_ggn.tex
+paper/figures/*.png
+paper/figures/*.png.provenance.json
+paper/tables/cg_accuracy_results.tex
+paper/tables/cg_accuracy_results.tex.provenance.json
+paper/tables/covertype_results.tex
+paper/tables/covertype_results.tex.provenance.json
+paper/tables/nonlinear_drift_results.tex
+paper/tables/nonlinear_drift_results.tex.provenance.json
+paper/tables/operator_ablation_results.tex
+paper/tables/operator_ablation_results.tex.provenance.json
+paper/tables/systems_scaling_results.tex
+paper/tables/systems_scaling_results.tex.provenance.json
 
-# Only the figure and generated tables referenced by main.tex.
-/paper/figures/*
-!/paper/figures/theory_factor_drift.pdf
+# Local datasets and scratch experiment outputs.
+experiments/data/*
+!experiments/data/.gitignore
+!experiments/data/.gitkeep
+experiments/results/*
+!experiments/results/.gitignore
+!experiments/results/.gitkeep
 
-/paper/tables/*
-!/paper/tables/executed_policy_results.tex
-!/paper/tables/linear_bound_ratios.tex
-!/paper/tables/covertype_horizon_results.tex
+# Preserve all derived artifacts, but keep the multi-gigabyte historical raw
+# archive out of Git. These compact/raw trees are the new revision evidence
+# needed to resume the current work on another machine.
+results/raw/*
+!results/raw/autodiff_systems/
+!results/raw/autodiff_systems/**
+!results/raw/offdiagonal_witness/
+!results/raw/offdiagonal_witness/**
+!results/raw/theory_scaling_compact/
+!results/raw/theory_scaling_compact/**
+
+# Generated release bundles are reproducible and substantially larger than the
+# source checkout. Rebuild them with tools/build_anonymous_supplement.py.
+release/
+release_review/
+anonymous_compact_supplement.zip
+anonymous_compact_supplement.zip.sha256
+anonymous_review_supplement.zip
+anonymous_review_supplement.zip.sha256
+
+# Historical working notes and editor backups are not release inputs.
+notes/

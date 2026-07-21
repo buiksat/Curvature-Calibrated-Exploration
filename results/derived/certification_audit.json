@@ -1,0 +1,3052 @@
+{
+  "c_bonus_beta_relationship": {
+    "action_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+    "beta_base_formula": "sqrt(d log(1+(t-1)G^2/(d lambda sigma^2)) + 2 log(1/delta)) + sqrt(lambda) S",
+    "exact_formula": "bar_beta_t = c_bonus * beta_base_t",
+    "interpretation": "c_bonus multiplies the entire base confidence radius, including the sqrt(lambda) S term. It does not separately multiply u_t, the CG inflation, or a nonzero centering certificate. In this linear audit bar_psi_t is exactly zero.",
+    "logged_beta_t_means": "bar_beta_t, after multiplication by c_bonus"
+  },
+  "category_definitions": {
+    "cg_solver_certified": "The approximate CG widths used a pre-action uniform energy-error certificate and the corresponding bonus inflation.",
+    "ex_ante_theorem_certified": "The executed action rule used only predictable pre-action quantities that satisfy the conditional theorem assumptions.",
+    "posthoc_theorem_event_verified": "Teacher-aware numerical checks made after execution verify the recorded realized confidence event and inequalities on every evaluation run; they do not create ex-ante certification.",
+    "uncertified_diagnostic": "A recorded quantity has no theorem-certification status; this includes evaluation-only fields and action-rule factors lacking a verified one-sided enclosure."
+  },
+  "event": "linear_policy_certification_audit",
+  "policies": [
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "dense_full",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<t} phi_s phi_s^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "Equal SPD matrices have equal inverse quadratic forms, so s_bar_t^2(a) = s_alg_t^2(a).",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "C_alg_t equals C_t equals C_bar_t",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/dense_full",
+      "policy_name": "fixed_reference/dense_full",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 4708.674922364232,
+          "theorem_bound_slack": 37009.449565426105,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 6.423306331271306e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -3.907985046680551e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 5.002220859751105e-12,
+          "theorem_bound_slack": 36978.2677720228,
+          "transfer_slack_min": -7.549516567451064e-15,
+          "width_dynamic_slack": 794.9186319779378,
+          "width_information_slack": 794.9186319779174
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a) is the recorded truncated CG iterate for C_alg_t u=phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a) is the recorded truncated CG iterate for C_alg_t u=phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "cg_full",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<t} phi_s phi_s^T; C_alg_t tilde_u_t(a) = phi(x_t,a) is solved by CG",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "cg.tolerance",
+          "configured_value": 0.05,
+          "formula": "bar_epsilon_t = epsilon_cfg when max_a epsilon_ta <= epsilon_cfg; otherwise a floating pre-action energy-error audit raises it to a roundwise padded max below 1",
+          "mathematical_justification": "Every action was solved and floating energy errors were audited before argmax, but neither that audit nor the condition estimate is a verified one-sided enclosure. The recorded inflation is therefore preserved without a CG solver-certification claim.",
+          "predictable": true,
+          "source": "cg.tolerance plus all-action floating 53 dimensional energy-error audit in experiments.run_linear_audit.run_method",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": false,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "For CG, the estimate sets the relative-residual target, but a floating condition estimate is not a verified upper enclosure and cannot certify the energy-error implication. The raw value and source label are preserved as executed-run diagnostics.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "Equal SPD matrices have equal inverse quadratic forms, so s_bar_t^2(a) = s_alg_t^2(a).",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "C_alg_t equals C_t equals C_bar_t",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/cg_full",
+      "policy_name": "fixed_reference/cg_full",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.05,
+          "cg_energy_error_max": 0.001081522492834093,
+          "kappa_bar_t": 4716.051380922558,
+          "theorem_bound_slack": 38915.32119526605,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 6.423306331271306e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 0.02359698078858996,
+          "bonus_upper_slack_min": 0.023014680188067627,
+          "cg_sandwich_lower_slack_min": 9.188659652449626e-05,
+          "cg_sandwich_upper_slack_min": 9.18890362009029e-05,
+          "dynamic_bound_slack": 4.263256414560601e-12,
+          "theorem_bound_slack": 38889.56877653471,
+          "transfer_slack_min": -7.549516567451064e-15,
+          "width_dynamic_slack": 796.395022108409,
+          "width_information_slack": 796.3950221083863
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The analytic transfer factor remains valid, but the floating condition estimate and energy-error audit are not verified one-sided enclosures.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "diagonal",
+      "operator_formula": "C_alg_t = diag(C_full_t)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/diagonal",
+      "policy_name": "fixed_reference/diagonal",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 8.070904324548899,
+          "theorem_bound_slack": 603915.8942796193,
+          "u_t": 668.2410729876045
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 2.5295321393059567e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 2.7533531010703882e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 129.22663612373688,
+          "theorem_bound_slack": 603740.9950729515,
+          "transfer_slack_min": 2.1316282072803006e-14,
+          "width_dynamic_slack": 1014.6848846128629,
+          "width_information_slack": 618.9275326666525
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "unrescaled_window",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum over the last min(t-1,W) played features phi_s phi_s^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "C_alg_t <= C_bar_t in Loewner order because omitted history terms are PSD. Inversion reverses order, hence phi^T C_bar_t^-1 phi <= phi^T C_alg_t^-1 phi. The stale argument is specific to fixed linear features and is not a certificate for a stale nonlinear Jacobian operator.",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "analytic PSD subset relation for the unrescaled recent subset",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/unrescaled_window",
+      "policy_name": "fixed_reference/unrescaled_window",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 301.7438054780511,
+          "theorem_bound_slack": 77347.25433357107,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 9.549694368615746e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -3.907985046680551e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 3.865352482534945e-12,
+          "theorem_bound_slack": 76638.47357843081,
+          "transfer_slack_min": -7.549516567451064e-15,
+          "width_dynamic_slack": 3581.955962670932,
+          "width_information_slack": 3581.955962670911
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "rescaled_subsample",
+      "operator_formula": "C_alg_t = lambda I when m_t=0; otherwise C_alg_t = lambda I + sigma^-2 ((t-1)/m_t) sum_{s in S_t} phi_s phi_s^T, m_t=min(t-1,n)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/rescaled_subsample",
+      "policy_name": "fixed_reference/rescaled_subsample",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 5436.540453677186,
+          "theorem_bound_slack": 126794.60885055203,
+          "u_t": 3.0562542993987565
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 2.098659024341032e-10,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 1.6431300764452317e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 1575.1797096199211,
+          "theorem_bound_slack": 124826.17838240856,
+          "transfer_slack_min": 3.3306690738754696e-16,
+          "width_dynamic_slack": 8296.162713740967,
+          "width_information_slack": 3420.0443171141196
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "lanczos_ritz",
+      "operator_formula": "C_alg_t = lambda I + Q_t diag(max(ritz_value-lambda,0)) Q_t^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/lanczos_ritz",
+      "policy_name": "fixed_reference/lanczos_ritz",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 3397.416190143642,
+          "theorem_bound_slack": 171138.92821776605,
+          "u_t": 1.864888305024585
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 9.726591088110581e-09,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 1.687538997430238e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": -9.726591088110581e-09,
+          "theorem_bound_slack": 161219.66965609777,
+          "transfer_slack_min": 7.28583859910259e-16,
+          "width_dynamic_slack": 8273.694070860676,
+          "width_information_slack": 8271.099034153647
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "fixed_reference",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 1.0
+      },
+      "method": "stale_refresh",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<=r_t} phi_s phi_s^T, r_t=P floor((t-1)/P)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 1.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "fixed full-profile base configuration",
+          "source_file": "experiments/configs/linear_audit.yaml",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "C_alg_t <= C_bar_t in Loewner order because omitted history terms are PSD. Inversion reverses order, hence phi^T C_bar_t^-1 phi <= phi^T C_alg_t^-1 phi. The stale argument is specific to fixed linear features and is not a certificate for a stale nonlinear Jacobian operator.",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "analytic PSD subset relation for the retained history prefix in this fixed-feature linear model",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "fixed_reference/stale_refresh",
+      "policy_name": "fixed_reference/stale_refresh",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.190194298376227,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 4596.285425186706,
+          "theorem_bound_slack": 43528.861758058236,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 7.503331289626658e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -3.197442310920451e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 265.63158082165234,
+          "theorem_bound_slack": 41460.55377972304,
+          "transfer_slack_min": -5.773159728050814e-15,
+          "width_dynamic_slack": 1793.9269806875973,
+          "width_information_slack": 969.7166474599182
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 0.5
+      },
+      "method": "dense_full",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<t} phi_s phi_s^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 0.5,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-000 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "Equal SPD matrices have equal inverse quadratic forms, so s_bar_t^2(a) = s_alg_t^2(a).",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "C_alg_t equals C_t equals C_bar_t",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/dense_full",
+      "policy_name": "validation_tuned/dense_full",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.529062833700827,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 9472.313784256237,
+          "theorem_bound_slack": 55987.3323561419,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 7.048583938740194e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -1.2079226507921703e-13,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 5.4569682106375694e-12,
+          "theorem_bound_slack": 55948.766244169354,
+          "transfer_slack_min": -3.197442310920451e-14,
+          "width_dynamic_slack": 1775.8417950215585,
+          "width_information_slack": 1775.8417950215144
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a) is the recorded truncated CG iterate for C_alg_t u=phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a) is the recorded truncated CG iterate for C_alg_t u=phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "cg_full",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<t} phi_s phi_s^T; C_alg_t tilde_u_t(a) = phi(x_t,a) is solved by CG",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "cg.tolerance",
+          "configured_value": 0.05,
+          "formula": "bar_epsilon_t = epsilon_cfg when max_a epsilon_ta <= epsilon_cfg; otherwise a floating pre-action energy-error audit raises it to a roundwise padded max below 1",
+          "mathematical_justification": "Every action was solved and floating energy errors were audited before argmax, but neither that audit nor the condition estimate is a verified one-sided enclosure. The recorded inflation is therefore preserved without a CG solver-certification claim.",
+          "predictable": true,
+          "source": "cg.tolerance plus all-action floating 53 dimensional energy-error audit in experiments.run_linear_audit.run_method",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": false,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "For CG, the estimate sets the relative-residual target, but a floating condition estimate is not a verified upper enclosure and cannot certify the energy-error implication. The raw value and source label are preserved as executed-run diagnostics.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "Equal SPD matrices have equal inverse quadratic forms, so s_bar_t^2(a) = s_alg_t^2(a).",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "C_alg_t equals C_t equals C_bar_t",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/cg_full",
+      "policy_name": "validation_tuned/cg_full",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.05,
+          "cg_energy_error_max": 0.001675719866924676,
+          "kappa_bar_t": 2351.953890746046,
+          "theorem_bound_slack": 25940.74379562559,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 5.5138116294983774e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 0.02389418954768452,
+          "bonus_upper_slack_min": 0.023306091883436353,
+          "cg_sandwich_lower_slack_min": 9.553488007042667e-05,
+          "cg_sandwich_upper_slack_min": 9.554371909005878e-05,
+          "dynamic_bound_slack": 4.888534022029489e-12,
+          "theorem_bound_slack": 25917.388947944855,
+          "transfer_slack_min": -1.9984014443252818e-15,
+          "width_dynamic_slack": 351.8673324020135,
+          "width_information_slack": 351.8673324020039
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The analytic transfer factor remains valid, but the floating condition estimate and energy-error audit are not verified one-sided enclosures.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "diagonal",
+      "operator_formula": "C_alg_t = diag(C_full_t)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/diagonal",
+      "policy_name": "validation_tuned/diagonal",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 8.083430485762147,
+          "theorem_bound_slack": 297889.9393755123,
+          "u_t": 335.55049937674755
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 2.4158453015843406e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 2.220446049250313e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 100.02085866230226,
+          "theorem_bound_slack": 297634.4140251362,
+          "transfer_slack_min": 1.021405182655144e-14,
+          "width_dynamic_slack": 452.74191507932335,
+          "width_information_slack": 296.4581819976329
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "unrescaled_window",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum over the last min(t-1,W) played features phi_s phi_s^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "C_alg_t <= C_bar_t in Loewner order because omitted history terms are PSD. Inversion reverses order, hence phi^T C_bar_t^-1 phi <= phi^T C_alg_t^-1 phi. The stale argument is specific to fixed linear features and is not a certificate for a stale nonlinear Jacobian operator.",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "analytic PSD subset relation for the unrescaled recent subset",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/unrescaled_window",
+      "policy_name": "validation_tuned/unrescaled_window",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 153.43196449579048,
+          "theorem_bound_slack": 51407.55167821578,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 8.640199666842818e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -1.5987211554602254e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 3.410605131648481e-12,
+          "theorem_bound_slack": 51000.62039474849,
+          "transfer_slack_min": -2.220446049250313e-15,
+          "width_dynamic_slack": 1573.487508492427,
+          "width_information_slack": 1573.4875084924138
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "rescaled_subsample",
+      "operator_formula": "C_alg_t = lambda I when m_t=0; otherwise C_alg_t = lambda I + sigma^-2 ((t-1)/m_t) sum_{s in S_t} phi_s phi_s^T, m_t=min(t-1,n)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/rescaled_subsample",
+      "policy_name": "validation_tuned/rescaled_subsample",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 2749.608985048868,
+          "theorem_bound_slack": 80571.21455661379,
+          "u_t": 3.2376604012898413
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 5.7411853049416095e-11,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 1.2434497875801753e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 1439.1770298113806,
+          "theorem_bound_slack": 79590.70255949667,
+          "transfer_slack_min": 2.8102520310824275e-16,
+          "width_dynamic_slack": 3665.215806123914,
+          "width_information_slack": 1387.2024739210747
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": false,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": true
+      },
+      "certification_category": "posthoc_theorem_event_verified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "lanczos_ritz",
+      "operator_formula": "C_alg_t = lambda I + Q_t diag(max(ritz_value-lambda,0)) Q_t^T",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "rho_plus_t = lambda_max(C_bar_t^-1/2 C_alg_t C_bar_t^-1/2); u_t(a) = max(1, rho_plus_t (1 + 32 eps_machine))",
+          "mathematical_justification": "The recorded floating eigenvalue and fixed machine-epsilon padding are not a verified one-sided upper enclosure. The raw factor remains part of the executed action rule, but it is not a theorem certificate.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating generalized eigenvalue estimate of the already constructed 53 by 53 matrices, with heuristic machine-epsilon padding",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/lanczos_ritz",
+      "policy_name": "validation_tuned/lanczos_ritz",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 1700.7829252762524,
+          "theorem_bound_slack": 105580.63412735033,
+          "u_t": 1.845593914124566
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 3.6025085137225688e-09,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": 1.1102230246251565e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": -3.6025085137225688e-09,
+          "theorem_bound_slack": 95224.25399423945,
+          "transfer_slack_min": 5.134781488891349e-16,
+          "width_dynamic_slack": 3214.059502314348,
+          "width_information_slack": 3209.035910799733
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "superseded_as_insufficient",
+          "audit_reason": "The floating generalized eigenvalue factor and heuristic padding are not a verified one-sided upper enclosure.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    },
+    {
+      "action_selection": {
+        "actions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "all_actions_scored_before_selection": true,
+        "formula": "tilde_s_t^2(a)=phi(x_t,a)^T tilde_u_t(a); tilde_u_t(a)=C_alg_t^-1 phi(x_t,a); w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a)); a_t=first argmax_a [phi(x_t,a)^T theta_hat_t+w_t(a)]",
+        "solve_definition": "tilde_u_t(a)=C_alg_t^-1 phi(x_t,a)",
+        "teacher_used": false,
+        "tie_break": "numpy.argmax chooses the lowest action index among exact ties"
+      },
+      "categories": {
+        "cg_solver_certified": false,
+        "ex_ante_theorem_certified": true,
+        "posthoc_theorem_event_verified": true,
+        "uncertified_diagnostic": false
+      },
+      "certification_category": "ex_ante_theorem_certified",
+      "comparison": "validation_tuned",
+      "exact_bonus_formula": "w_t(a)=(bar_beta_t+bar_psi_t) sqrt(u_t(a)/(1-bar_epsilon_t)) sqrt(tilde_s_t^2(a))",
+      "hyperparameters": {
+        "c_bonus": 1.0,
+        "lambda": 2.0
+      },
+      "method": "stale_refresh",
+      "operator_formula": "C_alg_t = lambda I + sigma^-2 sum_{s<=r_t} phi_s phi_s^T, r_t=P floor((t-1)/P)",
+      "policy_available_schedules": {
+        "beta_bar_t": {
+          "additional_config_keys": [
+            "ridge",
+            "environment.noise_std",
+            "confidence.theta_bound"
+          ],
+          "category": "ex_ante_theorem_certified",
+          "config_key": "confidence.delta",
+          "constants": {
+            "G_squared": 3.0,
+            "S": 2.036703832175901,
+            "d": 53,
+            "delta": 0.05,
+            "lambda": 2.0,
+            "sigma": 0.25
+          },
+          "formula": "gamma_upper_t = d log(1 + (t-1) G^2/(d lambda sigma^2)); beta_base_t = sqrt(gamma_upper_t + 2 log(1/delta)) + sqrt(lambda) S; bar_beta_t = c_bonus beta_base_t",
+          "logged_field": "beta_t",
+          "mathematical_justification": "The deterministic trace/log-determinant upper bound dominates the self-normalized information term. S is a declared parameter-norm bound, and c_bonus >= 1 preserves the upper-bound property.",
+          "predictable": true,
+          "source": "experiments.run_linear_audit.confidence_radius followed by the configured bonus_scale multiplication",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "c_bonus": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "bonus_scale",
+          "formula": "bar_beta_t = c_bonus beta_base_t",
+          "mathematical_justification": "The value is at least one. Fixed-reference uses the declared base value; validation-tuned uses only disjoint tuning seeds and is fixed before any evaluation trajectory.",
+          "predictable": true,
+          "source": "results/raw/linear_audit/full/selection.json winner candidate-004 selected on tuning seeds only",
+          "source_file": "experiments/run_linear_study.py",
+          "timing": "fixed_before_evaluation",
+          "used_in_action_selection": true,
+          "value": 1.0
+        },
+        "epsilon_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_epsilon_t = 0",
+          "mathematical_justification": "The computed inverse quadratic form is exact up to floating-point arithmetic, so the modeled relative energy error is zero.",
+          "predictable": true,
+          "source": "exact dense action solve; no truncated CG solve",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "uniform_upper_bound_verified": true,
+          "used_in_action_selection": true
+        },
+        "kappa_bar_t": {
+          "category": "uncertified_diagnostic",
+          "config_key": "not_applicable",
+          "formula": "bar_kappa_t = cond_2(C_alg_t)",
+          "logged_source": "exact_dense_pre_action_small_scale_certificate",
+          "mathematical_justification": "The policy does not use this logged condition estimate in its action rule.",
+          "one_sided_upper_enclosure_verified": false,
+          "predictable": true,
+          "source": "floating pre-action numpy.linalg.cond estimate of the SPD operator",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": false
+        },
+        "psi_bar_t": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "bar_psi_t = 0",
+          "mathematical_justification": "There is no feature drift or nonlinear Taylor remainder and the ridge normal equation is solved exactly, so the centering discrepancy certificate vanishes.",
+          "predictable": true,
+          "source": "analytic fixed-feature linear model with an exact ridge center",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        },
+        "u_t(a)": {
+          "category": "ex_ante_theorem_certified",
+          "config_key": "not_applicable",
+          "formula": "u_t(a) = 1 for every action",
+          "mathematical_justification": "C_alg_t <= C_bar_t in Loewner order because omitted history terms are PSD. Inversion reverses order, hence phi^T C_bar_t^-1 phi <= phi^T C_alg_t^-1 phi. The stale argument is specific to fixed linear features and is not a certificate for a stale nonlinear Jacobian operator.",
+          "one_sided_upper_enclosure_verified": true,
+          "predictable": true,
+          "source": "analytic PSD subset relation for the retained history prefix in this fixed-feature linear model",
+          "source_file": "experiments/run_linear_audit.py",
+          "timing": "pre_action",
+          "used_in_action_selection": true
+        }
+      },
+      "policy_id": "validation_tuned/stale_refresh",
+      "policy_name": "validation_tuned/stale_refresh",
+      "posthoc_fields": [
+        {
+          "category": "posthoc_theorem_event_verified",
+          "fields": [
+            "confidence_ratio_max",
+            "confidence_radius_valid_on_path",
+            "optimism_violations",
+            "theorem_bound_slack"
+          ],
+          "justification": "These fields numerically check that the recorded realized confidence event and inequalities held. They neither make the event predictable nor repair a missing one-sided enclosure.",
+          "timing": "post_action_or_end_of_run",
+          "used_in_action_selection": false
+        },
+        {
+          "category": "uncertified_diagnostic",
+          "fields": [
+            "true_means",
+            "optimal_action",
+            "pseudo_regret"
+          ],
+          "justification": "They use the synthetic teacher only to evaluate the executed policy and carry no certification role in action selection.",
+          "timing": "post_action",
+          "used_in_action_selection": false
+        }
+      ],
+      "posthoc_theorem_event_evidence": {
+        "aggregate_final_horizon_means": {
+          "bar_psi_t": 0.0,
+          "beta_t": 21.051131603393525,
+          "cg_certified_epsilon": 0.0,
+          "cg_energy_error_max": 0.0,
+          "kappa_bar_t": 2312.522362809305,
+          "theorem_bound_slack": 28476.745401059907,
+          "u_t": 1.0
+        },
+        "all_C_equals_C_bar": true,
+        "all_confidence_events_realized": true,
+        "all_executed_policy": true,
+        "all_raw_summaries_report_certified_execution": true,
+        "all_raw_summaries_report_predictable_certificate_flag": true,
+        "interpretation": "These are numerical checks and preserved raw summary flags. They do not supply a missing verified one-sided floating-point enclosure and do not override the policy-level certification categories.",
+        "maximum_absolute_dynamic_identity_residual": 7.275957614183426e-12,
+        "minimum_slacks": {
+          "bonus_lower_slack_min": -1.0658141036401503e-14,
+          "bonus_upper_slack_min": 0.0,
+          "cg_sandwich_lower_slack_min": 0.0,
+          "cg_sandwich_upper_slack_min": 0.0,
+          "dynamic_bound_slack": 237.3556791370711,
+          "theorem_bound_slack": 27368.521645216377,
+          "transfer_slack_min": -1.7763568394002505e-15,
+          "width_dynamic_slack": 794.3890279569897,
+          "width_information_slack": 418.95904919555977
+        },
+        "numerical_tolerance": 1e-08,
+        "raw_summary_certification_claims": {
+          "audit_disposition": "independently_supported_by_analytic_audit",
+          "audit_reason": "The current audit independently establishes every action-rule schedule; it does not rely on the raw self-classification fields.",
+          "raw_files_rewritten": false,
+          "reported_values": {
+            "certificate_mode": [
+              "predictable_exact_small_scale"
+            ],
+            "certified_execution": true,
+            "policy_used_predictable_valid_certificates": true
+          }
+        },
+        "run_count": 20,
+        "seeds": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ]
+      }
+    }
+  ],
+  "provenance": {
+    "aggregate": {
+      "path": "results/derived/linear_audit_full.json",
+      "raw_input_set_sha256": "7e1cf25874bcccebc0cc1594af358e944d93b7b1f4da0308c6553f17e6f0b5bf",
+      "sha256": "602f3965f923e7dfe9d5a881b5a0f698c59add6c02be71cfb3dc12cc705a730e"
+    },
+    "config": {
+      "path": "experiments/configs/linear_audit.yaml",
+      "sha256": "ae1e97057bc953d9e3954043999b2c076ede5bde25a2539b5b97d7242f9a3d6b"
+    },
+    "evaluation_manifests": {
+      "file_count": 280,
+      "sha256": "c9eabbe4a0deb8275cdeb0e37370d5617f80570749a9c87f3abe1e077c8bd49a"
+    },
+    "evaluation_summaries": {
+      "file_count": 280,
+      "sha256": "9be86f94bbbd30a84176e78113378d6be4285b6d406d819cadf9fc43984d9c5b"
+    },
+    "implementation": [
+      {
+        "path": "experiments/run_linear_audit.py",
+        "sha256": "c98655c17da3d4669d3a17843fca9e5dbe61f2ae7cd4db39417bab041220eacb"
+      },
+      {
+        "path": "experiments/run_linear_study.py",
+        "sha256": "f1f9ef9b162bf37a68c5eb0fd4840606e843499d150eb5ee44e911d30fd855a8"
+      },
+      {
+        "path": "experiments/make_certification_audit.py",
+        "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8"
+      }
+    ],
+    "selection": {
+      "path": "results/raw/linear_audit/full/selection.json",
+      "sha256": "c0b3df6ca3f1d4266535fafd1321fdee100ed2d8bab84b1df6ae9fa0ce1cd25a"
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "comparisons": [
+      "fixed_reference",
+      "validation_tuned"
+    ],
+    "evaluation_run_count": 280,
+    "evaluation_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "methods": [
+      "dense_full",
+      "cg_full",
+      "diagonal",
+      "unrescaled_window",
+      "rescaled_subsample",
+      "lanczos_ritz",
+      "stale_refresh"
+    ],
+    "phase": "evaluation",
+    "primary_policy_count": 14,
+    "profile": "full",
+    "seed_sets_disjoint": true,
+    "tuning_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  }
+}

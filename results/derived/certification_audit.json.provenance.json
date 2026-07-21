@@ -1,0 +1,41 @@
+{
+  "artifact": "results/derived/certification_audit.json",
+  "artifact_sha256": "4e3c95abc505278f23a936fe52a7160631e077abfcf69edd177f1956b1944b00",
+  "category_vocabulary": [
+    "ex_ante_theorem_certified",
+    "posthoc_theorem_event_verified",
+    "cg_solver_certified",
+    "uncertified_diagnostic"
+  ],
+  "evaluation_run_count": 280,
+  "event": "linear_policy_certification_audit_provenance",
+  "generator": {
+    "path": "experiments/make_certification_audit.py",
+    "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8"
+  },
+  "inputs": {
+    "aggregate": {
+      "path": "results/derived/linear_audit_full.json",
+      "raw_input_set_sha256": "7e1cf25874bcccebc0cc1594af358e944d93b7b1f4da0308c6553f17e6f0b5bf",
+      "sha256": "602f3965f923e7dfe9d5a881b5a0f698c59add6c02be71cfb3dc12cc705a730e"
+    },
+    "config": {
+      "path": "experiments/configs/linear_audit.yaml",
+      "sha256": "ae1e97057bc953d9e3954043999b2c076ede5bde25a2539b5b97d7242f9a3d6b"
+    },
+    "evaluation_manifests": {
+      "file_count": 280,
+      "sha256": "c9eabbe4a0deb8275cdeb0e37370d5617f80570749a9c87f3abe1e077c8bd49a"
+    },
+    "evaluation_summaries": {
+      "file_count": 280,
+      "sha256": "9be86f94bbbd30a84176e78113378d6be4285b6d406d819cadf9fc43984d9c5b"
+    },
+    "selection": {
+      "path": "results/raw/linear_audit/full/selection.json",
+      "sha256": "c0b3df6ca3f1d4266535fafd1321fdee100ed2d8bab84b1df6ae9fa0ce1cd25a"
+    }
+  },
+  "primary_policy_count": 14,
+  "schema_version": 1
+}

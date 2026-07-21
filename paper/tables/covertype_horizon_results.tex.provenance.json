@@ -1,0 +1,13 @@
+{
+  "artifact": "paper/tables/covertype_horizon_results.tex",
+  "artifact_sha256": "93b627e11e656e67509c64288dd8fd6bcd1278ad4a256aa66b0b7882712ecef9",
+  "input_set_sha256": "da89316a1354765b0b080ff55e0acfc946b64d011c9ebdd59835149ea5346316",
+  "inputs": [
+    {
+      "path": "results/derived/covertype_horizon_results.json",
+      "sha256": "1b44295723862f0271b43c869d85226cdb6323d2bc09909fb66c2d6382c6f2eb"
+    }
+  ],
+  "raw_input_set_sha256": "afec6450e2b8afc54da30ef0b8e14bdbc4c667b2ac66d02a10a642fc1a38de73",
+  "schema_version": 1
+}

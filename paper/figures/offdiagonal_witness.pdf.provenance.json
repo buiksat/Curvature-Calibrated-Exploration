@@ -1,0 +1,41 @@
+{
+  "artifact": "paper/figures/offdiagonal_witness.pdf",
+  "artifact_sha256": "a03705372fe47171907b3ca30709e040fec82d535dd21ebe9e88abc17131114a",
+  "generation_parameters": {
+    "analytic_cell": "analytic",
+    "analytic_curves": [
+      [
+        "exact_full",
+        "full_cg"
+      ],
+      [
+        "diagonal_raw",
+        "diagonal_uniform_transfer"
+      ]
+    ],
+    "log_axis_numerical_floor": null,
+    "noisy_cells": [
+      "low_gap_noisy",
+      "rotated_noisy",
+      "high_ratio_noisy"
+    ],
+    "paired_comparisons": [
+      "diagonal_raw_minus_exact_full",
+      "diagonal_uniform_transfer_minus_exact_full"
+    ],
+    "paired_horizon": 10000,
+    "uncertainty_interval": "paired_two_sided_95_percent_student_t_interval"
+  },
+  "input_set_sha256": "b4a42f4ff37251e9752a507fd744421640af806cf3161287eae598c6e9421f90",
+  "inputs": [
+    {
+      "path": "results/derived/offdiagonal_witness.json",
+      "sha256": "4ce4a67ed2cf3cc5a472e36ea21ff11f332004c104fb09fe4389fc72853cc809"
+    },
+    {
+      "path": "results/derived/offdiagonal_witness.json.provenance.json",
+      "sha256": "3d6f0d135210ebb303c627d4608215a5981d20bc295f36581f9f3b84ad3999b1"
+    }
+  ],
+  "schema_version": 1
+}

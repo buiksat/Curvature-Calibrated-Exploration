@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "name": "cg_accuracy",
+  "description": "Dense-reference solver audit plus a separate executed linear-bandit CG policy audit of accuracy, certificates, initialization, preconditioning, optimism, regret, and cost.",
+  "base": {
+    "task": "fixed_spd_predictive_width_and_linear_policy_audit",
+    "rounds": 200,
+    "dimension": 64,
+    "sample_count": 256,
+    "action_count": 5,
+    "ridge": 1.0,
+    "noise_std": 0.25,
+    "condition_numbers": [10.0, 100.0, 1000.0],
+    "epsilon_bar": [0.5, 0.25, 0.1, 0.05, 0.01],
+    "initializations": ["zero", "warm"],
+    "preconditioners": ["none", "jacobi"],
+    "reference_solver": "dense_float64",
+    "policy_audit": {
+      "environment": "bounded_normalized_rademacher_contextual_linear_bandit",
+      "feature_map": "[x, one_hot(a), kron(x, one_hot(a))]",
+      "delta": 0.05,
+      "bonus_scale": 1.0,
+      "confidence_schedule": "predetermined_time_uniform_linear_ucb",
+      "max_iterations": 212,
+      "operator_policy": "one_fixed_predictable_operator_with_separate_per_action_solves",
+      "certificate": "exact_pre_action_small_scale_condition_bound_plus_residual",
+      "output_subdirectory": "cg_policy_accuracy"
+    },
+    "measurements": [
+      "initial_relative_energy_error",
+      "exact_relative_energy_error",
+      "residual_certificate",
+      "predictive_width_relative_error",
+      "cg_width_sandwich",
+      "optimism_violation_rate",
+      "cumulative_pseudo_regret",
+      "iterations",
+      "curvature_vector_products",
+      "wall_time_seconds",
+      "peak_host_memory_bytes"
+    ],
+    "output_root": "results/raw/cg_accuracy",
+    "provenance": {"packages": ["numpy", "scipy", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 8,
+      "dimension": 24,
+      "sample_count": 48,
+      "condition_numbers": [10.0, 100.0],
+      "epsilon_bar": [0.5, 0.1],
+      "seed_sets": {"tuning": [30], "evaluation": [130]}
+    },
+    "full": {
+      "seed_sets": {
+        "tuning": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+        "evaluation": [130, 131, 132, 133, 134, 135, 136, 137, 138, 139]
+      }
+    }
+  }
+}
