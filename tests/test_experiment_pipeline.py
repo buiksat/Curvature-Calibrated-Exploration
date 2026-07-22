@@ -27,6 +27,7 @@ CONFIG_NAMES = {
     "offdiagonal_witness",
     "spectral_tail_study",
     "autodiff_systems",
+    "autodiff_ggn_benchmark",
 }
 
 

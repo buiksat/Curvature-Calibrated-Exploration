@@ -1,3 +1,5 @@
+load("@fbcode_macros//build_defs:native_rules.bzl", "buck_sh_binary")
+
 python_library(
     name = "config_lib",
     srcs = ["__init__.py", "config.py"],
@@ -30,6 +32,7 @@ python_library(
         "aggregate_results",
         "aggregate_theory_scaling",
         "make_balanced_benchmark_artifact",
+        "make_autodiff_ggn_artifacts",
         "make_certification_audit",
         "make_certified_tanh_artifact",
         "make_certified_scaling_artifacts",
@@ -80,4 +83,23 @@ python_binary(
     name = "record_autodiff_systems_not_run",
     main_module = "experiments.run_autodiff_systems",
     deps = [":lib"],
+)
+
+buck_sh_binary(
+    name = "run_autodiff_systems_conda",
+    main = "run_conda_python_module.sh",
+    resources = [
+        "run_conda_python_module.sh",
+        "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
+    ],
+)
+
+buck_sh_binary(
+    name = "run_autodiff_ggn_benchmark_conda",
+    main = "run_autodiff_ggn_benchmark_conda.sh",
+    resources = [
+        "run_autodiff_ggn_benchmark.py",
+        "run_autodiff_ggn_benchmark_conda.sh",
+        "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
+    ],
 )

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "autodiff_ggn_benchmark",
+  "description": "Real torch.func JVP/VJP matrix-free GGN benchmark with small-model dense audits and a preregistered compute cap.",
+  "base": {
+    "rounds": 1,
+    "models": [
+      {"name": "mlp_100k", "architecture": [128, 512, 128, 1], "dense_reference": true},
+      {"name": "mlp_10m", "architecture": [256, 2048, 4608, 1], "dense_reference": false}
+    ],
+    "buffer_sizes": [32, 128, 512],
+    "action_counts": [5, 10],
+    "cg_targets": [0.1, 0.01, 0.001],
+    "methods": [
+      "separate_cg",
+      "batched_cg",
+      "jacobi_pcg",
+      "diagonal",
+      "last_layer",
+      "explicit_dense_reference"
+    ],
+    "damping": 1.0,
+    "noise_variance": 1.0,
+    "dtype": "float32",
+    "device": "auto",
+    "activation": "tanh",
+    "maximum_cg_iterations": 25,
+    "diagonal_chunk_size": 4,
+    "warmup_repetitions": 1,
+    "timing_repetitions": 1,
+    "compute_cap_accelerator_hours": 24.0,
+    "compute_cap_cpu_hours": 96.0,
+    "rng": "torch manual seed plus NumPy PCG64 manifest",
+    "selection_protocol": "all model and solver cells fixed before evaluation; no evaluation-seed selection",
+    "provenance": {"packages": ["torch", "numpy"]}
+  },
+  "profiles": {
+    "smoke": {
+      "models": [
+        {"name": "mlp_smoke", "architecture": [8, 16, 1], "dense_reference": true}
+      ],
+      "buffer_sizes": [6],
+      "action_counts": [2],
+      "cg_targets": [0.1],
+      "dtype": "float64",
+      "device": "cpu",
+      "maximum_cg_iterations": 4,
+      "diagonal_chunk_size": 2,
+      "warmup_repetitions": 0,
+      "compute_cap_accelerator_hours": 0.1,
+      "compute_cap_cpu_hours": 0.1,
+      "seed_sets": {
+        "development": [31],
+        "tuning": [41],
+        "evaluation": [5000]
+      }
+    },
+    "full": {
+      "seed_sets": {
+        "development": [31],
+        "tuning": [41, 42, 43],
+        "evaluation": [5000, 5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009]
+      }
+    }
+  }
+}
