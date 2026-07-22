@@ -1,15 +1,39 @@
 {
   "artifact": "paper/tables/theory_scaling_full_grid.tex",
-  "artifact_sha256": "5a443c50bb3f567fa76a58df6f87c132006fe9b61512a95025ed12a6dfba1da3",
+  "artifact_sha256": "7a661377302da7e9242be950415f3b16c3efd02557aa9db05de64a41f7325fec",
   "generation_parameters": {
-    "active_ranks": [
-      4,
-      8,
-      16
-    ],
-    "ambient_dimension": 2048,
     "bootstrap_replicates": 2000,
-    "interpretation": "finite-horizon diagnostic, not a proof"
+    "contents": "all-method terminal regret means and per-method theorem-event status with failure categories and counts",
+    "interpretation": "finite-horizon diagnostic, not a proof",
+    "methods": [
+      "exact_current",
+      "full_cg",
+      "window_q_1_2",
+      "window_q_2_3",
+      "window_q_1",
+      "frozen",
+      "diagonal_current",
+      "greedy"
+    ],
+    "panels": [
+      {
+        "active_rank": 4,
+        "ambient_dimension": 128
+      },
+      {
+        "active_rank": 4,
+        "ambient_dimension": 2048
+      },
+      {
+        "active_rank": 8,
+        "ambient_dimension": 2048
+      },
+      {
+        "active_rank": 16,
+        "ambient_dimension": 2048
+      }
+    ],
+    "uncertainty": "pointwise percentile-bootstrap 95 percent intervals"
   },
   "input_set_sha256": "522fbe386ea57c1035bab3782b1c72ddf863202dbd1bcfb2ff87968bd176c3ad",
   "inputs": [

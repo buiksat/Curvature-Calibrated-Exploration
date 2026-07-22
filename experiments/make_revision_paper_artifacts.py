@@ -453,7 +453,7 @@ def _make_table(tanh: Mapping[str, Any], balanced: Mapping[str, Any], path: Path
         r"\setlength{\tabcolsep}{2.4pt}",
         r"\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrrrl@{}}",
         r"\toprule",
-        r"Study & Policy & Regret [95\% CI] & Time (s) & Event fail. & Status \\",
+        r"Study & Policy & Regret [95\% CI] & Measured run time (s) & Event fail. & Status \\",
         r"\midrule",
     ]
     for index, row in enumerate(rows):
@@ -508,7 +508,9 @@ def generate_revision_artifacts(
         "balanced_configuration": "validation_tuned_on_disjoint_tuning_seeds",
         "balanced_methods": [method for method, _ in BALANCED_METHODS],
         "regret_interval": "mean_and_two_sided_95_percent_student_t_interval",
-        "runtime_definition": "seconds_per_complete_run",
+        "runtime_definition": (
+            "descriptive_seconds_per_complete_run_not_controlled_method_speed"
+        ),
         "tanh_configuration": "fixed_schedule_evaluation",
     }
     sidecars = [

@@ -78,22 +78,25 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-Exploration bonuses for differentiable-model bandits depend on an inverse
-curvature that is usually replaced by a diagonal or last-layer surrogate.  We use
-curvature--vector products and conjugate gradients (CG) to compute a matrix-free
-full-GGN/Fisher reference without materializing a $d\times d$ matrix.  For Gaussian
-rewards and squared loss, our regret reduction separates linearization, centering,
-feature and operator transfer, CG error, and realized width complexity.  We make its
-nonlinear inputs operational: a vector Welford statistic and scalar residual moments
-give predictable conservative transfer, centering, and confidence schedules using
-only $O(d)$ additional path-certificate state.  A bounded-path near-linear
-corollary states the resulting finite-$T$ dependence explicitly.  On 50 held-out
-seeds, a nonlinear tanh policy uses only these pre-action schedules and has zero
-observed theorem-event failures, although its float64 checks are post-hoc verified
-and its numerical bound is highly vacuous.  A preregistered mechanism map and a
-matched contextual benchmark show that full curvature is not uniformly preferred;
-diagonal and last-layer policies often have lower regret.  Thus full GGN is a
-reference operator, not a universal performance claim.
+Curvature surrogates in differentiable-model bandits change exploration widths,
+but greater fidelity to full curvature need not improve online decisions.  We use
+the full generalized Gauss--Newton (GGN)/Fisher operator as a reference for analysis
+and falsification, computing its widths with curvature--vector products and
+conjugate gradients (CG) without materializing a $d\times d$ matrix.  For Gaussian
+rewards and squared loss, a transfer theorem separates linearization, centering,
+feature and operator transfer, CG error, and realized width complexity.  Predictable
+Welford and residual statistics instantiate its nonlinear certificates with $O(d)$
+additional state.  A closed sublinear rate is conditional: a supplied fixed
+$r$-dimensional tangent subspace, a bounded near-linear path, and the stated width,
+optimizer, and CG premises yield $O(r\sqrt T\log T)+O(T/\sqrt W)$.  A separate
+growing-window result gives a conditional $T^{1-q/2}$ regret versus
+$T^{1+3q/2}$ sample-CVP tradeoff under persistent excitation.  Experiments are a
+reference-operator falsification study, not a performance demonstration.  A linear
+Gram witness isolates an off-diagonal action change, while a 3,600-run scaling grid,
+a mechanism map, and a matched contextual benchmark reject a uniform
+fidelity-based regret ordering in the tested regimes.  The grid has a clean
+low-rank slice but optimizer and path-event failures at larger ranks; its fitted
+slopes are diagnostics.  Diagonal and last-layer policies often have lower regret.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -134,9 +137,13 @@ of~$s_t^2(a)$.  The spectral change does not by itself imply a change
 in the selected action, and therefore in regret; whether it does is an
 empirical question, which we make measurable and study directly.
 
-\textbf{We make this width distortion measurable and compute the
-full-curvature bonus without materializing the matrix.}  This reference exposes
-surrogate-induced changes under a common operator interface.  We adapt the
+\textbf{We use full curvature as a reference operator in a falsification study.}
+Common-trajectory diagnostics isolate surrogate-induced width distortion, while
+independently executed policies test whether those distortions survive adaptive
+feedback.  The target is the uniform claim that greater fidelity to full GGN orders
+regret: one controlled reversal rejects that claim, whereas agreement does not
+establish superiority.  Because executed policies follow different histories,
+their regret contrasts are descriptive rather than causal operator effects.  We adapt the
 established matrix-free predictive-variance primitive to online contextual
 exploration: curvature--vector products (CVPs), available through automatic
 differentiation, let us
@@ -165,21 +172,23 @@ nonlinear inputs are computable: Welford parameter moments and observed collecti
 residuals upper-bound feature transfer and centering, while an analytic Taylor
 schedule supplies the confidence radius (\Cref{lem:path-certificates,cor:operational}).
 These schedules are conservative and need known smoothness constants and a certified
-optimizer residual.  Under a bounded near-linear path and fixed tangent rank we
-close information gain and give an explicit $O(r\sqrt T\log T)$ rate; a
+optimizer residual.  For a supplied fixed-rank tangent path satisfying the stated
+width-dependent smoothness, residual, and optimizer envelopes, we close information
+gain and give an explicit $O(r\sqrt T\log T)+O(T/\sqrt W)$ rate; a
 persistently excited growing window gives a computation--regret tradeoff
 (\Cref{cor:rank-near-linear,thm:growing-window}).  Neither result certifies
 unrestricted fine-tuning.
 
 \paragraph{Contributions.}
-\textbf{(1)} A rank-closed bounded-path theorem for exact current GGN, with
-information gain and width dependence explicit (\Cref{cor:rank-near-linear}).
+\textbf{(1)} A rank-closed conditional rate for fixed-subspace adaptation with
+exact current GGN, with bounded-path and width assumptions explicit
+(\Cref{cor:rank-near-linear}).
 \textbf{(2)} A certified growing-window rate exposing the $T^{1-q/2}$ regret
 versus $T^{1+3q/2}$ sample-CVP tradeoff (\Cref{thm:growing-window}).
 \textbf{(3)} Predictable $O(d)$-state nonlinear transfer and centering
 certificates (\Cref{lem:path-certificates,cor:operational}).
 \textbf{(4)} Matrix-free full-GGN/Fisher widths via residual-checked CG/CVP
-solves, plus a constructive case where off-diagonal geometry changes regret
+solves, plus an off-diagonal linear-Gram witness relevant to the GGN metric
 (\Cref{prop:offdiag-witness}).
 \textbf{(5)} Executed nonlinear, mechanism, baseline, and systems audits that
 separate online outcomes from post-hoc diagnostics (\Cref{sec:experiments}).
@@ -668,40 +677,58 @@ $(1/2,3/4,7/4)$, $(2/3,2/3,2)$, and $(1,1/2,5/2)$.
 All regret rows are independently executed policies.  Common random numbers are
 used only where pairing is valid.  Exact teacher and dense replay quantities are
 post-action audits; common-trajectory operator comparisons never report causal
-regret.  Tuning and evaluation seeds are disjoint, and seed-level data and complete
-hash provenance are released (\Cref{app:new-experiments}).
+regret.  Tuning and evaluation seeds are disjoint.  The derived full-grid aggregate
+retains seed-level checkpoints and complete hash provenance; release scope and
+missing raw tiers are stated in \Cref{app:availability}.
 
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/theory_scaling_full_grid.pdf}
-  \caption{Finite-horizon theorem-scaling diagnostic at ambient dimension
-  $d=2048$.  Curves are 50-seed mean cumulative regret with paired-seed bootstrap
-  95\% intervals at the five preregistered trajectory prefixes.  Full CG uses the
-  residual-checked ambient CVP implementation; greedy is an uncertified control.
-  The fitted log--log behavior is descriptive and does not prove an asymptotic rate.}
+  \caption{Finite-horizon theorem-scaling diagnostic.  The first panel is the
+  event-clean $d=128,r=4$ reference; the remaining panels use $d=2048$.
+  Curves are 50-seed means and bands are pointwise percentile-bootstrap 95\%
+  intervals at five preregistered prefixes.  Panel labels report the conjunction
+  of float64 theorem-event fields for exact, CG, and the three window methods.
+  Greedy is uncertified.  No exponent comparison tests \Cref{thm:growing-window}
+  unless every premise and audit field for that method/rank cell passes.}
   \label{fig:theory-scaling-full-grid}
 \end{figure*}
 
 \begin{table*}[t]
 \centering\small
 \input{tables/theory_scaling_full_grid.tex}
-\caption{Preregistered finite-horizon scaling summary at $d=2048$.  Slopes are
-unweighted OLS fits of the log seed-mean metric on log horizon; brackets are
-paired-seed bootstrap 95\% intervals.  Audit fail. counts failed float64 event-field
-instances across exact current, full CG, and the three growing-window rows.  These
-point checks are neither certificates nor verified enclosures, and a nonzero entry
-precludes describing the corresponding executions as theorem-event verified.}
+\caption{Preregistered scaling summary.  Panel (a) reports terminal mean regret
+for every executed method.  Panel (b) decomposes failed float64 theorem-event
+fields by method: O is the prescribed optimizer-residual envelope, $P_e$ is the
+path bound using the excitation floor, and $P_\lambda$ is the path bound using
+damping.  Pass means zero observed failures for the displayed fields, not a
+verified numerical enclosure.  Any nonzero entry precludes interpreting that
+cell's slope as a test of the corresponding conditional theorem.}
 \label{tab:theory-scaling-full-grid}
 \end{table*}
 
-The complete Cartesian grid contains all three ambient dimensions and active ranks,
-all eight methods, and all 50 fixed evaluation seeds.  Active-coordinate regret and
-dynamic-width curves agree across ambient dimensions up to the separate ambient-CVP
-runtime, while the coordinate-diagonal surrogate changes with the embedding.  Most
-importantly, the generated audit column records failed optimizer/path events outside
-the primary low-rank slice.  We therefore treat every slope in
-\Cref{fig:theory-scaling-full-grid,tab:theory-scaling-full-grid} as a diagnostic,
-not evidence that the theorem's assumptions hold uniformly.
+The grid contains three ambient dimensions, three active ranks, eight methods,
+and 50 fixed seeds.  For the column-orthonormal embedding $E_d$,
+\[
+ (E_dg)^\top(\lambda I_d+E_dA_tE_d^\top)^{-1}(E_dg)
+ =g^\top(\lambda I_r+A_t)^{-1}g.
+\]
+Thus non-diagonal widths are ambient-invariant in exact arithmetic.  Empirically,
+the maximum cross-$d$ regret range is zero; the dynamic-width range is
+$5.7\times10^{-14}$ for non-diagonal methods and $2.2501\times10^3$ for the
+embedding-dependent diagonal method.  Ambient-CVP runtime is excluded.
+
+The policy predeclares $\zeta_t=10^{-6}$ and stops after at most 40 optimizer
+iterations; it does not enforce that envelope.  A failed field therefore means
+the executed radius does not instantiate the theorem on that round, so the path
+is an uncertified diagnostic.  Five-point slopes and fit residuals are in
+\Cref{tab:theory-scaling-slopes}.
+
+Full CG is a one-step equivalence test: each right-hand side is an active
+coordinate and the Gram is diagonal in that basis.  Width errors are about
+$10^{-15}$, yet near-tie perturbations can change an action and the subsequent
+adaptive trajectory.  The rotated-SPD audit in \Cref{app:new-experiments}, not
+this scaling row, tests nontrivial Krylov convergence.
 
 \subsection{Predictable nonlinear execution}\label{sec:factorial-audit}
 We first use the genuinely nonlinear Gaussian model
@@ -726,7 +753,7 @@ Because the residual and dense audit checks are ordinary float64 point computati
 these executions are classified \emph{post-hoc theorem-event verified with fully
 predictable schedules}, not verified-enclosure theorem certified.
 
-\subsection{Curvature mechanism and matched baselines}\label{sec:operator-cg-audit}
+\subsection{Reference-operator falsification and matched baselines}\label{sec:operator-cg-audit}
 The phase map crosses active-spectrum condition, rotation relative to the decision
 direction, gap, nuisance strength, effective rank, and damping in eight balanced
 cells.  Each of seven operators runs 30 independent policies; the exact-full path
@@ -741,7 +768,8 @@ order regret.  Scalar-rescaled disagreement is often much smaller than raw score
 disagreement, consistent with the invariance in \Cref{prop:scalar-invariance}; the
 remaining action changes are anisotropic.
 
-The separately executed off-diagonal construction makes that anisotropy concrete
+The separately executed off-diagonal linear-Gram construction makes that
+anisotropy concrete
 (\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).  Exact full curvature and
 residual-checked full CG coincide in the analytic witness, whereas raw diagonalization
 changes the selected action and accumulates regret.  No uniform full-curvature ranking
@@ -764,21 +792,18 @@ check passes, but the experiment is negative evidence for uniform full-curvature
 superiority.
 
 \subsection{Audits and systems scope}
-All 280 bounded $d=53$ linear traces pass the determinant, transfer, CG,
-width-sum, and regret-implication checks in float64.  In the theorem's
-real-arithmetic model, dense, window, and stale rows have analytic schedules;
-CG, diagonal, subsample, and Lanczos remain post-hoc event verified because their
-spectral estimates are unenclosed.  Their dense pre-action oracles test theorem
-semantics at audit scale, not scalable certification.  At $T=1000$ the vacuous
-RHS/regret ranges from $260.2$ (window 64) to $13{,}456.0$ (diagonal).  Full
-Gram's normalized RHS decreases while window 64's increases, a finite-trajectory
-observation only.  The supplementary 45-parameter stress test retains its failed
-time-only schedules as post-hoc diagnostics.
+All 280 bounded $d=53$ linear traces pass the float64 theorem checks, but
+unenclosed spectral estimates leave CG, diagonal, subsample, and Lanczos rows
+post-hoc verified.  The dense pre-action oracles test semantics, not scalable
+certification; RHS/regret at $T=1000$ ranges from $260.2$ to $13{,}456.0$.
+The supplementary 45-parameter stress test retains its failed schedules.
 
-At $d=128,n=512,K=10$, row-batched CG is about $1.8\times$ faster than separate
-solves at reference width accuracy; Jacobi does not help this cell.  A synthetic
-matrix-free test reaches $d=8192$ without dense allocation.  These are CPU
-operator microbenchmarks, not neural-model or accelerator evidence.
+The synthetic CPU implementation records a $1.8\times$ row-batched/separate
+timing ratio at $d=128,n=512,K=10$ and reaches $d=8192$ without dense allocation.
+These unmatched, contention-affected primitives provide resource accounting,
+not a speed comparison.  The defining autodiff JVP/VJP benchmark was not run
+because the declared Buck PyTorch dependency does not configure; no trained-model
+or accelerator performance is inferred.
 
 \paragraph{Real-data baseline check.}
 The Covertype study (\Cref{sec:covertype-rerun}) fails its basic baseline check:
@@ -788,22 +813,20 @@ contextual method.  It is not external validation of curvature-aware exploration
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
 
-CC-UCB is a matrix-free full-GGN/Fisher reference with explicit confidence,
-centering, transfer, CG, and dynamic-width terms.  $O(d)$ path statistics make its
-nonlinear schedules executable under smoothness and optimizer-residual assumptions.
-The tanh execution has zero observed event failures but a vacuous bound.  Full
-curvature is not uniformly preferred in the mechanism map or matched benchmark.
-The failed Covertype baseline check is not evidence about curvature choice.
+CC-UCB supplies a matrix-free full-GGN/Fisher reference with explicit transfer,
+CG, and width terms.  Its closed rate is conditional fixed-subspace adaptation,
+not unrestricted neural training.  Empirically, the operator is a reference for
+testing width and action-order preservation: the tanh bound is vacuous, the
+scaling grid exposes failed envelopes, and full curvature is not uniformly
+preferred.  Covertype fails its baseline check.
 
 \paragraph{Limitations.}
-Theory assumes Gaussian squared loss, full action enumeration, realizability,
-known smoothness, and a certified optimizer residual; its loose schedules do not
-cover unrestricted fine-tuning.  Corrected centering needs frozen features, while
-approximate operators, warm starts, and screening need separate certificates.
-Float64 checks are not verified enclosures, the RHS is vacuous, and systems tests
-use synthetic CPU operators.  Adaptive policy paths confound operator comparisons
-outside labelled common-trajectory diagnostics.  No universal full-curvature
-advantage is claimed.
+Theory assumes Gaussian squared loss, enumeration, realizability, known
+smoothness, and a certified optimizer residual.  Approximate operators, warm
+starts, and screening need separate certificates.  Float64 checks are not
+verified enclosures; bounds are vacuous; actual autodiff timing is absent; and
+adaptive paths confound non-causal operator comparisons.  No universal
+full-curvature advantage is claimed.
 
 % --- references -----------------------------------------------------------
 \FloatBarrier % ensure no body float escapes past the references
@@ -1321,11 +1344,12 @@ For $A\ge1$, $\log(1+Ax)\le A\log(1+x)$, proving the information comparison.
 Substitution into \Cref{cor:twosided} gives the regret display.
 \end{proof}
 
-\begin{corollary}[Rank-closed bounded-path nonlinear rate]\label{cor:rank-near-linear}
-Under \Cref{cor:near-linear}, additionally suppose a known fixed active
-subspace gives
-$\operatorname{rank}(\bCbar_t-\lambda\bI)\le r$ for every $t\le T+1$, and define
-$\Gamma_{T,r}$ by \eqref{eq:rank-gamma-main}.  Then
+\begin{corollary}[Conditional fixed-subspace adaptation rate]\label{cor:rank-near-linear}
+Under \Cref{cor:near-linear}, additionally suppose a subspace
+$U\subseteq\R^d$ with $\dim U\le r$ is fixed and supplied before interaction,
+and every candidate or replayed tangent feature through round $T$ lies in $U$.
+Hence $\operatorname{rank}(\bCbar_t-\lambda\bI)\le r$ for every
+$t\le T+1$.  Define $\Gamma_{T,r}$ by \eqref{eq:rank-gamma-main}.  Then
 \eqref{eq:near-linear-regret-main} holds with
 \begin{align*}
 \Omega_{T,r}:={}&
@@ -1343,6 +1367,10 @@ $W\ge C T^2P_T$ for a constant $C$ satisfying the explicit thresholds in
 \[
  R_T=O(r\sqrt T\log T)+O(T/\sqrt W).
 \]
+This rate is conditional on the ex ante subspace $U$ and every bounded-path,
+width, residual, optimizer, and CG premise of \Cref{cor:near-linear}.  It
+neither learns $U$ nor covers unrestricted representation learning or
+end-to-end neural-network training.
 \end{corollary}
 \begin{proof}
 \Cref{lem:rank-logdet} gives $\gamma_T\le\Gamma_{T,r}$.  Every occurrence of
@@ -2574,7 +2602,7 @@ Absent those conditions the proposition makes no regret claim.  Accordingly,
 regret differences can reflect anisotropic width distortion or a difference in
 damping, center, adaptive path, optimization, calibration, or solve accuracy.
 
-\begin{proposition}[Off-diagonal separation witness]\label{prop:offdiag-witness}
+\begin{proposition}[Off-diagonal linear-Gram witness]\label{prop:offdiag-witness}
 Let $\sigma=1$, $\bu=(1,1)/\sqrt2$, $\bv=(1,-1)/\sqrt2$, the action set be
 $\{\bu,\bv\}$, and $\btheta^*=\epsilon\bu+\Delta\bv$ with
 $\Delta>\epsilon>0$.  Rewards are noiseless, the ridge is $\lambda\bI$, all
@@ -2610,9 +2638,12 @@ $\sqrt{\kappa_n}$ leaves them equal; uniform certified inflation therefore does
 not change the diagonal action.  For example,
 $(\lambda,\epsilon,\Delta,b)=(1,0.1,1,1.1)$ satisfies the interval.
 \end{proof}
-This is an existence witness, not a dominance result.  A dense action-dependent
-factor recovers the full widths in this two-dimensional example, but it uses the
-reference geometry that the diagonal approximation was meant to avoid.
+This is a two-dimensional linear-Gram existence witness.  For a linear predictor
+with Gaussian squared loss, this Gram is exactly the GGN/Fisher operator, so the
+construction isolates a GGN-relevant geometric mechanism.  It is neither a
+nonlinear-network result nor a uniform dominance result.  A dense action-dependent
+factor recovers the full widths, but it uses the reference geometry that the
+diagonal approximation was meant to avoid.
 
 \paragraph{Composing subsampling with feature drift.}
 \Cref{lem:subsample} guarantees a sandwich for the \emph{relinearized}
@@ -3248,8 +3279,12 @@ selection, where used, is performed on the declared tuning seeds before evaluati
 Common random numbers pair methods within an evaluation seed.  We report arithmetic
 means, marginal 95\% Student-$t$ intervals, and paired Student-$t$ intervals for
 method differences.  No multiplicity adjustment is applied, so the intervals are
-descriptive.  An offline common-trajectory diagnostic uses one logged action and
-checkpoint sequence for all operators and is never mixed with online regret.
+descriptive.  Scaling-curve bands instead use pointwise percentile bootstrap
+intervals.  Their slope intervals resample whole seed trajectories, reaverage the
+same five nested prefixes, and refit the specified unweighted OLS model; they
+measure seed sensitivity conditional on that finite grid, not whether a power law
+is appropriate.  An offline common-trajectory diagnostic uses one logged action
+and checkpoint sequence for all operators and is never mixed with online regret.
 
 \begin{figure*}[t]
   \centering
@@ -3263,18 +3298,30 @@ checkpoint sequence for all operators and is never mixed with online regret.
 
 \begin{table*}[t]
 \centering\small
+\input{tables/theory_scaling_slopes.tex}
+\caption{Five-point OLS diagnostics for every method at $d=2048$.  Slope
+brackets are obtained from 2,000 paired resamples of whole seed trajectories.
+$R^2$ and maximum absolute log residual describe the fit to the five selected
+prefix means; they are not tests of a power-law model or asymptotic exponents.}
+\label{tab:theory-scaling-slopes}
+\end{table*}
+
+\begin{table*}[t]
+\centering\small
 \input{tables/executed_policy_results.tex}
 \caption{Supplementary executed-policy summary.  Tanh rows use one fixed
 theoretical configuration; balanced rows are selected only on tuning seeds and
 rerun on disjoint evaluation seeds.  Float64 event checks are not verified
-enclosures, and balanced rows are uncertified performance comparisons.}
+enclosures, and balanced rows are uncertified performance comparisons.  Measured
+run times are resource accounting under each executed implementation, not a
+controlled speed or matched-wall-clock comparison.}
 \label{tab:executed-policy-results}
 \end{table*}
 
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/offdiagonal_witness.pdf}
-  \caption{Off-diagonal separation witness.  The analytic cell is constructive;
+  \caption{Off-diagonal linear-Gram witness.  The analytic cell is constructive;
   the noisy cells are uncertified extensions.  Paired differences are descriptive
   and establish no uniform ordering of curvature surrogates.}
   \label{fig:offdiagonal-witness}
@@ -3283,7 +3330,7 @@ enclosures, and balanced rows are uncertified performance comparisons.}
 \begin{table*}[t]
 \centering\small
 \input{tables/offdiagonal_witness.tex}
-\caption{Executed analytic off-diagonal witness by horizon.  Every value is
+\caption{Executed analytic off-diagonal linear-Gram witness by horizon.  Every value is
 generated from the provenance-validated derived artifact; fitted slopes are
 finite-horizon diagnostics.}
 \label{tab:offdiagonal-witness}
@@ -3437,8 +3484,16 @@ numbers 10/100/1000, five target errors, two initializations, and two
 preconditioners on seeds 130--139.  Its solver audit contains 600,000 dense-reference
 action solves; its separate policy audit executes 200 full-enumeration linear-bandit
 policies for 200 rounds with the same five tolerances and start/preconditioner
-factorial.  These older operator runs remain post-hoc audits and are not used for
-the new phase-map conclusions.
+factorial.  Unlike the one-step scaling construction, the rotated-SPD right-hand
+sides exercise nontrivial Krylov convergence.  At target energy error $0.1$ with
+zero start and no preconditioner, mean iteration counts are $6.026$, $22.643$,
+and $55.043$ for condition numbers $10$, $10^2$, and $10^3$; mean measured
+energy errors are $2.23\times10^{-2}$, $6.87\times10^{-3}$, and
+$2.45\times10^{-3}$, and mean relative width errors are
+$2.54\times10^{-4}$, $2.43\times10^{-5}$, and $3.28\times10^{-6}$.
+The residual certificate is at most the prescribed $0.1$ in every retained
+solve.  These solver audits do not establish a method-speed advantage or a
+policy benefit.
 
 \paragraph{Systems audit.}
 Five evaluation seeds (140--144) cross
@@ -3451,8 +3506,11 @@ CPU grid uses $d\in\{512,2048,8192\}$, $n=32$, $K=4$, and $I=16$ for the
 two batched solvers, with no dense allocation.  Records include wall time, host
 memory, operator calls, equivalent sample CVPs, per-action iterations and
 residuals, and width error.  These are synthetic float64 operator timings on one
-CPU host, not trained-network or accelerator measurements, and no extrapolation
-is made.
+CPU host and use different computational primitives.  Timings are descriptive
+resource accounting under the executed implementations, not matched-wall-clock
+comparisons; no trained-network or accelerator extrapolation is made.  The
+configured 131,841-parameter \texttt{torch.func} JVP/VJP benchmark was not run
+because its declared Buck PyTorch dependency failed to configure.
 
 \subsection{Covertype real-data baseline audit}\label{sec:covertype-rerun}
 We use UCI Covertype DOI \texttt{10.24432/C50K5N} via scikit-learn 1.9.0; the
@@ -3904,11 +3962,17 @@ and online monitoring.  This paper analyzes regret under stated certificates and
 does not establish safe exploration.
 
 \section{Data and Code Availability}\label{app:availability}
-The anonymous repository accompanying the manuscript contains the configuration-driven
-new experiment pipeline, pinned requirements, unit tests, aggregation and figure
-scripts, and machine-readable raw and derived artifacts described in
-\Cref{app:new-experiments}.  Internal run manifests carry input hashes and local
-execution provenance.  The release is built into a fresh directory by
+The reviewed repository contains the configuration-driven experiment pipeline,
+pinned Buck environment, unit tests, aggregation and figure scripts, validated
+derived artifacts, the retained $d=128,r=4$ scaling slice, and selected raw
+off-diagonal and blocker records.  The 2.1~GB full scaling tree and several
+historical provenance inputs are stored outside Git and are not present in a
+clean compact checkout.  Therefore the current checkout does not by itself
+regenerate every historical raw-derived chain.  The anonymous submission bundle
+will contain only tiers whose provenance inputs have been restored and validated;
+until that final bundle is rebuilt, ``will contain'' rather than ``contains'' is
+the operative release claim.  Internal run manifests carry input hashes and local
+execution provenance.  The release builder writes into a fresh directory using
 \nolinkurl{tools/build_anonymous_supplement.py}: it converts paths to
 repository-relative form, replaces the Git revision with an anonymous source-tree
 content hash, writes an artifact-preserving per-round JSONL projection compressed
@@ -3918,7 +3982,9 @@ The public UCI Covertype dataset
 \citep{blackard1998covertype} is distributed under CC BY 4.0 (DOI
 \texttt{10.24432/C50K5N}); its exact cached-file and split hashes are in each
 Covertype manifest.  The compact horizon report records all real-data means,
-intervals, runtimes, policy types, and certification categories.  No identifying
-repository URL or local path appears in the manuscript or release.
+intervals, resource-accounting times, policy types, and certification categories.
+The defining autodiff benchmark has status \texttt{not\_run} and contributes no
+timing result.  No identifying repository URL or local path will appear in the
+final manuscript bundle.
 
 \end{document}

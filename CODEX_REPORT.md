@@ -2,6 +2,12 @@
 
 Audit date: 2026-07-21
 
+> **Historical snapshot.** This report predates the closed-rate/scaling revision.
+> Its PDF hash, release manifests, file counts, page locations, and validation
+> counts are not current submission-release claims.  See `REVISION_REPORT.md`
+> and regenerate both release tiers from the final reviewed tree before using
+> any hash below.
+
 ## Disposition
 
 The acceptance-critical theory, predictable certificate implementation,

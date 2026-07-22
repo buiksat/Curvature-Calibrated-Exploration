@@ -1,7 +1,17 @@
 {
-  "artifact": "paper/figures/theory_scaling_full_grid.pdf",
-  "artifact_sha256": "af53365958b8f0f5028c360be19c387b17441b656e5843c43f9fb80694a9321d",
+  "artifact": "paper/tables/theory_scaling_slopes.tex",
+  "artifact_sha256": "88c217b1f2087c8df382d3fe5f0cc6461eca407c8475be2a2a136ca6f37564f2",
   "generation_parameters": {
+    "active_ranks": [
+      4,
+      8,
+      16
+    ],
+    "ambient_dimension": 2048,
+    "diagnostics": [
+      "R-squared",
+      "maximum absolute log-space residual"
+    ],
     "horizons": [
       128,
       256,
@@ -9,7 +19,7 @@
       1024,
       2048
     ],
-    "interpretation": "finite-horizon diagnostic, not a proof",
+    "interpretation": "five-point finite-horizon diagnostic, not a proof",
     "methods": [
       "exact_current",
       "full_cg",
@@ -20,26 +30,8 @@
       "diagonal_current",
       "greedy"
     ],
-    "panels": [
-      {
-        "active_rank": 4,
-        "ambient_dimension": 128
-      },
-      {
-        "active_rank": 4,
-        "ambient_dimension": 2048
-      },
-      {
-        "active_rank": 8,
-        "ambient_dimension": 2048
-      },
-      {
-        "active_rank": 16,
-        "ambient_dimension": 2048
-      }
-    ],
-    "status": "PASS iff all recorded float64 theorem-event failure counts are zero for the five theorem methods shown in the status matrix",
-    "uncertainty": "pointwise percentile-bootstrap 95 percent intervals"
+    "regression": "unweighted OLS of log(seed-mean metric) on log(horizon)",
+    "uncertainty": "percentile intervals from paired whole-seed resampling across the five horizon prefixes"
   },
   "input_set_sha256": "522fbe386ea57c1035bab3782b1c72ddf863202dbd1bcfb2ff87968bd176c3ad",
   "inputs": [

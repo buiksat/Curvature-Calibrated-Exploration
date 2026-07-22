@@ -1,4 +1,4 @@
-"""Generate paper artifacts for the off-diagonal separation witness.
+"""Generate paper artifacts for the off-diagonal linear-Gram witness.
 
 The generator consumes only the validated derived artifact.  It never reads a
 trajectory opportunistically or recomputes a reported result from paper text.
@@ -414,7 +414,7 @@ def _make_figure(
         bbox_inches="tight",
         metadata={
             "Creator": "experiments.make_offdiagonal_witness_paper_artifacts",
-            "Title": "Off-diagonal curvature separation witness",
+            "Title": "Off-diagonal linear-Gram witness",
             "CreationDate": None,
             "ModDate": None,
         },

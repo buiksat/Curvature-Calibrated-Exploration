@@ -1,6 +1,6 @@
 {
   "artifact": "paper/tables/executed_policy_results.tex",
-  "artifact_sha256": "a64036966652bb40ac88aa007d9d42612be53c3d7d2a83e8c3d34386822eb8b1",
+  "artifact_sha256": "74f02c00a00d10d6519d930b584ff81f80b972d0c3802f543cf6dd1a9ba7cead",
   "generation_parameters": {
     "balanced_configuration": "validation_tuned_on_disjoint_tuning_seeds",
     "balanced_methods": [
@@ -17,7 +17,7 @@
       "gaussian_context_free_ts"
     ],
     "regret_interval": "mean_and_two_sided_95_percent_student_t_interval",
-    "runtime_definition": "seconds_per_complete_run",
+    "runtime_definition": "descriptive_seconds_per_complete_run_not_controlled_method_speed",
     "tanh_configuration": "fixed_schedule_evaluation"
   },
   "input_set_sha256": "2a12906d305bd03027d8189a76d002108ec7987b1a839d2c7579e37f990734dd",

@@ -23,6 +23,28 @@ unproved stable-excitation statement remains outside the manuscript. Covertype
 remains a failed appendix baseline check, and no new faithful published-baseline
 claim was started.
 
+## Post-review response
+
+The current uncommitted response reframes Corollary 9 as conditional
+fixed-subspace adaptation, rewrites the abstract around the transfer theorem and
+growing-window tradeoff, and makes the reference-operator/falsification thesis
+explicit.  The main scaling figure now includes the event-clean `d=128,r=4`
+slice and all eight methods.  Its companion table reports every terminal regret
+and decomposes theorem-event failures by method and field; an appendix table adds
+five-point OLS fit diagnostics.  The manuscript also states that scaling CG is a
+one-step equivalence test, surfaces the existing nontrivial rotated-SPD audit,
+labels timings as resource accounting, and says directly that actual JVP/VJP
+timing was not run.
+
+No scaling trajectory was rerun in this response.  In particular, the reported
+policy still audits a fixed optimizer envelope rather than enforcing it.  The
+autodiff benchmark, verified numerical enclosures, final anonymous bundle, and
+official target-year AISTATS package remain blockers or external prerequisites.
+The revised Buck test targets and combined runner pass.  A review-tier release
+build was attempted and stopped at the first missing required fixture,
+`experiments/data/sklearn/covertype/samples_py3`; release validation was not
+bypassed.
+
 ## Buck2 support
 
 The repository now has a pinned Buck2 manifest, standalone cell configuration,
@@ -191,9 +213,9 @@ its retained historical artifact because this compact checkout excludes
 `results/raw/certified_tanh/full/evaluation/corrected/seed-160/summary.jsonl`.
 That missing raw tree is recorded as a blocker; validation was not bypassed.
 
-The direct LaTeX build passed after `latexmk -C`. `paper/main.pdf` has 42 pages;
-Algorithm 1 is on page 3, Figure 1 and Table 1 are on page 7, and references
-begin on page 9. Ghostscript renders all pages, reports only Type 0/Type 1 font
+The direct LaTeX build passed after `latexmk -C`. `paper/main.pdf` has 43 pages;
+Algorithm 1 is on page 3, Figure 1 is on page 7, Table 1 is on page 8, and
+references begin on page 9. Ghostscript renders all pages, reports only Type 0/Type 1 font
 resources, and confirms empty title/author metadata. The sole overfull warning
 is the pre-existing 5.12 pt style-generated abstract box at the environment
 boundary; there are no content-generated overfull boxes. `pdfinfo`, `pdffonts`,
@@ -211,10 +233,11 @@ still provisional because the official target-year AISTATS checklist is absent.
   matches.
 - Retained primary: 400/400 runs revalidated in validation-only mode and not
   overwritten.
-- Paper static validation: 154 labels with no duplicates, 112 reference
+- Paper static validation: 155 labels with no duplicates, 112 reference
   targets with none unresolved, and 34 citation keys with none missing.
-- LaTeX: successful 42-page build; no Type 3 fonts; required page positions
+- LaTeX: successful 43-page build; no Type 3 fonts; required page positions
   preserved.
+- Revised generated-paper artifact hashes match their provenance sidecars.
 - `git diff --check`: passed.
 
 ## Changed files
@@ -239,7 +262,9 @@ The changed paths are:
   generated scaling and off-diagonal assets/provenance, `.gitignore`,
   `BUCK2_SETUP.md`, `experiments/README.md`, `RESULTS_STATUS.md`, and this report.
 
-No main-branch or remote state was changed.
+The checkpoint commit `621f78e3` is present on the local and remote topic branch.
+The post-review response edits described after this checkpoint remain uncommitted;
+no claim is made that they are present in a clean checkout or anonymous release.
 
 ## Remaining blockers and scope gaps
 
@@ -251,8 +276,10 @@ No main-branch or remote state was changed.
 - No external published implementation has been verified for the neural-bandit
   baselines; existing local implementations retain that explicit limitation.
 - No verified interval enclosure is available for the float64 audit points.
-- The anonymous release should be rebuilt and identity-scanned after the final
-  branch state is settled.
+- The anonymous release cannot yet be rebuilt from this checkout: the
+  review-tier builder first fails on the missing required Covertype fixture
+  `experiments/data/sklearn/covertype/samples_py3`.  After restoring required
+  inputs, it must be rebuilt and identity-scanned from the final branch state.
 - Full-grid raw trajectories are not distributed through Git; reproducing the
   aggregate requires rerunning the fixed protocol or restoring artifact storage.
 

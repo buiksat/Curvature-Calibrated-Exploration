@@ -1,4 +1,4 @@
-"""Execute the preregistered off-diagonal separation witness."""
+"""Execute the preregistered off-diagonal linear-Gram witness."""
 
 from __future__ import annotations
 

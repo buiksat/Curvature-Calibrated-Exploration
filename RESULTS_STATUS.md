@@ -12,11 +12,13 @@ regret events passed. The actual float64 rows remain conservatively classified
 `posthoc_theorem_event_verified`, because their residual calculations are not
 verified interval enclosures.
 
-Artifacts:
+Derived artifacts in the compact checkout:
 
 - `results/derived/certified_tanh_full.json`
 - `results/derived/certified_tanh_report.json`
-- `results/raw/certified_tanh/full/evaluation/`
+
+The historical raw tanh tree is stored outside the compact Git checkout; it
+must be restored before rebuilding its full provenance chain.
 
 At T=100, mean pseudo-regret is 7.86 (original) and 5.69 (corrected). The
 observable theorem RHS remains highly vacuous: mean RHS/regret is 6,956.7 and
@@ -64,7 +66,7 @@ ridge/bonus grid was selected by mean pseudo-regret on tuning seeds 70--79; all
 
 At T=200, mean cumulative pseudo-regret and 95% intervals are:
 
-| Method | Mean [95% CI] | Mean runtime (s) |
+| Method | Mean [95% CI] | Mean measured run time (s) |
 |---|---:|---:|
 | CC-UCB full GGN-CG | 21.94 [20.64, 23.23] | 0.966 |
 | Diagonal full network | 16.11 [14.62, 17.61] | 0.024 |
@@ -207,14 +209,16 @@ result may be inferred from operation counts.
 |---|---|
 | 1. Computable schedules | **Satisfied.** `PathCertificateState` supplies `beta_bar_t`, `psi_bar_t`, and `u_t` from pre-action state, with direct-history and filtration tests. |
 | 2. Nonlinear predictable execution | **Satisfied in the required observed-event sense.** Both tanh centers have zero observed failures across 50 evaluation seeds.  Float64 point checks remain `posthoc_theorem_event_verified`, not verified-enclosure ex-ante certificates. |
-| 3. Explicit nonlinear rate or conditional reframing | **Satisfied.** The bounded-path near-linear corollary exposes its width and horizon dependence, and the independent proof audit reports no open correctness or presentation gap. |
+| 3. Explicit nonlinear rate or conditional reframing | **Satisfied conditionally.** Corollary 9 is framed as fixed-subspace adaptation and exposes its bounded-path, width, residual, and optimizer premises; it is not an end-to-end neural-training theorem. |
 | 4. Contextual sanity benchmark | **Satisfied narrowly by the balanced synthetic benchmark.** LinUCB beats both context-free baselines on 30 untouched seeds.  No external real-data benchmark passes this test. |
 | 5. NeuralLinear plus a full neural baseline | **Satisfied by local matched implementations.** NeuralLinear, NeuralUCB, and NeuralTS are included, but are not claimed exact reproductions of published code. |
-| 6. Scalability claims | **Satisfied by claim restriction, not by large-model evidence.** The manuscript limits the evidence to measured synthetic CPU operators and explicitly disclaims model/accelerator feasibility. |
+| 6. Scalability claims | **Restricted, not empirically established.** The manuscript limits evidence to synthetic CPU resource accounting and states that the defining autodiff JVP/VJP benchmark was not run. |
 | 7. Legacy evidence | **Satisfied in the current manuscript.** The unrecovered oracle-selected study is absent from the evidentiary chain. |
 
-Final proof, test, LaTeX, artifact-regeneration, provenance, hash, compression,
-metadata, and identity checks passed.  The archival release is 503.1 MiB and the
-review tier is 89.8 MiB.  The remaining items above are scientific scope gaps,
-not unrecorded validation work; in particular, no external passing benchmark,
-verified floating-point enclosure, or accelerator/large-model result is claimed.
+The historical anonymous bundles and hashes recorded in `CODEX_REPORT.md`
+predate the closed-rate/scaling revision and are not current release artifacts.
+No final `release/` or `release_review/` directory is present in this checkout.
+Restore every provenance-bound raw input, rebuild both tiers from the final
+reviewed commit, and rerun identity/hash scans before making a release claim.
+No external passing benchmark, verified floating-point enclosure, actual-autodiff
+timing, or accelerator/large-model result is claimed.
