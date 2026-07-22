@@ -158,6 +158,125 @@ exact_width = dense_width
 
 
 @dataclass(frozen=True)
+class FeatureDriftSandwichResult:
+    frozen_curvature: FloatArray
+    current_curvature: FloatArray
+    stacked_frozen_design: FloatArray
+    stacked_current_design: FloatArray
+    chi: float
+    minimum_squared_singular_value: float
+    maximum_squared_singular_value: float
+    lower_factor: float | None
+    upper_factor: float
+
+
+def feature_drift_sandwich(
+    frozen_features: ArrayLike,
+    current_features: ArrayLike,
+    *,
+    damping: float,
+    noise_variance: float,
+) -> FeatureDriftSandwichResult:
+    r"""Audit the sharpened stacked-design feature-drift sandwich.
+
+    Rows of ``frozen_features`` are the predictable historical gradients
+    ``g_s`` and rows of ``current_features`` are the same samples replayed at
+    the current parameter.  If ``chi < 1``, the returned factors verify
+
+    ``(1-chi)^2 Cbar <= C <= (1+chi)^2 Cbar``.
+
+    The eigendecompositions are ordinary float64 diagnostics, not verified
+    numerical enclosures and not policy inputs.
+    """
+
+    frozen = _as_float64_array(
+        frozen_features, name="frozen_features", ndim=2, copy=True
+    )
+    current = _as_float64_array(
+        current_features, name="current_features", ndim=2, copy=True
+    )
+    if frozen.shape != current.shape:
+        raise ValueError("frozen_features and current_features must have equal shape")
+    sample_count, dimension = frozen.shape
+    if dimension == 0:
+        raise ValueError("feature matrices must have positive parameter dimension")
+    ridge = _positive_float(damping, name="damping")
+    variance = _positive_float(noise_variance, name="noise_variance")
+
+    identity = np.eye(dimension, dtype=np.float64)
+    frozen_curvature = ridge * identity + frozen.T @ frozen / variance
+    current_curvature = ridge * identity + current.T @ current / variance
+    eigenvalues, eigenvectors = np.linalg.eigh(frozen_curvature)
+    if np.any(eigenvalues <= 0.0) or not np.all(np.isfinite(eigenvalues)):
+        raise FloatingPointError("frozen curvature is not positive definite")
+    inverse_root = (
+        eigenvectors * (1.0 / np.sqrt(eigenvalues))
+    ) @ eigenvectors.T
+    whitened_frozen = inverse_root @ frozen.T / np.sqrt(variance)
+    whitened_drift = inverse_root @ (current - frozen).T / np.sqrt(variance)
+
+    stacked_frozen = np.vstack((np.sqrt(ridge) * inverse_root, whitened_frozen.T))
+    stacked_current = np.vstack(
+        (np.sqrt(ridge) * inverse_root, (whitened_frozen + whitened_drift).T)
+    )
+    expected_shape = (dimension + sample_count, dimension)
+    if (
+        stacked_frozen.shape != expected_shape
+        or stacked_current.shape != expected_shape
+    ):
+        raise AssertionError("stacked design has an unexpected shape")
+
+    chi = (
+        0.0
+        if sample_count == 0
+        else float(np.linalg.norm(whitened_drift, ord=2))
+    )
+    whitened_current = inverse_root @ current_curvature @ inverse_root
+    frozen_identity_residual = float(
+        np.linalg.norm(stacked_frozen.T @ stacked_frozen - identity, ord=2)
+    )
+    current_identity_residual = float(
+        np.linalg.norm(stacked_current.T @ stacked_current - whitened_current, ord=2)
+    )
+    difference_residual = float(
+        abs(np.linalg.norm(stacked_current - stacked_frozen, ord=2) - chi)
+    )
+    tolerance = (
+        4096.0
+        * np.finfo(np.float64).eps
+        * max(1, dimension + sample_count)
+        * max(1.0, chi, np.linalg.norm(whitened_current, ord=2))
+    )
+    if (
+        frozen_identity_residual > tolerance
+        or current_identity_residual > tolerance
+        or difference_residual > tolerance
+    ):
+        raise FloatingPointError("a stacked-design identity failed in float64")
+
+    singular_values = np.linalg.svd(stacked_current, compute_uv=False)
+    minimum_squared = float(np.min(singular_values) ** 2)
+    maximum_squared = float(np.max(singular_values) ** 2)
+    lower = (1.0 - chi) ** 2 if chi < 1.0 else None
+    upper = (1.0 + chi) ** 2
+    if lower is not None and minimum_squared < lower - tolerance:
+        raise FloatingPointError("the sharpened lower feature-drift bound failed")
+    if maximum_squared > upper + tolerance:
+        raise FloatingPointError("the sharpened upper feature-drift bound failed")
+    return FeatureDriftSandwichResult(
+        frozen_curvature=_readonly(frozen_curvature.copy()),
+        current_curvature=_readonly(current_curvature.copy()),
+        stacked_frozen_design=_readonly(stacked_frozen.copy()),
+        stacked_current_design=_readonly(stacked_current.copy()),
+        chi=chi,
+        minimum_squared_singular_value=minimum_squared,
+        maximum_squared_singular_value=maximum_squared,
+        lower_factor=lower,
+        upper_factor=upper,
+    )
+
+
+@dataclass(frozen=True)
 class CGWidthResult:
     width_squared: float
     width: float
@@ -551,6 +670,113 @@ class InformationGainClosureResult:
     @property
     def best_upper_bound(self) -> float:
         return min(self.rank_trace_bound, self.effective_dimension_bound)
+
+
+@dataclass(frozen=True)
+class SpectralTailInformationResult:
+    eigenvalues_descending: FloatArray
+    damping: float
+    horizon: int
+    tail_rank: int
+    effective_top_rank: int
+    spectral_tail: float
+    exact_logdet: float
+    top_rank_bound: float
+    tail_bound: float
+    upper_bound: float
+
+
+def spectral_tail_information_bound(
+    increment: ArrayLike,
+    *,
+    damping: float,
+    horizon: int,
+    feature_bound: float,
+    noise_variance: float,
+    tail_rank: int,
+) -> SpectralTailInformationResult:
+    r"""Evaluate the approximate-rank spectral-tail log-det closure.
+
+    For ``A >= 0`` generated by at most ``horizon`` rank-one terms, this checks
+
+    ``log det(I+A/lambda) <= r_T log(1+T G^2/(r_T lambda sigma^2))
+                              + sum_{i>r} nu_i/lambda``.
+
+    The first term is defined as zero when ``r_T=min(r,T)`` is zero.
+    """
+
+    matrix = _symmetric_matrix(increment, name="increment")
+    dimension = matrix.shape[0]
+    ridge = _positive_float(damping, name="damping")
+    rounds = _nonnegative_int(horizon, name="horizon")
+    bound = _nonnegative_float(feature_bound, name="feature_bound")
+    variance = _positive_float(noise_variance, name="noise_variance")
+    rank = _nonnegative_int(tail_rank, name="tail_rank")
+    if rank > dimension:
+        raise ValueError("tail_rank must not exceed the matrix dimension")
+
+    eigenvalues = np.asarray(np.linalg.eigvalsh(matrix), dtype=np.float64)
+    sign_tolerance = _eigenvalue_sign_tolerance(eigenvalues)
+    if np.any(eigenvalues < -sign_tolerance):
+        raise ValueError("increment must be positive semidefinite")
+    positive = np.asarray(
+        np.where(eigenvalues > sign_tolerance, eigenvalues, 0.0),
+        dtype=np.float64,
+    )[::-1]
+    observed_rank = int(np.count_nonzero(positive))
+    if observed_rank > rounds:
+        raise ValueError(
+            "increment rank exceeds horizon; it cannot be a sum of the declared "
+            "number of rank-one terms"
+        )
+    observed_trace = float(np.sum(positive))
+    trace_bound = rounds * bound * bound / variance
+    trace_tolerance = (
+        512.0
+        * np.finfo(np.float64).eps
+        * max(1, dimension)
+        * max(1.0, observed_trace, trace_bound)
+    )
+    if observed_trace > trace_bound + trace_tolerance:
+        raise ValueError("increment trace exceeds T G^2 / sigma^2")
+
+    effective_top_rank = min(rank, rounds)
+    spectral_tail = float(np.sum(positive[rank:]))
+    exact = float(np.sum(np.log1p(positive / ridge)))
+    if effective_top_rank == 0:
+        top_bound = 0.0
+    else:
+        top_bound = float(
+            effective_top_rank
+            * np.log1p(
+                rounds
+                * bound
+                * bound
+                / (effective_top_rank * ridge * variance)
+            )
+        )
+    tail_bound = spectral_tail / ridge
+    upper = top_bound + tail_bound
+    tolerance = (
+        1024.0
+        * np.finfo(np.float64).eps
+        * max(1, dimension)
+        * max(1.0, exact, upper)
+    )
+    if exact > upper + tolerance:
+        raise FloatingPointError("spectral-tail information bound was violated")
+    return SpectralTailInformationResult(
+        eigenvalues_descending=_readonly(positive.copy()),
+        damping=ridge,
+        horizon=rounds,
+        tail_rank=rank,
+        effective_top_rank=effective_top_rank,
+        spectral_tail=spectral_tail,
+        exact_logdet=exact,
+        top_rank_bound=top_bound,
+        tail_bound=tail_bound,
+        upper_bound=upper,
+    )
 
 
 def information_gain_closure(

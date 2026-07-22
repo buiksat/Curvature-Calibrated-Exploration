@@ -11,6 +11,7 @@ from experiments.theory_metrics import (
     dynamic_rank_trace_upper_bound,
     dynamic_logdet_metrics,
     endpoint_rank_trace_logdet_bound,
+    feature_drift_sandwich,
     frozen_rank_information_bound,
     generalized_eigenvalues,
     growing_window_complexity_bound,
@@ -19,8 +20,124 @@ from experiments.theory_metrics import (
     outer_product_perturbation_bound,
     rank_sensitive_variation_bound,
     relative_refresh_audit,
+    spectral_tail_information_bound,
     width_sum_inequality,
 )
+
+
+@pytest.mark.parametrize("seed", range(16))
+def test_sharpened_feature_drift_sandwich_on_random_matrices(seed: int) -> None:
+    rng = np.random.default_rng(seed)
+    sample_count = 9
+    dimension = 6
+    frozen = rng.normal(size=(sample_count, dimension))
+    raw_drift = rng.normal(size=(sample_count, dimension))
+
+    pilot = feature_drift_sandwich(
+        frozen,
+        frozen + raw_drift,
+        damping=0.8,
+        noise_variance=1.3,
+    )
+    target_chi = 0.05 + 0.9 * seed / 15.0
+    scale = target_chi / pilot.chi
+    result = feature_drift_sandwich(
+        frozen,
+        frozen + scale * raw_drift,
+        damping=0.8,
+        noise_variance=1.3,
+    )
+
+    assert result.chi == pytest.approx(target_chi, rel=2e-12, abs=2e-13)
+    assert result.lower_factor == pytest.approx((1.0 - target_chi) ** 2)
+    assert result.upper_factor == pytest.approx((1.0 + target_chi) ** 2)
+    assert result.minimum_squared_singular_value >= result.lower_factor - 1e-11
+    assert result.maximum_squared_singular_value <= result.upper_factor + 1e-11
+    np.testing.assert_allclose(
+        result.stacked_frozen_design.T @ result.stacked_frozen_design,
+        np.eye(dimension),
+        rtol=2e-12,
+        atol=2e-12,
+    )
+
+
+def test_sharpened_feature_drift_handles_empty_history_and_zero_gradient() -> None:
+    empty = np.empty((0, 4), dtype=np.float64)
+    result = feature_drift_sandwich(
+        empty,
+        empty,
+        damping=1.7,
+        noise_variance=0.4,
+    )
+    assert result.chi == 0.0
+    assert result.lower_factor == 1.0
+    assert result.upper_factor == 1.0
+    np.testing.assert_allclose(result.frozen_curvature, 1.7 * np.eye(4))
+    np.testing.assert_allclose(result.current_curvature, result.frozen_curvature)
+
+    zeros = np.zeros((3, 4), dtype=np.float64)
+    zero_gradient = feature_drift_sandwich(
+        zeros,
+        zeros,
+        damping=1.7,
+        noise_variance=0.4,
+    )
+    assert zero_gradient.chi == 0.0
+    assert zero_gradient.lower_factor == 1.0
+    assert zero_gradient.upper_factor == 1.0
+
+
+@pytest.mark.parametrize("seed", range(12))
+@pytest.mark.parametrize("tail_rank", [0, 1, 3, 8])
+def test_spectral_tail_logdet_inequality(seed: int, tail_rank: int) -> None:
+    rng = np.random.default_rng(seed)
+    horizon = 8
+    dimension = 10
+    feature_bound = 1.5
+    noise_variance = 0.7
+    rows = rng.normal(size=(horizon, dimension))
+    row_norms = np.linalg.norm(rows, axis=1)
+    rows *= (feature_bound / np.maximum(feature_bound, row_norms))[:, None]
+    increment = rows.T @ rows / noise_variance
+    result = spectral_tail_information_bound(
+        increment,
+        damping=0.9,
+        horizon=horizon,
+        feature_bound=feature_bound,
+        noise_variance=noise_variance,
+        tail_rank=tail_rank,
+    )
+
+    assert result.effective_top_rank == min(tail_rank, horizon)
+    assert result.exact_logdet <= result.upper_bound + 1e-11
+    if tail_rank == 0:
+        assert result.top_rank_bound == 0.0
+        assert result.spectral_tail == pytest.approx(np.trace(increment))
+
+
+def test_spectral_tail_exact_rank_and_zero_edge_cases() -> None:
+    exact_rank = np.diag([4.0, 2.0, 0.0, 0.0])
+    exact = spectral_tail_information_bound(
+        exact_rank,
+        damping=1.0,
+        horizon=3,
+        feature_bound=np.sqrt(2.0),
+        noise_variance=1.0,
+        tail_rank=2,
+    )
+    assert exact.spectral_tail == 0.0
+    assert exact.tail_bound == 0.0
+
+    zero = spectral_tail_information_bound(
+        np.zeros((4, 4)),
+        damping=1.0,
+        horizon=0,
+        feature_bound=0.0,
+        noise_variance=1.0,
+        tail_rank=0,
+    )
+    assert zero.exact_logdet == 0.0
+    assert zero.upper_bound == 0.0
 
 
 @pytest.mark.parametrize("seed", range(12))

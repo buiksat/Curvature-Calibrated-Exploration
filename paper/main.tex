@@ -493,6 +493,113 @@ corrected center, the same statement holds without \Cref{asm:optim} after
 replacing $\omega_t$ by $\bar\beta_t$.
 \end{theorem}
 
+\begin{corollary}[Exact-current regret through the frozen potential]
+\label{cor:exact-current-frozen-potential}
+Adopt \Cref{thm:regret} with exact current curvature $\Calg_t=\bC_t$.
+Suppose a predictable certificate satisfies
+$\chi_t\le\bar\chi_t<1$ for every $t$, and use the valid transfer factor
+$u_t=(1+\bar\chi_t)^2$.  Then, on the event of \Cref{thm:regret},
+\begin{equation}\label{eq:exact-current-frozen-potential}
+\begin{aligned}
+ R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,\gamma_T\\[-1mm]
+ &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
+ \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
+ +2E_T.
+\end{aligned}
+\end{equation}
+For the corrected center of \Cref{cor:corrected-center}, the same statement
+holds without \Cref{asm:optim} after replacing $\omega_t$ by $\bar\beta_t$.
+This removes the nonmonotone dynamic-width term only in the small-drift,
+exact-current regime.
+\end{corollary}
+\begin{proof}
+The sharpened sandwich in \Cref{cor:drift-sandwich} and Loewner inversion give
+\[
+ s_t(a)\le\frac{\bar s_t(a)}{1-\bar\chi_t}.
+\]
+The per-round proof of \Cref{thm:regret}, together with
+$\sqrt{u_t}=1+\bar\chi_t$, therefore gives
+\[
+ \operatorname{regret}_t\le
+ 2\alpha_t\omega_t
+ \frac{1+\bar\chi_t}{1-\bar\chi_t}\bar s_t(a_t)
+ +2\epslin(t).
+\]
+Sum and apply Cauchy--Schwarz once.  The frozen rank-one update and the usual
+elliptic-potential inequality give
+$\sum_t\bar s_t^2(a_t)\le
+(\sigma^2+G^2/\lambda)\gamma_T$, proving the display.  The corrected-center
+claim follows from the prediction identity in \Cref{cor:corrected-center}.
+\end{proof}
+
+For an integer $0\le r\le d$, define
+\begin{equation}\label{eq:gamma-tail-main}
+\begin{aligned}
+ \Delta_{T,r}&:=\sum_{i>r}\nu_i,\qquad
+ r_T:=\min\{r,T\},\\
+ \Gamma^{\rm tail}_{T,r}
+ &:=r_T\log\!\left(1+\frac{TG^2}
+ {r_T\lambda\sigma^2}\right)+\frac{\Delta_{T,r}}{\lambda},
+\end{aligned}
+\end{equation}
+where $\nu_1\ge\cdots\ge\nu_d\ge0$ are the eigenvalues of
+$\bCbar_{T+1}-\lambda\bI$ and the first term is defined to be zero when
+$r_T=0$.  \Cref{lem:spectral-tail-logdet} proves
+$\gamma_T\le\Gamma^{\rm tail}_{T,r}$.
+
+\begin{corollary}[Approximate-rank exact-current GGN]
+\label{cor:approx-rank-current-ggn}
+Under \Cref{cor:exact-current-frozen-potential}, for every fixed
+$r\in\{0,\ldots,d\}$,
+\begin{equation}\label{eq:approx-rank-current-ggn}
+\begin{aligned}
+ R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,
+ \Gamma^{\rm tail}_{T,r}\\[-1mm]
+ &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
+ \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
+ +2E_T.
+\end{aligned}
+\end{equation}
+This is a realized-complexity statement: the policy may retain the existing
+observable $\hat\gamma_{t-1}$ schedule, but a terminal realized
+$\Delta_{T,r}$ is not used in any action-time radius.
+
+Operationally, if before round $t$ a supplied deterministic or
+$\cHist_t$-measurable envelope $\bar\Delta_{t-1,r}$ upper-bounds the spectral
+tail of $\bCbar_t-\lambda\bI$, define
+\[
+\begin{aligned}
+ r_{t-1}&:=\min\{r,t-1\},\\
+ \bar\Gamma^{\rm tail}_{t-1,r}
+ &:=r_{t-1}\log\!\left(1+\frac{(t-1)G^2}
+ {r_{t-1}\lambda\sigma^2}\right)
+ +\frac{\bar\Delta_{t-1,r}}\lambda.
+\end{aligned}
+\]
+again taking the first term as zero when $r_{t-1}=0$.
+Replacing $\gamma_{t-1}$ in the constructive confidence radius by this
+predictable upper bound is valid.  In that version,
+\eqref{eq:approx-rank-current-ggn} holds with
+$\Gamma^{\rm tail}_{T,r}$ replaced by any supplied terminal envelope
+$\bar\Gamma^{\rm tail}_{T,r}$ and with $\omega_t$ formed from the resulting
+radius.
+
+No exact tangent subspace is assumed.  A small spectral tail can contain
+decision-relevant directions and does not supply their basis, so
+full-dimensional CG may still be necessary.  Exact rank is recovered when
+$\Delta_{T,r}=0$; the supplied-subspace result
+\Cref{cor:rank-near-linear} is then an additional computational special case.
+The corrected-center version again replaces $\omega_t$ by $\bar\beta_t$.
+\end{corollary}
+\begin{proof}
+Apply \Cref{lem:spectral-tail-logdet} to substitute
+$\gamma_T\le\Gamma^{\rm tail}_{T,r}$ in
+\eqref{eq:exact-current-frozen-potential}.  The prefix version of the same
+lemma makes $\bar\Gamma^{\rm tail}_{t-1,r}$ a predictable upper bound on
+$\gamma_{t-1}$, so \Cref{lem:confidence,cor:beta-constructive} justify the
+operational radius.  No eigenspace is used by either argument.
+\end{proof}
+
 In particular, the bound is sublinear whenever
 $\Lamalg_T S_T=o(T^2)$ and $E_T=o(T)$.
 
@@ -608,7 +715,7 @@ R_T\le2\alpha_I\sqrt{\rho_+/\rho_-}\,\Omega_{T,r}
  \sqrt{(\sigma^2+G^2/\lambda)T\Gamma_{T,r}}+2\bar E_T,
 \end{equation}
 where $x_T=2c_gR\sqrt{T-1}/(\sigma\sqrt{\lambda W})$,
-$\rho_\pm=1\pm(2x_T+x_T^2)$, and $\Omega_{T,r}$ is displayed with every
+$\rho_-=(1-x_T)^2$, $\rho_+=(1+x_T)^2$, and $\Omega_{T,r}$ is displayed with every
 $T,W,r,P_T,\lambda,\sigma$ dependence in the appendix.  At fixed $r$ and
 problem constants, $W=\Omega(T^2P_T)$ makes the path inflation bounded and
 gives $R_T=O(r\sqrt T\log T)+O(T/\sqrt W)$.  This is a low-rank tangent-space
@@ -893,6 +1000,53 @@ The second term is useful only with a predictable or deterministic envelope on
 $d_{{\rm eff},\lambda}$; a realized value is post-hoc.  It is not the empirical
 trace effective rank $\operatorname{tr}(A)/\|A\|_{\rm op}$, which does not in
 general control log determinant.
+
+\begin{lemma}[Spectral-tail information closure]\label{lem:spectral-tail-logdet}
+Let
+\[
+ A_T:=\bCbar_{T+1}-\lambda\bI
+ =\sigma^{-2}\sum_{t=1}^T\bg_t\bg_t^\top\succeq0
+\]
+have eigenvalues $\nu_1\ge\cdots\ge\nu_d\ge0$.  For an integer
+$r\in\{0,\ldots,d\}$, let
+$\Delta_{T,r}:=\sum_{i>r}\nu_i$ and $r_T:=\min\{r,T\}$.  Then
+\begin{equation}\label{eq:spectral-tail-logdet}
+ \gamma_T\le
+ r_T\log\!\left(1+\frac{TG^2}{r_T\lambda\sigma^2}\right)
+ +\frac{\Delta_{T,r}}\lambda,
+\end{equation}
+where the first term is defined as zero when $r_T=0$.  Thus $r=0$ gives
+$\gamma_T\le\operatorname{tr}(A_T)/\lambda$, while
+$r\ge\operatorname{rank}(A_T)$ gives $\Delta_{T,r}=0$ and recovers the
+rank closure.  The statement also covers $T=0$, when both sides vanish.
+\end{lemma}
+\begin{proof}
+Because $A_T$ is a sum of $T$ rank-one matrices,
+$\operatorname{rank}(A_T)\le T$, and \Cref{asm:bounded} gives
+$\operatorname{tr}(A_T)\le TG^2/\sigma^2$.  If $r_T>0$, concavity of
+$x\mapsto\log(1+x/\lambda)$ on the leading eigenvalues gives
+\[
+ \sum_{i=1}^{r}\log(1+\nu_i/\lambda)
+ =\sum_{i=1}^{r_T}\log(1+\nu_i/\lambda)
+ \le r_T\log\!\left(1+
+ \frac{\sum_{i=1}^{r_T}\nu_i}{r_T\lambda}\right)
+ \le r_T\log\!\left(1+\frac{TG^2}
+ {r_T\lambda\sigma^2}\right).
+\]
+The equality uses zero eigenvalues when $r>T$.  For the tail,
+$\log(1+x)\le x$ yields
+$\sum_{i>r}\log(1+\nu_i/\lambda)\le\Delta_{T,r}/\lambda$.
+Adding the two parts proves the claim.  When $r_T=0$, only the tail argument
+is used, so no zero denominator is evaluated.
+\end{proof}
+
+A deterministic or history-measurable prefix envelope
+$\bar\Delta_{t,r}\ge\Delta_{t,r}$ may enter an online confidence schedule
+through the prefix form of~\eqref{eq:spectral-tail-logdet}.  In contrast, a
+realized terminal $\Delta_{T,r}$ is an a posteriori path-complexity bound only.
+It must not choose $r$, an eigenspace, a radius, or any other action-time
+quantity.  The existing observable $\hat\gamma_t$ schedule remains valid when
+only the realized terminal tail is reported.
 
 The dynamic-potential and CG-observable consequences of \Cref{thm:regret} are
 \begin{equation}\label{eq:regret-bound-dyn}
@@ -1297,10 +1451,10 @@ current-parameter curvature and a uniform CG tolerance
 $\bar\varepsilon_t\le\bar\varepsilon<1$, set
 \[
  x_T=\frac{2c_gR\sqrt{T-1}}{\sigma\sqrt{\lambda W}},\quad
- \epsilon_{\rm drift,T}=2x_T+x_T^2,\quad
- \rho_\pm=1\pm\epsilon_{\rm drift,T}.
+ \rho_-=(1-x_T)^2,\qquad
+ \rho_+=(1+x_T)^2.
 \]
-If $\rho_->0$, then
+If $x_T<1$, then
 $\rho_-\bCbar_t\preceq\bC_t\preceq\rho_+\bCbar_t$ for all $t\le T$.
 Writing
 \[
@@ -1411,18 +1565,20 @@ $O(r\sqrt T\log T)$.
 \end{proof}
 
 For explicit targets
-$\bar\epsilon_{\rm drift}\in(0,1)$, $\Psi,b_F,\eta_E>0$, put
-$x_*=\sqrt{1+\bar\epsilon_{\rm drift}}-1$.  The sufficient conditions
+$\bar x_{\rm drift}\in(0,1)$ and $\Psi,b_F,\eta_E>0$, the sufficient conditions
 \begin{equation}\label{eq:width-thresholds}
 \begin{aligned}
-W&\ge\frac{4c_g^2R^2(T-1)}{\lambda\sigma^2x_*^2},&
+W&\ge\frac{4c_g^2R^2(T-1)}{\lambda\sigma^2\bar x_{\rm drift}^2},&
 W&\ge\frac{4c_\mu^2R^4T}{\sigma^2b_F^2},&
 W&\ge\frac{4c_\mu^2R^4}{\eta_E^2},\\
 W&\ge\max\!\left\{\frac{4A_T^2}{\lambda\Psi^2},
 \frac{2B_T}{\sqrt\lambda\Psi}\right\}
 \end{aligned}
 \end{equation}
-respectively ensure bounded drift, $\sqrt{\bar F_{T+1}}/\sigma\le b_F$,
+respectively ensure $x_T\le\bar x_{\rm drift}<1$ (and therefore
+$\rho_-\ge(1-\bar x_{\rm drift})^2$ and
+$\rho_+\le(1+\bar x_{\rm drift})^2$),
+$\sqrt{\bar F_{T+1}}/\sigma\le b_F$,
 $\bar E_T/T\le\eta_E$, and $\bar\psi_T\le\Psi$.  Thus the centering
 requirement has leading sufficient scaling $W=\Omega(T^2P_T)$; these
 conditions do not bound $\gamma_T$.
@@ -1508,6 +1664,17 @@ $d\times(t{-}1)$ whitened column matrices
   \qquad
   \chi_t := \|\Dmat_t\|_{\mathrm{op}} .
 \end{equation}
+Writing $n_t=t-1$, also define the $(d+n_t)\times d$ stacked matrices
+\begin{equation}\label{eq:stacked-whitened-designs}
+ \Amat_t:=\begin{bmatrix}
+  \sqrt\lambda\,\bCbar_t^{-1/2}\\[1mm] \Gmat_t^\top
+ \end{bmatrix},\qquad
+ \Bmat_t:=\begin{bmatrix}
+  \sqrt\lambda\,\bCbar_t^{-1/2}\\[1mm] (\Gmat_t+\Dmat_t)^\top
+ \end{bmatrix}.
+\end{equation}
+At $t=1$ the lower blocks have zero rows.  All square roots and inverse
+square roots in this statement are principal.
 Then:
 \begin{enumerate}[nosep,label=(\alph*),leftmargin=1.6em]
 \item $\Gmat_t\Gmat_t^\top = \bI - \lambda\,\bCbar_t^{-1} \preceq \bI$,
@@ -1516,6 +1683,13 @@ Then:
   = \Gmat_t\Dmat_t^\top + \Dmat_t\Gmat_t^\top + \Dmat_t\Dmat_t^\top$,
   so $\bigl\|\bCbar_t^{-1/2}(\bC_t-\bCbar_t)\bCbar_t^{-1/2}\bigr\|_{\mathrm{op}}
   \le 2\chi_t + \chi_t^2$.
+\item The stacked designs obey
+  \begin{equation}\label{eq:stacked-identities}
+   \Amat_t^\top\Amat_t=\bI_d,\qquad
+   \Bmat_t^\top\Bmat_t=
+   \bCbar_t^{-1/2}\bC_t\bCbar_t^{-1/2},\qquad
+   \|\Bmat_t-\Amat_t\|_{\rm op}=\chi_t.
+  \end{equation}
 \item \textbf{(One-sided, no smallness condition.)} For every $\chi_t\ge0$,
   \begin{equation}\label{eq:onesided-C}
     \bC_t \;\preceq\; (1+\chi_t)^2\,\bCbar_t,
@@ -1560,6 +1734,19 @@ $\|\Gmat_t\Dmat_t^\top+\Dmat_t\Gmat_t^\top+\Dmat_t\Dmat_t^\top\|_{\mathrm{op}}
 \le 2\chi_t+\chi_t^2$.
 
 \emph{(c)}
+By part~(a),
+$\Amat_t^\top\Amat_t=\lambda\bCbar_t^{-1}
++\Gmat_t\Gmat_t^\top=\bI_d$.  Expanding the current replay Gram gives
+\[
+ \Bmat_t^\top\Bmat_t
+ =\lambda\bCbar_t^{-1}+(\Gmat_t+\Dmat_t)(\Gmat_t+\Dmat_t)^\top
+ =\bCbar_t^{-1/2}\bC_t\bCbar_t^{-1/2}.
+\]
+The two stacks differ only in their bottom block, hence
+$\|\Bmat_t-\Amat_t\|_{\rm op}=\|\Dmat_t^\top\|_{\rm op}=\chi_t$.
+These identities also hold at $t=1$, with empty bottom blocks and $\chi_1=0$.
+
+\emph{(d)}
 The matrix $W_t:=\bCbar_t^{-1/2}(\bC_t-\bCbar_t)\bCbar_t^{-1/2}$ is
 symmetric with $\|W_t\|_{\mathrm{op}}\le2\chi_t+\chi_t^2$, hence
 $W_t\preceq(2\chi_t+\chi_t^2)\bI$.  Congruence by $\bCbar_t^{1/2}$ gives
@@ -1572,7 +1759,7 @@ $\bar s_t^2(a)\le(1+\chi_t)^2 s_t^2(a)$.  Since $x\mapsto(1+x)^2$ is
 increasing on $[0,\infty)$, replacing $\chi_t$ by any $\bar\chi_t\ge\chi_t$
 preserves the inequality, giving $u_t=(1+\bar\chi_t)^2$.
 
-\emph{(d)}
+\emph{(e)}
 $\chi_t=\|\Dmat_t\|_{\mathrm{op}}\le\|\Dmat_t\|_F$, and
 $\|\Dmat_t\|_F^2=\sum_{s<t}\|\bCbar_t^{-1/2}\delta_{s,t}/\sigma\|^2
 =\sigma^{-2}\sum_{s<t}\delta_{s,t}^\top\bCbar_t^{-1}\delta_{s,t}
@@ -1583,27 +1770,43 @@ $\|\delta_{s,t}\|_{\bCbar_t^{-1}}^2\le\|\delta_{s,t}\|^2/\lambda
 gives~\eqref{eq:chi-primitive}.
 \end{proof}
 
-\begin{corollary}[Two-sided feature sandwich]\label{cor:drift-sandwich}
-If additionally $\varepsilon_t:=2\chi_t+\chi_t^2<1$, then
+\begin{corollary}[Sharp two-sided feature-drift sandwich]\label{cor:drift-sandwich}
+If $\chi_t<1$, then
 \begin{equation}\label{eq:drift-sandwich}
-  (1-\varepsilon_t)\,\bCbar_t
+  (1-\chi_t)^2\,\bCbar_t
   \;\preceq\;
   \bC_t
   \;\preceq\;
-  (1+\varepsilon_t)\,\bCbar_t .
+  (1+\chi_t)^2\,\bCbar_t .
 \end{equation}
+Consequently, if a predictable certificate satisfies
+$\chi_t\le\bar\chi_t<1$, then
+$(1-\bar\chi_t)^2\bCbar_t\preceq\bC_t
+\preceq(1+\bar\chi_t)^2\bCbar_t$.
 \end{corollary}
 \begin{proof}
-From part~(b), $W_t\succeq-(2\chi_t+\chi_t^2)\bI=-\varepsilon_t\bI$;
-congruence by $\bCbar_t^{1/2}$ gives $\bC_t\succeq(1-\varepsilon_t)\bCbar_t$,
-and the upper bound is~\eqref{eq:onesided-C} with
-$(1+\chi_t)^2\le1+\varepsilon_t$ when $\varepsilon_t<1$
-(indeed $(1+\chi_t)^2=1+\varepsilon_t$ exactly).
+Because $\Amat_t^\top\Amat_t=\bI_d$, all $d$ singular values of the
+$(d+n_t)\times d$ matrix $\Amat_t$ equal one.  Singular-value perturbation
+and~\eqref{eq:stacked-identities} give, for $j=1,\ldots,d$,
+\[
+ |\sigma_j(\Bmat_t)-1|
+ \le\|\Bmat_t-\Amat_t\|_{\rm op}=\chi_t.
+\]
+For $\chi_t<1$, every singular value of $\Bmat_t$ therefore lies in
+$[1-\chi_t,1+\chi_t]$.  Squaring the singular values and using
+$\Bmat_t^\top\Bmat_t=\bCbar_t^{-1/2}\bC_t\bCbar_t^{-1/2}$ yields
+$(1-\chi_t)^2\bI\preceq
+\bCbar_t^{-1/2}\bC_t\bCbar_t^{-1/2}
+\preceq(1+\chi_t)^2\bI$.  Congruence by the principal
+$\bCbar_t^{1/2}$ proves~\eqref{eq:drift-sandwich}.
+If $0\le\chi_t\le\bar\chi_t<1$, then
+$(1-\bar\chi_t)^2\le(1-\chi_t)^2$ and
+$(1+\chi_t)^2\le(1+\bar\chi_t)^2$, proving the certificate version.
 \end{proof}
 
 The main theorem uses only the one-sided bound~\eqref{eq:onesided-C}, which
 holds for \emph{any} $\chi_t\ge0$; the smallness condition
-$\varepsilon_t<1$ is needed only for the two-sided
+$\chi_t<1$ is needed only for the lower half of the two-sided
 sandwich~\eqref{eq:drift-sandwich}, which in turn is used by the explicit
 near-linear corollary and by any optional analysis that
 explicitly assumes a two-sided sandwich.  An unrescaled current-parameter window is
