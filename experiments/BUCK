@@ -41,6 +41,7 @@ python_library(
         "make_paper_artifacts",
         "make_primary_table",
         "make_revision_paper_artifacts",
+        "make_spectral_tail_artifacts",
         "make_theory_scaling_paper_artifacts",
         "run_balanced_benchmark",
         "run_certified_tanh",
@@ -52,6 +53,7 @@ python_library(
         "run_offdiagonal_witness",
         "run_operator_ablation",
         "run_systems_scaling",
+        "run_spectral_tail_study",
         "theory_scaling",
         "theory_scaling_compact",
     ]

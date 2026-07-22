@@ -24,6 +24,7 @@ CONFIG_NAMES = {
     "covertype_rerun",
     "curvature_phase_diagram",
     "offdiagonal_witness",
+    "spectral_tail_study",
     "autodiff_systems",
 }
 
