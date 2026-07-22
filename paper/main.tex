@@ -88,7 +88,7 @@ separates linearization, centering, feature and operator transfer, CG error, and
 realized width complexity.  Predictable Welford and residual statistics instantiate
 its nonlinear certificates with $O(d)$ additional path state.  When a fixed tangent
 subspace is supplied before interaction, the relevant widths reduce exactly to an
-$r$-dimensional projected Gram.  Additional bounded-path, width, residual,
+$r$-dimensional projected Gram.  Additional bounded-path, near-linearity, residual,
 optimizer, transfer, and CG premises then yield
 $O(r\sqrt T\log T)+O(T/\sqrt W)$; this is a conditional projected-feature
 corollary, not a neural-network training guarantee.  A growing-window theorem
@@ -178,7 +178,7 @@ residuals upper-bound feature transfer and centering, while an analytic Taylor
 schedule supplies the confidence radius (\Cref{lem:path-certificates,cor:operational}).
 These schedules are conservative and need known smoothness constants and a certified
 optimizer residual.  For a supplied fixed-rank tangent path satisfying the stated
-width-dependent smoothness, residual, and optimizer envelopes, we close information
+scale-dependent smoothness, residual, and optimizer envelopes, we close information
 gain and give an explicit $O(r\sqrt T\log T)+O(T/\sqrt W)$ rate; a
 persistently excited growing window gives a conditional regret and width-solve
 sample-CVP accounting bound
@@ -688,7 +688,8 @@ The proof, filtration-order pseudocode, and a scalar-tanh specialization with
 $G\le B_\phi$ and $L_\mu=L_g\le4B_\phi^2/(3\sqrt3)$ are in
 \Cref{lem:path-certificates,cor:tanh-link}.
 
-For a width parameter $W$, suppose $\|\btheta_t\|,\|\btheta^*\|\le R$,
+For an abstract near-linearity scale $W$, suppose
+$\|\btheta_t\|,\|\btheta^*\|\le R$,
 $L_\mu\le c_\mu/\sqrt W$, $L_g\le c_g/\sqrt W$,
 $\zeta_t\le\zeta_0/\sqrt W$, and
 $R_t^{\rm col}\le C_RtP_T$ for a supplied $P_T\ge1$.  Then
@@ -1350,6 +1351,39 @@ $\|\bg_s\|\le G$ (\Cref{asm:bounded}) and $|\bar r_{s,t}|\le B_{t,\delta}$
 term by term in the definition of $M_t$ gives the claimed bound on $\|M_t\|_2$.
 \end{proof}
 
+\begin{lemma}[Bounded-output residual energy]
+\label{lem:bounded-output-residual}
+Fix a horizon $T\ge1$ and $\delta_R\in(0,1)$.  Suppose
+$|\mu_{\btheta}(x,a)|\le B_\mu$ throughout the certified parameter region and
+$|\mu^*(x,a)|\le B_\mu$.  Under \Cref{asm:noise}, with probability at least
+$1-\delta_R$, simultaneously for every $t\le T+1$,
+\begin{equation}\label{eq:bounded-output-residual}
+ R_t^{\rm col}\le
+ \left[8B_\mu^2+4\sigma^2\log\!\left(\frac{2T}{\delta_R}\right)\right](t-1).
+\end{equation}
+This finite-horizon envelope is not claimed to be tight.
+\end{lemma}
+\begin{proof}
+Conditional sub-Gaussianity gives
+\[
+ \Pr\!\left(|\eta_s|>
+ \sigma\sqrt{2\log(2T/\delta_R)}\mid\cG_s\right)
+ \le\delta_R/T.
+\]
+Taking expectations and a union bound over $s=1,\ldots,T$ yields an event of
+probability at least $1-\delta_R$ on which this bound holds for every noise
+term.  On that event,
+$c_s=\mu_{\btheta_s}(x_s,a_s)-\mu^*(x_s,a_s)-\eta_s$ and
+$(a+b)^2\le2a^2+2b^2$ give
+\[
+ c_s^2\le
+ 2(2B_\mu)^2+2\sigma^2\,2\log(2T/\delta_R)
+ =8B_\mu^2+4\sigma^2\log(2T/\delta_R).
+\]
+Summing the first $t-1$ terms proves~\eqref{eq:bounded-output-residual}; at
+$t=1$ both sides are zero.
+\end{proof}
+
 \begin{lemma}[$O(d)$-state path certificates]\label{lem:path-certificates}
 Suppose $\nabla_\theta\mu_\theta(z)$ is $L_g$-Lipschitz and bounded by $G$
 on a convex region containing the realized iterates.  Before round $t$, let
@@ -1499,6 +1533,99 @@ For $A\ge1$, $\log(1+Ax)\le A\log(1+x)$, proving the information comparison.
 Substitution into \Cref{cor:twosided} gives the regret display.
 \end{proof}
 
+\begin{corollary}[Corrected-center near-linear rate]
+\label{cor:corrected-near-linear}
+Fix $T$ and suppose, for every $t\le T$,
+\[
+ \|\btheta_t\|,\|\btheta^*\|\le R,\qquad
+ L_\mu\le c_\mu/\sqrt W,\qquad L_g\le c_g/\sqrt W,
+\]
+where $W$ is an abstract near-linearity scale.  Use the corrected center,
+exact current curvature, and a uniform CG tolerance
+$\bar\varepsilon_t\le\bar\varepsilon<1$.  Fix
+$r\in\{0,\ldots,d\}$ and suppose a predictable prefix information envelope
+$\mathcal G_{n,r}\ge\gamma_n$ is supplied for $n=0,\ldots,T$.  Valid choices
+are the rank envelope $\Gamma_{n,r}$ under a known rank bound, or the
+spectral-tail envelope in \Cref{cor:approx-rank-current-ggn} with supplied
+prefix tails $\bar\Delta_{n,r}$.  Set
+\begin{align*}
+ x_T&:=\frac{2c_gR\sqrt{T-1}}{\sigma\sqrt{\lambda W}},&
+ \alpha_I&:=\sqrt{\frac{1+\bar\varepsilon}{1-\bar\varepsilon}},\\
+ \mathcal B_{T,r}^{\rm corr}
+ &:=\sqrt{\mathcal G_{T,r}+2\log(1/\delta)}+\sqrt\lambda R
+ +\frac{2c_\mu R^2\sqrt T}{\sigma\sqrt W}.&&
+\end{align*}
+If $x_T<1$, the predictable radius
+\begin{equation}\label{eq:corrected-near-linear-beta}
+ \bar\beta_t^{\rm corr}:=
+ \sqrt{\mathcal G_{t-1,r}+2\log(1/\delta)}+\sqrt\lambda R
+ +\frac{2c_\mu R^2\sqrt{t-1}}{\sigma\sqrt W}
+\end{equation}
+is valid and the corrected-center policy satisfies
+\begin{equation}\label{eq:corrected-near-linear-regret}
+\begin{aligned}
+ R_T\le{}&2\alpha_I\frac{1+x_T}{1-x_T}
+ \mathcal B_{T,r}^{\rm corr}
+ \sqrt{(\sigma^2+G^2/\lambda)T\mathcal G_{T,r}}\\
+ &+\frac{4c_\mu R^2T}{\sqrt W}.
+\end{aligned}
+\end{equation}
+In particular, bounded transfer requires only
+$W>4c_g^2R^2(T-1)/(\lambda\sigma^2)=\Omega(T)$ up to problem constants,
+and $E_T\le2c_\mu R^2T/\sqrt W$.  If
+$\mathcal G_{T,r}=O(r\log T)$---for example, if
+$\bar\Delta_{T,r}=O(r\log T)$ at fixed $\lambda$---and $W=\Omega(T)$ with
+a sufficiently large constant to keep $x_T$ bounded away from one, then
+\[
+ R_T=O(r\sqrt T\log T)+O(\sqrt T)
+\]
+up to confidence and CG constants.
+
+This corollary assumes neither an optimizer-residual rate nor an envelope on
+$R_t^{\rm col}$.  Its cost is frozen-feature access: exact corrected centers
+require an explicit $d\times d$ frozen Gram, stored frozen gradients, replay
+with historical checkpoints, a supplied low-dimensional representation, or a
+separately certified sketch.  The result therefore does not have $O(d)$ total
+memory merely because current-curvature products are matrix-free.
+\end{corollary}
+\begin{proof}
+The trust region gives $Q_t\le4R^2(t-1)$, so
+\Cref{lem:path-certificates} yields
+$\bar\chi_t\le2c_gR\sqrt{t-1}/(\sigma\sqrt{\lambda W})\le x_T$,
+$\bar\epsilon_t^{\rm lin}\le2c_\mu R^2/\sqrt W$,
+$\bar F_t\le4c_\mu^2R^4(t-1)/W$, and
+$\bar E_T\le2c_\mu R^2T/\sqrt W$.  Hence
+\eqref{eq:corrected-near-linear-beta} dominates \eqref{eq:beta}.
+Apply the corrected-center form of
+\Cref{cor:exact-current-frozen-potential}, bound
+$\alpha_t\le\alpha_I$, $(1+\bar\chi_t)/(1-\bar\chi_t)\le
+(1+x_T)/(1-x_T)$, and
+$\bar\beta_t^{\rm corr}\le\mathcal B_{T,r}^{\rm corr}$, then use
+$\gamma_T\le\mathcal G_{T,r}$.  Finally substitute
+$2\bar E_T\le4c_\mu R^2T/\sqrt W$.  The stated orders follow directly.
+\end{proof}
+
+\begin{remark}[Why $W$ is an abstract near-linearity scale]
+The all-weights MLP used in the nonlinear diagnostics has action-$a$ mean
+$v_a^\top\tanh(Ux+b)+c_a$ and no $W^{-1/2}$ forward normalization.  With
+$\bar x=(x,1)$, hidden vector $q_i=(U_i,b_i)$, and $z_i=q_i^\top\bar x$, the
+Hessian block on $(q_i,v_{a,i})$ is
+\[
+ \begin{bmatrix}
+  v_{a,i}\tanh''(z_i)\bar x\bar x^\top&
+  \tanh'(z_i)\bar x\\
+  \tanh'(z_i)\bar x^\top&0
+ \end{bmatrix}.
+\]
+At $z_i=0$ and $v_{a,i}=0$ its operator norm is $\|\bar x\|$, independent of
+hidden width.  Thus the executed all-weights parameterization does not imply
+$L_\mu,L_g=O(W^{-1/2})$.  Such a conclusion would require a different
+explicitly normalized parameterization and coordinate constraints, which
+would also change the ridge penalty and GGN geometry.  We therefore do not
+identify $W$ with generic neural-network width or derive optimizer-residual
+scaling from it.
+\end{remark}
+
 \begin{corollary}[Conditional projected-Gram rate for a supplied subspace]\label{cor:rank-near-linear}
 Under \Cref{cor:near-linear}, additionally suppose a subspace
 $U\subseteq\R^d$ with $\dim U\le r$ is fixed and supplied before interaction,
@@ -1544,7 +1671,7 @@ $W\ge C T^2P_T$ for a constant $C$ satisfying the explicit thresholds in
  R_T=O(r\sqrt T\log T)+O(T/\sqrt W).
 \]
 This rate is conditional on the ex ante subspace $U$ and every bounded-path,
-width, residual, optimizer, transfer, and solver premise of
+near-linearity, residual, optimizer, transfer, and solver premise of
 \Cref{cor:near-linear}.  It neither learns $U$ nor covers unrestricted
 representation learning or end-to-end neural-network training; it is an
 effective projected-feature closure, not a full-dimensional computational
@@ -1557,12 +1684,27 @@ $\lambda I_{d-r_U}$; the query has zero coordinates in the second block.  This
 proves \eqref{eq:projected-width}, and the same argument proves the frozen-Gram
 identity.  \Cref{lem:rank-logdet} gives $\gamma_T\le\Gamma_{T,r}$.  Every occurrence of
 $\gamma_T$ in \Cref{cor:near-linear} is monotone, so direct substitution gives
-the display.  Under the stated width scaling, $x_T$, the centering terms, and
+the display.  Under the stated near-linearity scaling, $x_T$, the centering terms, and
 the linearization terms are bounded, while
 $\Gamma_{T,r}=O(r\log T)$.  Hence
 $\Omega_{T,r}=O(\sqrt{r\log T}+1)$ and the leading product is
 $O(r\sqrt T\log T)$.
 \end{proof}
+
+\begin{remark}[Linear-subclass lower bound]
+The exact-rank class contains a standard $r$-dimensional stochastic linear
+bandit.  Take a constant context, a known orthonormal basis $Q_U$, the finite
+action set $z(a)\in\{\pm1/\sqrt r\}^r$, linear mean
+$\mu_\vartheta(a)=z(a)^\top\vartheta$, and Gaussian noise.  Choosing the usual
+hypercube parameter family with coordinates of order $\sqrt{r/T}$ keeps the
+parameter norm bounded when $T\gtrsim r^2$.  Here $L_\mu=L_g=E_T=0$,
+$\bC_t=\bCbar_t$, and all features lie in $U$.  The stochastic linear-bandit
+minimax expected-regret lower bound is $\Omega(r\sqrt T)$ in this regime
+\citep{dani2008stochastic}.  Hence the leading $r\sqrt T$ dependence of the
+exact-rank upper bound is sharp up to logarithms on this linear subclass.  This
+does not prove a lower bound for the nonlinear or spectral-tail classes, nor a
+computational lower bound.
+\end{remark}
 
 For explicit targets
 $\bar x_{\rm drift}\in(0,1)$ and $\Psi,b_F,\eta_E>0$, the sufficient conditions
@@ -1595,6 +1737,14 @@ On any certified trust region, \Cref{cor:operational} therefore gives an
 executable nonlinear Gaussian-reward CC-UCB policy using only the online path
 statistics, a pre-action optimizer-residual certificate, and the stated
 operator/CG certificates.
+Under realizability, both the model and teacher outputs have $B_\mu=1$.
+Hence \Cref{lem:bounded-output-residual} removes the supplied residual-energy
+factor in \Cref{cor:near-linear}: on its event one may take
+\[
+ C_R=1,\qquad
+ P_T=8+4\sigma^2\log(2T/\delta_R),
+\]
+and allocate $\delta_R$ to the certificate failure budget.
 \end{corollary}
 \begin{proof}
 $\nabla_\theta\mu=\operatorname{sech}^2(\phi^\top\theta)\phi$, so its norm is
@@ -3079,6 +3229,12 @@ The tower property and union bound yield
 $\Pr(\cE_{\rm cert})\ge1-\delta_{\rm cert}$.  Deterministic or almost-sure
 certificates use $\delta_{j,t}=0$.  The self-normalized confidence event is
 separate and receives probability $\delta$.
+When \Cref{lem:bounded-output-residual} supplies the residual-energy envelope,
+include its time-uniform event $\cE_R$ as one certificate source and reserve
+$\delta_R$ inside $\delta_{\rm cert}$ (equivalently, require
+$\delta_R+\sum_{j,t}\delta_{j,t}\le\delta_{\rm cert}$ for the remaining
+sources).  The residual event is never counted again in the self-normalized
+failure probability $\delta$.
 
 
 

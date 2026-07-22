@@ -779,6 +779,29 @@ def spectral_tail_information_bound(
     )
 
 
+def bounded_output_residual_factor(
+    *,
+    output_bound: float,
+    noise_scale: float,
+    horizon: int,
+    failure_probability: float,
+) -> float:
+    r"""Return ``8 B_mu^2 + 4 sigma^2 log(2T/delta_R)``."""
+
+    bound = _nonnegative_float(output_bound, name="output_bound")
+    scale = _nonnegative_float(noise_scale, name="noise_scale")
+    rounds = _nonnegative_int(horizon, name="horizon")
+    if rounds == 0:
+        raise ValueError("horizon must be positive")
+    probability = float(failure_probability)
+    if not np.isfinite(probability) or not 0.0 < probability < 1.0:
+        raise ValueError("failure_probability must lie strictly between zero and one")
+    return float(
+        8.0 * bound * bound
+        + 4.0 * scale * scale * np.log(2.0 * rounds / probability)
+    )
+
+
 def information_gain_closure(
     increment: ArrayLike,
     *,

@@ -125,3 +125,91 @@ an operational prefix schedule.
 The approximate-rank result does not imply a supplied eigenspace. Therefore it
 does not inherit the projected `r x r` implementation: full-dimensional CG can
 remain necessary when tail directions affect action ordering.
+
+## Corrected-center near-linear closure
+
+On a radius-`R` path with `||theta_star||<=R`,
+
+```text
+Q_t <= 4 R^2 (t-1),
+bar_chi_t <= 2 c_g R sqrt(t-1)/(sigma sqrt(lambda W)),
+bar_epsilon_t <= 2 c_mu R^2/sqrt(W),
+bar_F_t <= 4 c_mu^2 R^4 (t-1)/W,
+bar_E_T <= 2 c_mu R^2 T/sqrt(W).
+```
+
+The corrected center removes `bar_psi_t`, so no optimizer-residual or
+collection-residual envelope enters. The condition `x_T<1` requires
+
+```text
+W > 4 c_g^2 R^2 (T-1)/(lambda sigma^2),
+```
+
+which is linear rather than quadratic in `T`. With a predictable information
+envelope `G_{t,r}`, the radius is bounded by
+
+```text
+sqrt(G_{t-1,r}+2 log(1/delta)) + sqrt(lambda) R
+  + 2 c_mu R^2 sqrt(t-1)/(sigma sqrt(W)).
+```
+
+Substitution into the frozen-potential corollary gives the manuscript's
+explicit bound. If `G_{T,r}=O(r log T)` and `W=Omega(T)` with a constant that
+keeps `x_T` below one, the leading product is
+`O(r sqrt(T) log T)` and `2 bar_E_T=O(sqrt(T))`.
+
+## Bounded-output residual energy
+
+For `c_s=mu_{theta_s}-mu_star-eta_s`, bounded outputs give
+`|mu_{theta_s}-mu_star|<=2 B_mu`. Conditional sub-Gaussianity and a union bound
+over `T` rounds yield
+
+```text
+|eta_s| <= sigma sqrt(2 log(2T/delta_R))
+```
+
+simultaneously with probability at least `1-delta_R`. Therefore
+
+```text
+c_s^2 <= 2(2 B_mu)^2
+       + 2 sigma^2 [2 log(2T/delta_R)]
+       = 8 B_mu^2 + 4 sigma^2 log(2T/delta_R).
+```
+
+Summing the first `t-1` terms proves the stated envelope; at `t=1` both sides
+are zero. `delta_R` belongs inside the certificate-event allocation, not the
+self-normalized confidence failure probability.
+
+## Architecture check and obstruction
+
+For the executed all-weights MLP
+
+```text
+f(U,b,V,c;x,a) = v_a^T tanh(Ux+b) + c_a,
+```
+
+let `xbar=(x,1)`, `q_i=(U_i,b_i)`, and `z_i=q_i^T xbar`. The Hessian block on
+`(q_i,v_{a,i})` is
+
+```text
+[[v_{a,i} tanh''(z_i) xbar xbar^T, tanh'(z_i) xbar],
+ [tanh'(z_i) xbar^T,                    0]].
+```
+
+At `z_i=0` and `v_{a,i}=0`, its operator norm is `||xbar||`, independent of
+hidden width. Hence an all-parameter `O(W^-1/2)` Hessian bound is false for the
+repository's parameterization. The manuscript consequently treats `W` only as
+an abstract near-linearity scale. An explicit `1/sqrt(W)` forward
+parameterization would change the optimization coordinates, ridge geometry,
+and GGN and is not silently substituted.
+
+## Linear-subclass lower bound
+
+The exact-rank assumptions contain a constant-context linear bandit on the
+normalized hypercube `z(a) in {+-1/sqrt(r)}^r`, with parameter coordinates of
+order `sqrt(r/T)` and Gaussian noise. For `T` at least order `r^2`, both action
+and parameter norms are bounded. Gradients are constant, so `L_mu=L_g=E_T=0`
+and `C_t=Cbar_t`. The standard minimax expected-regret lower bound is
+`Omega(r sqrt(T))`; this checks only the leading dimension dependence on the
+linear exact-rank subclass and says nothing about nonlinear, spectral-tail, or
+computational lower bounds.

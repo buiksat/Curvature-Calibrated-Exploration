@@ -5,6 +5,7 @@ import pytest
 
 from experiments.curvature_operators import CurvatureOperator
 from experiments.theory_metrics import (
+    bounded_output_residual_factor,
     cg_sandwich,
     cg_width,
     dense_width,
@@ -138,6 +139,25 @@ def test_spectral_tail_exact_rank_and_zero_edge_cases() -> None:
     )
     assert zero.exact_logdet == 0.0
     assert zero.upper_bound == 0.0
+
+
+def test_bounded_output_residual_factor_has_declared_constants() -> None:
+    bound = 1.3
+    scale = 0.4
+    horizon = 250
+    failure_probability = 0.02
+    factor = bounded_output_residual_factor(
+        output_bound=bound,
+        noise_scale=scale,
+        horizon=horizon,
+        failure_probability=failure_probability,
+    )
+    noise_threshold = scale * np.sqrt(
+        2.0 * np.log(2.0 * horizon / failure_probability)
+    )
+    expected = 2.0 * (2.0 * bound) ** 2 + 2.0 * noise_threshold**2
+    assert factor == pytest.approx(expected)
+    assert 0.0 * factor == 0.0  # t=1 has no collected residuals.
 
 
 @pytest.mark.parametrize("seed", range(12))
