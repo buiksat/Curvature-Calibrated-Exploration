@@ -82,39 +82,36 @@ Curvature surrogates in differentiable-model bandits change exploration widths,
 but greater fidelity to full curvature need not improve online decisions.  We use
 the full generalized Gauss--Newton (GGN)/Fisher operator as a reference, computing
 its widths with curvature--vector products and conjugate gradients (CG) without
-materializing a $d\times d$ matrix.  For Gaussian rewards and squared loss on a
-certified region with uniformly Lipschitz parameter gradients, a transfer theorem
+materializing a $d\times d$ matrix.  Rewards have conditionally sub-Gaussian
+noise; the fitted curvature is the Gaussian squared-loss quasi-likelihood.  In
+the small-drift exact-current regime, a sharpened singular-value argument transfers
+the analysis to the monotone frozen-feature potential.  Splitting its spectrum at
+rank $r$ yields a full-dimensional regret bound in terms of the top-$r$ log
+determinant and the residual spectral mass $\Delta_{T,r}$, without assuming an
+exact tangent subspace.  Exact rank is a special case; a supplied subspace also
+permits an $r$-dimensional implementation.  A more general transfer theorem
 separates linearization, centering, feature and operator transfer, CG error, and
 realized width complexity.  Predictable Welford and residual statistics instantiate
-its nonlinear certificates with $O(d)$ additional path state.  When a fixed tangent
-subspace is supplied before interaction, the relevant widths reduce exactly to an
-$r$-dimensional projected Gram.  Additional bounded-path, near-linearity, residual,
-optimizer, transfer, and CG premises then yield
-$O(r\sqrt T\log T)+O(T/\sqrt W)$; this is a conditional projected-feature
-corollary, not a neural-network training guarantee.  A growing-window theorem
-retains an explicit burn-in, fixed-subspace excitation, certificate factor $H_T$,
-and linearization term $E_T$; its simplified $T^{1-q/2}$ bound and
-$T^{1+3q/2}$ width-solve sample-CVP count require those terms not to dominate.
-Experiments are a reference-operator stress test, not a performance demonstration.
-A linear-Gram witness, a 3,600-run scaling grid, a mechanism map, and a matched
-benchmark show no uniform fidelity-based regret ordering in the tested regimes;
-diagonal and last-layer policies often have lower regret.
+its nonlinear certificates with $O(d)$ additional path state.  These are
+conditional differentiable-model results, not guarantees for unrestricted neural
+training.  Experiments are reference-operator and failure-mode studies rather than
+a performance demonstration, and they show no uniform fidelity-based regret
+ordering in the tested regimes.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
 Contextual bandits are a standard framework for sequential
-decision-making under partial feedback, and increasingly the reward
-predictor is a large differentiable parametric model---a pretrained
-network for text, vision, or multimodal data composed with a reward head
-\citep{zhou2020neural,riquelme2018deep}.  The central algorithmic
+decision-making under partial feedback, and the reward predictor may be a
+differentiable parametric model or a pretrained representation composed with a
+reward head \citep{zhou2020neural,riquelme2018deep}.  The central algorithmic
 question is how to build an exploration bonus that faithfully reflects
 epistemic uncertainty over such a model's predictions.  We analyze the
 Gaussian/squared-loss curvature model with sub-Gaussian noise and uniformly
-Lipschitz parameter gradients on a known certified region.  The closed sublinear
-rate further requires a supplied low-rank tangent path; pretrained and foundation
-models motivate the operator, but unrestricted neural training is not covered.
+Lipschitz parameter gradients on a known certified region.  The closed bounds
+also require small feature drift and a controlled spectral tail or an exact-rank
+special case; unrestricted neural training is not covered.
 
 In the \emph{white-box} setting---gradient and curvature--vector-product
 access to the model---the canonical bonus is the GGN/Fisher-linearized
@@ -139,6 +136,16 @@ changes the \emph{spectrum} of~$\bC_t$ and hence the value
 of~$s_t^2(a)$.  The spectral change does not by itself imply a change
 in the selected action, and therefore in regret; whether it does is an
 empirical question, which we make measurable and study directly.
+
+Current-parameter relinearization asks a different scientific question from a
+historical-gradient Gram.  The latter preserves the features that were
+predictable when data were collected and therefore supports a rank-one
+self-normalized confidence process.  The former re-evaluates every historical
+example under the representation used for the next decision, but destroys that
+monotone update.  Our analysis keeps the predictable frozen Gram for confidence
+and quantifies when its widths transfer to the current full-history GGN.  This
+separation is why feature drift, rather than curvature fidelity alone, appears
+explicitly in the regret bound.
 
 \textbf{We use full curvature as a reference operator in a falsification study.}
 Common-trajectory diagnostics isolate surrogate-induced width distortion, while
@@ -177,28 +184,33 @@ nonlinear inputs are computable: Welford parameter moments and observed collecti
 residuals upper-bound feature transfer and centering, while an analytic Taylor
 schedule supplies the confidence radius (\Cref{lem:path-certificates,cor:operational}).
 These schedules are conservative and need known smoothness constants and a certified
-optimizer residual.  For a supplied fixed-rank tangent path satisfying the stated
-scale-dependent smoothness, residual, and optimizer envelopes, we close information
-gain and give an explicit $O(r\sqrt T\log T)+O(T/\sqrt W)$ rate; a
-persistently excited growing window gives a conditional regret and width-solve
+optimizer residual.  In the exact-current small-drift regime, the sharpened
+two-sided sandwich closes regret through the frozen potential, and a top-$r$ plus
+spectral-tail decomposition closes its information gain without a known subspace
+(\Cref{cor:exact-current-frozen-potential,cor:approx-rank-current-ggn}).  A
+supplied exact-rank path is a computational special case, while a persistently
+excited growing window gives a separate conditional regret and width-solve
 sample-CVP accounting bound
-(\Cref{cor:rank-near-linear,thm:growing-window}).  Neither result certifies
+(\Cref{cor:rank-near-linear,thm:growing-window}).  None of these results certifies
 unrestricted fine-tuning.
 
 \paragraph{Contributions.}
-\textbf{(1)} A realized-width regret reduction with one-sided feature/operator
-transfer and explicit centering, linearization, and CG terms
+\textbf{(1)} A full-dimensional, approximate-rank regret closure for exact
+current GGN under predictable small drift, using a sharpened frozen/current
+sandwich and a residual spectral-mass term; exact rank is a special case
+(\Cref{cor:exact-current-frozen-potential,lem:spectral-tail-logdet,cor:approx-rank-current-ggn}).
+\textbf{(2)} A general realized-width regret reduction with one-sided
+feature/operator transfer and explicit centering, linearization, and CG terms
 (\Cref{thm:regret,lem:whitened}).
-\textbf{(2)} A conditional projected-Gram rate for a supplied tangent subspace
-and a separate growing-window bound with its burn-in and certificate terms
-exposed (\Cref{cor:rank-near-linear,thm:growing-window}).
 \textbf{(3)} Predictable $O(d)$ additional-state nonlinear transfer and
 centering certificates (\Cref{lem:path-certificates,cor:operational}).
-\textbf{(4)} An online adaptation of matrix-free full-GGN/Fisher widths via
-residual-checked CG/CVP solves, plus an off-diagonal linear-Gram witness relevant
-to the GGN metric (\Cref{prop:offdiag-witness}).
-\textbf{(5)} Executed nonlinear, mechanism, baseline, and systems audits that
-separate online outcomes from post-hoc diagnostics (\Cref{sec:experiments}).
+\textbf{(4)} A conditional projected-Gram shortcut for a supplied tangent
+subspace and a separate growing-window bound with its burn-in and certificate
+terms exposed (\Cref{cor:rank-near-linear,thm:growing-window}).
+\textbf{(5)} Matrix-free full-GGN/Fisher widths through residual-checked CG/CVP
+solves, together with executed nonlinear, operator-mechanism, baseline, and
+systems audits that separate policy outcomes from post-hoc diagnostics
+(\Cref{sec:experiments,prop:offdiag-witness}).
 
 \section{Problem Setup}\label{sec:problem}
 
@@ -912,9 +924,10 @@ All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
 their bounds are vacuous.  Synthetic CPU operators reach $d=8192$, but use
 unmatched stored-feature primitives.  Small-model policies likewise materialize
 Jacobians for dense audits, validating algebra rather than on-the-fly $O(d)$
-Krylov state.  The defining autodiff JVP/VJP benchmark was not run because its
-Buck PyTorch dependency does not configure; no method-speed, trained-model, or
-accelerator claim follows.
+Krylov state.  A Buck-managed \texttt{torch.func} pipeline now executes real
+JVP/VJP operators without retaining an explicit sample-by-parameter Jacobian;
+only smoke and development-pilot cells have run.  The preregistered evaluation
+grid is not reported, so no comparative method-speed or deployment claim follows.
 
 \paragraph{Real-data baseline check.}
 Covertype fails its baseline check: context-free controls beat every contextual
@@ -924,18 +937,23 @@ method at every horizon (\Cref{sec:covertype-rerun}).
 \section{Conclusion}\label{sec:conclusion}
 
 CC-UCB supplies a matrix-free full-GGN/Fisher reference with explicit transfer,
-CG, and width terms.  Its only closed rate is a conditional projected-Gram
-corollary for a supplied subspace, where full-dimensional CG is unnecessary;
-it is not an unrestricted neural-training result.  Empirically, the operator
-tests width and action-order preservation: the tanh bound is vacuous, the
-scaling grid exposes failed envelopes, and full curvature is not uniformly
-preferred.  Covertype fails its baseline check.
+CG, and width terms.  The strongest full-dimensional result combines predictable
+small feature drift with a top-$r$ plus spectral-tail bound on the frozen
+potential; it does not require a known tangent subspace.  Exact rank recovers a
+projected-Gram special case where full-dimensional CG is unnecessary.  Neither
+result is an unrestricted neural-training guarantee.  Empirically, the executed
+studies test width and action-order preservation rather than demonstrate
+performance: the tanh bound is vacuous, the legacy scaling grid exposes failed
+envelopes, full curvature is not uniformly preferred, and Covertype fails its
+baseline check.
 
 \paragraph{Limitations.}
 Theory assumes Gaussian squared loss, enumeration, realizability, smoothness,
-and an optimizer certificate; approximate operators and screening need further
-certificates.  Float64 checks lack enclosures, bounds are vacuous, autodiff
-timing is absent, and adaptive comparisons are non-causal.
+and, for the original center, an optimizer certificate; approximate operators
+and screening need further certificates.  Controlling feature drift and the
+spectral tail during unrestricted training remains open.  Float64 checks lack
+enclosures, bounds are vacuous, the full autodiff evaluation grid is unrun, and
+adaptive comparisons are non-causal.
 
 % --- references -----------------------------------------------------------
 \FloatBarrier % ensure no body float escapes past the references
@@ -2226,7 +2244,8 @@ $>10^8$ parameters under distributed training \citep{granziol2026hessian}, which
 indicates that curvature--vector primitives of this general form are implementable
 at scale.  We do \emph{not} claim foundation-model feasibility from this: that
 work times Hessian--vector products, not the exact per-example GGN JVP/VJP used
-here, and we report no wall-clock benchmark of our primitive.
+here.  Our real-\texttt{torch.func} pipeline has only smoke and development-pilot
+runs, not a completed evaluation-seed systems study.
 Warm-starting CG from the previous round's solution can reduce the
 iteration count in practice.
 
@@ -3025,10 +3044,12 @@ separately verified, which we evaluate empirically.
 
 \paragraph{What remains open.}
 The path schedules close the computability gap, but their constants can be
-extremely loose.  Beyond the bounded low-rank and window-excitation regimes,
-useful control of $\Lamalg_T$ for a genuinely adapting backbone, tighter
-smoothness/residual certificates, and verified numerical enclosures for
-floating-point solver and spectral calculations remain open.
+extremely loose.  The approximate-rank result replaces exact rank by a realized
+or predictably bounded spectral tail, but does not show that this tail or feature
+drift remains small during unrestricted training.  Useful control of these two
+quantities for a genuinely adapting backbone, tighter smoothness/residual
+certificates, and verified numerical enclosures for floating-point solver and
+spectral calculations remain open.
 
 
 
@@ -3889,9 +3910,11 @@ CPU host and use different computational primitives.  The timed operator stores
 an $n\times d$ random-feature matrix and applies an averaged Gram; it does not
 time model training or on-the-fly network JVP/VJP.  Timings are descriptive
 resource accounting under the executed implementations, not matched-wall-clock
-comparisons; no trained-network or accelerator extrapolation is made.  The
-configured 131,841-parameter \texttt{torch.func} JVP/VJP benchmark was not run
-because its declared Buck PyTorch dependency failed to configure.
+comparisons; no trained-network or accelerator extrapolation is made.  A
+Buck-managed Conda toolchain now runs the separate real-\texttt{torch.func}
+pipeline.  Smoke checks and one preregistered development-pilot cell for each of
+the 131,841- and 9,972,737-parameter MLPs executed on an accelerator; the
+evaluation-seed grid, intervals, and main-paper systems artifacts remain unrun.
 
 \subsection{Covertype real-data baseline audit}\label{sec:covertype-rerun}
 We use UCI Covertype DOI \texttt{10.24432/C50K5N} via scikit-learn 1.9.0; the
@@ -4333,13 +4356,17 @@ online monitoring; the regret certificates here do not establish safety.
 
 \section{Data and Code Availability}\label{app:availability}
 The repository contains the Buck pipeline, tests, artifact scripts, validated
-derived results, and retained $d=128,r=4$ slice.  The 2.1~GB scaling tree and
-historical inputs outside Git are absent, so not every raw-derived chain is
-reproducible.  Neither anonymous tier is built; the review builder lacks
+legacy derived results, the retained $d=128,r=4$ slice, and deterministic
+reproduction entry points for the new spectral-tail, premise-clean scaling, and
+real-autodiff studies.  Their full evaluation grids are not committed and have
+not all run.  The 2.1~GB legacy scaling tree and historical inputs outside Git
+are absent, so not every raw-derived chain is reproducible.  Neither anonymous
+tier is built; the review builder lacks
 \nolinkurl{experiments/data/sklearn/covertype/samples_py3} and
 \nolinkurl{experiments/data/sklearn/covertype/targets_py3}.  Once restored, the
 builder sanitizes identities and validates hashes/provenance.  Covertype is CC BY
-4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}; autodiff
-remains \texttt{not\_run}.  No current bundle or identifying URL is claimed.
+4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}.  The autodiff
+study status is \texttt{development\_pilot}; no evaluation result is claimed.
+No current bundle or identifying URL is claimed.
 
 \end{document}

@@ -1,319 +1,242 @@
-# Revision Checkpoint Report
+# Resubmission Revision Report
 
-Checkpoint date: 2026-07-22
+Date: 2026-07-22
 
 Branch: `codex/closed-rates-20260721`
 
-Starting revision: `df3aa4dc298e3828f857c63d00ca10442275062d`
+Baseline revision: `d6279816`
 
-## Current status
+## Status
 
-The Buck2 implementation, complete theorem-scaling Cartesian grid, strict
-aggregation, generated paper artifacts, and manuscript integration are complete
-in the current working tree.
-All nine scaling cells and all 3,600 expected trajectories were validated. The
-2.1 GB full-grid raw tree remains on the execution host but is intentionally
-ignored by Git; the derived aggregate, its hash, and generated paper artifacts
-are versioned. The retained `d=128`, `r=4`, `T=2048` primary slice was not rerun
-or overwritten. The actual-autodiff benchmark remains an explicit `not_run`
-because the declared Buck PyTorch dependency cannot be configured on this host.
+The theory work requested in Tasks A--H is implemented, tested, and integrated
+into the manuscript, except that no architecture-specific `W^{-1/2}` theorem
+was added: the required full-Hessian conclusion does not follow from the draft's
+parameterization and norm assumptions. `W` is now an abstract near-linearity
+scale and optimizer-residual scaling is not attributed to width.
 
-The central regret theorem and its assumptions were not changed. The stronger
-unproved stable-excitation statement remains outside the manuscript. Covertype
-remains a failed appendix baseline check, and no new faithful published-baseline
-claim was started.
+Three P0 experiment pipelines have deterministic configurations, seed manifests,
+raw/derived separation, hash sidecars, tests, and one-command reproduction
+scripts. Their smoke profiles pass. The real-autodiff pipeline also ran
+preregistered development-pilot cells on the two target model sizes. The full
+evaluation grids have not run, so none of their smoke or pilot outputs is used as
+main-paper evidence.
 
-## Post-review response
+The legacy main scaling figure remains in the manuscript and is explicitly
+labelled a failed-premise, one-step-equivalence diagnostic. It has not been
+silently replaced by smoke output. Coverage-matched operator evaluation and the
+balanced MNIST benchmark remain unimplemented. The anonymous release also
+remains blocked by historical raw inputs and Covertype fixtures absent from this
+checkout.
 
-The first review response reframed Corollary 9 as conditional
-supplied-subspace adaptation, rewrote the abstract around the transfer theorem and
-growing-window tradeoff, and makes the reference-operator/falsification thesis
-explicit.  The main scaling figure now includes the event-clean `d=128,r=4`
-slice and all eight methods.  Its companion table reports every terminal regret
-and decomposes theorem-event failures by method and field; an appendix table adds
-five-point OLS fit diagnostics.  The manuscript also states that scaling CG is a
-one-step equivalence test, surfaces the existing nontrivial rotated-SPD audit,
-labels timings as resource accounting, and says directly that actual JVP/VJP
-timing was not run.
+## Commits
 
-No scaling trajectory was rerun in this response.  In particular, the reported
-policy still audits a fixed optimizer envelope rather than enforcing it.  The
-autodiff benchmark, verified numerical enclosures, final anonymous bundle, and
-official target-year AISTATS package remain blockers or external prerequisites.
-The revised Buck test targets and combined runner pass.  A review-tier release
-build was attempted and stopped at the first missing required fixture,
-`experiments/data/sklearn/covertype/samples_py3`; the sibling required fixture
-`targets_py3` is also absent.  Release validation was not bypassed.
+- `bce0c117` records the pre-edit baseline.
+- `504e3b6a` sharpens feature drift and adds spectral-tail regret closure.
+- `40c51dca` adds corrected-center, bounded-output, architecture-obstruction,
+  and lower-bound statements.
+- `98745976` adds the spectral-tail experiment pipeline.
+- `03dfe082` adds the premise-clean rotated scaling pipeline.
+- `69c2971c` adds the real `torch.func` GGN benchmark pipeline.
 
-## Second-review response
+## Theory Changes
 
-The subsequent scope review identified two further overstatements and one cost
-accounting error.  Corollary 9 now proves the exact projected-Gram identity for
-the supplied subspace and says explicitly that its curvature linear algebra is
-`r`-dimensional, so full-dimensional CG is unnecessary in the only closed-rate
-regime.  The growing-window simplification now requires
-`E_T = O_tilde(T^(1-q/2))`; the weaker `E_T=o(T)` condition was insufficient.
-Its displayed exponents are labelled achieved conditional upper bounds, not a
-Pareto frontier.
+### Sharpened feature drift
 
-The systems section now separates full training history `N_t` from curvature
-buffer `m_t`, charges candidate gradients, explicit CG residual applications,
-full-history optimizer steps, and optimizer-residual certification, and retains
-model-dependent JVP/VJP costs.  With uniformly bounded pass counts, the generic
-full-batch implementation has an `O(T^2)` full-history sample-work term that
-curvature windowing does not remove.  The text also discloses that the executed small-model
-studies materialize Jacobian arrays; the unrun autodiff target is the only
-on-the-fly JVP/VJP implementation.
-
-The title and claims were narrowed, the determinant identity was demoted to
-bookkeeping, the unsupported published-claim target was removed, and Chang et
-al.'s diagonal-plus-low-rank EKF/LO-FI comparison was added.  The eight-page main
-text was shortened to preserve references on page 9.  No architecture theorem,
-forced-excitation guarantee, LO-FI implementation, actual-autodiff timing,
-optimizer-enforced scaling rerun, or new positive performance result is claimed.
-
-## Buck2 support
-
-The repository now has a pinned Buck2 manifest, standalone cell configuration,
-local execution platform, host Python toolchain bindings, declared wheel hashes,
-and targets for experiment libraries, both test suites, scaling execution and
-aggregation, off-diagonal and closed-rate artifacts, the actual-autodiff driver,
-its deterministic blocker recorder, manuscript generators, and static paper
-validation. Configs and repository data are declared resources. All output
-arguments in the documented commands are repository-relative.
-
-Clean-checkout prerequisites and every supported command are in
-`BUCK2_SETUP.md`; `experiments/README.md` contains the study-specific commands.
-This host requires `/data/repos/fbsource`. No Python, pip, virtualenv, or direct
-pytest command was used.
-
-A clean checkout contains the Buck definitions, retained primary raw slice,
-full-grid derived aggregate, and generated manuscript artifacts. It does not
-contain the ignored 2.1 GB full-grid raw tree. Full-grid reaggregation therefore
-requires rerunning the fixed protocol or restoring that tree from artifact
-storage; tests and paper generation do not require it.
-
-Core validated commands were:
-
-```bash
-buck2 --version
-buck2 root
-buck2 targets //...
-buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200
-buck2 run //tools:pytest_runner -- -q tests experiments/tests
-buck2 run //experiments:aggregate_theory_scaling -- \
-  --config experiments/configs/theory_scaling.json \
-  --profile full --seed-set evaluation \
-  --input-root results/raw/theory_scaling_compact \
-  --scope full-grid \
-  --output results/derived/theory_scaling_full_grid.json
-buck2 run //experiments:make_theory_scaling_paper_artifacts
-buck2 run //paper:validate
-```
-
-## Host
-
-- Buck2: `4b1af7328ff43271e1a3f23d7587680dbbb23c77`
-- CPU: 22 logical Intel Xeon Platinum 8339HC CPUs
-- Memory: 189,775,360,000 physical bytes; 176 GiB displayed by the OS
-- Accelerator: NVIDIA PG509-210, 81,920 MiB, driver 580.126.09
-- Scaling execution: CPU, with `OMP_NUM_THREADS=1`,
-  `OPENBLAS_NUM_THREADS=1`, and `MKL_NUM_THREADS=1` on new evaluation shards
-- Python toolchain: platform010 CPython 3.12, invoked only by Buck2
-
-## Scaling execution and coverage
-
-The development smoke used the unexecuted `d=128`, `r=8`, development seed 40
-cell. Exact current took 82.24 s internally with the default BLAS environment
-and a 3.25 GB process high-water mark; the separate one-thread seed-41 smoke
-took 59.66 s wall time. Full CG took 64.26 s internally, used a 3.31 GB
-high-water mark, and made
-4,192,256 sample-CVPs. A worst-cell smoke at `d=2048`, `r=16` took 194.55 s for
-full CG with a 2.96 GB high-water mark. Those development records are separate
-from evaluation.
-
-The local evaluation tree contains 3,600 maximum-horizon run directories and
-10,800 raw SHA-256 sidecars. The 3,200 newly executed shards also have hashed
-timing logs. The ignored raw scaling tree is 2.1 GB; the ignored timing-log tree
-is 25 MB. Strict aggregation reports exactly nine cells and 3,600 runs, with no
-missing, duplicate, unexpected, or hash-failing run. No scaling cell is unrun.
-
-The separate aggregate is
-`results/derived/theory_scaling_full_grid.json` (about 11 MB), SHA-256:
+For the principal frozen whitening, the manuscript now defines stacked matrices
+`A_t` and `B_t`, checks their dimensions, proves `A_t^T A_t = I`, identifies
+`B_t^T B_t` with the whitened current GGN, and proves
 
 ```text
-69c3d8cc7d6f2c588963b2af8b1be9a04351e1c394f2b8c84855287800b86d9d
+(1 - chi_t)^2 Cbar_t <= C_t <= (1 + chi_t)^2 Cbar_t
 ```
 
-It preserves seed-level regret and diagnostics as well as aggregate estimates.
-The original `results/derived/theory_scaling_primary.json` remains unchanged.
+for `chi_t < 1` by singular-value perturbation. The unconditional one-sided
+upper inequality is retained. Downstream drift factors use
+`rho_- = (1-x_T)^2` and `rho_+ = (1+x_T)^2`.
 
-## Numerical findings
+### Frozen-potential regret
 
-The following `T=2048`, `d=2048` mean regrets use the same 50 fixed evaluation
-seeds. Active-coordinate outcomes agree across ambient dimensions; diagonal
-curvature changes with the ambient embedding.
+The exact-current corollary keeps the time-varying factor inside one
+Cauchy--Schwarz step:
 
-| Rank | Exact | Full CG | q=1/2 | q=2/3 | q=1 | Frozen | Diagonal | Greedy |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 4 | 1.800 | 1.848 | 98.298 | 17.229 | 1.800 | 153.600 | 153.600 | 0.816 |
-| 8 | 7.497 | 7.817 | 108.612 | 106.444 | 7.497 | 108.612 | 108.612 | 2.126 |
-| 16 | 43.947 | 45.238 | 76.800 | 76.800 | 43.947 | 76.800 | 76.800 | 6.273 |
+```text
+sum_t alpha_t^2 omega_t^2 ((1+bar_chi_t)/(1-bar_chi_t))^2.
+```
 
-Exact-current regret means and paired-bootstrap 95% intervals are 1.800
-[1.575, 2.073], 7.497 [6.820, 8.169], and 43.947 [42.244, 45.591] for ranks
-4, 8, and 16. Their log-log regret slopes are 0.000 [0.000, 0.000], 0.134
-[0.115, 0.153], and 0.818 [0.804, 0.831]. The q=1/2 regret slopes are 0.851
-[0.843, 0.859], 1.000 [1.000, 1.000], and 1.000 [1.000, 1.000]; q=2/3 gives
-0.309 [0.292, 0.326], 0.994 [0.993, 0.995], and 1.000 [1.000, 1.000].
+This replaces the nonmonotone dynamic-width complexity by the frozen elliptic
+potential only in the exact-current, small-drift regime. A corrected-center
+version removes the centering premise but requires frozen-feature access.
 
-Exact-current dynamic-width slopes are 0.106 [0.105, 0.107], 0.099
-[0.098, 0.100], and 0.117 [0.117, 0.118]. For ranks 4/8/16, q=1/2 dynamic
-width slopes are 0.465/0.383/0.406, q=2/3 gives 0.334/0.304/0.278, and q=1
-matches exact current at 0.106/0.099/0.117. All fits are finite-horizon
-diagnostics, not asymptotic-rate proofs.
+### Spectral-tail closure
 
-Observed maximum rank information gains versus analytic rank bounds are
-40.825/43.372, 76.795/81.199, and 149.136/151.309 for ranks 4/8/16. The
-pre-action excitation-floor minimum is 13.500 in every rank; maxima are
-6397.874, 3199.437, and 1600.219. Across theorem methods, maximum optimizer
-residuals are `1.216e-6`, `2.448e-5`, and `3.221`. Maximum
-`psi/lambda` tightness ratios are `8.361e-6`, `7.016e-5`, and 17.457;
-maximum `psi/excitation` ratios are `6.358e-4`, `3.014e-3`, and 64.689.
-These are float64 audits, never certificates or enclosures.
+For eigenvalues `nu_i` of `Cbar_{T+1}-lambda I`, the new log-determinant lemma
+proves
 
-Full CG uses one iteration per action in this construction. At `d=2048`, its
-maximum relative residual is at most `1.715e-14`, maximum energy error is at
-most `4.126e-15`, selected-width relative error is at most `3.796e-15`, and
-each run uses 4,192,256 sample-CVPs. Exact/full-CG action disagreement rises
-from 0.00082 to 0.00630 to 0.03343 with rank; paired final-regret differences
-are 0.048 [-0.027, 0.132], 0.320 [0.064, 0.569], and 1.291
-[0.798, 1.822].
+```text
+gamma_T <= r_T log(1 + T G^2/(r_T lambda sigma^2))
+           + Delta_{T,r}/lambda,
+```
 
-At `d=2048`, mean complete-run seconds for exact/full-CG/diagonal are
-136.74/305.04/225.73 at rank 4, 151.93/306.12/233.72 at rank 8, and
-179.63/331.46/252.85 at rank 16. The largest measured process high-water mark
-anywhere in the new grid is 3,714,514,944 bytes. Runtime intervals reflect
-concurrent shard contention and are not matched-wall-clock policy comparisons.
+with explicit `r=0`, zero-gradient, and exact-rank conventions. The combined
+corollary does not assume a supplied tangent subspace. A realized terminal tail
+is used only for a posteriori complexity; only a deterministic or predictable
+prefix envelope may replace the online information-gain schedule.
 
-## Theorem-event audits
+### Additional closures and limits
 
-The retained `d=128`, `r=4` primary theorem methods have zero failures. At
-rank 4, full CG has one optimizer-residual field failure at each of `d=512` and
-`d=2048`. At rank 8, q=1/2, frozen, and diagonal each have one optimizer field
-failure per ambient dimension. At rank 16, every theorem method has 140 failed
-field instances per cell: 49 optimizer, 46 `psi`-excitation, and 45
-`psi`-lambda. Greedy is uncertified and has 13,767 failed field instances over
-the full grid. Consequently, ranks 8 and 16 cannot be described as uniformly
-theorem-event verified.
+- The corrected-center near-linear corollary removes optimizer and
+  collection-residual assumptions, requires `W = Omega(T)` for bounded
+  transfer, and displays its replay/memory requirement.
+- The bounded-output lemma gives a simultaneous finite-horizon
+  collection-residual envelope under conditional sub-Gaussian noise.
+- The exact-rank linear subclass is related to the standard
+  `Omega(r sqrt(T))` stochastic linear-bandit lower bound; no lower bound is
+  claimed for the nonlinear or spectral-tail class.
+- The attempted two-layer width theorem is documented as an obstruction. No
+  full-Hessian rate or optimizer-residual rate is fabricated.
 
-Greedy often has lower regret, but it is an uncertified control. The
-off-diagonal witness remains existential: it does not establish uniform
-superiority of full curvature.
+Independent derivations and edge cases are recorded in
+`THEORY_DERIVATIONS.md`. Tests cover random drift sandwiches, Loewner inversion
+directions, spectral-tail log determinants, `r=0`, exact rank, zero gradients,
+and `chi` approaching one.
 
-## Actual-autodiff systems benchmark
+## Experiment Pipelines
 
-The host alias `fbsource//third-party/pypi/torch:torch` exists, but
-`buck2 cquery //experiments:run_autodiff_systems` fails through
-`fbcode//caffe2:torch`, `fbcode//caffe2:_torch`, and
-`fbsource//third-party/python/3.12:python-for-embedding`. Evaluation of
-`feature_rollout_utils.bzl` ends with `Starlark call stack overflow`.
+### Spectral tail
 
-No undeclared PyTorch was installed and no timing was fabricated. Buck2 wrote
-the deterministic current-host full-profile status under
-`results/raw/autodiff_systems/full/development/seed-31`; it records
-`reason_code: missing_buck_dependency`, `timing_executed: false`, and
-`numerical_result_reportable: false`, with a valid SHA-256 sidecar. Both the
-smoke and configured 131,841-parameter benchmark are unrun.
+Files:
 
-## Manuscript and artifacts
+- `experiments/run_spectral_tail_study.py`
+- `experiments/make_spectral_tail_artifacts.py`
+- `experiments/configs/spectral_tail_study.yaml`
+- `scripts/reproduce_fig_spectral_tail.sh`
 
-Buck2 regenerated the full-grid figure/table, off-diagonal figure/table, and
-closed-rate artifact. Every new full-grid artifact validates the aggregate and
-its sidecar before generation; its provenance names the aggregate hash above.
-The main paper now contains the full-grid figure and table, while the
-off-diagonal witness and broader legacy audit figures/tables remain in the
-appendix. Numerical values are generated, not copied into TeX.
+The fixed full configuration uses `d=256`, `K=8`, five horizons, four target
+ranks, three decay exponents, random rotations, and prespecified tail-alignment
+cells. It includes dense full Gram, residual-checked full CG, rank truncation,
+diagonal, block diagonal, Frequent Directions, and greedy. Tuning seeds `0--9`
+and evaluation seeds `1000--1049` are disjoint. The smoke run executed 312
+tuning and 168 evaluation trajectories. The full grid was not run.
 
-`//experiments:make_revision_paper_artifacts` correctly refuses to regenerate
-its retained historical artifact because this compact checkout excludes
-`results/raw/certified_tanh/full/evaluation/corrected/seed-160/summary.jsonl`.
-That missing raw tree is recorded as a blocker; validation was not bypassed.
+### Premise-clean scaling
 
-The direct LaTeX build passed after `latexmk -C`. `paper/main.pdf` has 42 pages;
-Algorithm 1 is on page 3, Figure 1 is on page 7, Table 1 is on page 8, and
-references begin on page 9. Ghostscript renders all pages, reports only Type 0/Type 1 font
-resources, and confirms empty title/author metadata. The sole overfull warning
-is the pre-existing 5.12 pt style-generated abstract box at the environment
-boundary; there are no content-generated overfull boxes. `pdfinfo`, `pdffonts`,
-and `pdftotext` are not installed, so Ghostscript `pdf_info.ps`, `nullpage`,
-`txtwrite`, and `PDFDEBUG` were used for the corresponding checks. The build is
-still provisional because the official target-year AISTATS checklist is absent.
+Files:
+
+- `experiments/run_certified_scaling.py`
+- `experiments/make_certified_scaling_artifacts.py`
+- `experiments/configs/certified_scaling.yaml`
+- `scripts/reproduce_fig_certified_scaling.sh`
+
+The construction is a rotated sign-symmetric linear bandit with analytic cyclic
+window excitation after burn-in, condition numbers `10`, `100`, and `1000`, a
+closed-form ridge optimizer, and nontrivial Krylov spectra. The smoke run
+executed 14 trajectories; every declared premise passed and 98.4% of CG rounds
+used more than one iteration. The requested 50-seed full grid was not run and
+has not replaced Figure 1.
+
+### Real autodiff GGN
+
+Files:
+
+- `experiments/run_autodiff_ggn_benchmark.py`
+- `experiments/make_autodiff_ggn_artifacts.py`
+- `experiments/configs/autodiff_ggn_benchmark.yaml`
+- `scripts/reproduce_fig_autodiff_ggn.sh`
+
+The benchmark uses real `torch.func.jvp`, `torch.func.vjp`, and `torch.vmap`
+through a Buck-managed Conda/PyTorch toolchain. Matrix-free methods do not retain
+an explicit sample-by-parameter Jacobian. The configured MLPs contain 131,841
+and 9,972,737 parameters. Methods include separate CG, batched CG, streaming
+Jacobi-PCG, diagonal, last-layer, and a small-model dense reference.
+
+The smoke JVP/VJP operator matched the explicit Jacobian to approximately
+`1e-16`. One development-pilot cell (`m=32`, `K=5`, target `0.1`) ran for each
+model on an NVIDIA accelerator. Approximate single-repetition pilot times were
+0.025 seconds for small-model batched CG and 0.096 seconds for large-model
+batched CG. The large model used roughly 2.25 GB peak accelerator memory in
+that cell. These are development measurements without evaluation-seed intervals
+and are not reported as comparative paper results. The full 10-seed evaluation
+grid and 24-accelerator-hour study were not run.
+
+## Reproducibility
+
+Raw outputs from new runs are ignored under `results/raw/`; derived artifacts
+and hash/provenance inventories are the intended Git surface. Main-study entry
+points generate derived JSON/CSV, figures, table fragments, and SHA-256
+sidecars. The repository resource target now includes `scripts/**` and
+`tables/generated/**`.
+
+Every run manifest records the resolved configuration, PCG64/Torch seed, Git
+revision and dirty state, UTC timestamp, package versions, and hardware.
+PyTorch deterministic behavior is enabled where supported. Evaluation seeds do
+not appear in tuning manifests, and no reported environment or hyperparameter
+was selected from evaluation output.
+
+The legacy 2.1 GB scaling raw tree is absent from Git. Historical tanh raw
+inputs and two required Covertype fixtures are also absent, so the current
+checkout cannot rebuild every legacy raw-to-figure chain or either anonymous
+release tier. This is disclosed in the manuscript rather than bypassed.
+
+## Manuscript Changes
+
+- The abstract distinguishes conditionally sub-Gaussian data from the Gaussian
+  squared-loss quasi-likelihood and leads with the approximate-rank,
+  small-drift result.
+- The introduction explains current-parameter relinearization relative to the
+  predictable historical-gradient Gram.
+- Contributions put the full-dimensional spectral-tail result first and the
+  generic transfer theorem second; exact supplied subspaces are computational
+  shortcuts.
+- Related work positions the method against matrix-free predictive variance,
+  NeuralUCB/NeuralTS, NTK and regression approaches, EKF/LO-FI, structured
+  Laplace, Frequent Directions, and dyadic sketching.
+- The conclusion states the strongest proved regime and the open problem of
+  controlling feature drift and spectral tail during unrestricted training.
+- Autodiff language now says smoke/development pilots ran but the evaluation
+  systems grid did not.
+
+The abstract makes no claim based on the unrun new grids and no longer cites a
+run count whose complete raw chain is absent.
 
 ## Validation
 
-- `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`: two
-  targets passed, no failures.
-- Combined Buck-built runner: 242 passed, one pre-existing unclosed-file
-  `ResourceWarning` in `test_anonymous_supplement.py`.
-- Full grid: 9/9 cells and 3,600/3,600 raw runs validated; aggregate sidecar
-  matches.
-- Retained primary: 400/400 runs revalidated in validation-only mode and not
-  overwritten.
-- Paper static validation: 156 labels with no duplicates, 112 reference
-  targets with none unresolved, and 35 citation keys with none missing.
-- LaTeX: successful 42-page build; no Type 3 fonts; required page positions
-  preserved.
-- Revised generated-paper artifact hashes match their provenance sidecars.
-- `git diff --check`: passed.
+- `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`:
+  2 targets passed, 0 failed.
+- `buck2 run //paper:validate`: 170 unique labels, 122 resolved reference
+  targets, 36 valid citation keys, no blockers.
+- `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
+  references and citations stabilized, and `paper/main.pdf` has 46 pages.
+- The only overfull box is the pre-existing 5.12 pt style-generated abstract
+  boundary. No changed theorem display causes an overfull box.
 
-## Changed files
+## Deliberately Unmade Claims
 
-The changed paths are:
+- No unrestricted neural-network regret theorem.
+- No theorem that generic network width implies `W^{-1/2}` smoothness or
+  optimizer residual.
+- No online use of terminal rank, eigenspace, or spectral-tail statistics.
+- No theorem validation claim for a cell with a failed premise.
+- No practical or foundation-model scalability claim from development pilots.
+- No uniform regret advantage for full curvature.
+- No causal operator interpretation of independently executed policy regret.
+- No complete anonymous or clean raw-to-figure release claim.
 
-- Buck/toolchain: `.buck2`, `.buckconfig`, `.buck/fbsource_cell/`, `BUCK`,
-  `PACKAGE`, `third_party/`, `tools/BUCK`, `tools/build_defs`, and
-  `tools/pytest_main.py`.
-- Targets/tests: `experiments/BUCK`, `tests/BUCK`, `experiments/tests/BUCK`,
-  both `run_buck_pytest.sh` wrappers, `tests/test_theory_scaling.py`,
-  `tests/test_theory_scaling_paper_artifacts.py`, and
-  `experiments/tests/test_autodiff_systems.py`.
-- Experiment code: `experiments/aggregate_theory_scaling.py`,
-  `experiments/theory_scaling_compact.py`,
-  `experiments/run_autodiff_systems.py`, and
-  `experiments/make_theory_scaling_paper_artifacts.py`.
-- Results: `results/derived/theory_scaling_full_grid.json` plus sidecar. The
-  eight new raw evaluation cells, development smoke records, current-host
-  autodiff `not_run` record, and hashed scheduler logs remain local and ignored.
-- Paper/docs: `paper/BUCK`, `paper/main.tex`, `paper/main.pdf`, `paper/validate.py`,
-  generated scaling and off-diagonal assets/provenance, `.gitignore`,
-  `BUCK2_SETUP.md`, `experiments/README.md`, `RESULTS_STATUS.md`, and this report.
+## Remaining Work
 
-The checkpoint commit `70fb6c40` is present on the local and remote topic branch.
-The second-review response edits described after this checkpoint remain uncommitted;
-no claim is made that they are present in a clean checkout or anonymous release.
+P0 work still requiring substantial compute or external inputs:
 
-## Remaining blockers and scope gaps
+- run the full spectral-tail evaluation grid;
+- run the full premise-clean scaling grid and replace Figure 1 only after all
+  required premises validate;
+- run the full real-autodiff evaluation grid and generate systems artifacts;
+- restore legacy raw inputs or explicitly remove those legacy main-paper claims;
+- rebuild and identity-scan the anonymous release from a literal clean checkout.
 
-- Declared Buck PyTorch cannot configure, so the actual-autodiff benchmark has
-  no CPU or GPU measurements.
-- The compact checkout lacks historical raw tanh inputs required by
-  `make_revision_paper_artifacts`.
-- The official target-year AISTATS checklist/style pack is absent.
-- No external published implementation has been verified for the neural-bandit
-  baselines; existing local implementations retain that explicit limitation.
-- No verified interval enclosure is available for the float64 audit points.
-- The anonymous release cannot yet be rebuilt from this checkout: the
-  review-tier builder first fails on the missing required Covertype fixture
-  `experiments/data/sklearn/covertype/samples_py3`; the required sibling fixture
-  `targets_py3` is also absent.  After restoring required inputs, it must be
-  rebuilt and identity-scanned from the final branch state.
-- Full-grid raw trajectories are not distributed through Git; reproducing the
-  aggregate requires rerunning the fixed protocol or restoring artifact storage.
+P1 work not implemented:
 
-## Provenance caveat
+- coverage-matched and mean-bonus-matched operator comparisons;
+- balanced MNIST contextual benchmark with faithful stronger baselines;
+- matched-compute tuning and multiple-comparison analysis.
 
-The retained primary runs honestly record their original dirty-tree revision,
-machine, packages, hardware, and absolute working path. Newly executed shards
-record this branch's starting commit and dirty state plus the current host and
-one-thread BLAS environment. Protected manifests were not edited in place.
+External submission prerequisites still missing are the official target-year
+AISTATS style/checklist package and the data required by the release builder.
