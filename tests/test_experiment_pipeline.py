@@ -16,6 +16,7 @@ CONFIG_DIR = ROOT / "experiments" / "configs"
 CONFIG_NAMES = {
     "balanced_benchmark",
     "certified_tanh",
+    "certified_scaling",
     "linear_audit",
     "nonlinear_drift",
     "operator_ablation",
