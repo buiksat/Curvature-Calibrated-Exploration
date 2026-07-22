@@ -1,0 +1,26 @@
+{
+  "artifact": "paper/tables/theory_scaling_full_grid.tex",
+  "artifact_sha256": "5a443c50bb3f567fa76a58df6f87c132006fe9b61512a95025ed12a6dfba1da3",
+  "generation_parameters": {
+    "active_ranks": [
+      4,
+      8,
+      16
+    ],
+    "ambient_dimension": 2048,
+    "bootstrap_replicates": 2000,
+    "interpretation": "finite-horizon diagnostic, not a proof"
+  },
+  "input_set_sha256": "522fbe386ea57c1035bab3782b1c72ddf863202dbd1bcfb2ff87968bd176c3ad",
+  "inputs": [
+    {
+      "path": "results/derived/theory_scaling_full_grid.json",
+      "sha256": "69c3d8cc7d6f2c588963b2af8b1be9a04351e1c394f2b8c84855287800b86d9d"
+    },
+    {
+      "path": "results/derived/theory_scaling_full_grid.json.sha256",
+      "sha256": "ef539391fbc6c3f59dd398d2771b6fbc97246fe4eef00e7a40c2df206512b019"
+    }
+  ],
+  "schema_version": 1
+}

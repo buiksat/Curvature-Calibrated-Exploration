@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import inspect
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pytest
 
 from experiments.config import get_seed_set, load_config
 from experiments.aggregate_theory_scaling import (
+    aggregate_full_grid,
     aggregate_primary_slice,
     load_compact_run,
 )
@@ -176,6 +178,40 @@ def _test_metadata() -> dict[str, object]:
     }
 
 
+def _write_smoke_grid(
+    root: Path,
+    *,
+    dimensions: tuple[int, ...] = (16,),
+    ranks: tuple[int, ...] = (2,),
+    horizon: int = 4,
+) -> None:
+    config = load_config(CONFIG, profile="smoke")
+    for dimension in dimensions:
+        for rank in ranks:
+            for method in METHODS:
+                run = run_theory_scaling_cell(
+                    config,
+                    41,
+                    method=method,
+                    ambient_dimension=dimension,
+                    active_rank=rank,
+                    horizon=horizon,
+                )
+                destination = compact_run_directory(
+                    root,
+                    profile="smoke",
+                    seed_set="development",
+                    dimension=dimension,
+                    rank=rank,
+                    horizon=horizon,
+                    method=method,
+                    seed=41,
+                )
+                save_compact_run(
+                    run, config, destination, metadata=_test_metadata()
+                )
+
+
 def test_compact_npz_is_deterministic_and_contains_only_numeric_arrays(
     tmp_path: Path,
 ) -> None:
@@ -273,4 +309,120 @@ def test_compact_aggregate_validates_coverage_and_computes_paired_outputs(
             rank=2,
             horizon=8,
             bootstrap_replicates=5,
+        )
+
+
+def test_full_grid_aggregate_requires_and_validates_cartesian_coverage(
+    tmp_path: Path,
+) -> None:
+    dimensions = (16, 24)
+    ranks = (2, 3)
+    _write_smoke_grid(tmp_path, dimensions=dimensions, ranks=ranks)
+    aggregate = aggregate_full_grid(
+        tmp_path,
+        seeds=(41,),
+        dimensions=dimensions,
+        ranks=ranks,
+        checkpoints=(2, 4),
+        profile="smoke",
+        seed_set="development",
+        horizon=4,
+        bootstrap_replicates=7,
+    )
+    assert aggregate["coverage"] == {
+        "expected_cells": 4,
+        "validated_cells": 4,
+        "expected_runs": 32,
+        "validated_runs": 32,
+        "exact": True,
+    }
+    assert set(aggregate["cells"]) == {
+        "d-16_r-2_T-4",
+        "d-16_r-3_T-4",
+        "d-24_r-2_T-4",
+        "d-24_r-3_T-4",
+    }
+
+
+def test_full_grid_aggregate_rejects_missing_run(tmp_path: Path) -> None:
+    _write_smoke_grid(tmp_path)
+    missing = compact_run_directory(
+        tmp_path,
+        profile="smoke",
+        seed_set="development",
+        dimension=16,
+        rank=2,
+        horizon=4,
+        method="greedy",
+        seed=41,
+    )
+    shutil.rmtree(missing)
+    with pytest.raises(ValueError, match="coverage mismatch"):
+        aggregate_full_grid(
+            tmp_path,
+            seeds=(41,),
+            dimensions=(16,),
+            ranks=(2,),
+            checkpoints=(2, 4),
+            profile="smoke",
+            seed_set="development",
+            horizon=4,
+            bootstrap_replicates=3,
+        )
+
+
+def test_full_grid_aggregate_rejects_duplicate_run(tmp_path: Path) -> None:
+    _write_smoke_grid(tmp_path)
+    original = compact_run_directory(
+        tmp_path,
+        profile="smoke",
+        seed_set="development",
+        dimension=16,
+        rank=2,
+        horizon=4,
+        method="exact_current",
+        seed=41,
+    )
+    original.with_name("seed-041").symlink_to(
+        original.name, target_is_directory=True
+    )
+    with pytest.raises(ValueError, match="duplicate runs"):
+        aggregate_full_grid(
+            tmp_path,
+            seeds=(41,),
+            dimensions=(16,),
+            ranks=(2,),
+            checkpoints=(2, 4),
+            profile="smoke",
+            seed_set="development",
+            horizon=4,
+            bootstrap_replicates=3,
+        )
+
+
+def test_full_grid_aggregate_rejects_hash_failure(tmp_path: Path) -> None:
+    _write_smoke_grid(tmp_path)
+    directory = compact_run_directory(
+        tmp_path,
+        profile="smoke",
+        seed_set="development",
+        dimension=16,
+        rank=2,
+        horizon=4,
+        method="exact_current",
+        seed=41,
+    )
+    summary = directory / "summary.json"
+    summary.write_text(summary.read_text(encoding="ascii") + "\n", encoding="ascii")
+    with pytest.raises(ValueError, match="hash mismatch"):
+        aggregate_full_grid(
+            tmp_path,
+            seeds=(41,),
+            dimensions=(16,),
+            ranks=(2,),
+            checkpoints=(2, 4),
+            profile="smoke",
+            seed_set="development",
+            horizon=4,
+            bootstrap_replicates=3,
         )

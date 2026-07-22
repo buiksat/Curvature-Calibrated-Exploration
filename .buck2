@@ -1,0 +1,67 @@
+#!/usr/bin/env dotslash
+{
+  "name": "buck2",
+  "oncall": "oncall+build_infra@xmail.facebook.com",
+  "platforms": {
+    "linux/aarch64": {
+      "scheme": "manifold",
+      "bucket": "buck_cli",
+      "path": "tree/buckv2-cli/4b1af7328ff4/linux-aarch64",
+      "api_key": "buck_cli-user-builds-key",
+      "etag": "3694516267929886894",
+      "extract": {
+        "decompress": "tar.zst",
+        "path": "buck2-linux-aarch64/buck2"
+      }
+    },
+    "linux/x86_64": {
+      "scheme": "manifold",
+      "bucket": "buck_cli",
+      "path": "tree/buckv2-cli/4b1af7328ff4/linux-x86_64",
+      "api_key": "buck_cli-user-builds-key",
+      "etag": "6783155025269126374",
+      "extract": {
+        "decompress": "tar.zst",
+        "path": "buck2-linux-x86_64/buck2"
+      }
+    },
+    "macos/aarch64": {
+      "scheme": "manifold",
+      "bucket": "buck_cli",
+      "path": "tree/buckv2-cli/4b1af7328ff4/macos-aarch64",
+      "api_key": "buck_cli-user-builds-key",
+      "etag": "-4873285602785066760",
+      "extract": {
+        "decompress": "tar.zst",
+        "path": "buck2-macos-aarch64/buck2"
+      }
+    },
+    "macos/x86_64": {
+      "scheme": "manifold",
+      "bucket": "buck_cli",
+      "path": "tree/buckv2-cli/4b1af7328ff4/macos-x86_64",
+      "api_key": "buck_cli-user-builds-key",
+      "etag": "7729410219446568481",
+      "extract": {
+        "decompress": "tar.zst",
+        "path": "buck2-macos-x86_64/buck2"
+      }
+    },
+    "windows": {
+      "scheme": "manifold",
+      "bucket": "buck_cli",
+      "path": "tree/buckv2-cli/4b1af7328ff4/windows",
+      "api_key": "buck_cli-user-builds-key",
+      "etag": "-7055969715922540177",
+      "extract": {
+        "decompress": "tar.zst",
+        "path": "buck2-windows/buck2.exe"
+      }
+    }
+  },
+  "build_info": {
+    "commit_repo": "fbsource",
+    "commit_hash": "4b1af7328ff4",
+    "commit_timestamp": 1784626386
+  }
+}

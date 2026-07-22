@@ -1,0 +1,23 @@
+python_library(
+    name = "anonymous_supplement",
+    srcs = ["build_anonymous_supplement.py"],
+    visibility = ["PUBLIC"],
+)
+
+python_binary(
+    name = "pytest_runner",
+    main = "pytest_main.py",
+    deps = [
+        "//experiments:lib",
+        "//paper:paper_data",
+        ":anonymous_supplement",
+        "fbsource//third-party/pypi/pytest/7.2.2:py",
+    ],
+    visibility = ["PUBLIC"],
+)
+
+python_binary(
+    name = "build_anonymous_supplement",
+    main_module = "tools.build_anonymous_supplement",
+    deps = [":anonymous_supplement"],
+)

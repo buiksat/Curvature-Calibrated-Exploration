@@ -673,34 +673,35 @@ hash provenance are released (\Cref{app:new-experiments}).
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=\textwidth]{figures/theory_factor_drift.pdf}
-  \caption{Certificate tightness and curvature mechanism.  (a) Final-round exact
-  post-hoc quantities and their policy-supplied predictable upper schedules in the
-  50-seed tanh execution (log scale; means with marginal 95\% Student-$t$ intervals).
-  The corrected-center action rule does not use $\bar\psi_t$; its plotted
-  centering pair is audit-only.
-  (b) Mean paired regret difference, method minus exact full Gram, across eight
-  preregistered 30-seed fixed-gap cells; blue favors the method and red favors full.
-  Full-CG reproduces full Gram to numerical tolerance.  The phase map is descriptive
-  with no evaluation-cell selection; online paths are independent, while the released
-  common-trajectory diagnostics isolate width and score changes.}
-  \label{fig:theory-factor-drift}
+  \includegraphics[width=\textwidth]{figures/theory_scaling_full_grid.pdf}
+  \caption{Finite-horizon theorem-scaling diagnostic at ambient dimension
+  $d=2048$.  Curves are 50-seed mean cumulative regret with paired-seed bootstrap
+  95\% intervals at the five preregistered trajectory prefixes.  Full CG uses the
+  residual-checked ambient CVP implementation; greedy is an uncertified control.
+  The fitted log--log behavior is descriptive and does not prove an asymptotic rate.}
+  \label{fig:theory-scaling-full-grid}
 \end{figure*}
 
 \begin{table*}[t]
 \centering\small
-\input{tables/executed_policy_results.tex}
-\caption{Executed policies.  Tanh rows use one fixed theoretical configuration;
-balanced rows use configurations selected by mean cumulative pseudo-regret on ten
-independent tuning seeds and rerun on 30 evaluation seeds.  Regret is mean cumulative
-pseudo-regret and $\pm$ is the marginal 95\% Student-$t$ half-width.  Fail. is
-runs with any observed theorem-event failure / evaluation runs (not applicable to
-uncertified baseline rows).  Time is seconds per complete run and includes
-certificate and dense audit computations when present.  Post-hoc status means every
-checked event held but float64 checks are not verified enclosures; all balanced rows
-are uncertified performance comparisons.}
-\label{tab:executed-policy-results}
+\input{tables/theory_scaling_full_grid.tex}
+\caption{Preregistered finite-horizon scaling summary at $d=2048$.  Slopes are
+unweighted OLS fits of the log seed-mean metric on log horizon; brackets are
+paired-seed bootstrap 95\% intervals.  Audit fail. counts failed float64 event-field
+instances across exact current, full CG, and the three growing-window rows.  These
+point checks are neither certificates nor verified enclosures, and a nonzero entry
+precludes describing the corresponding executions as theorem-event verified.}
+\label{tab:theory-scaling-full-grid}
 \end{table*}
+
+The complete Cartesian grid contains all three ambient dimensions and active ranks,
+all eight methods, and all 50 fixed evaluation seeds.  Active-coordinate regret and
+dynamic-width curves agree across ambient dimensions up to the separate ambient-CVP
+runtime, while the coordinate-diagonal surrogate changes with the embedding.  Most
+importantly, the generated audit column records failed optimizer/path events outside
+the primary low-rank slice.  We therefore treat every slope in
+\Cref{fig:theory-scaling-full-grid,tab:theory-scaling-full-grid} as a diagnostic,
+not evidence that the theorem's assumptions hold uniformly.
 
 \subsection{Predictable nonlinear execution}\label{sec:factorial-audit}
 We first use the genuinely nonlinear Gaussian model
@@ -739,6 +740,13 @@ and than rank-3 Lanczos in seven (one unresolved).  Thus fidelity alone does not
 order regret.  Scalar-rescaled disagreement is often much smaller than raw score
 disagreement, consistent with the invariance in \Cref{prop:scalar-invariance}; the
 remaining action changes are anisotropic.
+
+The separately executed off-diagonal construction makes that anisotropy concrete
+(\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).  Exact full curvature and
+residual-checked full CG coincide in the analytic witness, whereas raw diagonalization
+changes the selected action and accumulates regret.  No uniform full-curvature ranking
+follows: the witness is existential, the noisy extensions are uncertified, and the
+broader phase map above contains cells where diagonal curvature has lower regret.
 
 For a separate balanced nonlinear contextual benchmark, all five arms are optimal
 on the exact 16-context support.  Ten tuning seeds choose each method's ridge and
@@ -3242,6 +3250,44 @@ means, marginal 95\% Student-$t$ intervals, and paired Student-$t$ intervals for
 method differences.  No multiplicity adjustment is applied, so the intervals are
 descriptive.  An offline common-trajectory diagnostic uses one logged action and
 checkpoint sequence for all operators and is never mixed with online regret.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/theory_factor_drift.pdf}
+  \caption{Supplementary certificate-tightness and curvature-mechanism overview.
+  Panel (a) compares final-round float64 audit quantities with predictable schedules
+  in the 50-seed tanh execution.  Panel (b) gives paired regret differences in the
+  preregistered curvature phase map.  These are descriptive point audits.}
+  \label{fig:theory-factor-drift}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\input{tables/executed_policy_results.tex}
+\caption{Supplementary executed-policy summary.  Tanh rows use one fixed
+theoretical configuration; balanced rows are selected only on tuning seeds and
+rerun on disjoint evaluation seeds.  Float64 event checks are not verified
+enclosures, and balanced rows are uncertified performance comparisons.}
+\label{tab:executed-policy-results}
+\end{table*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/offdiagonal_witness.pdf}
+  \caption{Off-diagonal separation witness.  The analytic cell is constructive;
+  the noisy cells are uncertified extensions.  Paired differences are descriptive
+  and establish no uniform ordering of curvature surrogates.}
+  \label{fig:offdiagonal-witness}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\input{tables/offdiagonal_witness.tex}
+\caption{Executed analytic off-diagonal witness by horizon.  Every value is
+generated from the provenance-validated derived artifact; fitted slopes are
+finite-horizon diagnostics.}
+\label{tab:offdiagonal-witness}
+\end{table*}
 
 \paragraph{Predictable tanh execution.}
 The analytically bounded tanh instance is

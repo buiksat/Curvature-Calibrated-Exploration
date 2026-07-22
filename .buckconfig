@@ -1,0 +1,85 @@
+[repositories]
+  root = .
+  fbsource = .buck/fbsource_cell
+  fbcode = .buck/fbsource_cell/fbcode
+  fbcode_macros = .buck/fbsource_cell/tools/build_defs/fbcode_macros
+  ovr_config = .buck/fbsource_cell/arvr/tools/build_defs/config
+  prelude = .buck/fbsource_cell/fbcode/buck2/prelude
+  toolchains = .buck/fbsource_cell/fbcode/buck2/toolchains
+  bazel_skylib = .buck/fbsource_cell/third-party/bazel-skylib
+  triton-llvm = .buck/fbsource_cell/third-party/tp2/triton-llvm/18.0.x/llvm-project
+  triton-llvm-amd = .buck/fbsource_cell/third-party/tp2/triton-llvm-amd/18.0.x/llvm-project
+  triton-llvm-cpu = .buck/fbsource_cell/third-party/tp2/triton-llvm-cpu/18.0.x/llvm-project
+  triton-llvm-mtia = .buck/fbsource_cell/third-party/tp2/triton-llvm-mtia/18.0.x/llvm-project
+  waserver = .buck/fbsource_cell/whatsapp/server
+  wwwtd = .buck/fbsource_cell/www/td
+  wa_android = .buck/fbsource_cell/whatsapp/android
+  waios = .buck/fbsource_cell/whatsapp/iphone
+  wa_meta = .buck/fbsource_cell/whatsapp/xplat
+
+[cells]
+  root = $(config repositories.root)
+  fbsource = $(config repositories.fbsource)
+  fbcode = $(config repositories.fbcode)
+  fbcode_macros = $(config repositories.fbcode_macros)
+  ovr_config = $(config repositories.ovr_config)
+  prelude = $(config repositories.prelude)
+  toolchains = $(config repositories.toolchains)
+  bazel_skylib = $(config repositories.bazel_skylib)
+  triton-llvm = $(config repositories.triton-llvm)
+  triton-llvm-amd = $(config repositories.triton-llvm-amd)
+  triton-llvm-cpu = $(config repositories.triton-llvm-cpu)
+  triton-llvm-mtia = $(config repositories.triton-llvm-mtia)
+  waserver = $(config repositories.waserver)
+  wwwtd = $(config repositories.wwwtd)
+  wa_android = $(config repositories.wa_android)
+  waios = $(config repositories.waios)
+  wa_meta = $(config repositories.wa_meta)
+
+[repository_aliases]
+  antlir = fbcode
+  config = ovr_config
+  wa_xplat = wa_meta
+
+<file:.buck/fbsource_cell/tools/buckconfigs/fbsource-mobile-common.bcfg>
+<file:.buck/fbsource_cell/tools/buckconfigs/fbsource/build_mode.bcfg>
+<file:.buck/fbsource_cell/tools/buckconfigs/android/ndk.bcfg>
+<file:.buck/fbsource_cell/tools/buckconfigs/cxx/platforms.bcfg>
+
+[buildfile]
+  name_v2 = BUCK
+
+[build]
+  execution_platforms = root//:local_execution_platforms
+
+[parser]
+  target_platform_detector_spec = \
+    target:root//...->ovr_config//platform/linux:x86_64-fbcode \
+    target:toolchains//...->ovr_config//platform/linux:x86_64-fbcode \
+    target:prelude//...->ovr_config//platform/linux:x86_64-fbcode \
+    target:fbcode//...->ovr_config//platform/linux:x86_64-fbcode \
+    target:fbsource//third-party/...->ovr_config//platform/linux:x86_64-fbsource \
+    target:fbsource//...->ovr_config//platform/linux:x86_64-fbsource \
+    target:fbcode_macros//...->ovr_config//platform/linux:x86_64-fbcode
+
+[python]
+  native_link_strategy = merged
+  pex_use_absolute_shebang = true
+
+[project]
+  watchman_merge_base = origin/main
+
+[fbcode]
+  header_namespace_allowlist = arvr, third-party, xplat
+
+[fb]
+  cache_mode = fbsource//xplat/buck2/platform/cache_mode:cache_mode
+
+[fbsource]
+  cell_name = root
+  repo_relative_path = .buck/fbsource_cell
+
+[buck2]
+  digest_algorithms = BLAKE3-KEYED,SHA1
+  is_full_meta_repo = true
+  source_digest_algorithm = BLAKE3-KEYED

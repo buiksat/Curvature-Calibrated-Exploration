@@ -5,12 +5,20 @@ reproducibility/logging layer. The protocol files use JSON syntax inside
 `.yaml` files: JSON is a YAML subset, so they load with the Python standard
 library. General YAML is accepted only when PyYAML is installed.
 
-Create the local environment from the repository root with:
+All Python entry points in this repository run through Buck2. The checked-in
+configuration uses the host Python toolchain and third-party targets exposed by
+`/data/repos/fbsource`; do not create a virtual environment or invoke Python or
+pip directly. Verify the setup from the repository root with:
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r experiments/requirements.txt
+buck2 --version
+buck2 root
+buck2 targets //...
+buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200
 ```
+
+See `BUCK2_SETUP.md` for the clean-checkout prerequisites, target inventory,
+wheel hashes, and exact artifact-generator commands.
 
 ## Profiles and seed splits
 
@@ -29,30 +37,30 @@ with pooled tuning-seed selection followed by an independent evaluation run.
 Run the smoke/tuning checks from the repository root:
 
 ```bash
-.venv/bin/python -m experiments.config experiments/configs/linear_audit.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/certified_tanh.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/curvature_phase_diagram.yaml --profile smoke --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/nonlinear_drift.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/operator_ablation.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/cg_accuracy.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/systems_scaling.yaml --profile smoke --seed-set tuning
-.venv/bin/python -m experiments.config experiments/configs/autodiff_systems.yaml --profile smoke --seed-set development
-.venv/bin/python -m experiments.config experiments/configs/covertype_rerun.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/linear_audit.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/certified_tanh.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/curvature_phase_diagram.yaml --profile smoke --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/nonlinear_drift.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/operator_ablation.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/cg_accuracy.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/systems_scaling.yaml --profile smoke --seed-set tuning
+buck2 run //experiments:config -- experiments/configs/autodiff_systems.yaml --profile smoke --seed-set development
+buck2 run //experiments:config -- experiments/configs/covertype_rerun.yaml --profile smoke --seed-set tuning
 ```
 
 Resolve the full evaluation protocols with these commands:
 
 ```bash
-.venv/bin/python -m experiments.config experiments/configs/balanced_benchmark.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/linear_audit.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/certified_tanh.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/curvature_phase_diagram.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/nonlinear_drift.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/operator_ablation.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/systems_scaling.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/autodiff_systems.yaml --profile full --seed-set evaluation
-.venv/bin/python -m experiments.config experiments/configs/covertype_rerun.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/balanced_benchmark.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/linear_audit.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/certified_tanh.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/curvature_phase_diagram.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/nonlinear_drift.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/operator_ablation.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/systems_scaling.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/autodiff_systems.yaml --profile full --seed-set evaluation
+buck2 run //experiments:config -- experiments/configs/covertype_rerun.yaml --profile full --seed-set evaluation
 ```
 
 ## Closed-rate revision studies
@@ -64,62 +72,92 @@ aggregator extracts the five preregistered horizon prefixes:
 
 ```bash
 for method in exact_current full_cg window_q_1_2 window_q_2_3 window_q_1 frozen diagonal_current greedy; do
-  .venv/bin/python -m experiments.theory_scaling_compact \
+  buck2 run //experiments:theory_scaling_compact -- \
     --config experiments/configs/theory_scaling.json \
     --profile full --seed-set evaluation \
     --output-root results/raw/theory_scaling_compact \
     --dimension 128 --rank 4 --horizon 2048 --method "$method"
 done
-.venv/bin/python -m experiments.aggregate_theory_scaling \
+buck2 run //experiments:aggregate_theory_scaling -- \
   --config experiments/configs/theory_scaling.json \
   --profile full --seed-set evaluation \
   --input-root results/raw/theory_scaling_compact \
   --output results/derived/theory_scaling_primary.json
 ```
 
-On a larger CPU machine, use the same command over the remaining Cartesian
-product `dimension in {128,512,2048}` and `rank in {4,8,16}`. Results are
-written under dimension/rank-specific directories, so completed cells are not
-overwritten. The committed primary slice should be retained as an immutable
-checkpoint.
+The completed Cartesian product covers
+`dimension in {128,512,2048}` and `rank in {4,8,16}`. Results are written under
+dimension/rank-specific directories, and the committed primary slice remains
+an immutable checkpoint. Newly generated raw trajectories are ignored by Git;
+archive them in artifact storage when cross-machine retention is required.
+
+Launch each remaining method/seed as an independent Buck process with
+`OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, and `MKL_NUM_THREADS=1`; the
+manifest records these values. After all 3,600 runs exist, validate and write
+the separate full-grid aggregate with:
+
+```bash
+buck2 run //experiments:aggregate_theory_scaling -- \
+  --config experiments/configs/theory_scaling.json \
+  --profile full --seed-set evaluation \
+  --input-root results/raw/theory_scaling_compact \
+  --scope full-grid \
+  --output results/derived/theory_scaling_full_grid.json
+buck2 run //experiments:make_theory_scaling_paper_artifacts
+```
+
+The full-grid aggregation command requires the local or externally restored
+3,600-run raw tree. Git tracks the validated full-grid aggregate, its hash, and
+the generated paper artifacts, not the 2.1 GB raw trajectory directory.
+
+Use `--scope primary --validate-only` to validate the retained 400-run slice
+without replacing `results/derived/theory_scaling_primary.json`. Use
+`--scope full-grid --validate-only` for a hash and coverage audit that does not
+rewrite the separate full-grid aggregate.
 
 The complete off-diagonal witness and its generated paper assets are rebuilt
 with:
 
 ```bash
-.venv/bin/python -m experiments.run_offdiagonal_witness \
+buck2 run //experiments:run_offdiagonal_witness -- \
   --config experiments/configs/offdiagonal_witness.yaml \
   --profile full --seed-set evaluation \
   --output results/raw/offdiagonal_witness
-.venv/bin/python -m experiments.make_offdiagonal_witness_artifact \
+buck2 run //experiments:make_offdiagonal_witness_artifact -- \
   --raw results/raw/offdiagonal_witness/full/evaluation \
   --output results/derived/offdiagonal_witness.json
-.venv/bin/python -m experiments.make_offdiagonal_witness_paper_artifacts
-.venv/bin/python -m experiments.make_closed_rate_artifact
+buck2 run //experiments:make_offdiagonal_witness_paper_artifacts
+buck2 run //experiments:make_closed_rate_artifact
 ```
 
 The actual-autodiff benchmark requires PyTorch, which is intentionally optional
 and is not in the base requirements file. Without PyTorch the driver writes a
 hashed `not_run` status artifact and records no timing result.
 
+On a Buck host, first configure
+`//experiments:run_autodiff_systems`. If the declared host PyTorch target cannot
+be configured, do not install or import an undeclared runtime. After preserving
+the exact Buck failure, run `//experiments:record_autodiff_systems_not_run` with
+`--record-buck-torch-blocker` to write the deterministic non-result.
+
 Execute the reportable studies from the repository root:
 
 ```bash
-.venv/bin/python -m experiments.run_balanced_benchmark --config experiments/configs/balanced_benchmark.yaml --profile full --seed-set tuning --tuning-selection results/raw/balanced_benchmark/full/tuning_selection.json --overwrite
-.venv/bin/python -m experiments.run_balanced_benchmark --config experiments/configs/balanced_benchmark.yaml --profile full --seed-set evaluation --tuning-selection results/raw/balanced_benchmark/full/tuning_selection.json --overwrite
-.venv/bin/python -m experiments.make_balanced_benchmark_artifact --config experiments/configs/balanced_benchmark.yaml --profile full --raw-root results/raw/balanced_benchmark/full/evaluation --selection results/raw/balanced_benchmark/full/tuning_selection.json --output results/derived/balanced_benchmark_full.json
-.venv/bin/python -m experiments.run_linear_study --config experiments/configs/linear_audit.yaml --profile full --output-root results/raw/linear_audit --overwrite
-.venv/bin/python -m experiments.run_certified_tanh --config experiments/configs/certified_tanh.yaml --profile full --seed-set evaluation --output-root results/raw/certified_tanh --overwrite
-.venv/bin/python -m experiments.run_certified_tanh --config experiments/configs/certified_tanh.yaml --profile full --seed-set tuning --controlled-grid --output-root results/raw/certified_tanh --overwrite
-.venv/bin/python -m experiments.make_curvature_phase_diagram_artifact --config experiments/configs/curvature_phase_diagram.yaml --output results/raw/curvature_phase_diagram/full/evaluation --derived-report results/derived/curvature_phase_diagram_report.json --write-round-records
-.venv/bin/python -m experiments.run_nonlinear_audit --config experiments/configs/nonlinear_drift.yaml --profile full --seed-set evaluation --output-root results/raw/nonlinear_drift --overwrite
-.venv/bin/python -m experiments.run_operator_ablation --config experiments/configs/operator_ablation.yaml --profile full --seed-set evaluation --environment both --output-root results/raw/operator_ablation --overwrite
-.venv/bin/python -m experiments.run_cg_accuracy --config experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation --audit solver --output-root results/raw/cg_accuracy --overwrite
-.venv/bin/python -m experiments.run_cg_accuracy --config experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation --audit policy --output-root results/raw --overwrite
-.venv/bin/python -m experiments.run_systems_scaling --config experiments/configs/systems_scaling.yaml --profile full --seed-set evaluation --output-root results/raw/systems_scaling --overwrite
-.venv/bin/python -m experiments.run_autodiff_systems --config experiments/configs/autodiff_systems.yaml --profile full --seed-set evaluation --output-root results/raw --overwrite
-.venv/bin/python -m experiments.run_covertype --config experiments/configs/covertype_rerun.yaml --profile full --seed-set tuning --download --output-root results/raw/covertype_rerun_1500 --tuning-selection results/raw/covertype_rerun_1500/full/tuning_selection.json --overwrite
-.venv/bin/python -m experiments.run_covertype --config experiments/configs/covertype_rerun.yaml --profile full --seed-set evaluation --output-root results/raw/covertype_rerun_1500 --tuning-selection results/raw/covertype_rerun_1500/full/tuning_selection.json --test-diagnostics-output results/derived/covertype_test_class_counts.json --overwrite
+buck2 run //experiments:run_balanced_benchmark -- --config experiments/configs/balanced_benchmark.yaml --profile full --seed-set tuning --tuning-selection results/raw/balanced_benchmark/full/tuning_selection.json --overwrite
+buck2 run //experiments:run_balanced_benchmark -- --config experiments/configs/balanced_benchmark.yaml --profile full --seed-set evaluation --tuning-selection results/raw/balanced_benchmark/full/tuning_selection.json --overwrite
+buck2 run //experiments:make_balanced_benchmark_artifact -- --config experiments/configs/balanced_benchmark.yaml --profile full --raw-root results/raw/balanced_benchmark/full/evaluation --selection results/raw/balanced_benchmark/full/tuning_selection.json --output results/derived/balanced_benchmark_full.json
+buck2 run //experiments:run_linear_study -- --config experiments/configs/linear_audit.yaml --profile full --output-root results/raw/linear_audit --overwrite
+buck2 run //experiments:run_certified_tanh -- --config experiments/configs/certified_tanh.yaml --profile full --seed-set evaluation --output-root results/raw/certified_tanh --overwrite
+buck2 run //experiments:run_certified_tanh -- --config experiments/configs/certified_tanh.yaml --profile full --seed-set tuning --controlled-grid --output-root results/raw/certified_tanh --overwrite
+buck2 run //experiments:make_curvature_phase_diagram_artifact -- --config experiments/configs/curvature_phase_diagram.yaml --output results/raw/curvature_phase_diagram/full/evaluation --derived-report results/derived/curvature_phase_diagram_report.json --write-round-records
+buck2 run //experiments:run_nonlinear_audit -- --config experiments/configs/nonlinear_drift.yaml --profile full --seed-set evaluation --output-root results/raw/nonlinear_drift --overwrite
+buck2 run //experiments:run_operator_ablation -- --config experiments/configs/operator_ablation.yaml --profile full --seed-set evaluation --environment both --output-root results/raw/operator_ablation --overwrite
+buck2 run //experiments:run_cg_accuracy -- --config experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation --audit solver --output-root results/raw/cg_accuracy --overwrite
+buck2 run //experiments:run_cg_accuracy -- --config experiments/configs/cg_accuracy.yaml --profile full --seed-set evaluation --audit policy --output-root results/raw --overwrite
+buck2 run //experiments:run_systems_scaling -- --config experiments/configs/systems_scaling.yaml --profile full --seed-set evaluation --output-root results/raw/systems_scaling --overwrite
+buck2 run //experiments:run_autodiff_systems -- --config experiments/configs/autodiff_systems.yaml --profile full --seed-set evaluation --output-root results/raw --overwrite
+buck2 run //experiments:run_covertype -- --config experiments/configs/covertype_rerun.yaml --profile full --seed-set tuning --download --output-root results/raw/covertype_rerun_1500 --tuning-selection results/raw/covertype_rerun_1500/full/tuning_selection.json --overwrite
+buck2 run //experiments:run_covertype -- --config experiments/configs/covertype_rerun.yaml --profile full --seed-set evaluation --output-root results/raw/covertype_rerun_1500 --tuning-selection results/raw/covertype_rerun_1500/full/tuning_selection.json --test-diagnostics-output results/derived/covertype_test_class_counts.json --overwrite
 ```
 
 In the balanced benchmark, `neural_linear` is a Gaussian Bayesian linear head
@@ -167,21 +205,21 @@ evaluation-seed model selection.
 Aggregate only complete evaluation trees:
 
 ```bash
-.venv/bin/python -m experiments.aggregate_results results/raw/linear_audit/full/evaluation --seed-set evaluation --output results/derived/linear_audit_full.json
-.venv/bin/python -m experiments.aggregate_results results/raw/certified_tanh/full/evaluation --seed-set evaluation --output results/derived/certified_tanh_full.json
-.venv/bin/python -m experiments.aggregate_results results/raw/certified_tanh/controlled_grid/full/tuning --seed-set tuning --output results/derived/certified_tanh_controlled_grid.json
-.venv/bin/python -m experiments.make_certified_tanh_artifact
-.venv/bin/python -m experiments.aggregate_results results/raw/systems_scaling/systems_scaling/full/evaluation --seed-set evaluation --output results/derived/systems_scaling_full.json
-.venv/bin/python -m experiments.aggregate_results results/raw/nonlinear_drift/nonlinear_audit/full/evaluation --seed-set evaluation --output results/derived/nonlinear_drift_full.json
-.venv/bin/python -m experiments.aggregate_cg_policy results/raw/cg_policy_accuracy/full/evaluation --seed-set evaluation --output results/derived/cg_policy_accuracy_full.json
-.venv/bin/python -m experiments.aggregate_results results/raw/covertype_rerun_1500 --output results/derived/covertype_rerun_1500_full_aggregate.json
+buck2 run //experiments:aggregate_results -- results/raw/linear_audit/full/evaluation --seed-set evaluation --output results/derived/linear_audit_full.json
+buck2 run //experiments:aggregate_results -- results/raw/certified_tanh/full/evaluation --seed-set evaluation --output results/derived/certified_tanh_full.json
+buck2 run //experiments:aggregate_results -- results/raw/certified_tanh/controlled_grid/full/tuning --seed-set tuning --output results/derived/certified_tanh_controlled_grid.json
+buck2 run //experiments:make_certified_tanh_artifact
+buck2 run //experiments:aggregate_results -- results/raw/systems_scaling/systems_scaling/full/evaluation --seed-set evaluation --output results/derived/systems_scaling_full.json
+buck2 run //experiments:aggregate_results -- results/raw/nonlinear_drift/nonlinear_audit/full/evaluation --seed-set evaluation --output results/derived/nonlinear_drift_full.json
+buck2 run //experiments:aggregate_cg_policy -- results/raw/cg_policy_accuracy/full/evaluation --seed-set evaluation --output results/derived/cg_policy_accuracy_full.json
+buck2 run //experiments:aggregate_results -- results/raw/covertype_rerun_1500 --output results/derived/covertype_rerun_1500_full_aggregate.json
 ```
 
 Generate the linear action-selection certification ledger after the strict
 linear aggregate is current:
 
 ```bash
-.venv/bin/python -m experiments.make_certification_audit
+buck2 run //experiments:make_certification_audit
 ```
 
 This validates all full-profile evaluation manifests and summaries before
@@ -192,22 +230,22 @@ Generate the linear bound-scale and compact Covertype report artifacts after
 their strict aggregates are current:
 
 ```bash
-.venv/bin/python -m experiments.make_linear_bound_artifact
-.venv/bin/python -m experiments.make_covertype_horizon_artifact
-.venv/bin/python -m experiments.make_revision_paper_artifacts
+buck2 run //experiments:make_linear_bound_artifact
+buck2 run //experiments:make_covertype_horizon_artifact
+buck2 run //experiments:make_revision_paper_artifacts
 ```
 
 Build the anonymous compact supplement into a fresh directory only after the
 paper and all derived artifacts are final:
 
 ```bash
-.venv/bin/python tools/build_anonymous_supplement.py --output release
+buck2 run //tools:build_anonymous_supplement -- --output release
 ```
 
 Build the smaller review tier only after the same artifacts are final:
 
 ```bash
-.venv/bin/python tools/build_anonymous_supplement.py --tier review
+buck2 run //tools:build_anonymous_supplement -- --tier review
 ```
 
 Review mode defaults to `release_review`. It retains every source, config,
@@ -221,7 +259,7 @@ Add `--print` to any command to inspect the fully resolved configuration. Run
 the pipeline tests exactly as follows:
 
 ```bash
-.venv/bin/python -m pytest -q tests/test_experiment_pipeline.py
+buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200
 ```
 
 ## Driver integration

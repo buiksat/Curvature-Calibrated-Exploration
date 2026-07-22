@@ -1,0 +1,11 @@
+python_library(
+    name = "paper_data",
+    resources = glob(["**"], exclude = ["BUCK", "validate.py"]),
+    visibility = ["PUBLIC"],
+)
+
+python_binary(
+    name = "validate",
+    main = "validate.py",
+    resources = glob(["**"], exclude = ["BUCK"]),
+)

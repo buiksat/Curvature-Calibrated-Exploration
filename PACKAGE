@@ -1,0 +1,27 @@
+load("@fbcode_macros//build_defs/lib:split_dwarf.bzl", "split_dwarf")
+load("@fbcode_macros//build_defs/lib:third_party.bzl", "third_party")
+load("@fbsource//tools/build_defs/buck2/cfg:set_cfg_constructor.bzl", "set_cfg_constructor")
+load("@fbsource//tools/build_defs/third_party/default_versions.bzl", "DEFAULT_THIRD_PARTY_VERSIONS")
+load("@fbsource//xplat/wearable/buck_config/modifiers:modifiers.bzl", WEARABLE_CONDITIONAL_MODIFIERS = "WEARABLE_CONDITIONAL_MODIFIERS")
+load("@prelude//cfg/modifier:set_cfg_modifiers.bzl", "set_cfg_modifiers")
+load("@waios//platforms:modifiers.bzl", WA_CONDITIONAL_MODIFIERS = "CONDITIONAL_MODIFIERS")
+
+set_cfg_constructor()
+
+modifiers_list = (
+    third_party.versions(
+        {p: v for p, v in DEFAULT_THIRD_PARTY_VERSIONS.items() if p not in ["llvm-fb"]},
+    )
+    + [
+        "ovr_config//build_mode/default_opt_cxx:disabled",
+        "fbsource//xplat/tools/infer/buck2:infer-capture-modifier",
+        "ovr_config//toolchain/python/constraints:secondary-native-debuginfo-conditional",
+    ]
+    + split_dwarf.root_conditional_modifiers()
+)
+
+modifiers_list.extend(split_dwarf.modifiers(separate = False))
+modifiers_list.extend(WA_CONDITIONAL_MODIFIERS)
+modifiers_list.extend(WEARABLE_CONDITIONAL_MODIFIERS)
+
+set_cfg_modifiers(cfg_modifiers = modifiers_list)

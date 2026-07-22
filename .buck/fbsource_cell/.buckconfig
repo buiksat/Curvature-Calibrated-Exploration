@@ -1,0 +1,23 @@
+[repositories]
+  fbsource = .
+  fbcode = fbcode
+  fbcode_macros = tools/build_defs/fbcode_macros
+  ovr_config = arvr/tools/build_defs/config
+  prelude = fbcode/buck2/prelude
+  toolchains = fbcode/buck2/toolchains
+
+<file:tools/buckconfigs/fbsource-mobile-common.bcfg>
+<file:tools/buckconfigs/fbsource/build_mode.bcfg>
+<file:tools/buckconfigs/android/ndk.bcfg>
+<file:tools/buckconfigs/cxx/platforms.bcfg>
+
+[fbsource]
+  cell_name = fbsource
+  repo_relative_path = .
+
+[python]
+  native_link_strategy = merged
+  pex_use_absolute_shebang = true
+
+[fbcode]
+  header_namespace_allowlist = arvr, third-party, xplat

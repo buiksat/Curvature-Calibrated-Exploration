@@ -7,10 +7,12 @@ from pathlib import Path
 from experiments.config import load_config
 from experiments.run_autodiff_systems import (
     BENCHMARK_KIND,
+    BUCK_TORCH_BLOCKER_REASON,
     METHODS,
     TorchCapability,
     mlp_parameter_count,
     run_autodiff_systems,
+    run_experiment,
     save_run,
     torch_capability,
 )
@@ -60,6 +62,32 @@ def test_missing_torch_produces_deterministic_not_run_status(tmp_path: Path) -> 
     raw = [json.loads(line) for line in (first_dir / "raw.jsonl").read_text().splitlines()]
     assert len(raw) == 1
     assert raw[0]["metrics"]["status"] == "not_run"
+
+
+def test_verified_buck_dependency_blocker_is_recorded_without_timing(
+    tmp_path: Path,
+) -> None:
+    config = load_config(
+        "experiments/configs/autodiff_systems.yaml", profile="full"
+    )
+    blocker = TorchCapability(
+        available=False,
+        version=None,
+        reason_code="missing_buck_dependency",
+        reason=BUCK_TORCH_BLOCKER_REASON,
+    )
+    runs = run_experiment(
+        config,
+        seed_set="development",
+        output_root=tmp_path,
+        capability=blocker,
+    )
+    assert len(runs) == 1
+    assert runs[0].status == "not_run"
+    assert runs[0].summary["reason_code"] == "missing_buck_dependency"
+    assert "Starlark call stack overflow" in runs[0].summary["reason"]
+    assert runs[0].summary["timing_executed"] is False
+    assert "wall_time_seconds" not in runs[0].records[0]
 
 
 def test_runtime_is_explicitly_not_run_or_executes_tiny_actual_autodiff() -> None:

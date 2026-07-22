@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 from typing import Any
 
 import numpy as np
@@ -29,6 +30,7 @@ from .theory_scaling_compact import (
 FloatArray = NDArray[np.float64]
 BOOTSTRAP_SEED = 20260721
 BOOTSTRAP_REPLICATES = 2000
+CELL_DIRECTORY_PATTERN = re.compile(r"d-(\d+)_r-(\d+)_T-(\d+)\Z")
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -212,20 +214,60 @@ def _ratio_summary(numerator: FloatArray, denominator: FloatArray) -> dict[str, 
     }
 
 
+def _finite_summary(values: NDArray[np.generic]) -> dict[str, float | int | None]:
+    vector = np.asarray(values, dtype=np.float64).reshape(-1)
+    finite = vector[np.isfinite(vector)]
+    if finite.size == 0:
+        return {
+            "count": 0,
+            "mean": None,
+            "median": None,
+            "minimum": None,
+            "maximum": None,
+        }
+    return {
+        "count": int(finite.size),
+        "mean": float(np.mean(finite)),
+        "median": float(np.median(finite)),
+        "minimum": float(np.min(finite)),
+        "maximum": float(np.max(finite)),
+    }
+
+
 def _actual_coverage(cell_root: Path) -> set[tuple[str, int]]:
     result: set[tuple[str, int]] = set()
     if not cell_root.exists():
         return result
-    for method_dir in cell_root.iterdir():
+    paths: dict[tuple[str, int], Path] = {}
+    unexpected: list[str] = []
+    duplicates: list[tuple[tuple[str, int], Path, Path]] = []
+    for method_dir in sorted(cell_root.iterdir()):
         if not method_dir.is_dir():
+            unexpected.append(str(method_dir))
             continue
-        for seed_dir in method_dir.iterdir():
-            if seed_dir.is_dir() and seed_dir.name.startswith("seed-"):
-                try:
-                    seed = int(seed_dir.name.removeprefix("seed-"))
-                except ValueError:
-                    continue
-                result.add((method_dir.name, seed))
+        for seed_dir in sorted(method_dir.iterdir()):
+            if not seed_dir.is_dir() or not seed_dir.name.startswith("seed-"):
+                unexpected.append(str(seed_dir))
+                continue
+            try:
+                seed = int(seed_dir.name.removeprefix("seed-"))
+            except ValueError:
+                unexpected.append(str(seed_dir))
+                continue
+            key = (method_dir.name, seed)
+            if key in paths:
+                duplicates.append((key, paths[key], seed_dir))
+            else:
+                paths[key] = seed_dir
+                result.add(key)
+    if duplicates:
+        details = [
+            f"{key}: {first}, {second}"
+            for key, first, second in duplicates
+        ]
+        raise ValueError(f"duplicate runs: {details}")
+    if unexpected:
+        raise ValueError(f"coverage mismatch: unexpected paths={unexpected}")
     return result
 
 
@@ -242,6 +284,7 @@ def aggregate_primary_slice(
     horizon: int = PRIMARY_HORIZON,
     bootstrap_replicates: int = BOOTSTRAP_REPLICATES,
     bootstrap_seed: int = BOOTSTRAP_SEED,
+    include_provenance: bool = False,
 ) -> dict[str, Any]:
     ordered_seeds = tuple(sorted(int(value) for value in seeds))
     ordered_methods = tuple(methods)
@@ -299,14 +342,16 @@ def aggregate_primary_slice(
             stream_by_seed[seed] = stream
             loaded[(method, seed)] = arrays
             summaries[(method, seed)] = summary
-            source_hashes.append(
-                {
+            source_record = {
                     "path": str(directory),
                     "method": method,
                     "seed": seed,
                     **manifest["verified_file_hashes"],
                 }
-            )
+            if include_provenance:
+                source_record["provenance"] = manifest.get("provenance")
+                source_record["config_digest"] = manifest.get("config_digest")
+            source_hashes.append(source_record)
 
     indices = np.asarray(ordered_checkpoints, dtype=np.int64) - 1
     metric_fields = {
@@ -384,6 +429,7 @@ def aggregate_primary_slice(
 
     tightness: dict[str, Any] = {}
     failures: dict[str, Any] = {}
+    numerical_diagnostics: dict[str, Any] = {}
     for method in ordered_methods:
         concatenated = {
             field: np.concatenate(
@@ -396,6 +442,14 @@ def aggregate_primary_slice(
                 "chi_exact_float64_audit", "chi_lambda_upper",
                 "chi_excitation_upper", "psi_float64_audit",
                 "psi_lambda_upper", "psi_excitation_upper",
+                "gamma_frozen_float64_audit", "gamma_rank_upper",
+                "excitation_floor_pre_action", "excitation_schedule_active",
+                "lambda_min_current_active_float64_audit",
+                "optimizer_residual_pre_action_float64_audit",
+                "optimizer_residual_schedule_pre_action",
+                "optimizer_iterations", "cg_relative_residual",
+                "cg_residual_certificate", "cg_energy_error_float64_audit",
+                "cg_iterations", "sample_cvp_count", "cg_seconds",
             )
         }
         tightness[method] = {
@@ -415,6 +469,71 @@ def aggregate_primary_slice(
                 concatenated["psi_float64_audit"],
                 concatenated["psi_excitation_upper"],
             ),
+        }
+        excitation_active = np.asarray(
+            concatenated["excitation_schedule_active"], dtype=np.bool_
+        )
+        numerical_diagnostics[method] = {
+            "rank_information_gain_float64_audit": {
+                "observed": _finite_summary(
+                    concatenated["gamma_frozen_float64_audit"]
+                ),
+                "analytic_rank_upper": _finite_summary(
+                    concatenated["gamma_rank_upper"]
+                ),
+                "observed_over_upper": _ratio_summary(
+                    concatenated["gamma_frozen_float64_audit"],
+                    concatenated["gamma_rank_upper"],
+                ),
+            },
+            "excitation": {
+                "active_round_count": int(np.count_nonzero(excitation_active)),
+                "floor_pre_action_when_active": _finite_summary(
+                    concatenated["excitation_floor_pre_action"][excitation_active]
+                ),
+                "current_minimum_eigenvalue_float64_audit_when_active": (
+                    _finite_summary(
+                        concatenated[
+                            "lambda_min_current_active_float64_audit"
+                        ][excitation_active]
+                    )
+                ),
+            },
+            "optimizer_float64_audit": {
+                "residual_pre_action": _finite_summary(
+                    concatenated["optimizer_residual_pre_action_float64_audit"]
+                ),
+                "residual_schedule_pre_action": _finite_summary(
+                    concatenated["optimizer_residual_schedule_pre_action"]
+                ),
+                "residual_over_schedule": _ratio_summary(
+                    concatenated["optimizer_residual_pre_action_float64_audit"],
+                    concatenated["optimizer_residual_schedule_pre_action"],
+                ),
+                "iterations": _finite_summary(
+                    concatenated["optimizer_iterations"]
+                ),
+            },
+            "cg_float64_audit": {
+                "relative_residual": _finite_summary(
+                    concatenated["cg_relative_residual"]
+                ),
+                "residual_certificate": _finite_summary(
+                    concatenated["cg_residual_certificate"]
+                ),
+                "energy_error": _finite_summary(
+                    concatenated["cg_energy_error_float64_audit"]
+                ),
+                "iterations_per_action": _finite_summary(
+                    concatenated["cg_iterations"]
+                ),
+                "sample_cvp_count_per_round": _finite_summary(
+                    concatenated["sample_cvp_count"]
+                ),
+                "seconds_per_round": _finite_summary(
+                    concatenated["cg_seconds"]
+                ),
+            },
         }
         failures[method] = {
             field: int(
@@ -543,6 +662,34 @@ def aggregate_primary_slice(
                 "wall clock from complete runs; concurrent shard contention is not removed"
             ),
         }
+        memory_values = [
+            float(summaries[(method, seed)]["peak_host_memory_bytes"])
+            for seed in ordered_seeds
+            if "peak_host_memory_bytes" in summaries[(method, seed)]
+        ]
+        if memory_values and len(memory_values) != len(ordered_seeds):
+            raise ValueError(
+                f"inconsistent peak-memory coverage for method {method}"
+            )
+        if memory_values:
+            resources[method]["peak_host_memory_bytes"] = {
+                "status": "measured",
+                "maximum": float(np.max(memory_values)),
+                "mean_interval": bootstrap_mean_interval(
+                    np.asarray(memory_values, dtype=np.float64),
+                    replicates=bootstrap_replicates,
+                    seed=bootstrap_seed,
+                    token=f"peak-memory:{method}",
+                ),
+                "scope": "process_lifetime_high_water_mark",
+            }
+        else:
+            resources[method]["peak_host_memory_bytes"] = {
+                "status": "not_recorded_in_retained_raw_runs",
+                "maximum": None,
+                "mean_interval": None,
+                "scope": None,
+            }
 
     horizon_values = np.asarray(ordered_checkpoints, dtype=np.float64)
     exact_lambda_mean = np.mean(metric_matrices[reference]["Lambda"], axis=0)
@@ -630,6 +777,7 @@ def aggregate_primary_slice(
         "estimates": estimates,
         "slopes": slopes,
         "certificate_tightness_float64_audit": tightness,
+        "numerical_diagnostics": numerical_diagnostics,
         "theorem_event_failure_counts_float64_audit": failures,
         "full_vs_cg": exact_cg,
         "resources": resources,
@@ -638,6 +786,144 @@ def aggregate_primary_slice(
         "source_hashes": source_hashes,
         "numerical_semantics": "float64 audit quantities are not verified enclosures",
     }
+
+
+def _actual_grid_cells(
+    root: Path, *, profile: str, seed_set: str
+) -> set[tuple[int, int, int]]:
+    parent = root / profile / seed_set
+    if not parent.exists():
+        return set()
+    cells: dict[tuple[int, int, int], Path] = {}
+    duplicates: list[tuple[tuple[int, int, int], Path, Path]] = []
+    unexpected: list[str] = []
+    for path in sorted(parent.iterdir()):
+        if not path.is_dir():
+            unexpected.append(str(path))
+            continue
+        match = CELL_DIRECTORY_PATTERN.fullmatch(path.name)
+        if match is None:
+            unexpected.append(str(path))
+            continue
+        cell = tuple(int(value) for value in match.groups())
+        if cell in cells:
+            duplicates.append((cell, cells[cell], path))
+        else:
+            cells[cell] = path
+    if duplicates:
+        details = [
+            f"{cell}: {first}, {second}"
+            for cell, first, second in duplicates
+        ]
+        raise ValueError(f"duplicate grid cells: {details}")
+    if unexpected:
+        raise ValueError(f"grid coverage mismatch: unexpected paths={unexpected}")
+    return set(cells)
+
+
+def aggregate_full_grid(
+    root: str | Path,
+    *,
+    seeds: Sequence[int],
+    dimensions: Sequence[int],
+    ranks: Sequence[int],
+    methods: Sequence[str] = METHODS,
+    checkpoints: Sequence[int] = PRIMARY_CHECKPOINTS,
+    profile: str = "full",
+    seed_set: str = "evaluation",
+    horizon: int = PRIMARY_HORIZON,
+    bootstrap_replicates: int = BOOTSTRAP_REPLICATES,
+    bootstrap_seed: int = BOOTSTRAP_SEED,
+) -> dict[str, Any]:
+    ordered_dimensions = tuple(int(value) for value in dimensions)
+    ordered_ranks = tuple(int(value) for value in ranks)
+    if not ordered_dimensions or len(set(ordered_dimensions)) != len(ordered_dimensions):
+        raise ValueError("dimensions must be nonempty and unique")
+    if not ordered_ranks or len(set(ordered_ranks)) != len(ordered_ranks):
+        raise ValueError("ranks must be nonempty and unique")
+    if any(rank > dimension for dimension in ordered_dimensions for rank in ordered_ranks):
+        raise ValueError("every active rank must fit every ambient dimension")
+    expected_cells = {
+        (dimension, rank, horizon)
+        for dimension in ordered_dimensions
+        for rank in ordered_ranks
+    }
+    actual_cells = _actual_grid_cells(
+        Path(root), profile=profile, seed_set=seed_set
+    )
+    if actual_cells != expected_cells:
+        missing = sorted(expected_cells - actual_cells)
+        extra = sorted(actual_cells - expected_cells)
+        raise ValueError(
+            f"grid coverage mismatch: missing={missing}, extra={extra}"
+        )
+
+    cells: dict[str, Any] = {}
+    for dimension in ordered_dimensions:
+        for rank in ordered_ranks:
+            name = f"d-{dimension}_r-{rank}_T-{horizon}"
+            cells[name] = aggregate_primary_slice(
+                root,
+                seeds=seeds,
+                methods=methods,
+                checkpoints=checkpoints,
+                profile=profile,
+                seed_set=seed_set,
+                dimension=dimension,
+                rank=rank,
+                horizon=horizon,
+                bootstrap_replicates=bootstrap_replicates,
+                bootstrap_seed=bootstrap_seed,
+                include_provenance=True,
+            )
+
+    expected_runs = (
+        len(expected_cells) * len(tuple(methods)) * len(tuple(seeds))
+    )
+    validated_runs = sum(
+        int(cell["coverage"]["validated_runs"]) for cell in cells.values()
+    )
+    return {
+        "schema_version": 1,
+        "experiment": "theory_scaling_full_grid_aggregate",
+        "protocol": {
+            "profile": profile,
+            "seed_set": seed_set,
+            "ambient_dimensions": list(ordered_dimensions),
+            "active_ranks": list(ordered_ranks),
+            "maximum_horizon": horizon,
+            "checkpoints": [int(value) for value in checkpoints],
+            "methods": list(methods),
+            "seeds": sorted(int(value) for value in seeds),
+            "bootstrap_seed": bootstrap_seed,
+            "bootstrap_replicates": bootstrap_replicates,
+        },
+        "coverage": {
+            "expected_cells": len(expected_cells),
+            "validated_cells": len(cells),
+            "expected_runs": expected_runs,
+            "validated_runs": validated_runs,
+            "exact": validated_runs == expected_runs,
+        },
+        "cells": cells,
+        "interpretation": (
+            "finite-horizon scaling fits are diagnostics, not proofs; greedy is an "
+            "uncertified control"
+        ),
+        "numerical_semantics": (
+            "float64 point audits are not certificates or verified enclosures"
+        ),
+    }
+
+
+def aggregate_sha256(result: Mapping[str, Any]) -> str:
+    payload = (
+        json.dumps(
+            result, sort_keys=True, indent=2, ensure_ascii=True, allow_nan=False
+        )
+        + "\n"
+    ).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def write_aggregate(result: Mapping[str, Any], destination: str | Path) -> Path:
@@ -662,19 +948,56 @@ def _main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--profile", choices=("smoke", "full"), default="full")
     parser.add_argument("--seed-set", choices=("development", "tuning", "evaluation"), default="evaluation")
     parser.add_argument("--input-root", type=Path, default=Path("results/raw/theory_scaling_compact"))
-    parser.add_argument("--output", type=Path, default=Path("results/derived/theory_scaling_primary.json"))
+    parser.add_argument("--scope", choices=("primary", "full-grid"), default="primary")
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--validate-only", action="store_true")
     parser.add_argument("--bootstrap-replicates", type=int, default=BOOTSTRAP_REPLICATES)
     args = parser.parse_args(argv)
     config = load_config(args.config, profile=args.profile)
-    result = aggregate_primary_slice(
-        args.input_root,
-        seeds=get_seed_set(config, args.seed_set),
-        profile=args.profile,
-        seed_set=args.seed_set,
-        bootstrap_replicates=args.bootstrap_replicates,
-    )
-    write_aggregate(result, args.output)
-    print(json.dumps({"output": str(args.output), "runs": result["coverage"]["validated_runs"]}, sort_keys=True))
+    seeds = get_seed_set(config, args.seed_set)
+    if args.scope == "full-grid":
+        grid = config.get("grid")
+        if not isinstance(grid, Mapping):
+            parser.error("config.grid must be an object")
+        dimensions = grid.get("ambient_dimensions")
+        ranks = grid.get("active_ranks")
+        horizons = grid.get("horizons")
+        if not isinstance(dimensions, Sequence) or isinstance(dimensions, (str, bytes)):
+            parser.error("config.grid.ambient_dimensions must be a sequence")
+        if not isinstance(ranks, Sequence) or isinstance(ranks, (str, bytes)):
+            parser.error("config.grid.active_ranks must be a sequence")
+        if not isinstance(horizons, Sequence) or isinstance(horizons, (str, bytes)):
+            parser.error("config.grid.horizons must be a sequence")
+        result = aggregate_full_grid(
+            args.input_root,
+            seeds=seeds,
+            dimensions=[int(value) for value in dimensions],
+            ranks=[int(value) for value in ranks],
+            checkpoints=[int(value) for value in horizons],
+            profile=args.profile,
+            seed_set=args.seed_set,
+            horizon=max(int(value) for value in horizons),
+            bootstrap_replicates=args.bootstrap_replicates,
+        )
+        default_output = Path("results/derived/theory_scaling_full_grid.json")
+    else:
+        result = aggregate_primary_slice(
+            args.input_root,
+            seeds=seeds,
+            profile=args.profile,
+            seed_set=args.seed_set,
+            bootstrap_replicates=args.bootstrap_replicates,
+        )
+        default_output = Path("results/derived/theory_scaling_primary.json")
+    output = args.output or default_output
+    if not args.validate_only:
+        write_aggregate(result, output)
+    print(json.dumps({
+        "output": None if args.validate_only else str(output),
+        "runs": result["coverage"]["validated_runs"],
+        "sha256": aggregate_sha256(result),
+        "status": "validated" if args.validate_only else "written",
+    }, sort_keys=True))
     return 0
 
 
@@ -683,7 +1006,8 @@ if __name__ == "__main__":
 
 
 __all__ = [
-    "BOOTSTRAP_REPLICATES", "BOOTSTRAP_SEED", "aggregate_primary_slice",
+    "BOOTSTRAP_REPLICATES", "BOOTSTRAP_SEED", "aggregate_full_grid",
+    "aggregate_primary_slice", "aggregate_sha256",
     "bootstrap_loglog_slope", "bootstrap_mean_interval", "load_compact_run",
     "write_aggregate",
 ]

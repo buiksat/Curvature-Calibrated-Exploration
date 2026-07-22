@@ -1,0 +1,40 @@
+prebuilt_python_library(
+    name = "numpy",
+    binary_src = "wheels/numpy-2.2.3-cp312-cp312-manylinux_x86_64.whl",
+    visibility = ["PUBLIC"],
+)
+
+prebuilt_python_library(
+    name = "scipy",
+    binary_src = "wheels/scipy-1.13.1-cp312-cp312-manylinux_x86_64.whl",
+    deps = [":numpy"],
+    visibility = ["PUBLIC"],
+)
+
+prebuilt_python_library(
+    name = "kiwisolver",
+    binary_src = "wheels/kiwisolver-1.4.9-cp312-cp312-manylinux_x86_64.whl",
+    visibility = ["PUBLIC"],
+)
+
+prebuilt_python_library(
+    name = "pillow",
+    binary_src = "wheels/pillow-12.2.0-cp312-cp312-manylinux_x86_64.whl",
+    visibility = ["PUBLIC"],
+)
+
+prebuilt_python_library(
+    name = "matplotlib",
+    binary_src = "wheels/matplotlib-3.10.8-cp312-cp312-manylinux_x86_64.whl",
+    deps = [
+        ":kiwisolver",
+        ":numpy",
+        ":pillow",
+        "fbsource//third-party/pypi/cycler:cycler",
+        "fbsource//third-party/pypi/fonttools:fonttools",
+        "fbsource//third-party/pypi/packaging:packaging",
+        "fbsource//third-party/pypi/pyparsing:pyparsing",
+        "fbsource//third-party/pypi/python-dateutil:python-dateutil",
+    ],
+    visibility = ["PUBLIC"],
+)

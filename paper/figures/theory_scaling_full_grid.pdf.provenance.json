@@ -1,0 +1,42 @@
+{
+  "artifact": "paper/figures/theory_scaling_full_grid.pdf",
+  "artifact_sha256": "ac91bb5a85b62f1bf7e20506c47871af604b4f0aea39fdef4f32e4a9fd49d9bf",
+  "generation_parameters": {
+    "active_ranks": [
+      4,
+      8,
+      16
+    ],
+    "ambient_dimension": 2048,
+    "horizons": [
+      128,
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "interpretation": "finite-horizon diagnostic, not a proof",
+    "methods": [
+      "exact_current",
+      "full_cg",
+      "window_q_1_2",
+      "window_q_2_3",
+      "window_q_1",
+      "diagonal_current",
+      "greedy"
+    ],
+    "uncertainty": "paired-seed bootstrap 95 percent intervals"
+  },
+  "input_set_sha256": "522fbe386ea57c1035bab3782b1c72ddf863202dbd1bcfb2ff87968bd176c3ad",
+  "inputs": [
+    {
+      "path": "results/derived/theory_scaling_full_grid.json",
+      "sha256": "69c3d8cc7d6f2c588963b2af8b1be9a04351e1c394f2b8c84855287800b86d9d"
+    },
+    {
+      "path": "results/derived/theory_scaling_full_grid.json.sha256",
+      "sha256": "ef539391fbc6c3f59dd398d2771b6fbc97246fe4eef00e7a40c2df206512b019"
+    }
+  ],
+  "schema_version": 1
+}

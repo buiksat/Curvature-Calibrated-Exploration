@@ -1,0 +1,79 @@
+python_library(
+    name = "config_lib",
+    srcs = ["__init__.py", "config.py"],
+    resources = glob(["configs/*"]),
+    visibility = ["PUBLIC"],
+)
+
+python_library(
+    name = "lib",
+    srcs = glob(["*.py"], exclude = ["__init__.py", "config.py"]),
+    resources = glob(["data/.gitkeep"]),
+    deps = [
+        ":config_lib",
+        "//third_party:matplotlib",
+        "//third_party:numpy",
+        "//third_party:scipy",
+        "fbsource//third-party/pypi/psutil/7.2.2:py",
+    ],
+    visibility = ["PUBLIC"],
+)
+
+[
+    python_binary(
+        name = module,
+        main_module = "experiments." + module,
+        deps = [":lib"],
+    )
+    for module in [
+        "aggregate_cg_policy",
+        "aggregate_results",
+        "aggregate_theory_scaling",
+        "make_balanced_benchmark_artifact",
+        "make_certification_audit",
+        "make_certified_tanh_artifact",
+        "make_closed_rate_artifact",
+        "make_covertype_horizon_artifact",
+        "make_curvature_phase_diagram_artifact",
+        "make_linear_bound_artifact",
+        "make_offdiagonal_witness_artifact",
+        "make_offdiagonal_witness_paper_artifacts",
+        "make_paper_artifacts",
+        "make_primary_table",
+        "make_revision_paper_artifacts",
+        "make_theory_scaling_paper_artifacts",
+        "run_balanced_benchmark",
+        "run_certified_tanh",
+        "run_cg_accuracy",
+        "run_covertype",
+        "run_linear_audit",
+        "run_linear_study",
+        "run_nonlinear_audit",
+        "run_offdiagonal_witness",
+        "run_operator_ablation",
+        "run_systems_scaling",
+        "theory_scaling",
+        "theory_scaling_compact",
+    ]
+]
+
+python_binary(
+    name = "config",
+    main_module = "experiments.config",
+    deps = [":config_lib"],
+)
+
+python_binary(
+    name = "run_autodiff_systems",
+    main_module = "experiments.run_autodiff_systems",
+    deps = [
+        ":lib",
+        "fbsource//third-party/pypi/torch:torch",
+    ],
+)
+
+python_binary(
+    name = "record_autodiff_systems_not_run",
+    main_module = "experiments.run_autodiff_systems",
+    deps = [":lib"],
+)

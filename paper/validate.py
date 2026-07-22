@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Static LaTeX validation (no TeX engine available in this environment)."""
-import re, sys, collections
+import collections
+from pathlib import Path
+import re
+import sys
 
-MAIN = "main.tex"
-MACROS = "macros.tex"
+PAPER_DIR = Path(__file__).resolve().parent
+MAIN = PAPER_DIR / "main.tex"
+MACROS = PAPER_DIR / "macros.tex"
 
 def read(p):
     with open(p) as f:
@@ -81,7 +85,7 @@ print(f"[refs] {len(refkeys)} distinct ref targets, {len(unresolved)} unresolved
 if unresolved: problems.append(f"unresolved refs: {unresolved}")
 
 # 7. citations in .bib
-bib = read("references.bib")
+bib = read(PAPER_DIR / "references.bib")
 bibkeys = set(re.findall(r'@\w+\{([^,]+),', bib))
 cites = re.findall(r'\\cite[a-z]*\{([^}]+)\}', main)
 citekeys = set()

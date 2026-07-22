@@ -1,6 +1,6 @@
 {
   "artifact": "paper/figures/offdiagonal_witness.pdf",
-  "artifact_sha256": "a03705372fe47171907b3ca30709e040fec82d535dd21ebe9e88abc17131114a",
+  "artifact_sha256": "f71b58a9d2f795566794fda52bd356a2c1363594f52ca6da5a946981ae012e0c",
   "generation_parameters": {
     "analytic_cell": "analytic",
     "analytic_curves": [

@@ -1,6 +1,6 @@
 # Results Status
 
-Status date: 2026-07-21
+Status date: 2026-07-22
 
 ## Revision progress after the baseline audit
 
@@ -29,6 +29,30 @@ The preregistered balanced contextual benchmark, bounded-linear curvature phase
 diagram, and expanded synthetic CPU systems study are also complete.  Each
 derived report and provenance sidecar validates against its current source
 inventory.
+
+## Closed-rate theorem-scaling grid
+
+The separate full-grid artifact
+`results/derived/theory_scaling_full_grid.json` validates all 3,600 expected
+maximum-horizon trajectories: three ambient dimensions, three active ranks,
+eight methods, and 50 fixed evaluation seeds. Its SHA-256 is
+`69c3d8cc7d6f2c588963b2af8b1be9a04351e1c394f2b8c84855287800b86d9d`.
+The original 400-run `d=128`, `r=4` primary slice was preserved and revalidated
+without replacement.
+
+At `d=2048`, exact-current mean regret at `T=2048` is 1.80 [1.57, 2.07],
+7.50 [6.82, 8.17], and 43.95 [42.24, 45.59] for ranks 4, 8, and 16. The
+corresponding finite-horizon regret slopes are 0.000, 0.134 [0.115, 0.153], and
+0.818 [0.804, 0.831]; exact dynamic-width slopes are 0.106, 0.099, and 0.117.
+These fits are diagnostics, not asymptotic-rate proofs. The rank-16 executions
+also have optimizer/path audit failures, so they are not theorem-event verified.
+Greedy has lower regret in these cells but is an uncertified control.
+
+The actual-autodiff benchmark was not run. Although the host exposes a declared
+PyTorch alias, Buck configuration reaches
+`fbsource//third-party/python/3.12:python-for-embedding` and fails in
+`feature_rollout_utils.bzl` with `Starlark call stack overflow`. The hashed
+current-host `not_run` record has no fabricated timing.
 
 ## New balanced contextual benchmark
 
@@ -110,10 +134,11 @@ model or large-model feasibility claim.
 | Covertype long-horizon rerun | `results/derived/covertype_rerun_1500_full_aggregate.json` | 8 methods x 10 evaluation seeds x four horizons |
 | Covertype class imbalance | `results/derived/covertype_test_class_counts.json` | Exact fixed test-split counts and majority oracle |
 | CPU systems audit | `results/derived/systems_scaling_full.json` | 5 seeds, 384 synthetic groups through dimension 8192; no model or accelerator claim |
+| Theorem-scaling full grid | `results/derived/theory_scaling_full_grid.json` | 9 cells x 8 methods x 50 evaluation seeds; 3,600/3,600 raw trajectories and hashes validated |
 | Revision paper artifacts | `paper/figures/theory_factor_drift.pdf`, `paper/tables/executed_policy_results.tex` | Generated only after validating tanh, balanced, phase, and systems reports; output sidecars bind direct inputs |
 
 The primary figure and generated tables are reproducible from these artifacts.
-Final validation passed: 143 tests, a clean 38-page LaTeX build, zero
+Final validation passed: 241 tests, a clean 42-page LaTeX build, zero
 content-generated overfull boxes, zero Type 3 fonts, and anonymous PDF metadata.
 
 ## Failed or negative experiments
@@ -164,15 +189,17 @@ for new conclusions.
   wall-clock budget.
 - Nonzero representation-drift cells in the curvature phase diagram.
 - KFAC or block preconditioning for the full target system, verified interval
-  enclosures for numerical certificates, and an accelerator or actual
-  10^5--10^7-parameter model systems benchmark.
+  enclosures for numerical certificates, and an actual-autodiff
+  131,841-parameter systems benchmark. The latter is blocked by the declared
+  Buck PyTorch dependency and has a deterministic `not_run` record.
 
 ## Resource constraints
 
-The host has an Apple M4 Max GPU and 64 GiB memory, but the repository's current
-environment has no PyTorch or JAX backend.  Existing code is NumPy/SciPy CPU
-code.  Accelerator experiments therefore require an explicit dependency and
-implementation change; no result may be inferred from operation counts.
+The current host has 22 logical Intel Xeon Platinum 8339HC CPUs, 176 GiB of OS
+memory, and one detected NVIDIA PG509-210 with 81,920 MiB. Scaling used CPU
+only. The repository's declared Buck PyTorch target does not configure in this
+standalone cell, so no CPU or GPU actual-autodiff timing was executed and no
+result may be inferred from operation counts.
 
 ## Acceptance gates
 

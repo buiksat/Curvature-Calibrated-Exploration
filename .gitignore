@@ -1,6 +1,7 @@
 # Local environments and caches.
 .DS_Store
 .venv/
+buck-out/
 .pytest_cache/
 **/__pycache__/
 *.py[cod]
@@ -49,17 +50,15 @@ experiments/data/*
 experiments/results/*
 !experiments/results/.gitignore
 !experiments/results/.gitkeep
+results/logs/
 
-# Preserve all derived artifacts, but keep the multi-gigabyte historical raw
-# archive out of Git. These compact/raw trees are the new revision evidence
-# needed to resume the current work on another machine.
+# Preserve derived artifacts, but keep generated raw experiment output out of
+# Git. Raw files already present in repository history remain tracked; new runs
+# belong in artifact storage and are represented here by derived reports and
+# hash/provenance inventories.
 results/raw/*
-!results/raw/autodiff_systems/
-!results/raw/autodiff_systems/**
 !results/raw/offdiagonal_witness/
 !results/raw/offdiagonal_witness/**
-!results/raw/theory_scaling_compact/
-!results/raw/theory_scaling_compact/**
 
 # Generated release bundles are reproducible and substantially larger than the
 # source checkout. Rebuild them with tools/build_anonymous_supplement.py.

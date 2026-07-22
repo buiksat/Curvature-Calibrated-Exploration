@@ -1,0 +1,20 @@
+filegroup(
+    name = "test_sources",
+    srcs = glob(["test_*.py"]),
+)
+
+sh_test(
+    name = "tests",
+    args = [
+        "$(exe //tools:pytest_runner)",
+        "-q",
+        "tests",
+    ],
+    deps = [
+        "//:repository_resources",
+        ":test_sources",
+        "//tools:pytest_runner",
+    ],
+    labels = ["buck2_run_from_project_root"],
+    test = "run_buck_pytest.sh",
+)

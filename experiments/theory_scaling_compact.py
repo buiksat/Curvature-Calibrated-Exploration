@@ -11,7 +11,10 @@ from collections.abc import Mapping, Sequence
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
+import resource
+import sys
 import zipfile
 from typing import Any
 
@@ -73,6 +76,11 @@ CHECK_FIELDS = (
     "psi_excitation", "linearization", "optimizer_residual", "F",
     "dynamic_width", "cg",
 )
+
+
+def _peak_host_memory_bytes() -> int:
+    value = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    return value if sys.platform == "darwin" else value * 1024
 
 
 def sha256_file(path: str | Path) -> str:
@@ -282,6 +290,10 @@ def run_primary_compact_protocol(
         repository=Path(__file__).resolve().parents[1],
         packages=("numpy", "scipy", "psutil"),
     )
+    protocol_metadata["execution_environment"] = {
+        name: os.environ.get(name)
+        for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
+    }
     for seed in selected_seeds:
         for method in selected_methods:
             run_config = json.loads(json.dumps(config))
@@ -305,6 +317,10 @@ def run_primary_compact_protocol(
                 ambient_dimension=dimension,
                 active_rank=rank,
                 horizon=horizon,
+            )
+            run.summary["peak_host_memory_bytes"] = _peak_host_memory_bytes()
+            run.summary["peak_host_memory_scope"] = (
+                "process_lifetime_high_water_mark"
             )
             destination = compact_run_directory(
                 output_root,

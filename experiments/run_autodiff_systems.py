@@ -30,6 +30,14 @@ from .logging_utils import ExperimentLogger, append_jsonl, canonical_json, seed_
 
 BENCHMARK_KIND = "actual_autodiff_squared_loss_ggn_mlp"
 METHODS = ("ggn_cvp", "scalar_cg", "batched_cg", "diagonal")
+BUCK_TORCH_BLOCKER_REASON = (
+    "Buck target fbsource//third-party/pypi/torch:torch cannot be configured "
+    "from this standalone repository cell. The dependency chain through "
+    "fbcode//caffe2:torch reaches "
+    "fbsource//third-party/python/3.12:python-for-embedding and fails while "
+    "evaluating feature_rollout_utils.bzl with 'Starlark call stack overflow'. "
+    "No PyTorch timing was executed."
+)
 
 
 @dataclass(frozen=True)
@@ -909,10 +917,11 @@ def run_experiment(
     seed_set: str,
     output_root: str | Path,
     overwrite: bool = False,
+    capability: TorchCapability | None = None,
 ) -> tuple[AutodiffSystemsRun, ...]:
     runs: list[AutodiffSystemsRun] = []
     for seed in get_seed_set(config, seed_set):
-        run = run_autodiff_systems(config, seed)
+        run = run_autodiff_systems(config, seed, capability=capability)
         destination = (
             Path(output_root)
             / str(config.get("name", "autodiff_systems"))
@@ -939,6 +948,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--output-root", type=Path, default=Path("results/raw")
     )
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--record-buck-torch-blocker",
+        action="store_true",
+        help=(
+            "record the verified host Buck dependency failure without probing or "
+            "timing a Python runtime"
+        ),
+    )
     args = parser.parse_args(argv)
     if args.config_path is not None and args.config_option is not None:
         parser.error("provide the config either positionally or with --config, not both")
@@ -946,11 +963,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     if config_path is None:
         parser.error("a config path is required")
     config = load_config(config_path, profile=args.profile)
+    capability = None
+    if args.record_buck_torch_blocker:
+        capability = TorchCapability(
+            available=False,
+            version=None,
+            reason_code="missing_buck_dependency",
+            reason=BUCK_TORCH_BLOCKER_REASON,
+        )
     runs = run_experiment(
         config,
         seed_set=args.seed_set,
         output_root=args.output_root,
         overwrite=args.overwrite,
+        capability=capability,
     )
     print(
         json.dumps(
@@ -975,6 +1001,7 @@ if __name__ == "__main__":
 __all__ = [
     "AutodiffSystemsRun",
     "BENCHMARK_KIND",
+    "BUCK_TORCH_BLOCKER_REASON",
     "METHODS",
     "TorchCapability",
     "main",
