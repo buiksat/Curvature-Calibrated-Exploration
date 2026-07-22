@@ -1,6 +1,6 @@
 {
   "artifact": "results/derived/closed_rate_predictions.json",
-  "artifact_sha256": "69ae4e79664a23e9a1e2973c8e4a95cb64efb9735c27cd8078c4898c1a4d7d04",
+  "artifact_sha256": "53b7a7b44f2d01b079c102072bdcf3d4f1c44559d99a43e4207cef73f827b1b4",
   "input_set_sha256": "525107f239ad4cf1d6eec910377eb2d6478c3152dca0df923abbde520a3204d7",
   "inputs": [
     {

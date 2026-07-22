@@ -25,8 +25,8 @@ claim was started.
 
 ## Post-review response
 
-The current uncommitted response reframes Corollary 9 as conditional
-fixed-subspace adaptation, rewrites the abstract around the transfer theorem and
+The first review response reframed Corollary 9 as conditional
+supplied-subspace adaptation, rewrote the abstract around the transfer theorem and
 growing-window tradeoff, and makes the reference-operator/falsification thesis
 explicit.  The main scaling figure now includes the event-clean `d=128,r=4`
 slice and all eight methods.  Its companion table reports every terminal regret
@@ -42,8 +42,35 @@ autodiff benchmark, verified numerical enclosures, final anonymous bundle, and
 official target-year AISTATS package remain blockers or external prerequisites.
 The revised Buck test targets and combined runner pass.  A review-tier release
 build was attempted and stopped at the first missing required fixture,
-`experiments/data/sklearn/covertype/samples_py3`; release validation was not
-bypassed.
+`experiments/data/sklearn/covertype/samples_py3`; the sibling required fixture
+`targets_py3` is also absent.  Release validation was not bypassed.
+
+## Second-review response
+
+The subsequent scope review identified two further overstatements and one cost
+accounting error.  Corollary 9 now proves the exact projected-Gram identity for
+the supplied subspace and says explicitly that its curvature linear algebra is
+`r`-dimensional, so full-dimensional CG is unnecessary in the only closed-rate
+regime.  The growing-window simplification now requires
+`E_T = O_tilde(T^(1-q/2))`; the weaker `E_T=o(T)` condition was insufficient.
+Its displayed exponents are labelled achieved conditional upper bounds, not a
+Pareto frontier.
+
+The systems section now separates full training history `N_t` from curvature
+buffer `m_t`, charges candidate gradients, explicit CG residual applications,
+full-history optimizer steps, and optimizer-residual certification, and retains
+model-dependent JVP/VJP costs.  With uniformly bounded pass counts, the generic
+full-batch implementation has an `O(T^2)` full-history sample-work term that
+curvature windowing does not remove.  The text also discloses that the executed small-model
+studies materialize Jacobian arrays; the unrun autodiff target is the only
+on-the-fly JVP/VJP implementation.
+
+The title and claims were narrowed, the determinant identity was demoted to
+bookkeeping, the unsupported published-claim target was removed, and Chang et
+al.'s diagonal-plus-low-rank EKF/LO-FI comparison was added.  The eight-page main
+text was shortened to preserve references on page 9.  No architecture theorem,
+forced-excitation guarantee, LO-FI implementation, actual-autodiff timing,
+optimizer-enforced scaling rerun, or new positive performance result is claimed.
 
 ## Buck2 support
 
@@ -213,7 +240,7 @@ its retained historical artifact because this compact checkout excludes
 `results/raw/certified_tanh/full/evaluation/corrected/seed-160/summary.jsonl`.
 That missing raw tree is recorded as a blocker; validation was not bypassed.
 
-The direct LaTeX build passed after `latexmk -C`. `paper/main.pdf` has 43 pages;
+The direct LaTeX build passed after `latexmk -C`. `paper/main.pdf` has 42 pages;
 Algorithm 1 is on page 3, Figure 1 is on page 7, Table 1 is on page 8, and
 references begin on page 9. Ghostscript renders all pages, reports only Type 0/Type 1 font
 resources, and confirms empty title/author metadata. The sole overfull warning
@@ -227,15 +254,15 @@ still provisional because the official target-year AISTATS checklist is absent.
 
 - `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`: two
   targets passed, no failures.
-- Combined Buck-built runner: 241 passed, one pre-existing unclosed-file
+- Combined Buck-built runner: 242 passed, one pre-existing unclosed-file
   `ResourceWarning` in `test_anonymous_supplement.py`.
 - Full grid: 9/9 cells and 3,600/3,600 raw runs validated; aggregate sidecar
   matches.
 - Retained primary: 400/400 runs revalidated in validation-only mode and not
   overwritten.
-- Paper static validation: 155 labels with no duplicates, 112 reference
-  targets with none unresolved, and 34 citation keys with none missing.
-- LaTeX: successful 43-page build; no Type 3 fonts; required page positions
+- Paper static validation: 156 labels with no duplicates, 112 reference
+  targets with none unresolved, and 35 citation keys with none missing.
+- LaTeX: successful 42-page build; no Type 3 fonts; required page positions
   preserved.
 - Revised generated-paper artifact hashes match their provenance sidecars.
 - `git diff --check`: passed.
@@ -262,8 +289,8 @@ The changed paths are:
   generated scaling and off-diagonal assets/provenance, `.gitignore`,
   `BUCK2_SETUP.md`, `experiments/README.md`, `RESULTS_STATUS.md`, and this report.
 
-The checkpoint commit `621f78e3` is present on the local and remote topic branch.
-The post-review response edits described after this checkpoint remain uncommitted;
+The checkpoint commit `70fb6c40` is present on the local and remote topic branch.
+The second-review response edits described after this checkpoint remain uncommitted;
 no claim is made that they are present in a clean checkout or anonymous release.
 
 ## Remaining blockers and scope gaps
@@ -278,8 +305,9 @@ no claim is made that they are present in a clean checkout or anonymous release.
 - No verified interval enclosure is available for the float64 audit points.
 - The anonymous release cannot yet be rebuilt from this checkout: the
   review-tier builder first fails on the missing required Covertype fixture
-  `experiments/data/sklearn/covertype/samples_py3`.  After restoring required
-  inputs, it must be rebuilt and identity-scanned from the final branch state.
+  `experiments/data/sklearn/covertype/samples_py3`; the required sibling fixture
+  `targets_py3` is also absent.  After restoring required inputs, it must be
+  rebuilt and identity-scanned from the final branch state.
 - Full-grid raw trajectories are not distributed through Git; reproducing the
   aggregate requires rerunning the fixed protocol or restoring artifact storage.
 

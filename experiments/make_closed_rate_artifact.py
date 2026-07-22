@@ -1,4 +1,4 @@
-"""Generate the analytic growing-window Pareto artifact and LaTeX table."""
+"""Generate conditional growing-window exponent accounting and its LaTeX table."""
 
 from __future__ import annotations
 
@@ -33,6 +33,7 @@ def build_artifact(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
             raise ValueError("window exponents must lie in (0,1]")
         regret = Fraction(1, 1) - q / 2
         cost = Fraction(1, 1) + 3 * q / 2
+        full_policy = max(Fraction(2, 1), cost)
         rows.append(
             {
                 "q": {"numerator": q.numerator, "denominator": q.denominator},
@@ -44,6 +45,10 @@ def build_artifact(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
                     "numerator": cost.numerator,
                     "denominator": cost.denominator,
                 },
+                "bounded_full_history_exponent": {
+                    "numerator": full_policy.numerator,
+                    "denominator": full_policy.denominator,
+                },
             }
         )
     if not rows:
@@ -54,6 +59,7 @@ def build_artifact(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         "artifact": "closed_rate_predictions",
         "regret_formula": "1-q/2",
         "sample_cvp_formula": "1+3q/2",
+        "bounded_full_history_formula": "max(2,1+3q/2)",
         "rows": rows,
         "inputs": inputs,
         "input_set_sha256": hashlib.sha256(
@@ -71,16 +77,19 @@ def _tex_fraction(value: dict[str, int]) -> str:
 def render_table(artifact: dict[str, Any]) -> str:
     lines = [
         r"\begin{center}",
-        r"\begin{tabular}{@{}ccc@{}}",
+        r"\begin{tabular}{@{}cccc@{}}",
         r"\toprule",
-        r"$q$ & regret exponent & cumulative sample-CVP exponent\\",
+        r"$q$ & conditional regret & width-solve CVPs & full-policy sample work\\",
         r"\midrule",
     ]
     for row in artifact["rows"]:
         q = _tex_fraction(row["q"])
         regret = _tex_fraction(row["regret_exponent"])
         cost = _tex_fraction(row["sample_cvp_exponent"])
-        lines.append(rf"${q}$ & $T^{{{regret}}}$ & $KT^{{{cost}}}$\\")
+        full_policy = _tex_fraction(row["bounded_full_history_exponent"])
+        lines.append(
+            rf"${q}$ & $T^{{{regret}}}$ & $KT^{{{cost}}}$ & $T^{{{full_policy}}}$\\"
+        )
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{center}", ""])
     return "\n".join(lines)
 

@@ -1,5 +1,11 @@
 # Revision Changelog
 
+> **Historical snapshot.** The validation counts and anonymous-release claims
+> below describe the 2026-07-21 tree. They predate the closed-rate/scaling
+> revision and are not current submission-release evidence. See
+> `REVISION_REPORT.md` and rebuild both release tiers from the final reviewed
+> tree before using those counts or hashes.
+
 ## 2026-07-21 - Audited revision
 
 This entry records implemented and executed revision work.  It does not claim

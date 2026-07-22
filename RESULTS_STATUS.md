@@ -140,7 +140,7 @@ model or large-model feasibility claim.
 | Revision paper artifacts | `paper/figures/theory_factor_drift.pdf`, `paper/tables/executed_policy_results.tex` | Generated only after validating tanh, balanced, phase, and systems reports; output sidecars bind direct inputs |
 
 The primary figure and generated tables are reproducible from these artifacts.
-Final validation passed: 241 tests, a clean 42-page LaTeX build, zero
+Current code/PDF validation passed: 242 tests, a clean 42-page LaTeX build, zero
 content-generated overfull boxes, zero Type 3 fonts, and anonymous PDF metadata.
 
 ## Failed or negative experiments
@@ -184,7 +184,7 @@ for new conclusions.
 - Wheel, Mushroom, or another standard external contextual benchmark that
   passes the two context-free baselines.
 - Validation against external published implementations of NeuralLinear,
-  NeuralUCB, or NeuralTS.  NN-UCB/NN-TS, EKF, LMC-TS, KFAC, and block-Laplace
+  NeuralUCB, or NeuralTS.  NN-UCB/NN-TS, LO-FI/low-rank EKF, LMC-TS, KFAC, and block-Laplace
   comparisons are also unrun.
 - A matched-wall-clock policy-budget rerun; the balanced study matches update
   budgets and reports runtime, but does not retune each policy under an equal
@@ -209,15 +209,17 @@ result may be inferred from operation counts.
 |---|---|
 | 1. Computable schedules | **Satisfied.** `PathCertificateState` supplies `beta_bar_t`, `psi_bar_t`, and `u_t` from pre-action state, with direct-history and filtration tests. |
 | 2. Nonlinear predictable execution | **Satisfied in the required observed-event sense.** Both tanh centers have zero observed failures across 50 evaluation seeds.  Float64 point checks remain `posthoc_theorem_event_verified`, not verified-enclosure ex-ante certificates. |
-| 3. Explicit nonlinear rate or conditional reframing | **Satisfied conditionally.** Corollary 9 is framed as fixed-subspace adaptation and exposes its bounded-path, width, residual, and optimizer premises; it is not an end-to-end neural-training theorem. |
+| 3. Explicit nonlinear rate or conditional reframing | **Satisfied only as a projected-feature closure.** Corollary 9 proves that supplied `U` reduces both current and frozen widths exactly to an `r x r` Gram, where full-dimensional CG is unnecessary. It exposes its bounded-path, width, residual, optimizer, transfer, and solver premises and is not an end-to-end neural-training theorem. |
 | 4. Contextual sanity benchmark | **Satisfied narrowly by the balanced synthetic benchmark.** LinUCB beats both context-free baselines on 30 untouched seeds.  No external real-data benchmark passes this test. |
 | 5. NeuralLinear plus a full neural baseline | **Satisfied by local matched implementations.** NeuralLinear, NeuralUCB, and NeuralTS are included, but are not claimed exact reproductions of published code. |
-| 6. Scalability claims | **Restricted, not empirically established.** The manuscript limits evidence to synthetic CPU resource accounting and states that the defining autodiff JVP/VJP benchmark was not run. |
+| 6. Scalability claims | **Restricted, not empirically established.** The manuscript separates full-history training from curvature-window work, includes the generic bounded-pass full-batch implementation's `O(T^2)` sample-work term, and states that policy studies materialize Jacobians while the defining autodiff JVP/VJP benchmark was not run. |
 | 7. Legacy evidence | **Satisfied in the current manuscript.** The unrecovered oracle-selected study is absent from the evidentiary chain. |
 
 The historical anonymous bundles and hashes recorded in `CODEX_REPORT.md`
 predate the closed-rate/scaling revision and are not current release artifacts.
 No final `release/` or `release_review/` directory is present in this checkout.
+The review-tier builder first fails on the missing required Covertype fixture
+`experiments/data/sklearn/covertype/samples_py3`; `targets_py3` is also absent.
 Restore every provenance-bound raw input, rebuild both tiers from the final
 reviewed commit, and rerun identity/hash scans before making a release claim.
 No external passing benchmark, verified floating-point enclosure, actual-autodiff
