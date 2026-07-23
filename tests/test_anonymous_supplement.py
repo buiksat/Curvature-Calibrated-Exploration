@@ -204,6 +204,29 @@ def test_review_omits_large_auxiliary_raw_file_for_source_index(tmp_path: Path) 
     assert large.relative_to(repository).as_posix() not in builder.references
 
 
+def test_copy_derived_recurses_into_study_directories(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    aggregate = (
+        repository
+        / "results"
+        / "derived"
+        / "spectral_tail_study"
+        / "full"
+        / "aggregate.json"
+    )
+    aggregate.parent.mkdir(parents=True)
+    aggregate.write_text('{"schema_version":1}\n', encoding="utf-8")
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+
+    builder._copy_derived()
+
+    relative = aggregate.relative_to(repository).as_posix()
+    assert relative in builder.records
+    assert json.loads((builder.staging / relative).read_text()) == {
+        "schema_version": 1
+    }
+
+
 def test_grouped_sidecar_inputs_are_standardized_to_released_files() -> None:
     builder = object.__new__(ReleaseBuilder)
     builder.tier = "full"
@@ -343,6 +366,14 @@ def test_review_selector_uses_first_complete_run_per_study(tmp_path: Path) -> No
     selected = select_review_run_directories(raw_root)
 
     assert selected == (alpha, beta_first)
+
+
+def test_missing_raw_root_is_an_empty_release_input(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    builder = ReleaseBuilder(repository, tmp_path / "release", tier="review")
+
+    assert builder._release_raw_files() == []
 
 
 def test_review_tier_has_separate_default_output() -> None:

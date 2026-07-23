@@ -1201,6 +1201,8 @@ class ReleaseBuilder:
 
     def _release_raw_files(self) -> list[Path]:
         raw_root = self.repository / "results" / "raw"
+        if not raw_root.exists():
+            return []
         if not raw_root.is_dir():
             raise BuildError("results/raw is missing")
         raw_files = [
@@ -1261,12 +1263,12 @@ class ReleaseBuilder:
         sources = sorted(
             (
                 path
-                for path in derived_root.iterdir()
+                for path in derived_root.rglob("*")
                 if path.is_file()
                 and path.name != ".gitkeep"
                 and not path.name.endswith(".provenance.json")
             ),
-            key=lambda path: path.name,
+            key=lambda path: relative_posix(path, self.repository),
         )
         pending_json: dict[str, tuple[Path, Any]] = {}
         for source in sources:
