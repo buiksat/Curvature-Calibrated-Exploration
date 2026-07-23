@@ -58,6 +58,21 @@ METHOD_COLORS = {
     "frozen_linear_ucb": "#00A6A6",
     "greedy": "#777777",
 }
+EVENT_FIELD_LABELS = {
+    "optimizer_pass": "optimizer",
+    "transfer_pass": "relative transfer",
+    "centering_pass": "relative centering",
+    "linearization_pass": "linearization",
+    "information_pass": "prefix information",
+    "endpoint_information_pass": "endpoint information",
+    "confidence_event": "confidence",
+    "optimism_event": "optimism",
+    "cg_converged": "CG convergence",
+    "regret_bound_pass": "regret bound",
+    "residual_envelope_pass": "residual envelope",
+    "old_transfer_pass": "Welford transfer",
+    "old_centering_pass": "Welford centering",
+}
 
 ONE_DIMENSIONAL_ARRAYS = {
     "cumulative_pseudo_regret",
@@ -155,6 +170,37 @@ BOUND_ARRAYS = {
     "rhs_width_potential",
     "rhs_statistical_component",
     "rhs_linearization_component",
+}
+
+COMMON_PREMISE_FIELDS = (
+    "linearization_pass",
+    "information_pass",
+    "endpoint_information_pass",
+    "confidence_event",
+    "optimism_event",
+    "regret_bound_pass",
+)
+METHOD_PREMISE_FIELDS = {
+    "exact_current_relative": (
+        "optimizer_pass",
+        "transfer_pass",
+        "centering_pass",
+        "residual_envelope_pass",
+    ),
+    "full_cg_relative": (
+        "optimizer_pass",
+        "transfer_pass",
+        "centering_pass",
+        "residual_envelope_pass",
+        "cg_converged",
+    ),
+    "current_welford": (
+        "optimizer_pass",
+        "old_transfer_pass",
+        "old_centering_pass",
+        "residual_envelope_pass",
+    ),
+    "corrected_current": ("transfer_pass",),
 }
 
 
@@ -589,6 +635,34 @@ def _build_group(
 
     prefix = (profile, cell.token, method)
     theorem = method in THEOREM_METHODS
+    required_fields = (
+        (*COMMON_PREMISE_FIELDS, *METHOD_PREMISE_FIELDS[method]) if theorem else ()
+    )
+
+    def failed_rounds(run: Mapping[str, NDArray[np.generic]], name: str) -> int:
+        values = np.asarray(run[name], dtype=np.bool_)
+        if name == "cg_converged":
+            values = np.all(values, axis=1)
+        if values.ndim != 1 or values.shape[0] != cell.horizon:
+            raise ScaledTanhArtifactError(
+                f"invalid premise field {name!r} for {cell.token}/{method}"
+            )
+        return int(np.count_nonzero(~values))
+
+    failure_round_counts = {
+        name: sum(failed_rounds(run, name) for run in runs)
+        for name in required_fields
+    }
+    failed_trajectory_count = (
+        sum(item["all_required_premises_pass"] is not True for item in summaries)
+        if theorem
+        else 0
+    )
+    premise_failure_round_count = (
+        int(sum(int(item["premise_failure_count"]) for item in summaries))
+        if theorem
+        else 0
+    )
     group: dict[str, Any] = {
         "cell": _expected_cell(cell),
         "method": method,
@@ -598,11 +672,12 @@ def _build_group(
             if theorem
             else None
         ),
-        "premise_failure_count": (
-            int(sum(int(item["premise_failure_count"]) for item in summaries))
-            if theorem
-            else 0
-        ),
+        # Keep the old key for consumers of the smoke artifact, but expose its
+        # unit explicitly: it counts failed rounds, not failed trajectories.
+        "premise_failure_count": premise_failure_round_count,
+        "premise_failure_round_count": premise_failure_round_count,
+        "failed_trajectory_count": failed_trajectory_count,
+        "required_event_failure_round_counts": failure_round_counts,
         "terminal_pseudo_regret": _bootstrap_interval(
             terminal("cumulative_pseudo_regret"),
             resamples=resamples,
@@ -904,6 +979,21 @@ def build_aggregate(
                     resamples=resamples,
                     seed_parts=(*prefix, "sample-cvps"),
                 ),
+                "theorem_failure_audit": {
+                    method: {
+                        "failed_trajectory_count": group_records[
+                            (*_cell_key(cell), method)
+                        ]["failed_trajectory_count"],
+                        "failed_round_count": group_records[
+                            (*_cell_key(cell), method)
+                        ]["premise_failure_round_count"],
+                        "required_event_failure_round_counts": group_records[
+                            (*_cell_key(cell), method)
+                        ]["required_event_failure_round_counts"],
+                    }
+                    for method in methods
+                    if method in THEOREM_METHODS
+                },
             }
         )
 
@@ -914,6 +1004,74 @@ def build_aggregate(
     ]
     if len(reference_runs) != len(seeds):
         raise ScaledTanhArtifactError("canonical certificate trace is incomplete")
+
+    theorem_failure_audit: dict[str, dict[str, Any]] = {}
+    for method in methods:
+        if method not in THEOREM_METHODS:
+            continue
+        method_groups = [group for group in groups if group["method"] == method]
+        event_names = sorted(
+            {
+                name
+                for group in method_groups
+                for name in group["required_event_failure_round_counts"]
+            }
+        )
+        theorem_failure_audit[method] = {
+            "failed_trajectory_count": int(
+                sum(group["failed_trajectory_count"] for group in method_groups)
+            ),
+            "failed_round_count": int(
+                sum(group["premise_failure_round_count"] for group in method_groups)
+            ),
+            "required_event_failure_round_counts": {
+                name: int(
+                    sum(
+                        group["required_event_failure_round_counts"].get(name, 0)
+                        for group in method_groups
+                    )
+                )
+                for name in event_names
+            },
+        }
+
+    primary_methods = ("exact_current_relative", "full_cg_relative")
+    primary_premises_pass = all(
+        theorem_failure_audit[method]["failed_trajectory_count"] == 0
+        for method in primary_methods
+    )
+    rho_below_one = all(float(item["analytic_rho_W"]) < 1.0 for item in comparisons)
+    exact_cg_action_agreement = min(
+        float(item["action_agreement"]["mean"]) for item in comparisons
+    )
+    exact_cg_width_error = max(
+        float(item["maximum_relative_width_squared_error"]["mean"])
+        for item in comparisons
+    )
+    relative_groups = [
+        group for group in groups if group["method"] == "exact_current_relative"
+    ]
+    relative_transfer_strictly_tighter = all(
+        float(group["analytic_rho_W"])
+        < float(group["maximum_old_chi_bar"]["mean"])
+        for group in relative_groups
+    )
+    rhs_per_round_decreases = True
+    for width_ratio in sorted({float(item["cell"]["width_ratio"]) for item in comparisons}):
+        values = [
+            float(item["exact_terminal_rhs_per_round"]["mean"])
+            for item in sorted(
+                (
+                    candidate
+                    for candidate in comparisons
+                    if float(candidate["cell"]["width_ratio"]) == width_ratio
+                ),
+                key=lambda candidate: int(candidate["cell"]["horizon"]),
+            )
+        ]
+        rhs_per_round_decreases &= all(
+            later < earlier for earlier, later in zip(values, values[1:])
+        )
     certificate_trace = {
         "cell": _expected_cell(reference_cell),
         "method": reference_method,
@@ -975,6 +1133,30 @@ def build_aggregate(
         ),
         "groups": groups,
         "exact_cg_comparisons": comparisons,
+        "theorem_failure_audit": theorem_failure_audit,
+        "support_criteria": {
+            "primary_exact_and_cg_premises_pass_all_trajectories": primary_premises_pass,
+            "analytic_relative_transfer_below_one_all_cells": rho_below_one,
+            "relative_transfer_strictly_below_welford_all_cells": (
+                relative_transfer_strictly_tighter
+            ),
+            "rhs_per_round_strictly_decreases_at_each_width_ratio": (
+                rhs_per_round_decreases
+            ),
+            "minimum_exact_cg_action_agreement": exact_cg_action_agreement,
+            "maximum_mean_relative_width_squared_error": exact_cg_width_error,
+            "dense_cg_declared_tolerances_pass": (
+                exact_cg_action_agreement == 1.0 and exact_cg_width_error <= 1.0e-8
+            ),
+            "supports_nonavacuous_instantiation_claim": bool(
+                primary_premises_pass
+                and rho_below_one
+                and relative_transfer_strictly_tighter
+                and rhs_per_round_decreases
+                and exact_cg_action_agreement == 1.0
+                and exact_cg_width_error <= 1.0e-8
+            ),
+        },
         "certificate_trace": certificate_trace,
         "raw_inputs": normalized_inputs,
         "input_set_sha256": input_set_sha256(normalized_inputs),
@@ -1315,33 +1497,67 @@ def _format_mean(interval: Mapping[str, Any], *, digits: int = 3) -> str:
 
 def make_table(report: Mapping[str, Any], output: Path) -> None:
     lines = [
-        r"\begin{tabular}{rrrcrrrrr}",
+        r"\begin{tabular}{rrrcrrrrrr}",
         r"\toprule",
     ]
     if report["profile"] == "smoke":
         lines.extend(
             (
-                r"\multicolumn{9}{c}{\emph{Smoke verification only; not main-paper evidence.}} \\",
+                r"\multicolumn{10}{c}{\emph{Smoke verification only; not main-paper evidence.}} \\",
                 r"\midrule",
             )
         )
     lines.extend(
         (
-            r"$T$ & $W/(T R_T)$ & $\rho_W$ & Premises & Regret & RHS/$T$ & CG agree. & Max width err. & Sample-CVPs \\",
+            r"$T$ & $W/(T R_T)$ & $\rho_W$ & Premises & Failed traj. (E/C/W/K) & Regret & RHS/$T$ & CG agree. & Max width err. & Sample-CVPs \\",
             r"\midrule",
         )
     )
     for item in report["exact_cg_comparisons"]:
         cell = item["cell"]
         status = "PASS" if item["all_theorem_premises_pass"] else "FAIL"
+        audit = item["theorem_failure_audit"]
+        failed = "/".join(
+            (
+                str(audit[method]["failed_trajectory_count"])
+                if method in audit
+                else "--"
+            )
+            for method in (
+                "exact_current_relative",
+                "full_cg_relative",
+                "current_welford",
+                "corrected_current",
+            )
+        )
         lines.append(
             f"{int(cell['horizon'])} & {float(cell['width_ratio']):g} & "
-            f"{float(item['analytic_rho_W']):.3g} & {status} & "
+            f"{float(item['analytic_rho_W']):.3g} & {status} & {failed} & "
             f"{_format_mean(item['exact_terminal_pseudo_regret'])} & "
             f"{_format_mean(item['exact_terminal_rhs_per_round'])} & "
             f"{_format_mean(item['action_agreement'])} & "
             f"{_format_mean(item['maximum_relative_width_squared_error'])} & "
             f"{_format_mean(item['terminal_cg_sample_cvps'])} \\\\"
+        )
+    lines.extend((r"\bottomrule", r"\end{tabular}", r"\par\smallskip"))
+    lines.extend(
+        (
+            r"\begin{tabular}{lrrp{0.53\linewidth}}",
+            r"\toprule",
+            r"Method & Failed trajectories & Failed rounds & Required event-field failures \\",
+            r"\midrule",
+        )
+    )
+    for method, audit in report["theorem_failure_audit"].items():
+        failures = [
+            f"{EVENT_FIELD_LABELS[name]}: {count}"
+            for name, count in audit["required_event_failure_round_counts"].items()
+            if int(count) > 0
+        ]
+        lines.append(
+            f"{METHOD_LABELS[method]} & {int(audit['failed_trajectory_count'])} & "
+            f"{int(audit['failed_round_count'])} & "
+            f"{'; '.join(failures) if failures else 'none'} \\\\"
         )
     lines.extend((r"\bottomrule", r"\end{tabular}"))
     output.parent.mkdir(parents=True, exist_ok=True)

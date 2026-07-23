@@ -149,6 +149,30 @@ def test_manifest_grid_artifacts_and_smoke_scope(
     assert all("seed-999" not in item["path"] for item in report["raw_inputs"])
     assert report["interval"]["unit"] == "one complete evaluation-seed trajectory"
     assert report["tuning_evaluation_seeds_disjoint"] is True
+    assert set(report["theorem_failure_audit"]) == {
+        "exact_current_relative",
+        "full_cg_relative",
+    }
+    for audit in report["theorem_failure_audit"].values():
+        assert audit["failed_trajectory_count"] == 0
+        assert audit["failed_round_count"] == 0
+        assert all(
+            count == 0
+            for count in audit["required_event_failure_round_counts"].values()
+        )
+    assert report["support_criteria"][
+        "primary_exact_and_cg_premises_pass_all_trajectories"
+    ] is True
+    assert report["support_criteria"]["dense_cg_declared_tolerances_pass"] is True
+    assert isinstance(
+        report["support_criteria"]["supports_nonavacuous_instantiation_claim"],
+        bool,
+    )
+    for group in report["groups"]:
+        assert group["premise_failure_count"] == group[
+            "premise_failure_round_count"
+        ]
+        assert group["failed_trajectory_count"] == 0
     for path in (aggregate, *artifacts):
         validate_sha256_sidecar(path)
     for path in artifacts:
