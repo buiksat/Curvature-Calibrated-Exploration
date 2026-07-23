@@ -1,6 +1,6 @@
 # Resubmission Revision Report
 
-Date: 2026-07-22
+Date: 2026-07-23
 
 Branch: `codex/closed-rates-20260721`
 
@@ -24,6 +24,12 @@ Their derived aggregates, figures, generated tables, hashes, and provenance are
 main-paper evidence; the multi-gigabyte seed-level raw trees remain ignored by
 Git.
 
+The branch tip no longer tracks any file under `results/raw/`. The cleanup
+removed 13,223 generated paths from the index while retaining all local raw
+outputs for analysis. A literal checkout now contains 328 tracked files rather
+than 13,551; compact derived aggregates, figures, tables, and hashes remain the
+versioned evidence surface.
+
 The new all-premise-pass scaling figure replaces the legacy main figure. The
 legacy failed-premise, one-step-equivalence grid is retained in the appendix as
 a diagnostic. Coverage-matched operator evaluation also ran in full. The
@@ -41,6 +47,10 @@ cache serialization.
 - `98745976` adds the spectral-tail experiment pipeline.
 - `03dfe082` adds the premise-clean rotated scaling pipeline.
 - `69c2971c` adds the real `torch.func` GGN benchmark pipeline.
+- `bda79cbf` records the completed evaluation grids and regenerated manuscript.
+- `617b5389` removes all generated raw outputs from the Git index.
+- `9b5cb592` through `a7d1ed65` make both anonymous tiers build, sanitize, and
+  validate honestly from a compact clean checkout.
 
 ## Theory Changes
 
@@ -266,6 +276,11 @@ raw-to-figure chain. Public dataset caches are optional release accelerators:
 the anonymous builder no longer requires a particular scikit-learn cache
 serialization. This is disclosed in the manuscript rather than hidden.
 
+When raw inputs are absent, release provenance retains their recorded path and
+SHA-256 with availability `not_in_compact_checkout`; public cache inputs use
+`public_dataset_cache_not_in_checkout`. The top manifest reports
+`passed_with_declared_unavailable_inputs`, not an unqualified provenance pass.
+
 ## Manuscript Changes
 
 - The abstract distinguishes conditionally sub-Gaussian data from the Gaussian
@@ -307,8 +322,17 @@ The abstract no longer cites a run count whose complete raw chain is absent.
   exact 10% class priors, all twelve methods, figures, table, and derived report.
 - The only overfull box is the pre-existing 5.12 pt style-generated abstract
   boundary. No changed theorem display causes an overfull box.
-- Final clean-checkout and anonymous-tier results are recorded after the final
-  reviewed commit below.
+- Literal detached checkout `a7d1ed65`: both Buck test targets passed; static
+  validation found 185 unique labels, 129 resolved reference targets, and 36
+  valid citation keys; forced LaTeX compilation produced 64 pages with no
+  unresolved reference or citation.
+- The clean-checkout review tier built 290 files (98.3 MiB), passed identity
+  scanning over 276 files, checked 55 provenance sidecars and 24,203 input
+  references, and checked all 28 paper inputs.
+- The clean-checkout full tier built 289 files (98.3 MiB), passed identity
+  scanning over 275 files, checked the same 55 provenance sidecars and all 28
+  paper inputs. Both manifests explicitly mark 24,133 raw and three public-data
+  cache references as unavailable rather than claiming they are released.
 
 ## Deliberately Unmade Claims
 
@@ -330,7 +354,5 @@ limitations are:
 - the absent legacy raw trees cannot be reconstructed from the compact checkout;
 - MNIST neural baselines remain local matched implementations rather than
   verified official packages;
-- the final anonymous tiers and literal clean-checkout audit must be rebuilt
-  after the reviewed commit;
 - the official target-year AISTATS style/checklist package is not available in
   this checkout and is not fabricated.
