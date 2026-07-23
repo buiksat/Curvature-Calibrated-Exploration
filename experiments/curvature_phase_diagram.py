@@ -863,6 +863,15 @@ def _summarize_rounds(
     summary["algorithmic_condition_max"] = max(
         float(row["algorithmic_condition"]) for row in rounds
     )
+    if rounds and "coverage_hits_all_actions" in rounds[0]:
+        coverage_hits = sum(int(row["coverage_hits_all_actions"]) for row in rounds)
+        coverage_total = sum(int(row["coverage_total_actions"]) for row in rounds)
+        summary["empirical_coverage_all_actions"] = (
+            float(coverage_hits / coverage_total) if coverage_total else 1.0
+        )
+        summary["average_bonus_magnitude"] = float(
+            np.mean([float(row["average_bonus_magnitude"]) for row in rounds])
+        )
     return summary
 
 
@@ -873,10 +882,16 @@ def run_online_policy(
     method: str,
     *,
     environment: Environment | None = None,
+    bonus_multiplier: float = 1.0,
+    calibration_protocol: str = "identical_theoretical_coefficient",
 ) -> PolicyResult:
     validate_config(config, require_30_seeds=False)
     if method not in METHODS:
         raise ValueError(f"unknown method {method}")
+    if not math.isfinite(bonus_multiplier) or bonus_multiplier <= 0.0:
+        raise ValueError("bonus_multiplier must be finite and positive")
+    if not calibration_protocol:
+        raise ValueError("calibration_protocol must be nonempty")
     env = environment or generate_environment(config, cell, seed)
     dimension = env.features.shape[2]
     variance = float(config["environment"]["noise_std"]) ** 2
@@ -913,16 +928,26 @@ def run_online_policy(
                 algorithmic_matrix, candidate_features
             )
             iterations, residuals = [], []
-        beta = _beta(
+        base_beta = _beta(
             config,
             cell,
             history_count=len(history),
             feature_bound=env.feature_bound,
         )
+        beta = bonus_multiplier * base_beta
         scores = means + beta * np.sqrt(np.maximum(algorithmic_widths, 0.0))
         action = int(np.argmax(scores))
         true_means = env.means[round_index]
         regret = float(np.max(true_means) - true_means[action])
+        algorithmic_scales = np.sqrt(np.maximum(algorithmic_widths, 0.0))
+        base_denominators = base_beta * algorithmic_scales
+        prediction_errors = np.abs(true_means - means)
+        required_multipliers = np.divide(
+            prediction_errors,
+            base_denominators,
+            out=np.where(prediction_errors == 0.0, 0.0, np.inf),
+            where=base_denominators > 0.0,
+        )
         record = _base_record(
             cell,
             seed=seed,
@@ -962,10 +987,19 @@ def run_online_policy(
                 "optimal_action": int(np.argmax(true_means)),
                 "pseudo_regret": regret,
                 "beta": beta,
+                "base_beta": base_beta,
+                "calibration_multiplier": bonus_multiplier,
+                "calibration_protocol": calibration_protocol,
+                "coverage_hits_all_actions": int(
+                    np.count_nonzero(required_multipliers <= bonus_multiplier)
+                ),
+                "coverage_total_actions": int(required_multipliers.size),
+                "coverage_required_multipliers": required_multipliers.tolist(),
+                "average_bonus_magnitude": float(np.mean(beta * algorithmic_scales)),
                 "feature_bound": env.feature_bound,
                 "realized_feature_max_posthoc": env.realized_feature_max,
                 "feature_bound_source": "analytic_preexecution_cell_bound",
-                "bonus_calibration": "fixed_preregistered_no_scalar_rescaling",
+                "bonus_calibration": calibration_protocol,
                 "population_effective_rank": float(
                     np.sum(env.covariance_eigenvalues)
                     / np.max(env.covariance_eigenvalues)
@@ -1081,6 +1115,17 @@ def run_common_trajectory_diagnostic(
         diagnostic_action = int(
             np.argmax(means + beta * np.sqrt(np.maximum(algorithmic_widths, 0.0)))
         )
+        algorithmic_scales = np.sqrt(np.maximum(algorithmic_widths, 0.0))
+        full_scales = np.sqrt(np.maximum(full_widths, 0.0))
+        true_means = env.means[round_index]
+        prediction_errors = np.abs(true_means - means)
+        base_denominators = beta * algorithmic_scales
+        required_multipliers = np.divide(
+            prediction_errors,
+            base_denominators,
+            out=np.where(prediction_errors == 0.0, 0.0, np.inf),
+            where=base_denominators > 0.0,
+        )
         record = _base_record(
             cell,
             seed=seed,
@@ -1116,6 +1161,15 @@ def run_common_trajectory_diagnostic(
                 "diagnostic_action": diagnostic_action,
                 "diagnostic_action_matches_logged_action": diagnostic_action
                 == logged_action,
+                "coverage_hits_all_actions": int(
+                    np.count_nonzero(required_multipliers <= 1.0)
+                ),
+                "coverage_total_actions": int(required_multipliers.size),
+                "coverage_required_multipliers": required_multipliers.tolist(),
+                "average_bonus_magnitude": float(np.mean(beta * algorithmic_scales)),
+                "reference_average_bonus_magnitude": float(
+                    np.mean(beta * full_scales)
+                ),
                 "baseline_action_digest": baseline.summary["action_digest"],
                 "scalar_rescaling_status": (
                     "posthoc_common_trajectory_diagnostic_only"

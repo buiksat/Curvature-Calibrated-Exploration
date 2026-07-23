@@ -18,13 +18,16 @@ Three P0 experiment pipelines have deterministic configurations, seed manifests,
 raw/derived separation, hash sidecars, tests, and one-command reproduction
 scripts. Their smoke profiles pass. The real-autodiff pipeline also ran
 preregistered development-pilot cells on the two target model sizes. The full
-evaluation grids have not run, so none of their smoke or pilot outputs is used as
-main-paper evidence.
+P0 evaluation grids have not run, so none of their smoke or pilot outputs is used
+as main-paper evidence. The separate coverage-matched operator grid did run in
+full and is now included as main-paper mechanism evidence.
 
 The legacy main scaling figure remains in the manuscript and is explicitly
 labelled a failed-premise, one-step-equivalence diagnostic. It has not been
 silently replaced by smoke output. Coverage-matched operator evaluation and the
-balanced MNIST benchmark remain unimplemented. The anonymous release also
+balanced MNIST pipeline are implemented; the former ran in full, while the
+latter is blocked before its smoke run because neither torchvision MNIST mirror
+resolves and no declared fixture exists. The anonymous release also
 remains blocked by historical raw inputs and Covertype fixtures absent from this
 checkout.
 
@@ -158,6 +161,54 @@ that cell. These are development measurements without evaluation-seed intervals
 and are not reported as comparative paper results. The full 10-seed evaluation
 grid and 24-accelerator-hour study were not run.
 
+### Coverage-matched operator study
+
+Files:
+
+- `experiments/run_coverage_matched_operator_study.py`
+- `experiments/make_coverage_matched_operator_artifacts.py`
+- `experiments/configs/coverage_matched_operator.yaml`
+- `scripts/reproduce_fig_coverage_matched_operator.sh`
+
+The fixed eight-cell condition/rotation/gap design compares seven operator
+labels under identical theoretical coefficients, tuning-selected 95% one-step
+coverage, and tuning-selected mean bonus magnitude. Coefficients are pooled over
+all cells and tuning seeds 2000--2019, then frozen before evaluation seeds
+2100--2149. The complete run contains 8,400 evaluation trajectories. Holm
+adjustment covers all 144 prespecified method/cell/protocol comparisons.
+
+Significant comparisons remain mixed under every protocol. The identical
+coefficient has 35 significant cells (13 lower regret for a surrogate, 22 for
+full); coverage matching has 20 (8/12); mean-bonus matching has 27 (11/16).
+Evaluation coverage under the coverage-matched protocol averages 94.6% across
+method/cell means. Current and historical full Grams are separate audit labels
+but algebraically identical in this fixed-feature linear environment. LO-FI is
+not included because no compatible recursive precision implementation exists in
+the repository. These independently executed policy differences are not given a
+causal operator interpretation.
+
+### Balanced MNIST benchmark
+
+Files:
+
+- `experiments/run_mnist_contextual_benchmark.py`
+- `experiments/make_mnist_contextual_benchmark_artifacts.py`
+- `experiments/configs/mnist_contextual_benchmark.yaml`
+- `scripts/reproduce_fig_mnist_contextual_benchmark.sh`
+
+The pipeline fixes disjoint supervised-pretraining, tuning, and evaluation
+splits, tuning seeds 3000--3009, evaluation seeds 3100--3119, equal four-cell
+tuning budgets, `T=5000`, and twelve explicitly local method implementations.
+The all-layer tanh reward model has manually derived full-parameter Jacobians;
+finite differences validate them. Current full GGN recomputes every historical
+selected Jacobian rather than silently substituting a window. Tests execute all
+twelve methods on a balanced synthetic fixture, but that fixture is test-only.
+
+No MNIST outcome is reported. The real-data smoke attempt stopped in
+`torchvision.datasets.MNIST`: both configured mirrors failed DNS, and a search
+found no declared repository or host fixture. The code does not substitute
+sklearn digits or synthetic images under the MNIST name.
+
 ## Reproducibility
 
 Raw outputs from new runs are ignored under `results/raw/`; derived artifacts
@@ -194,6 +245,10 @@ release tier. This is disclosed in the manuscript rather than bypassed.
   controlling feature drift and spectral tail during unrestricted training.
 - Autodiff language now says smoke/development pilots ran but the evaluation
   systems grid did not.
+- The main mechanism figure reports the full coverage-matched grid and the text
+  reports all Holm-adjusted direction counts, including cells unfavorable to
+  full curvature.
+- The missing-MNIST status is explicit in the experiment and availability text.
 
 The abstract makes no claim based on the unrun new grids and no longer cites a
 run count whose complete raw chain is absent.
@@ -202,10 +257,10 @@ run count whose complete raw chain is absent.
 
 - `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`:
   2 targets passed, 0 failed.
-- `buck2 run //paper:validate`: 170 unique labels, 122 resolved reference
+- `buck2 run //paper:validate`: 173 unique labels, 124 resolved reference
   targets, 36 valid citation keys, no blockers.
 - `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
-  references and citations stabilized, and `paper/main.pdf` has 46 pages.
+  references and citations stabilized, and `paper/main.pdf` has 48 pages.
 - The only overfull box is the pre-existing 5.12 pt style-generated abstract
   boundary. No changed theorem display causes an overfull box.
 
@@ -220,6 +275,7 @@ run count whose complete raw chain is absent.
 - No uniform regret advantage for full curvature.
 - No causal operator interpretation of independently executed policy regret.
 - No complete anonymous or clean raw-to-figure release claim.
+- No MNIST result from the synthetic unit-test fixture.
 
 ## Remaining Work
 
@@ -232,11 +288,13 @@ P0 work still requiring substantial compute or external inputs:
 - restore legacy raw inputs or explicitly remove those legacy main-paper claims;
 - rebuild and identity-scan the anonymous release from a literal clean checkout.
 
-P1 work not implemented:
+P1 work still blocked or incomplete:
 
-- coverage-matched and mean-bonus-matched operator comparisons;
-- balanced MNIST contextual benchmark with faithful stronger baselines;
-- matched-compute tuning and multiple-comparison analysis.
+- restore a declared MNIST fixture or network access, then run the full balanced
+  benchmark; all neural baselines are currently local matched implementations,
+  not verified official reproductions;
+- add a compatible LO-FI implementation to the coverage study;
+- run matched-compute tuning for MNIST once real data are available.
 
 External submission prerequisites still missing are the official target-year
 AISTATS style/checklist package and the data required by the release builder.

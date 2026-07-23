@@ -36,10 +36,12 @@ python_library(
         "make_certification_audit",
         "make_certified_tanh_artifact",
         "make_certified_scaling_artifacts",
+        "make_coverage_matched_operator_artifacts",
         "make_closed_rate_artifact",
         "make_covertype_horizon_artifact",
         "make_curvature_phase_diagram_artifact",
         "make_linear_bound_artifact",
+        "make_mnist_contextual_benchmark_artifacts",
         "make_offdiagonal_witness_artifact",
         "make_offdiagonal_witness_paper_artifacts",
         "make_paper_artifacts",
@@ -50,6 +52,7 @@ python_library(
         "run_balanced_benchmark",
         "run_certified_tanh",
         "run_certified_scaling",
+        "run_coverage_matched_operator_study",
         "run_cg_accuracy",
         "run_covertype",
         "run_linear_audit",
@@ -100,6 +103,15 @@ buck_sh_binary(
     resources = [
         "run_autodiff_ggn_benchmark.py",
         "run_autodiff_ggn_benchmark_conda.sh",
+        "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
+    ],
+)
+
+buck_sh_binary(
+    name = "run_conda_module",
+    main = "run_conda_module.sh",
+    resources = [
+        "run_conda_module.sh",
         "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
     ],
 )

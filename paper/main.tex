@@ -908,6 +908,32 @@ seven.  Thus fidelity does not order regret.  The separate linear-Gram witness
 changes the diagonal policy's action, but is existential rather than a dominance
 result (\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).
 
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/coverage_matched_mechanism.pdf}
+  \caption{Coverage-matched operator mechanism map.  Entries are mean
+  method-minus-current-full-GGN cumulative pseudo-regret in all eight
+  preregistered condition/rotation/gap cells (50 evaluation seeds).  Scalar
+  coefficients are either identical, selected on tuning seeds 2000--2019 for
+  95\% one-step coverage, or selected there to match mean bonus magnitude;
+  evaluation seeds 2100--2149 are untouched during selection.  Policies execute
+  independently, so differences are descriptive rather than causal operator
+  effects.}
+  \label{fig:coverage-matched-mechanism}
+\end{figure*}
+
+Scalar calibration changes conclusions but does not induce a uniform ordering.
+Across the 48 surrogate--cell comparisons per protocol, Holm correction over the
+full 144-comparison family leaves 35 significant under the identical coefficient
+(13 favor a surrogate, 22 favor full), 20 under coverage matching (8/12), and 27
+under mean-bonus matching (11/16).  Evaluation coverage under the tuning-selected
+95\% protocol averages 94.6\% across method--cell means and ranges from 85.6\% to
+99.2\%.  Current and historical full Grams coincide in this fixed-feature linear
+environment; their separate labels audit the protocol rather than representation
+drift.  The frozen coefficients are in \Cref{tab:coverage-matched-calibration},
+and full coverage/decision heatmaps are in
+\Cref{fig:coverage-matched-heatmaps}.
+
 The balanced nonlinear benchmark uses separate tuning and 30 evaluation seeds;
 local NeuralUCB is the historical-time full-gradient-Gram comparison, alongside
 NeuralTS, NeuralLinear, last-layer, diagonal, linear, greedy, and context-free
@@ -918,6 +944,12 @@ $[14.62,17.61]$, LinUCB $10.58$ $[9.82,11.33]$, NeuralLinear $10.01$
 $[9.33,10.68]$, and frozen last-layer UCB $7.44$ $[6.90,7.99]$.  Context-free
 controls have regret $90.35$ and $89.40$; the sanity check passes, but the
 experiment is negative evidence for full-curvature superiority.
+
+A separate balanced-MNIST pipeline fixes disjoint supervised-pretraining,
+tuning, and online-evaluation splits and the requested local baseline set, but
+has no reported result: neither torchvision mirror resolves from this execution
+environment and no declared MNIST fixture is present.  We do not substitute a
+different image dataset under the MNIST label.
 
 \subsection{Audits and systems scope}
 All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
@@ -944,8 +976,8 @@ projected-Gram special case where full-dimensional CG is unnecessary.  Neither
 result is an unrestricted neural-training guarantee.  Empirically, the executed
 studies test width and action-order preservation rather than demonstrate
 performance: the tanh bound is vacuous, the legacy scaling grid exposes failed
-envelopes, full curvature is not uniformly preferred, and Covertype fails its
-baseline check.
+envelopes, coverage and bonus matching still produce mixed operator comparisons,
+full curvature is not uniformly preferred, and Covertype fails its baseline check.
 
 \paragraph{Limitations.}
 Theory assumes Gaussian squared loss, enumeration, realizability, smoothness,
@@ -3848,6 +3880,36 @@ candidate-gradient alignment with retained and discarded eigenspaces, global and
 action-set transfer, effective rank, and condition number.  Paired intervals are
 method-minus-exact-full; they are descriptive and unadjusted across cells.
 
+\paragraph{Coverage-matched extension.}
+The extension retains the same eight cells and operator settings, but adds
+tuning seeds 2000--2019 and evaluation seeds 2100--2149.  Coefficients are
+pooled over every tuning cell, never selected per evaluation cell.  The three
+protocols use an identical theoretical coefficient, the empirical 95th
+percentile of all one-step prediction-error/width ratios, or the ratio needed to
+match the full operator's mean bonus on common tuning trajectories.  The latter
+two coefficients are frozen before any evaluation run.  Holm adjustment is over
+all $3\times8\times6=144$ prespecified surrogate comparisons.  Because this is
+a fixed-feature linear model, current and historical full-Gram rows are
+algebraically identical; LO-FI is not included because the repository has no
+compatible recursive precision implementation.
+
+\begin{table}[t]
+\centering\small
+\input{../tables/generated/coverage_matched_calibration.tex}
+\caption{Tuning-selected scalar multipliers for the coverage-matched operator
+study.  Evaluation outcomes are not used to select these values.}
+\label{tab:coverage-matched-calibration}
+\end{table}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/coverage_matched_heatmaps.pdf}
+  \caption{Full-grid evaluation coverage and top-action disagreement under all
+  three frozen calibration protocols.  These are independently executed policy
+  diagnostics, not causal operator effects.}
+  \label{fig:coverage-matched-heatmaps}
+\end{figure*}
+
 \paragraph{Balanced contextual benchmark.}
 Normalized Rademacher contexts have dimension four, five available actions, and
 Gaussian noise $0.10$; exact enumeration of the 16 contexts verifies that every
@@ -4367,6 +4429,8 @@ tier is built; the review builder lacks
 builder sanitizes identities and validates hashes/provenance.  Covertype is CC BY
 4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}.  The autodiff
 study status is \texttt{development\_pilot}; no evaluation result is claimed.
-No current bundle or identifying URL is claimed.
+The balanced-MNIST study is \texttt{blocked\_missing\_dataset}: both configured
+torchvision mirrors fail DNS and no repository fixture exists.  No current
+bundle or identifying URL is claimed.
 
 \end{document}

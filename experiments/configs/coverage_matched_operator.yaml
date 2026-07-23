@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "name": "coverage_matched_operator",
+  "description": "Coverage- and bonus-matched operator comparison on the prespecified condition/rotation/gap mechanism grid.",
+  "base": {
+    "rounds": 30,
+    "study": {
+      "phase": "evaluation",
+      "tuning_enabled": false,
+      "cell_selection": "none_preregistered_all_cells",
+      "evaluation_seeds": [
+        2100,2101,2102,2103,2104,2105,2106,2107,2108,2109,
+        2110,2111,2112,2113,2114,2115,2116,2117,2118,2119,
+        2120,2121,2122,2123,2124,2125,2126,2127,2128,2129,
+        2130,2131,2132,2133,2134,2135,2136,2137,2138,2139,
+        2140,2141,2142,2143,2144,2145,2146,2147,2148,2149
+      ]
+    },
+    "seed_sets": {
+      "tuning": [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019],
+      "evaluation": [
+        2100,2101,2102,2103,2104,2105,2106,2107,2108,2109,
+        2110,2111,2112,2113,2114,2115,2116,2117,2118,2119,
+        2120,2121,2122,2123,2124,2125,2126,2127,2128,2129,
+        2130,2131,2132,2133,2134,2135,2136,2137,2138,2139,
+        2140,2141,2142,2143,2144,2145,2146,2147,2148,2149
+      ]
+    },
+    "calibration": {
+      "protocols": ["identical_theoretical", "matched_95_coverage", "matched_mean_bonus"],
+      "coverage_target": 0.95,
+      "pooling": "all_prespecified_cells_and_tuning_seeds",
+      "selection_data": "tuning_common_exact_full_trajectories_only"
+    },
+    "semantic_methods": {
+      "current_full_ggn": "full_cg",
+      "historical_frozen_gram": "exact_full",
+      "diagonal": "diagonal",
+      "block_kfac": "block_diagonal",
+      "rank_r": "low_rank_lanczos",
+      "window": "unrescaled_window",
+      "stale_refresh": "stale_refresh"
+    },
+    "design": {
+      "kind": "balanced_eight_cell_two_level_fractional_factorial",
+      "base_factors": ["active_spectrum_condition_number", "rotation_degrees", "action_gap"],
+      "active_spectrum_condition_definition": "largest_over_smallest_nonzero_population_covariance_eigenvalue",
+      "full_population_covariance_condition": "infinite_when_effective_rank_is_below_dimension",
+      "generators": {"nuisance_strength":"active_condition_x_rotation","effective_rank":"active_condition_x_gap","damping":"rotation_x_gap"},
+      "estimand": "descriptive_main_effect_mechanism_map",
+      "aliased_interactions": true,
+      "evaluation_cell_search": false,
+      "full_win_selection": false
+    },
+    "environment": {
+      "kind": "bounded_linear_common_context_action_offsets",
+      "dimension": 10,
+      "action_count": 4,
+      "rounds": 30,
+      "noise_std": 0.2,
+      "context_distribution": "normalized_rotated_rademacher",
+      "true_parameter": "unit_first_coordinate",
+      "optimal_action_structure": "arm_0_fixed_by_design",
+      "scope": "curvature_mechanism_isolation_not_general_contextual_benchmark",
+      "representation_drift": {"supported":false,"status":"not_run_fixed_zero","reason":"fixed bounded linear representation"}
+    },
+    "policy": {"delta":0.05,"bonus_scale":1.0,"full_action_enumeration":true,"tie_breaking":"lowest_index","hyperparameter_tuning":"scalar_calibration_on_tuning_only"},
+    "methods": ["exact_full","full_cg","diagonal","block_diagonal","low_rank_lanczos","unrescaled_window","stale_refresh"],
+    "method_options": {"cg":{"relative_residual":1e-10,"max_iterations":20},"block_size":2,"lanczos_rank":3,"window_size":8,"stale_period":5},
+    "preregistered_cells": [
+      {"cell_id":"ffd_000","active_spectrum_condition_number":3.0,"rotation_degrees":0.0,"action_gap":0.15,"nuisance_strength":1.2,"effective_rank":8,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_001","active_spectrum_condition_number":3.0,"rotation_degrees":0.0,"action_gap":0.50,"nuisance_strength":1.2,"effective_rank":3,"damping":0.5,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_010","active_spectrum_condition_number":3.0,"rotation_degrees":60.0,"action_gap":0.15,"nuisance_strength":0.4,"effective_rank":8,"damping":0.5,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_011","active_spectrum_condition_number":3.0,"rotation_degrees":60.0,"action_gap":0.50,"nuisance_strength":0.4,"effective_rank":3,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_100","active_spectrum_condition_number":50.0,"rotation_degrees":0.0,"action_gap":0.15,"nuisance_strength":0.4,"effective_rank":3,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_101","active_spectrum_condition_number":50.0,"rotation_degrees":0.0,"action_gap":0.50,"nuisance_strength":0.4,"effective_rank":8,"damping":0.5,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_110","active_spectrum_condition_number":50.0,"rotation_degrees":60.0,"action_gap":0.15,"nuisance_strength":1.2,"effective_rank":3,"damping":0.5,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
+      {"cell_id":"ffd_111","active_spectrum_condition_number":50.0,"rotation_degrees":60.0,"action_gap":0.50,"nuisance_strength":1.2,"effective_rank":8,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"}
+    ],
+    "output": {"write_round_records":true,"aggregation_ready_jsonl":true,"expected_full_runtime_seconds":600},
+    "provenance": {"packages":["numpy","scipy","matplotlib"],"posthoc_cell_filtering":false}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 3,
+      "environment": {"rounds":3},
+      "study": {"evaluation_seeds":[2100,2101]},
+      "seed_sets": {"tuning":[2000,2001],"evaluation":[2100,2101]},
+      "preregistered_cells": [
+        {"cell_id":"ffd_000","active_spectrum_condition_number":3.0,"rotation_degrees":0.0,"action_gap":0.15,"nuisance_strength":1.2,"effective_rank":8,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"}
+      ]
+    },
+    "full": {}
+  }
+}
