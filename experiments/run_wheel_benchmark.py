@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 import hashlib
 import json
@@ -932,6 +933,77 @@ def save_run(
     return destination
 
 
+def _execute_run_task(
+    task: tuple[
+        dict[str, Any],
+        str,
+        int,
+        Cell,
+        str,
+        float,
+        float,
+        str,
+        bool,
+    ]
+) -> WheelRun:
+    (
+        config,
+        method,
+        seed,
+        cell,
+        phase,
+        ridge,
+        bonus,
+        destination,
+        overwrite,
+    ) = task
+    run = run_policy(
+        config,
+        method,
+        seed,
+        cell=cell,
+        phase=phase,
+        ridge=ridge,
+        bonus_scale=bonus,
+    )
+    save_run(run, config, destination, overwrite=overwrite)
+    return WheelRun(
+        method=run.method,
+        cell=run.cell,
+        seed=run.seed,
+        phase=run.phase,
+        ridge=run.ridge,
+        bonus_scale=run.bonus_scale,
+        records=(),
+        summary=run.summary,
+    )
+
+
+def _execute_tasks(
+    tasks: Sequence[
+        tuple[
+            dict[str, Any],
+            str,
+            int,
+            Cell,
+            str,
+            float,
+            float,
+            str,
+            bool,
+        ]
+    ],
+    *,
+    workers: int,
+) -> tuple[WheelRun, ...]:
+    if workers <= 0:
+        raise ValueError("workers must be positive")
+    if workers == 1:
+        return tuple(_execute_run_task(task) for task in tasks)
+    with ProcessPoolExecutor(max_workers=workers) as executor:
+        return tuple(executor.map(_execute_run_task, tasks, chunksize=1))
+
+
 def run_experiment(
     config: Mapping[str, Any],
     *,
@@ -939,6 +1011,7 @@ def run_experiment(
     output_root: str | Path,
     tuning_selection: str | Path | Mapping[str, Any] | None = None,
     overwrite: bool = False,
+    workers: int = 1,
 ) -> tuple[WheelRun, ...]:
     validate_wheel_config(config)
     if seed_set not in {"tuning", "evaluation"}:
@@ -946,19 +1019,11 @@ def run_experiment(
     root = Path(output_root)
     runs: list[WheelRun] = []
     if seed_set == "tuning":
+        tasks = []
         for cell in cells(config):
             for method in METHODS:
                 for ridge, bonus in hyperparameter_grid(config, method):
                     for seed in get_seed_set(config, "tuning"):
-                        run = run_policy(
-                            config,
-                            method,
-                            seed,
-                            cell=cell,
-                            phase="tuning",
-                            ridge=ridge,
-                            bonus_scale=bonus,
-                        )
                         run_config = copy.deepcopy(dict(config))
                         run_config["execution"] = {
                             "seed_set": "tuning",
@@ -973,19 +1038,28 @@ def run_experiment(
                             },
                         }
                         setting = f"ridge-{ridge:g}_bonus-{bonus:g}"
-                        save_run(
-                            run,
-                            run_config,
-                            root
-                            / str(config["profile"])
-                            / "tuning"
-                            / cell.token
-                            / method
-                            / setting
-                            / f"seed-{seed}",
-                            overwrite=overwrite,
+                        tasks.append(
+                            (
+                                run_config,
+                                method,
+                                seed,
+                                cell,
+                                "tuning",
+                                ridge,
+                                bonus,
+                                (
+                                    root
+                                    / str(config["profile"])
+                                    / "tuning"
+                                    / cell.token
+                                    / method
+                                    / setting
+                                    / f"seed-{seed}"
+                                ).as_posix(),
+                                overwrite,
+                            )
                         )
-                        runs.append(run)
+        runs.extend(_execute_tasks(tasks, workers=workers))
         artifact = build_tuning_selection(config, runs)
         selection_path = (
             Path(tuning_selection)
@@ -1004,19 +1078,11 @@ def run_experiment(
     )
     selected = validate_tuning_selection(config, artifact)
     selection_sha = hashlib.sha256(canonical_json(artifact).encode("ascii")).hexdigest()
+    tasks = []
     for cell in cells(config):
         for method in METHODS:
             ridge, bonus = selected[method]
             for seed in get_seed_set(config, "evaluation"):
-                run = run_policy(
-                    config,
-                    method,
-                    seed,
-                    cell=cell,
-                    phase="evaluation",
-                    ridge=ridge,
-                    bonus_scale=bonus,
-                )
                 run_config = copy.deepcopy(dict(config))
                 run_config["execution"] = {
                     "seed_set": "evaluation",
@@ -1031,18 +1097,27 @@ def run_experiment(
                     "evaluation_rerun_from_scratch": True,
                     "evaluation_outcomes_used_for_tuning": False,
                 }
-                save_run(
-                    run,
-                    run_config,
-                    root
-                    / str(config["profile"])
-                    / "evaluation"
-                    / cell.token
-                    / method
-                    / f"seed-{seed}",
-                    overwrite=overwrite,
+                tasks.append(
+                    (
+                        run_config,
+                        method,
+                        seed,
+                        cell,
+                        "evaluation",
+                        ridge,
+                        bonus,
+                        (
+                            root
+                            / str(config["profile"])
+                            / "evaluation"
+                            / cell.token
+                            / method
+                            / f"seed-{seed}"
+                        ).as_posix(),
+                        overwrite,
+                    )
                 )
-                runs.append(run)
+    runs.extend(_execute_tasks(tasks, workers=workers))
     return tuple(runs)
 
 
@@ -1054,6 +1129,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--output-root")
     parser.add_argument("--tuning-selection")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args(argv)
     config = load_config(args.config, profile=args.profile)
     runs = run_experiment(
@@ -1062,6 +1138,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_root=args.output_root or str(config["output_root"]),
         tuning_selection=args.tuning_selection,
         overwrite=args.overwrite,
+        workers=args.workers,
     )
     print(canonical_json({"run_count": len(runs)}))
     return 0

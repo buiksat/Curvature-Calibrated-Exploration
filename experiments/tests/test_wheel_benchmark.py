@@ -16,6 +16,7 @@ from experiments.run_wheel_benchmark import (
     METHODS,
     WheelRun,
     _control_action,
+    _execute_tasks,
     build_tuning_selection,
     cells,
     run_experiment,
@@ -294,6 +295,88 @@ def test_tuning_selection_uses_one_pooled_argmin_across_all_deltas() -> None:
     assert first["pooled_mean_cumulative_pseudo_regret"] == 50.0
 
 
+def test_workers_two_matches_serial_pooled_selection_and_surfaces_errors(
+    tmp_path: Path,
+) -> None:
+    config = _smoke_config()
+    config["tuning_rounds"] = 4
+    serial_selection = tmp_path / "serial" / "smoke" / "selection.json"
+    parallel_selection = tmp_path / "parallel" / "smoke" / "selection.json"
+    serial = run_experiment(
+        config,
+        seed_set="tuning",
+        output_root=tmp_path / "serial",
+        tuning_selection=serial_selection,
+        workers=1,
+    )
+    parallel = run_experiment(
+        config,
+        seed_set="tuning",
+        output_root=tmp_path / "parallel",
+        tuning_selection=parallel_selection,
+        workers=2,
+    )
+    direct = run_policy(
+        config,
+        serial[0].method,
+        serial[0].seed,
+        cell=serial[0].cell,
+        phase=serial[0].phase,
+        ridge=serial[0].ridge,
+        bonus_scale=serial[0].bonus_scale,
+    )
+
+    def deterministic_summary(run: WheelRun) -> dict[str, object]:
+        return {
+            key: value
+            for key, value in run.summary.items()
+            if not key.endswith(("_seconds", "_bytes"))
+        }
+
+    assert all(run.records == () for run in serial)
+    assert all(run.records == () for run in parallel)
+    assert deterministic_summary(direct) == deterministic_summary(serial[0])
+    assert deterministic_summary(direct) == deterministic_summary(parallel[0])
+    assert serial_selection.read_bytes() == parallel_selection.read_bytes()
+    assert [
+        (
+            run.cell.delta,
+            run.method,
+            run.seed,
+            run.ridge,
+            run.bonus_scale,
+            run.summary["cumulative_pseudo_regret"],
+            run.summary["environment_stream_sha256"],
+        )
+        for run in serial
+    ] == [
+        (
+            run.cell.delta,
+            run.method,
+            run.seed,
+            run.ridge,
+            run.bonus_scale,
+            run.summary["cumulative_pseudo_regret"],
+            run.summary["environment_stream_sha256"],
+        )
+        for run in parallel
+    ]
+
+    bad_task = (
+        config,
+        "not_a_wheel_method",
+        2000,
+        cells(config)[0],
+        "tuning",
+        1.0,
+        0.5,
+        (tmp_path / "bad-worker-run").as_posix(),
+        False,
+    )
+    with pytest.raises(ValueError, match="unknown method"):
+        _execute_tasks([bad_task], workers=2)
+
+
 def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
     tmp_path: Path,
 ) -> None:
@@ -304,6 +387,7 @@ def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
         seed_set="tuning",
         output_root=tmp_path,
         tuning_selection=selection_path,
+        workers=2,
     )
     expected_tuning = (
         len(cells(config)) * len(METHODS) * len(get_seed_set(config, "tuning"))
@@ -319,6 +403,7 @@ def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
         seed_set="evaluation",
         output_root=tmp_path,
         tuning_selection=selection_path,
+        workers=2,
     )
     expected_evaluation = (
         len(cells(config))
