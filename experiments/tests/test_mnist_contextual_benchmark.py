@@ -9,6 +9,7 @@ from experiments.run_mnist_contextual_benchmark import (
     ACTION_COUNT,
     MNISTData,
     ManualNetwork,
+    _balanced_indices,
     run_policy,
     validate_mnist_config,
 )
@@ -54,6 +55,20 @@ def test_mnist_config_has_preregistered_disjoint_seeds() -> None:
     validate_mnist_config(config, full=True)
     assert config["seed_sets"]["tuning"] == list(range(3000, 3010))
     assert config["seed_sets"]["evaluation"] == list(range(3100, 3120))
+
+
+def test_balanced_indices_are_disjoint_and_capacity_aware() -> None:
+    labels = np.repeat(np.arange(ACTION_COUNT, dtype=np.int64), 12)
+    labels = np.concatenate((labels, np.full(3, ACTION_COUNT - 1, dtype=np.int64)))
+    rng = np.random.Generator(np.random.PCG64(19))
+    first = _balanced_indices(labels, 100, rng)
+    remaining = np.setdiff1d(np.arange(labels.size, dtype=np.int64), first)
+    second = _balanced_indices(labels, 20, rng, candidates=remaining)
+
+    assert np.intersect1d(first, second).size == 0
+    assert np.max(np.bincount(labels[first], minlength=ACTION_COUNT)) == 10
+    assert second.size == 20
+    assert np.unique(second).size == second.size
 
 
 def test_all_local_methods_execute_on_balanced_fixture() -> None:

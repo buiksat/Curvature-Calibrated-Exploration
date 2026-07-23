@@ -26,10 +26,11 @@ The legacy main scaling figure remains in the manuscript and is explicitly
 labelled a failed-premise, one-step-equivalence diagnostic. It has not been
 silently replaced by smoke output. Coverage-matched operator evaluation and the
 balanced MNIST pipeline are implemented; the former ran in full, while the
-latter is blocked before its smoke run because neither torchvision MNIST mirror
-resolves and no declared fixture exists. The anonymous release also
-remains blocked by historical raw inputs and Covertype fixtures absent from this
-checkout.
+latter now passes its real-data smoke profile after the canonical archives were
+retrieved through the approved forward proxy. The full MNIST grid has not run,
+and the dataset cache is intentionally not tracked by Git. The anonymous release
+also remains blocked by historical raw inputs and Covertype fixtures absent from
+this checkout.
 
 ## Commits
 
@@ -196,18 +197,21 @@ Files:
 - `experiments/configs/mnist_contextual_benchmark.yaml`
 - `scripts/reproduce_fig_mnist_contextual_benchmark.sh`
 
-The pipeline fixes disjoint supervised-pretraining, tuning, and evaluation
-splits, tuning seeds 3000--3009, evaluation seeds 3100--3119, equal four-cell
-tuning budgets, `T=5000`, and twelve explicitly local method implementations.
+The pipeline fixes deterministic label-stratified, disjoint
+supervised-pretraining, tuning, and evaluation splits, tuning seeds 3000--3009,
+evaluation seeds 3100--3119, equal four-cell tuning budgets, `T=5000`, and
+twelve explicitly local method implementations.
 The all-layer tanh reward model has manually derived full-parameter Jacobians;
 finite differences validate them. Current full GGN recomputes every historical
 selected Jacobian rather than silently substituting a window. Tests execute all
 twelve methods on a balanced synthetic fixture, but that fixture is test-only.
 
-No MNIST outcome is reported. The real-data smoke attempt stopped in
-`torchvision.datasets.MNIST`: both configured mirrors failed DNS, and a search
-found no declared repository or host fixture. The code does not substitute
-sklearn digits or synthetic images under the MNIST name.
+No full MNIST outcome is reported. The four canonical archives from
+`storage.googleapis.com/cvdf-datasets/mnist` passed their published MD5 checks
+and IDX header checks. The real-data smoke profile completed all twelve methods
+and reported a 10% context-free optimum for both tuning and evaluation. Smoke
+outputs are not used as paper evidence, and the code does not substitute sklearn
+digits or synthetic images under the MNIST name.
 
 ## Reproducibility
 
@@ -248,7 +252,8 @@ release tier. This is disclosed in the manuscript rather than bypassed.
 - The main mechanism figure reports the full coverage-matched grid and the text
   reports all Holm-adjusted direction counts, including cells unfavorable to
   full curvature.
-- The missing-MNIST status is explicit in the experiment and availability text.
+- The MNIST text distinguishes the validated real-data smoke path from the unrun
+  full benchmark.
 
 The abstract makes no claim based on the unrun new grids and no longer cites a
 run count whose complete raw chain is absent.
@@ -261,6 +266,10 @@ run count whose complete raw chain is absent.
   targets, 36 valid citation keys, no blockers.
 - `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
   references and citations stabilized, and `paper/main.pdf` has 48 pages.
+- `buck2 run //tools:pytest_runner -- -q
+  experiments/tests/test_mnist_contextual_benchmark.py`: 4 tests passed.
+- `PROFILE=smoke scripts/reproduce_fig_mnist_contextual_benchmark.sh`: passed on
+  canonical MNIST, including all twelve methods and artifact generation.
 - The only overfull box is the pre-existing 5.12 pt style-generated abstract
   boundary. No changed theorem display causes an overfull box.
 - A detached literal checkout at `928f2a64` passed both Buck test targets and a
@@ -282,7 +291,7 @@ run count whose complete raw chain is absent.
 - No uniform regret advantage for full curvature.
 - No causal operator interpretation of independently executed policy regret.
 - No complete anonymous or clean raw-to-figure release claim.
-- No MNIST result from the synthetic unit-test fixture.
+- No full MNIST result or claim from the real-data smoke output.
 
 ## Remaining Work
 
@@ -297,11 +306,11 @@ P0 work still requiring substantial compute or external inputs:
 
 P1 work still blocked or incomplete:
 
-- restore a declared MNIST fixture or network access, then run the full balanced
-  benchmark; all neural baselines are currently local matched implementations,
-  not verified official reproductions;
+- run the full balanced MNIST benchmark and provide a redistributable fixture or
+  source manifest for clean-checkout reproduction; all neural baselines are
+  currently local matched implementations, not verified official reproductions;
 - add a compatible LO-FI implementation to the coverage study;
-- run matched-compute tuning for MNIST once real data are available.
+- run matched-compute tuning for MNIST using the now-available canonical data.
 
 External submission prerequisites still missing are the official target-year
 AISTATS style/checklist package and the data required by the release builder.

@@ -946,10 +946,10 @@ controls have regret $90.35$ and $89.40$; the sanity check passes, but the
 experiment is negative evidence for full-curvature superiority.
 
 A separate balanced-MNIST pipeline fixes disjoint supervised-pretraining,
-tuning, and online-evaluation splits and the requested local baseline set, but
-has no reported result: neither torchvision mirror resolves from this execution
-environment and no declared MNIST fixture is present.  We do not substitute a
-different image dataset under the MNIST label.
+tuning, and online-evaluation splits and the requested local baseline set.  Its
+canonical-data smoke profile passes, but the full tuning and evaluation grid has
+not run, so we report no MNIST outcome.  We do not substitute a different image
+dataset under the MNIST label or use smoke output as paper evidence.
 
 \subsection{Audits and systems scope}
 All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
@@ -4429,8 +4429,9 @@ tier is built; the review builder lacks
 builder sanitizes identities and validates hashes/provenance.  Covertype is CC BY
 4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}.  The autodiff
 study status is \texttt{development\_pilot}; no evaluation result is claimed.
-The balanced-MNIST study is \texttt{blocked\_missing\_dataset}: both configured
-torchvision mirrors fail DNS and no repository fixture exists.  No current
-bundle or identifying URL is claimed.
+The balanced-MNIST study is \texttt{smoke\_validated}: canonical archives pass
+their published checksums and the real-data smoke pipeline completes, but the
+full grid has not run and the ignored local cache is not a clean-checkout
+fixture.  No current bundle or identifying URL is claimed.
 
 \end{document}

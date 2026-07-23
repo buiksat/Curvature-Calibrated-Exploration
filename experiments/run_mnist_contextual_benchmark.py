@@ -146,6 +146,50 @@ def _dataset_arrays(dataset: Any) -> tuple[NDArray[np.uint8], NDArray[np.int64]]
     return np.asarray(dataset.data.cpu().numpy()), np.asarray(dataset.targets.cpu().numpy(), dtype=np.int64)
 
 
+def _balanced_indices(
+    labels: NDArray[np.int64],
+    count: int,
+    rng: np.random.Generator,
+    *,
+    candidates: NDArray[np.int64] | None = None,
+) -> NDArray[np.int64]:
+    """Draw a deterministic near-uniform class sample without replacement."""
+    available = (
+        np.arange(labels.size, dtype=np.int64)
+        if candidates is None
+        else np.asarray(candidates, dtype=np.int64)
+    )
+    if count < 0 or count > available.size:
+        raise ValueError("balanced sample size exceeds the candidate pool")
+
+    class_pools = [
+        rng.permutation(available[labels[available] == action])
+        for action in range(ACTION_COUNT)
+    ]
+    base, remainder = divmod(count, ACTION_COUNT)
+    quotas = np.asarray(
+        [base + int(action < remainder) for action in range(ACTION_COUNT)],
+        dtype=np.int64,
+    )
+    capacities = np.asarray([pool.size for pool in class_pools], dtype=np.int64)
+    quotas = np.minimum(quotas, capacities)
+    deficit = count - int(np.sum(quotas))
+    while deficit:
+        eligible = np.flatnonzero(quotas < capacities)
+        if eligible.size == 0:
+            raise ValueError("class capacities cannot satisfy the requested sample size")
+        for action in eligible:
+            if deficit == 0:
+                break
+            quotas[action] += 1
+            deficit -= 1
+
+    selected = np.concatenate(
+        [pool[: int(quota)] for pool, quota in zip(class_pools, quotas, strict=True)]
+    )
+    return np.asarray(rng.permutation(selected), dtype=np.int64)
+
+
 def load_mnist_data(config: dict[str, Any]) -> MNISTData:
     try:
         from torchvision.datasets import MNIST
@@ -157,7 +201,6 @@ def load_mnist_data(config: dict[str, Any]) -> MNISTData:
     train_x_raw, train_y = _dataset_arrays(train)
     test_x_raw, test_y = _dataset_arrays(test)
     rng = np.random.Generator(np.random.PCG64(20260722))
-    train_order = rng.permutation(train_y.size)
     pixel_indices = np.sort(
         rng.choice(28 * 28, size=int(config["input_dimension"]), replace=False)
     ).astype(np.int64)
@@ -171,9 +214,14 @@ def load_mnist_data(config: dict[str, Any]) -> MNISTData:
         flat = raw.reshape(raw.shape[0], -1)[:, pixel_indices].astype(np.float64) / 255.0
         return np.asarray((flat - 0.1307) / 0.3081, dtype=np.float64)
 
-    pre_indices = train_order[:pre_count]
-    tune_indices = train_order[pre_count : pre_count + tuning_count]
-    evaluation_indices = np.arange(evaluation_count, dtype=np.int64)
+    pre_indices = _balanced_indices(train_y, pre_count, rng)
+    remaining_train = np.setdiff1d(
+        np.arange(train_y.size, dtype=np.int64), pre_indices, assume_unique=True
+    )
+    tune_indices = _balanced_indices(
+        train_y, tuning_count, rng, candidates=remaining_train
+    )
+    evaluation_indices = _balanced_indices(test_y, evaluation_count, rng)
     pre_x = project(train_x_raw, pre_indices)
     tune_x = project(train_x_raw, tune_indices)
     evaluation_x = project(test_x_raw, evaluation_indices)
