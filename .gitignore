@@ -52,13 +52,10 @@ experiments/results/*
 !experiments/results/.gitkeep
 results/logs/
 
-# Preserve derived artifacts, but keep generated raw experiment output out of
-# Git. Raw files already present in repository history remain tracked; new runs
-# belong in artifact storage and are represented here by derived reports and
-# hash/provenance inventories.
-results/raw/*
-!results/raw/offdiagonal_witness/
-!results/raw/offdiagonal_witness/**
+# Preserve derived artifacts, but keep all generated seed-level experiment
+# output out of Git. Raw runs belong in artifact storage and are represented in
+# the repository by compact derived reports and hash/provenance inventories.
+results/raw/
 
 # Generated release bundles are reproducible and substantially larger than the
 # source checkout. Rebuild them with tools/build_anonymous_supplement.py.
