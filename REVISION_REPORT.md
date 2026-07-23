@@ -263,6 +263,13 @@ run count whose complete raw chain is absent.
   references and citations stabilized, and `paper/main.pdf` has 48 pages.
 - The only overfull box is the pre-existing 5.12 pt style-generated abstract
   boundary. No changed theorem display causes an overfull box.
+- A detached literal checkout at `928f2a64` passed both Buck test targets and a
+  from-scratch `latexmk` build with stable references and citations.
+- The clean-checkout review-tier command
+  `buck2 run //tools:build_anonymous_supplement -- --tier review ...` stopped at
+  the first missing required fixture,
+  `experiments/data/sklearn/covertype/samples_py3`. Release validation was not
+  bypassed.
 
 ## Deliberately Unmade Claims
 
