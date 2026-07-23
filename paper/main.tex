@@ -508,6 +508,25 @@ corrected center, the same statement holds without \Cref{asm:optim} after
 replacing $\omega_t$ by $\bar\beta_t$.
 \end{theorem}
 
+In particular, the bound is sublinear whenever
+$\Lamalg_T S_T=o(T^2)$ and $E_T=o(T)$.
+The exact-curvature instantiation is $\Calg_t=\bC_t$ with
+$u_t=(1+\bar\chi_t)^2$ from \Cref{lem:whitened}; approximate operators are
+covered through \Cref{thm:spectral-distortion}.  The proof is in
+\Cref{app:proof}.
+
+\paragraph{Proof sketch.}
+Self-normalized confidence plus the centering and linearization terms gives
+$|\mu^*(a)-\mu_{\btheta_t}(a)|\le\omega_t\bar s_t(a)+\epslin(t)$.
+The one-sided relation and CG lower bound make the computed bonus optimistic,
+so instantaneous regret is at most $2w_t(a_t)+2\epslin(t)$.  The CG upper
+bound gives $w_t(a_t)\le\alpha_t\omega_t\sqrt{u_t(a_t)}s_{\Calg,t}(a_t)$.
+Summing, applying Cauchy--Schwarz only once, and using \eqref{eq:main-dynamic}
+yields \eqref{eq:regret-bound}; hence time-varying factors remain inside $S_T$
+rather than being replaced by horizon maxima.  The corrected center replaces
+$\omega_t$ by $\bar\beta_t$ and removes the centering certificate, but requires
+exact or certified frozen-feature access (\Cref{cor:corrected-center}).
+
 \begin{corollary}[Exact-current regret through the frozen potential]
 \label{cor:exact-current-frozen-potential}
 Adopt \Cref{thm:regret} with exact current curvature $\Calg_t=\bC_t$.
@@ -618,29 +637,7 @@ $\gamma_{t-1}$, so \Cref{lem:confidence,cor:beta-constructive} justify the
 operational radius.  No eigenspace is used by either argument.
 \end{proof}
 
-In particular, the bound is sublinear whenever
-$\Lamalg_T S_T=o(T^2)$ and $E_T=o(T)$.
-
-The exact-curvature instantiation is $\Calg_t=\bC_t$ with
-$u_t=(1+\bar\chi_t)^2$ from \Cref{lem:whitened}; approximate operators are
-covered through \Cref{thm:spectral-distortion}.  The proof is in
-\Cref{app:proof}.
-
-\paragraph{Proof sketch.}
-Self-normalized confidence plus the centering and linearization terms gives
-$|\mu^*(a)-\mu_{\btheta_t}(a)|\le\omega_t\bar s_t(a)+\epslin(t)$.
-The one-sided relation and CG lower bound make the computed bonus optimistic,
-so instantaneous regret is at most $2w_t(a_t)+2\epslin(t)$.  The CG upper
-bound gives $w_t(a_t)\le\alpha_t\omega_t\sqrt{u_t(a_t)}s_{\Calg,t}(a_t)$.
-Summing, applying Cauchy--Schwarz only once, and using \eqref{eq:main-dynamic}
-yields \eqref{eq:regret-bound}; hence time-varying factors remain inside $S_T$
-rather than being replaced by horizon maxima.
-
-The corrected center replaces $\omega_t$ by $\bar\beta_t$ and removes the
-centering certificate, but requires exact or certified frozen-feature access;
-the formal statement and implementation discussion are in
-\Cref{cor:corrected-center}.
-
+\newcommand{\deferredConditionalRates}{%
 \subsection{Online nonlinear certificates}\label{sec:operational-certificates}
 At the start of round $t$, let $n_t=t-1$, and let $\bar\btheta_{<t}$ and
 $J_{<t}=\sum_{s<t}\|\btheta_s-\bar\btheta_{<t}\|^2$ be maintained by a
@@ -818,6 +815,7 @@ conditions.  Illustrative achieved upper-bound exponents are reported in
 \Cref{sec:systems}; they are not a Pareto frontier or a lower
 bound.  When $U$ is supplied, the projected Gram in
 \eqref{eq:projected-width} can instead be solved directly.
+}
 
 % [approximate-curvature results (window, subsample, spectral-distortion) relocated to \Cref{app:deferred}]
 \section{Experiments}\label{sec:experiments}
@@ -842,6 +840,7 @@ is stated in \Cref{app:availability}.
   \label{fig:spectral-tail-regret}
 \end{figure*}
 
+\newcommand{\deferredSpectralComplexityFigure}{%
 \begin{figure*}[t]
   \centering
   \includegraphics[width=.72\textwidth]{figures/spectral_tail_complexity.pdf}
@@ -851,6 +850,7 @@ is stated in \Cref{app:availability}.
   an upper bound rather than an estimator of $\gamma_T$.}
   \label{fig:spectral-tail-complexity}
 \end{figure*}
+}
 
 The full spectral-tail run contains 7,440 tuning and 8,400 evaluation
 trajectories.  At $r=8,p=2$, the head-aligned rank truncation has terminal mean
@@ -866,6 +866,17 @@ the construction nevertheless gives one CG iteration and is therefore an
 equivalence check, not a Krylov stress test.  Greedy is often best, so this grid
 supports the tail-mechanism claim, not a performance advantage for CC-UCB.
 
+A separate rotated scaling grid supplies the nontrivial Krylov test: all 10,800
+trajectories pass the stated premises, more than 90\% of rounds require multiple
+CG iterations, and maximum relative energy error is below $2.4\times10^{-4}$.
+The real \texttt{torch.func} study completes all 360 JVP/VJP cells through a
+9,972,737-parameter MLP.  Coverage-matched operator comparisons remain mixed,
+the nonlinear benchmark favors simpler baselines, and balanced MNIST stays at
+chance for every local method.  These negative outcomes and the full protocols,
+figures, tables, and finite-grid fits are reported in
+\Cref{app:additional-experiments}; no policy-performance advantage is claimed.
+
+\newcommand{\deferredExperimentalEvidence}{%
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/certified_scaling.pdf}
@@ -1052,6 +1063,7 @@ not support a deployment or foundation-model claim.
 \paragraph{Real-data baseline check.}
 Covertype fails its baseline check: context-free controls beat every contextual
 method at every horizon (\Cref{sec:covertype-rerun}).
+}
 
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
@@ -1104,6 +1116,14 @@ $10^7$ parameters on one accelerator, and adaptive comparisons are non-causal.
 % --- appendix -------------------------------------------------------------
 \appendix
 \onecolumn % AISTATS supplement/appendix is single-column (per the official template)
+\section{Additional conditional rates}\label{app:additional-rates}
+\deferredConditionalRates
+
+\section{Additional experimental evidence}\label{app:additional-experiments}
+\deferredSpectralComplexityFigure
+\deferredExperimentalEvidence
+\FloatBarrier
+
 \section{Deferred main-text derivations}\label{app:deferred}
 This appendix collects the formal statements, proofs, and derivations deferred
 from the compact main text; all cross-referenced results are stated here.
@@ -4047,8 +4067,10 @@ terminal-regret differences; Holm controls familywise error at $0.05$.  For zero
 variance, an identically zero difference is assigned $p=1$ and a constant nonzero
 difference the limiting value $p=0$.  Because this is
 a fixed-feature linear model, current and historical full-Gram rows are
-algebraically identical; LO-FI is not included because the repository has no
-compatible recursive precision implementation.
+algebraically identical.  An official recursive LO-FI implementation is not
+included because the repository lacks a compatible recursive-precision
+implementation; the seventh surrogate is the batch-refit low-rank-plus-diagonal
+LO-FI-style control described in \Cref{sec:operator-cg-audit}.
 
 \begin{table}[t]
 \centering\small

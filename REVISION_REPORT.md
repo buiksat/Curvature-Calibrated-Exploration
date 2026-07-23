@@ -308,14 +308,38 @@ SHA-256 with availability `not_in_compact_checkout`; public cache inputs use
 
 The abstract no longer cites a run count whose complete raw chain is absent.
 
+### Submission packaging
+
+- The rendered submission body now occupies seven pages; references start on
+  PDF page 8, within the eight-page AISTATS submission limit. The references
+  occupy pages 8--9 and the appendix starts on page 10.
+- Theorem 1's sublinearity statement, exact-current instantiation, and proof
+  sketch now immediately follow Theorem 1, before Corollaries 2--3.
+- The growing-window theorem, work accounting, secondary experiment figures,
+  premise table, and detailed protocols now render after the references. The
+  main experiment section retains the spectral-tail regret figure and a compact
+  summary of the premise-clean, autodiff, calibration, and negative benchmark
+  findings.
+- The appendix distinguishes the batch-refit low-rank-plus-diagonal LO-FI-style
+  control from an unavailable official recursive LO-FI implementation.
+- Every Matplotlib paper generator forces PDF/PS font type 42. Redundant
+  internal suptitles were removed from the spectral-tail, premise-clean
+  scaling, and JVP/VJP figures; their two-row legends have reserved top margins,
+  and the scaling work axes use at most five major logarithmic ticks.
+- Visual inspection of compiled PDF pages 7, 15, and 17 confirms that the
+  affected legends, panel titles, and tick labels do not overlap. A Ghostscript
+  decompressed-object scan finds 0 Type 3 font objects, 21 Type 0 fonts with
+  CIDFontType2 descendants for plotted text, and the expected Type 1 TeX fonts.
+
 ## Validation
 
 - `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`:
   2 targets passed, 0 failed.
-- `buck2 run //paper:validate`: 185 unique labels, 129 resolved reference
+- `buck2 run //paper:validate`: 187 unique labels, 131 resolved reference
   targets, 36 valid citation keys, no blockers.
 - `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
-  references and citations stabilized, and `paper/main.pdf` has 64 pages.
+  references and citations stabilized, and the revised `paper/main.pdf` has 65
+  pages with references beginning on page 8.
 - Targeted coverage/phase tests: 9 passed. The full expanded run regenerated
   9,600 policies and complete 168-row appendix comparison tables.
 - Full balanced-MNIST reproduction: 480 tuning and 240 evaluation policies,
@@ -333,6 +357,9 @@ The abstract no longer cites a run count whose complete raw chain is absent.
   scanning over 275 files, checked the same 55 provenance sidecars and all 28
   paper inputs. Both manifests explicitly mark 24,133 raw and three public-data
   cache references as unavailable rather than claiming they are released.
+- After page-limit restructuring and figure regeneration, the compiled PDF has
+  65 pages because all displaced material remains in the appendix; references
+  begin on page 8 and no Type 3 font object remains.
 
 ## Deliberately Unmade Claims
 
