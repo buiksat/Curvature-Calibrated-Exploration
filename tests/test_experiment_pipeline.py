@@ -26,10 +26,14 @@ CONFIG_NAMES = {
     "covertype_rerun",
     "coverage_matched_operator",
     "curvature_phase_diagram",
+    "end_to_end_systems_benchmark",
+    "gap_dependent_validation",
     "offdiagonal_witness",
+    "scaled_tanh_instantiation",
     "spectral_tail_study",
     "autodiff_systems",
     "autodiff_ggn_benchmark",
+    "wheel_benchmark",
 }
 
 
