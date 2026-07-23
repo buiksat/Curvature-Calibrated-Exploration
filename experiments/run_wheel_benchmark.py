@@ -6,6 +6,7 @@ import argparse
 import copy
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
+import datetime as dt
 import hashlib
 import json
 import math
@@ -19,7 +20,14 @@ from numpy.typing import ArrayLike, NDArray
 
 from .config import config_digest, get_seed_set, load_config
 from .curvature_operators import CurvatureOperator
-from .logging_utils import ExperimentLogger, append_jsonl, canonical_json, derive_seed
+from .artifact_utils import write_json_artifact
+from .logging_utils import (
+    ExperimentLogger,
+    append_jsonl,
+    canonical_json,
+    collect_run_metadata,
+    derive_seed,
+)
 from .nonlinear_environment import MLPLayout, SmallTanhMLP
 from .run_systems_scaling import batched_independent_cg
 from .wheel_environment import (
@@ -954,15 +962,40 @@ def _execute_run_task(
         destination,
         overwrite,
     ) = task
-    run = run_policy(
-        config,
-        method,
-        seed,
-        cell=cell,
-        phase=phase,
-        ridge=ridge,
-        bonus_scale=bonus,
-    )
+    try:
+        run = run_policy(
+            config,
+            method,
+            seed,
+            cell=cell,
+            phase=phase,
+            ridge=ridge,
+            bonus_scale=bonus,
+        )
+    except Exception as error:
+        failure = {
+            "schema_version": 1,
+            "event": "wheel_policy_run_failed",
+            "timestamp_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "seed": seed,
+            "phase": phase,
+            "method": method,
+            "cell": {"delta": cell.delta, "token": cell.token},
+            "hyperparameters": {"ridge": ridge, "bonus_scale": bonus},
+            "config_digest": config_digest(config),
+            "error_type": type(error).__name__,
+            "error_message": str(error),
+            "provenance": collect_run_metadata(
+                repository=Path(__file__).resolve().parents[1],
+                packages=config.get("provenance", {}).get("packages"),
+            ),
+        }
+        write_json_artifact(Path(destination) / "failure.json", failure)
+        raise RuntimeError(
+            "Wheel policy run failed: "
+            f"phase={phase}, method={method}, delta={cell.delta:g}, seed={seed}, "
+            f"ridge={ridge:g}, bonus={bonus:g}: {error}"
+        ) from error
     save_run(run, config, destination, overwrite=overwrite)
     return WheelRun(
         method=run.method,

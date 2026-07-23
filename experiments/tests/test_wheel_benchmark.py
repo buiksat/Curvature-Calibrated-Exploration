@@ -379,8 +379,20 @@ def test_workers_two_matches_serial_pooled_selection_and_surfaces_errors(
         (tmp_path / "bad-worker-run").as_posix(),
         False,
     )
-    with pytest.raises(ValueError, match="unknown method"):
+    with pytest.raises(RuntimeError, match="method=not_a_wheel_method"):
         _execute_tasks([bad_task], workers=2)
+    failure_path = tmp_path / "bad-worker-run" / "failure.json"
+    validate_sha256_sidecar(failure_path)
+    failure = json.loads(failure_path.read_text(encoding="ascii"))
+    assert failure["event"] == "wheel_policy_run_failed"
+    assert failure["seed"] == 2000
+    assert failure["phase"] == "tuning"
+    assert failure["method"] == "not_a_wheel_method"
+    assert failure["cell"] == {"delta": 0.5, "token": "delta-0p5"}
+    assert failure["hyperparameters"] == {"ridge": 1.0, "bonus_scale": 0.5}
+    assert failure["error_type"] == "ValueError"
+    assert failure["error_message"] == "unknown method 'not_a_wheel_method'"
+    assert failure["provenance"]["git_revision"]
 
 
 def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
