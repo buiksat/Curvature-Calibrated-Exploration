@@ -40,6 +40,7 @@ def test_structured_sanitizer_relativizes_paths_and_replaces_revision(
         "git_revision": "old-revision",
         "git_root": str(repository),
         "python": {"executable": str(repository / ".venv/bin/python")},
+        "test_indices_artifact": "/Users/example/cache/test_indices.npy",
     }
 
     sanitized = sanitizer.sanitize(record)
@@ -47,6 +48,7 @@ def test_structured_sanitizer_relativizes_paths_and_replaces_revision(
     assert sanitized["git_revision"] == source_hash
     assert sanitized["git_root"] == "."
     assert sanitized["python"]["executable"] == ".venv/bin/python"
+    assert sanitized["test_indices_artifact"] == "external-data/test_indices.npy"
     assert sanitized["config"]["output_root"] == "results/raw/study"
     expected = hashlib.sha256(canonical_json(sanitized["config"]).encode("ascii"))
     assert sanitized["config_digest"] == expected.hexdigest()

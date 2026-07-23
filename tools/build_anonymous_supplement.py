@@ -162,6 +162,10 @@ SOURCE_HASH_EXCLUDED_SUFFIXES = {
     ".pdf",
     ".png",
 }
+OPAQUE_GENERATED_SUFFIXES = {
+    ".pdf",
+    ".png",
+}
 
 
 class BuildError(RuntimeError):
@@ -401,7 +405,12 @@ class StructuredSanitizer:
         if isinstance(value, str):
             path_context = bool(
                 normalized_key in PATHISH_KEYS
-                or (normalized_key and normalized_key.endswith(("_path", "_root", "_file")))
+                or (
+                    normalized_key
+                    and normalized_key.endswith(
+                        ("_path", "_root", "_file", "_artifact")
+                    )
+                )
             )
             return self.normalize_string(value, path_context=path_context)
         return value
@@ -691,7 +700,8 @@ class ReleaseBuilder:
         destination.write_bytes(data)
         os.chmod(destination, 0o755 if relative.endswith(".py") else 0o644)
         if scan:
-            self.identity_scanner.scan_bytes(relative, data)
+            if PurePosixPath(relative).suffix.lower() not in OPAQUE_GENERATED_SUFFIXES:
+                self.identity_scanner.scan_bytes(relative, data)
         return self._record_file(
             relative, role=role, source_relative=source_relative
         )
@@ -783,7 +793,10 @@ class ReleaseBuilder:
                 continue
             normalized = self.sanitizer.normalize_string(
                 item,
-                path_context=key in PATHISH_KEYS or key.endswith(("_path", "_root", "_file")),
+                path_context=(
+                    key in PATHISH_KEYS
+                    or key.endswith(("_path", "_root", "_file", "_artifact"))
+                ),
             )
             target = self._resolve_reference(normalized)
             if target is not None:
@@ -1814,7 +1827,9 @@ inventories are under `manifests`.
         # Raw logical streams were scanned before compression.  Scan all other
         # released bytes after provenance and metadata generation.
         for relative in sorted(self.records):
-            if relative.endswith((".jsonl.zst", ".jsonl.gz")):
+            if relative.endswith((".jsonl.zst", ".jsonl.gz")) or (
+                PurePosixPath(relative).suffix.lower() in OPAQUE_GENERATED_SUFFIXES
+            ):
                 continue
             self.identity_scanner.scan_bytes(relative, self._stage_path(relative).read_bytes())
         self._validate_anonymous_author_declarations()
