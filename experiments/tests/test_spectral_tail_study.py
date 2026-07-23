@@ -11,6 +11,10 @@ from experiments.artifact_utils import (
     write_deterministic_npz,
 )
 from experiments.config import get_seed_set, load_config
+from experiments.make_spectral_tail_artifacts import (
+    SpectralTailArtifactError,
+    _reanalyze_trajectory_bounds,
+)
 from experiments.run_spectral_tail_study import (
     Cell,
     generate_stream,
@@ -18,6 +22,7 @@ from experiments.run_spectral_tail_study import (
     run_trajectory,
     validate_study_config,
 )
+from experiments.theory_metrics import spectral_tail_information_bound
 
 
 CONFIG = Path("experiments/configs/spectral_tail_study.yaml")
@@ -68,6 +73,79 @@ def test_dense_and_cg_trajectories_match_and_tail_bound_holds() -> None:
     assert np.all(cg.arrays["cg_iterations"] == 1)
     assert np.all(cg.arrays["cg_relative_residual"] == 0.0)
     assert np.all(dense.arrays["gamma"] <= dense.arrays["gamma_tail"] + 1e-12)
+
+
+def test_retained_trajectory_reanalysis_orders_refined_and_ambient_bounds() -> None:
+    config = _smoke_config()
+    cell = Cell(rank=2, spectral_power=2, alignment="tail")
+    trajectory = run_trajectory(
+        config,
+        cell,
+        generate_stream(config, cell, seed=1000),
+        method="exact_dense_full",
+        bonus=0.4,
+    )
+    bounds, diagnostics = _reanalyze_trajectory_bounds(
+        trajectory.arrays, config, tail_rank=cell.rank
+    )
+
+    tolerance = 1e-10
+    assert np.all(bounds["gamma_exact"] <= bounds["gamma_split"] + tolerance)
+    assert np.all(bounds["gamma_split"] <= bounds["gamma_tail_old"] + tolerance)
+    assert np.all(
+        bounds["gamma_split"]
+        <= bounds["gamma_ambient_realized_trace"] + tolerance
+    )
+    assert np.all(
+        bounds["gamma_ambient_realized_trace"]
+        <= bounds["gamma_ambient_worst_case"] + tolerance
+    )
+    assert set(diagnostics["comparisons"]) == {
+        "gamma_exact_le_gamma_split",
+        "gamma_split_le_gamma_tail_old",
+        "gamma_split_le_gamma_ambient_realized_trace",
+        "gamma_ambient_realized_trace_le_gamma_ambient_worst_case",
+    }
+
+    selected = np.asarray(
+        trajectory.arrays["selected_coordinates"], dtype=np.int64
+    )
+    counts = np.bincount(selected, minlength=int(config["dimension"])).astype(
+        np.float64
+    )
+    increment = np.diag(counts / float(config["noise_std"]) ** 2)
+    reference = spectral_tail_information_bound(
+        increment,
+        damping=float(config["damping"]),
+        horizon=int(config["rounds"]),
+        feature_bound=float(config["feature_bound"]),
+        noise_variance=float(config["noise_std"]) ** 2,
+        tail_rank=cell.rank,
+    )
+    assert bounds["gamma_exact"][-1] == pytest.approx(reference.exact_logdet)
+    assert bounds["gamma_split"][-1] == pytest.approx(reference.split_upper_bound)
+    assert bounds["gamma_tail_old"][-1] == pytest.approx(reference.upper_bound)
+
+
+def test_retained_trajectory_reanalysis_rejects_ordering_violation() -> None:
+    config = _smoke_config()
+    cell = Cell(rank=2, spectral_power=1, alignment="head")
+    trajectory = run_trajectory(
+        config,
+        cell,
+        generate_stream(config, cell, seed=1001),
+        method="exact_dense_full",
+        bonus=0.1,
+    )
+    bounds, _ = _reanalyze_trajectory_bounds(
+        trajectory.arrays, config, tail_rank=cell.rank
+    )
+    corrupted = dict(trajectory.arrays)
+    corrupted["gamma"] = bounds["gamma_split"] + 1.0
+    with pytest.raises(
+        SpectralTailArtifactError, match="gamma_exact <= gamma_split"
+    ):
+        _reanalyze_trajectory_bounds(corrupted, config, tail_rank=cell.rank)
 
 
 def test_deterministic_npz_and_hash_tamper_detection(tmp_path: Path) -> None:
