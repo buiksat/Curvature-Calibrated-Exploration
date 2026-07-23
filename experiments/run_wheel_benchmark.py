@@ -44,26 +44,39 @@ FloatArray = NDArray[np.float64]
 DEFAULT_CONFIG = Path(__file__).with_name("configs") / "wheel_benchmark.yaml"
 METHODS = (
     "cc_ucb_full_ggn_cg",
-    "linucb",
-    "linear_ts",
     "local_neural_ucb",
     "local_neural_ts",
+    "all_layer_diagonal_ucb",
+    "local_neural_linear",
+    "frozen_backbone_last_layer_ucb",
+    "linucb",
+    "linear_ts",
+    "greedy",
     "random",
     "safe",
     "oracle",
 )
 CONTROL_METHODS = {"random", "safe", "oracle"}
-NEURAL_METHODS = {
+FULL_NETWORK_METHODS = {
     "cc_ucb_full_ggn_cg",
     "local_neural_ucb",
     "local_neural_ts",
+    "all_layer_diagonal_ucb",
+    "local_neural_linear",
+    "greedy",
 }
+NEURAL_METHODS = FULL_NETWORK_METHODS
+FIXED_HYPERPARAMETER_METHODS = CONTROL_METHODS | {"greedy"}
 METHOD_IMPLEMENTATIONS = {
     "cc_ucb_full_ggn_cg": "local_current_parameter_full_ggn_residual_checked_cg_ucb",
-    "linucb": "local_disjoint_affine_feature_linucb",
-    "linear_ts": "local_disjoint_affine_feature_gaussian_linear_ts",
     "local_neural_ucb": "local_full_network_linearized_ucb_not_published_code",
     "local_neural_ts": "local_full_network_linearized_gaussian_ts_not_published_code",
+    "all_layer_diagonal_ucb": "local_full_network_all_parameter_diagonal_ucb_not_published_code",
+    "local_neural_linear": "local_online_tanh_representation_gaussian_last_layer_ts_neurallinear_style_not_official",
+    "frozen_backbone_last_layer_ucb": "local_frozen_tanh_backbone_bayesian_last_layer_ucb_not_official",
+    "linucb": "local_disjoint_affine_feature_linucb",
+    "linear_ts": "local_disjoint_affine_feature_gaussian_linear_ts",
+    "greedy": "local_full_network_greedy_one_step_update_no_uncertainty",
     "random": "uniform_random_context_and_oracle_independent_control",
     "safe": "fixed_canonical_safe_action_control",
     "oracle": "privileged_true_mean_oracle_nonlearner_control",
@@ -125,7 +138,9 @@ def configured_methods(config: Mapping[str, Any]) -> tuple[str, ...]:
         raise ValueError("methods must be a sequence")
     methods = tuple(str(item) for item in value)
     if methods != METHODS:
-        raise ValueError("methods must contain the preregistered Wheel inventory in order")
+        raise ValueError(
+            "methods must contain the preregistered Wheel inventory in order"
+        )
     return methods
 
 
@@ -164,11 +179,32 @@ def validate_wheel_config(config: Mapping[str, Any]) -> None:
     _nonnegative(model.get("model_ridge"), name="model.model_ridge")
     _positive(model.get("maximum_step_norm"), name="model.maximum_step_norm")
     _positive(model.get("posterior_noise_std"), name="model.posterior_noise_std")
-    if _positive_int(model.get("updates_per_round"), name="model.updates_per_round") != 1:
+    if (
+        _positive_int(model.get("updates_per_round"), name="model.updates_per_round")
+        != 1
+    ):
         raise ValueError("the matched protocol requires one update per round")
+    if tuple(model.get("full_network_methods", ())) != tuple(
+        method for method in METHODS if method in FULL_NETWORK_METHODS
+    ):
+        raise ValueError(
+            "model.full_network_methods must match the implemented update set"
+        )
+    selection = _section(config, "selection")
+    maximum_configurations = _positive_int(
+        selection.get("maximum_configurations_per_method"),
+        name="selection.maximum_configurations_per_method",
+    )
+    if any(
+        len(hyperparameter_grid(config, method)) > maximum_configurations
+        for method in METHODS
+    ):
+        raise ValueError("a Wheel method exceeds the declared tuning budget")
     cg = _section(config, "cg")
     _positive(cg.get("relative_residual_tolerance"), name="cg tolerance")
     _positive_int(cg.get("max_iterations"), name="cg.max_iterations")
+    if cg.get("preconditioner") not in {"none", "symmetric_jacobi"}:
+        raise ValueError("cg.preconditioner must be none or symmetric_jacobi")
 
 
 def linear_action_features(context: ArrayLike) -> FloatArray:
@@ -183,12 +219,29 @@ def linear_action_features(context: ArrayLike) -> FloatArray:
     return features
 
 
+def last_layer_action_features(
+    model: SmallTanhMLP, displacement: ArrayLike, context: ArrayLike
+) -> FloatArray:
+    """Return action-disjoint ``[hidden, 1]`` features for a tanh backbone."""
+
+    hidden = model.hidden(displacement, context)
+    base = np.concatenate((hidden, np.ones(1, dtype=np.float64)))
+    features = np.zeros(
+        (model.layout.action_count, model.layout.action_count * base.size),
+        dtype=np.float64,
+    )
+    for action in range(model.layout.action_count):
+        start = action * base.size
+        features[action, start : start + base.size] = base
+    return features
+
+
 def hyperparameter_grid(
     config: Mapping[str, Any], method: str
 ) -> tuple[tuple[float, float], ...]:
     if method not in METHODS:
         raise ValueError(f"unknown method {method!r}")
-    if method in CONTROL_METHODS:
+    if method in FIXED_HYPERPARAMETER_METHODS:
         return ((0.0, 0.0),)
     ridges = tuple(_positive(value, name="ridge") for value in config["ridge_grid"])
     bonuses = tuple(_positive(value, name="bonus") for value in config["bonus_grid"])
@@ -318,10 +371,18 @@ def run_policy(
         cg_config["relative_residual_tolerance"], name="cg tolerance"
     )
     cg_limit = _positive_int(cg_config["max_iterations"], name="cg.max_iterations")
+    cg_preconditioner = str(cg_config["preconditioner"])
 
     linear_dimension = ACTION_COUNT * 3
     linear_matrix = max(ridge_value, 1.0e-12) * np.eye(linear_dimension)
     linear_rhs = np.zeros(linear_dimension, dtype=np.float64)
+    last_layer_dimension = ACTION_COUNT * (layout.hidden_width + 1)
+    last_layer_matrix = max(ridge_value, 1.0e-12) * np.eye(last_layer_dimension)
+    last_layer_rhs = np.zeros(last_layer_dimension, dtype=np.float64)
+    frozen_backbone_theta = np.zeros(layout.parameter_dimension, dtype=np.float64)
+    diagonal_precision = max(ridge_value, 1.0e-12) * np.ones(
+        layout.parameter_dimension, dtype=np.float64
+    )
     frozen_gradients: list[FloatArray] = []
     history_contexts: list[FloatArray] = []
     history_actions: list[int] = []
@@ -339,6 +400,7 @@ def run_policy(
     total_cg_iterations = 0
     total_cg_operator_calls = 0
     maximum_cg_residual = 0.0
+    full_network_update_count = 0
     process = psutil.Process()
     start_rss = process.memory_info().rss
     peak_rss = start_rss
@@ -367,9 +429,7 @@ def run_policy(
             estimate = np.linalg.solve(linear_matrix, linear_rhs)
             predicted_normalized = candidates @ estimate
             solved = np.linalg.solve(linear_matrix, candidates.T).T
-            widths = np.sqrt(
-                np.maximum(np.einsum("ij,ij->i", candidates, solved), 0.0)
-            )
+            widths = np.sqrt(np.maximum(np.einsum("ij,ij->i", candidates, solved), 0.0))
             if method == "linucb":
                 scores = predicted_normalized + bonus * widths
             else:
@@ -377,11 +437,36 @@ def run_policy(
                 scores = candidates @ sampled
             predicted = reward_scale * predicted_normalized
             action = int(np.argmax(scores))
+        elif method in {
+            "local_neural_linear",
+            "frozen_backbone_last_layer_ucb",
+        }:
+            representation_theta = (
+                theta if method == "local_neural_linear" else frozen_backbone_theta
+            )
+            candidates = last_layer_action_features(
+                model, representation_theta, context
+            )
+            estimate = np.linalg.solve(last_layer_matrix, last_layer_rhs)
+            predicted_normalized = candidates @ estimate
+            solved = np.linalg.solve(last_layer_matrix, candidates.T).T
+            widths = np.sqrt(np.maximum(np.einsum("ij,ij->i", candidates, solved), 0.0))
+            if method == "local_neural_linear":
+                sampled = _posterior_sample(rng, last_layer_matrix, estimate, bonus)
+                scores = candidates @ sampled
+            else:
+                scores = predicted_normalized + bonus * widths
+            predicted = reward_scale * predicted_normalized
+            action = int(np.argmax(scores))
         else:
             predicted_normalized = model.means(theta, context)
             predicted = reward_scale * predicted_normalized
-            queries = model.jacobians(theta, context)
+            if method == "greedy":
+                scores = predicted_normalized.copy()
+            else:
+                queries = model.jacobians(theta, context)
             if method == "cc_ucb_full_ggn_cg":
+                assert queries is not None
                 historical = (
                     model.selected_jacobians(
                         theta,
@@ -401,7 +486,7 @@ def run_policy(
                     queries,
                     cg_limit,
                     relative_tolerance=cg_tolerance,
-                    preconditioner="none",
+                    preconditioner=cg_preconditioner,
                 )
                 for action_index in range(ACTION_COUNT):
                     relative = float(solution.explicit_relative_residuals[action_index])
@@ -420,7 +505,9 @@ def run_policy(
                     np.einsum("ij,ij->i", queries, solution.solutions),
                     0.0,
                 )
-                cg_iterations.extend(int(value) for value in solution.per_action_iterations)
+                cg_iterations.extend(
+                    int(value) for value in solution.per_action_iterations
+                )
                 cg_residuals.extend(
                     float(value) for value in solution.explicit_relative_residuals
                 )
@@ -429,7 +516,8 @@ def run_policy(
                 )
                 widths = np.sqrt(width_squared)
                 scores = predicted_normalized + bonus * widths
-            else:
+            elif method in {"local_neural_ucb", "local_neural_ts"}:
+                assert queries is not None
                 historical = (
                     np.stack(frozen_gradients)
                     if frozen_gradients
@@ -449,6 +537,15 @@ def run_policy(
                         rng, matrix, np.zeros(layout.parameter_dimension), bonus
                     )
                     scores = predicted_normalized + queries @ perturbation
+            elif method == "all_layer_diagonal_ucb":
+                assert queries is not None
+                solved = queries / diagonal_precision[np.newaxis, :]
+                widths = np.sqrt(
+                    np.maximum(np.einsum("ij,ij->i", queries, solved), 0.0)
+                )
+                scores = predicted_normalized + bonus * widths
+            elif method != "greedy":
+                raise AssertionError(f"unhandled Wheel learner {method}")
             action = int(np.argmax(scores))
 
         uncertainty_seconds = time.perf_counter() - uncertainty_started
@@ -463,20 +560,48 @@ def run_policy(
 
         update_started = time.perf_counter()
         update_norm = 0.0
+        full_network_update_performed = False
         normalized_reward = outcome.reward / reward_scale
         if method in {"linucb", "linear_ts"}:
             assert candidates is not None
             selected = candidates[action]
             linear_matrix += np.outer(selected, selected) / posterior_variance
             linear_rhs += selected * normalized_reward / posterior_variance
-        elif method in NEURAL_METHODS:
-            assert queries is not None
-            selected_query = queries[action].copy()
+        elif method in {
+            "local_neural_linear",
+            "frozen_backbone_last_layer_ucb",
+        }:
+            assert candidates is not None
+            selected = candidates[action]
+            last_layer_matrix += np.outer(selected, selected) / posterior_variance
+            last_layer_rhs += selected * normalized_reward / posterior_variance
+            if method == "local_neural_linear":
+                theta, update_norm = _model_update(
+                    model,
+                    theta,
+                    context,
+                    action,
+                    normalized_reward,
+                    learning_rate=learning_rate,
+                    model_ridge=model_ridge,
+                    maximum_step_norm=maximum_step,
+                )
+                full_network_update_count += 1
+                full_network_update_performed = True
+        elif method in FULL_NETWORK_METHODS:
             if method == "cc_ucb_full_ggn_cg":
                 history_contexts.append(context.copy())
                 history_actions.append(action)
-            else:
+            elif method in {"local_neural_ucb", "local_neural_ts"}:
+                assert queries is not None
+                selected_query = queries[action].copy()
                 frozen_gradients.append(selected_query)
+            elif method == "all_layer_diagonal_ucb":
+                assert queries is not None
+                selected_query = queries[action]
+                diagonal_precision += (
+                    selected_query * selected_query / posterior_variance
+                )
             theta, update_norm = _model_update(
                 model,
                 theta,
@@ -487,6 +612,8 @@ def run_policy(
                 model_ridge=model_ridge,
                 maximum_step_norm=maximum_step,
             )
+            full_network_update_count += 1
+            full_network_update_performed = True
         update_seconds = time.perf_counter() - update_started
 
         if method == "cc_ucb_full_ggn_cg":
@@ -497,6 +624,16 @@ def run_policy(
             )
         if method in {"linucb", "linear_ts"}:
             state_bytes = linear_matrix.nbytes + linear_rhs.nbytes
+        elif method == "local_neural_linear":
+            state_bytes = (
+                theta.nbytes + last_layer_matrix.nbytes + last_layer_rhs.nbytes
+            )
+        elif method == "frozen_backbone_last_layer_ucb":
+            state_bytes = last_layer_matrix.nbytes + last_layer_rhs.nbytes
+        elif method == "all_layer_diagonal_ucb":
+            state_bytes = theta.nbytes + diagonal_precision.nbytes
+        elif method == "greedy":
+            state_bytes = theta.nbytes
         elif method == "cc_ucb_full_ggn_cg":
             state_bytes = theta.nbytes + sum(item.nbytes for item in history_contexts)
             state_bytes += 8 * len(history_actions)
@@ -520,7 +657,9 @@ def run_policy(
             "delta": cell.delta,
             "cell": {"delta": cell.delta, "token": cell.token},
             "executed_policy": True,
-            "execution_mode": "online_adaptive" if method not in CONTROL_METHODS else "online_control",
+            "execution_mode": (
+                "online_adaptive" if method not in CONTROL_METHODS else "online_control"
+            ),
             "context": context.tolist(),
             "context_radius": float(np.linalg.norm(context)),
             "outer_region": outer,
@@ -549,6 +688,9 @@ def run_policy(
             "ridge": ridge_value,
             "bonus_scale": bonus,
             "model_update_norm": update_norm,
+            "full_network_method": method in FULL_NETWORK_METHODS,
+            "full_network_update_performed": full_network_update_performed,
+            "cumulative_full_network_updates": full_network_update_count,
             "round_runtime_seconds": elapsed,
             "cumulative_runtime_seconds": cumulative_runtime,
             "state_update_seconds": update_seconds,
@@ -570,11 +712,20 @@ def run_policy(
                     "operator_matvecs": sum(cg_calls),
                     "cumulative_operator_matvecs": total_cg_operator_calls,
                     "cg_all_actions_converged": True,
+                    "cg_preconditioner": cg_preconditioner,
+                    "cg_max_iterations": cg_limit,
                     "current_parameter_history_relinearized": True,
                     "matrix_free_dense_gram_materialized": False,
                 }
             )
         records.append(record)
+
+    expected_full_network_updates = rounds if method in FULL_NETWORK_METHODS else 0
+    if full_network_update_count != expected_full_network_updates:
+        raise AssertionError(
+            f"{method} executed {full_network_update_count} full-network updates; "
+            f"expected {expected_full_network_updates}"
+        )
 
     summary: dict[str, Any] = {
         "schema_version": 1,
@@ -590,7 +741,9 @@ def run_policy(
         "cell": {"delta": cell.delta, "token": cell.token},
         "comparison": "pooled_validation_tuned",
         "executed_policy": True,
-        "execution_mode": "online_adaptive" if method not in CONTROL_METHODS else "online_control",
+        "execution_mode": (
+            "online_adaptive" if method not in CONTROL_METHODS else "online_control"
+        ),
         "rounds": rounds,
         "cumulative_pseudo_regret": cumulative_regret,
         "cumulative_reward": cumulative_reward,
@@ -604,6 +757,10 @@ def run_policy(
         "host_rss_at_start_bytes": start_rss,
         "peak_host_rss_delta_bytes": max(0, peak_rss - start_rss),
         "maximum_persistent_numeric_policy_state_bytes": maximum_state_bytes,
+        "full_network_method": method in FULL_NETWORK_METHODS,
+        "full_network_updates_per_round": (full_network_update_count / float(rounds)),
+        "full_network_update_count": full_network_update_count,
+        "matched_full_network_update_budget": True,
         "ridge": ridge_value,
         "bonus_scale": bonus,
         "hyperparameters": {"ridge": ridge_value, "bonus_scale": bonus},
@@ -621,7 +778,15 @@ def run_policy(
         ),
         "lofi_included": False,
         "kfac_included": False,
-        "local_neural_method": method in {"local_neural_ucb", "local_neural_ts"},
+        "local_neural_method": method
+        in {
+            "local_neural_ucb",
+            "local_neural_ts",
+            "all_layer_diagonal_ucb",
+            "local_neural_linear",
+            "frozen_backbone_last_layer_ucb",
+        },
+        "official_or_published_baseline_implementation_claim": False,
         "evaluation_outcomes_used_for_tuning": False,
     }
     if method == "cc_ucb_full_ggn_cg":
@@ -633,6 +798,8 @@ def run_policy(
                 "cg_total_operator_calls": total_cg_operator_calls,
                 "cg_maximum_relative_residual": maximum_cg_residual,
                 "cg_relative_residual_tolerance": cg_tolerance,
+                "cg_preconditioner": cg_preconditioner,
+                "cg_max_iterations": cg_limit,
                 "all_cg_solves_converged": True,
                 "current_parameter_history_relinearized": True,
                 "matrix_free_dense_gram_materialized": False,
@@ -719,6 +886,7 @@ def build_tuning_selection(
                     "per_delta_means": per_delta,
                     "per_cell_cumulative_pseudo_regret": per_cell,
                     "fixed_control": method in CONTROL_METHODS,
+                    "fixed_hyperparameters": method in FIXED_HYPERPARAMETER_METHODS,
                 }
             )
             choices.append((mean, order, ridge, bonus))
@@ -731,6 +899,7 @@ def build_tuning_selection(
                 "pooled_mean_tuning_cumulative_pseudo_regret": winner[0],
                 "tie_break_grid_order": winner[1],
                 "fixed_control": method in CONTROL_METHODS,
+                "fixed_hyperparameters": method in FIXED_HYPERPARAMETER_METHODS,
             }
         )
     return {
@@ -748,6 +917,7 @@ def build_tuning_selection(
         "evaluation_outcomes_used": False,
         "evaluation_policies_rerun_from_scratch": True,
         "controls_have_single_fixed_setting": True,
+        "fixed_hyperparameter_methods": sorted(FIXED_HYPERPARAMETER_METHODS),
         "common_stream_within_seed_across_deltas": True,
         "tie_break": "lowest_configured_grid_order",
         "candidates": candidates,
@@ -773,6 +943,7 @@ def validate_tuning_selection(
         "evaluation_outcomes_used": False,
         "evaluation_policies_rerun_from_scratch": True,
         "controls_have_single_fixed_setting": True,
+        "fixed_hyperparameter_methods": sorted(FIXED_HYPERPARAMETER_METHODS),
         "common_stream_within_seed_across_deltas": True,
         "tie_break": "lowest_configured_grid_order",
     }
@@ -803,14 +974,16 @@ def validate_tuning_selection(
             raise ValueError("selection candidate grid order mismatch")
         if item.get("fixed_control") is not (method in CONTROL_METHODS):
             raise ValueError("selection candidate control label mismatch")
+        if item.get("fixed_hyperparameters") is not (
+            method in FIXED_HYPERPARAMETER_METHODS
+        ):
+            raise ValueError("selection candidate fixed-hyperparameter label mismatch")
         per_cell = item.get("per_cell_cumulative_pseudo_regret")
         if not isinstance(per_cell, list) or any(
             not isinstance(row, Mapping) for row in per_cell
         ):
             raise ValueError("selection candidate lacks pooled cell rows")
-        coverage = {
-            (float(row.get("delta")), int(row.get("seed"))) for row in per_cell
-        }
+        coverage = {(float(row.get("delta")), int(row.get("seed"))) for row in per_cell}
         if coverage != expected_coverage or len(per_cell) != len(expected_coverage):
             raise ValueError("selection candidate pooled cell coverage mismatch")
         ordered = sorted(
@@ -892,6 +1065,10 @@ def validate_tuning_selection(
             raise ValueError(f"selected setting for {method} is not the tuning argmin")
         if item.get("fixed_control") is not (method in CONTROL_METHODS):
             raise ValueError("selected control label mismatch")
+        if item.get("fixed_hyperparameters") is not (
+            method in FIXED_HYPERPARAMETER_METHODS
+        ):
+            raise ValueError("selected fixed-hyperparameter label mismatch")
         chosen[method] = (stated[2], stated[3])
     return chosen
 
@@ -949,7 +1126,7 @@ def _execute_run_task(
         float,
         str,
         bool,
-    ]
+    ],
 ) -> WheelRun:
     (
         config,
@@ -1181,6 +1358,8 @@ if __name__ == "__main__":
 __all__ = [
     "CONTROL_METHODS",
     "Cell",
+    "FIXED_HYPERPARAMETER_METHODS",
+    "FULL_NETWORK_METHODS",
     "METHODS",
     "METHOD_IMPLEMENTATIONS",
     "NEURAL_METHODS",
@@ -1189,6 +1368,7 @@ __all__ = [
     "configured_methods",
     "cells",
     "hyperparameter_grid",
+    "last_layer_action_features",
     "linear_action_features",
     "load_tuning_selection",
     "run_experiment",

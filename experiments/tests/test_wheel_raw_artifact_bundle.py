@@ -18,7 +18,7 @@ from experiments.raw_artifact_bundle import (
     extract_bundle,
     verify_bundle,
 )
-from experiments.run_wheel_benchmark import run_experiment
+from experiments.run_wheel_benchmark import METHODS, run_experiment
 
 
 SOURCE_CONFIG = Path("experiments/configs/wheel_benchmark.yaml")
@@ -78,7 +78,7 @@ def tiny_wheel_chain(tmp_path_factory: pytest.TempPathFactory) -> TinyWheelChain
         tuning_selection=selection,
         workers=1,
     )
-    assert len(tuning) == len(evaluation) == 32
+    assert len(tuning) == len(evaluation) == 4 * len(METHODS)
     return TinyWheelChain(config=config, config_path=config_path, raw_root=raw_root)
 
 
@@ -99,15 +99,17 @@ def test_wheel_bundle_is_deterministic_extractable_and_rebuildable(
     ]
     assert bundles[0].read_bytes() == bundles[1].read_bytes()
     assert results[0]["bundle_sha256"] == results[1]["bundle_sha256"]
-    assert results[0]["validated_tuning_run_count"] == 32
-    assert results[0]["validated_evaluation_run_count"] == 32
-    assert results[0]["file_count"] == 193
+    expected_run_count = 4 * len(METHODS)
+    expected_file_count = 2 * expected_run_count * 3 + 1
+    assert results[0]["validated_tuning_run_count"] == expected_run_count
+    assert results[0]["validated_evaluation_run_count"] == expected_run_count
+    assert results[0]["file_count"] == expected_file_count
 
     verified = verify_bundle(bundles[0])
     assert verified["status"] == "verified"
     extraction_root = tmp_path / "extracted"
     extracted = extract_bundle(bundles[0], destination=extraction_root)
-    assert extracted["extracted_file_count"] == 193
+    assert extracted["extracted_file_count"] == expected_file_count
 
     restored_profile = extraction_root / "wheel_benchmark" / "smoke"
     report = build_artifact(
@@ -118,7 +120,7 @@ def test_wheel_bundle_is_deterministic_extractable_and_rebuildable(
     )
     assert report["profile"] == "smoke"
     assert report["evaluation_outcomes_used_for_tuning"] is False
-    assert len(report["seed_level_results"]) == 32
+    assert len(report["seed_level_results"]) == expected_run_count
 
 
 def test_wheel_bundle_rejects_extra_files_and_selection_hash_drift(

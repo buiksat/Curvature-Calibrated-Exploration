@@ -15,14 +15,19 @@ from experiments.artifact_utils import (
 )
 from experiments.config import get_seed_set, load_config
 from experiments.make_wheel_benchmark_artifacts import build_artifact, write_artifacts
+from experiments.nonlinear_environment import MLPLayout, SmallTanhMLP
 from experiments.run_wheel_benchmark import (
     CONTROL_METHODS,
+    FIXED_HYPERPARAMETER_METHODS,
+    FULL_NETWORK_METHODS,
     METHODS,
     WheelRun,
     _control_action,
     _execute_tasks,
     build_tuning_selection,
     cells,
+    hyperparameter_grid,
+    last_layer_action_features,
     run_experiment,
     run_policy,
     validate_tuning_selection,
@@ -56,6 +61,21 @@ def test_wheel_config_is_canonical_disjoint_and_honest_about_implementations() -
     assert "kfac" not in smoke["methods"]
     assert "faithful pinned" in smoke["omitted_methods"]["lofi"]
     assert "not a pinned or faithful" in smoke["method_semantics"]["local_neural_ucb"]
+    assert (
+        "not an official or faithful"
+        in smoke["method_semantics"]["local_neural_linear"]
+    )
+    assert (
+        "not an official published"
+        in smoke["method_semantics"]["frozen_backbone_last_layer_ucb"]
+    )
+    assert tuple(smoke["model"]["full_network_methods"]) == tuple(
+        method for method in METHODS if method in FULL_NETWORK_METHODS
+    )
+    maximum = smoke["selection"]["maximum_configurations_per_method"]
+    assert maximum == 12
+    assert all(len(hyperparameter_grid(smoke, method)) <= maximum for method in METHODS)
+    assert hyperparameter_grid(smoke, "greedy") == ((0.0, 0.0),)
     assert set(get_seed_set(smoke, "tuning")).isdisjoint(
         get_seed_set(smoke, "evaluation")
     )
@@ -64,6 +84,11 @@ def test_wheel_config_is_canonical_disjoint_and_honest_about_implementations() -
     assert get_seed_set(full, "tuning") == tuple(range(2000, 2010))
     assert get_seed_set(full, "evaluation") == tuple(range(3000, 3030))
     assert full["cg"]["relative_residual_tolerance"] == pytest.approx(1.0e-6)
+    assert full["cg"]["max_iterations"] == 300
+    assert full["cg"]["preconditioner"] == "none"
+    assert "56 hashed current-GGN failure records" in full["cg"][
+        "iteration_budget_revision_reason"
+    ]
     assert full["cg"]["solver"].startswith("batched_independent_cg")
     assert set(get_seed_set(full, "tuning")).isdisjoint(
         get_seed_set(full, "evaluation")
@@ -109,9 +134,7 @@ def test_quadrant_map_threshold_oracle_means_and_regret_are_exact() -> None:
     assert spec.quadrant_action([-0.5, 0.0]) == QUADRANT_TO_ACTION["northwest"]
 
     inner = np.asarray([spec.delta, 0.0])
-    np.testing.assert_array_equal(
-        spec.mean_rewards(inner), [1.2, 1.0, 1.0, 1.0, 1.0]
-    )
+    np.testing.assert_array_equal(spec.mean_rewards(inner), [1.2, 1.0, 1.0, 1.0, 1.0])
     assert spec.optimal_action(inner) == SAFE_ACTION
     assert spec.pseudo_regret(inner, SAFE_ACTION) == 0.0
     assert spec.pseudo_regret(inner, 1) == pytest.approx(0.2)
@@ -129,7 +152,9 @@ def test_quadrant_map_threshold_oracle_means_and_regret_are_exact() -> None:
         assert spec.optimal_action(context) == optimal
         assert spec.pseudo_regret(context, optimal) == 0.0
         assert spec.pseudo_regret(context, SAFE_ACTION) == pytest.approx(48.8)
-        wrong_risky = next(action for action in range(1, ACTION_COUNT) if action != optimal)
+        wrong_risky = next(
+            action for action in range(1, ACTION_COUNT) if action != optimal
+        )
         assert spec.pseudo_regret(context, wrong_risky) == pytest.approx(49.0)
         assert spec.reward_stds(context)[optimal] == 0.01
 
@@ -159,9 +184,7 @@ def test_random_safe_oracle_control_regrets_and_access_labels() -> None:
     frequencies = np.bincount(random_actions, minlength=ACTION_COUNT) / 50_000.0
     np.testing.assert_allclose(frequencies, 1.0 / ACTION_COUNT, atol=0.006)
     assert (
-        _control_action(
-            "safe", np.asarray([np.nan, np.nan]), rng, NoOracleAccess()
-        )
+        _control_action("safe", np.asarray([np.nan, np.nan]), rng, NoOracleAccess())
         == SAFE_ACTION
     )
 
@@ -205,14 +228,115 @@ def test_random_safe_oracle_control_regrets_and_access_labels() -> None:
     )
     assert oracle.summary["cumulative_pseudo_regret"] == 0.0
     assert oracle.summary["uses_privileged_pre_action_oracle"] is True
-    assert all(row["selected_action"] == row["optimal_action_posthoc"] for row in oracle.records)
+    assert all(
+        row["selected_action"] == row["optimal_action_posthoc"]
+        for row in oracle.records
+    )
     assert all(row["selected_action"] == SAFE_ACTION for row in safe.records)
     assert safe.summary["uses_privileged_pre_action_oracle"] is False
-    assert random_first.deterministic_signature() == random_second.deterministic_signature()
+    assert (
+        random_first.deterministic_signature()
+        == random_second.deterministic_signature()
+    )
     assert random_first.summary["uses_privileged_pre_action_oracle"] is False
-    assert all(row["oracle_information_used_for_selection"] is False for row in random_first.records)
+    assert all(
+        row["oracle_information_used_for_selection"] is False
+        for row in random_first.records
+    )
     source = inspect.getsource(PostActionWheelOracle)
     assert "observe_after_action" in source
+
+
+def test_action_disjoint_last_layer_features_use_requested_backbone() -> None:
+    layout = MLPLayout(context_dimension=2, hidden_width=8, action_count=ACTION_COUNT)
+    model = SmallTanhMLP(layout)
+    context = np.asarray([0.3, -0.4], dtype=np.float64)
+    frozen = np.zeros(layout.parameter_dimension, dtype=np.float64)
+    moved = frozen.copy()
+    moved[layout.backbone_indices[0]] = 0.25
+    frozen_features = last_layer_action_features(model, frozen, context)
+    moved_features = last_layer_action_features(model, moved, context)
+    block_size = layout.hidden_width + 1
+    assert frozen_features.shape == (ACTION_COUNT, ACTION_COUNT * block_size)
+    for action in range(ACTION_COUNT):
+        active = slice(action * block_size, (action + 1) * block_size)
+        assert frozen_features[action, active.stop - 1] == 1.0
+        assert np.count_nonzero(frozen_features[action, : active.start]) == 0
+        assert np.count_nonzero(frozen_features[action, active.stop :]) == 0
+    assert not np.array_equal(frozen_features, moved_features)
+
+
+def test_added_wheel_baselines_are_finite_and_match_update_budget() -> None:
+    config = _smoke_config()
+    cell = cells(config)[0]
+    for method in FULL_NETWORK_METHODS:
+        ridge, bonus = hyperparameter_grid(config, method)[0]
+        run = run_policy(
+            config,
+            method,
+            3000,
+            cell=cell,
+            phase="evaluation",
+            ridge=ridge,
+            bonus_scale=bonus,
+        )
+        assert run.summary["full_network_update_count"] == config["rounds"]
+        assert run.summary["full_network_updates_per_round"] == 1.0
+        assert run.summary["matched_full_network_update_budget"] is True
+        assert all(row["full_network_update_performed"] for row in run.records)
+        assert all(
+            np.all(np.isfinite(row["policy_scores_all_actions"])) for row in run.records
+        )
+
+    for method in (
+        "all_layer_diagonal_ucb",
+        "local_neural_linear",
+        "frozen_backbone_last_layer_ucb",
+    ):
+        ridge, bonus = hyperparameter_grid(config, method)[0]
+        run = run_policy(
+            config,
+            method,
+            3001,
+            cell=cell,
+            phase="evaluation",
+            ridge=ridge,
+            bonus_scale=bonus,
+        )
+        assert all(
+            np.all(np.asarray(row["predictive_widths_all_actions"]) >= 0.0)
+            for row in run.records
+        )
+        assert all(
+            row["published_implementation_claim"] is False for row in run.records
+        )
+
+    frozen = run_policy(
+        config,
+        "frozen_backbone_last_layer_ucb",
+        3000,
+        cell=cell,
+        phase="evaluation",
+        ridge=1.0,
+        bonus_scale=0.5,
+    )
+    assert frozen.summary["full_network_update_count"] == 0
+    assert frozen.summary["full_network_updates_per_round"] == 0.0
+    assert all(not row["full_network_update_performed"] for row in frozen.records)
+
+    greedy = run_policy(
+        config,
+        "greedy",
+        3000,
+        cell=cell,
+        phase="evaluation",
+        ridge=0.0,
+        bonus_scale=0.0,
+    )
+    assert all(
+        row["predictive_widths_all_actions"] == [0.0] * ACTION_COUNT
+        for row in greedy.records
+    )
 
 
 def test_selection_rejects_evaluation_leakage_and_requires_tuning_artifact(
@@ -227,8 +351,8 @@ def test_selection_rejects_evaluation_leakage_and_requires_tuning_artifact(
             seed,
             cell=cell,
             phase="tuning",
-            ridge=0.0 if method in CONTROL_METHODS else 1.0,
-            bonus_scale=0.0 if method in CONTROL_METHODS else 0.5,
+            ridge=hyperparameter_grid(config, method)[0][0],
+            bonus_scale=hyperparameter_grid(config, method)[0][1],
         )
         for method in METHODS
         for cell in cells(config)
@@ -258,13 +382,17 @@ def test_tuning_selection_uses_one_pooled_argmin_across_all_deltas() -> None:
     config["ridge_grid"] = [1.0, 2.0]
     runs: list[WheelRun] = []
     for method in METHODS:
-        settings = ((0.0, 0.0),) if method in CONTROL_METHODS else (
-            (1.0, 0.5),
-            (2.0, 0.5),
+        settings = (
+            ((0.0, 0.0),)
+            if method in FIXED_HYPERPARAMETER_METHODS
+            else (
+                (1.0, 0.5),
+                (2.0, 0.5),
+            )
         )
         for ridge, bonus in settings:
             for cell_index, cell in enumerate(cells(config)):
-                if method in CONTROL_METHODS:
+                if method in FIXED_HYPERPARAMETER_METHODS:
                     regret = 0.0
                 elif ridge == 1.0:
                     regret = 0.0 if cell_index < 2 else 100.0
@@ -285,14 +413,17 @@ def test_tuning_selection_uses_one_pooled_argmin_across_all_deltas() -> None:
                     )
     artifact = build_tuning_selection(config, runs)
     selected = validate_tuning_selection(config, artifact)
-    for method in set(METHODS) - CONTROL_METHODS:
+    for method in set(METHODS) - FIXED_HYPERPARAMETER_METHODS:
         assert selected[method] == (2.0, 0.5)
+    assert selected["greedy"] == (0.0, 0.0)
     first = next(
         row
         for row in artifact["candidates"]
         if row["method"] == "linucb" and row["ridge"] == 1.0
     )
-    assert [row["mean_cumulative_pseudo_regret"] for row in first["per_delta_means"]] == [
+    assert [
+        row["mean_cumulative_pseudo_regret"] for row in first["per_delta_means"]
+    ] == [
         0.0,
         0.0,
         100.0,
@@ -424,19 +555,20 @@ def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
         workers=2,
     )
     expected_evaluation = (
-        len(cells(config))
-        * len(METHODS)
-        * len(get_seed_set(config, "evaluation"))
+        len(cells(config)) * len(METHODS) * len(get_seed_set(config, "evaluation"))
     )
     assert len(evaluation) == expected_evaluation
     for seed in get_seed_set(config, "evaluation"):
-        assert len(
-            {
-                run.summary["environment_stream_sha256"]
-                for run in evaluation
-                if run.seed == seed
-            }
-        ) == 1
+        assert (
+            len(
+                {
+                    run.summary["environment_stream_sha256"]
+                    for run in evaluation
+                    if run.seed == seed
+                }
+            )
+            == 1
+        )
 
     artifact = build_artifact(
         config_path=CONFIG,
@@ -464,18 +596,19 @@ def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
             for cell in cells(config)
         ],
     }
-    assert artifact["method_results"]["cc_ucb_full_ggn_cg"][
-        "all_cg_solves_converged"
-    ] is True
+    assert (
+        artifact["method_results"]["cc_ucb_full_ggn_cg"]["all_cg_solves_converged"]
+        is True
+    )
     assert "lofi" in artifact["omitted_methods"]
     assert artifact["pooled_tuning_over_all_deltas"] is True
     assert artifact["delta_count"] == 4
     assert len(artifact["method_results"]["linucb"]["by_delta"]) == 4
     assert len(artifact["seed_level_results"]) == expected_evaluation
-    assert len(artifact["paired_comparisons_against_controls"]) == 4 * 3 * 7
-    assert artifact["interval"]["unit"] == (
-        "one complete evaluation-seed trajectory"
+    assert len(artifact["paired_comparisons_against_controls"]) == (
+        4 * 3 * (len(METHODS) - 1)
     )
+    assert artifact["interval"]["unit"] == ("one complete evaluation-seed trajectory")
     for method, result in artifact["method_results"].items():
         for row in result["by_delta"]:
             metrics = row["metrics"]

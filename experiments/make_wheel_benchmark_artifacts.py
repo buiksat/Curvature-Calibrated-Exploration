@@ -27,6 +27,8 @@ from .config import get_seed_set, load_config
 from .logging_utils import canonical_json
 from .run_wheel_benchmark import (
     CONTROL_METHODS,
+    FIXED_HYPERPARAMETER_METHODS,
+    FULL_NETWORK_METHODS,
     METHODS,
     METHOD_IMPLEMENTATIONS,
     cells,
@@ -49,32 +51,44 @@ DEFAULT_SMOKE_ROOT = Path("results/derived/wheel_benchmark/smoke")
 
 DISPLAY_NAMES = {
     "cc_ucb_full_ggn_cg": "Current-GGN UCB",
-    "linucb": "LinUCB",
-    "linear_ts": "Linear TS",
     "local_neural_ucb": "Local neural UCB",
     "local_neural_ts": "Local neural TS",
+    "all_layer_diagonal_ucb": "All-layer diagonal UCB",
+    "local_neural_linear": "Local NeuralLinear-style",
+    "frozen_backbone_last_layer_ucb": "Frozen last-layer UCB",
+    "linucb": "LinUCB",
+    "linear_ts": "Linear TS",
+    "greedy": "Greedy",
     "random": "Random",
     "safe": "Safe",
     "oracle": "Oracle",
 }
 METHOD_COLORS = {
     "cc_ucb_full_ggn_cg": "#0072B2",
-    "linucb": "#009E73",
-    "linear_ts": "#56B4E9",
     "local_neural_ucb": "#D55E00",
     "local_neural_ts": "#CC79A7",
+    "all_layer_diagonal_ucb": "#E6AB02",
+    "local_neural_linear": "#6A3D9A",
+    "frozen_backbone_last_layer_ucb": "#1F9E89",
+    "linucb": "#009E73",
+    "linear_ts": "#56B4E9",
+    "greedy": "#A65628",
     "random": "#7F7F7F",
     "safe": "#E69F00",
     "oracle": "#111111",
 }
 METHOD_MARKERS = {
     "cc_ucb_full_ggn_cg": "o",
-    "linucb": "s",
-    "linear_ts": "^",
     "local_neural_ucb": "D",
     "local_neural_ts": "v",
-    "random": "P",
-    "safe": "X",
+    "all_layer_diagonal_ucb": "P",
+    "local_neural_linear": "<",
+    "frozen_backbone_last_layer_ucb": ">",
+    "linucb": "s",
+    "linear_ts": "^",
+    "greedy": "h",
+    "random": "X",
+    "safe": "+",
     "oracle": "*",
 }
 DELTA_MARKERS = {0.5: "o", 0.7: "s", 0.9: "^", 0.95: "D"}
@@ -144,8 +158,7 @@ def _seed_diagnostics(
         float(
             np.mean(
                 [
-                    int(row["selected_action"])
-                    == int(row["optimal_action_posthoc"])
+                    int(row["selected_action"]) == int(row["optimal_action_posthoc"])
                     and int(row["selected_action"]) != SAFE_ACTION
                     for row in outer
                 ],
@@ -175,12 +188,8 @@ def _seed_diagnostics(
             predictions = np.asarray(
                 row["predicted_means_all_actions"], dtype=np.float64
             )
-            widths = np.asarray(
-                row["predictive_widths_all_actions"], dtype=np.float64
-            )
-            if predictions.shape != (ACTION_COUNT,) or widths.shape != (
-                ACTION_COUNT,
-            ):
+            widths = np.asarray(row["predictive_widths_all_actions"], dtype=np.float64)
+            if predictions.shape != (ACTION_COUNT,) or widths.shape != (ACTION_COUNT,):
                 raise ValueError("Wheel prediction diagnostics have the wrong shape")
             if (
                 np.any(widths < 0.0)
@@ -283,8 +292,8 @@ def build_artifact(
     tuning_seeds = tuple(get_seed_set(config, "tuning"))
     if set(evaluation_seeds) & set(tuning_seeds):
         raise ValueError("tuning and evaluation seeds overlap")
-    if profile == "full" and evaluation_seeds != tuple(range(3000, 3050)):
-        raise ValueError("the full Wheel report requires evaluation seeds 3000--3049")
+    if profile == "full" and evaluation_seeds != tuple(range(3000, 3030)):
+        raise ValueError("the full Wheel report requires evaluation seeds 3000--3029")
     if profile == "full" and tuning_seeds != tuple(range(2000, 2010)):
         raise ValueError("the full Wheel report requires tuning seeds 2000--2009")
     if profile == "full" and int(config["rounds"]) != 5000:
@@ -326,6 +335,9 @@ def build_artifact(
                     or float(summary.get("delta", -1.0)) != cell.delta
                     or summary.get("phase") != "evaluation"
                     or summary.get("executed_policy") is not True
+                    or summary.get("method_implementation")
+                    != METHOD_IMPLEMENTATIONS[method]
+                    or summary.get("published_implementation_claim") is not False
                     or execution.get("cell")
                     != {"delta": cell.delta, "token": cell.token}
                     or execution.get("tuning_selection_sha256")
@@ -343,7 +355,22 @@ def build_artifact(
                         "evaluation hyperparameters were not selected by pooled tuning"
                     )
                 if summary.get("pooled_tuning_setting") is not True:
-                    raise ValueError("evaluation summary lacks pooled-tuning provenance")
+                    raise ValueError(
+                        "evaluation summary lacks pooled-tuning provenance"
+                    )
+                expected_updates = (
+                    int(config["rounds"]) if method in FULL_NETWORK_METHODS else 0
+                )
+                if (
+                    summary.get("full_network_method")
+                    is not (method in FULL_NETWORK_METHODS)
+                    or int(summary.get("full_network_update_count", -1))
+                    != expected_updates
+                    or summary.get("matched_full_network_update_budget") is not True
+                ):
+                    raise ValueError(
+                        "evaluation summary violates the neural update budget"
+                    )
                 if len(rows) != int(config["rounds"]):
                     raise ValueError(
                         f"evaluation trajectory is incomplete: {directory}"
@@ -357,8 +384,7 @@ def build_artifact(
                     raise ValueError("raw method/cell identity mismatch")
                 digest = str(summary["environment_stream_sha256"])
                 if any(
-                    item.get("environment_stream_sha256") != digest
-                    for item in metrics
+                    item.get("environment_stream_sha256") != digest for item in metrics
                 ):
                     raise ValueError("raw stream digest disagrees with the summary")
                 stream_digests[seed].add(digest)
@@ -378,9 +404,7 @@ def build_artifact(
                         "seed": seed,
                         "ridge": ridge,
                         "bonus_scale": bonus,
-                        "cumulative_pseudo_regret": summary[
-                            "cumulative_pseudo_regret"
-                        ],
+                        "cumulative_pseudo_regret": summary["cumulative_pseudo_regret"],
                         "cumulative_reward": summary["cumulative_reward"],
                         "optimal_action_rate": summary["optimal_action_rate"],
                         "environment_stream_sha256": digest,
@@ -404,7 +428,9 @@ def build_artifact(
         or item.get("uses_privileged_pre_action_oracle") is not True
         for item in oracle_metrics
     ):
-        raise ValueError("oracle control is not an exact privileged zero-regret control")
+        raise ValueError(
+            "oracle control is not an exact privileged zero-regret control"
+        )
     safe_metrics = [
         _metrics(row)
         for cell in configured_cells
@@ -423,7 +449,10 @@ def build_artifact(
         for seed in evaluation_seeds
         for row in raw[(cell.delta, "random", seed)]
     ]
-    if any(item.get("uses_privileged_pre_action_oracle") is not False for item in random_metrics):
+    if any(
+        item.get("uses_privileged_pre_action_oracle") is not False
+        for item in random_metrics
+    ):
         raise ValueError("random control used privileged oracle information")
 
     summary_metric_names = (
@@ -454,17 +483,17 @@ def build_artifact(
                         "horizon": horizon,
                         "cumulative_pseudo_regret": student_t_interval(
                             float(
-                                _metrics(
-                                    raw[(cell.delta, method, seed)][horizon - 1]
-                                )["cumulative_pseudo_regret"]
+                                _metrics(raw[(cell.delta, method, seed)][horizon - 1])[
+                                    "cumulative_pseudo_regret"
+                                ]
                             )
                             for seed in evaluation_seeds
                         ),
                         "optimal_action_rate": student_t_interval(
                             float(
-                                _metrics(
-                                    raw[(cell.delta, method, seed)][horizon - 1]
-                                )["cumulative_optimal_action_rate"]
+                                _metrics(raw[(cell.delta, method, seed)][horizon - 1])[
+                                    "cumulative_optimal_action_rate"
+                                ]
                             )
                             for seed in evaluation_seeds
                         ),
@@ -476,8 +505,7 @@ def build_artifact(
                     "evaluation_seed_count": len(rows),
                     "metrics": {
                         **{
-                            name: _interval(rows, name)
-                            for name in summary_metric_names
+                            name: _interval(rows, name) for name in summary_metric_names
                         },
                         "outside_optimal_risky_rate": _optional_interval(
                             diagnostics, "outside_optimal_risky_rate"
@@ -496,10 +524,14 @@ def build_artifact(
             "method_implementation": METHOD_IMPLEMENTATIONS[method],
             "published_implementation_claim": False,
             "privileged_pre_action_oracle": method == "oracle",
-            "selected_hyperparameters": summaries[
-                (configured_cells[0].delta, method)
-            ][0]["hyperparameters"],
+            "selected_hyperparameters": summaries[(configured_cells[0].delta, method)][
+                0
+            ]["hyperparameters"],
             "selection_was_pooled_over_all_deltas": True,
+            "full_network_method": method in FULL_NETWORK_METHODS,
+            "full_network_updates_per_round": (
+                1 if method in FULL_NETWORK_METHODS else 0
+            ),
             "evaluation_seed_count_per_delta": len(evaluation_seeds),
             "by_delta": by_delta,
         }
@@ -517,12 +549,10 @@ def build_artifact(
                 if method == control:
                     continue
                 method_by_seed = {
-                    int(row["seed"]): row
-                    for row in summaries[(cell.delta, method)]
+                    int(row["seed"]): row for row in summaries[(cell.delta, method)]
                 }
                 control_by_seed = {
-                    int(row["seed"]): row
-                    for row in summaries[(cell.delta, control)]
+                    int(row["seed"]): row for row in summaries[(cell.delta, control)]
                 }
                 differences = [
                     float(method_by_seed[seed]["cumulative_pseudo_regret"])
@@ -627,7 +657,7 @@ def build_artifact(
         "paired_comparisons_against_controls": paired_against_controls,
         "omitted_methods": config["omitted_methods"],
         "limitations": [
-            "Local neural UCB/TS and current-GGN policies are diagnostic local implementations, not pinned reproductions of published NeuralUCB or NeuralTS code.",
+            "Current-GGN, neural UCB/TS, all-layer diagonal, NeuralLinear-style, frozen-last-layer, and greedy policies are local diagnostic implementations; none is claimed to be an official or faithful published baseline implementation.",
             "LO-FI is excluded because this repository has no faithful pinned implementation.",
             "KFAC is excluded rather than presenting a local block approximation under a fidelity claim.",
             "The oracle is a privileged non-learner sanity control and is not a deployable contextual-bandit policy.",
@@ -656,9 +686,7 @@ def _save_figure(figure: plt.Figure, output: Path) -> None:
     write_sha256_sidecar(output)
 
 
-def _method_rows(
-    report: Mapping[str, Any], method: str
-) -> Sequence[Mapping[str, Any]]:
+def _method_rows(report: Mapping[str, Any], method: str) -> Sequence[Mapping[str, Any]]:
     method_results = report["method_results"]
     if not isinstance(method_results, Mapping):
         raise ValueError("Wheel report lacks method results")
@@ -676,9 +704,7 @@ def _plot_interval_series(
     method: str,
 ) -> None:
     defined = [
-        row
-        for row in rows
-        if isinstance(row.get("metrics", {}).get(metric), Mapping)
+        row for row in rows if isinstance(row.get("metrics", {}).get(metric), Mapping)
     ]
     if not defined:
         return
@@ -714,8 +740,10 @@ def _method_legend_handles(*, marker_by_method: bool = True) -> list[Line2D]:
             color=METHOD_COLORS[method],
             marker=METHOD_MARKERS[method] if marker_by_method else None,
             linestyle=(
-                "--" if method in CONTROL_METHODS else "-"
-            ) if marker_by_method else "-",
+                ("--" if method in CONTROL_METHODS else "-")
+                if marker_by_method
+                else "-"
+            ),
             linewidth=1.15 if marker_by_method else 2.5,
             markersize=4.5,
             label=DISPLAY_NAMES[method],
@@ -726,7 +754,7 @@ def _method_legend_handles(*, marker_by_method: bool = True) -> list[Line2D]:
 
 def make_policy_quality_figure(report: Mapping[str, Any], output: Path) -> None:
     _configure_pdf_fonts()
-    figure, axes = plt.subplots(1, 3, figsize=(11.2, 3.65), sharex=True)
+    figure, axes = plt.subplots(1, 3, figsize=(11.2, 4.15), sharex=True)
     specifications = (
         ("cumulative_pseudo_regret", "Terminal cumulative pseudo-regret"),
         ("outside_optimal_risky_rate", "Outer optimal-risky rate"),
@@ -761,14 +789,14 @@ def make_policy_quality_figure(report: Mapping[str, Any], output: Path) -> None:
     figure.legend(
         handles=_method_legend_handles(),
         loc="lower center",
-        bbox_to_anchor=(0.5, 0.01),
+        bbox_to_anchor=(0.5, 0.015),
         ncol=4,
         frameon=False,
         fontsize=7.2,
         columnspacing=1.5,
         handlelength=2.0,
     )
-    figure.subplots_adjust(left=0.07, right=0.99, bottom=0.27, top=top, wspace=0.28)
+    figure.subplots_adjust(left=0.07, right=0.99, bottom=0.36, top=top, wspace=0.28)
     _save_figure(figure, output)
 
 
@@ -795,7 +823,7 @@ def _interval_error(
 def make_compute_figure(report: Mapping[str, Any], output: Path) -> None:
     _configure_pdf_fonts()
     rounds = int(report["rounds"])
-    figure, axes = plt.subplots(1, 2, figsize=(8.6, 3.75), sharey=True)
+    figure, axes = plt.subplots(1, 2, figsize=(8.6, 4.25), sharey=True)
     for method in METHODS:
         for row in _method_rows(report, method):
             metrics = row["metrics"]
@@ -871,14 +899,14 @@ def make_compute_figure(report: Mapping[str, Any], output: Path) -> None:
     figure.legend(
         handles=_method_legend_handles(marker_by_method=False),
         loc="lower center",
-        bbox_to_anchor=(0.5, 0.01),
+        bbox_to_anchor=(0.5, 0.015),
         ncol=4,
         frameon=False,
         fontsize=7.2,
         columnspacing=1.4,
         handlelength=1.8,
     )
-    figure.subplots_adjust(left=0.1, right=0.98, bottom=0.29, top=top, wspace=0.1)
+    figure.subplots_adjust(left=0.1, right=0.98, bottom=0.37, top=top, wspace=0.1)
     _save_figure(figure, output)
 
 
@@ -922,7 +950,7 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
         selected = method_results[method]["selected_hyperparameters"]
         hyperparameters = (
             r"\textit{fixed}"
-            if method in CONTROL_METHODS
+            if method in FIXED_HYPERPARAMETER_METHODS
             else rf"$({float(selected['ridge']):g},\,{float(selected['bonus_scale']):g})$"
         )
         for row in _method_rows(report, method):

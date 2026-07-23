@@ -1196,6 +1196,8 @@ def _validate_scaled_tanh_inventory_contract(
 def _validate_wheel_inventory_contract(
     value: Mapping[str, Any], entries: Sequence[Mapping[str, Any]]
 ) -> None:
+    from .run_wheel_benchmark import hyperparameter_grid
+
     profile = value.get("profile")
     if profile not in {"smoke", "full"}:
         raise RawArtifactBundleError("Wheel bundle profile is invalid")
@@ -1239,13 +1241,10 @@ def _validate_wheel_inventory_contract(
     try:
         methods = tuple(str(method) for method in config["methods"])
         deltas = tuple(float(delta) for delta in config["deltas"])
-        ridges = tuple(float(ridge) for ridge in config["ridge_grid"])
-        bonuses = tuple(float(bonus) for bonus in config["bonus_grid"])
         tuning = tuple(int(seed) for seed in tuning_seeds)
         evaluation = tuple(int(seed) for seed in evaluation_seeds)
     except (KeyError, TypeError, ValueError) as error:
         raise RawArtifactBundleError("Wheel resolved grid is invalid") from error
-    controls = {"random", "safe", "oracle"}
     selected_settings = value.get("selected_hyperparameters")
     if not isinstance(selected_settings, dict) or set(selected_settings) != set(
         methods
@@ -1259,11 +1258,7 @@ def _validate_wheel_inventory_contract(
             pair = (float(setting["ridge"]), float(setting["bonus_scale"]))
         except (KeyError, TypeError, ValueError) as error:
             raise RawArtifactBundleError("Wheel selected setting is invalid") from error
-        allowed = (
-            {(0.0, 0.0)}
-            if method in controls
-            else {(ridge, bonus) for ridge in ridges for bonus in bonuses}
-        )
+        allowed = set(hyperparameter_grid(config, method))
         if pair not in allowed:
             raise RawArtifactBundleError("Wheel selected setting is outside its grid")
     expected_paths = {selection_path}
@@ -1272,11 +1267,7 @@ def _validate_wheel_inventory_contract(
     for delta in deltas:
         token = f"delta-{format(delta, '.12g').replace('.', 'p')}"
         for method in methods:
-            settings = (
-                ((0.0, 0.0),)
-                if method in controls
-                else tuple((ridge, bonus) for ridge in ridges for bonus in bonuses)
-            )
+            settings = hyperparameter_grid(config, method)
             for ridge, bonus in settings:
                 setting = f"ridge-{ridge:g}_bonus-{bonus:g}"
                 for seed in tuning:
