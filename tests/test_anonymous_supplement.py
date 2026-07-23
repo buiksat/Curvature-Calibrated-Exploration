@@ -436,6 +436,40 @@ def test_review_rewriter_binds_omitted_raw_input_to_index(tmp_path: Path) -> Non
         )
 
 
+def test_compact_checkout_retains_unavailable_raw_binding(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    source_path = "results/raw/study/full/evaluation/seed-1/raw.jsonl"
+    source_digest = "c" * 64
+    builder = object.__new__(ReleaseBuilder)
+    builder.repository = repository
+    builder.tier = "review"
+    builder.raw_index_record = None
+    builder.raw_source_index = {}
+    builder.records = {}
+    builder.references = {}
+    builder.sanitizer = StructuredSanitizer(repository, "a" * 64)
+
+    rewritten = builder._rewrite_known_paths(
+        {
+            "input_set_sha256": "stale",
+            "inputs": [{"path": source_path, "sha256": source_digest}],
+        }
+    )
+
+    item = rewritten["inputs"][0]
+    assert item == {
+        "availability": "not_in_compact_checkout",
+        "path": source_path,
+        "sha256": source_digest,
+    }
+    assert builder._is_valid_unavailable_raw_reference(item)
+    with pytest.raises(BuildError, match="unavailable raw input hash is invalid"):
+        builder._rewrite_known_paths(
+            {"inputs": [{"path": source_path, "sha256": "invalid"}]}
+        )
+
+
 def test_review_rewriter_rejects_stale_hash_for_selected_raw_input(
     tmp_path: Path,
 ) -> None:

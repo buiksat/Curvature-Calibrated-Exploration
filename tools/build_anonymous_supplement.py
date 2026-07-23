@@ -794,9 +794,18 @@ class ReleaseBuilder:
                 target = self._resolve_reference(normalized)
                 if target is None:
                     indexed = self._indexed_raw_reference(normalized, item.get("sha256"))
-                    if indexed is None:
-                        raise BuildError(f"provenance references an omitted file: {normalized}")
-                    rewritten.append(indexed)
+                    if indexed is not None:
+                        rewritten.append(indexed)
+                    else:
+                        unavailable = self._unavailable_raw_reference(
+                            normalized, item.get("sha256")
+                        )
+                        if unavailable is not None:
+                            rewritten.append(unavailable)
+                        else:
+                            raise BuildError(
+                                f"provenance references an omitted file: {normalized}"
+                            )
                 else:
                     rewritten.append({"path": target.path, "sha256": target.sha256})
             rewritten.sort(key=lambda item: (item["path"], item["sha256"]))
@@ -837,6 +846,20 @@ class ReleaseBuilder:
             "sha256": digest,
         }
 
+    def _unavailable_raw_reference(
+        self, path: str, digest: Any
+    ) -> dict[str, Any] | None:
+        raw_root = self.repository / "results" / "raw"
+        if raw_root.exists() or not path.startswith(f"{RAW_ROOT.as_posix()}/"):
+            return None
+        if not isinstance(digest, str) or not HASH_PATTERN.fullmatch(digest):
+            raise BuildError(f"unavailable raw input hash is invalid: {path}")
+        return {
+            "availability": "not_in_compact_checkout",
+            "path": path,
+            "sha256": digest,
+        }
+
     def _is_valid_indexed_raw_reference(self, item: Mapping[str, Any]) -> bool:
         if self.tier != "review" or self.raw_index_record is None:
             return False
@@ -857,6 +880,19 @@ class ReleaseBuilder:
             entry
             and entry.get("sha256") == digest
             and entry.get("release_status") == "indexed_not_released"
+        )
+
+    def _is_valid_unavailable_raw_reference(self, item: Mapping[str, Any]) -> bool:
+        raw_root = self.repository / "results" / "raw"
+        path = item.get("path")
+        digest = item.get("sha256")
+        return bool(
+            not raw_root.exists()
+            and isinstance(path, str)
+            and path.startswith(f"{RAW_ROOT.as_posix()}/")
+            and isinstance(digest, str)
+            and HASH_PATTERN.fullmatch(digest)
+            and item.get("availability") == "not_in_compact_checkout"
         )
 
     def _record_inventory(
@@ -1409,6 +1445,7 @@ class ReleaseBuilder:
             )
 
     def _write_release_metadata(self) -> None:
+        raw_sources_available = (self.repository / "results" / "raw").is_dir()
         source_manifest = {
             "anonymous_source_tree_sha256": self.source_hash,
             "files": self.source_inventory,
@@ -1423,7 +1460,9 @@ class ReleaseBuilder:
             "archives": sorted(self.raw_inventory, key=lambda item: item["source_path"]),
             "compression": self.compression,
             "lossless": False,
-            "lossless_for_reported_artifacts": self.tier == "full",
+            "lossless_for_reported_artifacts": (
+                self.tier == "full" and raw_sources_available
+            ),
             "projection": {
                 "record_envelope": "all fields retained",
                 "metric_scalars": "all string, boolean, integer, float, and null values retained",
@@ -1442,7 +1481,11 @@ class ReleaseBuilder:
                     "path": self.raw_index_record.path,
                     "sha256": self.raw_index_record.sha256,
                 },
-                "scope": "representative_trajectories_only",
+                "scope": (
+                    "representative_trajectories_only"
+                    if raw_sources_available
+                    else "derived_artifacts_only"
+                ),
                 "selected_run_count": len(self.review_run_directories),
                 "selection_algorithm": REVIEW_SELECTION_ALGORITHM,
             }
@@ -1463,7 +1506,19 @@ class ReleaseBuilder:
                 "find results/raw -name '*" + suffix + "' -exec sh -c "
                 "'for p do; gzip -dc \"$p\" > \"${p%" + suffix + "}\"; done' sh {} +"
             )
-        if self.tier == "review":
+        if not raw_sources_available:
+            introduction = f"""This compact-checkout release contains the anonymous paper,
+experiment implementation and configuration, tests, every committed derived
+artifact, and the table and figure regeneration inputs.  Seed-level raw outputs
+are intentionally stored outside Git and are not included.  `MANIFEST.json`
+binds every released file.  The anonymous source-tree digest is
+`{self.source_hash}`."""
+            raw_notes = """No raw trajectory is present in this compact-checkout build.
+Provenance entries marked `not_in_compact_checkout` retain the recorded source
+path and SHA-256, but the release does not claim to have independently verified
+or locally supplied those inputs.  Re-run the deterministic experiment entry
+points to reconstruct them."""
+        elif self.tier == "review":
             introduction = f"""This review-tier release contains the anonymous paper,
 experiment implementation and configuration, tests, every derived artifact,
 and the table and figure regeneration inputs.  It intentionally includes only
@@ -1614,6 +1669,7 @@ inventories are under `manifests`.
         sidecars = 0
         input_references = 0
         indexed_input_references = 0
+        unavailable_input_references = 0
         for relative, record in sorted(self.records.items()):
             if record.role != "provenance":
                 continue
@@ -1638,6 +1694,8 @@ inventories are under `manifests`.
                         raise BuildError(f"sidecar input hash is stale: {relative}")
                 elif self._is_valid_indexed_raw_reference(item):
                     indexed_input_references += 1
+                elif self._is_valid_unavailable_raw_reference(item):
+                    unavailable_input_references += 1
                 else:
                     raise BuildError(f"sidecar input is missing: {relative}")
                 input_references += 1
@@ -1668,6 +1726,9 @@ inventories are under `manifests`.
             "paper_references_checked": references_checked,
             "provenance_input_references_checked": input_references,
             "provenance_sidecars_checked": sidecars,
+            "unavailable_raw_provenance_input_references": (
+                unavailable_input_references
+            ),
         }
 
     def _validate_anonymous_author_declarations(self) -> None:
@@ -1703,6 +1764,11 @@ inventories are under `manifests`.
             if self.tier == "review"
             else "anonymous_compact_supplement"
         )
+        validation_status = (
+            "passed_with_declared_unavailable_raw_inputs"
+            if validation.get("unavailable_raw_provenance_input_references", 0)
+            else "passed"
+        )
         manifest = {
             "anonymous_source_tree_sha256": self.source_hash,
             "compression": self.compression,
@@ -1715,7 +1781,10 @@ inventories are under `manifests`.
             "release_kind": release_kind,
             "release_tier": self.tier,
             "schema_version": SCHEMA_VERSION,
-            "source_reference_validation": {"status": "passed", **validation},
+            "source_reference_validation": {
+                "status": validation_status,
+                **validation,
+            },
             "total_bytes_excluding_this_manifest": total_bytes,
         }
         return self._write_bytes(
