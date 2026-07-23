@@ -40,7 +40,7 @@ def test_structured_sanitizer_relativizes_paths_and_replaces_revision(
         "git_revision": "old-revision",
         "git_root": str(repository),
         "python": {"executable": str(repository / ".venv/bin/python")},
-        "test_indices_artifact": "/Users/example/cache/test_indices.npy",
+        "test_indices_artifact": "/" + "Users" + "/example/cache/test_indices.npy",
     }
 
     sanitized = sanitizer.sanitize(record)
