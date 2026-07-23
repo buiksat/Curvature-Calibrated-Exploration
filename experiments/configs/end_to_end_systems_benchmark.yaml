@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "name": "end_to_end_systems_benchmark",
+  "description": "Real-PyTorch end-to-end contextual-bandit loop benchmark with current-parameter replay GGN, local implemented controls, synchronized component timings, and explicit compute caps.",
+  "base": {
+    "rounds": 1000,
+    "models": [
+      {"name": "mlp_100k", "architecture": [128, 512, 128, 1]},
+      {"name": "mlp_1m", "architecture": [128, 1024, 896, 1]}
+    ],
+    "action_counts": [5, 10],
+    "replay_sizes": [128, 512],
+    "methods": [
+      "current_replay_ggn_cg",
+      "historical_gradient_cg",
+      "empirical_diagonal",
+      "exact_last_layer",
+      "local_tensor_block_isotropic",
+      "greedy"
+    ],
+    "method_semantics": {
+      "current_replay_ggn_cg": "Current-parameter relinearization of every selected context in the capped replay buffer; the summed GGN is applied by real torch.func JVP/VJP and solved by batched CG.",
+      "historical_gradient_cg": "Collection-time selected gradients retained in the capped replay buffer and applied as an explicit local historical-gradient Gram; this is not an official NeuralUCB implementation.",
+      "empirical_diagonal": "Collection-time selected-gradient squares retained in the capped replay buffer and summed into a diagonal precision.",
+      "exact_last_layer": "Exact rank-one inverse updates for the capped replay buffer of collection-time scalar-output last-layer features; earlier features are not recomputed after network updates.",
+      "local_tensor_block_isotropic": "One isotropic precision scalar per weight or bias tensor, updated from collection-time gradient energy. This local tensor-block control has no Kronecker factors and is not KFAC.",
+      "greedy": "Current network mean with no uncertainty bonus."
+    },
+    "unavailable_baselines": {
+      "lofi": "omitted_no_pinned_compatible_official_implementation",
+      "kfac": "omitted_no_faithful_kfac_implementation; local_tensor_block_isotropic_is_not_kfac"
+    },
+    "activation": "tanh",
+    "dtype": "float32",
+    "device": "auto",
+    "noise_std": 0.1,
+    "damping": 1.0,
+    "bonus_scale": 1.0,
+    "learning_rate": 0.001,
+    "model_ridge": 0.00001,
+    "maximum_step_norm": 0.05,
+    "cg_relative_tolerance": 0.05,
+    "cg_max_iterations": 12,
+    "warmup_rounds": 10,
+    "deterministic_algorithms": true,
+    "synchronize_component_boundaries": true,
+    "compute_cap_accelerator_hours": 24.0,
+    "compute_cap_cpu_hours": 96.0,
+    "selection_protocol": "all models, action counts, replay sizes, methods, and optimization constants fixed before evaluation; no evaluation-seed tuning",
+    "timing_semantics": "wall-clock perf_counter with explicit device synchronization before and after each component; first warmup_rounds update policy state but are excluded from p50/p95 summaries",
+    "provenance": {
+      "packages": ["numpy", "psutil", "torch", "matplotlib", "scipy"]
+    }
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 4,
+      "models": [
+        {"name": "mlp_smoke", "architecture": [8, 16, 1]}
+      ],
+      "action_counts": [2],
+      "replay_sizes": [3],
+      "cg_max_iterations": 8,
+      "warmup_rounds": 1,
+      "compute_cap_accelerator_hours": 0.25,
+      "compute_cap_cpu_hours": 0.25,
+      "seed_sets": {
+        "development": [71],
+        "tuning": [7000],
+        "evaluation": [8000]
+      }
+    },
+    "full": {
+      "seed_sets": {
+        "development": [7100],
+        "tuning": [7000, 7001, 7002, 7003, 7004],
+        "evaluation": [8000, 8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009]
+      }
+    }
+  }
+}
