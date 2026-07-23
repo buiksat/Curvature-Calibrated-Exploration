@@ -83,7 +83,7 @@
       "preconditioner": "none",
       "separate_per_action_residual_check": true,
       "tolerance_deviation_reason": "Pre-evaluation development-only seed 1900 pilots failed the 1e-10 check after 190.04 seconds and the 1e-8 check at round 2955 after 440.94 seconds (relative residual 1.337249e-8). The 1e-6 target is frozen before tuning/evaluation and every solve remains independently residual checked.",
-      "iteration_budget_revision_reason": "The initial 100-iteration tuning attempt wrote 56 hashed current-GGN failure records before stopping; the first failure was delta=0.5, seed=2000, ridge=0.1, bonus=0.1 at round 484 with residual 8.647020e-6. No evaluation policy was run. The cap was increased to 300 and a 1000-round rerun of that tuning task passed with maximum residual 9.998529e-7 before tuning was restarted from scratch."
+      "iteration_budget_revision_reason": "The initial 100-iteration tuning attempt wrote 56 hashed current-GGN failure records before stopping; the first failure was delta=0.5, seed=2000, ridge=0.1, bonus=0.1 at round 484 with residual 8.647020e-6. A clean 300-iteration restart then failed before evaluation at delta=0.5, seed=2008, ridge=0.1, bonus=0.5, round 2761 with residual 4.714088e-6. A development-only periodic residual-replacement diagnostic also failed at round 174 with residual 5.467890e-6. No evaluation policy was run, and the full Wheel study remains a recorded failed benchmark."
     },
     "selection": {
       "criterion": "pooled_mean_cumulative_pseudo_regret_across_all_deltas_and_tuning_seeds",
