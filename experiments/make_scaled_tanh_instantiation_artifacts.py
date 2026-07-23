@@ -1509,7 +1509,7 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
         )
     lines.extend(
         (
-            r"$T$ & $W/(T R_T)$ & $\rho_W$ & Premises & Failed traj. (E/C/W/K) & Regret & RHS/$T$ & CG agree. & Max width err. & Sample-CVPs \\",
+            r"$T$ & $W/(T R_T)$ & $\rho_W$ & Premises & Failed traj. (Exact/CG/Welf./Corr.) & Regret & RHS/$T$ & CG agree. & Max width err. & Sample-CVPs \\",
             r"\midrule",
         )
     )
