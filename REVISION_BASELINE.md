@@ -77,3 +77,37 @@ reclassified as regressions in later verification.
 - Rebuilding `paper/main.pdf` changes the tracked PDF working-tree entry even
   when the TeX sources are unchanged; final artifact checks must compare
   content and provenance deliberately rather than assuming byte identity.
+
+## Scalar-link revision cycle (2026-07-23)
+
+This second baseline was captured before the relative scalar-link, scaled-tanh,
+refined spectral-tail, gap-dependent, PCG, Wheel, and end-to-end systems work at
+Git revision `c0a7a57a0bca8fdc516553d42b48a744616301de` on branch
+`codex/closed-rates-20260721`.
+
+The requested manuscript labels all resolve in `paper/main.tex`:
+`thm:regret`, `lem:whitened`, `lem:path-certificates`,
+`lem:spectral-tail-logdet`, `cor:corrected-near-linear`, and `cor:tanh-link`.
+The repository uses Buck targets in `tests/BUCK`, `experiments/BUCK`, and
+`paper/BUCK`; experiment configurations live under `experiments/configs/`;
+figure entry points are `scripts/reproduce_fig_*.sh`; generated tables live in
+`tables/generated/`; and artifacts use JSON manifests, provenance records, and
+SHA-256 sidecars under `results/raw/` and `results/derived/`.
+
+Baseline verification results:
+
+- `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`:
+  **pass**, two targets passed with zero failures, timeouts, skips, omissions,
+  infrastructure failures, or build failures.
+- `buck2 run //paper:validate`: **pass**, with 187 labels, zero duplicates, 131
+  distinct reference targets, zero unresolved references, 36 citation keys,
+  and zero missing bibliography entries.
+- `latexmk -g -pdf -interaction=nonstopmode -halt-on-error main.tex`, run from
+  `paper/`: **pass**, producing a 65-page PDF.
+
+Pre-existing LaTeX diagnostics remain the 5.1225 pt overfull box at line 80,
+underfull boxes, the AISTATS style's `\footskip` warnings, and the provisional
+checklist warning. There were no undefined references or citations, duplicate
+labels, missing figures, or build errors. The forced build changes the tracked
+PDF bytes without changing source; that generated-file delta is not treated as
+a scientific edit.
