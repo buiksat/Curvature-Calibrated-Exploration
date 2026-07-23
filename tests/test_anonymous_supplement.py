@@ -470,6 +470,37 @@ def test_compact_checkout_retains_unavailable_raw_binding(tmp_path: Path) -> Non
         )
 
 
+def test_compact_checkout_retains_public_dataset_cache_binding(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    builder = object.__new__(ReleaseBuilder)
+    builder.repository = repository
+    builder.tier = "review"
+    builder.raw_index_record = None
+    builder.raw_source_index = {}
+    builder.records = {}
+    builder.references = {}
+    builder.sanitizer = StructuredSanitizer(repository, "a" * 64)
+
+    rewritten = builder._rewrite_known_paths(
+        {
+            "inputs": [
+                {"path": "external-data/samples_py3", "sha256": "d" * 64}
+            ]
+        }
+    )
+
+    item = rewritten["inputs"][0]
+    assert item == {
+        "availability": "public_dataset_cache_not_in_checkout",
+        "path": "external-data/samples_py3",
+        "sha256": "d" * 64,
+    }
+    assert builder._is_valid_unavailable_external_data_reference(item)
+
+
 def test_review_rewriter_rejects_stale_hash_for_selected_raw_input(
     tmp_path: Path,
 ) -> None:

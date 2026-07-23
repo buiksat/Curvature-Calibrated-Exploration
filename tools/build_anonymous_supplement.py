@@ -803,9 +803,16 @@ class ReleaseBuilder:
                         if unavailable is not None:
                             rewritten.append(unavailable)
                         else:
-                            raise BuildError(
-                                f"provenance references an omitted file: {normalized}"
+                            external = self._unavailable_external_data_reference(
+                                normalized, item.get("sha256")
                             )
+                            if external is not None:
+                                rewritten.append(external)
+                            else:
+                                raise BuildError(
+                                    "provenance references an omitted file: "
+                                    f"{normalized}"
+                                )
                 else:
                     rewritten.append({"path": target.path, "sha256": target.sha256})
             rewritten.sort(key=lambda item: (item["path"], item["sha256"]))
@@ -893,6 +900,35 @@ class ReleaseBuilder:
             and isinstance(digest, str)
             and HASH_PATTERN.fullmatch(digest)
             and item.get("availability") == "not_in_compact_checkout"
+        )
+
+    @staticmethod
+    def _unavailable_external_data_reference(
+        path: str, digest: Any
+    ) -> dict[str, Any] | None:
+        if not path.startswith("external-data/"):
+            return None
+        if not isinstance(digest, str) or not HASH_PATTERN.fullmatch(digest):
+            raise BuildError(f"external data input hash is invalid: {path}")
+        return {
+            "availability": "public_dataset_cache_not_in_checkout",
+            "path": path,
+            "sha256": digest,
+        }
+
+    @staticmethod
+    def _is_valid_unavailable_external_data_reference(
+        item: Mapping[str, Any],
+    ) -> bool:
+        path = item.get("path")
+        digest = item.get("sha256")
+        return bool(
+            isinstance(path, str)
+            and path.startswith("external-data/")
+            and isinstance(digest, str)
+            and HASH_PATTERN.fullmatch(digest)
+            and item.get("availability")
+            == "public_dataset_cache_not_in_checkout"
         )
 
     def _record_inventory(
@@ -1517,7 +1553,10 @@ binds every released file.  The anonymous source-tree digest is
 Provenance entries marked `not_in_compact_checkout` retain the recorded source
 path and SHA-256, but the release does not claim to have independently verified
 or locally supplied those inputs.  Re-run the deterministic experiment entry
-points to reconstruct them."""
+points to reconstruct them.  Entries marked
+`public_dataset_cache_not_in_checkout` likewise identify optional public-data
+cache inputs that are fetched by the released loaders rather than shipped in
+the bundle."""
         elif self.tier == "review":
             introduction = f"""This review-tier release contains the anonymous paper,
 experiment implementation and configuration, tests, every derived artifact,
@@ -1670,6 +1709,7 @@ inventories are under `manifests`.
         input_references = 0
         indexed_input_references = 0
         unavailable_input_references = 0
+        unavailable_external_data_references = 0
         for relative, record in sorted(self.records.items()):
             if record.role != "provenance":
                 continue
@@ -1696,6 +1736,8 @@ inventories are under `manifests`.
                     indexed_input_references += 1
                 elif self._is_valid_unavailable_raw_reference(item):
                     unavailable_input_references += 1
+                elif self._is_valid_unavailable_external_data_reference(item):
+                    unavailable_external_data_references += 1
                 else:
                     raise BuildError(f"sidecar input is missing: {relative}")
                 input_references += 1
@@ -1728,6 +1770,9 @@ inventories are under `manifests`.
             "provenance_sidecars_checked": sidecars,
             "unavailable_raw_provenance_input_references": (
                 unavailable_input_references
+            ),
+            "unavailable_external_data_provenance_input_references": (
+                unavailable_external_data_references
             ),
         }
 
@@ -1765,8 +1810,13 @@ inventories are under `manifests`.
             else "anonymous_compact_supplement"
         )
         validation_status = (
-            "passed_with_declared_unavailable_raw_inputs"
-            if validation.get("unavailable_raw_provenance_input_references", 0)
+            "passed_with_declared_unavailable_inputs"
+            if (
+                validation.get("unavailable_raw_provenance_input_references", 0)
+                or validation.get(
+                    "unavailable_external_data_provenance_input_references", 0
+                )
+            )
             else "passed"
         )
         manifest = {
