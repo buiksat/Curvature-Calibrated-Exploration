@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "name": "wheel_benchmark",
+  "description": "Canonical five-action Wheel benchmark over four difficulty radii with pooled leakage-free tuning and explicit random, safe, and privileged-oracle controls.",
+  "base": {
+    "task": "canonical_wheel_contextual_bandit",
+    "rounds": 5000,
+    "tuning_rounds": 5000,
+    "horizons": [1000, 2500, 5000],
+    "deltas": [0.5, 0.7, 0.9, 0.95],
+    "environment": {
+      "context_distribution": "uniform_by_area_on_unit_disk",
+      "context_dimension": 2,
+      "action_count": 5,
+      "safe_mean": 1.2,
+      "safe_std": 0.05,
+      "risky_mean": 1.0,
+      "risky_std": 0.05,
+      "high_mean": 50.0,
+      "high_std": 0.01,
+      "outer_threshold": "strict_radius_greater_than_delta",
+      "quadrant_actions": {"northeast": 1, "northwest": 2, "southwest": 3, "southeast": 4},
+      "benchmark_source": "Riquelme_et_al_2018_wheel_bandit"
+    },
+    "methods": [
+      "cc_ucb_full_ggn_cg",
+      "linucb",
+      "linear_ts",
+      "local_neural_ucb",
+      "local_neural_ts",
+      "random",
+      "safe",
+      "oracle"
+    ],
+    "method_semantics": {
+      "cc_ucb_full_ggn_cg": "Local current-parameter full-GGN UCB diagnostic with a fixed operator and separately residual-checked CG solve for every action.",
+      "linucb": "Local disjoint affine-feature LinUCB implementation.",
+      "linear_ts": "Local disjoint affine-feature Gaussian linear Thompson sampler.",
+      "local_neural_ucb": "Local full-network linearized UCB implementation; not a pinned or faithful reproduction of published NeuralUCB code.",
+      "local_neural_ts": "Local full-network linearized Gaussian Thompson sampler; not a pinned or faithful reproduction of published NeuralTS code.",
+      "random": "Uniform random action independent of context and oracle information.",
+      "safe": "Always selects the canonical safe action zero.",
+      "oracle": "Privileged non-learner control that selects the true optimal action before reward observation."
+    },
+    "omitted_methods": {
+      "lofi": "Excluded because no faithful pinned implementation is available in this repository.",
+      "kfac": "Excluded rather than labeling a local block approximation as faithful KFAC."
+    },
+    "ridge_grid": [0.1, 1.0],
+    "bonus_grid": [0.1, 0.5, 1.0],
+    "model": {
+      "architecture": "one_hidden_layer_tanh_width8",
+      "hidden_width": 8,
+      "learning_rate": 0.02,
+      "model_ridge": 0.001,
+      "maximum_step_norm": 0.05,
+      "reward_normalization": "divide_by_high_mean",
+      "posterior_noise_std": 0.1,
+      "updates_per_round": 1,
+      "dtype": "float64"
+    },
+    "cg": {
+      "relative_residual_tolerance": 1e-10,
+      "max_iterations": 100,
+      "initial_solution": "zero",
+      "separate_per_action_residual_check": true
+    },
+    "selection": {
+      "criterion": "pooled_mean_cumulative_pseudo_regret_across_all_deltas_and_tuning_seeds",
+      "selected_on": "all_declared_deltas_cross_tuning_seeds_only",
+      "evaluation_outcomes_used": false,
+      "evaluation_rerun_from_scratch": true,
+      "common_random_numbers_within_seed": true,
+      "tie_break": "lowest_configured_grid_order"
+    },
+    "controls": {
+      "required": ["random", "safe", "oracle"],
+      "oracle_is_privileged_nonlearner": true,
+      "controls_are_not_hyperparameter_tuned": true
+    },
+    "output_root": "results/raw/wheel_benchmark",
+    "provenance": {"packages": ["numpy", "scipy", "psutil"]}
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 24,
+      "tuning_rounds": 16,
+      "horizons": [12, 24],
+      "ridge_grid": [1.0],
+      "bonus_grid": [0.5],
+      "seed_sets": {"tuning": [2000, 2001], "evaluation": [3000, 3001]}
+    },
+    "full": {
+      "seed_sets": {
+        "tuning": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009],
+        "evaluation": [3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035, 3036, 3037, 3038, 3039, 3040, 3041, 3042, 3043, 3044, 3045, 3046, 3047, 3048, 3049]
+      }
+    }
+  }
+}
