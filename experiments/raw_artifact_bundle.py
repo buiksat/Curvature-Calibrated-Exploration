@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import gzip
 import hashlib
 import json
+import math
 import os
 import shutil
 import tarfile
@@ -26,7 +28,10 @@ from .logging_utils import canonical_json
 
 
 SCHEMA_VERSION = 1
-EXPERIMENT = "scaled_tanh_instantiation"
+SCALED_TANH_EXPERIMENT = "scaled_tanh_instantiation"
+WHEEL_EXPERIMENT = "wheel_benchmark"
+EXPERIMENT = SCALED_TANH_EXPERIMENT
+SUPPORTED_EXPERIMENTS = {SCALED_TANH_EXPERIMENT, WHEEL_EXPERIMENT}
 COMPRESSION_LEVEL = 9
 CHUNK_SIZE = 1024 * 1024
 
@@ -64,7 +69,16 @@ def _artifact_files(path: Path) -> tuple[Path, Path]:
     return path, _sidecar(path)
 
 
-def _role(path: Path) -> str:
+def _role(path: Path, *, experiment: str) -> str:
+    if experiment == WHEEL_EXPERIMENT:
+        if path.name == "tuning_selection.json":
+            return "wheel_tuning_selection"
+        phase = "tuning" if "tuning" in path.parts else "evaluation"
+        return {
+            "manifest.jsonl": f"wheel_{phase}_manifest",
+            "raw.jsonl": f"wheel_{phase}_raw",
+            "summary.jsonl": f"wheel_{phase}_summary",
+        }.get(path.name) or _raise_unrecognized(path)
     if path.name.endswith(".sha256"):
         return "sha256_sidecar"
     if path.name == "optimizer_selection.json":
@@ -75,6 +89,10 @@ def _role(path: Path) -> str:
         return "run_summary"
     if path.name == "rounds.npz":
         return "round_trajectory"
+    return _raise_unrecognized(path)
+
+
+def _raise_unrecognized(path: Path) -> str:
     raise RawArtifactBundleError(f"unrecognized raw evidence file {path}")
 
 
@@ -327,7 +345,321 @@ def _validated_scaled_tanh_sources(
     )
 
 
-def _source_entries(paths: Sequence[Path], *, raw_root: Path) -> list[SourceEntry]:
+def _single_jsonl(path: Path) -> dict[str, Any]:
+    try:
+        lines = path.read_text(encoding="ascii").splitlines()
+    except OSError as error:
+        raise RawArtifactBundleError(
+            f"cannot read JSONL record {path}: {error}"
+        ) from error
+    if len(lines) != 1:
+        raise RawArtifactBundleError(f"expected one JSONL record in {path}")
+    try:
+        value = json.loads(lines[0])
+    except json.JSONDecodeError as error:
+        raise RawArtifactBundleError(f"invalid JSONL record {path}: {error}") from error
+    if not isinstance(value, dict):
+        raise RawArtifactBundleError(f"JSONL record is not an object: {path}")
+    return value
+
+
+def _validate_round_jsonl(path: Path, *, seed: int, rounds: int) -> None:
+    completed = 0
+    try:
+        with path.open("r", encoding="ascii") as handle:
+            for completed, line in enumerate(handle, start=1):
+                value = json.loads(line)
+                expected_round = completed - 1
+                if (
+                    not isinstance(value, dict)
+                    or value.get("schema_version") != 1
+                    or value.get("event") != "round"
+                    or value.get("seed") != seed
+                    or value.get("round") != expected_round
+                    or not isinstance(value.get("metrics"), dict)
+                ):
+                    raise RawArtifactBundleError(
+                        f"round identity mismatch at {path}:{completed}"
+                    )
+    except (OSError, json.JSONDecodeError) as error:
+        raise RawArtifactBundleError(f"invalid round JSONL {path}: {error}") from error
+    if completed != rounds:
+        raise RawArtifactBundleError(
+            f"round coverage mismatch for {path}: {completed} != {rounds}"
+        )
+
+
+def _wheel_execution_config(
+    config: Mapping[str, Any],
+    *,
+    phase: str,
+    method: str,
+    cell: Any,
+    ridge: float,
+    bonus: float,
+    selection_payload_sha256: str | None,
+) -> dict[str, Any]:
+    result = copy.deepcopy(dict(config))
+    execution: dict[str, Any] = {
+        "seed_set": phase,
+        "method": method,
+        "cell": {"delta": cell.delta, "token": cell.token},
+        "comparison": "pooled_validation_tuned",
+        "executed_policy": True,
+        "mode": "online_adaptive",
+        "hyperparameters": {"ridge": ridge, "bonus_scale": bonus},
+    }
+    if phase == "evaluation":
+        if selection_payload_sha256 is None:
+            raise RawArtifactBundleError("evaluation lacks a selection digest")
+        execution.update(
+            {
+                "tuning_selection_sha256": selection_payload_sha256,
+                "pooled_over_all_declared_deltas": True,
+                "evaluation_rerun_from_scratch": True,
+                "evaluation_outcomes_used_for_tuning": False,
+            }
+        )
+    result["execution"] = execution
+    return result
+
+
+def _validate_wheel_run_source(
+    directory: Path,
+    *,
+    config: Mapping[str, Any],
+    profile: str,
+    phase: str,
+    method: str,
+    cell: Any,
+    seed: int,
+    ridge: float,
+    bonus: float,
+    selection_payload_sha256: str | None,
+) -> dict[str, Any]:
+    manifest_path = directory / "manifest.jsonl"
+    raw_path = directory / "raw.jsonl"
+    summary_path = directory / "summary.jsonl"
+    manifest = _single_jsonl(manifest_path)
+    summary = _single_jsonl(summary_path)
+    run_config = _wheel_execution_config(
+        config,
+        phase=phase,
+        method=method,
+        cell=cell,
+        ridge=ridge,
+        bonus=bonus,
+        selection_payload_sha256=selection_payload_sha256,
+    )
+    expected_manifest = {
+        "schema_version": 1,
+        "event": "run_manifest",
+        "seed": seed,
+        "config": run_config,
+        "config_digest": config_digest(run_config),
+    }
+    for key, expected in expected_manifest.items():
+        if manifest.get(key) != expected:
+            raise RawArtifactBundleError(
+                f"Wheel manifest mismatch for {directory}: {key}"
+            )
+    rounds = int(config["tuning_rounds"] if phase == "tuning" else config["rounds"])
+    expected_summary = {
+        "schema_version": 1,
+        "event": "wheel_benchmark_run_summary",
+        "experiment": WHEEL_EXPERIMENT,
+        "profile": profile,
+        "phase": phase,
+        "seed": seed,
+        "method": method,
+        "delta": cell.delta,
+        "cell": {"delta": cell.delta, "token": cell.token},
+        "hyperparameters": {"ridge": ridge, "bonus_scale": bonus},
+        "rounds": rounds,
+        "executed_policy": True,
+        "eligible_for_pooled_tuning": phase == "tuning",
+        "pooled_tuning_setting": phase == "evaluation",
+        "evaluation_outcomes_used_for_tuning": False,
+    }
+    for key, expected in expected_summary.items():
+        if summary.get(key) != expected:
+            raise RawArtifactBundleError(
+                f"Wheel summary provenance mismatch for {directory}: {key}"
+            )
+    _sha256_text(summary.get("environment_stream_sha256"), name="Wheel stream")
+    _validate_round_jsonl(raw_path, seed=seed, rounds=rounds)
+    return summary
+
+
+def _wheel_source_hashes(repository: Path) -> dict[str, str]:
+    paths = (
+        "experiments/run_wheel_benchmark.py",
+        "experiments/wheel_environment.py",
+        "experiments/logging_utils.py",
+        "experiments/make_wheel_benchmark_artifacts.py",
+    )
+    return {path: sha256_file(repository / path) for path in paths}
+
+
+def _validated_wheel_sources(
+    config: dict[str, Any],
+    *,
+    profile: str,
+    raw_root: Path,
+) -> tuple[
+    list[Path],
+    str,
+    str,
+    int,
+    int,
+    dict[str, str],
+    dict[str, dict[str, float]],
+]:
+    from .run_wheel_benchmark import (
+        METHODS,
+        cells,
+        hyperparameter_grid,
+        load_tuning_selection,
+        validate_tuning_selection,
+        validate_wheel_config,
+    )
+
+    validate_wheel_config(config)
+    if config.get("profile") != profile:
+        raise RawArtifactBundleError("resolved Wheel config profile mismatch")
+    tuning_seeds = get_seed_set(config, "tuning")
+    evaluation_seeds = get_seed_set(config, "evaluation")
+    if not set(tuning_seeds).isdisjoint(evaluation_seeds):
+        raise RawArtifactBundleError("Wheel tuning/evaluation seeds overlap")
+    raw_root = raw_root.resolve()
+    profile_root = raw_root / profile
+    selection_path = profile_root / "tuning_selection.json"
+    try:
+        selection = load_tuning_selection(selection_path)
+        selected = validate_tuning_selection(config, selection)
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        raise RawArtifactBundleError(
+            f"Wheel tuning selection validation failed: {error}"
+        ) from error
+    if selection.get("evaluation_outcomes_used") is not False:
+        raise RawArtifactBundleError("Wheel selection reads evaluation outcomes")
+    selection_payload_sha256 = hashlib.sha256(
+        canonical_json(selection).encode("ascii")
+    ).hexdigest()
+    selection_file_sha256 = sha256_file(selection_path)
+    expected_paths: set[Path] = {selection_path}
+    candidate_rows = {
+        (
+            str(candidate["method"]),
+            float(candidate["ridge"]),
+            float(candidate["bonus_scale"]),
+        ): {
+            (float(row["delta"]), int(row["seed"])): float(
+                row["cumulative_pseudo_regret"]
+            )
+            for row in candidate["per_cell_cumulative_pseudo_regret"]
+        }
+        for candidate in selection["candidates"]
+    }
+    tuning_streams = {seed: set() for seed in tuning_seeds}
+    tuning_run_count = 0
+    for cell in cells(config):
+        for method in METHODS:
+            for ridge, bonus in hyperparameter_grid(config, method):
+                candidate = candidate_rows[(method, ridge, bonus)]
+                for seed in tuning_seeds:
+                    setting = f"ridge-{ridge:g}_bonus-{bonus:g}"
+                    directory = (
+                        profile_root
+                        / "tuning"
+                        / cell.token
+                        / method
+                        / setting
+                        / f"seed-{seed}"
+                    )
+                    summary = _validate_wheel_run_source(
+                        directory,
+                        config=config,
+                        profile=profile,
+                        phase="tuning",
+                        method=method,
+                        cell=cell,
+                        seed=seed,
+                        ridge=ridge,
+                        bonus=bonus,
+                        selection_payload_sha256=None,
+                    )
+                    if not math.isclose(
+                        float(summary["cumulative_pseudo_regret"]),
+                        candidate[(cell.delta, seed)],
+                        rel_tol=0.0,
+                        abs_tol=1.0e-12,
+                    ):
+                        raise RawArtifactBundleError(
+                            f"Wheel tuning selection/raw mismatch for {directory}"
+                        )
+                    tuning_streams[seed].add(str(summary["environment_stream_sha256"]))
+                    expected_paths.update(
+                        directory / name
+                        for name in ("manifest.jsonl", "raw.jsonl", "summary.jsonl")
+                    )
+                    tuning_run_count += 1
+    if any(len(digests) != 1 for digests in tuning_streams.values()):
+        raise RawArtifactBundleError("Wheel tuning runs do not share streams by seed")
+
+    evaluation_streams = {seed: set() for seed in evaluation_seeds}
+    evaluation_run_count = 0
+    for cell in cells(config):
+        for method in METHODS:
+            ridge, bonus = selected[method]
+            for seed in evaluation_seeds:
+                directory = (
+                    profile_root / "evaluation" / cell.token / method / f"seed-{seed}"
+                )
+                summary = _validate_wheel_run_source(
+                    directory,
+                    config=config,
+                    profile=profile,
+                    phase="evaluation",
+                    method=method,
+                    cell=cell,
+                    seed=seed,
+                    ridge=ridge,
+                    bonus=bonus,
+                    selection_payload_sha256=selection_payload_sha256,
+                )
+                evaluation_streams[seed].add(str(summary["environment_stream_sha256"]))
+                expected_paths.update(
+                    directory / name
+                    for name in ("manifest.jsonl", "raw.jsonl", "summary.jsonl")
+                )
+                evaluation_run_count += 1
+    if any(len(digests) != 1 for digests in evaluation_streams.values()):
+        raise RawArtifactBundleError(
+            "Wheel evaluation runs do not share streams by seed"
+        )
+    if set(tuning_streams) & set(evaluation_streams):
+        raise RawArtifactBundleError("Wheel phase seed identities overlap")
+    _validate_exact_tree(profile_root, expected_paths)
+    source_hashes = _wheel_source_hashes(Path(__file__).resolve().parents[1])
+    selected_settings = {
+        method: {"ridge": ridge, "bonus_scale": bonus}
+        for method, (ridge, bonus) in selected.items()
+    }
+    return (
+        sorted(expected_paths),
+        selection_file_sha256,
+        selection_payload_sha256,
+        tuning_run_count,
+        evaluation_run_count,
+        source_hashes,
+        selected_settings,
+    )
+
+
+def _source_entries(
+    paths: Sequence[Path], *, raw_root: Path, experiment: str
+) -> list[SourceEntry]:
     result = []
     root = raw_root.resolve()
     for source in paths:
@@ -338,14 +670,14 @@ def _source_entries(paths: Sequence[Path], *, raw_root: Path) -> list[SourceEntr
             raise RawArtifactBundleError(
                 f"raw input is outside the declared root: {source}"
             ) from error
-        archive_path = (PurePosixPath(EXPERIMENT) / relative.as_posix()).as_posix()
+        archive_path = (PurePosixPath(experiment) / relative.as_posix()).as_posix()
         result.append(
             SourceEntry(
                 source=resolved,
                 archive_path=archive_path,
                 sha256=sha256_file(resolved),
                 size_bytes=resolved.stat().st_size,
-                role=_role(resolved),
+                role=_role(resolved, experiment=experiment),
             )
         )
     result.sort(key=lambda item: item.archive_path)
@@ -445,7 +777,9 @@ def create_scaled_tanh_bundle(
         runner_source_sha256,
         validated_runs,
     ) = _validated_scaled_tanh_sources(config, profile=profile, raw_root=raw_root)
-    entries = _source_entries(sources, raw_root=raw_root)
+    entries = _source_entries(
+        sources, raw_root=raw_root, experiment=SCALED_TANH_EXPERIMENT
+    )
     _write_deterministic_tar_gz(bundle_path, entries)
     archive_sha256 = sha256_file(bundle_path)
     write_sha256_sidecar(bundle_path)
@@ -522,6 +856,137 @@ def create_scaled_tanh_bundle(
     }
 
 
+def create_wheel_bundle(
+    config: dict[str, Any],
+    *,
+    config_path: Path,
+    profile: str,
+    raw_root: Path,
+    bundle_path: Path,
+    inventory_path: Path | None = None,
+    overwrite: bool = False,
+) -> dict[str, Any]:
+    """Validate Wheel tuning/evaluation chains and write a deterministic bundle."""
+
+    if not bundle_path.name.endswith(".tar.gz"):
+        raise RawArtifactBundleError("bundle path must end in .tar.gz")
+    inventory = inventory_path or default_inventory_path(bundle_path)
+    if len(set(_outputs(bundle_path, inventory))) != 4:
+        raise RawArtifactBundleError(
+            "bundle and inventory output paths must be distinct"
+        )
+    profile_root = raw_root / profile
+    if _inside(bundle_path, profile_root) or _inside(inventory, profile_root):
+        raise RawArtifactBundleError("bundle outputs must be outside the raw profile")
+    existing = [path for path in _outputs(bundle_path, inventory) if path.exists()]
+    if existing and not overwrite:
+        raise FileExistsError(
+            "refusing to overwrite bundle outputs: "
+            + ", ".join(path.as_posix() for path in existing)
+        )
+    if load_config(config_path, profile=profile) != config:
+        raise RawArtifactBundleError(
+            "resolved config does not match the declared config source"
+        )
+
+    (
+        sources,
+        selection_file_sha256,
+        selection_payload_sha256,
+        tuning_run_count,
+        evaluation_run_count,
+        source_hashes,
+        selected_settings,
+    ) = _validated_wheel_sources(config, profile=profile, raw_root=raw_root)
+    entries = _source_entries(
+        sources,
+        raw_root=raw_root,
+        experiment=WHEEL_EXPERIMENT,
+    )
+    _write_deterministic_tar_gz(bundle_path, entries)
+    archive_sha256 = sha256_file(bundle_path)
+    write_sha256_sidecar(bundle_path)
+    inventory_entries = [entry.inventory_value() for entry in entries]
+    total_runs = tuning_run_count + evaluation_run_count
+    inventory_value = {
+        "schema_version": SCHEMA_VERSION,
+        "bundle_kind": "seed_level_figure_evidence",
+        "experiment": WHEEL_EXPERIMENT,
+        "profile": profile,
+        "evidence_scope": (
+            "smoke-only engineering verification; not main-paper evidence"
+            if profile == "smoke"
+            else "prespecified full-profile raw evidence"
+        ),
+        "archive": {
+            "filename": bundle_path.name,
+            "format": "ustar+gzip",
+            "sha256": archive_sha256,
+            "size_bytes": bundle_path.stat().st_size,
+            "compression_level": COMPRESSION_LEVEL,
+            "fixed_member_mtime": 0,
+            "fixed_member_mode": "0644",
+            "fixed_member_owner": "0:0",
+        },
+        "raw_root_relative": WHEEL_EXPERIMENT,
+        "selection_path_relative": (
+            PurePosixPath(WHEEL_EXPERIMENT) / profile / "tuning_selection.json"
+        ).as_posix(),
+        "selection_artifact_sha256": selection_file_sha256,
+        "selection_payload_sha256": selection_payload_sha256,
+        "selected_hyperparameters": selected_settings,
+        "config_digest": config_digest(config),
+        "config_source": {
+            "filename": config_path.name,
+            "sha256": sha256_file(config_path),
+        },
+        "resolved_config": config,
+        "source_artifact_hashes": source_hashes,
+        "source_binding_scope": (
+            "source files are hashed at bundle creation; legacy Wheel JSONL "
+            "manifests record git state but do not embed source-file hashes"
+        ),
+        "tuning_seeds": list(get_seed_set(config, "tuning")),
+        "evaluation_seeds": list(get_seed_set(config, "evaluation")),
+        "tuning_evaluation_seeds_disjoint": True,
+        "expected_tuning_run_count": tuning_run_count,
+        "validated_tuning_run_count": tuning_run_count,
+        "expected_evaluation_run_count": evaluation_run_count,
+        "validated_evaluation_run_count": evaluation_run_count,
+        "expected_run_count": total_runs,
+        "validated_run_count": total_runs,
+        "file_count": len(entries),
+        "uncompressed_size_bytes": sum(entry.size_bytes for entry in entries),
+        "input_set_sha256": input_set_sha256(inventory_entries),
+        "entries": inventory_entries,
+        "validation": {
+            "tuning_selection_recomputed_from_tuning_only": True,
+            "tuning_selection_bound_to_every_tuning_summary": True,
+            "evaluation_outcomes_used_for_selection": False,
+            "evaluation_manifests_bound_to_selection_hash": True,
+            "every_jsonl_manifest_and_trajectory_complete": True,
+            "common_stream_per_seed_within_each_phase": True,
+            "tuning_evaluation_seed_sets_disjoint": True,
+            "exact_profile_file_set": True,
+        },
+    }
+    write_json_artifact(inventory, inventory_value)
+    verified = verify_bundle(bundle_path, inventory_path=inventory)
+    return {
+        "bundle": bundle_path.as_posix(),
+        "bundle_sha256": archive_sha256,
+        "inventory": inventory.as_posix(),
+        "profile": profile,
+        "validated_tuning_run_count": tuning_run_count,
+        "validated_evaluation_run_count": evaluation_run_count,
+        "validated_run_count": total_runs,
+        "file_count": len(entries),
+        "uncompressed_size_bytes": inventory_value["uncompressed_size_bytes"],
+        "archive_size_bytes": verified["archive_size_bytes"],
+        "compression_ratio": verified["compression_ratio"],
+    }
+
+
 def _load_inventory(path: Path) -> dict[str, Any]:
     try:
         validate_sha256_sidecar(path)
@@ -535,7 +1000,7 @@ def _load_inventory(path: Path) -> dict[str, Any]:
     return value
 
 
-def _safe_archive_path(value: Any) -> str:
+def _safe_archive_path(value: Any, *, experiment: str) -> str:
     if not isinstance(value, str) or not value or "\\" in value:
         raise RawArtifactBundleError(f"unsafe archive path {value!r}")
     path = PurePosixPath(value)
@@ -543,7 +1008,7 @@ def _safe_archive_path(value: Any) -> str:
         path.is_absolute()
         or path.as_posix() != value
         or any(part in {"", ".", ".."} for part in path.parts)
-        or path.parts[0] != EXPERIMENT
+        or path.parts[0] != experiment
     ):
         raise RawArtifactBundleError(f"unsafe archive path {value!r}")
     return value
@@ -555,6 +1020,9 @@ def _cell_token(horizon: int, width_ratio: float) -> str:
 
 
 def _inventory_entries(value: Mapping[str, Any]) -> list[dict[str, Any]]:
+    experiment = value.get("experiment")
+    if experiment not in SUPPORTED_EXPERIMENTS:
+        raise RawArtifactBundleError("unsupported bundle experiment")
     raw_entries = value.get("entries")
     if not isinstance(raw_entries, list) or not raw_entries:
         raise RawArtifactBundleError("bundle inventory has no entries")
@@ -562,7 +1030,7 @@ def _inventory_entries(value: Mapping[str, Any]) -> list[dict[str, Any]]:
     for raw in raw_entries:
         if not isinstance(raw, dict):
             raise RawArtifactBundleError("bundle entry must be an object")
-        path = _safe_archive_path(raw.get("path"))
+        path = _safe_archive_path(raw.get("path"), experiment=str(experiment))
         digest = raw.get("sha256")
         size = raw.get("size_bytes")
         role = raw.get("role")
@@ -593,7 +1061,7 @@ def _inventory_entries(value: Mapping[str, Any]) -> list[dict[str, Any]]:
     return entries
 
 
-def _validate_inventory_contract(
+def _validate_scaled_tanh_inventory_contract(
     value: Mapping[str, Any], entries: Sequence[Mapping[str, Any]]
 ) -> None:
     profile = value.get("profile")
@@ -723,6 +1191,173 @@ def _validate_inventory_contract(
             raise RawArtifactBundleError(f"bundle omits sidecar for {path}")
     if manifest_count != validated_runs:
         raise RawArtifactBundleError("manifest count does not match validated runs")
+
+
+def _validate_wheel_inventory_contract(
+    value: Mapping[str, Any], entries: Sequence[Mapping[str, Any]]
+) -> None:
+    profile = value.get("profile")
+    if profile not in {"smoke", "full"}:
+        raise RawArtifactBundleError("Wheel bundle profile is invalid")
+    config = value.get("resolved_config")
+    if not isinstance(config, dict) or config.get("profile") != profile:
+        raise RawArtifactBundleError("Wheel resolved config is invalid")
+    if value.get("config_digest") != config_digest(config):
+        raise RawArtifactBundleError("Wheel config digest mismatch")
+    source_hashes = value.get("source_artifact_hashes")
+    expected_sources = {
+        "experiments/run_wheel_benchmark.py",
+        "experiments/wheel_environment.py",
+        "experiments/logging_utils.py",
+        "experiments/make_wheel_benchmark_artifacts.py",
+    }
+    if not isinstance(source_hashes, dict) or set(source_hashes) != expected_sources:
+        raise RawArtifactBundleError("Wheel source provenance is incomplete")
+    for name, digest in source_hashes.items():
+        _sha256_text(digest, name=name)
+    tuning_seeds = value.get("tuning_seeds")
+    evaluation_seeds = value.get("evaluation_seeds")
+    if not isinstance(tuning_seeds, list) or not isinstance(evaluation_seeds, list):
+        raise RawArtifactBundleError("Wheel seed sets are invalid")
+    if (
+        not set(tuning_seeds).isdisjoint(evaluation_seeds)
+        or value.get("tuning_evaluation_seeds_disjoint") is not True
+    ):
+        raise RawArtifactBundleError("Wheel tuning/evaluation seeds overlap")
+    selection_path = (
+        PurePosixPath(WHEEL_EXPERIMENT) / str(profile) / "tuning_selection.json"
+    ).as_posix()
+    if value.get("raw_root_relative") != WHEEL_EXPERIMENT:
+        raise RawArtifactBundleError("Wheel raw-root layout is invalid")
+    if value.get("selection_path_relative") != selection_path:
+        raise RawArtifactBundleError("Wheel selection path is invalid")
+    selection_sha256 = _sha256_text(
+        value.get("selection_artifact_sha256"), name="Wheel selection artifact"
+    )
+    _sha256_text(value.get("selection_payload_sha256"), name="Wheel selection payload")
+
+    try:
+        methods = tuple(str(method) for method in config["methods"])
+        deltas = tuple(float(delta) for delta in config["deltas"])
+        ridges = tuple(float(ridge) for ridge in config["ridge_grid"])
+        bonuses = tuple(float(bonus) for bonus in config["bonus_grid"])
+        tuning = tuple(int(seed) for seed in tuning_seeds)
+        evaluation = tuple(int(seed) for seed in evaluation_seeds)
+    except (KeyError, TypeError, ValueError) as error:
+        raise RawArtifactBundleError("Wheel resolved grid is invalid") from error
+    controls = {"random", "safe", "oracle"}
+    selected_settings = value.get("selected_hyperparameters")
+    if not isinstance(selected_settings, dict) or set(selected_settings) != set(
+        methods
+    ):
+        raise RawArtifactBundleError("Wheel selected settings are incomplete")
+    for method in methods:
+        setting = selected_settings[method]
+        if not isinstance(setting, dict):
+            raise RawArtifactBundleError("Wheel selected setting is invalid")
+        try:
+            pair = (float(setting["ridge"]), float(setting["bonus_scale"]))
+        except (KeyError, TypeError, ValueError) as error:
+            raise RawArtifactBundleError("Wheel selected setting is invalid") from error
+        allowed = (
+            {(0.0, 0.0)}
+            if method in controls
+            else {(ridge, bonus) for ridge in ridges for bonus in bonuses}
+        )
+        if pair not in allowed:
+            raise RawArtifactBundleError("Wheel selected setting is outside its grid")
+    expected_paths = {selection_path}
+    tuning_manifests: set[str] = set()
+    evaluation_manifests: set[str] = set()
+    for delta in deltas:
+        token = f"delta-{format(delta, '.12g').replace('.', 'p')}"
+        for method in methods:
+            settings = (
+                ((0.0, 0.0),)
+                if method in controls
+                else tuple((ridge, bonus) for ridge in ridges for bonus in bonuses)
+            )
+            for ridge, bonus in settings:
+                setting = f"ridge-{ridge:g}_bonus-{bonus:g}"
+                for seed in tuning:
+                    directory = (
+                        PurePosixPath(WHEEL_EXPERIMENT)
+                        / str(profile)
+                        / "tuning"
+                        / token
+                        / method
+                        / setting
+                        / f"seed-{seed}"
+                    )
+                    for filename in ("manifest.jsonl", "raw.jsonl", "summary.jsonl"):
+                        expected_paths.add((directory / filename).as_posix())
+                    tuning_manifests.add((directory / "manifest.jsonl").as_posix())
+            for seed in evaluation:
+                directory = (
+                    PurePosixPath(WHEEL_EXPERIMENT)
+                    / str(profile)
+                    / "evaluation"
+                    / token
+                    / method
+                    / f"seed-{seed}"
+                )
+                for filename in ("manifest.jsonl", "raw.jsonl", "summary.jsonl"):
+                    expected_paths.add((directory / filename).as_posix())
+                evaluation_manifests.add((directory / "manifest.jsonl").as_posix())
+
+    entries_by_path = {str(entry["path"]): entry for entry in entries}
+    if set(entries_by_path) != expected_paths:
+        missing = sorted(expected_paths - set(entries_by_path))
+        extra = sorted(set(entries_by_path) - expected_paths)
+        raise RawArtifactBundleError(
+            "Wheel bundle grid mismatch: " f"missing={missing[:5]}, extra={extra[:5]}"
+        )
+    if entries_by_path[selection_path]["role"] != "wheel_tuning_selection":
+        raise RawArtifactBundleError("Wheel selection role mismatch")
+    if entries_by_path[selection_path]["sha256"] != selection_sha256:
+        raise RawArtifactBundleError("Wheel selection file digest mismatch")
+    expected_tuning = len(tuning_manifests)
+    expected_evaluation = len(evaluation_manifests)
+    count_fields = {
+        "expected_tuning_run_count": expected_tuning,
+        "validated_tuning_run_count": expected_tuning,
+        "expected_evaluation_run_count": expected_evaluation,
+        "validated_evaluation_run_count": expected_evaluation,
+        "expected_run_count": expected_tuning + expected_evaluation,
+        "validated_run_count": expected_tuning + expected_evaluation,
+    }
+    if any(value.get(key) != expected for key, expected in count_fields.items()):
+        raise RawArtifactBundleError("Wheel bundle run counts are incomplete")
+    for path, entry in entries_by_path.items():
+        if path == selection_path:
+            expected_role = "wheel_tuning_selection"
+        elif "/tuning/" in path:
+            expected_role = {
+                "manifest.jsonl": "wheel_tuning_manifest",
+                "raw.jsonl": "wheel_tuning_raw",
+                "summary.jsonl": "wheel_tuning_summary",
+            }[PurePosixPath(path).name]
+        else:
+            expected_role = {
+                "manifest.jsonl": "wheel_evaluation_manifest",
+                "raw.jsonl": "wheel_evaluation_raw",
+                "summary.jsonl": "wheel_evaluation_summary",
+            }[PurePosixPath(path).name]
+        if entry["role"] != expected_role:
+            raise RawArtifactBundleError(f"Wheel bundle role mismatch for {path}")
+
+
+def _validate_inventory_contract(
+    value: Mapping[str, Any], entries: Sequence[Mapping[str, Any]]
+) -> None:
+    experiment = value.get("experiment")
+    if experiment == SCALED_TANH_EXPERIMENT:
+        _validate_scaled_tanh_inventory_contract(value, entries)
+        return
+    if experiment == WHEEL_EXPERIMENT:
+        _validate_wheel_inventory_contract(value, entries)
+        return
+    raise RawArtifactBundleError("unsupported bundle experiment")
 
 
 def _stream_sha256(handle: BinaryIO) -> str:
@@ -935,6 +1570,112 @@ def _validate_sidecar_payload(
         raise RawArtifactBundleError(f"invalid embedded SHA-256 sidecar {path}")
 
 
+def _validate_wheel_selection_payload(
+    payload: bytes,
+    *,
+    entry: Mapping[str, Any],
+    inventory: Mapping[str, Any],
+) -> None:
+    from .run_wheel_benchmark import validate_tuning_selection
+
+    value = _json_object(payload, path=str(entry["path"]))
+    if (
+        hashlib.sha256(canonical_json(value).encode("ascii")).hexdigest()
+        != inventory["selection_payload_sha256"]
+    ):
+        raise RawArtifactBundleError("Wheel selection canonical digest mismatch")
+    try:
+        selected = validate_tuning_selection(inventory["resolved_config"], value)
+    except (TypeError, ValueError) as error:
+        raise RawArtifactBundleError(
+            f"Wheel tuning selection is invalid: {error}"
+        ) from error
+    if value.get("evaluation_outcomes_used") is not False:
+        raise RawArtifactBundleError("Wheel selection used evaluation outcomes")
+    expected_settings = inventory["selected_hyperparameters"]
+    actual_settings = {
+        method: {"ridge": ridge, "bonus_scale": bonus}
+        for method, (ridge, bonus) in selected.items()
+    }
+    if actual_settings != expected_settings:
+        raise RawArtifactBundleError("Wheel selected settings mismatch inventory")
+
+
+def _validate_wheel_manifest_payload(
+    payload: bytes,
+    *,
+    entry: Mapping[str, Any],
+    inventory: Mapping[str, Any],
+) -> None:
+    path = str(entry["path"])
+    parts = PurePosixPath(path).parts
+    value = _json_object(payload, path=path)
+    phase = "tuning" if entry["role"] == "wheel_tuning_manifest" else "evaluation"
+    expected_parts = 8 if phase == "tuning" else 7
+    if len(parts) != expected_parts or parts[:3] != (
+        WHEEL_EXPERIMENT,
+        str(inventory["profile"]),
+        phase,
+    ):
+        raise RawArtifactBundleError(f"Wheel manifest path is invalid: {path}")
+    token = parts[3]
+    method = parts[4]
+    seed_part = parts[6] if phase == "tuning" else parts[5]
+    try:
+        seed = int(seed_part.removeprefix("seed-"))
+    except ValueError as error:
+        raise RawArtifactBundleError(
+            f"Wheel manifest seed path is invalid: {path}"
+        ) from error
+    run_config = value.get("config")
+    if not isinstance(run_config, dict):
+        raise RawArtifactBundleError(f"Wheel manifest config is invalid: {path}")
+    execution = run_config.get("execution")
+    base_config = {key: item for key, item in run_config.items() if key != "execution"}
+    if base_config != inventory["resolved_config"] or not isinstance(execution, dict):
+        raise RawArtifactBundleError(f"Wheel manifest base config mismatch: {path}")
+    if (
+        value.get("schema_version") != 1
+        or value.get("event") != "run_manifest"
+        or value.get("seed") != seed
+        or value.get("config_digest") != config_digest(run_config)
+        or execution.get("seed_set") != phase
+        or execution.get("method") != method
+        or execution.get("cell", {}).get("token") != token
+        or execution.get("executed_policy") is not True
+    ):
+        raise RawArtifactBundleError(f"Wheel manifest identity mismatch: {path}")
+    hyperparameters = execution.get("hyperparameters")
+    if not isinstance(hyperparameters, dict):
+        raise RawArtifactBundleError(f"Wheel manifest hyperparameters invalid: {path}")
+    try:
+        ridge = float(hyperparameters["ridge"])
+        bonus = float(hyperparameters["bonus_scale"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise RawArtifactBundleError(
+            f"Wheel manifest hyperparameters invalid: {path}"
+        ) from error
+    if phase == "tuning":
+        setting = parts[5]
+        if setting != f"ridge-{ridge:g}_bonus-{bonus:g}":
+            raise RawArtifactBundleError(f"Wheel tuning setting path mismatch: {path}")
+    else:
+        if hyperparameters != inventory["selected_hyperparameters"].get(method):
+            raise RawArtifactBundleError(
+                f"Wheel evaluation setting was not tuning-selected: {path}"
+            )
+        if (
+            execution.get("tuning_selection_sha256")
+            != inventory["selection_payload_sha256"]
+            or execution.get("pooled_over_all_declared_deltas") is not True
+            or execution.get("evaluation_rerun_from_scratch") is not True
+            or execution.get("evaluation_outcomes_used_for_tuning") is not False
+        ):
+            raise RawArtifactBundleError(
+                f"Wheel evaluation selection provenance mismatch: {path}"
+            )
+
+
 def verify_bundle(
     bundle_path: Path, *, inventory_path: Path | None = None
 ) -> dict[str, Any]:
@@ -951,9 +1692,10 @@ def verify_bundle(
     if (
         value.get("schema_version") != SCHEMA_VERSION
         or value.get("bundle_kind") != "seed_level_figure_evidence"
-        or value.get("experiment") != EXPERIMENT
+        or value.get("experiment") not in SUPPORTED_EXPERIMENTS
     ):
         raise RawArtifactBundleError("unsupported bundle inventory schema")
+    experiment = str(value["experiment"])
     archive_record = value.get("archive")
     if not isinstance(archive_record, dict):
         raise RawArtifactBundleError("bundle inventory lacks archive metadata")
@@ -991,7 +1733,7 @@ def verify_bundle(
                     "archive members do not match the ordered inventory"
                 )
             for member, entry in zip(members, entries, strict=True):
-                _safe_archive_path(member.name)
+                _safe_archive_path(member.name, experiment=experiment)
                 _validate_member(member, entry)
                 extracted = archive.extractfile(member)
                 if extracted is None:
@@ -1001,6 +1743,9 @@ def verify_bundle(
                         "sha256_sidecar",
                         "optimizer_selection",
                         "run_manifest",
+                        "wheel_tuning_selection",
+                        "wheel_tuning_manifest",
+                        "wheel_evaluation_manifest",
                     }:
                         payload = extracted.read()
                         digest = hashlib.sha256(payload).hexdigest()
@@ -1032,6 +1777,23 @@ def verify_bundle(
                         entry=entry,
                         inventory=value,
                         entries_by_path=entries_by_path,
+                    )
+                elif entry["role"] == "wheel_tuning_selection":
+                    assert payload is not None
+                    _validate_wheel_selection_payload(
+                        payload,
+                        entry=entry,
+                        inventory=value,
+                    )
+                elif entry["role"] in {
+                    "wheel_tuning_manifest",
+                    "wheel_evaluation_manifest",
+                }:
+                    assert payload is not None
+                    _validate_wheel_manifest_payload(
+                        payload,
+                        entry=entry,
+                        inventory=value,
                     )
     except (OSError, tarfile.TarError, EOFError) as error:
         raise RawArtifactBundleError(
@@ -1088,6 +1850,7 @@ def extract_bundle(
     verification = verify_bundle(bundle_path, inventory_path=inventory)
     value = _load_inventory(inventory)
     entries = _inventory_entries(value)
+    experiment = str(value["experiment"])
     if destination.exists() or destination.is_symlink():
         raise FileExistsError(f"refusing to overwrite extraction root {destination}")
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -1099,7 +1862,9 @@ def extract_bundle(
             members = archive.getmembers()
             for member, entry in zip(members, entries, strict=True):
                 _validate_member(member, entry)
-                relative = PurePosixPath(_safe_archive_path(member.name))
+                relative = PurePosixPath(
+                    _safe_archive_path(member.name, experiment=experiment)
+                )
                 target = staging.joinpath(*relative.parts)
                 _copy_member(archive, member, target, entry["sha256"])
         os.replace(staging, destination)
@@ -1134,6 +1899,16 @@ def _parser() -> argparse.ArgumentParser:
     create.add_argument("--inventory", type=Path)
     create.add_argument("--overwrite", action="store_true")
 
+    wheel = subparsers.add_parser(
+        "create-wheel", help="validate and bundle Wheel tuning/evaluation raw data"
+    )
+    wheel.add_argument("--config", type=Path, required=True)
+    wheel.add_argument("--profile", choices=("smoke", "full"), required=True)
+    wheel.add_argument("--raw-root", type=Path, required=True)
+    wheel.add_argument("--bundle", type=Path, required=True)
+    wheel.add_argument("--inventory", type=Path)
+    wheel.add_argument("--overwrite", action="store_true")
+
     verify = subparsers.add_parser("verify", help="verify a bundle and inventory")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--inventory", type=Path)
@@ -1152,6 +1927,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "create":
         config = load_config(args.config, profile=args.profile)
         result = create_scaled_tanh_bundle(
+            config,
+            config_path=args.config,
+            profile=args.profile,
+            raw_root=args.raw_root,
+            bundle_path=args.bundle,
+            inventory_path=args.inventory,
+            overwrite=args.overwrite,
+        )
+    elif args.command == "create-wheel":
+        config = load_config(args.config, profile=args.profile)
+        result = create_wheel_bundle(
             config,
             config_path=args.config,
             profile=args.profile,
@@ -1179,6 +1965,7 @@ if __name__ == "__main__":
 __all__ = [
     "RawArtifactBundleError",
     "create_scaled_tanh_bundle",
+    "create_wheel_bundle",
     "default_inventory_path",
     "extract_bundle",
     "verify_bundle",
