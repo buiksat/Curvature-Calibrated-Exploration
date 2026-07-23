@@ -360,6 +360,10 @@ The abstract no longer cites a run count whose complete raw chain is absent.
 - After page-limit restructuring and figure regeneration, the compiled PDF has
   65 pages because all displaced material remains in the appendix; references
   begin on page 8 and no Type 3 font object remains.
+- A literal detached checkout of the packaging commits passes both Buck test
+  targets, static manuscript validation, a forced 65-page LaTeX rebuild, and
+  the anonymous review-tier build (290 files, 98.3 MiB, identity scan passed,
+  24,203 provenance inputs classified).
 
 ## Deliberately Unmade Claims
 
