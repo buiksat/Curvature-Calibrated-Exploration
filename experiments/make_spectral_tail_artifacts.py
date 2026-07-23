@@ -393,7 +393,10 @@ def _interval_arrays(
 
 
 def make_regret_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     config = report["config"]
     rank = int(config["figure_rank"])
@@ -443,13 +446,13 @@ def make_regret_figure(report: Mapping[str, Any], output: Path) -> None:
     figure.legend(
         handles,
         labels,
-        loc="upper center",
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.91),
         ncol=4,
         frameon=False,
         fontsize=8,
     )
-    figure.suptitle(f"Spectral-tail study ($r={rank}$)", y=0.995, fontsize=10)
-    figure.tight_layout(rect=(0, 0, 1, 0.91))
+    figure.tight_layout(rect=(0, 0, 1, 0.86))
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, bbox_inches="tight", metadata={"CreationDate": None})
     plt.close(figure)
@@ -457,7 +460,10 @@ def make_regret_figure(report: Mapping[str, Any], output: Path) -> None:
 
 
 def make_complexity_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     config = report["config"]
     rank = int(config["figure_rank"])
@@ -517,7 +523,10 @@ def make_complexity_figure(report: Mapping[str, Any], output: Path) -> None:
 
 
 def make_decision_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     groups = _group_index(report)
     paired = {

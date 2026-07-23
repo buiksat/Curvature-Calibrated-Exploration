@@ -8,9 +8,12 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import ttest_1samp
+
+matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
 from .aggregate_results import student_t_interval
 from .artifact_utils import (

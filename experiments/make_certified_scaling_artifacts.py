@@ -379,7 +379,11 @@ def _curve(records: Sequence[Mapping[str, Any]]) -> tuple[FloatArray, FloatArray
 
 
 def make_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+    from matplotlib import ticker as mticker
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     config = report["config"]
     dimension = int(config["figure_dimension"])
@@ -436,21 +440,29 @@ def make_figure(report: Mapping[str, Any], output: Path) -> None:
         axes_array[row, 1].set_ylabel("Sample-CVPs")
         for axis in axes_array[row]:
             axis.set_xscale("log", base=2)
-            axis.set_yscale("symlog", linthresh=1.0)
             axis.grid(alpha=0.2, linewidth=0.5)
+        axes_array[row, 0].set_yscale("symlog", linthresh=1.0)
+        axes_array[row, 1].set_yscale("log")
+        axes_array[row, 1].yaxis.set_major_locator(
+            mticker.LogLocator(base=10, numticks=5)
+        )
+        axes_array[row, 1].yaxis.set_minor_locator(mticker.NullLocator())
         if row == len(ranks) - 1:
             axes_array[row, 0].set_xlabel("Horizon")
             axes_array[row, 1].set_xlabel("Horizon")
     axes_array[0, 0].set_title("Executed-policy regret", fontsize=9)
     axes_array[0, 1].set_title("Width-solve work", fontsize=9)
     handles, labels = axes_array[0, 0].get_legend_handles_labels()
-    figure.legend(handles, labels, loc="upper center", ncol=4, frameon=False, fontsize=8)
-    figure.suptitle(
-        f"Rotated cyclic scaling ($d={dimension}$, $\\kappa={condition}$)",
-        y=0.995,
-        fontsize=10,
+    figure.legend(
+        handles,
+        labels,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.91),
+        ncol=4,
+        frameon=False,
+        fontsize=8,
     )
-    figure.tight_layout(rect=(0, 0, 1, 0.92))
+    figure.tight_layout(rect=(0, 0, 1, 0.86))
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, bbox_inches="tight", metadata={"CreationDate": None})
     plt.close(figure)

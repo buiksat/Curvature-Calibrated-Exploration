@@ -294,7 +294,10 @@ def _mean(group: Mapping[str, Any], field: str) -> float | None:
 
 
 def make_systems_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     config = report["config"]
     models = tuple(str(model["name"]) for model in config["models"])
@@ -342,9 +345,16 @@ def make_systems_figure(report: Mapping[str, Any], output: Path) -> None:
             axis.set_xlabel("Replay buffer size")
         axes_array[row, 0].set_yscale("log")
     handles, labels = axes_array[0, 0].get_legend_handles_labels()
-    figure.legend(handles, labels, loc="upper center", ncol=3, frameon=False, fontsize=8)
-    figure.suptitle(f"Real JVP/VJP GGN systems benchmark ($K={actions}$)", y=0.995)
-    figure.tight_layout(rect=(0, 0, 1, 0.91))
+    figure.legend(
+        handles,
+        labels,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.91),
+        ncol=3,
+        frameon=False,
+        fontsize=8,
+    )
+    figure.tight_layout(rect=(0, 0, 1, 0.85))
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, bbox_inches="tight", metadata={"CreationDate": None})
     plt.close(figure)
@@ -352,7 +362,10 @@ def make_systems_figure(report: Mapping[str, Any], output: Path) -> None:
 
 
 def make_accuracy_figure(report: Mapping[str, Any], output: Path) -> None:
+    import matplotlib
     import matplotlib.pyplot as plt
+
+    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
     config = report["config"]
     reference_models = [

@@ -8,8 +8,11 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 
 from .artifact_utils import (
     sha256_file,
