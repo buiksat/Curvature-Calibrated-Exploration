@@ -86,8 +86,9 @@ materializing a $d\times d$ matrix.  Rewards have conditionally sub-Gaussian
 noise; the fitted curvature is the Gaussian squared-loss quasi-likelihood.  In
 the small-drift exact-current regime, a sharpened singular-value argument transfers
 the analysis to the monotone frozen-feature potential.  Splitting its spectrum at
-rank $r$ yields a full-dimensional regret bound in terms of the top-$r$ log
-determinant and the residual spectral mass $\Delta_{T,r}$, without assuming an
+rank $r$ yields a full-dimensional conditional regret bound in terms of a
+rank-$r$ logarithmic trace term and the residual spectral mass $\Delta_{T,r}$,
+without assuming an
 exact tangent subspace.  Exact rank is a special case; a supplied subspace also
 permits an $r$-dimensional implementation.  A more general transfer theorem
 separates linearization, centering, feature and operator transfer, CG error, and
@@ -185,8 +186,9 @@ residuals upper-bound feature transfer and centering, while an analytic Taylor
 schedule supplies the confidence radius (\Cref{lem:path-certificates,cor:operational}).
 These schedules are conservative and need known smoothness constants and a certified
 optimizer residual.  In the exact-current small-drift regime, the sharpened
-two-sided sandwich closes regret through the frozen potential, and a top-$r$ plus
-spectral-tail decomposition closes its information gain without a known subspace
+two-sided sandwich closes regret through the frozen potential, and a rank-$r$
+logarithmic-trace plus spectral-tail decomposition closes its information gain
+without a known subspace
 (\Cref{cor:exact-current-frozen-potential,cor:approx-rank-current-ggn}).  A
 supplied exact-rank path is a computational special case, while a persistently
 excited growing window gives a separate conditional regret and width-solve
@@ -195,9 +197,10 @@ sample-CVP accounting bound
 unrestricted fine-tuning.
 
 \paragraph{Contributions.}
-\textbf{(1)} A full-dimensional, approximate-rank regret closure for exact
-current GGN under predictable small drift, using a sharpened frozen/current
-sandwich and a residual spectral-mass term; exact rank is a special case
+\textbf{(1)} A full-dimensional approximate-rank information-gain closure,
+yielding a conditional regret bound for exact current GGN under predictable small
+drift, using a sharpened frozen/current sandwich and a residual spectral-mass
+term; exact rank is a special case
 (\Cref{cor:exact-current-frozen-potential,lem:spectral-tail-logdet,cor:approx-rank-current-ggn}).
 \textbf{(2)} A general realized-width regret reduction with one-sided
 feature/operator transfer and explicit centering, linearization, and CG terms
@@ -286,8 +289,8 @@ The algorithm uses the \emph{relinearized curvature matrix}
 \end{equation}
 the \emph{damped GGN curvature} for the Gaussian/squared-loss model
 at the current parameter~$\btheta_t$.
-(For this likelihood, the GGN coincides with the true Fisher
-information; see the remark below.)
+(For the Gaussian working model underlying this squared-loss quasi-likelihood,
+the GGN coincides with the model Fisher information; see the remark below.)
 While $\bC_t$ is the natural object for
 computing predictive variances at $\btheta_t$, it
 re-evaluates all past Jacobians at~$\btheta_t$ and therefore does
@@ -561,8 +564,8 @@ $\gamma_T\le\Gamma^{\rm tail}_{T,r}$.
 
 \begin{corollary}[Approximate-rank exact-current GGN]
 \label{cor:approx-rank-current-ggn}
-Under \Cref{cor:exact-current-frozen-potential}, for every fixed
-$r\in\{0,\ldots,d\}$,
+Under \Cref{cor:exact-current-frozen-potential}, on the same confidence event
+the following holds simultaneously for every $r\in\{0,\ldots,d\}$:
 \begin{equation}\label{eq:approx-rank-current-ggn}
 \begin{aligned}
  R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,
@@ -574,7 +577,10 @@ $r\in\{0,\ldots,d\}$,
 \end{equation}
 This is a realized-complexity statement: the policy may retain the existing
 observable $\hat\gamma_{t-1}$ schedule, but a terminal realized
-$\Delta_{T,r}$ is not used in any action-time radius.
+$\Delta_{T,r}$ is not used in any action-time radius.  Because the deterministic
+spectral inequality holds for every $r$, the terminal report may minimize
+$\Gamma^{\rm tail}_{T,r}$ over $r$ a posteriori, provided that choice does not
+alter any past action, radius, or other action-time quantity.
 
 Operationally, if before round $t$ a supplied deterministic or
 $\cHist_t$-measurable envelope $\bar\Delta_{t-1,r}$ upper-bounds the spectral
@@ -819,9 +825,10 @@ bound.  When $U$ is supplied, the projected Gram in
 All regret rows are independently executed policies.  Common random numbers are
 used only where pairing is valid.  Exact teacher and dense replay quantities are
 post-action audits; common-trajectory operator comparisons never report causal
-regret.  Tuning and evaluation seeds are disjoint.  The derived full-grid aggregate
-retains seed-level checkpoints and complete hash provenance; release scope and
-missing raw tiers are stated in \Cref{app:availability}.
+regret.  Tuning and evaluation seeds are disjoint.  The derived full-grid
+aggregate retains seed-level checkpoints and hash-indexed provenance metadata,
+although raw tiers needed to verify the complete chain are absent; release scope
+is stated in \Cref{app:availability}.
 
 \begin{figure*}[t]
   \centering
@@ -923,15 +930,20 @@ result (\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).
 \end{figure*}
 
 Scalar calibration changes conclusions but does not induce a uniform ordering.
-Across the 48 surrogate--cell comparisons per protocol, Holm correction over the
-full 144-comparison family leaves 35 significant under the identical coefficient
+For each comparison we use a two-sided paired Student-$t$ test on the 50
+seed-level terminal-regret differences; an identically zero difference receives
+$p=1$, while a constant nonzero difference receives the limiting value $p=0$.
+Holm's step-down procedure controls familywise error at $0.05$ over all 144
+prespecified tests.  Across the 48 surrogate--cell comparisons per protocol, the
+adjustment leaves 35 significant under the identical coefficient
 (13 favor a surrogate, 22 favor full), 20 under coverage matching (8/12), and 27
 under mean-bonus matching (11/16).  Evaluation coverage under the tuning-selected
 95\% protocol averages 94.6\% across method--cell means and ranges from 85.6\% to
 99.2\%.  Current and historical full Grams coincide in this fixed-feature linear
 environment; their separate labels audit the protocol rather than representation
 drift.  The frozen coefficients are in \Cref{tab:coverage-matched-calibration},
-and full coverage/decision heatmaps are in
+all mean paired differences and raw/adjusted $p$-values are in the generated
+appendix comparison tables, and full coverage/decision heatmaps are in
 \Cref{fig:coverage-matched-heatmaps}.
 
 The balanced nonlinear benchmark uses separate tuning and 30 evaluation seeds;
@@ -968,9 +980,10 @@ method at every horizon (\Cref{sec:covertype-rerun}).
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
 
-CC-UCB supplies a matrix-free full-GGN/Fisher reference with explicit transfer,
+CC-UCB supplies a matrix-free full-GGN/model-Fisher reference with explicit transfer,
 CG, and width terms.  The strongest full-dimensional result combines predictable
-small feature drift with a top-$r$ plus spectral-tail bound on the frozen
+small feature drift for exact current curvature with a rank-$r$ logarithmic-trace
+plus spectral-tail bound on the frozen
 potential; it does not require a known tangent subspace.  Exact rank recovers a
 projected-Gram special case where full-dimensional CG is unnecessary.  Neither
 result is an unrestricted neural-training guarantee.  Empirically, the executed
@@ -978,6 +991,8 @@ studies test width and action-order preservation rather than demonstrate
 performance: the tanh bound is vacuous, the legacy scaling grid exposes failed
 envelopes, coverage and bonus matching still produce mixed operator comparisons,
 full curvature is not uniformly preferred, and Covertype fails its baseline check.
+The explicit corrected-center rate additionally requires a nondecreasing
+predictable prefix information envelope and frozen-feature access.
 
 \paragraph{Limitations.}
 Theory assumes Gaussian squared loss, enumeration, realizability, smoothness,
@@ -1095,9 +1110,13 @@ A deterministic or history-measurable prefix envelope
 $\bar\Delta_{t,r}\ge\Delta_{t,r}$ may enter an online confidence schedule
 through the prefix form of~\eqref{eq:spectral-tail-logdet}.  In contrast, a
 realized terminal $\Delta_{T,r}$ is an a posteriori path-complexity bound only.
-It must not choose $r$, an eigenspace, a radius, or any other action-time
-quantity.  The existing observable $\hat\gamma_t$ schedule remains valid when
-only the realized terminal tail is reported.
+Since the inequality is pathwise and simultaneous over the finite set of ranks,
+the terminal report may minimize over $r$.  Neither the terminal tail nor that
+post-hoc rank may choose an eigenspace, a radius, an action, or any other
+action-time quantity.  If valid predictable envelopes are available for several
+ranks, their pointwise minimum is itself a valid predictable information bound.
+The existing observable $\hat\gamma_t$ schedule remains valid when only realized
+terminal tails are reported.
 
 The dynamic-potential and CG-observable consequences of \Cref{thm:regret} are
 \begin{equation}\label{eq:regret-bound-dyn}
@@ -1597,18 +1616,19 @@ $r\in\{0,\ldots,d\}$ and suppose a predictable prefix information envelope
 $\mathcal G_{n,r}\ge\gamma_n$ is supplied for $n=0,\ldots,T$.  Valid choices
 are the rank envelope $\Gamma_{n,r}$ under a known rank bound, or the
 spectral-tail envelope in \Cref{cor:approx-rank-current-ggn} with supplied
-prefix tails $\bar\Delta_{n,r}$.  Set
+prefix tails $\bar\Delta_{n,r}$.  Define its predictable monotone closure
+$\mathcal G^\uparrow_{n,r}:=\max_{0\le j\le n}\mathcal G_{j,r}$ and set
 \begin{align*}
  x_T&:=\frac{2c_gR\sqrt{T-1}}{\sigma\sqrt{\lambda W}},&
  \alpha_I&:=\sqrt{\frac{1+\bar\varepsilon}{1-\bar\varepsilon}},\\
  \mathcal B_{T,r}^{\rm corr}
- &:=\sqrt{\mathcal G_{T,r}+2\log(1/\delta)}+\sqrt\lambda R
+ &:=\sqrt{\mathcal G^\uparrow_{T,r}+2\log(1/\delta)}+\sqrt\lambda R
  +\frac{2c_\mu R^2\sqrt T}{\sigma\sqrt W}.&&
 \end{align*}
 If $x_T<1$, the predictable radius
 \begin{equation}\label{eq:corrected-near-linear-beta}
  \bar\beta_t^{\rm corr}:=
- \sqrt{\mathcal G_{t-1,r}+2\log(1/\delta)}+\sqrt\lambda R
+ \sqrt{\mathcal G^\uparrow_{t-1,r}+2\log(1/\delta)}+\sqrt\lambda R
  +\frac{2c_\mu R^2\sqrt{t-1}}{\sigma\sqrt W}
 \end{equation}
 is valid and the corrected-center policy satisfies
@@ -1616,15 +1636,16 @@ is valid and the corrected-center policy satisfies
 \begin{aligned}
  R_T\le{}&2\alpha_I\frac{1+x_T}{1-x_T}
  \mathcal B_{T,r}^{\rm corr}
- \sqrt{(\sigma^2+G^2/\lambda)T\mathcal G_{T,r}}\\
+ \sqrt{(\sigma^2+G^2/\lambda)T\mathcal G^\uparrow_{T,r}}\\
  &+\frac{4c_\mu R^2T}{\sqrt W}.
 \end{aligned}
 \end{equation}
-In particular, bounded transfer requires only
+In particular, bounded transfer is ensured by
 $W>4c_g^2R^2(T-1)/(\lambda\sigma^2)=\Omega(T)$ up to problem constants,
 and $E_T\le2c_\mu R^2T/\sqrt W$.  If
-$\mathcal G_{T,r}=O(r\log T)$---for example, if
-$\bar\Delta_{T,r}=O(r\log T)$ at fixed $\lambda$---and $W=\Omega(T)$ with
+$\mathcal G^\uparrow_{T,r}=O(r\log T)$---for example, if
+$\max_{n\le T}\bar\Delta_{n,r}=O(r\log T)$ at fixed $\lambda$---and
+$W=\Omega(T)$ with
 a sufficiently large constant to keep $x_T$ bounded away from one, then
 \[
  R_T=O(r\sqrt T\log T)+O(\sqrt T)
@@ -1639,6 +1660,8 @@ separately certified sketch.  The result therefore does not have $O(d)$ total
 memory merely because current-curvature products are matrix-free.
 \end{corollary}
 \begin{proof}
+The running maximum $\mathcal G^\uparrow_{n,r}$ is predictable and dominates
+both $\mathcal G_{n,r}$ and every earlier prefix envelope.
 The trust region gives $Q_t\le4R^2(t-1)$, so
 \Cref{lem:path-certificates} yields
 $\bar\chi_t\le2c_gR\sqrt{t-1}/(\sigma\sqrt{\lambda W})\le x_T$,
@@ -1651,7 +1674,7 @@ Apply the corrected-center form of
 $\alpha_t\le\alpha_I$, $(1+\bar\chi_t)/(1-\bar\chi_t)\le
 (1+x_T)/(1-x_T)$, and
 $\bar\beta_t^{\rm corr}\le\mathcal B_{T,r}^{\rm corr}$, then use
-$\gamma_T\le\mathcal G_{T,r}$.  Finally substitute
+$\gamma_T\le\mathcal G_{T,r}\le\mathcal G^\uparrow_{T,r}$.  Finally substitute
 $2\bar E_T\le4c_\mu R^2T/\sqrt W$.  The stated orders follow directly.
 \end{proof}
 
@@ -3374,8 +3397,8 @@ The \emph{generalized Gauss--Newton} (GGN) drops the
 residual-times-Hessian term from the full Hessian, retaining only the
 outer-product Jacobian part that is guaranteed PSD
 \citep{martens2020new,schraudolph2002fast}.
-For Gaussian regression with fixed variance (the squared-loss setting
-of this paper), the true Fisher and GGN are identical, and both
+For the fixed-variance Gaussian working model underlying the squared-loss
+quasi-likelihood used here, the model Fisher and GGN are identical, and both
 reduce to the outer-product curvature $\sigma^{-2}\sum_s\bg_s\bg_s^\top$
 used in~\eqref{eq:curvature}.
 More generally, for exponential-family negative log-likelihoods
@@ -3888,7 +3911,11 @@ protocols use an identical theoretical coefficient, the empirical 95th
 percentile of all one-step prediction-error/width ratios, or the ratio needed to
 match the full operator's mean bonus on common tuning trajectories.  The latter
 two coefficients are frozen before any evaluation run.  Holm adjustment is over
-all $3\times8\times6=144$ prespecified surrogate comparisons.  Because this is
+all $3\times8\times6=144$ prespecified surrogate comparisons.  Each marginal
+$p$-value comes from a two-sided paired Student-$t$ test of the 50 seed-level
+terminal-regret differences; Holm controls familywise error at $0.05$.  For zero
+variance, an identically zero difference is assigned $p=1$ and a constant nonzero
+difference the limiting value $p=0$.  Because this is
 a fixed-feature linear model, current and historical full-Gram rows are
 algebraically identical; LO-FI is not included because the repository has no
 compatible recursive precision implementation.
@@ -3900,6 +3927,8 @@ compatible recursive precision implementation.
 study.  Evaluation outcomes are not used to select these values.}
 \label{tab:coverage-matched-calibration}
 \end{table}
+
+\input{../tables/generated/coverage_matched_comparisons.tex}
 
 \begin{figure*}[t]
   \centering

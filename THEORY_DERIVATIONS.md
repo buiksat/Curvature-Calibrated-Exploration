@@ -117,10 +117,14 @@ valid.
 
 A realized terminal `Delta_{T,r}` is permitted only in the final pathwise
 complexity bound. It is not measurable at earlier action times and must not set
-an online confidence radius. The existing observable `hat_gamma_t` schedule
-remains valid without consulting the tail. Alternatively, a fixed `r` and a
-deterministic or history-measurable prefix envelope `bar_Delta_{t,r}` can define
-an operational prefix schedule.
+an online confidence radius. Because the deterministic bound holds
+simultaneously for the finite set `r=0,...,d`, the terminal report may minimize
+over `r` a posteriori; that choice cannot alter past radii, actions, or
+eigenspaces. The existing observable `hat_gamma_t` schedule remains valid
+without consulting the tail. Alternatively, deterministic or
+history-measurable prefix envelopes `bar_Delta_{t,r}` can define an operational
+prefix schedule. The pointwise minimum of several valid predictable information
+envelopes is also predictable and valid.
 
 The approximate-rank result does not imply a supplied eigenspace. Therefore it
 does not inherit the projected `r x r` implementation: full-dimensional CG can
@@ -145,17 +149,26 @@ collection-residual envelope enters. The condition `x_T<1` requires
 W > 4 c_g^2 R^2 (T-1)/(lambda sigma^2),
 ```
 
-which is linear rather than quadratic in `T`. With a predictable information
-envelope `G_{t,r}`, the radius is bounded by
+which is linear rather than quadratic in `T`. A predictable information envelope
+`G_{t,r}` need not itself be nondecreasing. Define the predictable monotone
+closure
 
 ```text
-sqrt(G_{t-1,r}+2 log(1/delta)) + sqrt(lambda) R
+G_up(n,r) = max_{0<=j<=n} G_{j,r}.
+```
+
+Then `gamma_n <= G_{n,r} <= G_up(n,r)`, and the radius is bounded by
+
+```text
+sqrt(G_up(t-1,r)+2 log(1/delta)) + sqrt(lambda) R
   + 2 c_mu R^2 sqrt(t-1)/(sigma sqrt(W)).
 ```
 
-Substitution into the frozen-potential corollary gives the manuscript's
-explicit bound. If `G_{T,r}=O(r log T)` and `W=Omega(T)` with a constant that
-keeps `x_T` below one, the leading product is
+The running maximum is necessary: the prefix-envelope definition alone permits
+`G_{0,r}>G_{T,r}`, so a terminal-only bound does not control every radius.
+Substitution into the frozen-potential corollary gives the manuscript's explicit
+bound. If `G_up(T,r)=O(r log T)` and `W=Omega(T)` with a constant that keeps
+`x_T` below one, the leading product is
 `O(r sqrt(T) log T)` and `2 bar_E_T=O(sqrt(T))`.
 
 ## Bounded-output residual energy

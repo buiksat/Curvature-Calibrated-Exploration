@@ -44,6 +44,7 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
         tmp_path / "mechanism.pdf",
         tmp_path / "heatmaps.pdf",
         tmp_path / "calibration.tex",
+        tmp_path / "comparisons.tex",
     )
     assert artifacts["evaluation_run_count"] == 42
     for path in (
@@ -51,6 +52,12 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
         tmp_path / "mechanism.pdf",
         tmp_path / "heatmaps.pdf",
         tmp_path / "calibration.tex",
+        tmp_path / "comparisons.tex",
     ):
         assert path.is_file()
         assert path.with_name(path.name + ".sha256").is_file()
+    comparison_text = (tmp_path / "comparisons.tex").read_text(encoding="ascii")
+    assert "Holm adjustment uses the complete 144-test family" in comparison_text
+    derived = json.loads((tmp_path / "derived.json").read_text(encoding="ascii"))
+    assert derived["inference"]["familywise_alpha"] == 0.05
+    assert derived["inference"]["test"].startswith("two_sided_paired_student_t")

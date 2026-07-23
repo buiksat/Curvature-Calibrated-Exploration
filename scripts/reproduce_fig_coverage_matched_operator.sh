@@ -17,4 +17,5 @@ buck2 run //experiments:make_coverage_matched_operator_artifacts -- \
   --derived results/derived/coverage_matched_operator.json \
   --mechanism-figure paper/figures/coverage_matched_mechanism.pdf \
   --heatmap-figure paper/figures/coverage_matched_heatmaps.pdf \
-  --table tables/generated/coverage_matched_calibration.tex
+  --table tables/generated/coverage_matched_calibration.tex \
+  --comparison-table tables/generated/coverage_matched_comparisons.tex

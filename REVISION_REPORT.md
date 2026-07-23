@@ -84,13 +84,19 @@ gamma_T <= r_T log(1 + T G^2/(r_T lambda sigma^2))
 with explicit `r=0`, zero-gradient, and exact-rank conventions. The combined
 corollary does not assume a supplied tangent subspace. A realized terminal tail
 is used only for a posteriori complexity; only a deterministic or predictable
-prefix envelope may replace the online information-gain schedule.
+prefix envelope may replace the online information-gain schedule. Because the
+deterministic inequality holds simultaneously for every rank, the terminal
+report may minimize over rank post hoc, but that choice cannot alter any past
+radius, action, or eigenspace.
 
 ### Additional closures and limits
 
 - The corrected-center near-linear corollary removes optimizer and
   collection-residual assumptions, requires `W = Omega(T)` for bounded
-  transfer, and displays its replay/memory requirement.
+  transfer, and displays its replay/memory requirement. Its prefix information
+  envelope is replaced by the predictable monotone closure
+  `G_up(n,r)=max_{j<=n} G(j,r)`; the final rate condition is on
+  `G_up(T,r)`, closing the nonmonotone-envelope proof gap identified in review.
 - The bounded-output lemma gives a simultaneous finite-horizon
   collection-residual envelope under conditional sub-Gaussian noise.
 - The exact-rank linear subclass is related to the standard
@@ -177,6 +183,11 @@ coverage, and tuning-selected mean bonus magnitude. Coefficients are pooled over
 all cells and tuning seeds 2000--2019, then frozen before evaluation seeds
 2100--2149. The complete run contains 8,400 evaluation trajectories. Holm
 adjustment covers all 144 prespecified method/cell/protocol comparisons.
+Each marginal test is a two-sided paired Student-t test on the 50 seed-level
+terminal-regret differences, with Holm familywise control at 0.05. Identically
+zero differences receive `p=1`; constant nonzero differences receive the
+limiting value `p=0`. The generated appendix tables report every mean paired
+difference, raw p-value, adjusted p-value, and classification.
 
 Significant comparisons remain mixed under every protocol. The identical
 coefficient has 35 significant cells (13 lower regret for a surrogate, 22 for
@@ -265,7 +276,12 @@ run count whose complete raw chain is absent.
 - `buck2 run //paper:validate`: 173 unique labels, 124 resolved reference
   targets, 36 valid citation keys, no blockers.
 - `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
-  references and citations stabilized, and `paper/main.pdf` has 48 pages.
+  references and citations stabilized, and `paper/main.pdf` has 51 pages.
+- `buck2 run //tools:pytest_runner -- -q
+  experiments/tests/test_coverage_matched_operator_study.py`: 2 tests passed.
+- `REUSE_RAW=1 PROFILE=full
+  scripts/reproduce_fig_coverage_matched_operator.sh`: regenerated the derived
+  inference metadata and complete 144-row appendix comparison tables.
 - `buck2 run //tools:pytest_runner -- -q
   experiments/tests/test_mnist_contextual_benchmark.py`: 4 tests passed.
 - `PROFILE=smoke scripts/reproduce_fig_mnist_contextual_benchmark.sh`: passed on

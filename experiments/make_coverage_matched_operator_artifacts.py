@@ -88,6 +88,7 @@ def build_artifacts(
     mechanism_figure: str | Path,
     heatmap_figure: str | Path,
     table_path: str | Path,
+    comparison_table_path: str | Path | None = None,
 ) -> dict[str, Any]:
     raw = Path(raw_root)
     selection = _read_json(raw / "selection.json")
@@ -128,6 +129,16 @@ def build_artifacts(
         "paired_comparisons": comparisons,
         "manifest": manifest,
         "inputs": inputs,
+        "inference": {
+            "test": "two_sided_paired_student_t_on_seed_level_terminal_regret_differences",
+            "family": "all 144 prespecified protocol-cell-surrogate comparisons",
+            "familywise_alpha": 0.05,
+            "adjustment": "Holm step-down",
+            "zero_variance_rule": (
+                "p=1 for an identically zero difference; p=0 for a constant "
+                "nonzero difference"
+            ),
+        },
         "interpretation": (
             "All cells are prespecified. Regret compares independently executed policies "
             "and is not a causal operator contrast."
@@ -208,11 +219,76 @@ def build_artifacts(
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     table.write_text("\n".join(lines) + "\n", encoding="ascii")
     write_sha256_sidecar(table)
+
+    comparison_table = (
+        Path(comparison_table_path)
+        if comparison_table_path is not None
+        else table.with_name("coverage_matched_comparisons.tex")
+    )
+    comparison_table.parent.mkdir(parents=True, exist_ok=True)
+    comparison_lines: list[str] = []
+    protocol_titles = {
+        "identical_theoretical": "Identical theoretical coefficient",
+        "matched_95_coverage": "Tuning-matched 95\\% coverage",
+        "matched_mean_bonus": "Tuning-matched mean bonus",
+    }
+    classifications = {
+        "surrogate_lower_regret": "surrogate lower",
+        "current_full_lower_regret": "full lower",
+        "unresolved": "unresolved",
+    }
+    for protocol_index, protocol in enumerate(PROTOCOLS):
+        comparison_lines.extend(
+            [
+                r"\begin{table*}[p]",
+                r"\centering\tiny",
+                r"\begin{tabular}{llrrrl}",
+                r"\toprule",
+                r"Cell & Surrogate & Mean diff. & Raw $p$ & Holm $p$ & Classification \\",
+                r"\midrule",
+            ]
+        )
+        protocol_rows = sorted(
+            (row for row in comparisons if row["protocol"] == protocol),
+            key=lambda row: (str(row["cell_id"]), str(row["semantic_method"])),
+        )
+        for row in protocol_rows:
+            comparison_lines.append(
+                f"{_latex(str(row['cell_id']))} & "
+                f"{_latex(str(row['semantic_method']))} & "
+                f"{float(row['interval']['mean']):.3f} & "
+                f"{float(row['raw_two_sided_p_value']):.2e} & "
+                f"{float(row['holm_adjusted_p_value']):.2e} & "
+                f"{classifications[str(row['classification'])]} \\\\"
+            )
+        label = (
+            "tab:coverage-matched-comparisons"
+            if protocol_index == 0
+            else f"tab:coverage-matched-comparisons-{protocol_index + 1}"
+        )
+        comparison_lines.extend(
+            [
+                r"\bottomrule",
+                r"\end{tabular}",
+                (
+                    r"\caption{Paired terminal-regret inference for the "
+                    + protocol_titles[protocol]
+                    + r" protocol. Differences are surrogate minus current full GGN; "
+                    r"Holm adjustment uses the complete 144-test family.}"
+                ),
+                f"\\label{{{label}}}",
+                r"\end{table*}",
+                "",
+            ]
+        )
+    comparison_table.write_text("\n".join(comparison_lines), encoding="ascii")
+    write_sha256_sidecar(comparison_table)
     return {
         "derived": derived.as_posix(),
         "mechanism_figure": mechanism.as_posix(),
         "heatmap_figure": heatmap.as_posix(),
         "calibration_table": table.as_posix(),
+        "comparison_table": comparison_table.as_posix(),
         "evaluation_run_count": expected_runs,
     }
 
@@ -224,6 +300,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--mechanism-figure", type=Path, required=True)
     parser.add_argument("--heatmap-figure", type=Path, required=True)
     parser.add_argument("--table", type=Path, required=True)
+    parser.add_argument("--comparison-table", type=Path, required=True)
     return parser
 
 
@@ -235,6 +312,7 @@ def main() -> None:
         args.mechanism_figure,
         args.heatmap_figure,
         args.table,
+        args.comparison_table,
     )
     print(canonical_json(result))
 

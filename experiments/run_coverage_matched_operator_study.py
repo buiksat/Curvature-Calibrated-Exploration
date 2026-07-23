@@ -247,6 +247,11 @@ def aggregate(
                 "difference": "method_minus_current_full_ggn_regret",
                 "interval": student_t_interval(differences.tolist()),
                 "raw_two_sided_p_value": p_value,
+                "test": "two_sided_paired_student_t_on_seed_level_differences",
+                "zero_variance_rule": (
+                    "p=1 for an identically zero difference; p=0 for a constant "
+                    "nonzero difference"
+                ),
                 "seeds": sorted(method_by_seed),
                 "causal_operator_interpretation": False,
             }
@@ -255,6 +260,7 @@ def aggregate(
     for record, adjusted_p in zip(comparisons, adjusted, strict=True):
         record["holm_adjusted_p_value"] = adjusted_p
         record["holm_family"] = "all_prespecified_protocol_cell_surrogate_comparisons"
+        record["familywise_alpha"] = 0.05
         mean = float(record["interval"]["mean"])
         if adjusted_p < 0.05:
             record["classification"] = (
