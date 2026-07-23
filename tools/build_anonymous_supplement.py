@@ -428,11 +428,21 @@ def _source_candidates(repository: Path) -> tuple[Path, ...]:
                 continue
             candidates.add(path)
 
-    for subtree in (repository / "tests", repository / "tools"):
+    for subtree in (repository / "tests", repository / "tools", repository / "scripts"):
         if not subtree.is_dir():
             continue
         for path in subtree.rglob("*"):
             if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc":
+                candidates.add(path)
+
+    generated_tables = repository / "tables" / "generated"
+    if generated_tables.is_dir():
+        for path in generated_tables.rglob("*"):
+            if (
+                path.is_file()
+                and path.name != ".gitkeep"
+                and not path.name.endswith(".provenance.json")
+            ):
                 candidates.add(path)
 
     paper = repository / "paper"
@@ -458,7 +468,11 @@ def _is_source_hash_file(path: Path, repository: Path) -> bool:
     relative = PurePosixPath(relative_posix(path, repository))
     if path.suffix.lower() in SOURCE_HASH_EXCLUDED_SUFFIXES:
         return False
-    if relative.parts[:2] in {("paper", "figures"), ("paper", "tables")}:
+    if relative.parts[:2] in {
+        ("paper", "figures"),
+        ("paper", "tables"),
+        ("tables", "generated"),
+    }:
         return False
     return True
 
@@ -1393,7 +1407,11 @@ class ReleaseBuilder:
             pending_json = deferred
 
     def _provenance_sources(self) -> tuple[Path, ...]:
-        roots = (self.repository / "results" / "derived", self.repository / "paper")
+        roots = (
+            self.repository / "results" / "derived",
+            self.repository / "paper",
+            self.repository / "tables" / "generated",
+        )
         sources: list[Path] = []
         for root in roots:
             if root.is_dir():
