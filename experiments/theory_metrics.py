@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Callable, Sequence
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -168,6 +168,189 @@ class FeatureDriftSandwichResult:
     maximum_squared_singular_value: float
     lower_factor: float | None
     upper_factor: float
+
+
+@dataclass(frozen=True)
+class RelativeScalarLinkResult:
+    """Dense float64 audit of the structured scalar-link certificates."""
+
+    multipliers: FloatArray
+    relative_drift: float
+    whitened_drift: float
+    frozen_curvature: FloatArray
+    current_curvature: FloatArray
+    centering_coefficients: FloatArray
+    mismatch_vector: FloatArray
+    mismatch_vector_from_coefficients: FloatArray
+    mismatch_frozen_metric_norm: float
+    coefficient_norm: float
+    coefficient_norm_bound: float
+    path_energy: float
+    collection_residual_energy: float
+
+
+def relative_scalar_link_diagnostics(
+    features: ArrayLike,
+    collection_parameters: ArrayLike,
+    current_parameter: ArrayLike,
+    rewards: ArrayLike,
+    *,
+    link: Callable[[FloatArray], ArrayLike],
+    link_derivative: Callable[[FloatArray], ArrayLike],
+    gradient_bound: float,
+    jacobian_lipschitz: float,
+    trust_region_radius: float,
+    damping: float,
+    noise_variance: float,
+) -> RelativeScalarLinkResult:
+    r"""Audit the relative drift and centering identities for ``h(phi.T theta)``.
+
+    This routine materializes dense matrices and uses the observed rewards, so it
+    is a numerical audit helper rather than a policy certificate.  The analytic
+    bound it checks uses only pre-action collection residual energy, path energy,
+    and a supplied relative-drift bound.
+    """
+
+    feature_matrix = _as_float64_array(features, name="features", ndim=2, copy=True)
+    parameters = _as_float64_array(
+        collection_parameters,
+        name="collection_parameters",
+        ndim=2,
+        copy=True,
+    )
+    sample_count, dimension = feature_matrix.shape
+    if dimension == 0:
+        raise ValueError("features must have positive dimension")
+    if parameters.shape != (sample_count, dimension):
+        raise ValueError(
+            "collection_parameters must have the same sample and parameter "
+            "dimensions as features"
+        )
+    current = _validate_vector(current_parameter, dimension, name="current_parameter")
+    observed_rewards = _as_float64_array(rewards, name="rewards", ndim=1, copy=True)
+    if observed_rewards.shape != (sample_count,):
+        raise ValueError(f"rewards must have shape ({sample_count},)")
+    feature_norm_bound = _nonnegative_float(gradient_bound, name="gradient_bound")
+    lipschitz = _nonnegative_float(
+        jacobian_lipschitz, name="jacobian_lipschitz"
+    )
+    radius = _nonnegative_float(trust_region_radius, name="trust_region_radius")
+    ridge = _positive_float(damping, name="damping")
+    variance = _positive_float(noise_variance, name="noise_variance")
+    sigma = float(np.sqrt(variance))
+
+    norm_tolerance = 256.0 * np.finfo(np.float64).eps * max(1, dimension)
+    if np.any(np.linalg.norm(parameters, axis=1) > radius + norm_tolerance):
+        raise ValueError("a collection parameter lies outside the trust region")
+    if np.linalg.norm(current) > radius + norm_tolerance:
+        raise ValueError("current_parameter lies outside the trust region")
+
+    collection_q = np.einsum("nd,nd->n", feature_matrix, parameters)
+    current_q = feature_matrix @ current
+    collection_means = _as_float64_array(
+        link(collection_q), name="collection link values", ndim=1
+    )
+    current_means = _as_float64_array(
+        link(current_q), name="current link values", ndim=1
+    )
+    collection_derivatives = _as_float64_array(
+        link_derivative(collection_q),
+        name="collection link derivatives",
+        ndim=1,
+    )
+    current_derivatives = _as_float64_array(
+        link_derivative(current_q), name="current link derivatives", ndim=1
+    )
+    expected = (sample_count,)
+    for name, array in (
+        ("collection link values", collection_means),
+        ("current link values", current_means),
+        ("collection link derivatives", collection_derivatives),
+        ("current link derivatives", current_derivatives),
+    ):
+        if array.shape != expected:
+            raise ValueError(f"{name} must have shape {expected}")
+    if np.any(collection_derivatives == 0.0):
+        raise ValueError("collection link derivatives must be nonzero")
+
+    frozen_gradients = collection_derivatives[:, None] * feature_matrix
+    current_gradients = current_derivatives[:, None] * feature_matrix
+    multipliers = current_derivatives / collection_derivatives
+    relative_drift = (
+        0.0
+        if sample_count == 0
+        else float(np.max(np.abs(multipliers - 1.0)))
+    )
+    identity = np.eye(dimension, dtype=np.float64)
+    frozen_curvature = ridge * identity + frozen_gradients.T @ frozen_gradients / variance
+    current_curvature = ridge * identity + current_gradients.T @ current_gradients / variance
+    values, vectors = np.linalg.eigh(frozen_curvature)
+    inverse_root = (vectors * (1.0 / np.sqrt(values))) @ vectors.T
+    whitened_drift = (
+        0.0
+        if sample_count == 0
+        else float(
+            np.linalg.norm(
+                inverse_root @ (current_gradients - frozen_gradients).T / sigma,
+                ord=2,
+            )
+        )
+    )
+
+    displacements = current[None, :] - parameters
+    path_energy = float(np.sum(displacements * displacements))
+    linearized_means = collection_means + np.einsum(
+        "nd,nd->n", frozen_gradients, displacements
+    )
+    linearization_errors = current_means - linearized_means
+    linearized_residuals = linearized_means - observed_rewards
+    collection_residuals = collection_means - observed_rewards
+    collection_residual_energy = float(collection_residuals @ collection_residuals)
+    coefficients = (
+        linearized_residuals * (multipliers - 1.0)
+        + multipliers * linearization_errors
+    )
+
+    feature_deltas = current_gradients - frozen_gradients
+    mismatch = (
+        linearized_residuals @ feature_deltas
+        + linearization_errors @ frozen_gradients
+        + linearization_errors @ feature_deltas
+    ) / variance
+    mismatch_from_coefficients = coefficients @ frozen_gradients / variance
+    mismatch_metric_norm = float(
+        np.sqrt(mismatch @ np.linalg.solve(frozen_curvature, mismatch))
+    )
+    coefficient_norm = float(np.linalg.norm(coefficients))
+    coefficient_bound = float(
+        relative_drift
+        * (
+            np.sqrt(collection_residual_energy)
+            + feature_norm_bound * np.sqrt(path_energy)
+        )
+        + (1.0 + relative_drift)
+        * lipschitz
+        * radius
+        * np.sqrt(path_energy)
+    )
+
+    return RelativeScalarLinkResult(
+        multipliers=_readonly(multipliers.copy()),
+        relative_drift=relative_drift,
+        whitened_drift=whitened_drift,
+        frozen_curvature=_readonly(frozen_curvature.copy()),
+        current_curvature=_readonly(current_curvature.copy()),
+        centering_coefficients=_readonly(coefficients.copy()),
+        mismatch_vector=_readonly(np.asarray(mismatch, dtype=np.float64).copy()),
+        mismatch_vector_from_coefficients=_readonly(
+            np.asarray(mismatch_from_coefficients, dtype=np.float64).copy()
+        ),
+        mismatch_frozen_metric_norm=mismatch_metric_norm,
+        coefficient_norm=coefficient_norm,
+        coefficient_norm_bound=coefficient_bound,
+        path_energy=path_energy,
+        collection_residual_energy=collection_residual_energy,
+    )
 
 
 def feature_drift_sandwich(
@@ -679,8 +862,14 @@ class SpectralTailInformationResult:
     horizon: int
     tail_rank: int
     effective_top_rank: int
+    effective_tail_rank: int
+    trace: float
     spectral_tail: float
+    spectral_head: float
     exact_logdet: float
+    split_top_bound: float
+    split_tail_bound: float
+    split_upper_bound: float
     top_rank_bound: float
     tail_bound: float
     upper_bound: float
@@ -699,8 +888,14 @@ def spectral_tail_information_bound(
 
     For ``A >= 0`` generated by at most ``horizon`` rank-one terms, this checks
 
-    ``log det(I+A/lambda) <= r_T log(1+T G^2/(r_T lambda sigma^2))
-                              + sum_{i>r} nu_i/lambda``.
+    The returned ``split_upper_bound`` is
+
+    ``r_T log(1+(tr(A)-Delta)/(r_T lambda))
+       + q_T,r log(1+Delta/(q_T,r lambda))``,
+
+    while ``upper_bound`` retains the older, looser closure
+
+    ``r_T log(1+T G^2/(r_T lambda sigma^2)) + Delta/lambda``.
 
     The first term is defined as zero when ``r_T=min(r,T)`` is zero.
     """
@@ -741,8 +936,29 @@ def spectral_tail_information_bound(
         raise ValueError("increment trace exceeds T G^2 / sigma^2")
 
     effective_top_rank = min(rank, rounds)
+    effective_tail_rank = min(dimension - rank, max(rounds - rank, 0))
     spectral_tail = float(np.sum(positive[rank:]))
+    spectral_head = max(0.0, observed_trace - spectral_tail)
     exact = float(np.sum(np.log1p(positive / ridge)))
+    if effective_top_rank == 0:
+        split_top = 0.0
+    else:
+        split_top = float(
+            effective_top_rank
+            * np.log1p(spectral_head / (effective_top_rank * ridge))
+        )
+    if effective_tail_rank == 0:
+        if spectral_tail > trace_tolerance:
+            raise FloatingPointError(
+                "a nonzero spectral tail has no available nonzero tail rank"
+            )
+        split_tail = 0.0
+    else:
+        split_tail = float(
+            effective_tail_rank
+            * np.log1p(spectral_tail / (effective_tail_rank * ridge))
+        )
+    split_upper = split_top + split_tail
     if effective_top_rank == 0:
         top_bound = 0.0
     else:
@@ -763,6 +979,10 @@ def spectral_tail_information_bound(
         * max(1, dimension)
         * max(1.0, exact, upper)
     )
+    if exact > split_upper + tolerance:
+        raise FloatingPointError("split spectral-tail information bound was violated")
+    if split_upper > upper + tolerance:
+        raise FloatingPointError("split spectral-tail bound exceeded the old bound")
     if exact > upper + tolerance:
         raise FloatingPointError("spectral-tail information bound was violated")
     return SpectralTailInformationResult(
@@ -771,8 +991,14 @@ def spectral_tail_information_bound(
         horizon=rounds,
         tail_rank=rank,
         effective_top_rank=effective_top_rank,
+        effective_tail_rank=effective_tail_rank,
+        trace=observed_trace,
         spectral_tail=spectral_tail,
+        spectral_head=spectral_head,
         exact_logdet=exact,
+        split_top_bound=split_top,
+        split_tail_bound=split_tail,
+        split_upper_bound=split_upper,
         top_rank_bound=top_bound,
         tail_bound=tail_bound,
         upper_bound=upper,

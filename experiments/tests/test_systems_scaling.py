@@ -241,6 +241,54 @@ def test_symmetric_jacobi_batched_cg_matches_scalar_scipy_pcg() -> None:
     )
 
 
+def test_jacobi_pcg_energy_width_and_preconditioned_residual_certificates() -> None:
+    rng = np.random.default_rng(110)
+    operator = CurvatureOperator(rng.normal(size=(17, 8)), damping=0.75)
+    right_hand_sides = rng.normal(size=(5, 8))
+    result = batched_independent_cg(
+        operator,
+        right_hand_sides,
+        4,
+        relative_tolerance=0.0,
+        preconditioner="symmetric_jacobi",
+    )
+
+    dense = operator.to_dense()
+    diagonal = operator.diagonal()
+    inverse_root = np.diag(1.0 / np.sqrt(diagonal))
+    transformed = inverse_root @ dense @ inverse_root
+    eigenvalues = np.linalg.eigvalsh(transformed)
+    transformed_condition = float(eigenvalues[-1] / eigenvalues[0])
+    inverse_diagonal = 1.0 / diagonal
+
+    for rhs, approximate in zip(
+        right_hand_sides, result.solutions, strict=True
+    ):
+        exact = np.linalg.solve(dense, rhs)
+        error = exact - approximate
+        exact_energy_squared = float(exact @ dense @ exact)
+        relative_energy_error = float(
+            np.sqrt((error @ dense @ error) / exact_energy_squared)
+        )
+        residual = rhs - dense @ approximate
+        preconditioned_residual_ratio = float(
+            np.sqrt(
+                (residual @ (inverse_diagonal * residual))
+                / (rhs @ (inverse_diagonal * rhs))
+            )
+        )
+        assert relative_energy_error <= (
+            np.sqrt(transformed_condition) * preconditioned_residual_ratio
+            + 2e-13
+        )
+
+        exact_width_squared = float(rhs @ exact)
+        approximate_width_squared = float(rhs @ approximate)
+        assert abs(approximate_width_squared - exact_width_squared) <= (
+            relative_energy_error * exact_width_squared + 2e-13
+        )
+
+
 def test_advanced_cpu_grid_uses_sample_space_reference_and_only_batched_methods() -> None:
     config = {
         **_config(),

@@ -580,6 +580,15 @@ where $\nu_1\ge\cdots\ge\nu_d\ge0$ are the eigenvalues of
 $\bCbar_{T+1}-\lambda\bI$ and the first term is defined to be zero when
 $r_T=0$.  \Cref{lem:spectral-tail-logdet} proves
 $\gamma_T\le\Gamma^{\rm tail}_{T,r}$.
+Writing $\tau_T=\sum_i\nu_i$ and
+$q_{T,r}=\min\{d-r,\max\{T-r,0\}\}$, the same lemma proves the sharper
+realized split bound
+\begin{equation}\label{eq:gamma-split-main}
+ \Gamma^{\rm split}_{T,r}:=
+ r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right)
+ +q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}{q_{T,r}\lambda}\right),
+\end{equation}
+where a term with zero multiplier is defined as zero.
 
 \begin{corollary}[Approximate-rank exact-current GGN]
 \label{cor:approx-rank-current-ggn}
@@ -594,6 +603,8 @@ the following holds simultaneously for every $r\in\{0,\ldots,d\}$:
  +2E_T.
 \end{aligned}
 \end{equation}
+The same display holds with $\Gamma^{\rm tail}_{T,r}$ replaced by the
+smaller $\Gamma^{\rm split}_{T,r}$ from~\eqref{eq:gamma-split-main}.
 This is a realized-complexity statement: the policy may retain the existing
 observable $\hat\gamma_{t-1}$ schedule, but a terminal realized
 $\Delta_{T,r}$ is not used in any action-time radius.  Because the deterministic
@@ -603,7 +614,8 @@ alter any past action, radius, or other action-time quantity.
 
 Operationally, if before round $t$ a supplied deterministic or
 $\cHist_t$-measurable envelope $\bar\Delta_{t-1,r}$ upper-bounds the spectral
-tail of $\bCbar_t-\lambda\bI$, define
+tail of $\bCbar_t-\lambda\bI$, the old predictable envelope below remains
+valid:
 \[
 \begin{aligned}
  r_{t-1}&:=\min\{r,t-1\},\\
@@ -621,6 +633,22 @@ $\Gamma^{\rm tail}_{T,r}$ replaced by any supplied terminal envelope
 $\bar\Gamma^{\rm tail}_{T,r}$ and with $\omega_t$ formed from the resulting
 radius.
 
+A refined predictable alternative uses the observable frozen trace
+$\tau_{t-1}=\operatorname{tr}(\bCbar_t-\lambda\bI)
+=\sigma^{-2}\sum_{s<t}\|\bg_s\|^2$.  With
+$q_{t-1,r}=\min\{d-r,\max\{t-1-r,0\}\}$, set
+\begin{equation}\label{eq:predictable-split-envelope}
+ \bar\Gamma^{\rm split}_{t-1,r}:=
+ r_{t-1}\log\!\left(1+\frac{\tau_{t-1}}{r_{t-1}\lambda}\right)
+ +q_{t-1,r}\log\!\left(1+
+ \frac{\bar\Delta_{t-1,r}}{q_{t-1,r}\lambda}\right),
+\end{equation}
+again omitting zero-multiplier terms.  The head term deliberately uses the
+full trace: subtracting an \emph{upper} tail envelope could reduce the head
+term and invalidate an upper bound.  Thus
+$\bar\Gamma^{\rm split}_{t-1,r}\ge\gamma_{t-1}$ is a valid action-time
+schedule, although it can be looser than the realized split expression.
+
 No exact tangent subspace is assumed.  A small spectral tail can contain
 decision-relevant directions and does not supply their basis, so
 full-dimensional CG may still be necessary.  Exact rank is recovered when
@@ -629,12 +657,62 @@ $\Delta_{T,r}=0$; the supplied-subspace result
 The corrected-center version again replaces $\omega_t$ by $\bar\beta_t$.
 \end{corollary}
 \begin{proof}
-Apply \Cref{lem:spectral-tail-logdet} to substitute
-$\gamma_T\le\Gamma^{\rm tail}_{T,r}$ in
+Apply \Cref{lem:spectral-tail-logdet} to substitute either
+$\gamma_T\le\Gamma^{\rm split}_{T,r}\le\Gamma^{\rm tail}_{T,r}$ in
 \eqref{eq:exact-current-frozen-potential}.  The prefix version of the same
-lemma makes $\bar\Gamma^{\rm tail}_{t-1,r}$ a predictable upper bound on
+lemma makes either $\bar\Gamma^{\rm tail}_{t-1,r}$ or
+$\bar\Gamma^{\rm split}_{t-1,r}$ a predictable upper bound on
 $\gamma_{t-1}$, so \Cref{lem:confidence,cor:beta-constructive} justify the
 operational radius.  No eigenspace is used by either argument.
+\end{proof}
+
+\begin{corollary}[Gap-dependent exact-current regret]
+\label{cor:gap-dependent-exact-current}
+Adopt \Cref{cor:exact-current-frozen-potential}.  Define the realized gap
+$\Delta_t:=\mu^*(\bx_t,a_t^*)-\mu^*(\bx_t,a_t)$ and suppose every
+suboptimal candidate action at every round has gap at least a deterministic
+(or almost-sure) $\Delta_{\min}>0$.  This gap is an analysis condition and is
+not used to tune the policy; if it holds only on a high-probability event, that
+event must be added to the certificate failure allocation.  Suppose also
+$\epslin(t)\le\Delta_{\min}/4$ for all $t$, and set
+\[
+ H_t^{\rm gap}:=\alpha_t\omega_t
+ \frac{1+\bar\chi_t}{1-\bar\chi_t},\qquad
+ H_{\max}^{\rm gap}:=\max_{t\le T}H_t^{\rm gap}.
+\]
+Then, on the event of \Cref{thm:regret},
+\begin{equation}\label{eq:gap-dependent-exact-current}
+ R_T\le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}
+ \left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T.
+\end{equation}
+Consequently $\gamma_T$ in this display may be replaced by the exact-rank
+bound $\Gamma_{T,r}$ of~\eqref{eq:rank-gamma-main}, the simple tail bound
+$\Gamma^{\rm tail}_{T,r}$ of~\eqref{eq:gamma-tail-main}, or the refined
+$\Gamma^{\rm split}_{T,r}$ of~\eqref{eq:gamma-split-main}, under the
+corresponding premises.  The corrected-center version replaces $\omega_t$ by
+$\bar\beta_t$ as usual.  This result is not a minimax-optimality claim: unlike
+the gap-free result, it requires a uniform positive gap and a per-round
+linearization error smaller than one quarter of that gap.
+\end{corollary}
+\begin{proof}
+The per-round argument in
+\Cref{cor:exact-current-frozen-potential} gives
+\[
+ \Delta_t\le2H_t^{\rm gap}\bar s_t(a_t)+2\epslin(t).
+\]
+On a suboptimal round, $\Delta_t\ge\Delta_{\min}$ and hence
+$2\epslin(t)\le\Delta_t/2$.  Rearranging and using
+$H_t^{\rm gap}\le H_{\max}^{\rm gap}$ gives
+$\Delta_t\le4H_{\max}^{\rm gap}\bar s_t(a_t)$.  Squaring this inequality and using
+$\Delta_t\ge\Delta_{\min}$ yields
+\[
+ \Delta_t\le\frac{\Delta_t^2}{\Delta_{\min}}
+ \le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}\bar s_t^2(a_t).
+\]
+Optimal rounds contribute zero.  Sum over $t$ and apply
+$\sum_t\bar s_t^2(a_t)\le
+(\sigma^2+G^2/\lambda)\gamma_T$ to prove the display; the three substitutions
+follow from \Cref{lem:rank-logdet,lem:spectral-tail-logdet}.
 \end{proof}
 
 \newcommand{\deferredConditionalRates}{%
@@ -1173,9 +1251,22 @@ Let
 \]
 have eigenvalues $\nu_1\ge\cdots\ge\nu_d\ge0$.  For an integer
 $r\in\{0,\ldots,d\}$, let
-$\Delta_{T,r}:=\sum_{i>r}\nu_i$ and $r_T:=\min\{r,T\}$.  Then
+$\Delta_{T,r}:=\sum_{i>r}\nu_i$, $\tau_T:=\operatorname{tr}(A_T)$,
+$r_T:=\min\{r,T\}$, and
+$q_{T,r}:=\min\{d-r,\max\{T-r,0\}\}$.  Then
+\begin{equation}\label{eq:spectral-tail-split}
+\begin{aligned}
+ \gamma_T
+ &\le r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}
+ {r_T\lambda}\right)
+ +q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}
+ {q_{T,r}\lambda}\right)\\
+ &=:\Gamma^{\rm split}_{T,r},
+\end{aligned}
+\end{equation}
+where either term is defined as zero when its multiplier is zero.  Moreover,
 \begin{equation}\label{eq:spectral-tail-logdet}
- \gamma_T\le
+ \Gamma^{\rm split}_{T,r}\le
  r_T\log\!\left(1+\frac{TG^2}{r_T\lambda\sigma^2}\right)
  +\frac{\Delta_{T,r}}\lambda,
 \end{equation}
@@ -1193,20 +1284,65 @@ $x\mapsto\log(1+x/\lambda)$ on the leading eigenvalues gives
  \sum_{i=1}^{r}\log(1+\nu_i/\lambda)
  =\sum_{i=1}^{r_T}\log(1+\nu_i/\lambda)
  \le r_T\log\!\left(1+
- \frac{\sum_{i=1}^{r_T}\nu_i}{r_T\lambda}\right)
- \le r_T\log\!\left(1+\frac{TG^2}
- {r_T\lambda\sigma^2}\right).
+ \frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right).
 \]
 The equality uses zero eigenvalues when $r>T$.  For the tail,
-$\log(1+x)\le x$ yields
-$\sum_{i>r}\log(1+\nu_i/\lambda)\le\Delta_{T,r}/\lambda$.
-Adding the two parts proves the claim.  When $r_T=0$, only the tail argument
-is used, so no zero denominator is evaluated.
+at most $q_{T,r}$ eigenvalues can be nonzero: there are at most $d-r$ tail
+coordinates and at most $T-r$ nonzero eigenvalues after the first $r$.
+Concavity, with zero padding when necessary, therefore gives
+\[
+ \sum_{i>r}\log(1+\nu_i/\lambda)
+ \le q_{T,r}\log\!\left(1+
+ \frac{\Delta_{T,r}}{q_{T,r}\lambda}\right).
+\]
+If $q_{T,r}=0$, the rank bound forces $\Delta_{T,r}=0$ and the tail sum is
+empty.  This proves~\eqref{eq:spectral-tail-split}; the $r_T=0$ case similarly
+uses only the tail term.
+
+For the second inequality, use
+$\tau_T-\Delta_{T,r}\le\tau_T\le TG^2/\sigma^2$ in the head term and
+$q\log(1+x/q)\le x$ with $x=\Delta_{T,r}/\lambda$ in the tail term.
+This proves~\eqref{eq:spectral-tail-logdet} without evaluating a zero
+denominator.  The stated edge cases follow immediately.
+\end{proof}
+
+\begin{proposition}[Tightness of the split spectral-tail expression]
+\label{prop:spectral-tail-tightness}
+Fix integers $r,q\ge1$, masses $H,\Delta\ge0$, ambient dimension
+$d=r+q$, and $T\ge d$.  Let a PSD
+$d\times d$ matrix have $r$ head eigenvalues equal to $H/r$, $q$ tail eigenvalues equal to
+$\Delta/q$, and all remaining eigenvalues zero, with the head values ordered
+no smaller than the tail values.  Splitting after $r$ makes
+\eqref{eq:spectral-tail-split} an equality:
+\[
+ \log\det(\bI_d+A/\lambda)
+ =r\log\!\left(1+\frac{H}{r\lambda}\right)
+ +q\log\!\left(1+\frac{\Delta}{q\lambda}\right).
+\]
+If $\Delta/(q\lambda)\le1$, then the tail contribution obeys
+\[
+ q\log\!\left(1+\frac{\Delta}{q\lambda}\right)
+ \ge\frac{\Delta}{2\lambda}.
+\]
+Thus dependence linear in the tail mass cannot in general be removed without
+additional information about the tail rank or spectrum.  This is a tightness
+statement for the information inequality, not a regret lower bound for the
+nonlinear class.  The example is algebraic; to embed it in the bounded-feature
+bandit class one additionally chooses factors satisfying
+$H+\Delta\le TG^2/\sigma^2$.
+\end{proposition}
+\begin{proof}
+The equality follows by substituting the two constant spectral blocks.  For
+$x\in[0,1]$, $\log(1+x)\ge x/2$; apply this with
+$x=\Delta/(q\lambda)$ and multiply by $q$.
 \end{proof}
 
 A deterministic or history-measurable prefix envelope
 $\bar\Delta_{t,r}\ge\Delta_{t,r}$ may enter an online confidence schedule
-through the prefix form of~\eqref{eq:spectral-tail-logdet}.  In contrast, a
+through the prefix form of~\eqref{eq:spectral-tail-logdet}.  A second valid
+schedule is~\eqref{eq:predictable-split-envelope}, which uses the observable
+full trace for the head and the tail envelope only for the tail.  It does not
+subtract an upper tail envelope from the trace.  In contrast, a
 realized terminal $\Delta_{T,r}$ is an a posteriori path-complexity bound only.
 Since the inequality is pathwise and simultaneous over the finite set of ranks,
 the terminal report may minimize over $r$.  Neither the terminal tail nor that
@@ -1926,6 +2062,150 @@ $4/(3\sqrt3)$, proving both Lipschitz constants.  Apply
 \Cref{lem:path-certificates,cor:operational}.
 \end{proof}
 
+\begin{corollary}[Scaled-tanh relative-link rate]
+\label{cor:scaled-tanh-relative}
+Consider the explicit zero-offset scalar-link family
+\begin{equation}\label{eq:scaled-tanh-model}
+ \mu_{\btheta,W}(z)=\sqrt W\,
+ \tanh\!\left(\frac{\phi(z)^\top\btheta}{\sqrt W}\right),
+ \qquad \|\phi(z)\|\le B_\phi,\qquad
+ \|\btheta_t\|,\|\btheta^*\|\le R.
+\end{equation}
+This is a scaled generalized-linear family in the displacement coordinates,
+not a claim that generic neural-network width provides the scale $W$.
+Let
+\[
+ c_h:=\frac{4B_\phi^2}{3\sqrt3},\qquad
+ \rho_W:=\exp\!\left(\frac{4B_\phi R}{\sqrt W}\right)-1.
+\]
+Then valid global constants on the certified region are
+\begin{equation}\label{eq:scaled-tanh-constants}
+ G=B_\phi,\qquad L_\mu=L_g=\frac{c_h}{\sqrt W},qquad
+ |\mu_{\btheta,W}(z)|\le B_\phi R,qquad \rho_t\le\rho_W.
+\end{equation}
+The stated exponential relative-drift certificate obeys $\rho_W<1$ exactly
+when
+\begin{equation}\label{eq:scaled-tanh-rho-threshold}
+ W>\left(\frac{4B_\phi R}{\log2}\right)^2.
+\end{equation}
+
+Fix a uniform CG certificate
+$\bar\varepsilon_t\le\bar\varepsilon<1$, let
+$\alpha_I=\sqrt{(1+\bar\varepsilon)/(1-\bar\varepsilon)}$, and suppose
+$\zeta_t\le\zeta_0/\sqrt W$ and
+$R_t^{\rm col}\le C_RtP_T$ for $P_T\ge1$.  Fix a rank index $r$ and supply a
+predictable prefix information envelope $\mathcal G_{n,r}\ge\gamma_n$; write
+$\mathcal G^\uparrow_{n,r}=\max_{j\le n}\mathcal G_{j,r}$.  The envelope may
+be the exact-rank bound or either valid predictable spectral-tail schedule in
+\Cref{cor:approx-rank-current-ggn}.  Define
+\begin{align}
+ \Psi^{\rm rel}_{T,W}:={}&\frac{\zeta_0}{\sqrt{\lambda W}}
+ +\frac1\sigma\Biggl\{\rho_W
+ \left[\sqrt{C_RTP_T}+2B_\phi R\sqrt{T-1}\right]
+ \nonumber\\[-1mm]
+ &\hspace{29mm}
+ +\frac{2(1+\rho_W)c_hR^2\sqrt{T-1}}{\sqrt W}\Biggr\},
+ \label{eq:scaled-tanh-relative-psi}\\
+ \mathcal B^{\rm rel}_{T,r}:={}&
+ \sqrt{\mathcal G^\uparrow_{T,r}+2\log(1/\delta)}+\sqrt\lambda R
+ +\frac{2c_hR^2\sqrt T}{\sigma\sqrt W}
+ +\Psi^{\rm rel}_{T,W}.
+ \label{eq:scaled-tanh-relative-radius}
+\end{align}
+If $\rho_W<1$, exact current curvature with the original nonlinear center and
+the relative certificate of \Cref{lem:relative-link-drift} satisfies
+\begin{equation}\label{eq:scaled-tanh-relative-regret}
+\begin{aligned}
+ R_T\le{}&2\alpha_I\frac{1+\rho_W}{1-\rho_W}
+ \mathcal B^{\rm rel}_{T,r}
+ \sqrt{\left(\sigma^2+\frac{B_\phi^2}{\lambda}\right)
+ T\mathcal G^\uparrow_{T,r}}
+ +\frac{4c_hR^2T}{\sqrt W}.
+\end{aligned}
+\end{equation}
+
+More explicitly, choose a fixed target $\rho_0\in(0,1)$ and suppose
+\begin{equation}\label{eq:scaled-tanh-linear-width}
+ W\ge CTP_T,\qquad
+ C\ge C_{\rho_0}:=
+ \left(\frac{4B_\phi R}{\log(1+\rho_0)}\right)^2.
+\end{equation}
+Then $\rho_W\le\rho_0$, and the mean-value theorem gives the displayed
+uniform certificate
+\begin{equation}\label{eq:scaled-tanh-psi-uniform}
+\begin{aligned}
+ \Psi^{\rm rel}_{T,W}\le{}&\frac{\zeta_0}{\sqrt{\lambda W}}
+ +\frac1\sigma\Biggl[
+ 4(1+\rho_0)B_\phi R\sqrt{\frac{C_R}{C}}\\[-1mm]
+ &\quad+\frac{8(1+\rho_0)B_\phi^2R^2
+ +2(1+\rho_0)c_hR^2}{\sqrt{CP_T}}\Biggr].
+\end{aligned}
+\end{equation}
+Furthermore
+$\bar F_{T+1}\le4c_h^2R^4T/W$ and
+$\bar E_T\le2c_hR^2T/\sqrt W$.  Hence, if
+$\mathcal G^\uparrow_{T,r}=O(r\log T)$ with fixed problem, confidence, and CG
+constants,
+\[
+ R_T=O(r\sqrt T\log T)+O(T/\sqrt W).
+\]
+At $W=\Theta(TP_T)$ this is
+$O(r\sqrt T\log T+\sqrt{T/P_T})$, and therefore
+$O(r\sqrt T\log T+\sqrt T)$ up to the displayed residual factor.
+
+Under realizability, \Cref{lem:bounded-output-residual} supplies the premise
+with probability at least $1-\delta_R$ by taking
+\begin{equation}\label{eq:scaled-tanh-residual-factor}
+ C_R=1,\qquad
+ P_T=\max\!\left\{1,
+ 8B_\phi^2R^2+4\sigma^2\log(2T/\delta_R)\right\}.
+\end{equation}
+Thus this fully analytic residual choice makes the sufficient width
+$W=\Omega(T\log(T/\delta_R))$ at fixed problem constants.  Its event is
+added to the certificate failure allocation.  No claim is made that the
+residual or width constants are tight.
+\end{corollary}
+\begin{proof}
+For $h_W(q)=\sqrt W\tanh(q/\sqrt W)$,
+$h_W'(q)=\operatorname{sech}^2(q/\sqrt W)$ and
+\[
+ h_W''(q)=-\frac{2}{\sqrt W}\tanh(q/\sqrt W)
+ \operatorname{sech}^2(q/\sqrt W).
+\]
+The maximum of $2y(1-y^2)$ on $y\in[0,1]$ is $4/(3\sqrt3)$, proving the
+gradient and Hessian bounds in~\eqref{eq:scaled-tanh-constants}; also
+$\sqrt W|\tanh(q/\sqrt W)|\le|q|\le B_\phi R$.
+Moreover
+\[
+ \left|\frac{d}{dq}\log h_W'(q)\right|
+ =\frac{2}{\sqrt W}|\tanh(q/\sqrt W)|\le\frac2{\sqrt W}.
+\]
+Since $|q_{s,t}-q_s|\le B_\phi\|\btheta_t-\btheta_s\|le2B_\phi R$,
+$|\log c_{s,t}|\le4B_\phi R/\sqrt W$.  Hence
+$|c_{s,t}-1|\le e^{4B_\phi R/\sqrt W}-1=\rho_W$, and solving
+$e^{4B_\phi R/\sqrt W}-1<1$ gives
+\eqref{eq:scaled-tanh-rho-threshold} for this exponential certificate.
+
+The trust region gives $Q_t\le4R^2(t-1)$.  Substitution in
+\eqref{eq:relative-link-psi} proves
+$\bar\psi_t^{\rm rel}\le\Psi^{\rm rel}_{T,W}$.  Taylor's theorem gives
+$\bar\epsilon_t^{\rm lin}\le2c_hR^2/\sqrt W$, and hence the stated bounds on
+$\bar F_{T+1},\bar E_T$ and the confidence radius
+\eqref{eq:scaled-tanh-relative-radius}.  Apply
+\Cref{cor:exact-current-frozen-potential}, bound the time-varying factors by
+$\alpha_I$, $\rho_W$, and $\mathcal B^{\rm rel}_{T,r}$, and use
+$\gamma_T\le\mathcal G^\uparrow_{T,r}$ to obtain
+\eqref{eq:scaled-tanh-relative-regret}.
+
+Under~\eqref{eq:scaled-tanh-linear-width}, the exponential mean-value bound
+$e^x-1\le(1+\rho_0)x$ for $0\le x\le\log(1+\rho_0)$ gives
+$\rho_W\le4(1+\rho_0)B_\phi R/\sqrt W$.  Substitute this and
+$W\ge CTP_T$ in~\eqref{eq:scaled-tanh-relative-psi} to prove
+\eqref{eq:scaled-tanh-psi-uniform}; the rate follows.  Finally
+\Cref{lem:bounded-output-residual} with $B_\mu=B_\phi R$ proves
+\eqref{eq:scaled-tanh-residual-factor}.
+\end{proof}
+
 \paragraph{Predictable algorithmic curvature under certified transfer.}
 The analysis is conducted for a \emph{generic predictable SPD algorithmic
 curvature sequence} $\{\Calg_t\}_{t\ge1}$ satisfying
@@ -2089,6 +2369,140 @@ Since $\bCbar_t^{-1}\preceq\lambda^{-1}\bI$,
 $\|\delta_{s,t}\|_{\bCbar_t^{-1}}^2\le\|\delta_{s,t}\|^2/\lambda
 \le L_g^2\Delta_{s,t}^2/\lambda$; summing and taking square roots
 gives~\eqref{eq:chi-primitive}.
+\end{proof}
+
+\begin{lemma}[Relative scalar-link drift and centering]
+\label{lem:relative-link-drift}
+Suppose the prediction model has the fixed-feature scalar-link form
+$\mu_{\btheta}(z)=h(\phi(z)^\top\btheta)$, where
+$\phi(z)\in\R^d$, $h$ is differentiable, and $h'(q)$ is nonzero throughout
+the certified scalar region.  For $s<t$, write $\phi_s=\phi(z_s)$ and define
+\[
+ q_s=\phi_s^\top\btheta_s,\qquad
+ q_{s,t}=\phi_s^\top\btheta_t,\qquad
+ c_{s,t}=\frac{h'(q_{s,t})}{h'(q_s)},\qquad
+ \rho_t=\max_{s<t}|c_{s,t}-1|,
+\]
+with $\rho_1=0$.  Here $\phi_s,q_s$, and $h'(q_s)$ are fixed before reward
+$r_s$, while $\btheta_t$ and every ratio above are $\cHist_t$-measurable
+before action $a_t$ is selected.  Then:
+\begin{enumerate}[nosep,label=(\alph*),leftmargin=1.6em]
+\item The scalar-link gradients obey
+\begin{equation}\label{eq:relative-link-gradients}
+ \bg_s=h'(q_s)\phi_s,\qquad
+ \bg_{s,t}=h'(q_{s,t})\phi_s=c_{s,t}\bg_s,\qquad
+ \delta_{s,t}=(c_{s,t}-1)\bg_s.
+\end{equation}
+Writing $\mathbf c_t=(c_{1,t},\ldots,c_{t-1,t})^\top\in\R^{t-1}$, the
+$d\times(t-1)$ matrices of \Cref{lem:whitened} satisfy
+\begin{equation}\label{eq:relative-link-D}
+ \Dmat_t=\Gmat_t\operatorname{Diag}(\mathbf c_t-\mathbf{1}),\qquad
+ \chi_t\le\|\Gmat_t\|_{\rm op}\rho_t\le\rho_t.
+\end{equation}
+At $t=1$ the matrices have zero columns and the same identities hold under the
+empty-matrix convention.
+
+\item Exact current curvature therefore satisfies, without a smallness
+condition,
+\begin{equation}\label{eq:relative-link-transfer}
+ \bC_t\preceq(1+\rho_t)^2\bCbar_t.
+\end{equation}
+If $\rho_t<1$, it also satisfies
+\begin{equation}\label{eq:relative-link-sandwich}
+ (1-\rho_t)^2\bCbar_t\preceq\bC_t
+ \preceq(1+\rho_t)^2\bCbar_t.
+\end{equation}
+Any predictable upper certificate $\bar\rho_t\ge\rho_t$ may replace $\rho_t$
+in the one-sided result, and may replace it in both sides when
+$\bar\rho_t<1$.
+
+\item Reuse $\bar r_{s,t},e_{s,t}$, and $M_t$ from
+\Cref{lem:primitive-pred}, and define
+\begin{equation}\label{eq:relative-link-v}
+ v_{s,t}:=\bar r_{s,t}(c_{s,t}-1)+c_{s,t}e_{s,t},\qquad
+ \bv_t=(v_{1,t},\ldots,v_{t-1,t})^\top\in\R^{t-1}.
+\end{equation}
+Then the centering mismatch has the exact structured form
+\begin{equation}\label{eq:relative-link-M}
+ M_t=\frac1{\sigma^2}\sum_{s<t}v_{s,t}\bg_s,\qquad
+ \|M_t\|_{\bCbar_t^{-1}}\le\frac{\|\bv_t\|_2}{\sigma}.
+\end{equation}
+
+\item If $\|\btheta_s\|,\|\btheta_t\|\le R$, the gradients are bounded by
+$G$ and are $L_g$-Lipschitz on the radius-$R$ region, then
+\begin{align}
+ \|\bar{\mathbf r}_t\|_2
+ &\le\sqrt{R_t^{\rm col}}+G\sqrt{Q_t},
+ &\bar{\mathbf r}_t&=(\bar r_{1,t},\ldots,\bar r_{t-1,t})^\top,
+ \label{eq:relative-link-rbar}\\
+ \|\mathbf e_t\|_2
+ &\le L_gR\sqrt{Q_t},
+ &\mathbf e_t&=(e_{1,t},\ldots,e_{t-1,t})^\top,
+ \label{eq:relative-link-e}\\
+ \|\bv_t\|_2
+ &\le \rho_t\!\left(\sqrt{R_t^{\rm col}}+G\sqrt{Q_t}\right)
+ +(1+\rho_t)L_gR\sqrt{Q_t}.
+ \label{eq:relative-link-v-bound}
+\end{align}
+Consequently a valid original-center certificate is
+\begin{equation}\label{eq:relative-link-psi}
+ \bar\psi_t^{\rm rel}:=\frac{\zeta_t}{\sqrt\lambda}
+ +\frac{\rho_t(\sqrt{R_t^{\rm col}}+G\sqrt{Q_t})
+ +(1+\rho_t)L_gR\sqrt{Q_t}}{\sigma}.
+\end{equation}
+The right side remains valid after replacing $\rho_t$ by a predictable upper
+bound $\bar\rho_t$.
+\end{enumerate}
+The exact $\rho_t$ requires replaying $\phi_s$ and retaining at least the
+collection scalar $q_s$ (or $h'(q_s)$) for every sample.  Computing the exact
+$v_{s,t}$ additionally uses the stored reward and the same scalar-link replay;
+$q_s$ suffices because both $\bar r_{s,t}$ and $e_{s,t}$ can be reconstructed
+from $q_s,q_{s,t},h(q_s)$, and $h'(q_s)$.  Thus the structured replay uses
+$O(t)$ scalar metadata in addition to raw-example replay.  The Welford
+quantities $Q_t,R_t^{\rm col}$ remain $O(d)$ path-summary state, but neither
+implementation is $O(d)$ total memory.
+\end{lemma}
+\begin{proof}
+Equation~\eqref{eq:relative-link-gradients} is the chain rule.  Applying it to
+each column of~\eqref{eq:whitened-cols} gives
+\eqref{eq:relative-link-D}.  Since the operator norm of the diagonal matrix is
+$\rho_t$ and $\|\Gmat_t\|_{\rm op}\le1$ by \Cref{lem:whitened},
+$\chi_t\le\rho_t$.  Equations~\eqref{eq:relative-link-transfer} and
+\eqref{eq:relative-link-sandwich} then follow respectively from the one-sided
+part of \Cref{lem:whitened} and \Cref{cor:drift-sandwich}.
+
+Substitute $\delta_{s,t}=(c_{s,t}-1)\bg_s$ in the definition of $M_t$:
+\[
+ \bar r_{s,t}\delta_{s,t}+e_{s,t}\bg_s+e_{s,t}\delta_{s,t}
+ =\{\bar r_{s,t}(c_{s,t}-1)+c_{s,t}e_{s,t}\}\bg_s.
+\]
+This proves the first identity in~\eqref{eq:relative-link-M}.  Since
+$M_t=\sigma^{-1}\Gmat_t\bv_t$ after left multiplication by
+$\bCbar_t^{-1/2}$,
+\[
+ \|M_t\|_{\bCbar_t^{-1}}
+ =\sigma^{-1}\|\Gmat_t\bv_t\|_2
+ \le\sigma^{-1}\|\bv_t\|_2,
+\]
+which proves the second identity and uses equivalently
+$\Gmat_t^\top\Gmat_t\preceq I_{t-1}$.
+
+Finally let $d_{s,t}=\|\btheta_t-\btheta_s\|$.  The collection residual
+$c_s=\mu_{\btheta_s}(z_s)-r_s$ gives
+$\bar r_{s,t}=c_s+\bg_s^\top(\btheta_t-\btheta_s)$.  The triangle and
+Cauchy--Schwarz inequalities therefore yield
+$\|\bar{\mathbf r}_t\|_2\le\sqrt{R_t^{\rm col}}+G\sqrt{Q_t}$.
+Taylor's theorem gives $|e_{s,t}|\le(L_g/2)d_{s,t}^2$; because both parameters
+lie in the radius-$R$ region, $d_{s,t}\le2R$, hence
+$|e_{s,t}|\le L_gR d_{s,t}$ and
+$\|\mathbf e_t\|_2\le L_gR\sqrt{Q_t}$.  Applying the triangle inequality to
+$\bv_t=\operatorname{Diag}(\mathbf c_t-\mathbf{1})\bar{\mathbf r}_t
++\operatorname{Diag}(\mathbf c_t)\mathbf e_t$, using
+$\|\mathbf c_t-\mathbf{1}\|_\infty=\rho_t$ and
+$\|\mathbf c_t\|_\infty\le1+\rho_t$, proves
+\eqref{eq:relative-link-v-bound}.  Combine this with
+\Cref{lem:primitive-pred} and~\eqref{eq:relative-link-M} to obtain
+\eqref{eq:relative-link-psi}.
 \end{proof}
 
 \begin{corollary}[Sharp two-sided feature-drift sandwich]\label{cor:drift-sandwich}
@@ -2760,6 +3174,97 @@ $|\bu^\top\Calg_t(\tilde\bu-\bu)|
 For the outer-product special case the condition-number bound follows from
 $\lambda_{\max}(\Calg_t)\le\lambda+\sigma^{-2}\sum_{s\in\mathcal{S}_t} w_s\|\bg_t(\bx_s,a_s)\|^2
 \le\lambda+W_tG^2/\sigma^2$.
+\end{proof}
+
+\begin{lemma}[Fixed-preconditioner CG accuracy]\label{lem:pcg}
+Fix round $t$ and let $P_t\in\R^{d\times d}$ be an
+$\cHist_t$-measurable SPD preconditioner, held fixed and applied as the same
+exact linear map throughout every iteration of a solve.  For
+$\bg=\bg_t(a)\ne0$, define the symmetric transformed system
+\begin{equation}\label{eq:pcg-transformed-system}
+ \widehat C_t\by=\widehat\bg,\qquad
+ \widehat C_t=P_t^{-1/2}\Calg_tP_t^{-1/2},\qquad
+ \widehat\bg=P_t^{-1/2}\bg,
+\end{equation}
+using principal square roots.  If CG starts from zero on this system and
+$\tilde\by_I$ is its $I$th iterate for $I\ge1$, set
+$\bu=\Calg_t^{-1}\bg$, $\by=P_t^{1/2}\bu$, and
+$\tilde\bu_I=P_t^{-1/2}\tilde\by_I$.  Then
+\begin{equation}\label{eq:pcg-energy-identity}
+ \frac{\|\bu-\tilde\bu_I\|_{\Calg_t}}{\|\bu\|_{\Calg_t}}
+ =\frac{\|\by-\tilde\by_I\|_{\widehat C_t}}
+ {\|\by\|_{\widehat C_t}}
+ \le2\left(\frac{\sqrt{\bar\kappa_t^P}-1}
+ {\sqrt{\bar\kappa_t^P}+1}\right)^I,
+\end{equation}
+where
+$\bar\kappa_t^P\ge\kappa(\widehat C_t)$ is a certified predictable bound.
+In particular, positive $\cHist_t$-measurable certified quantities
+$\ell_t,L_t$ satisfying the spectral equivalence
+$\ell_tP_t\preceq\Calg_t\preceq L_tP_t$ with
+$0<\ell_t\le L_t$ give
+$\bar\kappa_t^P=L_t/\ell_t$.
+
+Writing the left side of~\eqref{eq:pcg-energy-identity} as
+$\varepsilon_{t,a}^P$, the approximate width
+$\tilde s_{P,t}^2(a)=\bg^\top\tilde\bu_I$ satisfies, whenever
+$\varepsilon_{t,a}^P<1$,
+\begin{equation}\label{eq:pcg-width-sandwich}
+ (1-\varepsilon_{t,a}^P)s_{\Calg,t}^2(a)
+ \le\tilde s_{P,t}^2(a)
+ \le(1+\varepsilon_{t,a}^P)s_{\Calg,t}^2(a).
+\end{equation}
+
+There is also a directly recomputable residual certificate.  For
+$\br_I=\bg-\Calg_t\tilde\bu_I$,
+\begin{equation}\label{eq:pcg-residual-certificate}
+ \varepsilon_{t,a}^P
+ \le\sqrt{\bar\kappa_t^P}
+ \left(\frac{\br_I^\top P_t^{-1}\br_I}
+ {\bg^\top P_t^{-1}\bg}\right)^{1/2}.
+\end{equation}
+Thus stopping only after the preconditioned residual ratio is at most
+$\bar\varepsilon_t/\sqrt{\bar\kappa_t^P}$ certifies
+$\varepsilon_{t,a}^P\le\bar\varepsilon_t$.  For $\bg=0$, both widths are
+defined as zero.  Taking $P_t=I$ recovers ordinary CG.  The lemma makes no
+claim that a particular preconditioner improves the condition number; that
+requires a proved or measured spectral-equivalence bound.  Iteration-varying
+or inexact nonlinear preconditioners are outside this fixed transformed-CG
+argument.
+\end{lemma}
+\begin{proof}
+The substitutions $\bu=P_t^{-1/2}\by$ and
+$\tilde\bu_I=P_t^{-1/2}\tilde\by_I$ give
+\[
+ \|\bu-\tilde\bu_I\|_{\Calg_t}^2
+ =\|\by-\tilde\by_I\|_{\widehat C_t}^2,
+ \qquad
+ \|\bu\|_{\Calg_t}^2=\|\by\|_{\widehat C_t}^2.
+\]
+The standard zero-start CG Chebyshev bound on the SPD matrix $\widehat C_t$
+proves~\eqref{eq:pcg-energy-identity}.  Congruence of
+$\ell_tP_t\preceq\Calg_t\preceq L_tP_t$ by $P_t^{-1/2}$ puts the spectrum of
+$\widehat C_t$ in $[\ell_t,L_t]$.
+
+Also
+$\bg^\top(\tilde\bu_I-\bu)=
+\bu^\top\Calg_t(\tilde\bu_I-\bu)$, so Cauchy--Schwarz in the
+$\Calg_t$ energy norm proves~\eqref{eq:pcg-width-sandwich}, exactly as in
+\Cref{lem:cg}.  Finally the transformed residual is
+$\widehat\br_I=P_t^{-1/2}\br_I$.  If
+$m_t=\lambda_{\min}(\widehat C_t)$ and
+$M_t^P=\lambda_{\max}(\widehat C_t)$, then
+\[
+ \|\by-\tilde\by_I\|_{\widehat C_t}
+ \le\frac{\|\widehat\br_I\|_2}{\sqrt{m_t}},
+ \qquad
+ \|\by\|_{\widehat C_t}
+ \ge\frac{\|\widehat\bg\|_2}{\sqrt{M_t^P}}.
+\]
+Their ratio is at most
+$\sqrt{\kappa(\widehat C_t)}
+\|\widehat\br_I\|_2/\|\widehat\bg\|_2$, which yields
+\eqref{eq:pcg-residual-certificate} after using the certified upper bound.
 \end{proof}
 
 \paragraph{The algorithmic bonus.}
@@ -4153,8 +4658,11 @@ CPU host and use different computational primitives.  The timed operator stores
 an $n\times d$ random-feature matrix and applies an averaged Gram; it does not
 time model training or on-the-fly network JVP/VJP.  Timings are descriptive
 resource accounting under the executed implementations, not matched-wall-clock
-comparisons; no trained-network or accelerator extrapolation is made.  A
-  Buck-managed Conda toolchain runs a separate real-\texttt{torch.func}
+comparisons; no trained-network or accelerator extrapolation is made.  The
+Jacobi diagonal is fixed during each solve, so its recurrence is the symmetric
+transformed PCG of \Cref{lem:pcg}.  We report its measured iterations and make
+no unproved claim that Jacobi improves the transformed condition number.  A
+Buck-managed Conda toolchain runs a separate real-\texttt{torch.func}
 pipeline.  All 360 preregistered evaluation cells complete for the 131,841- and
 9,972,737-parameter MLPs.  At $m=512$, $K=10$, and target residual $10^{-3}$,
 mean batched-CG times are 0.0395 and 0.5674 seconds with peak allocated

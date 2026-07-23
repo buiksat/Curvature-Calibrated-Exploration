@@ -20,6 +20,7 @@ from experiments.theory_metrics import (
     kappa_plus,
     outer_product_perturbation_bound,
     rank_sensitive_variation_bound,
+    relative_scalar_link_diagnostics,
     relative_refresh_audit,
     spectral_tail_information_bound,
     width_sum_inequality,
@@ -88,6 +89,75 @@ def test_sharpened_feature_drift_handles_empty_history_and_zero_gradient() -> No
     assert zero_gradient.upper_factor == 1.0
 
 
+@pytest.mark.parametrize("seed", range(16))
+def test_relative_scalar_link_drift_and_centering_bounds(seed: int) -> None:
+    rng = np.random.default_rng(9000 + seed)
+    sample_count = 7
+    dimension = 5
+    radius = 0.35
+    feature_bound = 0.8
+    sigma = 0.65
+    damping = 0.9
+    features = rng.normal(size=(sample_count, dimension))
+    features *= feature_bound / np.maximum(
+        feature_bound, np.linalg.norm(features, axis=1, keepdims=True)
+    )
+    collection_parameters = rng.normal(size=(sample_count, dimension))
+    collection_parameters *= (0.8 * radius) / np.maximum(
+        radius, np.linalg.norm(collection_parameters, axis=1, keepdims=True)
+    )
+    current = rng.normal(size=dimension)
+    current *= (0.8 * radius) / max(radius, float(np.linalg.norm(current)))
+
+    def link(values: np.ndarray) -> np.ndarray:
+        return np.tanh(values)
+
+    def derivative(values: np.ndarray) -> np.ndarray:
+        return 1.0 / np.cosh(values) ** 2
+
+    collection_q = np.einsum("nd,nd->n", features, collection_parameters)
+    rewards = np.tanh(collection_q) + rng.normal(0.0, 0.08, size=sample_count)
+    lipschitz = 4.0 * feature_bound**2 / (3.0 * np.sqrt(3.0))
+    result = relative_scalar_link_diagnostics(
+        features,
+        collection_parameters,
+        current,
+        rewards,
+        link=link,
+        link_derivative=derivative,
+        gradient_bound=feature_bound,
+        jacobian_lipschitz=lipschitz,
+        trust_region_radius=radius,
+        damping=damping,
+        noise_variance=sigma**2,
+    )
+
+    tolerance = 2e-12
+    assert result.whitened_drift <= result.relative_drift + tolerance
+    upper_difference = (
+        (1.0 + result.relative_drift) ** 2 * result.frozen_curvature
+        - result.current_curvature
+    )
+    assert np.linalg.eigvalsh(upper_difference)[0] >= -tolerance
+    assert result.relative_drift < 1.0
+    lower_difference = (
+        result.current_curvature
+        - (1.0 - result.relative_drift) ** 2 * result.frozen_curvature
+    )
+    assert np.linalg.eigvalsh(lower_difference)[0] >= -tolerance
+    np.testing.assert_allclose(
+        result.mismatch_vector,
+        result.mismatch_vector_from_coefficients,
+        rtol=2e-12,
+        atol=2e-13,
+    )
+    assert (
+        result.mismatch_frozen_metric_norm
+        <= result.coefficient_norm / sigma + tolerance
+    )
+    assert result.coefficient_norm <= result.coefficient_norm_bound + tolerance
+
+
 @pytest.mark.parametrize("seed", range(12))
 @pytest.mark.parametrize("tail_rank", [0, 1, 3, 8])
 def test_spectral_tail_logdet_inequality(seed: int, tail_rank: int) -> None:
@@ -110,6 +180,8 @@ def test_spectral_tail_logdet_inequality(seed: int, tail_rank: int) -> None:
     )
 
     assert result.effective_top_rank == min(tail_rank, horizon)
+    assert result.exact_logdet <= result.split_upper_bound + 1e-11
+    assert result.split_upper_bound <= result.upper_bound + 1e-11
     assert result.exact_logdet <= result.upper_bound + 1e-11
     if tail_rank == 0:
         assert result.top_rank_bound == 0.0
@@ -138,7 +210,36 @@ def test_spectral_tail_exact_rank_and_zero_edge_cases() -> None:
         tail_rank=0,
     )
     assert zero.exact_logdet == 0.0
+    assert zero.split_upper_bound == 0.0
     assert zero.upper_bound == 0.0
+
+
+def test_split_spectral_tail_bound_is_exact_for_equal_head_and_tail() -> None:
+    head_rank = 2
+    tail_rank = 3
+    head_mass = 6.0
+    tail_mass = 0.4
+    eigenvalues = np.asarray(
+        [
+            *([head_mass / head_rank] * head_rank),
+            *([tail_mass / tail_rank] * tail_rank),
+        ]
+    )
+    increment = np.diag(eigenvalues)
+    result = spectral_tail_information_bound(
+        increment,
+        damping=1.0,
+        horizon=eigenvalues.size,
+        feature_bound=float(np.sqrt(np.sum(eigenvalues) / eigenvalues.size)),
+        noise_variance=1.0,
+        tail_rank=head_rank,
+    )
+
+    assert result.exact_logdet == pytest.approx(
+        result.split_upper_bound, rel=2e-15, abs=2e-15
+    )
+    assert tail_mass / tail_rank <= 1.0
+    assert result.split_tail_bound >= tail_mass / 2.0
 
 
 def test_bounded_output_residual_factor_has_declared_constants() -> None:
