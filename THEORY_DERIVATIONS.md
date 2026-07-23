@@ -226,3 +226,135 @@ and `C_t=Cbar_t`. The standard minimax expected-regret lower bound is
 `Omega(r sqrt(T))`; this checks only the leading dimension dependence on the
 linear exact-rank subclass and says nothing about nonlinear, spectral-tail, or
 computational lower bounds.
+
+## Relative scalar-link drift and centering
+
+For `mu_theta(z)=h(phi(z)^T theta)`, write `n=t-1` and take the frozen
+whitened feature matrices `G,D in R^{d x n}`.  Nonvanishing `h'` gives
+
+```text
+g_{s,t} = c_{s,t} g_s,
+c_{s,t} = h'(phi_s^T theta_t)/h'(phi_s^T theta_s),
+D = G diag(c_t-1).
+```
+
+Therefore `||D||_op <= ||G||_op rho_t`.  Because
+`G G^T <= Cbar^{-1/2} Cbar Cbar^{-1/2}=I`, `||G||_op<=1`, so
+`chi_t<=rho_t`.  The existing singular-value argument gives the one-sided
+factor `(1+rho_t)^2` and, for `rho_t<1`, the two-sided sandwich with factors
+`(1-rho_t)^2` and `(1+rho_t)^2`.
+
+With
+
+```text
+v_{s,t} = rbar_{s,t}(c_{s,t}-1) + c_{s,t} e_{s,t},
+Phi = [g_s/sigma]_{s<t} in R^{d x n},
+```
+
+direct substitution yields `M_t=sigma^{-1} Phi v_t`.  The ridge identity
+`Cbar=lambda I+Phi Phi^T` implies
+`Phi^T Cbar^{-1} Phi <= I_n`, including zero-feature and `t=1` cases.  Hence
+
+```text
+||M_t||_{Cbar^{-1}}^2
+  = sigma^{-2} v_t^T Phi^T Cbar^{-1} Phi v_t
+  <= sigma^{-2} ||v_t||_2^2.
+```
+
+The componentwise bounds
+
+```text
+||rbar_t||_2 <= sqrt(Rcol_t) + G sqrt(Q_t),
+||e_t||_2    <= L_g R sqrt(Q_t)
+```
+
+and `|c-1|<=rho`, `|c|<=1+rho` prove the displayed relative centering
+certificate.  Computing exact ratios requires `O(t)` collection-time scalar
+link metadata; the `O(d)` Welford state is not a total-memory claim.
+
+## Scaled-tanh specialization
+
+For `h_W(q)=sqrt(W)tanh(q/sqrt(W))`,
+
+```text
+h_W'(q)  = sech^2(q/sqrt(W)),
+h_W''(q) = -2 tanh(q/sqrt(W)) sech^2(q/sqrt(W))/sqrt(W).
+```
+
+Maximizing `2 y(1-y^2)` on `[0,1]` gives `4/(3 sqrt(3))`.  Thus, for
+`||phi||<=B_phi`,
+
+```text
+G = B_phi,
+L_mu = L_g = 4 B_phi^2/(3 sqrt(3) sqrt(W)),
+|mu| <= |phi^T theta| <= B_phi R.
+```
+
+Also `|d log h_W'(q)/dq|<=2/sqrt(W)`.  A radius-`R` path gives
+`|q_{s,t}-q_s|<=2 B_phi R`, hence
+
+```text
+rho_t <= exp(4 B_phi R/sqrt(W))-1 = rho_W.
+```
+
+The certificate has `rho_W<1` exactly when
+`W>(4 B_phi R/log(2))^2`.  Substitution of `Q_t<=4R^2(t-1)` and the
+bounded-output residual event into the relative certificate gives the
+manuscript constants.  With `W>=C T P_T`, `rho_W=O((TP_T)^-1/2)`, the
+relative centering term stays bounded, `Fbar=O(T/W)`, and
+`Ebar=O(T/sqrt(W))`.  This is an explicit scalar-link scale, not generic
+network width.
+
+## Split spectral-tail closure and tightness
+
+Let `A=Cbar-lambda I` have at most `T` nonzero eigenvalues, total trace
+`tau`, top-`r` tail mass `Delta`, `r_T=min(r,T)`, and
+`q=min(d-r,max(T-r,0))`.  Concavity applied separately to the head and tail
+gives
+
+```text
+gamma <= r_T log(1+(tau-Delta)/(r_T lambda))
+       + q log(1+Delta/(q lambda)),
+```
+
+with zero terms when the corresponding effective rank is zero.  Replacing
+`tau-Delta` by `T G^2/sigma^2` and using `log(1+x)<=x` on the tail recovers
+the old bound.  An online upper tail envelope cannot be subtracted from
+observed total trace; the safe predictable head term uses the full `tau`.
+
+Equality holds when the head eigenvalues are all `H/r` and the nonzero tail
+eigenvalues are all `Delta/q`.  If `Delta/(q lambda)<=1`, then
+`log(1+x)>=x/2`, so the exact tail contribution is at least
+`Delta/(2 lambda)`.  Linear tail-mass dependence is therefore unavoidable
+without additional tail-rank or spectral information.
+
+## Gap-dependent exact-current bound
+
+On a suboptimal round, optimism plus `epsilon_lin<=Delta_min/4` yields
+`Delta_t<=4 B_max sbar_t(a_t)`.  Since also `Delta_t>=Delta_min`,
+
+```text
+Delta_t <= 16 B_max^2 sbar_t(a_t)^2/Delta_min.
+```
+
+Summing and applying the frozen elliptic potential produces the factor
+`16 B_max^2 (sigma^2+G^2/lambda) gamma_T/Delta_min`.  Rank and both
+spectral-tail forms are deterministic substitutions; the gap is an analysis
+assumption and is not supplied to the policy.
+
+## Fixed-preconditioner PCG
+
+For an `H_t`-measurable fixed SPD preconditioner `P`, transform the solve with
+`H=P^{-1/2} C P^{-1/2}` and `b=P^{-1/2}g`.  Standard CG on `Hy=b` maps back
+by `u=P^{-1/2}y`, and its `H`-energy error equals the original `C`-energy
+error.  The width sandwich is therefore unchanged, with convergence governed
+by `kappa(H)`.  Moreover
+
+```text
+||u-u_star||_C <= ||r||_{C^{-1}}
+                <= ||r||_{P^{-1}}/sqrt(lambda_min(P^{-1/2} C P^{-1/2})).
+```
+
+This proves the preconditioned-residual stopping rule.  It says nothing about
+whether Jacobi improves the transformed condition number; that must be
+measured or proved separately.
