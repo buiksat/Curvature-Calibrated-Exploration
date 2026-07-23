@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 import pytest
+from matplotlib import pyplot as plt
 
 from experiments.artifact_utils import (
     sha256_file,
@@ -18,6 +19,7 @@ from experiments.artifact_utils import (
 from experiments.config import load_config
 from experiments.make_scaled_tanh_instantiation_artifacts import (
     ScaledTanhArtifactError,
+    _add_scope_banner,
     _trajectory_interval,
     build_aggregate,
     make_artifacts,
@@ -103,6 +105,27 @@ def test_trajectory_bootstrap_resamples_complete_seed_rows() -> None:
         np.asarray(interval["ci95_high"])[0] * np.asarray([2.0, 3.0]),
     )
     assert interval["n"] == 2
+
+
+def test_failed_full_profile_gets_visible_scope_banner() -> None:
+    figure = plt.figure()
+    top = _add_scope_banner(
+        figure,
+        {
+            "profile": "full",
+            "evaluation_seed_count": 2,
+            "exact_cg_comparisons": [{}, {}],
+            "support_criteria": {"supports_nonavacuous_instantiation_claim": False},
+            "theorem_failure_audit": {
+                "exact": {"failed_trajectory_count": 1},
+                "cg": {"failed_trajectory_count": 2},
+            },
+        },
+    )
+    assert top == pytest.approx(0.88)
+    assert figure._suptitle is not None
+    assert "3/8 theorem trajectories" in figure._suptitle.get_text()
+    plt.close(figure)
 
 
 def test_manifest_grid_artifacts_and_smoke_scope(

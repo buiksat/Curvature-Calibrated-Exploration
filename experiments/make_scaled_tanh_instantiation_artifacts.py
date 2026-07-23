@@ -1249,6 +1249,20 @@ def _add_scope_banner(figure: plt.Figure, report: Mapping[str, Any]) -> float:
             color="#A12A2A",
         )
         return 0.88
+    if not report["support_criteria"]["supports_nonavacuous_instantiation_claim"]:
+        failed = sum(
+            int(audit["failed_trajectory_count"])
+            for audit in report["theorem_failure_audit"].values()
+        )
+        total = len(report["theorem_failure_audit"]) * len(report["exact_cg_comparisons"])
+        total *= int(report["evaluation_seed_count"])
+        figure.suptitle(
+            f"Premise audit failed: {failed}/{total} theorem trajectories; "
+            "no theorem-instantiation claim",
+            fontsize=9,
+            color="#A12A2A",
+        )
+        return 0.88
     return 0.95
 
 
