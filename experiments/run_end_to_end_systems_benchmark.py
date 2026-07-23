@@ -64,6 +64,7 @@ COMPONENTS = (
     "replay_update_seconds",
     "round_total_seconds",
 )
+SMOKE_EVIDENCE_SCOPE = "SMOKE ONLY - not main-paper evidence"
 
 
 @dataclass(frozen=True)
@@ -1059,6 +1060,11 @@ def _save_policy(
         "seed_set": seed_set,
         "config_digest": config_digest(config),
         "stream_sha256": stream.stream_sha256,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
     }
     summary_path, _ = write_json_artifact(destination / "summary.json", summary_value)
     manifest = {
@@ -1083,6 +1089,7 @@ def _save_policy(
         "timings_sha256": sha256_file(timings_path),
         "summary_sha256": sha256_file(summary_path),
         "provenance": dict(metadata),
+        "evidence_scope": summary_value["evidence_scope"],
     }
     manifest_path, _ = write_json_artifact(destination / "manifest.json", manifest)
     return timings_path, summary_path, manifest_path
@@ -1114,6 +1121,11 @@ def run_grid(
                 "reason": capability.reason,
                 "completed_run_count": 0,
                 "reportable_complete": False,
+                "evidence_scope": (
+                    SMOKE_EVIDENCE_SCOPE
+                    if profile == "smoke"
+                    else "full evaluation not executed"
+                ),
             },
         )
         return {
@@ -1141,6 +1153,11 @@ def run_grid(
                 "reason": device_error,
                 "completed_run_count": 0,
                 "reportable_complete": False,
+                "evidence_scope": (
+                    SMOKE_EVIDENCE_SCOPE
+                    if profile == "smoke"
+                    else "full evaluation not executed"
+                ),
             },
         )
         return {
@@ -1258,6 +1275,11 @@ def run_grid(
         "inputs": sorted(inputs, key=lambda item: item["path"]),
         "input_set_sha256": input_set_sha256(inputs),
         "provenance": metadata,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
     }
     manifest_path, _ = write_json_artifact(phase_root / "manifest.json", manifest_value)
     return {
@@ -1307,6 +1329,7 @@ __all__ = [
     "COMPONENTS",
     "DEFAULT_CONFIG",
     "METHODS",
+    "SMOKE_EVIDENCE_SCOPE",
     "benchmark_grid",
     "run_grid",
     "run_policy",

@@ -10,6 +10,7 @@ from typing import Any, Mapping, Sequence
 import matplotlib
 
 matplotlib.use("Agg")
+matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
@@ -23,7 +24,11 @@ from .artifact_utils import (
 )
 from .config import config_digest, get_seed_set, load_config
 from .logging_utils import canonical_json
-from .run_gap_dependent_validation import METHODS, validate_study_config
+from .run_gap_dependent_validation import (
+    METHODS,
+    SMOKE_EVIDENCE_SCOPE,
+    validate_study_config,
+)
 
 
 DISPLAY_NAMES = {
@@ -91,8 +96,41 @@ def _load_run(
     for key, expected in expected_identity.items():
         if manifest.get(key) != expected:
             raise ValueError(f"manifest identity mismatch for {directory}: {key}")
-    if manifest.get("deterministic_manifest") is not True:
-        raise ValueError(f"run manifest is not marked deterministic: {manifest_path}")
+    expected_scope = (
+        SMOKE_EVIDENCE_SCOPE
+        if profile == "smoke"
+        else "full evaluation; eligible for paper reporting after artifact validation"
+    )
+    if manifest.get("evidence_scope") != expected_scope:
+        raise ValueError(f"run manifest evidence scope mismatch: {manifest_path}")
+    if manifest.get("deterministic_scientific_payload") is not True:
+        raise ValueError(
+            f"run manifest lacks deterministic-payload provenance: {manifest_path}"
+        )
+    timestamp = manifest.get("timestamp_utc")
+    if not isinstance(timestamp, str) or not timestamp.endswith("Z"):
+        raise ValueError(f"run manifest lacks a UTC timestamp: {manifest_path}")
+    provenance = manifest.get("provenance")
+    required_provenance = {
+        "git_revision",
+        "git_dirty",
+        "package_versions",
+        "hardware",
+        "python",
+        "source_artifact_hashes",
+    }
+    if not isinstance(provenance, Mapping) or not required_provenance <= set(
+        provenance
+    ):
+        raise ValueError(f"run manifest has incomplete provenance: {manifest_path}")
+    source_hashes = provenance["source_artifact_hashes"]
+    if not isinstance(source_hashes, Mapping) or not source_hashes:
+        raise ValueError(f"run manifest has no source hashes: {manifest_path}")
+    repository = Path(__file__).resolve().parents[1]
+    for source, expected_hash in source_hashes.items():
+        source_path = repository / str(source)
+        if not source_path.is_file() or sha256_file(source_path) != expected_hash:
+            raise ValueError(f"source hash mismatch for {source} in {manifest_path}")
     if manifest.get("rounds_sha256") != sha256_file(rounds_path):
         raise ValueError(f"round archive hash mismatch: {rounds_path}")
     if manifest.get("summary_sha256") != sha256_file(summary_path):
@@ -151,7 +189,12 @@ def aggregate_runs(
         "gaps": list(gaps),
         "methods": list(METHODS),
         "run_count": expected_run_count,
-        "deterministic_manifest": True,
+        "deterministic_scientific_payload": True,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
     }
     for key, expected in expected_manifest.items():
         if grid_manifest.get(key) != expected:
@@ -346,6 +389,11 @@ def aggregate_runs(
         "paired_regret_differences": paired,
         "input_set_sha256": input_set_sha256(normalized_inputs),
         "raw_inputs": normalized_inputs,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
         "interpretation": (
             "The exact/full-CG rows validate the recorded premises. Rank, diagonal, "
             "and greedy rows are decision diagnostics outside the exact-current premise."
@@ -409,6 +457,13 @@ def make_figure(report: Mapping[str, Any], output: Path) -> None:
     axes[2].set_ylim(bottom=0.0)
     for axis in axes:
         axis.grid(alpha=0.2)
+    if report["profile"] == "smoke":
+        figure.suptitle(
+            SMOKE_EVIDENCE_SCOPE,
+            color="#9b2226",
+            fontsize=10,
+            fontweight="bold",
+        )
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(
         output,
@@ -416,6 +471,7 @@ def make_figure(report: Mapping[str, Any], output: Path) -> None:
             "Creator": "gap_dependent_validation",
             "CreationDate": None,
             "ModDate": None,
+            "Subject": str(report["evidence_scope"]),
         },
     )
     plt.close(figure)
@@ -426,9 +482,20 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
     lines = [
         r"\begin{tabular}{llrrrrl}",
         r"\toprule",
-        r"Gap & Method & Regret & Gap-free RHS & Gap RHS & Disagree. & Premise \\",
-        r"\midrule",
     ]
+    if report["profile"] == "smoke":
+        lines.extend(
+            [
+                r"\multicolumn{7}{c}{\textbf{SMOKE ONLY --- not main-paper evidence}} \\",
+                r"\midrule",
+            ]
+        )
+    lines.extend(
+        [
+            r"Gap & Method & Regret & Gap-free RHS & Gap RHS & Disagree. & Premise \\",
+            r"\midrule",
+        ]
+    )
     for group in report["groups"]:
         method = str(group["method"])
         if not bool(group["exact_current_operator_method"]):
@@ -455,6 +522,7 @@ def _write_provenance(
     *,
     aggregate: Path,
     config: Mapping[str, Any],
+    profile: str,
 ) -> None:
     inputs = [{"path": aggregate.as_posix(), "sha256": sha256_file(aggregate)}]
     sidecar = artifact.with_name(artifact.name + ".provenance.json")
@@ -469,6 +537,13 @@ def _write_provenance(
             "generation_parameters": {
                 "experiment": "gap_dependent_validation",
                 "config_digest": config_digest(config),
+                "profile": profile,
+                "evidence_scope": (
+                    SMOKE_EVIDENCE_SCOPE
+                    if profile == "smoke"
+                    else "full evaluation"
+                ),
+                "generator_source_sha256": sha256_file(Path(__file__)),
             },
         },
     )
@@ -488,13 +563,19 @@ def build_artifacts(
     make_figure(report, figure_path)
     make_table(report, table_path)
     for artifact in (figure_path, table_path):
-        _write_provenance(artifact, aggregate=aggregate, config=config)
+        _write_provenance(
+            artifact,
+            aggregate=aggregate,
+            config=config,
+            profile=profile,
+        )
     return {
         "aggregate": aggregate.as_posix(),
         "figure": figure_path.as_posix(),
         "table": table_path.as_posix(),
         "validated_run_count": report["validated_run_count"],
         "input_set_sha256": report["input_set_sha256"],
+        "evidence_scope": report["evidence_scope"],
     }
 
 

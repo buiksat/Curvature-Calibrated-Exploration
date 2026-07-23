@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import copy
+import json
+import shutil
+import subprocess
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 
 from experiments.artifact_utils import validate_sha256_sidecar
@@ -96,7 +100,7 @@ def test_approximate_controls_are_not_mislabeled_exact_current() -> None:
         )
 
 
-def test_raw_manifests_are_byte_deterministic_and_artifacts_validate(
+def test_raw_payload_is_deterministic_and_provenance_artifacts_validate(
     tmp_path: Path,
 ) -> None:
     config = copy.deepcopy(_smoke_config())
@@ -122,9 +126,39 @@ def test_raw_manifests_are_byte_deterministic_and_artifacts_validate(
 
     first_phase = roots[0] / "smoke" / "evaluation"
     second_phase = roots[1] / "smoke" / "evaluation"
-    for first_path in sorted(path for path in first_phase.rglob("*") if path.is_file()):
-        relative = first_path.relative_to(first_phase)
-        assert first_path.read_bytes() == (second_phase / relative).read_bytes()
+    for method in METHODS:
+        relative = Path("gap-0p1") / method / "seed-1000"
+        for filename in (
+            "rounds.npz",
+            "rounds.npz.sha256",
+            "summary.json",
+            "summary.json.sha256",
+        ):
+            assert (first_phase / relative / filename).read_bytes() == (
+                second_phase / relative / filename
+            ).read_bytes()
+
+        manifest = json.loads(
+            (first_phase / relative / "manifest.json").read_text(encoding="ascii")
+        )
+        assert manifest["timestamp_utc"].endswith("Z")
+        assert manifest["deterministic_scientific_payload"] is True
+        assert manifest["evidence_scope"] == (
+            "SMOKE ONLY - not main-paper evidence"
+        )
+        provenance = manifest["provenance"]
+        assert {
+            "git_revision",
+            "git_dirty",
+            "package_versions",
+            "hardware",
+            "python",
+            "source_artifact_hashes",
+        } <= set(provenance)
+        assert set(config["provenance"]["packages"]) <= set(
+            provenance["package_versions"]
+        )
+        assert provenance["source_artifact_hashes"]
 
     aggregate = tmp_path / "derived" / "aggregate.json"
     figure = tmp_path / "derived" / "figure.pdf"
@@ -138,7 +172,30 @@ def test_raw_manifests_are_byte_deterministic_and_artifacts_validate(
         table_path=table,
     )
     assert result["validated_run_count"] == len(METHODS)
+    assert result["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
+    report = json.loads(aggregate.read_text(encoding="ascii"))
+    assert report["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
+    assert "SMOKE ONLY --- not main-paper evidence" in table.read_text(
+        encoding="ascii"
+    )
+    assert matplotlib.rcParams["pdf.fonttype"] == 42
     for path in (aggregate, figure, table):
         validate_sha256_sidecar(path)
     validate_sha256_sidecar(figure.with_name("figure.pdf.provenance.json"))
     validate_sha256_sidecar(table.with_name("table.tex.provenance.json"))
+    if shutil.which("pdffonts"):
+        fonts = subprocess.run(
+            ["pdffonts", figure.as_posix()],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        assert "Type 3" not in fonts
+    if shutil.which("pdftotext"):
+        extracted = subprocess.run(
+            ["pdftotext", figure.as_posix(), "-"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        assert "SMOKE ONLY - not main-paper evidence" in extracted

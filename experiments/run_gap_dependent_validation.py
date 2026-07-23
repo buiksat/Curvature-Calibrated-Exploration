@@ -9,6 +9,7 @@ it is never supplied to a policy.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import math
@@ -29,7 +30,12 @@ from .artifact_utils import (
 )
 from .config import config_digest, get_seed_set, load_config
 from .curvature_operators import conjugate_gradient
-from .logging_utils import canonical_json, derive_seed, seed_everything
+from .logging_utils import (
+    canonical_json,
+    collect_run_metadata,
+    derive_seed,
+    seed_everything,
+)
 
 
 FloatArray = NDArray[np.float64]
@@ -44,6 +50,7 @@ METHODS = (
     "diagonal",
     "greedy",
 )
+SMOKE_EVIDENCE_SCOPE = "SMOKE ONLY - not main-paper evidence"
 
 
 @dataclass(frozen=True)
@@ -629,6 +636,8 @@ def _save_trajectory(
     gap: float,
     method: str,
     stream: BanditStream,
+    timestamp_utc: str,
+    provenance: Mapping[str, Any],
     overwrite: bool,
 ) -> tuple[Path, Path, Path]:
     if destination.exists():
@@ -655,18 +664,44 @@ def _save_trajectory(
         "stream_sha256": stream.stream_sha256,
         "rounds_sha256": sha256_file(rounds_path),
         "summary_sha256": sha256_file(summary_path),
-        "driver_sha256": sha256_file(Path(__file__)),
         "rng": "numpy.random.Generator(numpy.random.PCG64)",
-        "deterministic_manifest": True,
+        "timestamp_utc": timestamp_utc,
+        "provenance": dict(provenance),
+        "deterministic_scientific_payload": True,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
     }
     manifest_path, _ = write_json_artifact(destination / "manifest.json", manifest)
     return rounds_path, summary_path, manifest_path
 
 
 def _execute_task(
-    task: tuple[dict[str, Any], str, str, str, int, float, bool]
+    task: tuple[
+        dict[str, Any],
+        str,
+        str,
+        str,
+        int,
+        float,
+        str,
+        dict[str, Any],
+        bool,
+    ]
 ) -> list[str]:
-    config, profile, seed_set, output_root_text, seed, gap, overwrite = task
+    (
+        config,
+        profile,
+        seed_set,
+        output_root_text,
+        seed,
+        gap,
+        timestamp_utc,
+        provenance,
+        overwrite,
+    ) = task
     seed_everything(seed, include_optional=False)
     stream = generate_stream(config, gap, seed)
     paths: list[str] = []
@@ -685,6 +720,8 @@ def _execute_task(
             gap=gap,
             method=method,
             stream=stream,
+            timestamp_utc=timestamp_utc,
+            provenance=provenance,
             overwrite=overwrite,
         )
         paths.extend(path.as_posix() for path in saved)
@@ -707,8 +744,40 @@ def run_grid(
         raise ValueError("workers must be positive")
     seeds = get_seed_set(config, seed_set)
     gaps = tuple(float(value) for value in config["gaps"])
+    repository = Path(__file__).resolve().parents[1]
+    provenance = collect_run_metadata(
+        repository=repository,
+        packages=tuple(config.get("provenance", {}).get("packages", ())),
+    )
+    source_paths = (
+        Path("experiments/run_gap_dependent_validation.py"),
+        Path("experiments/artifact_utils.py"),
+        Path("experiments/config.py"),
+        Path("experiments/curvature_operators.py"),
+        Path("experiments/logging_utils.py"),
+        Path("experiments/configs/gap_dependent_validation.yaml"),
+        Path("scripts/reproduce_fig_gap_dependent_validation.sh"),
+    )
+    provenance["source_artifact_hashes"] = {
+        path.as_posix(): sha256_file(repository / path) for path in source_paths
+    }
+    timestamp_utc = (
+        dt.datetime.now(dt.timezone.utc)
+        .isoformat(timespec="microseconds")
+        .replace("+00:00", "Z")
+    )
     tasks = [
-        (dict(config), profile, seed_set, output_root.as_posix(), seed, gap, overwrite)
+        (
+            dict(config),
+            profile,
+            seed_set,
+            output_root.as_posix(),
+            seed,
+            gap,
+            timestamp_utc,
+            provenance,
+            overwrite,
+        )
         for gap in gaps
         for seed in seeds
     ]
@@ -739,7 +808,14 @@ def run_grid(
         "run_count": len(seeds) * len(gaps) * len(METHODS),
         "input_set_sha256": input_set_sha256(inputs),
         "inputs": inputs,
-        "deterministic_manifest": True,
+        "timestamp_utc": timestamp_utc,
+        "provenance": provenance,
+        "deterministic_scientific_payload": True,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
     }
     manifest_path, _ = write_json_artifact(phase_root / "manifest.json", manifest)
     return {
@@ -788,6 +864,7 @@ __all__ = [
     "BanditStream",
     "DEFAULT_CONFIG",
     "METHODS",
+    "SMOKE_EVIDENCE_SCOPE",
     "Trajectory",
     "confidence_radius",
     "generate_stream",

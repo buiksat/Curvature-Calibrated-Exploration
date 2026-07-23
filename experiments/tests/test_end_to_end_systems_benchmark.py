@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
+import subprocess
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 
 from experiments.artifact_utils import validate_sha256_sidecar
@@ -97,6 +100,11 @@ def test_tiny_real_loop_and_artifact_validation(tmp_path: Path) -> None:
         for filename in ("manifest.json", "summary.json", "timings.npz"):
             validate_sha256_sidecar(directory / filename)
         summary = json.loads((directory / "summary.json").read_text(encoding="ascii"))
+        manifest = json.loads(
+            (directory / "manifest.json").read_text(encoding="ascii")
+        )
+        assert summary["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
+        assert manifest["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
         assert set(summary["latency_components"]) == set(COMPONENTS)
         assert all(
             summary["latency_components"][component]["count"] == 1
@@ -117,9 +125,34 @@ def test_tiny_real_loop_and_artifact_validation(tmp_path: Path) -> None:
         table_path=derived / "systems.tex",
     )
     assert artifacts["validated_run_count"] == len(METHODS)
+    assert artifacts["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
+    aggregate = json.loads(
+        (derived / "aggregate.json").read_text(encoding="ascii")
+    )
+    assert aggregate["evidence_scope"] == "SMOKE ONLY - not main-paper evidence"
+    assert "SMOKE ONLY --- not main-paper evidence" in (
+        derived / "systems.tex"
+    ).read_text(encoding="ascii")
+    assert matplotlib.rcParams["pdf.fonttype"] == 42
     for path in (
         derived / "aggregate.json",
         derived / "systems.pdf",
         derived / "systems.tex",
     ):
         validate_sha256_sidecar(path)
+    if shutil.which("pdffonts"):
+        fonts = subprocess.run(
+            ["pdffonts", (derived / "systems.pdf").as_posix()],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        assert "Type 3" not in fonts
+    if shutil.which("pdftotext"):
+        extracted = subprocess.run(
+            ["pdftotext", (derived / "systems.pdf").as_posix(), "-"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        assert "SMOKE ONLY - not main-paper evidence" in extracted

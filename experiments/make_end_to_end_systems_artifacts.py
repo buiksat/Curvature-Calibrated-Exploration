@@ -10,6 +10,7 @@ from typing import Any, Mapping, Sequence
 import matplotlib
 
 matplotlib.use("Agg")
+matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
@@ -28,6 +29,7 @@ from .run_autodiff_systems import mlp_parameter_count
 from .run_end_to_end_systems_benchmark import (
     COMPONENTS,
     METHODS,
+    SMOKE_EVIDENCE_SCOPE,
     benchmark_grid,
     validate_benchmark_config,
 )
@@ -122,6 +124,13 @@ def _load_run(
         raise ValueError(f"config digest mismatch in {manifest_path}")
     if manifest.get("identity") != identity:
         raise ValueError(f"run identity mismatch in {manifest_path}")
+    expected_scope = (
+        SMOKE_EVIDENCE_SCOPE
+        if profile == "smoke"
+        else "full evaluation; eligible for paper reporting after artifact validation"
+    )
+    if manifest.get("evidence_scope") != expected_scope:
+        raise ValueError(f"run evidence scope mismatch in {manifest_path}")
     if manifest.get("summary_sha256") != sha256_file(summary_path):
         raise ValueError(f"summary hash mismatch in {manifest_path}")
     if manifest.get("timings_sha256") != sha256_file(timings_path):
@@ -135,6 +144,8 @@ def _load_run(
         raise ValueError(f"summary profile/seed-set mismatch in {summary_path}")
     if summary.get("config_digest") != config_digest(config):
         raise ValueError(f"summary config digest mismatch in {summary_path}")
+    if summary.get("evidence_scope") != expected_scope:
+        raise ValueError(f"summary evidence scope mismatch in {summary_path}")
     for key, expected in identity.items():
         if summary.get(key) != expected:
             raise ValueError(f"summary identity mismatch for {key}: {summary_path}")
@@ -197,6 +208,13 @@ def aggregate_runs(
         raise ValueError("systems grid completed-run count mismatch")
     if grid_manifest.get("config_digest") != config_digest(config):
         raise ValueError("systems grid config digest mismatch")
+    expected_scope = (
+        SMOKE_EVIDENCE_SCOPE
+        if profile == "smoke"
+        else "full evaluation; eligible for paper reporting after artifact validation"
+    )
+    if grid_manifest.get("evidence_scope") != expected_scope:
+        raise ValueError("systems grid evidence scope mismatch")
 
     records: dict[tuple[str, int, int, str], list[tuple[int, dict[str, Any]]]] = {}
     inputs = [
@@ -365,6 +383,11 @@ def aggregate_runs(
         },
         "input_set_sha256": input_set_sha256(normalized_inputs),
         "raw_inputs": normalized_inputs,
+        "evidence_scope": (
+            SMOKE_EVIDENCE_SCOPE
+            if profile == "smoke"
+            else "full evaluation; eligible for paper reporting after artifact validation"
+        ),
         "claim_scope": (
             "Executed systems measurements only. Local controls are labeled by their "
             "implemented algebra and no regret superiority or faithful LO-FI/KFAC claim is made."
@@ -477,6 +500,13 @@ def make_figure(report: Mapping[str, Any], output: Path) -> None:
     axes[2].legend(handles=replay_handles, fontsize=6)
     for axis in axes:
         axis.grid(alpha=0.2)
+    if report["profile"] == "smoke":
+        figure.suptitle(
+            SMOKE_EVIDENCE_SCOPE,
+            color="#9b2226",
+            fontsize=10,
+            fontweight="bold",
+        )
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(
         output,
@@ -484,6 +514,7 @@ def make_figure(report: Mapping[str, Any], output: Path) -> None:
             "Creator": "end_to_end_systems_benchmark",
             "CreationDate": None,
             "ModDate": None,
+            "Subject": str(report["evidence_scope"]),
         },
     )
     plt.close(figure)
@@ -494,9 +525,20 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
     lines = [
         r"\begin{tabular}{lrrrrrrr}",
         r"\toprule",
-        r"Method & Params & $K$ & Replay & Round p50 & Curv. p95 & Host MiB & Device MiB \\",
-        r"\midrule",
     ]
+    if report["profile"] == "smoke":
+        lines.extend(
+            [
+                r"\multicolumn{8}{c}{\textbf{SMOKE ONLY --- not main-paper evidence}} \\",
+                r"\midrule",
+            ]
+        )
+    lines.extend(
+        [
+            r"Method & Params & $K$ & Replay & Round p50 & Curv. p95 & Host MiB & Device MiB \\",
+            r"\midrule",
+        ]
+    )
     for group in report["groups"]:
         round_p50 = group["latency_components"]["round_total_seconds"]
         curvature_p95 = group["latency_components"]["curvature_seconds"]
@@ -519,6 +561,7 @@ def _write_provenance(
     *,
     aggregate: Path,
     config: Mapping[str, Any],
+    profile: str,
 ) -> None:
     inputs = [{"path": aggregate.as_posix(), "sha256": sha256_file(aggregate)}]
     write_json_artifact(
@@ -532,6 +575,12 @@ def _write_provenance(
             "generation_parameters": {
                 "experiment": "end_to_end_systems_benchmark",
                 "config_digest": config_digest(config),
+                "profile": profile,
+                "evidence_scope": (
+                    SMOKE_EVIDENCE_SCOPE
+                    if profile == "smoke"
+                    else "full evaluation"
+                ),
                 "generator_source_sha256": sha256_file(Path(__file__)),
             },
         },
@@ -552,13 +601,19 @@ def build_artifacts(
     make_figure(report, figure_path)
     make_table(report, table_path)
     for artifact in (figure_path, table_path):
-        _write_provenance(artifact, aggregate=aggregate, config=config)
+        _write_provenance(
+            artifact,
+            aggregate=aggregate,
+            config=config,
+            profile=profile,
+        )
     return {
         "aggregate": aggregate.as_posix(),
         "figure": figure_path.as_posix(),
         "table": table_path.as_posix(),
         "validated_run_count": report["validated_run_count"],
         "input_set_sha256": report["input_set_sha256"],
+        "evidence_scope": report["evidence_scope"],
     }
 
 
