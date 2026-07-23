@@ -18,9 +18,10 @@ import psutil
 from numpy.typing import ArrayLike, NDArray
 
 from .config import config_digest, get_seed_set, load_config
-from .curvature_operators import conjugate_gradient
+from .curvature_operators import CurvatureOperator
 from .logging_utils import ExperimentLogger, append_jsonl, canonical_json, derive_seed
 from .nonlinear_environment import MLPLayout, SmallTanhMLP
+from .run_systems_scaling import batched_independent_cg
 from .wheel_environment import (
     ACTION_COUNT,
     PostActionWheelOracle,
@@ -374,54 +375,50 @@ def run_policy(
             queries = model.jacobians(theta, context)
             if method == "cc_ucb_full_ggn_cg":
                 historical = (
-                    np.stack(
-                        [
-                            model.jacobian(theta, old_context, old_action)
-                            for old_context, old_action in zip(
-                                history_contexts, history_actions, strict=True
-                            )
-                        ]
+                    model.selected_jacobians(
+                        theta,
+                        np.stack(history_contexts),
+                        np.asarray(history_actions, dtype=np.int64),
                     )
                     if history_contexts
                     else np.empty((0, layout.parameter_dimension), dtype=np.float64)
                 )
-                fixed_history = historical.copy()
-                operator_calls = 0
-
-                def matvec(vector: FloatArray) -> FloatArray:
-                    nonlocal operator_calls
-                    operator_calls += 1
-                    return (
-                        ridge_value * vector
-                        + fixed_history.T @ (fixed_history @ vector)
-                        / posterior_variance
-                    )
-
-                width_squared = np.empty(ACTION_COUNT, dtype=np.float64)
-                for action_index, query in enumerate(queries):
-                    calls_before = operator_calls
-                    solution = conjugate_gradient(
-                        matvec,
-                        query,
-                        tolerance=cg_tolerance,
-                        max_iterations=cg_limit,
-                        raise_on_nonconvergence=False,
-                    )
-                    residual = query - matvec(solution.solution)
-                    denominator = float(np.linalg.norm(query))
-                    relative = (
-                        float(np.linalg.norm(residual) / denominator)
-                        if denominator > 0.0
-                        else 0.0
-                    )
-                    if not solution.converged or relative > cg_tolerance + 1.0e-12:
-                        raise RuntimeError("Wheel current-GGN solve failed residual check")
-                    width_squared[action_index] = max(
-                        float(query @ solution.solution), 0.0
-                    )
-                    cg_iterations.append(int(solution.iterations))
-                    cg_residuals.append(relative)
-                    cg_calls.append(operator_calls - calls_before)
+                operator = CurvatureOperator(
+                    historical,
+                    damping=ridge_value,
+                    noise_variance=posterior_variance,
+                )
+                solution = batched_independent_cg(
+                    operator,
+                    queries,
+                    cg_limit,
+                    relative_tolerance=cg_tolerance,
+                    preconditioner="none",
+                )
+                for action_index in range(ACTION_COUNT):
+                    relative = float(solution.explicit_relative_residuals[action_index])
+                    if (
+                        not bool(solution.converged[action_index])
+                        or relative > cg_tolerance + 1.0e-12
+                    ):
+                        raise RuntimeError(
+                            "Wheel current-GGN solve failed residual check: "
+                            f"round={round_index + 1}, action={action_index}, "
+                            f"iterations={solution.per_action_iterations[action_index]}, "
+                            f"converged={bool(solution.converged[action_index])}, "
+                            f"relative_residual={relative:.6e}, tolerance={cg_tolerance:.6e}"
+                        )
+                width_squared = np.maximum(
+                    np.einsum("ij,ij->i", queries, solution.solutions),
+                    0.0,
+                )
+                cg_iterations.extend(int(value) for value in solution.per_action_iterations)
+                cg_residuals.extend(
+                    float(value) for value in solution.explicit_relative_residuals
+                )
+                cg_calls.extend(
+                    int(value) for value in solution.per_action_operator_matvecs
+                )
                 widths = np.sqrt(width_squared)
                 scores = predicted_normalized + bonus * widths
             else:

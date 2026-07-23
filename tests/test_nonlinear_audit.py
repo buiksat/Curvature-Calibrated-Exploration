@@ -38,6 +38,29 @@ def test_analytic_mlp_jacobian_matches_central_finite_difference() -> None:
     np.testing.assert_allclose(analytic, numerical, rtol=2.0e-9, atol=2.0e-10)
 
 
+def test_vectorized_selected_jacobians_match_per_sample_replay() -> None:
+    rng = np.random.default_rng(481)
+    model = SmallTanhMLP()
+    theta = rng.normal(scale=0.04, size=model.parameter_dimension)
+    contexts = rng.normal(size=(17, model.layout.context_dimension))
+    actions = rng.integers(0, model.layout.action_count, size=17, dtype=np.int64)
+    expected = np.stack(
+        [
+            model.jacobian(theta, context, int(action))
+            for context, action in zip(contexts, actions, strict=True)
+        ]
+    )
+    actual = model.selected_jacobians(theta, contexts, actions)
+    np.testing.assert_allclose(actual, expected, rtol=2e-15, atol=2e-16)
+
+    empty = model.selected_jacobians(
+        theta,
+        np.empty((0, model.layout.context_dimension)),
+        np.empty(0, dtype=np.int64),
+    )
+    assert empty.shape == (0, model.parameter_dimension)
+
+
 def test_teacher_has_bounded_contexts_and_context_dependent_rankings() -> None:
     environment = NonlinearBanditEnvironment(0)
     contexts = enumerate_rademacher_contexts()

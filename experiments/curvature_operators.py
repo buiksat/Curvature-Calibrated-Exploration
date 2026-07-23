@@ -199,6 +199,36 @@ class CurvatureOperator:
             raise FloatingPointError("curvature matvec produced a non-finite value")
         return result
 
+    def matmat(self, vectors: ArrayLike) -> FloatArray:
+        """Apply the operator to row-oriented vectors in one shared batch."""
+
+        checked = _as_float64_array(vectors, name="vectors", ndim=2)
+        if checked.shape[1] != self.dimension:
+            raise ValueError(
+                f"vectors must have shape (batch, {self.dimension}), got "
+                f"{checked.shape}"
+            )
+        projections = checked @ self._features.T
+        result = self.damping * checked + (
+            (projections * self._weights[None, :]) @ self._features
+        ) / self.noise_variance
+        result = np.asarray(result, dtype=np.float64)
+        if not np.all(np.isfinite(result)):
+            raise FloatingPointError("curvature matmat produced a non-finite value")
+        return result
+
+    def diagonal(self) -> FloatArray:
+        """Return the exact positive diagonal for fixed Jacobi PCG."""
+
+        result = self.damping + np.sum(
+            self._weights[:, None] * self._features**2,
+            axis=0,
+        ) / self.noise_variance
+        result = np.asarray(result, dtype=np.float64)
+        if np.any(result <= 0.0) or not np.all(np.isfinite(result)):
+            raise FloatingPointError("curvature diagonal is not finite and positive")
+        return result
+
     def __call__(self, vector: ArrayLike) -> FloatArray:
         return self.matvec(vector)
 

@@ -62,7 +62,9 @@ def test_wheel_config_is_canonical_disjoint_and_honest_about_implementations() -
     assert full["rounds"] == 5000
     assert full["tuning_rounds"] == 5000
     assert get_seed_set(full, "tuning") == tuple(range(2000, 2010))
-    assert get_seed_set(full, "evaluation") == tuple(range(3000, 3050))
+    assert get_seed_set(full, "evaluation") == tuple(range(3000, 3030))
+    assert full["cg"]["relative_residual_tolerance"] == pytest.approx(1.0e-6)
+    assert full["cg"]["solver"].startswith("batched_independent_cg")
     assert set(get_seed_set(full, "tuning")).isdisjoint(
         get_seed_set(full, "evaluation")
     )

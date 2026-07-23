@@ -311,6 +311,62 @@ class SmallTanhMLP:
     ) -> FloatArray:
         return self.jacobians(displacement, context)[self._validate_action(action)]
 
+    def selected_jacobians(
+        self,
+        displacement: ArrayLike,
+        contexts: ArrayLike,
+        actions: ArrayLike,
+    ) -> FloatArray:
+        """Vectorize exact Jacobians for selected actions over replay samples."""
+
+        delta = _finite_vector(
+            displacement, self.parameter_dimension, name="displacement"
+        )
+        x = np.asarray(contexts, dtype=np.float64)
+        selected_actions = np.asarray(actions)
+        if (
+            x.ndim != 2
+            or x.shape[1] != self.layout.context_dimension
+            or not np.all(np.isfinite(x))
+        ):
+            raise ValueError(
+                "contexts must be a finite matrix with shape "
+                f"(samples, {self.layout.context_dimension})"
+            )
+        if (
+            selected_actions.ndim != 1
+            or selected_actions.shape[0] != x.shape[0]
+            or not np.issubdtype(selected_actions.dtype, np.integer)
+        ):
+            raise ValueError("actions must be an integer vector matching contexts")
+        selected_actions = selected_actions.astype(np.int64, copy=False)
+        if np.any(selected_actions < 0) or np.any(
+            selected_actions >= self.layout.action_count
+        ):
+            raise ValueError("actions contain an out-of-range index")
+
+        w, b, v, _ = self.layout.unpack(self._base_parameters + delta)
+        hidden = np.tanh(x @ w.T + b[None, :])
+        sensitivity = v[selected_actions] * (1.0 - hidden * hidden)
+        result = np.zeros((x.shape[0], self.parameter_dimension), dtype=np.float64)
+        w_end = self.layout.weight_count
+        b_end = self.layout.backbone_dimension
+        v_start = b_end
+        c_start = v_start + self.layout.action_count * self.layout.hidden_width
+        result[:, :w_end] = np.einsum("nh,ni->nhi", sensitivity, x).reshape(
+            x.shape[0], w_end
+        )
+        result[:, w_end:b_end] = sensitivity
+        rows = np.arange(x.shape[0], dtype=np.int64)[:, None]
+        head_columns = (
+            v_start
+            + selected_actions[:, None] * self.layout.hidden_width
+            + np.arange(self.layout.hidden_width, dtype=np.int64)[None, :]
+        )
+        result[rows, head_columns] = hidden
+        result[np.arange(x.shape[0]), c_start + selected_actions] = 1.0
+        return result
+
     def mean_and_jacobian(
         self, displacement: ArrayLike, context: ArrayLike, action: int
     ) -> tuple[float, FloatArray]:

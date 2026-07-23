@@ -25,6 +25,7 @@ def test_weighted_curvature_is_symmetric_spd_and_matches_dense_matvec() -> None:
 
     dense = operator.to_dense()
     vector = rng.normal(size=6)
+    vectors = rng.normal(size=(4, 6))
 
     assert dense.dtype == np.float64
     assert operator.matvec(vector).dtype == np.float64
@@ -32,6 +33,12 @@ def test_weighted_curvature_is_symmetric_spd_and_matches_dense_matvec() -> None:
     assert np.linalg.eigvalsh(dense)[0] >= operator.damping
     np.testing.assert_allclose(
         operator.matvec(vector), dense @ vector, rtol=2e-15, atol=2e-15
+    )
+    np.testing.assert_allclose(
+        operator.matmat(vectors), vectors @ dense, rtol=2e-15, atol=2e-15
+    )
+    np.testing.assert_allclose(
+        operator.diagonal(), np.diag(dense), rtol=2e-15, atol=2e-15
     )
 
 
