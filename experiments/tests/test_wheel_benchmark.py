@@ -9,8 +9,12 @@ import numpy as np
 import pytest
 
 from experiments.aggregate_results import validate_aggregate_provenance_sidecar
+from experiments.artifact_utils import (
+    sha256_file,
+    validate_sha256_sidecar,
+)
 from experiments.config import get_seed_set, load_config
-from experiments.make_wheel_benchmark_artifacts import build_artifact
+from experiments.make_wheel_benchmark_artifacts import build_artifact, write_artifacts
 from experiments.run_wheel_benchmark import (
     CONTROL_METHODS,
     METHODS,
@@ -455,11 +459,48 @@ def test_complete_smoke_pipeline_builds_provenance_bound_artifact(
     assert len(artifact["method_results"]["linucb"]["by_delta"]) == 4
     assert len(artifact["seed_level_results"]) == expected_evaluation
     assert len(artifact["paired_comparisons_against_controls"]) == 4 * 3 * 7
-
-    from experiments.aggregate_results import write_aggregate_with_provenance
-
-    output, sidecar = write_aggregate_with_provenance(
-        artifact, tmp_path / "derived" / "wheel.json"
+    assert artifact["interval"]["unit"] == (
+        "one complete evaluation-seed trajectory"
     )
+    for method, result in artifact["method_results"].items():
+        for row in result["by_delta"]:
+            metrics = row["metrics"]
+            assert "outside_optimal_risky_rate" in metrics
+            assert metrics["inside_safe_action_rate"] is not None
+            if method in CONTROL_METHODS:
+                assert metrics["empirical_all_action_coverage"] is None
+            else:
+                assert metrics["empirical_all_action_coverage"]["n"] == len(
+                    get_seed_set(config, "evaluation")
+                )
+
+    derived = tmp_path / "derived"
+    output = derived / "wheel.json"
+    quality = derived / "wheel_quality.pdf"
+    compute = derived / "wheel_compute.pdf"
+    table = derived / "wheel_summary.tex"
+    result = write_artifacts(
+        artifact,
+        aggregate_path=output,
+        regret_figure_path=quality,
+        compute_figure_path=compute,
+        table_path=table,
+    )
+    sidecar = Path(result["aggregate_provenance"])
     provenance = validate_aggregate_provenance_sidecar(output, sidecar)
     assert provenance["input_set_sha256"] == artifact["input_set_sha256"]
+    for path in (output, sidecar, quality, compute, table):
+        validate_sha256_sidecar(path)
+    for path in (quality, compute, table):
+        publication_provenance = path.with_name(path.name + ".provenance.json")
+        validate_sha256_sidecar(publication_provenance)
+        record = json.loads(publication_provenance.read_text(encoding="ascii"))
+        assert record["artifact_sha256"] == sha256_file(path)
+        assert record["profile"] == "smoke"
+        assert record["generation_parameters"]["interval"] == artifact["interval"]
+    assert b"/FontFile2" in quality.read_bytes()
+    assert b"/FontFile2" in compute.read_bytes()
+    table_text = table.read_text(encoding="ascii")
+    assert "Smoke verification only; not main-paper evidence" in table_text
+    assert "Outer opt." in table_text
+    assert "All-act. cov." in table_text

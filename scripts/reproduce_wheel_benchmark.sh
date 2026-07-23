@@ -11,6 +11,18 @@ RAW_ROOT="results/raw/wheel_benchmark"
 PROFILE_ROOT="$RAW_ROOT/$PROFILE"
 SELECTION="$PROFILE_ROOT/tuning_selection.json"
 OUTPUT="results/derived/wheel_benchmark_${PROFILE}.json"
+DERIVED_ROOT="results/derived/wheel_benchmark/$PROFILE"
+
+# Smoke outputs are engineering checks and must not replace paper evidence.
+if [[ "$PROFILE" == "full" ]]; then
+  REGRET_FIGURE="paper/figures/wheel_benchmark_policy_quality.pdf"
+  COMPUTE_FIGURE="paper/figures/wheel_benchmark_compute.pdf"
+  TABLE="tables/generated/wheel_benchmark_summary.tex"
+else
+  REGRET_FIGURE="$DERIVED_ROOT/wheel_benchmark_policy_quality.pdf"
+  COMPUTE_FIGURE="$DERIVED_ROOT/wheel_benchmark_compute.pdf"
+  TABLE="$DERIVED_ROOT/wheel_benchmark_summary.tex"
+fi
 
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
 export OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-1}"
@@ -48,4 +60,7 @@ buck2 run //experiments:run_conda_module -- \
   --profile "$PROFILE" \
   --raw-root "$PROFILE_ROOT/evaluation" \
   --selection "$SELECTION" \
-  --output "$OUTPUT"
+  --output "$OUTPUT" \
+  --regret-figure "$REGRET_FIGURE" \
+  --compute-figure "$COMPUTE_FIGURE" \
+  --table "$TABLE"
