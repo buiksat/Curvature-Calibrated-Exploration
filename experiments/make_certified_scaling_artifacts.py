@@ -488,27 +488,60 @@ def make_premise_table(report: Mapping[str, Any], output: Path) -> None:
 
 
 def make_fits_table(report: Mapping[str, Any], output: Path) -> None:
-    lines = [
-        r"\begin{tabular}{rrrllrr}",
-        r"\toprule",
-        r"$d$ & $r$ & $\kappa$ & Method & Status & Regret slope & Work slope \\",
-        r"\midrule",
-    ]
-    for group in report["groups"]:
-        cell = group["cell"]
-        regret = group["regret_slope_log1p"]
-        work = group["work_slope_log1p"]
-        status = (
-            "PASS" if group["all_required_premises_pass"] else "FAIL"
-        ) if group["method"] in THEOREM_METHODS else "control"
-        lines.append(
-            f"{cell['dimension']} & {cell['effective_rank']} & "
-            f"{cell['condition_number']} & {METHOD_LABELS[group['method']]} & "
-            f"{status} & {regret['mean']:.3f} & {work['mean']:.3f} \\\\"
-        )
-    lines.extend((r"\bottomrule", r"\end{tabular}"))
+    lines: list[str] = []
+    dimensions = tuple(int(value) for value in report["config"]["dimensions"])
+    ranks = tuple(int(value) for value in report["config"]["effective_ranks"])
+    table_index = 0
+    for dimension in dimensions:
+        for rank in ranks:
+            table_index += 1
+            lines.extend(
+                (
+                    r"\begin{table*}[p]",
+                    r"\centering\scriptsize",
+                    r"\begin{tabular}{rllrr}",
+                    r"\toprule",
+                    r"$\kappa$ & Method & Status & Regret slope & Work slope \\",
+                    r"\midrule",
+                )
+            )
+            for group in report["groups"]:
+                cell = group["cell"]
+                if (
+                    int(cell["dimension"]) != dimension
+                    or int(cell["effective_rank"]) != rank
+                ):
+                    continue
+                regret = group["regret_slope_log1p"]
+                work = group["work_slope_log1p"]
+                status = (
+                    "PASS" if group["all_required_premises_pass"] else "FAIL"
+                ) if group["method"] in THEOREM_METHODS else "control"
+                lines.append(
+                    f"{cell['condition_number']} & {METHOD_LABELS[group['method']]} & "
+                    f"{status} & {regret['mean']:.3f} & {work['mean']:.3f} \\\\"
+                )
+            label = (
+                "tab:certified-scaling-fits"
+                if table_index == 1
+                else f"tab:certified-scaling-fits-{table_index}"
+            )
+            lines.extend(
+                (
+                    r"\bottomrule",
+                    r"\end{tabular}",
+                    (
+                        f"\\caption{{Finite-grid log--log slope diagnostics for "
+                        f"$d={dimension},r={rank}$.  Fits use the six prespecified "
+                        "nested horizons and are not asymptotic-rate estimates.}"
+                    ),
+                    f"\\label{{{label}}}",
+                    r"\end{table*}",
+                    "",
+                )
+            )
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n".join(lines) + "\n", encoding="ascii")
+    output.write_text("\n".join(lines), encoding="ascii")
     write_sha256_sidecar(output)
 
 

@@ -9,10 +9,10 @@
     "download": true,
     "noise_std": 0.1,
     "input_dimension": 64,
-    "hidden_width": 16,
+    "hidden_width": 1,
     "pretraining_count": 40000,
     "tuning_pool_count": 10000,
-    "evaluation_pool_count": 10000,
+    "evaluation_pool_count": 8000,
     "pretraining_epochs": 2,
     "pretraining_batch_size": 128,
     "pretraining_learning_rate": 0.05,
@@ -37,7 +37,7 @@
       {"ridge":1.0,"bonus":0.5,"learning_rate":0.005},
       {"ridge":1.0,"bonus":1.0,"learning_rate":0.01}
     ],
-    "cg": {"relative_residual":0.001,"max_iterations":30,"initial_solution":"zero"},
+    "cg": {"relative_residual":0.001,"max_iterations":30,"initial_solution":"zero","device":"auto","preconditioner":"jacobi","dtype":"float64","materialize_operator":true,"solver":"dense"},
     "lofi_rank": 8,
     "maximum_step_norm": 0.02,
     "compute_cap_accelerator_hours": 24.0,
@@ -64,7 +64,7 @@
       "tuning_grid": [{"ridge":1.0,"bonus":1.0,"learning_rate":0.01}],
       "selection": {"equal_configuration_count":1},
       "lofi_rank": 2,
-      "cg": {"relative_residual":0.01,"max_iterations":8,"initial_solution":"zero"},
+      "cg": {"relative_residual":0.01,"max_iterations":8,"initial_solution":"zero","device":"cpu","preconditioner":"jacobi","dtype":"float64","materialize_operator":true,"solver":"dense"},
       "seed_sets": {"tuning":[3000],"evaluation":[3100,3101]}
     },
     "full": {}

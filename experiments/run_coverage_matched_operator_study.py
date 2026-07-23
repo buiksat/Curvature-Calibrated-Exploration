@@ -22,7 +22,7 @@ from .artifact_utils import (
 )
 from .config import config_digest, load_config
 from .curvature_phase_diagram import (
-    METHODS,
+    SUPPORTED_METHODS,
     Cell,
     cells_from_config,
     generate_environment,
@@ -71,7 +71,7 @@ def validate_study_config(config: Mapping[str, Any], *, full: bool) -> None:
     semantic = config.get("semantic_methods")
     if not isinstance(semantic, Mapping) or REFERENCE not in semantic:
         raise ValueError("semantic_methods must include current_full_ggn")
-    if any(str(method) not in METHODS for method in semantic.values()):
+    if any(str(method) not in SUPPORTED_METHODS for method in semantic.values()):
         raise ValueError("semantic_methods contains an unknown operator")
 
 
@@ -345,8 +345,8 @@ def run_study(
         "semantic_methods": dict(config["semantic_methods"]),
         "evaluation_run_count": len(summaries),
         "elapsed_seconds": time.perf_counter() - started,
-        "holm_family_size": len(comparisons),
-        "lofi_status": "not_implemented_no_existing_compatible_precision_update",
+        "holm_family_size": int(config["calibration"]["holm_family_size"]),
+        "lofi_status": "implemented_low_rank_plus_diagonal_batch_refit_not_official_lofi",
         "interpretation": (
             "independently executed policy comparisons; paired seed intervals do not "
             "identify a causal operator effect"

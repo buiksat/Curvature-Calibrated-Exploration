@@ -8,6 +8,7 @@ from experiments.config import load_config
 from experiments.run_certified_scaling import (
     Cell,
     generate_scaling_stream,
+    run_evaluation,
     run_scaling_trajectory,
     validate_scaling_config,
 )
@@ -63,6 +64,7 @@ def test_nontrivial_cg_matches_dense_and_all_required_premises_pass() -> None:
     cg = run_scaling_trajectory(config, cell, stream, method="full_cg")
     window = run_scaling_trajectory(config, cell, stream, method="window_q_1_2")
     assert cg.summary["multi_iteration_round_fraction"] > 0.9
+    assert cg.summary["all_cg_solves_converged"] is True
     assert cg.summary["all_required_premises_pass"] is True
     assert window.summary["all_required_premises_pass"] is True
     assert window.summary["post_burnin_excitation_pass"] is True
@@ -80,3 +82,19 @@ def test_nontrivial_cg_matches_dense_and_all_required_premises_pass() -> None:
         - cg.arrays["exact_operator_width_squared"]
     ) / np.maximum(cg.arrays["exact_operator_width_squared"], 1e-15)
     assert float(np.max(relative_width_error)) < 1e-9
+
+
+def test_parallel_evaluation_preserves_complete_premise_clean_grid(
+    tmp_path: Path,
+) -> None:
+    config = _config()
+    result = run_evaluation(
+        config,
+        profile="smoke",
+        output_root=tmp_path / "raw",
+        overwrite=False,
+        workers=2,
+    )
+    assert result["workers"] == 2
+    assert result["run_count"] == 14
+    assert result["premise_clean_run_count"] == 14

@@ -110,6 +110,7 @@ def build_artifacts(
     )
     if len(summaries) != expected_runs or manifest["evaluation_run_count"] != expected_runs:
         raise ValueError("evaluation run coverage is incomplete")
+    comparison_count = int(manifest["holm_family_size"])
 
     inputs = []
     for name in (
@@ -131,7 +132,7 @@ def build_artifacts(
         "inputs": inputs,
         "inference": {
             "test": "two_sided_paired_student_t_on_seed_level_terminal_regret_differences",
-            "family": "all 144 prespecified protocol-cell-surrogate comparisons",
+            "family": f"all {comparison_count} prespecified protocol-cell-surrogate comparisons",
             "familywise_alpha": 0.05,
             "adjustment": "Holm step-down",
             "zero_variance_rule": (
@@ -274,7 +275,7 @@ def build_artifacts(
                     r"\caption{Paired terminal-regret inference for the "
                     + protocol_titles[protocol]
                     + r" protocol. Differences are surrogate minus current full GGN; "
-                    r"Holm adjustment uses the complete 144-test family.}"
+                    f"Holm adjustment uses the complete {comparison_count}-test family.}}"
                 ),
                 f"\\label{{{label}}}",
                 r"\end{table*}",

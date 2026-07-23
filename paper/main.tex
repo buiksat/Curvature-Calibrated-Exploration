@@ -832,56 +832,80 @@ is stated in \Cref{app:availability}.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=\textwidth]{figures/theory_scaling_full_grid.pdf}
-  \caption{Finite-horizon theorem-scaling diagnostic.  The first panel is the
-  event-clean $d=128,r=4$ reference; the remaining panels use $d=2048$.
-  Curves are 50-seed means and bands are pointwise percentile-bootstrap 95\%
-  intervals at five preregistered prefixes.  Panel labels report the conjunction
-  of float64 theorem-event fields for exact, CG, and the three window methods.
-  Greedy is uncertified.  No exponent comparison tests \Cref{thm:growing-window}
-  unless every premise and audit field for that method/rank cell passes.}
-  \label{fig:theory-scaling-full-grid}
+  \includegraphics[width=\textwidth]{figures/spectral_tail_regret.pdf}
+  \caption{Full spectral-tail evaluation at $d=256$, $K=8$, and displayed
+  rank $r=8$.  Curves are means over untouched evaluation seeds 1000--1049;
+  bands are 95\% whole-seed bootstrap intervals at the five preregistered
+  horizons.  Bonuses are selected once using tuning seeds 0--9 over the complete
+  preregistered cell set.  Head- and tail-aligned regimes are both shown, including
+  cells unfavorable to full curvature.}
+  \label{fig:spectral-tail-regret}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=.72\textwidth]{figures/spectral_tail_complexity.pdf}
+  \caption{Realized frozen information gain and the spectral-tail upper bound for
+  the exact-full $r=8$ trajectories.  The bound is informative for decaying
+  spectra but is not uniformly tighter than the ambient trace/rank bound; it is
+  an upper bound rather than an estimator of $\gamma_T$.}
+  \label{fig:spectral-tail-complexity}
+\end{figure*}
+
+The full spectral-tail run contains 7,440 tuning and 8,400 evaluation
+trajectories.  At $r=8,p=2$, the head-aligned rank truncation has terminal mean
+regret $0.283$ versus $0.714$ for exact full, whereas moving the decision gap to
+the discarded tail reverses the comparison sharply: $88.176$ versus $1.771$.
+Thus small total tail energy does not make discarded directions decision
+irrelevant.  In the same head-aligned cell,
+$\gamma_T=87.87$ and $\Gamma^{\rm tail}_{T,r}=330.75$, below the ambient
+$d$-rank bound $1888.87$ but still conservative.  For flat spectra the tail
+bound can exceed that ambient bound, which is reported rather than filtered.
+Dense full and full CG have identical actions, widths, and regret in every cell;
+the construction nevertheless gives one CG iteration and is therefore an
+equivalence check, not a Krylov stress test.  Greedy is often best, so this grid
+supports the tail-mechanism claim, not a performance advantage for CC-UCB.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/certified_scaling.pdf}
+  \caption{Premise-clean rotated scaling test.  The displayed $d=128$ panels
+  vary active rank and condition number; the full grid also contains
+  $d\in\{512,2048\}$.  Curves are 50-seed means with pointwise whole-trajectory
+  bootstrap 95\% intervals over six preregistered horizons.  Every theorem method
+  in all 27 cells passes the optimizer, rank-information, excitation, CG
+  convergence, and energy-error fields.  Slopes remain finite-grid diagnostics,
+  not asymptotic-rate estimates.}
+  \label{fig:certified-scaling}
 \end{figure*}
 
 \begin{table*}[t]
-\centering\small
-\input{tables/theory_scaling_full_grid.tex}
-\caption{Preregistered scaling summary.  Panel (a) reports terminal mean regret
-for every executed method.  Panel (b) decomposes failed float64 theorem-event
-fields by method: O is the prescribed optimizer-residual envelope, $P_e$ is the
-path bound using the excitation floor, and $P_\lambda$ is the path bound using
-damping.  Pass means zero observed failures for the displayed fields, not a
-verified numerical enclosure.  Any nonzero entry precludes interpreting that
-cell's slope as a test of the corresponding conditional theorem.}
-\label{tab:theory-scaling-full-grid}
+\centering\scriptsize
+\resizebox{\textwidth}{!}{\input{../tables/generated/certified_scaling_premises.tex}}
+\caption{Premise status for all 27 rotated scaling cells.  PASS is the
+conjunction over 50 evaluation trajectories and all rounds.  Diagonal and greedy
+are performance controls rather than theorem methods.  These are analytic
+construction checks plus float64 residual/energy audits, not directed-rounding
+enclosures.}
+\label{tab:certified-scaling-premises}
 \end{table*}
 
-The grid contains three ambient dimensions, three active ranks, eight methods,
-and 50 fixed seeds.  For the column-orthonormal embedding $E_d$,
-\[
- (E_dg)^\top(\lambda I_d+E_dA_tE_d^\top)^{-1}(E_dg)
- =g^\top(\lambda I_r+A_t)^{-1}g.
-\]
-Thus non-diagonal widths are ambient-invariant in exact arithmetic.  Empirically,
-the maximum cross-$d$ regret range is zero; the dynamic-width range is
-$5.7\times10^{-14}$ for non-diagonal methods and $2.2501\times10^3$ for the
-embedding-dependent diagonal method.  Ambient-CVP runtime is excluded.
-Every scaling method uses the same full-history optimizer from
-\eqref{eq:erm}; $m_t$ changes only the curvature operator.  The implementation
-also constructs full-history dense audit objects for window rows, so its runtime
-is not a measurement of the window-only cost model.
-
-The policy predeclares $\zeta_t=10^{-6}$ and stops after at most 40 optimizer
-iterations; it does not enforce that envelope.  A failed field therefore means
-the executed radius does not instantiate the theorem on that round, so the path
-is an uncertified diagnostic.  Five-point slopes and fit residuals are in
-\Cref{tab:theory-scaling-slopes}.
-
-Full CG is a one-step equivalence test: each right-hand side is an active
-coordinate and the Gram is diagonal in that basis.  Width errors are about
-$10^{-15}$, yet near-tie perturbations can change an action and the subsequent
-adaptive trajectory.  The rotated-SPD audit in \Cref{app:new-experiments}, not
-this scaling row, tests nontrivial Krylov convergence.
+The complete run contains 10,800 trajectories over three dimensions, three
+active ranks, three condition numbers, eight methods, and 50 fixed evaluation
+seeds.  Feature drift and linearization error are identically zero, the model
+update is a closed-form ridge solve, and cyclic excitation has a prespecified
+analytic lower bound.  Every full-CG and window solve converges from zero;
+more than 90\% of rounds use multiple iterations, and the largest observed
+relative energy error is below $2.4\times10^{-4}$ versus the $10^{-3}$ target.
+At $d=128,r=8,\kappa=1000$, mean work slopes are $1.498$, $1.674$, and $2.027$
+for $q=1/2,2/3,1$, respectively.  They are below the worst-case CG upper-bound
+exponents because iteration counts saturate in the fixed-rank active space.
+All methods have the same regret in this sign-symmetric construction, so the
+experiment validates premises and work accounting, not policy superiority.  The
+implementation uses dense active-coordinate matrices for simulation and exact
+energy audits; reported work is replay-equivalent sample-CVP accounting rather
+than controlled wall-clock timing.  All fitted slopes are in the generated
+appendix fit tables.
 
 \subsection{Predictable nonlinear execution}\label{sec:factorial-audit}
 We first use the genuinely nonlinear Gaussian model
@@ -933,15 +957,18 @@ Scalar calibration changes conclusions but does not induce a uniform ordering.
 For each comparison we use a two-sided paired Student-$t$ test on the 50
 seed-level terminal-regret differences; an identically zero difference receives
 $p=1$, while a constant nonzero difference receives the limiting value $p=0$.
-Holm's step-down procedure controls familywise error at $0.05$ over all 144
-prespecified tests.  Across the 48 surrogate--cell comparisons per protocol, the
+Holm's step-down procedure controls familywise error at $0.05$ over all 168
+prespecified tests.  Across the 56 surrogate--cell comparisons per protocol, the
 adjustment leaves 35 significant under the identical coefficient
 (13 favor a surrogate, 22 favor full), 20 under coverage matching (8/12), and 27
 under mean-bonus matching (11/16).  Evaluation coverage under the tuning-selected
 95\% protocol averages 94.6\% across method--cell means and ranges from 85.6\% to
 99.2\%.  Current and historical full Grams coincide in this fixed-feature linear
 environment; their separate labels audit the protocol rather than representation
-drift.  The frozen coefficients are in \Cref{tab:coverage-matched-calibration},
+drift.  The added low-rank-plus-diagonal method is a batch-refit LO-FI-style
+surrogate, not an official LO-FI implementation; none of its 24 comparisons is
+significant after Holm adjustment.  The frozen coefficients are in
+\Cref{tab:coverage-matched-calibration},
 all mean paired differences and raw/adjusted $p$-values are in the generated
 appendix comparison tables, and full coverage/decision heatmaps are in
 \Cref{fig:coverage-matched-heatmaps}.
@@ -958,20 +985,69 @@ controls have regret $90.35$ and $89.40$; the sanity check passes, but the
 experiment is negative evidence for full-curvature superiority.
 
 A separate balanced-MNIST pipeline fixes disjoint supervised-pretraining,
-tuning, and online-evaluation splits and the requested local baseline set.  Its
-canonical-data smoke profile passes, but the full tuning and evaluation grid has
-not run, so we report no MNIST outcome.  We do not substitute a different image
-dataset under the MNIST label or use smoke output as paper evidence.
+tuning, and online-evaluation splits.  Both online pools have exactly 10\% of
+each digit; 480 tuning policies select among four configurations per method
+before 240 untouched evaluation policies (12 methods, 20 seeds, $T=5000$).
+The deliberately compute-bounded nonlinear model uses 64 fixed pixels, one tanh
+hidden unit, and 85 trainable parameters.  Current and historical full Grams use
+exact dense solves here, not the matrix-free primitive benchmarked in
+\Cref{fig:autodiff-ggn-systems}; their maximum original-system residual is below
+$7\times10^{-12}$.  All implementations are local matched baselines, not
+official reproductions.
+
+The result is a failed algorithmic benchmark (\Cref{fig:mnist-contextual,tab:mnist-contextual}):
+mean accuracy ranges only from 9.885\% to 10.068\%, and mean regret from 4496.6
+to 4505.75.  Current full GGN has regret 4501.75
+$[4490.97,4512.53]$ and accuracy 9.965\%; none of its 11 paired method
+comparisons is significant after Holm adjustment.  We retain the full result as
+negative evidence rather than selecting a favorable method or seed subset.
+Multi-process wall times are resource accounting under host contention, not a
+controlled speed comparison.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/mnist_contextual_regret.pdf}
+  \caption{Balanced-MNIST evaluation over 20 untouched seeds.  Every method
+  remains near the 10\% context-free baseline; the plot is a failed sanity check
+  for this small local model, not evidence of algorithmic parity.}
+  \label{fig:mnist-contextual}
+\end{figure*}
+
+\begin{table*}[t]
+  \centering\scriptsize
+  \caption{Balanced-MNIST terminal results.  Times are contention-affected
+  resource accounting.  ``Max res.'' is the maximum original-system relative
+  residual over evaluation seeds for the three dense full-Gram methods.}
+  \label{tab:mnist-contextual}
+  \input{../tables/generated/mnist_contextual_benchmark.tex}
+\end{table*}
 
 \subsection{Audits and systems scope}
 All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
 their bounds are vacuous.  Synthetic CPU operators reach $d=8192$, but use
 unmatched stored-feature primitives.  Small-model policies likewise materialize
 Jacobians for dense audits, validating algebra rather than on-the-fly $O(d)$
-Krylov state.  A Buck-managed \texttt{torch.func} pipeline now executes real
-JVP/VJP operators without retaining an explicit sample-by-parameter Jacobian;
-only smoke and development-pilot cells have run.  The preregistered evaluation
-grid is not reported, so no comparative method-speed or deployment claim follows.
+Krylov state.  The separate real-autodiff study executes 360 preregistered cells
+using \texttt{torch.func} JVP/VJP operators without retaining an explicit
+sample-by-parameter Jacobian for the matrix-free methods
+(\Cref{fig:autodiff-ggn-systems}).  It covers ten evaluation instances for
+131,841- and 9,972,737-parameter MLPs, buffers 32/128/512, 5/10 actions, and
+residual targets $10^{-1}/10^{-2}/10^{-3}$; all cells finish within 0.167
+accelerator-hours and none is dropped.  These single-host primitive timings do
+not include model training, distributed communication, or a bandit loop and do
+not support a deployment or foundation-model claim.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/autodiff_ggn_systems.pdf}
+  \caption{Real neural JVP/VJP systems benchmark (ten evaluation instances per
+  cell; medians are aggregated with 95\% seed intervals).  Matrix-free methods
+  use \texttt{torch.func.jvp}/\texttt{vjp}; the explicit Jacobian is an audit
+  available only for the 131,841-parameter model.  The study measures isolated
+  uncertainty primitives after warm-up on one NVIDIA accelerator, not training
+  or end-to-end policy throughput.}
+  \label{fig:autodiff-ggn-systems}
+\end{figure*}
 
 \paragraph{Real-data baseline check.}
 Covertype fails its baseline check: context-free controls beat every contextual
@@ -987,10 +1063,12 @@ plus spectral-tail bound on the frozen
 potential; it does not require a known tangent subspace.  Exact rank recovers a
 projected-Gram special case where full-dimensional CG is unnecessary.  Neither
 result is an unrestricted neural-training guarantee.  Empirically, the executed
-studies test width and action-order preservation rather than demonstrate
-performance: the tanh bound is vacuous, the legacy scaling grid exposes failed
+studies test width and action-order preservation rather than demonstrate policy
+superiority: the tanh bound is vacuous, the legacy scaling grid exposes failed
 envelopes, coverage and bonus matching still produce mixed operator comparisons,
-full curvature is not uniformly preferred, and Covertype fails its baseline check.
+the real-autodiff study measures isolated primitives rather than a training loop,
+full curvature is not uniformly preferred, balanced MNIST remains at chance for
+all local methods, and Covertype fails its baseline check.
 The explicit corrected-center rate additionally requires a nondecreasing
 predictable prefix information envelope and frozen-feature access.
 
@@ -999,8 +1077,8 @@ Theory assumes Gaussian squared loss, enumeration, realizability, smoothness,
 and, for the original center, an optimizer certificate; approximate operators
 and screening need further certificates.  Controlling feature drift and the
 spectral tail during unrestricted training remains open.  Float64 checks lack
-enclosures, bounds are vacuous, the full autodiff evaluation grid is unrun, and
-adaptive comparisons are non-causal.
+enclosures, bounds are vacuous, the measured autodiff models stop at roughly
+$10^7$ parameters on one accelerator, and adaptive comparisons are non-causal.
 
 % --- references -----------------------------------------------------------
 \FloatBarrier % ensure no body float escapes past the references
@@ -2299,8 +2377,9 @@ $>10^8$ parameters under distributed training \citep{granziol2026hessian}, which
 indicates that curvature--vector primitives of this general form are implementable
 at scale.  We do \emph{not} claim foundation-model feasibility from this: that
 work times Hessian--vector products, not the exact per-example GGN JVP/VJP used
-here.  Our real-\texttt{torch.func} pipeline has only smoke and development-pilot
-runs, not a completed evaluation-seed systems study.
+here.  Our real-\texttt{torch.func} study reaches roughly $10^7$ parameters and
+$m=512$ on one accelerator; it does not measure distributed execution or model
+training.
 Warm-starting CG from the previous round's solution can reduce the
 iteration count in practice.
 
@@ -3757,6 +3836,57 @@ prefix means; they are not tests of a power-law model or asymptotic exponents.}
 \label{tab:theory-scaling-slopes}
 \end{table*}
 
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/theory_scaling_full_grid.pdf}
+  \caption{Legacy finite-horizon scaling diagnostic retained for disclosure.
+  The first panel is the event-clean $d=128,r=4$ reference; remaining panels use
+  $d=2048$.  Labels report the conjunction of float64 event fields.  Failed cells
+  are not interpreted as tests of \Cref{thm:growing-window}; the main replacement
+  is the premise-clean construction in \Cref{fig:certified-scaling}.}
+  \label{fig:theory-scaling-full-grid}
+\end{figure*}
+
+\begin{table*}[t]
+\centering\small
+\input{tables/theory_scaling_full_grid.tex}
+\caption{Legacy scaling summary.  Panel (a) reports terminal mean regret; panel
+(b) decomposes failed float64 fields by method.  O is the prescribed optimizer
+envelope, $P_e$ the path bound using excitation, and $P_\lambda$ the damping path
+bound.  Any nonzero entry precludes a theorem-test interpretation.}
+\label{tab:theory-scaling-full-grid}
+\end{table*}
+
+The legacy grid uses a predeclared $\zeta_t=10^{-6}$ and at most 40 optimizer
+iterations rather than enforcing the envelope.  Its full CG row is also a
+one-step diagonal-basis equivalence test.  Non-diagonal active-coordinate widths
+are ambient-invariant in exact arithmetic, while the coordinate-diagonal control
+depends on the embedding.  These limitations motivated the rotated replacement;
+the legacy slopes in \Cref{tab:theory-scaling-slopes} remain descriptive only.
+
+\input{../tables/generated/certified_scaling_fits.tex}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=.72\textwidth]{figures/spectral_tail_decisions.pdf}
+  \caption{Decision effects of discarded spectral directions over all 24
+  preregistered rank/power/alignment cells.  The horizontal coordinate measures
+  alignment of the decision margin with the discarded tail.  Regret differences
+  are paired by evaluation seed and compare rank truncation with exact full; the
+  figure is a mechanism diagnostic, not a dominance claim.}
+  \label{fig:spectral-tail-decisions}
+\end{figure*}
+
+\begin{table*}[p]
+\centering\scriptsize
+\input{../tables/generated/spectral_tail_summary.tex}
+\caption{Complete displayed-rank ($r=8$) spectral-tail summary at $T=4096$.
+All six power/alignment regimes and all seven methods are retained.  The
+disagreement column is the common-trajectory top-score diagnostic; online regret
+comes from independently executed paired policies.}
+\label{tab:spectral-tail-summary}
+\end{table*}
+
 \begin{table*}[t]
 \centering\small
 \input{tables/executed_policy_results.tex}
@@ -3911,7 +4041,7 @@ protocols use an identical theoretical coefficient, the empirical 95th
 percentile of all one-step prediction-error/width ratios, or the ratio needed to
 match the full operator's mean bonus on common tuning trajectories.  The latter
 two coefficients are frozen before any evaluation run.  Holm adjustment is over
-all $3\times8\times6=144$ prespecified surrogate comparisons.  Each marginal
+all $3\times8\times7=168$ prespecified surrogate comparisons.  Each marginal
 $p$-value comes from a two-sided paired Student-$t$ test of the 50 seed-level
 terminal-regret differences; Holm controls familywise error at $0.05$.  For zero
 variance, an identically zero difference is assigned $p=1$ and a constant nonzero
@@ -4002,10 +4132,45 @@ an $n\times d$ random-feature matrix and applies an averaged Gram; it does not
 time model training or on-the-fly network JVP/VJP.  Timings are descriptive
 resource accounting under the executed implementations, not matched-wall-clock
 comparisons; no trained-network or accelerator extrapolation is made.  A
-Buck-managed Conda toolchain now runs the separate real-\texttt{torch.func}
-pipeline.  Smoke checks and one preregistered development-pilot cell for each of
-the 131,841- and 9,972,737-parameter MLPs executed on an accelerator; the
-evaluation-seed grid, intervals, and main-paper systems artifacts remain unrun.
+  Buck-managed Conda toolchain runs a separate real-\texttt{torch.func}
+pipeline.  All 360 preregistered evaluation cells complete for the 131,841- and
+9,972,737-parameter MLPs.  At $m=512$, $K=10$, and target residual $10^{-3}$,
+mean batched-CG times are 0.0395 and 0.5674 seconds with peak allocated
+accelerator memory 0.126 and 4.219 GiB, respectively.  The corresponding
+separate-CG times are 0.2101 and 0.7532 seconds.  On the small model, the strict
+target's upper 95\% aggregate bound on maximum relative squared-width error is
+$9.38\times10^{-5}$; one of the prespecified groups has top-action and complete
+rank agreement 0.9 because a near tie changes order.  The large model has no
+explicit-Jacobian reference.  \Cref{fig:autodiff-ggn-accuracy} and
+\Cref{tab:autodiff-ggn-summary} report the full accuracy and resource audit.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figures/autodiff_ggn_accuracy.pdf}
+  \caption{Accuracy diagnostics for the real-autodiff GGN study.  Dense
+  energy/width errors are available only for the 131,841-parameter model; no
+  reference value is imputed for the larger model.}
+  \label{fig:autodiff-ggn-accuracy}
+\end{figure}
+
+\begin{table}[p]
+  \centering\scriptsize
+  \caption{Real-autodiff resource summary at $m=512$, $K=10$, and target
+  original-system residual $10^{-3}$.  Values are evaluation-seed means of the
+  timed primitive; the explicit reference is intentionally skipped for the
+  larger model.}
+  \label{tab:autodiff-ggn-summary}
+  \input{../tables/generated/autodiff_ggn_summary.tex}
+\end{table}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.78\textwidth]{figures/mnist_contextual_compute.pdf}
+  \caption{Balanced-MNIST terminal regret versus contention-affected per-policy
+  wall time.  The online model has 85 parameters and dense full-Gram solves, so
+  this figure is not a matrix-free scalability comparison.}
+  \label{fig:mnist-contextual-compute}
+\end{figure}
 
 \subsection{Covertype real-data baseline audit}\label{sec:covertype-rerun}
 We use UCI Covertype DOI \texttt{10.24432/C50K5N} via scikit-learn 1.9.0; the
@@ -4449,18 +4614,22 @@ online monitoring; the regret certificates here do not establish safety.
 The repository contains the Buck pipeline, tests, artifact scripts, validated
 legacy derived results, the retained $d=128,r=4$ slice, and deterministic
 reproduction entry points for the new spectral-tail, premise-clean scaling, and
-real-autodiff studies.  Their full evaluation grids are not committed and have
-not all run.  The 2.1~GB legacy scaling tree and historical inputs outside Git
-are absent, so not every raw-derived chain is reproducible.  Neither anonymous
-tier is built; the review builder lacks
-\nolinkurl{experiments/data/sklearn/covertype/samples_py3} and
-\nolinkurl{experiments/data/sklearn/covertype/targets_py3}.  Once restored, the
-builder sanitizes identities and validates hashes/provenance.  Covertype is CC BY
+real-autodiff studies.  Those three full grids have run; their validated derived
+aggregates, generated figures, tables, hashes, and provenance records are in the
+reviewed tree, while their seed-level raw directories remain outside Git.  The
+2.1~GB legacy scaling tree and historical inputs outside Git
+are absent, so not every legacy raw-derived chain is reproducible.  Public
+dataset caches are optional local accelerators rather than release requirements;
+the builder packages loaders/configurations and sanitizes identities and
+hashes/provenance without depending on a specific scikit-learn cache layout.
+Covertype is CC BY
 4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}.  The autodiff
-study status is \texttt{development\_pilot}; no evaluation result is claimed.
-The balanced-MNIST study is \texttt{smoke\_validated}: canonical archives pass
-their published checksums and the real-data smoke pipeline completes, but the
-full grid has not run and the ignored local cache is not a clean-checkout
-fixture.  No current bundle or identifying URL is claimed.
+study status is \texttt{full\_evaluation}: 360 cells over ten fixed evaluation
+seeds completed with no skipped cell under the 24-accelerator-hour cap.
+The balanced-MNIST study is \texttt{full\_evaluation}: canonical archives pass
+their published checksums, both online pools are exactly class-balanced, and all
+480 tuning plus 240 evaluation policies complete.  The ignored local cache is
+not a clean-checkout fixture; the public download path is retained.  No current
+bundle or identifying URL is claimed.
 
 \end{document}

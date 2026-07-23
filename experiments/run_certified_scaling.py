@@ -7,6 +7,7 @@ import datetime as dt
 import hashlib
 import math
 import shutil
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -207,25 +208,20 @@ def _relative_energy_error(
 def _cg_widths(
     matrix: FloatArray,
     feature: FloatArray,
-    replay_features: list[FloatArray],
     *,
-    damping: float,
-    variance: float,
     condition_upper: float,
     energy_target: float,
-) -> tuple[FloatArray, NDArray[np.int64], FloatArray, FloatArray]:
+) -> tuple[FloatArray, NDArray[np.int64], FloatArray, FloatArray, NDArray[np.bool_]]:
     residual_target = energy_target / math.sqrt(condition_upper)
 
     def matrix_free_matvec(vector: FloatArray) -> FloatArray:
-        result = damping * vector
-        for replay_feature in replay_features:
-            result = result + replay_feature * (replay_feature @ vector) / variance
-        return result
+        return matrix @ vector
 
     widths = np.empty(2, dtype=np.float64)
     iterations = np.empty(2, dtype=np.int64)
     residuals = np.empty(2, dtype=np.float64)
     energy_errors = np.empty(2, dtype=np.float64)
+    converged = np.empty(2, dtype=np.bool_)
     for action, sign in enumerate((1.0, -1.0)):
         right_hand_side = sign * feature
         exact = np.linalg.solve(matrix, right_hand_side)
@@ -233,14 +229,16 @@ def _cg_widths(
             matrix_free_matvec,
             right_hand_side,
             tolerance=residual_target,
-            max_iterations=matrix.shape[0],
+            max_iterations=8 * matrix.shape[0],
             initial_solution=None,
+            raise_on_nonconvergence=False,
         )
         widths[action] = math.sqrt(max(0.0, float(right_hand_side @ result.solution)))
         iterations[action] = result.iterations
         residuals[action] = result.relative_residual_norm
         energy_errors[action] = _relative_energy_error(matrix, exact, result.solution)
-    return widths, iterations, residuals, energy_errors
+        converged[action] = result.converged
+    return widths, iterations, residuals, energy_errors, converged
 
 
 def _rank_information_bound(
@@ -275,7 +273,8 @@ def run_scaling_trajectory(
     active_gram = np.eye(cell.rank, dtype=np.float64) * damping
     response = np.zeros(cell.rank, dtype=np.float64)
     ambient_diagonal = np.full(cell.dimension, damping, dtype=np.float64)
-    history_features: list[FloatArray] = []
+    prefix_grams = np.empty((rounds + 1, cell.rank, cell.rank), dtype=np.float64)
+    prefix_grams[0] = 0.0
 
     cumulative_regret = np.empty(rounds, dtype=np.float64)
     lambda_complexity = np.empty(rounds, dtype=np.float64)
@@ -294,6 +293,7 @@ def run_scaling_trajectory(
     cg_iterations = np.zeros((rounds, 2), dtype=np.int64)
     cg_relative_residual = np.zeros((rounds, 2), dtype=np.float64)
     cg_energy_error = np.zeros((rounds, 2), dtype=np.float64)
+    cg_converged = np.ones((rounds, 2), dtype=np.bool_)
     cumulative_sample_cvps = np.zeros(rounds, dtype=np.int64)
     premise_pass = np.ones(rounds, dtype=np.bool_)
     selected_actions = np.empty(rounds, dtype=np.int64)
@@ -325,16 +325,15 @@ def run_scaling_trajectory(
 
         operator_matrix = active_gram
         operator_history = history
-        operator_features = history_features
         alpha = 1.0
         if exponent is not None:
             length = _window_length(round_index, exponent)
             window_length[round_index] = length
-            recent = history_features[-length:] if length else []
-            operator_features = recent
             operator_matrix = np.eye(cell.rank, dtype=np.float64) * damping
-            for feature in recent:
-                operator_matrix += np.outer(feature, feature) / variance
+            if length:
+                operator_matrix += (
+                    prefix_grams[history] - prefix_grams[history - length]
+                ) / variance
             operator_history = length
             if length >= 2 * cell.rank:
                 excitation_required[round_index] = True
@@ -359,18 +358,16 @@ def run_scaling_trajectory(
 
         if method in {"full_cg", *WINDOW_METHODS}:
             condition_upper = 1.0 + operator_history / (damping * variance)
-            widths, iterations, residuals, energy_errors = _cg_widths(
+            widths, iterations, residuals, energy_errors, converged = _cg_widths(
                 operator_matrix,
                 base_feature,
-                operator_features,
-                damping=damping,
-                variance=variance,
                 condition_upper=condition_upper,
                 energy_target=energy_target,
             )
             cg_iterations[round_index] = iterations
             cg_relative_residual[round_index] = residuals
             cg_energy_error[round_index] = energy_errors
+            cg_converged[round_index] = converged
             alpha = 1.0 / (1.0 - energy_target)
             work_total += int(np.sum(iterations)) * operator_history
         elif method not in {"diagonal", "greedy"}:
@@ -408,7 +405,11 @@ def run_scaling_trajectory(
             and excitation_pass[round_index]
             and (
                 method not in {"full_cg", *WINDOW_METHODS}
-                or float(np.max(cg_energy_error[round_index])) <= energy_target + 1e-10
+                or (
+                    bool(np.all(cg_converged[round_index]))
+                    and float(np.max(cg_energy_error[round_index]))
+                    <= energy_target + 1e-10
+                )
             )
         )
         premise_pass[round_index] = round_checks
@@ -417,7 +418,9 @@ def run_scaling_trajectory(
         reward = float(true_means[selected] + stream.noises[round_index, selected])
         active_gram += np.outer(chosen_feature, chosen_feature) / variance
         response += chosen_feature * reward / variance
-        history_features.append(chosen_feature.copy())
+        prefix_grams[round_index + 1] = (
+            prefix_grams[round_index] + np.outer(chosen_feature, chosen_feature)
+        )
         if method == "diagonal":
             ambient_chosen = stream.active_basis @ chosen_feature
             ambient_diagonal += ambient_chosen * ambient_chosen / variance
@@ -443,6 +446,7 @@ def run_scaling_trajectory(
         "cg_iterations": cg_iterations,
         "cg_relative_residual": cg_relative_residual,
         "cg_energy_error": cg_energy_error,
+        "cg_converged": cg_converged,
         "cumulative_sample_cvps": cumulative_sample_cvps,
         "premise_pass": premise_pass,
         "selected_actions": selected_actions,
@@ -466,6 +470,7 @@ def run_scaling_trajectory(
         "maximum_optimizer_residual": float(np.max(optimizer_residual)),
         "maximum_cg_energy_error": float(np.max(cg_energy_error)),
         "maximum_cg_relative_residual": float(np.max(cg_relative_residual)),
+        "all_cg_solves_converged": bool(np.all(cg_converged)),
         "mean_cg_iterations": float(np.mean(cg_iterations)),
         "multi_iteration_round_fraction": multi_iteration_fraction,
         "sample_cvps": int(cumulative_sample_cvps[-1]),
@@ -532,46 +537,100 @@ def _save_run(
     )
 
 
+def _execute_scaling_task(
+    task: tuple[
+        dict[str, Any],
+        str,
+        str,
+        int,
+        Cell,
+        tuple[str, ...],
+        dict[str, Any],
+        bool,
+    ],
+) -> tuple[int, int]:
+    (
+        config,
+        profile,
+        output_root_text,
+        seed,
+        cell,
+        methods,
+        metadata,
+        overwrite,
+    ) = task
+    seed_everything(seed)
+    stream = generate_scaling_stream(config, cell, seed)
+    clean_count = 0
+    for method in methods:
+        run = run_scaling_trajectory(config, cell, stream, method=method)
+        _save_run(
+            _run_directory(Path(output_root_text), profile, cell, method, seed),
+            run,
+            config=config,
+            profile=profile,
+            seed=seed,
+            stream=stream,
+            metadata=metadata,
+            overwrite=overwrite,
+        )
+        clean_count += int(run.summary["all_required_premises_pass"])
+    return len(methods), clean_count
+
+
 def run_evaluation(
     config: dict[str, Any],
     *,
     profile: str,
     output_root: Path,
     overwrite: bool,
+    workers: int = 1,
 ) -> dict[str, Any]:
     validate_scaling_config(config)
+    if workers <= 0:
+        raise ValueError("workers must be positive")
     seeds = get_seed_set(config, "evaluation")
     metadata = collect_run_metadata(
         repository=Path(__file__).resolve().parents[1],
         packages=tuple(config.get("provenance", {}).get("packages", ())),
     )
     methods = tuple(str(value) for value in config["methods"])
+    tasks = [
+        (
+            config,
+            profile,
+            output_root.as_posix(),
+            seed,
+            cell,
+            methods,
+            metadata,
+            overwrite,
+        )
+        for seed in seeds
+        for cell in _cells(config)
+    ]
+    executor: ProcessPoolExecutor | None = None
+    if workers == 1:
+        task_results = map(_execute_scaling_task, tasks)
+    else:
+        executor = ProcessPoolExecutor(max_workers=workers)
+        task_results = executor.map(_execute_scaling_task, tasks, chunksize=1)
     count = 0
     clean_count = 0
-    for seed in seeds:
-        seed_everything(seed)
-        for cell in _cells(config):
-            stream = generate_scaling_stream(config, cell, seed)
-            for method in methods:
-                run = run_scaling_trajectory(config, cell, stream, method=method)
-                _save_run(
-                    _run_directory(output_root, profile, cell, method, seed),
-                    run,
-                    config=config,
-                    profile=profile,
-                    seed=seed,
-                    stream=stream,
-                    metadata=metadata,
-                    overwrite=overwrite,
-                )
-                count += 1
-                clean_count += int(run.summary["all_required_premises_pass"])
+    try:
+        for task_count, task_clean_count in task_results:
+            count += task_count
+            clean_count += task_clean_count
+    finally:
+        if executor is not None:
+            executor.shutdown()
     return {
         "profile": profile,
         "phase": "evaluation",
         "seeds": list(seeds),
         "run_count": count,
         "premise_clean_run_count": clean_count,
+        "workers": workers,
     }
 
 
@@ -581,6 +640,7 @@ def _main() -> int:
     parser.add_argument("--profile", choices=("smoke", "full"), required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
     config = load_config(args.config, profile=args.profile)
     result = run_evaluation(
@@ -588,6 +648,7 @@ def _main() -> int:
         profile=args.profile,
         output_root=args.output_root,
         overwrite=args.overwrite,
+        workers=args.workers,
     )
     print(canonical_json(result))
     return 0

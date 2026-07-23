@@ -38,6 +38,8 @@ METHODS = (
     "unrescaled_window",
     "stale_refresh",
 )
+OPTIONAL_METHODS = ("low_rank_plus_diagonal",)
+SUPPORTED_METHODS = METHODS + OPTIONAL_METHODS
 REQUIRED_KNOBS = (
     "active_spectrum_condition_number",
     "rotation_degrees",
@@ -187,8 +189,8 @@ def validate_config(config: Mapping[str, Any], *, require_30_seeds: bool = True)
     methods = config.get("methods")
     if not isinstance(methods, Sequence) or isinstance(methods, (str, bytes)):
         raise ConfigError("methods must be a list")
-    if tuple(methods) != METHODS:
-        raise ConfigError(f"methods must be exactly {METHODS}")
+    if tuple(methods) not in {METHODS, SUPPORTED_METHODS}:
+        raise ConfigError(f"methods must be exactly {METHODS} or {SUPPORTED_METHODS}")
 
     cells = config.get("preregistered_cells")
     if not isinstance(cells, Sequence) or isinstance(cells, (str, bytes)) or not cells:
@@ -405,7 +407,7 @@ class OperatorBuilder:
     def __init__(
         self, method: str, config: Mapping[str, Any], cell: Cell, seed: int
     ) -> None:
-        if method not in METHODS:
+        if method not in SUPPORTED_METHODS:
             raise ValueError(f"unknown method {method}")
         self.method = method
         self.config = config
@@ -443,6 +445,25 @@ class OperatorBuilder:
                 ),
             )
             return return_value, {"retained_basis": basis}
+        if self.method == "low_rank_plus_diagonal":
+            rank = min(int(options["lofi_rank"]), dimension)
+            increment = 0.5 * (
+                reference + reference.T
+            ) - self.cell.damping * np.eye(dimension)
+            values, vectors = np.linalg.eigh(increment)
+            order = np.argsort(values)[::-1]
+            values = np.maximum(values[order][:rank], 0.0)
+            basis = vectors[:, order[:rank]]
+            low_rank = (basis * values) @ basis.T
+            residual_diagonal = np.maximum(
+                np.diag(increment - low_rank), 0.0
+            )
+            surrogate = (
+                self.cell.damping * np.eye(dimension)
+                + low_rank
+                + np.diag(residual_diagonal)
+            )
+            return surrogate, {"retained_basis": basis}
         if self.method == "unrescaled_window":
             size = int(options["window_size"])
             return (
@@ -886,7 +907,7 @@ def run_online_policy(
     calibration_protocol: str = "identical_theoretical_coefficient",
 ) -> PolicyResult:
     validate_config(config, require_30_seeds=False)
-    if method not in METHODS:
+    if method not in SUPPORTED_METHODS:
         raise ValueError(f"unknown method {method}")
     if not math.isfinite(bonus_multiplier) or bonus_multiplier <= 0.0:
         raise ValueError("bonus_multiplier must be finite and positive")

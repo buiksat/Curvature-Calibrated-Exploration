@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import shutil
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -545,6 +546,78 @@ def _load_selection(path: Path, config: dict[str, Any], profile: str) -> dict[st
     return {method: float(selected[method]) for method in methods}
 
 
+def _execute_phase_task(
+    task: tuple[
+        dict[str, Any],
+        str,
+        str,
+        str,
+        int,
+        Cell,
+        tuple[str, ...],
+        tuple[float, ...],
+        dict[str, float],
+        dict[str, Any],
+        bool,
+    ],
+) -> tuple[list[dict[str, str]], list[tuple[str, float, float]]]:
+    (
+        config,
+        profile,
+        phase,
+        output_root_text,
+        seed,
+        cell,
+        methods,
+        bonus_grid,
+        selected_bonus,
+        metadata,
+        overwrite,
+    ) = task
+    seed_everything(seed)
+    stream = generate_stream(config, cell, seed)
+    source_inputs: list[dict[str, str]] = []
+    objective_records: list[tuple[str, float, float]] = []
+    output_root = Path(output_root_text)
+    for method in methods:
+        bonuses = (
+            (selected_bonus[method],)
+            if phase == "evaluation"
+            else ((0.0,) if method == "greedy" else bonus_grid)
+        )
+        for bonus in bonuses:
+            trajectory = run_trajectory(
+                config, cell, stream, method=method, bonus=bonus
+            )
+            destination = _run_directory(
+                output_root, profile, phase, seed, cell, method, bonus
+            )
+            paths = _save_trajectory(
+                destination,
+                trajectory,
+                config=config,
+                profile=profile,
+                phase=phase,
+                seed=seed,
+                stream=stream,
+                metadata=metadata,
+                overwrite=overwrite,
+            )
+            for path in paths:
+                source_inputs.append(
+                    {"path": path.as_posix(), "sha256": sha256_file(path)}
+                )
+            if phase == "tuning":
+                objective_records.append(
+                    (
+                        method,
+                        bonus,
+                        float(trajectory.summary["terminal_pseudo_regret"]),
+                    )
+                )
+    return source_inputs, objective_records
+
+
 def run_phase(
     config: dict[str, Any],
     *,
@@ -553,10 +626,13 @@ def run_phase(
     output_root: Path,
     selection_path: Path,
     overwrite: bool,
+    workers: int = 1,
 ) -> dict[str, Any]:
     validate_study_config(config)
     if phase not in {"tuning", "evaluation"}:
         raise ValueError("phase must be tuning or evaluation")
+    if workers <= 0:
+        raise ValueError("workers must be positive")
     seeds = get_seed_set(config, phase)
     methods = tuple(str(value) for value in config["methods"])
     bonus_grid = tuple(float(value) for value in config["bonus_grid"])
@@ -573,42 +649,37 @@ def run_phase(
     objective: dict[str, dict[float, list[float]]] = {
         method: {} for method in methods
     }
-    for seed in seeds:
-        seed_everything(seed)
-        for cell in _cells(config):
-            stream = generate_stream(config, cell, seed)
-            for method in methods:
-                bonuses = (
-                    (selected_bonus[method],)
-                    if phase == "evaluation"
-                    else ((0.0,) if method == "greedy" else bonus_grid)
-                )
-                for bonus in bonuses:
-                    trajectory = run_trajectory(
-                        config, cell, stream, method=method, bonus=bonus
-                    )
-                    destination = _run_directory(
-                        output_root, profile, phase, seed, cell, method, bonus
-                    )
-                    paths = _save_trajectory(
-                        destination,
-                        trajectory,
-                        config=config,
-                        profile=profile,
-                        phase=phase,
-                        seed=seed,
-                        stream=stream,
-                        metadata=metadata,
-                        overwrite=overwrite,
-                    )
-                    for path in paths:
-                        source_inputs.append(
-                            {"path": path.as_posix(), "sha256": sha256_file(path)}
-                        )
-                    if phase == "tuning":
-                        objective[method].setdefault(bonus, []).append(
-                            float(trajectory.summary["terminal_pseudo_regret"])
-                        )
+    tasks = [
+        (
+            config,
+            profile,
+            phase,
+            output_root.as_posix(),
+            seed,
+            cell,
+            methods,
+            bonus_grid,
+            selected_bonus,
+            metadata,
+            overwrite,
+        )
+        for seed in seeds
+        for cell in _cells(config)
+    ]
+    executor: ProcessPoolExecutor | None = None
+    if workers == 1:
+        task_results = map(_execute_phase_task, tasks)
+    else:
+        executor = ProcessPoolExecutor(max_workers=workers)
+        task_results = executor.map(_execute_phase_task, tasks, chunksize=1)
+    try:
+        for task_inputs, task_objectives in task_results:
+            source_inputs.extend(task_inputs)
+            for method, bonus, regret in task_objectives:
+                objective[method].setdefault(bonus, []).append(regret)
+    finally:
+        if executor is not None:
+            executor.shutdown()
 
     result = {
         "phase": phase,
@@ -620,6 +691,7 @@ def run_phase(
             if item["path"].endswith("manifest.json")
         ),
         "input_set_sha256": input_set_sha256(source_inputs),
+        "workers": workers,
     }
     if phase == "tuning":
         choices: dict[str, float] = {}
@@ -650,6 +722,7 @@ def run_phase(
             "raw_inputs": sorted(source_inputs, key=lambda item: item["path"]),
             "input_set_sha256": input_set_sha256(source_inputs),
             "evaluation_data_accessed": False,
+            "workers": workers,
         }
         if selection_path.exists() and not overwrite:
             raise FileExistsError(f"refusing to overwrite {selection_path}")
@@ -666,6 +739,7 @@ def _main() -> int:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--selection", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
 
     config = load_config(args.config, profile=args.profile)
@@ -676,6 +750,7 @@ def _main() -> int:
         output_root=args.output_root,
         selection_path=args.selection,
         overwrite=args.overwrite,
+        workers=args.workers,
     )
     print(canonical_json(result))
     return 0

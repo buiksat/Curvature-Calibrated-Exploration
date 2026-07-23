@@ -532,14 +532,6 @@ def test_review_tier_build_is_hash_valid_with_indexed_omissions(tmp_path: Path) 
         "\\documentclass{article}\n\\author{Anonymous}\n\\begin{document}x\\end{document}\n",
         encoding="utf-8",
     )
-    for relative in (
-        "experiments/data/sklearn/covertype/samples_py3",
-        "experiments/data/sklearn/covertype/targets_py3",
-    ):
-        path = repository / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(relative.encode("ascii"))
-
     raw_root = repository / "results" / "raw"
     first = raw_root / "study" / "full" / "evaluation" / "seed-1"
     second = raw_root / "study" / "full" / "evaluation" / "seed-2"

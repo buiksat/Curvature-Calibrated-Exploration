@@ -1,0 +1,20 @@
+\begin{tabular}{llrrrr}
+\toprule
+Model & Method & Time (s) & Peak GiB & Sample-CVPs & Max residual \\
+\midrule
+mlp\_100k & Separate CG & 0.2101 & 0.108 & 25600 & 1.40e-04 \\
+mlp\_100k & Batched CG & 0.0395 & 0.126 & 25600 & 1.37e-04 \\
+mlp\_100k & Jacobi-PCG & 0.05416 & 0.141 & 28570 & 9.44e-04 \\
+mlp\_100k & Diagonal & 0.4428 & 0.086 & 0 & 9.30e+00 \\
+mlp\_100k & Last layer & 0.002994 & 0.097 & 0 & -- \\
+mlp\_100k & Explicit dense reference & 0.02338 & 1.477 & 0 & 0.00e+00 \\
+\addlinespace
+mlp\_10m & Separate CG & 0.7532 & 2.844 & 61440 & 6.17e-04 \\
+mlp\_10m & Batched CG & 0.5674 & 4.219 & 61440 & 6.60e-04 \\
+mlp\_10m & Jacobi-PCG & 0.5825 & 5.370 & 61440 & 7.65e-04 \\
+mlp\_10m & Diagonal & 0.4889 & 1.839 & 0 & 2.76e+02 \\
+mlp\_10m & Last layer & 0.002785 & 2.387 & 0 & -- \\
+mlp\_10m & Explicit dense reference & skipped & -- & -- & -- \\
+\addlinespace
+\bottomrule
+\end{tabular}

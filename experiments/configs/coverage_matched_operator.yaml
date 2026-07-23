@@ -29,6 +29,7 @@
     "calibration": {
       "protocols": ["identical_theoretical", "matched_95_coverage", "matched_mean_bonus"],
       "coverage_target": 0.95,
+      "holm_family_size": 168,
       "pooling": "all_prespecified_cells_and_tuning_seeds",
       "selection_data": "tuning_common_exact_full_trajectories_only"
     },
@@ -38,6 +39,7 @@
       "diagonal": "diagonal",
       "block_kfac": "block_diagonal",
       "rank_r": "low_rank_lanczos",
+      "lofi_style": "low_rank_plus_diagonal",
       "window": "unrescaled_window",
       "stale_refresh": "stale_refresh"
     },
@@ -65,8 +67,8 @@
       "representation_drift": {"supported":false,"status":"not_run_fixed_zero","reason":"fixed bounded linear representation"}
     },
     "policy": {"delta":0.05,"bonus_scale":1.0,"full_action_enumeration":true,"tie_breaking":"lowest_index","hyperparameter_tuning":"scalar_calibration_on_tuning_only"},
-    "methods": ["exact_full","full_cg","diagonal","block_diagonal","low_rank_lanczos","unrescaled_window","stale_refresh"],
-    "method_options": {"cg":{"relative_residual":1e-10,"max_iterations":20},"block_size":2,"lanczos_rank":3,"window_size":8,"stale_period":5},
+    "methods": ["exact_full","full_cg","diagonal","block_diagonal","low_rank_lanczos","unrescaled_window","stale_refresh","low_rank_plus_diagonal"],
+    "method_options": {"cg":{"relative_residual":1e-10,"max_iterations":20},"block_size":2,"lanczos_rank":3,"lofi_rank":3,"window_size":8,"stale_period":5},
     "preregistered_cells": [
       {"cell_id":"ffd_000","active_spectrum_condition_number":3.0,"rotation_degrees":0.0,"action_gap":0.15,"nuisance_strength":1.2,"effective_rank":8,"damping":2.0,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},
       {"cell_id":"ffd_001","active_spectrum_condition_number":3.0,"rotation_degrees":0.0,"action_gap":0.50,"nuisance_strength":1.2,"effective_rank":3,"damping":0.5,"representation_drift":0.0,"representation_drift_status":"not_run_fixed_zero"},

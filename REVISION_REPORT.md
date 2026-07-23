@@ -16,21 +16,21 @@ scale and optimizer-residual scaling is not attributed to width.
 
 Three P0 experiment pipelines have deterministic configurations, seed manifests,
 raw/derived separation, hash sidecars, tests, and one-command reproduction
-scripts. Their smoke profiles pass. The real-autodiff pipeline also ran
-preregistered development-pilot cells on the two target model sizes. The full
-P0 evaluation grids have not run, so none of their smoke or pilot outputs is used
-as main-paper evidence. The separate coverage-matched operator grid did run in
-full and is now included as main-paper mechanism evidence.
+scripts. Their full evaluation grids ran. The spectral-tail study contains
+7,440 tuning and 8,400 evaluation trajectories; the premise-clean scaling study
+contains 10,800 evaluation trajectories; and the real-autodiff study completes
+all 360 cells over ten fixed evaluation instances in 0.167 accelerator-hours.
+Their derived aggregates, figures, generated tables, hashes, and provenance are
+main-paper evidence; the multi-gigabyte seed-level raw trees remain ignored by
+Git.
 
-The legacy main scaling figure remains in the manuscript and is explicitly
-labelled a failed-premise, one-step-equivalence diagnostic. It has not been
-silently replaced by smoke output. Coverage-matched operator evaluation and the
-balanced MNIST pipeline are implemented; the former ran in full, while the
-latter now passes its real-data smoke profile after the canonical archives were
-retrieved through the approved forward proxy. The full MNIST grid has not run,
-and the dataset cache is intentionally not tracked by Git. The anonymous release
-also remains blocked by historical raw inputs and Covertype fixtures absent from
-this checkout.
+The new all-premise-pass scaling figure replaces the legacy main figure. The
+legacy failed-premise, one-step-equivalence grid is retained in the appendix as
+a diagnostic. Coverage-matched operator evaluation also ran in full. The
+balanced MNIST pipeline passes its canonical-data smoke profile, and its full
+tuning/evaluation run is recorded separately below. Public dataset caches are
+not Git inputs and no release tier now depends on a particular scikit-learn
+cache serialization.
 
 ## Commits
 
@@ -125,8 +125,13 @@ The fixed full configuration uses `d=256`, `K=8`, five horizons, four target
 ranks, three decay exponents, random rotations, and prespecified tail-alignment
 cells. It includes dense full Gram, residual-checked full CG, rank truncation,
 diagonal, block diagonal, Frequent Directions, and greedy. Tuning seeds `0--9`
-and evaluation seeds `1000--1049` are disjoint. The smoke run executed 312
-tuning and 168 evaluation trajectories. The full grid was not run.
+and evaluation seeds `1000--1049` are disjoint. The full run executed 7,440
+tuning and 8,400 evaluation trajectories. At target rank 8 and spectral decay
+2, rank truncation has mean terminal regret 0.283 in the head-aligned cell but
+88.176 in the decision-relevant-tail cell, versus 0.714 and 1.771 for exact
+full. Full CG matches dense full in all paired terminal comparisons. The
+spectral construction remains a one-Krylov-step equivalence case; nontrivial
+Krylov behavior is supplied by the premise-clean scaling grid.
 
 ### Premise-clean scaling
 
@@ -139,10 +144,16 @@ Files:
 
 The construction is a rotated sign-symmetric linear bandit with analytic cyclic
 window excitation after burn-in, condition numbers `10`, `100`, and `1000`, a
-closed-form ridge optimizer, and nontrivial Krylov spectra. The smoke run
-executed 14 trajectories; every declared premise passed and 98.4% of CG rounds
-used more than one iteration. The requested 50-seed full grid was not run and
-has not replaced Figure 1.
+closed-form ridge optimizer, and nontrivial Krylov spectra. The full run executed
+10,800 trajectories: 27 dimension/rank/condition cells, eight methods, and 50
+evaluation seeds. Every required premise field passes and every full/window CG
+solve converges; all 216 aggregate groups are clean. Full CG uses multiple
+iterations in every reported high-condition cell and its maximum measured
+energy error remains below `1e-3`. The active-space simulator uses dense
+prefix-Gram algebra, so its work totals are replay-equivalent sample-CVP
+accounting rather than systems timings. All methods have identical regret in
+the sign-symmetric construction; this validates premises and work accounting,
+not a policy advantage.
 
 ### Real autodiff GGN
 
@@ -160,13 +171,14 @@ and 9,972,737 parameters. Methods include separate CG, batched CG, streaming
 Jacobi-PCG, diagonal, last-layer, and a small-model dense reference.
 
 The smoke JVP/VJP operator matched the explicit Jacobian to approximately
-`1e-16`. One development-pilot cell (`m=32`, `K=5`, target `0.1`) ran for each
-model on an NVIDIA accelerator. Approximate single-repetition pilot times were
-0.025 seconds for small-model batched CG and 0.096 seconds for large-model
-batched CG. The large model used roughly 2.25 GB peak accelerator memory in
-that cell. These are development measurements without evaluation-seed intervals
-and are not reported as comparative paper results. The full 10-seed evaluation
-grid and 24-accelerator-hour study were not run.
+`1e-16`. The full study completed all 360 cells with no skips: two model sizes,
+three buffers, two action counts, three residual targets, and ten evaluation
+instances. At `m=512`, `K=10`, and target residual `1e-3`, mean batched-CG times
+are 0.0395 and 0.5674 seconds for the small and large models; peak allocated
+accelerator memory is 0.126 and 4.219 GiB. The small-model explicit reference
+uses 1.477 GiB in that cell. The large model intentionally has no dense
+reference. These are isolated primitive measurements after warm-up on one
+accelerator, not model-training or end-to-end bandit throughput.
 
 ### Coverage-matched operator study
 
@@ -177,12 +189,12 @@ Files:
 - `experiments/configs/coverage_matched_operator.yaml`
 - `scripts/reproduce_fig_coverage_matched_operator.sh`
 
-The fixed eight-cell condition/rotation/gap design compares seven operator
+The fixed eight-cell condition/rotation/gap design compares eight operator
 labels under identical theoretical coefficients, tuning-selected 95% one-step
 coverage, and tuning-selected mean bonus magnitude. Coefficients are pooled over
 all cells and tuning seeds 2000--2019, then frozen before evaluation seeds
-2100--2149. The complete run contains 8,400 evaluation trajectories. Holm
-adjustment covers all 144 prespecified method/cell/protocol comparisons.
+2100--2149. The complete run contains 9,600 evaluation trajectories. Holm
+adjustment covers all 168 prespecified method/cell/protocol comparisons.
 Each marginal test is a two-sided paired Student-t test on the 50 seed-level
 terminal-regret differences, with Holm familywise control at 0.05. Identically
 zero differences receive `p=1`; constant nonzero differences receive the
@@ -195,9 +207,10 @@ full); coverage matching has 20 (8/12); mean-bonus matching has 27 (11/16).
 Evaluation coverage under the coverage-matched protocol averages 94.6% across
 method/cell means. Current and historical full Grams are separate audit labels
 but algebraically identical in this fixed-feature linear environment. LO-FI is
-not included because no compatible recursive precision implementation exists in
-the repository. These independently executed policy differences are not given a
-causal operator interpretation.
+represented by a rank-three low-rank-plus-diagonal batch refit; it is explicitly
+not an official LO-FI reproduction, and none of its 24 comparisons survives
+Holm adjustment. These independently executed policy differences are not given
+a causal operator interpretation.
 
 ### Balanced MNIST benchmark
 
@@ -214,15 +227,24 @@ evaluation seeds 3100--3119, equal four-cell tuning budgets, `T=5000`, and
 twelve explicitly local method implementations.
 The all-layer tanh reward model has manually derived full-parameter Jacobians;
 finite differences validate them. Current full GGN recomputes every historical
-selected Jacobian rather than silently substituting a window. Tests execute all
-twelve methods on a balanced synthetic fixture, but that fixture is test-only.
+selected Jacobian rather than silently substituting a window. To keep the full
+grid within its fixed compute budget, the online model uses 64 fixed pixels, one
+hidden unit, and 85 trainable parameters. The three full-Gram methods use exact
+dense float64 solves in this small benchmark; matrix-free CG evidence comes from
+the separate real-autodiff study. Maximum original-system relative residual is
+below `7e-12`.
 
-No full MNIST outcome is reported. The four canonical archives from
-`storage.googleapis.com/cvdf-datasets/mnist` passed their published MD5 checks
-and IDX header checks. The real-data smoke profile completed all twelve methods
-and reported a 10% context-free optimum for both tuning and evaluation. Smoke
-outputs are not used as paper evidence, and the code does not substitute sklearn
-digits or synthetic images under the MNIST name.
+The four canonical archives from `storage.googleapis.com/cvdf-datasets/mnist`
+passed their published MD5 and IDX header checks. Both online pools are exactly
+class-balanced. The full run completed 480 tuning and 240 evaluation policies.
+All methods remain at chance: mean accuracy ranges from 9.885% to 10.068%, and
+mean terminal regret from 4496.6 to 4505.75. Current full GGN has regret 4501.75
+with interval `[4490.97,4512.53]`; none of its 11 paired comparisons survives
+Holm adjustment. This is retained as a failed small-model benchmark, not as
+evidence of parity or practical utility. The rejected preliminary run with all
+10,000 test examples exposed an 11.35% majority class; the final 8,000-example
+pool fixes that protocol defect. A float32 draft was also rejected because its
+dense-solve residual exceeded `1e-3`.
 
 ## Reproducibility
 
@@ -238,10 +260,11 @@ PyTorch deterministic behavior is enabled where supported. Evaluation seeds do
 not appear in tuning manifests, and no reported environment or hyperparameter
 was selected from evaluation output.
 
-The legacy 2.1 GB scaling raw tree is absent from Git. Historical tanh raw
-inputs and two required Covertype fixtures are also absent, so the current
-checkout cannot rebuild every legacy raw-to-figure chain or either anonymous
-release tier. This is disclosed in the manuscript rather than bypassed.
+The legacy 2.1 GB scaling raw tree and historical tanh raw inputs are absent
+from Git, so the checkout cannot independently rebuild every legacy
+raw-to-figure chain. Public dataset caches are optional release accelerators:
+the anonymous builder no longer requires a particular scikit-learn cache
+serialization. This is disclosed in the manuscript rather than hidden.
 
 ## Manuscript Changes
 
@@ -258,43 +281,34 @@ release tier. This is disclosed in the manuscript rather than bypassed.
   Laplace, Frequent Directions, and dyadic sketching.
 - The conclusion states the strongest proved regime and the open problem of
   controlling feature drift and spectral tail during unrestricted training.
-- Autodiff language now says smoke/development pilots ran but the evaluation
-  systems grid did not.
+- The completed real-autodiff figure and table report the full ten-instance
+  systems grid and clearly separate isolated operator timing from training.
 - The main mechanism figure reports the full coverage-matched grid and the text
   reports all Holm-adjusted direction counts, including cells unfavorable to
   full curvature.
-- The MNIST text distinguishes the validated real-data smoke path from the unrun
-  full benchmark.
+- The premise-clean scaling figure replaces the failed-premise legacy main
+  figure; the old grid remains available in the appendix.
+- The full balanced-MNIST result is reported as a chance-level failed benchmark;
+  the dense 85-parameter execution is separated from matrix-free systems claims.
 
-The abstract makes no claim based on the unrun new grids and no longer cites a
-run count whose complete raw chain is absent.
+The abstract no longer cites a run count whose complete raw chain is absent.
 
 ## Validation
 
 - `buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200`:
   2 targets passed, 0 failed.
-- `buck2 run //paper:validate`: 173 unique labels, 124 resolved reference
+- `buck2 run //paper:validate`: 185 unique labels, 129 resolved reference
   targets, 36 valid citation keys, no blockers.
 - `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`: passed;
-  references and citations stabilized, and `paper/main.pdf` has 51 pages.
-- `buck2 run //tools:pytest_runner -- -q
-  experiments/tests/test_coverage_matched_operator_study.py`: 2 tests passed.
-- `REUSE_RAW=1 PROFILE=full
-  scripts/reproduce_fig_coverage_matched_operator.sh`: regenerated the derived
-  inference metadata and complete 144-row appendix comparison tables.
-- `buck2 run //tools:pytest_runner -- -q
-  experiments/tests/test_mnist_contextual_benchmark.py`: 4 tests passed.
-- `PROFILE=smoke scripts/reproduce_fig_mnist_contextual_benchmark.sh`: passed on
-  canonical MNIST, including all twelve methods and artifact generation.
+  references and citations stabilized, and `paper/main.pdf` has 64 pages.
+- Targeted coverage/phase tests: 9 passed. The full expanded run regenerated
+  9,600 policies and complete 168-row appendix comparison tables.
+- Full balanced-MNIST reproduction: 480 tuning and 240 evaluation policies,
+  exact 10% class priors, all twelve methods, figures, table, and derived report.
 - The only overfull box is the pre-existing 5.12 pt style-generated abstract
   boundary. No changed theorem display causes an overfull box.
-- A detached literal checkout at `928f2a64` passed both Buck test targets and a
-  from-scratch `latexmk` build with stable references and citations.
-- The clean-checkout review-tier command
-  `buck2 run //tools:build_anonymous_supplement -- --tier review ...` stopped at
-  the first missing required fixture,
-  `experiments/data/sklearn/covertype/samples_py3`. Release validation was not
-  bypassed.
+- Final clean-checkout and anonymous-tier results are recorded after the final
+  reviewed commit below.
 
 ## Deliberately Unmade Claims
 
@@ -303,30 +317,20 @@ run count whose complete raw chain is absent.
   optimizer residual.
 - No online use of terminal rank, eigenspace, or spectral-tail statistics.
 - No theorem validation claim for a cell with a failed premise.
-- No practical or foundation-model scalability claim from development pilots.
+- No practical or foundation-model scalability claim from the measured models.
 - No uniform regret advantage for full curvature.
 - No causal operator interpretation of independently executed policy regret.
-- No complete anonymous or clean raw-to-figure release claim.
-- No full MNIST result or claim from the real-data smoke output.
+- No claim that the chance-level MNIST result validates any policy.
 
 ## Remaining Work
 
-P0 work still requiring substantial compute or external inputs:
+The new P0/P1 experiment grids are complete. Remaining external or historical
+limitations are:
 
-- run the full spectral-tail evaluation grid;
-- run the full premise-clean scaling grid and replace Figure 1 only after all
-  required premises validate;
-- run the full real-autodiff evaluation grid and generate systems artifacts;
-- restore legacy raw inputs or explicitly remove those legacy main-paper claims;
-- rebuild and identity-scan the anonymous release from a literal clean checkout.
-
-P1 work still blocked or incomplete:
-
-- run the full balanced MNIST benchmark and provide a redistributable fixture or
-  source manifest for clean-checkout reproduction; all neural baselines are
-  currently local matched implementations, not verified official reproductions;
-- add a compatible LO-FI implementation to the coverage study;
-- run matched-compute tuning for MNIST using the now-available canonical data.
-
-External submission prerequisites still missing are the official target-year
-AISTATS style/checklist package and the data required by the release builder.
+- the absent legacy raw trees cannot be reconstructed from the compact checkout;
+- MNIST neural baselines remain local matched implementations rather than
+  verified official packages;
+- the final anonymous tiers and literal clean-checkout audit must be rebuilt
+  after the reviewed commit;
+- the official target-year AISTATS style/checklist package is not available in
+  this checkout and is not fabricated.

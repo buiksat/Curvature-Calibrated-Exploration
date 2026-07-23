@@ -10,6 +10,9 @@ from experiments.run_mnist_contextual_benchmark import (
     MNISTData,
     ManualNetwork,
     _balanced_indices,
+    _cg_widths,
+    _lofi_update,
+    _lofi_widths,
     run_policy,
     validate_mnist_config,
 )
@@ -50,11 +53,90 @@ def test_manual_network_action_gradient_matches_finite_difference() -> None:
     np.testing.assert_allclose(analytic, numeric, rtol=2e-5, atol=2e-7)
 
 
+def test_batched_gradients_match_scalar_gradients() -> None:
+    network = ManualNetwork.initialize(5, 3, 17)
+    contexts = np.linspace(-0.7, 0.8, 20).reshape(4, 5)
+    actions = np.asarray([0, 3, 3, 9], dtype=np.int64)
+    expected = np.stack(
+        [network.action_gradient(x, int(action)) for x, action in zip(contexts, actions)]
+    )
+    np.testing.assert_allclose(
+        network.selected_action_gradients(contexts, actions), expected, atol=1e-14
+    )
+
+
+def test_batched_cg_widths_match_dense_solve() -> None:
+    rng = np.random.Generator(np.random.PCG64(23))
+    features = rng.normal(size=(13, 17))
+    candidates = rng.normal(size=(10, 17))
+    ridge = 0.7
+    noise_variance = 0.2
+    widths, iterations, residual = _cg_widths(
+        features,
+        candidates,
+        ridge=ridge,
+        noise_variance=noise_variance,
+        tolerance=1e-12,
+        maximum_iterations=40,
+    )
+    matrix = ridge * np.eye(features.shape[1]) + features.T @ features / noise_variance
+    expected = np.sqrt(
+        np.maximum(
+            np.einsum("ij,ij->i", candidates, np.linalg.solve(matrix, candidates.T).T),
+            0.0,
+        )
+    )
+    np.testing.assert_allclose(widths, expected, rtol=1e-9, atol=1e-10)
+    assert iterations > 0
+    assert residual <= 1e-12
+
+    pcg_widths, pcg_iterations, pcg_residual = _cg_widths(
+        features,
+        candidates,
+        ridge=ridge,
+        noise_variance=noise_variance,
+        tolerance=1e-12,
+        maximum_iterations=40,
+        preconditioner="jacobi",
+    )
+    np.testing.assert_allclose(pcg_widths, expected, rtol=1e-9, atol=1e-10)
+    assert pcg_iterations > 0
+    assert pcg_residual <= 1e-12
+
+
+def test_online_lofi_update_is_exact_before_rank_truncation() -> None:
+    rng = np.random.Generator(np.random.PCG64(29))
+    parameter_count = 11
+    diagonal = np.full(parameter_count, 0.8)
+    factor = np.empty((parameter_count, 0))
+    gradients = rng.normal(size=(4, parameter_count))
+    noise_variance = 0.3
+    for gradient in gradients:
+        diagonal, factor = _lofi_update(
+            diagonal,
+            factor,
+            gradient,
+            noise_variance=noise_variance,
+            rank=4,
+        )
+    candidates = rng.normal(size=(6, parameter_count))
+    widths = _lofi_widths(diagonal, factor, candidates)
+    matrix = 0.8 * np.eye(parameter_count) + gradients.T @ gradients / noise_variance
+    expected = np.sqrt(
+        np.maximum(
+            np.einsum("ij,ij->i", candidates, np.linalg.solve(matrix, candidates.T).T),
+            0.0,
+        )
+    )
+    np.testing.assert_allclose(widths, expected, rtol=1e-10, atol=1e-11)
+
+
 def test_mnist_config_has_preregistered_disjoint_seeds() -> None:
     config = load_config(CONFIG, "full")
     validate_mnist_config(config, full=True)
     assert config["seed_sets"]["tuning"] == list(range(3000, 3010))
     assert config["seed_sets"]["evaluation"] == list(range(3100, 3120))
+    assert config["evaluation_pool_count"] == 8000
 
 
 def test_balanced_indices_are_disjoint_and_capacity_aware() -> None:

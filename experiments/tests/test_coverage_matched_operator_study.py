@@ -29,7 +29,7 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
     raw = tmp_path / "raw"
     manifest = run_study(config, raw)
     assert manifest["evaluation_seeds_inspected_during_selection"] is False
-    assert manifest["evaluation_run_count"] == 42
+    assert manifest["evaluation_run_count"] == 48
 
     selection = json.loads((raw / "selection.json").read_text(encoding="ascii"))
     assert selection["evaluation_seeds_inspected"] is False
@@ -46,7 +46,7 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
         tmp_path / "calibration.tex",
         tmp_path / "comparisons.tex",
     )
-    assert artifacts["evaluation_run_count"] == 42
+    assert artifacts["evaluation_run_count"] == 48
     for path in (
         tmp_path / "derived.json",
         tmp_path / "mechanism.pdf",
@@ -57,7 +57,7 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
         assert path.is_file()
         assert path.with_name(path.name + ".sha256").is_file()
     comparison_text = (tmp_path / "comparisons.tex").read_text(encoding="ascii")
-    assert "Holm adjustment uses the complete 144-test family" in comparison_text
+    assert "Holm adjustment uses the complete 168-test family" in comparison_text
     derived = json.loads((tmp_path / "derived.json").read_text(encoding="ascii"))
     assert derived["inference"]["familywise_alpha"] == 0.05
     assert derived["inference"]["test"].startswith("two_sided_paired_student_t")

@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 PROFILE="${PROFILE:-full}"
+WORKERS="${WORKERS:-16}"
 CONFIG="experiments/configs/certified_scaling.yaml"
 RAW_ROOT="results/raw/certified_scaling"
 DERIVED_ROOT="results/derived/certified_scaling/$PROFILE"
@@ -20,7 +21,8 @@ mkdir -p "$DERIVED_ROOT"
 buck2 run //experiments:run_certified_scaling -- \
   --config "$CONFIG" \
   --profile "$PROFILE" \
-  --output-root "$RAW_ROOT"
+  --output-root "$RAW_ROOT" \
+  --workers "$WORKERS"
 
 buck2 run //experiments:make_certified_scaling_artifacts -- \
   --config "$CONFIG" \

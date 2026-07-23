@@ -14,6 +14,7 @@ from experiments.config import get_seed_set, load_config
 from experiments.run_spectral_tail_study import (
     Cell,
     generate_stream,
+    run_phase,
     run_trajectory,
     validate_study_config,
 )
@@ -83,3 +84,20 @@ def test_deterministic_npz_and_hash_tamper_detection(tmp_path: Path) -> None:
     first.write_bytes(first.read_bytes() + b"tamper")
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         validate_sha256_sidecar(first)
+
+
+def test_parallel_phase_matches_declared_run_count(tmp_path: Path) -> None:
+    config = _smoke_config()
+    selection = tmp_path / "selection.json"
+    result = run_phase(
+        config,
+        profile="smoke",
+        phase="tuning",
+        output_root=tmp_path / "raw",
+        selection_path=selection,
+        overwrite=False,
+        workers=2,
+    )
+    assert result["workers"] == 2
+    assert result["run_count"] == 312
+    assert selection.is_file()

@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 PROFILE="${PROFILE:-full}"
+WORKERS="${WORKERS:-16}"
 CONFIG="experiments/configs/spectral_tail_study.yaml"
 RAW_ROOT="results/raw/spectral_tail_study"
 DERIVED_ROOT="results/derived/spectral_tail_study/$PROFILE"
@@ -23,14 +24,16 @@ buck2 run //experiments:run_spectral_tail_study -- \
   --profile "$PROFILE" \
   --phase tuning \
   --output-root "$RAW_ROOT" \
-  --selection "$SELECTION"
+  --selection "$SELECTION" \
+  --workers "$WORKERS"
 
 buck2 run //experiments:run_spectral_tail_study -- \
   --config "$CONFIG" \
   --profile "$PROFILE" \
   --phase evaluation \
   --output-root "$RAW_ROOT" \
-  --selection "$SELECTION"
+  --selection "$SELECTION" \
+  --workers "$WORKERS"
 
 buck2 run //experiments:make_spectral_tail_artifacts -- \
   --config "$CONFIG" \

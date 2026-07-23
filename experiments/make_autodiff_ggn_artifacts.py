@@ -423,11 +423,12 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
     ]
     for model in config["models"]:
         model_name = str(model["name"])
+        model_label = model_name.replace("_", r"\_")
         for method in METHODS:
             group = groups.get((model_name, buffer_size, actions, target, method))
             if group is None or _mean(group, "wall_time_seconds") is None:
                 lines.append(
-                    f"{model_name} & {METHOD_LABELS[method]} & skipped & -- & -- & -- \\\\"
+                    f"{model_label} & {METHOD_LABELS[method]} & skipped & -- & -- & -- \\\\"
                 )
                 continue
             time_value = _mean(group, "wall_time_seconds")
@@ -435,7 +436,7 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
             work = _mean(group, "sample_cvps")
             residual = _mean(group, "maximum_original_relative_residual")
             lines.append(
-                f"{model_name} & {METHOD_LABELS[method]} & {time_value:.4g} & "
+                f"{model_label} & {METHOD_LABELS[method]} & {time_value:.4g} & "
                 f"{(memory or 0.0) / 2**30:.3f} & {(work or 0.0):.0f} & "
                 f"{'--' if residual is None else f'{residual:.2e}'} \\\\"
             )

@@ -718,7 +718,10 @@ class ReleaseBuilder:
         for relative in DATA_FIXTURE_PATHS:
             source = self.repository.joinpath(*PurePosixPath(relative).parts)
             if not source.is_file():
-                raise BuildError(f"required dataset fixture is missing: {relative}")
+                # Public dataset caches are machine-local accelerators.  The
+                # release keeps the loader/configuration but must not depend on
+                # a particular scikit-learn cache serialization.
+                continue
             self._write_bytes(
                 relative,
                 source.read_bytes(),

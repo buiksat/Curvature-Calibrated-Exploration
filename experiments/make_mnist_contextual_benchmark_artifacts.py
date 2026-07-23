@@ -23,6 +23,20 @@ from .logging_utils import canonical_json
 
 
 REFERENCE = "current_full_ggn_cg"
+DISPLAY_NAMES = {
+    "current_full_ggn_cg": "Current full GGN (dense)",
+    "historical_neural_ucb": "Historical NeuralUCB",
+    "neural_ts": "NeuralTS",
+    "neural_linear": "NeuralLinear",
+    "frozen_last_layer_ucb": "Frozen last-layer UCB",
+    "all_layer_diagonal": "All-layer diagonal",
+    "block_laplace": "Block Laplace",
+    "lofi": "LO-FI style",
+    "linucb_frozen": "LinUCB (frozen)",
+    "greedy": "Greedy",
+    "context_free_ucb": "Context-free UCB",
+    "context_free_ts": "Context-free TS",
+}
 
 
 def _read_json(path: Path) -> Any:
@@ -75,6 +89,11 @@ def build_artifacts(
     metrics: list[dict[str, Any]] = []
     for method in methods:
         records = grouped[method]
+        full_gram = method in {
+            "current_full_ggn_cg",
+            "historical_neural_ucb",
+            "neural_ts",
+        }
         metrics.append(
             {
                 "method": method,
@@ -84,6 +103,17 @@ def build_artifacts(
                 "wall_seconds": student_t_interval(float(row["wall_seconds"]) for row in records),
                 "peak_rss_bytes": student_t_interval(float(row["peak_rss_bytes"]) for row in records),
                 "sample_cvps": student_t_interval(float(row["sample_cvps"]) for row in records),
+                "maximum_original_relative_residual": (
+                    max(
+                        float(row["maximum_cg_original_relative_residual"])
+                        for row in records
+                    )
+                    if full_gram
+                    else None
+                ),
+                "full_gram_solver": (
+                    str(records[0]["full_gram_solver"]) if full_gram else None
+                ),
                 "selected_hyperparameters": selection["selected"][method],
             }
         )
@@ -149,8 +179,9 @@ def build_artifacts(
             / np.arange(1, len(by_method_seed[(method, seed)]) + 1)
             for seed in sorted(expected_seeds)
         ]
-        axes[0].plot(np.mean(trajectories, axis=0), label=method, linewidth=1)
-        axes[1].plot(np.mean(accuracy, axis=0), label=method, linewidth=1)
+        label = DISPLAY_NAMES.get(method, method)
+        axes[0].plot(np.mean(trajectories, axis=0), label=label, linewidth=1)
+        axes[1].plot(np.mean(accuracy, axis=0), label=label, linewidth=1)
     axes[0].set(xlabel="Round", ylabel="Cumulative pseudo-regret")
     axes[1].set(xlabel="Round", ylabel="Online accuracy")
     axes[1].legend(fontsize=5, ncol=2)
@@ -163,7 +194,11 @@ def build_artifacts(
     figure, axis = plt.subplots(figsize=(6.4, 4.4), constrained_layout=True)
     for row in metrics:
         axis.scatter(row["wall_seconds"]["mean"], row["regret"]["mean"], s=25)
-        axis.annotate(row["method"], (row["wall_seconds"]["mean"], row["regret"]["mean"]), fontsize=6)
+        axis.annotate(
+            DISPLAY_NAMES.get(str(row["method"]), str(row["method"])),
+            (row["wall_seconds"]["mean"], row["regret"]["mean"]),
+            fontsize=6,
+        )
     axis.set(xlabel="Mean wall time (s, log scale)", ylabel="Mean cumulative pseudo-regret", xscale="log")
     compute_path = Path(compute_figure)
     compute_path.parent.mkdir(parents=True, exist_ok=True)
@@ -173,13 +208,21 @@ def build_artifacts(
 
     table = Path(table_path)
     table.parent.mkdir(parents=True, exist_ok=True)
-    lines = [r"\begin{tabular}{lrrrr}", r"\toprule", r"Method & Regret & Accuracy & Time (s) & Peak MB \\", r"\midrule"]
+    lines = [r"\begin{tabular}{lrrrrr}", r"\toprule", r"Method & Regret & Accuracy & Time (s) & Peak MB & Max res. \\", r"\midrule"]
     for row in metrics:
-        method_label = str(row["method"]).replace("_", r"\_")
+        method_label = DISPLAY_NAMES.get(
+            str(row["method"]), str(row["method"])
+        ).replace("_", r"\_")
         lines.append(
             f"{method_label} & {row['regret']['mean']:.2f} & "
             f"{row['accuracy']['mean']:.3f} & {row['wall_seconds']['mean']:.2f} & "
-            f"{row['peak_rss_bytes']['mean'] / 2**20:.1f} \\\\"
+            f"{row['peak_rss_bytes']['mean'] / 2**20:.1f} & "
+            + (
+                "--"
+                if row["maximum_original_relative_residual"] is None
+                else f"{row['maximum_original_relative_residual']:.1e}"
+            )
+            + " \\\\"
         )
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     table.write_text("\n".join(lines) + "\n", encoding="ascii")
