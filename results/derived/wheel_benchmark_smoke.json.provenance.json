@@ -1,1551 +1,2319 @@
 {
   "artifact": "results/derived/wheel_benchmark_smoke.json",
-  "artifact_sha256": "457a2c720c8f5a685d2d34a1f380a00056cbc79e3225308f29841ec71a624a71",
-  "input_set_sha256": "45741a34562b1e404b64bad39b3309afb4ee38dfff13f52f1960fcdd8c38ea7e",
+  "artifact_sha256": "c20448ddbf5226a13704109f3301b74bec7462ecf92a64dd24999b100f2c2163",
+  "input_set_sha256": "620bc4fccba323f7a7b59c739917398ad0b13804eb7ba71480126fc065722c4e",
   "inputs": [
     {
       "path": "experiments/configs/wheel_benchmark.yaml",
-      "sha256": "785f52b1a4b4f4b70793d9b2564065ea3b3d0b478af1be67d3f772cb9f9b788c"
+      "sha256": "f2179f44ea141d6b78b2269c9d40089ea20622b5ae8f072be6b1d50a6530906b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3000/manifest.jsonl",
+      "sha256": "2ceae2c7a77b3cc7a3145dd62aada7c27ba924ed32e3e08b4fa7518e32787fd6"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3000/raw.jsonl",
+      "sha256": "70227d4897adde1ed737ba938cfdbd13baee560e532cde82c4d203520c1a216c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3000/summary.jsonl",
+      "sha256": "56e6d799d2cb76ba0f76ae58875ccf8335265a93a328bf29ac6050ce96aed9ed"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3001/manifest.jsonl",
+      "sha256": "ae1b15f76f1876e0c16421db2d011c252f31a5a53daa8ddff42ea52bf8992c65"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3001/raw.jsonl",
+      "sha256": "ac3ee2c61648bf142534f1fd97a09134b55fb5b0d01aac3ec661a4195beed571"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/all_layer_diagonal_ucb/seed-3001/summary.jsonl",
+      "sha256": "cf6aedaa1545f83e491a070775d7f91dc38648577c26d5a4f1c427ef5ff97e72"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3000/manifest.jsonl",
-      "sha256": "7ec6acdbd4615d35ad5d33afd48f24d95fae1fe49cc4a2b59cf602463984f9dd"
+      "sha256": "7d3fe10afac67ad3de3d6189952745e9dac610422b3a2cf27c6204fec141afcd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3000/raw.jsonl",
-      "sha256": "e8bdb8974ba7d034cca90dd253c714a34477f00c54f2a2fba1e22fb1475c53d6"
+      "sha256": "42274376a38d664b2a629f2594aea42258601f89f11910e763931a32fc7df96d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3000/summary.jsonl",
-      "sha256": "7e1eac4bf9d145b23667c23953e71edf80dbe2d746c7af2d609b8c1ed0ad9d87"
+      "sha256": "0801aef70206362d273fa58c61d2bb6db1a8f6be38e120a2678df52b3b613ace"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3001/manifest.jsonl",
-      "sha256": "c9e5871eab4f000f0eeb922981773cc289ecdab2263162bd68d2df3a190bbe98"
+      "sha256": "f48e7c84bde848f7cf0df0b84656df3b35257e4b8c27d52b2f260b28f1b725cc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3001/raw.jsonl",
-      "sha256": "57960cadd0c8b073e7f194914f3e1cb0ebfb972c07db02396abc0398f557bcaa"
+      "sha256": "595dedfdc980eb93f740390488afc8ae748053ce1b5ab3a1313660f4ba503643"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/cc_ucb_full_ggn_cg/seed-3001/summary.jsonl",
-      "sha256": "3d85a7fea0592c77826779554ee17e26bd2545d4a1a1834dce1b5b3a09771e8d"
+      "sha256": "abc280cdbfdbdc6f7a0305439514490e4e7c430f1ff260e52a8aff5e2aab1051"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3000/manifest.jsonl",
+      "sha256": "684581f1b4ea820ef9626e2c16e6c447fd6437ac27d881b2ff72426bc330dcb2"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3000/raw.jsonl",
+      "sha256": "ab5185b2bf39bd7ce4180faacadaeaab3bdc0d273a3caa1df2fd68a65e631b3c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3000/summary.jsonl",
+      "sha256": "26519f975d0e664b09ef463ce489ced84882679f9280cec223b39ed80b51c83c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3001/manifest.jsonl",
+      "sha256": "39af7ceac961243ba3cd6dcd6bb0ad4c532ca6282d26da8885e9d70afc66d4fd"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3001/raw.jsonl",
+      "sha256": "08efabf911956e9f9b343d6940db4328b7dd13afd94bfe677c068cea318fcb1b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/frozen_backbone_last_layer_ucb/seed-3001/summary.jsonl",
+      "sha256": "ed0b0349929307dc3430ac66c2bc83bae244e70c6bf32a973e55484032fd043d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3000/manifest.jsonl",
+      "sha256": "2c0748bfe7b15e658de8538492598c29f0a2ddaf1b4b8304cb7741ee97d59d62"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3000/raw.jsonl",
+      "sha256": "c1b0da3a6af5e79dad346f041318ba2d5b6bf84fb20c651c11c3d94516c5ceac"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3000/summary.jsonl",
+      "sha256": "e98860963cdeba0419eea4267a103360a87223f0da5738c00da8511b75869665"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3001/manifest.jsonl",
+      "sha256": "ad8a7379d77957d708ab3cc9a3fdbf2ceac65e1d822640bfb3cb186486088696"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3001/raw.jsonl",
+      "sha256": "3e57d1cad686c05d7bd3b874867c80bc4bee082de1e73e5cc21be3a6b3d0d4e7"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/greedy/seed-3001/summary.jsonl",
+      "sha256": "d63596cb8daa842655bde25f540d75a2cb758af450698f4e537388f64c6eb9b2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3000/manifest.jsonl",
-      "sha256": "c5411c5b664f0b7543700d40625e43ea1f8d6078907bca546136486c41ab84cb"
+      "sha256": "ecc3e12cdcd69fa5a2d94c7174e0d31b177c0b77fc77d4bacb05eb9586334191"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3000/raw.jsonl",
-      "sha256": "8d28363b367a2152bdfe8d0ea00a0c1b17958312e00cebc6dc2eef28b775df40"
+      "sha256": "f487df14c111bbc94ecbe1d1907156979c8e94447191fea04f8d70367ede611a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3000/summary.jsonl",
-      "sha256": "23af9d41d0f45cb8001f65ba3879fcf9c58ff5c27fe1dbcbf3dcf0b0d2afcb3b"
+      "sha256": "22ca748d42ff5b2686bfec48866eb14c0fd9d460d85488be62032daf9773edeb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3001/manifest.jsonl",
-      "sha256": "4d56ecc637cabf1ec20a86e14c09db84c87b8e4a2458a9b4ef5d2ca514929a69"
+      "sha256": "00a7fd72529a8caa13979ec9ef845069171c1e6c68afa84438303c55a0a666d0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3001/raw.jsonl",
-      "sha256": "6b12276d57711a8bd68615b01796eca22ae865f918c5aab5769125ec4693e0e1"
+      "sha256": "a0142ff9f9b5525e9b2f8adcabb1987e8274ae452e026ce7bc521b96d330a3bc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linear_ts/seed-3001/summary.jsonl",
-      "sha256": "0f462c01add3311b50a9afea98c7583835dd8b8a88e2a7b78d12e04823d3797e"
+      "sha256": "fd1884a76ce965c558602496f9b72a9f2ff10d0e4502e561687e22bf48c2761d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3000/manifest.jsonl",
-      "sha256": "dcad7e0f3146381ca3eecddcb4760df0db06256785679ef975ec80c5bc4e1d32"
+      "sha256": "36aba92abc95b329853be0c195f50346c1e9dcbf71caacf3eea3731bdfce650d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3000/raw.jsonl",
-      "sha256": "ac63525232ac44a3df115a5dcda0f368f42973de63a24c73ed55b9117895cc25"
+      "sha256": "000d25e95807ed29f6faa960781788584bab2d08a91fc1ac5e40ae5efd54e509"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3000/summary.jsonl",
-      "sha256": "3271844946731eb39b28c7a695261e5e29a897de6b3338cc0bd7f962f33e0e35"
+      "sha256": "0f4f62726c8c9983bf7577b8a3b2f1c43297813befc70e12ec38501fff90dd13"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3001/manifest.jsonl",
-      "sha256": "1264026cc0d65f0b52ac935613d8633dc4df509bd17f663aa7231fdcdd01343b"
+      "sha256": "228d10e871de50d771d2bb2b232b691567aabad91fc9b92707c8d17a6bf85fa1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3001/raw.jsonl",
-      "sha256": "522fe114981559fbba4d52c31350a49922b833183aca713ab7fbd5f7de55af5b"
+      "sha256": "843c8d9597af8edb5611cd43adc333b5854f0b513a177f08169607eaad4417ad"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/linucb/seed-3001/summary.jsonl",
-      "sha256": "fe218df106f972eb62bd0dd2fd946099dae68048c342a8487fc9015f2e9dc93e"
+      "sha256": "3e6d079c3a9bf0126dbee7deeaf3d62831a65449bdd58c2d7a316439feb0291d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3000/manifest.jsonl",
+      "sha256": "bb6d71c7eb1bfba4d4fb001fc2c607ced8106cbd9bc4f5d20f639baaa4f90c1e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3000/raw.jsonl",
+      "sha256": "08c9965a3ed2610bb1007deb4ad0c647671a3a1cc3f6aefa021dd7f58beb6eab"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3000/summary.jsonl",
+      "sha256": "dfd69d3bf79e7a650703e29c384705aa500602f52b2c3f34ee363d01c7190591"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3001/manifest.jsonl",
+      "sha256": "3676945287e4b46cb6f658b452a3c43122e96793d6614ecad664b02f262566d3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3001/raw.jsonl",
+      "sha256": "fd7263eee9d3ef19e6bf3baf221616fadd38105728d3de27b8c0c149e4b4205f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_linear/seed-3001/summary.jsonl",
+      "sha256": "407685c135d47b3bff464d84bde0c767e980bc57e53e1c866c98c7eb133e82e8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3000/manifest.jsonl",
-      "sha256": "4a66cadf247828e85a5b951e2aeaf0fc79af089df702ea9e782b10ab5645026f"
+      "sha256": "3d5f0fa6a9223fa85c29dd6498284331f865176ff7fd2e58d9b92802b61c5b00"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3000/raw.jsonl",
-      "sha256": "0347510e991da1d4a3ace675a4d95c12793a8b7a0daeb293a71684950966aa7f"
+      "sha256": "88309ffd730e74b39b28aa00248f9da0378bf73f772723f7f21d30ec7652cf7a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3000/summary.jsonl",
-      "sha256": "3babb6745e57f1659ac9b591aac7f5a12bb6ac29d90c47d3b7edcb6f57058236"
+      "sha256": "9b3df1f285910ce4f55d6d718d3aceb871694e1b8708dc1071606bf5f08fde98"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3001/manifest.jsonl",
-      "sha256": "8121721f75b590da094b3908fd525357f05c135244cba9ddb1164871bfdff9a3"
+      "sha256": "c70bd3d70d9982f04d4bcf7f0a55f6dc856ca5f751b8a4a8d0f55e7770294dfa"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3001/raw.jsonl",
-      "sha256": "a08f3898d8fad45be95fb586cb73b6b73ea8e01e0941dd45065abd38841b704e"
+      "sha256": "3287868f539a3f81f58c0efc9cc8b2c84d90a2892f2ed68f29a98fff791b4219"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ts/seed-3001/summary.jsonl",
-      "sha256": "66ac5c66ef7d93bcaec411801cf499cb1fb449df4ba0a5d7a1509243070f1dad"
+      "sha256": "e252e225840a14fae1e2c08467ffcfb096737f842997369d022cfe8fc9414e2c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3000/manifest.jsonl",
-      "sha256": "30cb8d38b34ec242c1f1e4fc060d11455e6ef5787bd40470999f6b8eca1e5856"
+      "sha256": "d49d2ba2b9d3a1c0f2856a9d9dbc57684a80f9129f8120d547af6ed657291aaa"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3000/raw.jsonl",
-      "sha256": "9eed770310944529232cd027ab3c294a0f008daa6a555a207e839d14422c72cb"
+      "sha256": "37e9bc37db81b0e03a98de5a1e48f96a8adf950d508f2470776a41f052dc05c6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3000/summary.jsonl",
-      "sha256": "29a540722047113806f372f0f0c051e514023c5f5d3ce59d9eacb9b3449f0d39"
+      "sha256": "2cb37c8e05f99cd65481793e22dbd27992a3e681718c84e27c5efd937735e3c4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3001/manifest.jsonl",
-      "sha256": "7ebc5d76d8fe36044a8bae45219919d7ab1b46f9d8ef777e312f2928c52295da"
+      "sha256": "9847cc950f759ea5df0fabf90f969745ddbc667fb6d63f42b3afec089995be33"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3001/raw.jsonl",
-      "sha256": "e86dd550ba833229a1417254ac8019de6e4723308b6c60981fd1b24851f680ae"
+      "sha256": "6669e06a408bbcddc2e207a9d056ebf5d92f3830049f43b8705a17521b13201f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/local_neural_ucb/seed-3001/summary.jsonl",
-      "sha256": "f00d657b6708584386ae45cb581dda93fedba85cad65104ae1e7f3f3eded8aaa"
+      "sha256": "b8ff0fab3776949834b3cb77ede862a0fcc1b6963e69273b06b0fa6ad80f02c6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3000/manifest.jsonl",
-      "sha256": "03f0d5dbc7920c0e85bbc88383b392ab3d86e62ffa14fc872a9de7a1d4fa2280"
+      "sha256": "714f4bac3b009e96593574d59cdef15a157f590702302ac014b5851893cdcb52"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3000/raw.jsonl",
-      "sha256": "7ca0bdb00099348ba462ad708f67abc85ce2fe6def70e2594ccfb35f4c8e1ab7"
+      "sha256": "b6779e8e416e56d6c9f47931bfdf0ff7c1fc1e58797bf94d801ea6dec31fa6f4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3000/summary.jsonl",
-      "sha256": "4af54426563bed325ec1f2087b0ad0ece7fa7d8de3279fcfa9316ab816f38dbe"
+      "sha256": "f2429c82fb110165e37482ea9c36ec13081c3466341ba10926ad3ca4fd4bb33d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3001/manifest.jsonl",
-      "sha256": "45c79e51c64e8fde59e4d3739db8e27787ae6a1b11079f8d456b1a8a73547621"
+      "sha256": "d532722d1ca2c3ede801ab826c194716dc7aee625c381ac91b8da5e9ba8a3ed4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3001/raw.jsonl",
-      "sha256": "1bf8b15c4526a56469ed7197751df87ec046917c80ca94f29c234b3e94f59477"
+      "sha256": "c904399c6f32e87d1cb1892b2b3a016eedb98eb4508aa419c2d7d53d1eeca59b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/oracle/seed-3001/summary.jsonl",
-      "sha256": "88b3cd51b022f82fbe65da3d51432b392b2ba868de6d9d329b7dc617fd80e1a3"
+      "sha256": "87face118a1e7677ea7ebf0eb5be272013d2bf72212fe0c182a1d5ca5b7567a7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3000/manifest.jsonl",
-      "sha256": "c577f3ec4cf183596ac2476c17c34870f6e6de5e3bded93425b76468f60d5f5b"
+      "sha256": "456e379525b5da7612ed1cdff0abbfe8e24a7c46d72a0906d1bc22d7c2cce0cc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3000/raw.jsonl",
-      "sha256": "9bd0a45bf5603c61f824de30c193fb121a4452c961f0c7dbb7b0fcbd8e173793"
+      "sha256": "cabaa7f2830a8da39dd0476bc29ac637fc20f6c2be174e37231c2b67a786378f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3000/summary.jsonl",
-      "sha256": "56a326622e33e60ef7f4bd139c3bc6cfef681f1002a9887444963683de9ea8bd"
+      "sha256": "cd08a0f2f59c16a77e6c44149d88cc162f29eb1d6064a26821e733113d821122"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3001/manifest.jsonl",
-      "sha256": "a7827689611f7e29067b18d5c962c78aa1e04da214cfe55dcccb585c3bdd45a3"
+      "sha256": "5509a7ab55561f14fc1e1fe04f5fc6b2ef8160d561019b97584f6a6845423c84"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3001/raw.jsonl",
-      "sha256": "64f1373c44c569d5c289ad478e8d50719a167c8a4765fa7289b2c2cc8f34af05"
+      "sha256": "9b8ab48db9269677943dcc314cfa1dacecc2b067191269498adb88aa47943196"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/random/seed-3001/summary.jsonl",
-      "sha256": "98335179f38b2f385e51afd6bc6160eabc3b5642d0691c91d63035c01fdb06b2"
+      "sha256": "2b0fc845c02cde4e9f6109c22da7f86898db6a375f3241424b1aa04d51ab94b4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3000/manifest.jsonl",
-      "sha256": "7c6bb601ed93e3bdf12d34da3697e5c5cfd764efd3a319b08524a01b00a52d1e"
+      "sha256": "39539b308172f54171a9f478a60990a29ae564d511d92a9d18b68200305b4350"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3000/raw.jsonl",
-      "sha256": "b49e8cf2d83ef9ab1d8d8fdd8e8c8a3ba09ff6415b65137b6eb981680f6b22ac"
+      "sha256": "399e968e667323fbf2a5d372aad4670d1051ef7832b625328218e1f73da4138f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3000/summary.jsonl",
-      "sha256": "e318883ffdfb8bde6aef6c458bbbdd9df6c721253430b8c67541231cf17db300"
+      "sha256": "b25843d15f1316bf85a6b27a0ebc7807e58de91f7eb5b820911458530ec7ab98"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3001/manifest.jsonl",
-      "sha256": "1361172fbf1aab177ebcf763cf8530c582e0ec5b8fff6c3d0949ef8819af4f9d"
+      "sha256": "4972062f8e9088b09c133ecd0e25ca0685269e66c42d06d8dc0bbe342ea6a95f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3001/raw.jsonl",
-      "sha256": "dc1d5b2c9265f729adfa9167df09b1e8b252ae42599d8f1a69148146e8dd257b"
+      "sha256": "16b61092fb5cf4a17a838bd51490347e000e551ea1213babcbd1d14252bb949d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p5/safe/seed-3001/summary.jsonl",
-      "sha256": "786826cf29d5d5e5c726975acad23e433dcdf8f5cd320f78a029208490e1c03e"
+      "sha256": "771c6a744e258d8cf4eeb3774611f1b9c61e097b91ae0f663e34b465bd9523fd"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3000/manifest.jsonl",
+      "sha256": "88785b97d29a9851237f21166acb5cf0d60c2957217fa697394057d15e49658c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3000/raw.jsonl",
+      "sha256": "1576190b2f970a096f5329740e080743eb89be5d4b1b7d2e0277ff7b87ea5fc8"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3000/summary.jsonl",
+      "sha256": "3cacc5d60a05433249672b588c690b2ed769579beeded4670816f7d25b6fc7de"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3001/manifest.jsonl",
+      "sha256": "dcd7fcbab401e95c32d2d1111f8bd6a4bb1dda360f19eefb534afea871e647af"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3001/raw.jsonl",
+      "sha256": "a21d2d284d5a562c52a9ab707972821b082f1dbf6c4cceb843c474423ca48c86"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/all_layer_diagonal_ucb/seed-3001/summary.jsonl",
+      "sha256": "cac169198e50ddcb5e6f2ee56dec759729830d71e96c960d0870565f39911eef"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3000/manifest.jsonl",
-      "sha256": "64f089b2fbb1991312284344f292b1b9521af71c03b0f21229038e10944f4fea"
+      "sha256": "3af3f563037d6cd3bad4f63fe9ef4ea3a9a3eeff63c5166f4653f0d9020e3a60"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3000/raw.jsonl",
-      "sha256": "787bed24cb1d192694f7ac4f634c0f9693e8c981af588333b34d9ee6519323e0"
+      "sha256": "0faf5ca60d220ca3b8e0f3a2b4c23a4a1cf0a43ba77bb1f44508199d251e349d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3000/summary.jsonl",
-      "sha256": "dece4c4b1778c92f8a44247e8e93a5897e7da518835e849b2ea36e4bd92fcd7c"
+      "sha256": "0b35494e34eed66e004a1b4306c3229018c4b78828fb2d952322f81ee2ca2cb9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3001/manifest.jsonl",
-      "sha256": "c12fb3abae3907b2c7acfc1ed0f2fdf27137f5e742d3fd2b106c4701ec5b4b03"
+      "sha256": "225c276fddcbc9b0050a88d4a2c8ef0f07d944403232d9698444dd6cc5faf163"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3001/raw.jsonl",
-      "sha256": "e144988437e1b6a0ec93df76be5a9566ba741e3a2fa0906029b033146fd4c355"
+      "sha256": "cd6e50967c30e5a4b3d9a8fb74065d77290a82858f23b2a68375adfeb5a2ac89"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/cc_ucb_full_ggn_cg/seed-3001/summary.jsonl",
-      "sha256": "034f273e0f3f7ed733bec8aecc7aa4add2fbe7c3d10c35e49327dd890ef7e599"
+      "sha256": "f4ac7a27f3be2d06c78d90f01041a8cd00f2ba7f7c8d272e29852ea26be70436"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3000/manifest.jsonl",
+      "sha256": "3898d0fa879b805cb11e9ae78510f2f59603aa482d8332a110af1f634cb989e3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3000/raw.jsonl",
+      "sha256": "4c0e49642a9aae36deaa85efe11e0b6dfa9271de0f9cd7ebe846edde338c12fe"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3000/summary.jsonl",
+      "sha256": "16fc7d5c459c622afddd9fe53b4a645bb1631d8ff9a164da1e67a8c12868e027"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3001/manifest.jsonl",
+      "sha256": "e4412a9e79671a58f74174f54b2be41702b9640549d0c17395ab6d6cc76c4bde"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3001/raw.jsonl",
+      "sha256": "b2e02f9840604555883cb4ff91719b20a0694a9a2635dae25eeff88dbd2476a5"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/frozen_backbone_last_layer_ucb/seed-3001/summary.jsonl",
+      "sha256": "58fdb27155bc556d84bc5267ccbd4e957cfa62207868ac15ddb19464d3094978"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3000/manifest.jsonl",
+      "sha256": "f382c13e2b31650991e1de813be88be3f6306518097142cd3eee7d8d943fc77f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3000/raw.jsonl",
+      "sha256": "7b4b2953d49d1fb516fdb55009b3410fb5e5b6d8e7ca883885556661fb6fb931"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3000/summary.jsonl",
+      "sha256": "f0a82a4b7e8c053e70fc7bef79c99a64d4d51709b45265d8ab338ee57b44637c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3001/manifest.jsonl",
+      "sha256": "9a7e7c6ee9895b74238d28e8c83f2a06578a214c41a088cb7707f4108d679c00"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3001/raw.jsonl",
+      "sha256": "8cd30032b84404e7816e8dbbe27697e660a71a0ec25a794eb21c87a8af808751"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/greedy/seed-3001/summary.jsonl",
+      "sha256": "9ad97c3ce0a4104e97d3dcada7c5eb8a1c6028f7d9cc7d1e7be4f4be243503a9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3000/manifest.jsonl",
-      "sha256": "f135d8712a8eb7c8969c4293629865f5c1fb7e81bc886c05b55377d1cbece144"
+      "sha256": "8582837db58400d815dc32a46e27e5d48f7f500eb3733daedf3dcf16fe79d2b9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3000/raw.jsonl",
-      "sha256": "cbeef99a30d5ad2162c345e45be24601ded7f94a278c9f3c697535b22d50f2a4"
+      "sha256": "409a4046e9a76defa338a7c6387f803cb7c7c551a895f19ffda4f7af2bddfc69"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3000/summary.jsonl",
-      "sha256": "d2296633793d1f5bcbc46984a824e8040139f9eb49990d96aa83c1b3119db3be"
+      "sha256": "909f05f175419efa69d425553cd13d72be616f850565230a50d0bd8af6004579"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3001/manifest.jsonl",
-      "sha256": "63cbbec4bfa12cbdce4cef73e0e6beb15bf4ed7c1b0d9b70f3ad4cc8d77f7e5b"
+      "sha256": "e0e0ed31fe257cf7120eeeaa00cf990964e99a236698a52739fee8b57d2749f5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3001/raw.jsonl",
-      "sha256": "3d3dd13e80943af8ac662265019f602abd61dc14c3fb5ca0786ba82039412bed"
+      "sha256": "1701c7b3781dc7bc9126f49bc08f9768a3cf1a42bc349e5a3259b7797e9beefd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linear_ts/seed-3001/summary.jsonl",
-      "sha256": "4c888705c44b61500b397e0a3f8e81f4d80d2aaead59feb50cbaba7c71111de6"
+      "sha256": "75c17c8e8024b6b570d65e5d8e13c5660631ee0e51acb5afd0af4ca6b19257ed"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3000/manifest.jsonl",
-      "sha256": "f30e6ce9b1dee772f1c58fb2cc6bc7688a5a6b98ec5893f353d15d18d4d776f6"
+      "sha256": "8ddfb94ecfb347eccec3e6f9faff5314e0bf07cdba509038484e2f7946fe70ec"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3000/raw.jsonl",
-      "sha256": "1af9e0d6d83c3461812293b1e78fc344c83a262fb6f42719f9d032bfd4b3ec94"
+      "sha256": "5d6437713c6016215c8c1ce7490eb4dca18aa3b9e154d97ee3f249a98a05ce32"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3000/summary.jsonl",
-      "sha256": "bf617614f1c0f4de84d6aca2738dcfaf4392f54f04cd9ad69b85df1723c36f21"
+      "sha256": "7ea0259023b03847a4cc7028a8d2ea7b6139750a66ee3219b2919fc945766b3b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3001/manifest.jsonl",
-      "sha256": "6b7187bde9fe27978039d2ac261a17f18c27a84b773823f075e495eca8665ac8"
+      "sha256": "d37fc5a52abeacec6962137aa4b0266deefff5104afc08f3e2b107ba505eed0a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3001/raw.jsonl",
-      "sha256": "d9bc614bb7b95ef55974dbb0348b4c24e340f8532d3d82271ae3fbc995fdd7cd"
+      "sha256": "d6a0b38e64858facc9f36139066ac6ee8b40da919c358b3236a621b99884a22c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/linucb/seed-3001/summary.jsonl",
-      "sha256": "58a5ce16ecdc1f89f6cb32fc71a41cd4f379e739f354cbf4543622b3f4bc60e1"
+      "sha256": "c4846377ee1c46a3430c23c7ad5f444c27148c0e9625f6fccac7508747d082dc"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3000/manifest.jsonl",
+      "sha256": "4dd838d36fc0b64f18217eaaf12f12d63f98126cfdd1efe5d06a147edfa0af46"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3000/raw.jsonl",
+      "sha256": "c75ac16ad1b109b1684a73f37499e980876e4ed6415ca519f0c21a2bad0623c8"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3000/summary.jsonl",
+      "sha256": "db1810e1a398bd27efce49f7fae949041a1e82c797df85e589e8569149efadcf"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3001/manifest.jsonl",
+      "sha256": "2042429081476131d9db9142a0cad458d1184ee6ff25e64a48f82ee49555c613"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3001/raw.jsonl",
+      "sha256": "041b1870d5e85073344e26ca4a0e8cfad899150cb0cc182aee7c67a25cda82a2"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_linear/seed-3001/summary.jsonl",
+      "sha256": "89464300f6d9b26ef457200fc306d166735ac132c415e4802ea1e4488f17a6a8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3000/manifest.jsonl",
-      "sha256": "150a4a3828e493f8f8ac0b6ef777b6c31930c799f578743833e151b607794d0d"
+      "sha256": "88c28310ca15b8747d3788cfe8d2f6a116cf6a22fe912267b99b53a54ffd9961"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3000/raw.jsonl",
-      "sha256": "5ca2ac3533463e4d8d2993db96b22cb1784a93318cb735592d094dcfe093dc59"
+      "sha256": "d8b840148b9b4419c54b6d6136780d5c3f4c4cc5aea866b02f2abcd76b3dc590"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3000/summary.jsonl",
-      "sha256": "1dfc95e83f30001ff1f692440e075dc6c2639d995dbd47da2aa445dbf92ca993"
+      "sha256": "51072e13bdfca5293bf3cb3500d40233607c23b6fafb3e2ff59725d2e25ae140"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3001/manifest.jsonl",
-      "sha256": "aa30b1933450def5bc83e4ae7a5d192c2cdcc9a916ef2cde68925d321b5feaee"
+      "sha256": "160d6c4925d0bdbf333ff2626d7320caa5d5d145d3507869bf1a69ad38974dcb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3001/raw.jsonl",
-      "sha256": "8032856f7037de0f3fe66f5abee5e6468c0f6243aae8a0e1ce2ac9deca774a46"
+      "sha256": "fc135bdf38f1ccbc0afbe300c6d2063b405d95a1079f79fda5499df44361dbcd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ts/seed-3001/summary.jsonl",
-      "sha256": "928dce24a4cefb4a1b9f6d5816d3921a0e065ce64c7447cb1889501f8314b734"
+      "sha256": "d70196489245993e262f5f00ab3f4a0a2a20b4948a4b388b21c099f357df4c97"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3000/manifest.jsonl",
-      "sha256": "cd6804bbf978233ea75dab80c9627a556537c65470b9619412dfec70574abcac"
+      "sha256": "507d8d85f1d109c08e187fc38ca64ad5452e5567d1d80d996c8367a2572218e3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3000/raw.jsonl",
-      "sha256": "e872728282b0939992bd4c95088eb926b4f2b05fc5f02507b942149148bc066e"
+      "sha256": "e660666d4f2da336070921456ae6df0d0a1457cf47ef32a33312b592974b52a2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3000/summary.jsonl",
-      "sha256": "e0d2f0bd1cd7161384f893f37ed02cd3ddb61853303965f641f93e54ffa3eac6"
+      "sha256": "06c9694db8d298efa39a64a306cf188e13fa31b607c89433e29b0b07e6435121"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3001/manifest.jsonl",
-      "sha256": "835ed4c2b81d40c1bda9eac788defccc9f2ad98e9a5f486c285d65b4338b3cfc"
+      "sha256": "37c0bdd9babec0f93f575b409936ec95948fc59eed1abb2c7e000e924e4ab54f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3001/raw.jsonl",
-      "sha256": "c54929d689e59dea9a96bec49a1a0942e3fc355c72275354167c6472222cf8fa"
+      "sha256": "98650967624e9b8538a6e7fac5854820729df5ea700db4c0dd0686201e900830"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/local_neural_ucb/seed-3001/summary.jsonl",
-      "sha256": "c052c4d8cad0c82e17f7846010074cc84e5ebb66b6534519839f732c7739693d"
+      "sha256": "0e0e15df3ec9027e74cd404ba4618a1d00bacd2e73389078820b3006193736c1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3000/manifest.jsonl",
-      "sha256": "f217a6f3a2747666afcebabf88c9338995eb61df37b8b27667e99351e6469351"
+      "sha256": "5ff3e13808ef1610f308d3129d7d5be4901f14388b5c1ef206407fa96a0022a2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3000/raw.jsonl",
-      "sha256": "c03978b59b8be962221fd07dca475b07b2aace3c15fa029ef836af02a711cffc"
+      "sha256": "61c6239ea7c83fd42732d29647098038e862f849db8cd7ad7a8362f22fea177e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3000/summary.jsonl",
-      "sha256": "dc89e54ec7f03df975674069afb601fbb6fdb79cfa71d5d669b905a636c9f023"
+      "sha256": "ee07848a4f84413df69bb1147984313b8a76677904d989ecc8a7dddec37ca65d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3001/manifest.jsonl",
-      "sha256": "5ae35fb14943fde1615da29cce03ef21b067717aca369a6c1ac7e1a610b8efe1"
+      "sha256": "f806da80a5407956cc2102447f9aca2d6267a28cbdf221f4627ad28782744363"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3001/raw.jsonl",
-      "sha256": "918326d3e0707e8211f561199a0c92eb4e7d25eeab9e62d1f49b476d59372c02"
+      "sha256": "c8040a286553588db74b17c52763e8d08e93e37342c8d8b8fd3489b69123af79"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/oracle/seed-3001/summary.jsonl",
-      "sha256": "20e35924351be2a76f68c98cda26385cbc87a777bffcc79bbc7c9709a3ed659c"
+      "sha256": "abfb564faea2fb06dcf361e792363400e9dad25ce5fcb3a53d5bf8e2e6162233"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3000/manifest.jsonl",
-      "sha256": "bdcadc01cc5931a6d1bb4f094fdd7a4528fdd57e3397ed773983506913772c86"
+      "sha256": "59c83dbba8b03f8edf4a1d20595a61f5b2426a3e4c06c3d519257813ae939998"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3000/raw.jsonl",
-      "sha256": "24867e8d20524c0d1ace59b36b3d5d1b0995a8adfeb40ce01da119fa3da27f2e"
+      "sha256": "79d21b1cb354cdbe5eb997bc95f10ce232569c4fd75690695712941e3091f540"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3000/summary.jsonl",
-      "sha256": "d5f57f3ffef9fe527c52f1395ede0347492fa0ef58d0f26629851f0fba5f6453"
+      "sha256": "bbe8c26d8efe5e24f3b1bbdaf46dede6c7ad3bd3f6c5f041018f0840f0dc6766"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3001/manifest.jsonl",
-      "sha256": "8c34b4109b3fd261e37fadbed84339414ba43dc16797b85958c62ac7dfac614b"
+      "sha256": "e5fb180ccc10dd5b8e11c81ba672cb0f51e63c095f6ed264bf01a88a4c1e6a7d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3001/raw.jsonl",
-      "sha256": "c3411ee90ae1b0f0f4c55606ab368e2858cfb74e7bdf449e986a89f6204ba6d3"
+      "sha256": "745e39be21cb351de61c47c42c308f6b8e67b68e8f15927b1d481da963dfd55f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/random/seed-3001/summary.jsonl",
-      "sha256": "062c82a13cd5e392d0c0150d090dced4622224acc8f2aa0d506e348c750ace1c"
+      "sha256": "9938237c97ecc8aa9ba5223d3a43f81464865738b4e6087b34215cd257c597ba"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3000/manifest.jsonl",
-      "sha256": "6e0239ea0dfcdd7e1b2385069d367ba335984c5b642d23b0346d546fb5e28bb0"
+      "sha256": "efacd0519bdf20cb552d59f90f30cea428456cf9ed8aa3ffdf330e9ca23b9f8b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3000/raw.jsonl",
-      "sha256": "b0e91d8917f8e8d540c0b64436e53da1dd36306c45c370dd828a20b14e077d87"
+      "sha256": "a2515605e56e98aeb652732d747ad5e251a0182daf016f33dc68f5d1e0c9ed74"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3000/summary.jsonl",
-      "sha256": "c55b5baca40e8853aef72189dcb8cb829f9ad228df199edc06d0b19b577cb279"
+      "sha256": "611b3fcc3c2ba52f3dfafe60d2919d8e38f08d2074c75ac83f807e2de1abaca7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3001/manifest.jsonl",
-      "sha256": "61363749d1631984a34efcdcc183cb13751ffa8f3ad876cf152009af1841f691"
+      "sha256": "2fe61db0513f41622841eb852d72a414752b2fbd983e5f8644a50cb72610add3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3001/raw.jsonl",
-      "sha256": "6029b09d5e3aa63da861bb0a3f72d27e1a21d838da638d0ab8c1edc802480607"
+      "sha256": "26253b184e169897058697bd0f9bba25635dee946e2cfa6095a2b002fb7a1a23"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p7/safe/seed-3001/summary.jsonl",
-      "sha256": "71620b8ea7550cc50236e5e5b4acc94a3a706018b79bc33c2002b5ef3cdc42e7"
+      "sha256": "c4df66ec80a9aa0191d86f20e578a487ffab03d6cb78c794ce927c094fa2e1e3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3000/manifest.jsonl",
+      "sha256": "9c1bbc59571107e65c27fa837bb8b3a482a62a54c808859e6d3862702b190cd0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3000/raw.jsonl",
+      "sha256": "9c96d9cfdc90b7611b8dc2137288415f4647b4407597e498ba7dac7ac43a4dd7"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3000/summary.jsonl",
+      "sha256": "4d3da3a3a2e90d341f8f795928ac65990c0f842f6e8d4661864642c1b95b8658"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3001/manifest.jsonl",
+      "sha256": "6e7bc1748100f80a20c6d4e97ac81d156d28ccd9c09df96f7f5d4af781074bcf"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3001/raw.jsonl",
+      "sha256": "fb422ace39f9ecf7194098cd3d36c07e150a6d612fa523eb7c40353c8f1b2760"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/all_layer_diagonal_ucb/seed-3001/summary.jsonl",
+      "sha256": "e1e9eeab0f6186f1e40c6a58c907405c6b208a4aabe2cf8eb794b6cb6c614e10"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3000/manifest.jsonl",
-      "sha256": "708f03764f12220c735cc96d42f9916e9bcfcb363ecd85db432f4d61da9b8504"
+      "sha256": "4262984b94f9eb9c131edb3eca122e80f99db936b58feb52d57959db227730e0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3000/raw.jsonl",
-      "sha256": "249994c61013673780ce1ddc22518e829e9ef29127146c8df4280fb03283bfc6"
+      "sha256": "f5055d0e66904d3a204451f9cf699843a526d66dff1ef2d629127a013c90c560"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3000/summary.jsonl",
-      "sha256": "f56b62902dcb6a9c87b9aa5462a57d8b97bec9d16e9d24ccfcc22bf655f0ed60"
+      "sha256": "a4e08e715d6c70bd3b94d22123363c852e454f831fe3953d68cf51b6f1d480af"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3001/manifest.jsonl",
-      "sha256": "b34632ed9e8084aaf70c4834e34ab4e8693afcae0a3d6bfb341cc0777d2bd598"
+      "sha256": "df7192226fc11c188ecad789332fece25116575382c9082fcf5e31440766d41a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3001/raw.jsonl",
-      "sha256": "b05ee4a46018e5b39609fb967d1a01015a35e54fac37b71d393a60bd8fd57246"
+      "sha256": "93832bdc5564a99699eea1fa5a3b85836c689f91778d35110548a407ca4f42b3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/cc_ucb_full_ggn_cg/seed-3001/summary.jsonl",
-      "sha256": "d1a549ddee0bedef51be381774246bbb2980c2ccda3a72cf1850f942901e3989"
+      "sha256": "c9c50c1f303f8e87cefdfc2ddfaf99405091af98522c578721796190bb32e769"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3000/manifest.jsonl",
+      "sha256": "54cf1af2dab371d9c16cf6ed123b91dd8eb5d99489337b4ad114e6d171a605a1"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3000/raw.jsonl",
+      "sha256": "dbf0ac27d5d8685200dfee9eba40c284c614a92deb11e236672b109282427647"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3000/summary.jsonl",
+      "sha256": "d7b1ab4050291d93050cf2bc2267719d250ccbcd1d6bdf1b2f8e82dfa26f3f89"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3001/manifest.jsonl",
+      "sha256": "580f2e7eacfc30182ba16159d41e19f84b64e9c9b534bd89c0039d4c5d2b4b58"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3001/raw.jsonl",
+      "sha256": "523d2e8003d216754970aee7076035049607e3448fcc67ad5015917a4d9a42ad"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/frozen_backbone_last_layer_ucb/seed-3001/summary.jsonl",
+      "sha256": "66d564fb4ef2b3affefc0a794b46fcc1a04eae8638f5c1655120039bcd0562b5"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3000/manifest.jsonl",
+      "sha256": "63cb9487a0e268844e99ec876110054406ccc7ae6b1282698658e3134eb17568"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3000/raw.jsonl",
+      "sha256": "0eadb5b9db70eed67d24c0db833ccd2944460506031404ee0d1f99a1a5b61756"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3000/summary.jsonl",
+      "sha256": "534ed22bdabe54cdbf75ad3f36cbb4c42fa45d61188758af8050bb8869e05d6b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3001/manifest.jsonl",
+      "sha256": "b82e77fed7ed821f3ba28dec97f36840b4f92a6482e5119399b253bec2fcff21"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3001/raw.jsonl",
+      "sha256": "fa83b310d363d05d2dec77fadda8bd5fab3350b41c4f80efc5d0312a96e17c4c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/greedy/seed-3001/summary.jsonl",
+      "sha256": "9ce6f08f32c7bc0bccc204e3e4672d12e598435531f839046db8fcb76ea54add"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3000/manifest.jsonl",
-      "sha256": "e4e2a9780ac2c2ee4d64001ee3de6e84ae67e04be2ce4202da3ee4d703b06b63"
+      "sha256": "f4793818bfc7c075611f09203a4376b0ef5117f8f8053cd5b382522662350149"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3000/raw.jsonl",
-      "sha256": "db7df32b243c1854ecb8793053acb338c506651eb76e8419e69136df4d72cfcc"
+      "sha256": "313662b7305d1d7c5c74491e9fb7044d6fed9372d3d34fd212f90d0267d6c609"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3000/summary.jsonl",
-      "sha256": "86adfd024bce6cadbd0541ddfd385c862032c98f70dd8c7911081718024e8e03"
+      "sha256": "e810a4d14e4b2eb0051165c51b5a03da3b03698f5524d7db0fd97300c7991e46"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3001/manifest.jsonl",
-      "sha256": "b953b6ed696caac4cb7dd9e2490fa261683ca30c4d9c4859fe39db0e484306d3"
+      "sha256": "f78d752cb797e02804f38d55056d49976bfd8f0e1a6f57546d9cc14896ff51d8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3001/raw.jsonl",
-      "sha256": "027c8789644cd6aa770b0ddbf5a35bf05b1aae73a6c3acfbb29498cf0ae7627c"
+      "sha256": "a382515b05ca76af09f9ed83e8337e922dff71c8dcb19921aa44b67e164ffa83"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linear_ts/seed-3001/summary.jsonl",
-      "sha256": "33a7faeee0f30b065ed2bce83a9c7964b533e69361db5f184536fa290e78821a"
+      "sha256": "52de021bae11a96aa8279c9ca0071fe27219849d62c6fa82853240b387510662"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3000/manifest.jsonl",
-      "sha256": "aeca707fcdd0264ce8569b4a73832f0b7be3cb92079d20b0e62ea08c7a31df59"
+      "sha256": "0730dc9ef9e70a0dc58cf5d1dd880bba410c0d59a5aa2c0f016ac049d9ac5db5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3000/raw.jsonl",
-      "sha256": "edd7d3ab74d6427fdeb4f2652aff35c7e8856be2ea3bfc8f7d3eda4aefc42868"
+      "sha256": "4d28dfc5b4791e811fc50f78ece0dd0fed6815889c50d096f0c0bb0827d85375"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3000/summary.jsonl",
-      "sha256": "4b748e89734f377b6bb8600f20ea4781c90897a80715e495c863dbe5138cc8b7"
+      "sha256": "904b8fbb74ffcd853d66843e302c06f39489cad71120107e2e000291b1613545"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3001/manifest.jsonl",
-      "sha256": "cf3c084f9e36d97befd9da59e4fb2b7bc8334f97f076ee567be3feaf75659682"
+      "sha256": "300b1a4f5182a5743eba936f519aade01bae62fbd64425c1d1de511f6a5e441c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3001/raw.jsonl",
-      "sha256": "4492ac6b67795b7f323082a434c6644fff7da318b15798d302f0247549649397"
+      "sha256": "ebc061757cf41e258ae3ac7b1f98f1ea72c95019f6e9fea559d0181821832d50"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/linucb/seed-3001/summary.jsonl",
-      "sha256": "e1df2536ccf192ced264d137f21859fdda6a98897c7e363aca38fb62ea414ca5"
+      "sha256": "744f25f1543797b415e7049d729b382c60a08e4dbd1d916f74fcb3d5d9919ccf"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3000/manifest.jsonl",
+      "sha256": "afffe687f06cc59a60adc626830b48a8ce25a2f94a496f7cdec51e0a78b45ddc"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3000/raw.jsonl",
+      "sha256": "b390a216a6d435b1195b3e6c3dbffa077789fa4f408ceab6a396ff830c96b865"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3000/summary.jsonl",
+      "sha256": "f2262004adba4f804fbebdbc9b1c0ee1ee16c0e2497da0be1bb42f439631fbdc"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3001/manifest.jsonl",
+      "sha256": "8831a45664c9a5a39c65bb8a03f9dc5658b9cd99feeaecd20a39d4ccaca43012"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3001/raw.jsonl",
+      "sha256": "8ac53cb1dffbb31f400ae4c6e3e0d7e29d5b796490a5e81dcaa3d6c2a4b91fe4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_linear/seed-3001/summary.jsonl",
+      "sha256": "b54428391971a702e4f99eb058b4d1361571b91917dda6c8621a869f4db947ee"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3000/manifest.jsonl",
-      "sha256": "67188040be664508a2fdb9717812561ba6cbc7d5572cd3ef4b32a3616a92e417"
+      "sha256": "ce42f84caec5419dec0d6634ade6f8c046dd90088ae94989abcc64e446d7d335"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3000/raw.jsonl",
-      "sha256": "169248d667689d21e8f4d8629aa46fac6d83b25414e7e4bba734349e43071a27"
+      "sha256": "4752394c1d5a10615dabcc5a2c65a98ad568ed0ff1a79d0f35a0aea047f6c992"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3000/summary.jsonl",
-      "sha256": "10ebd9a64579451fe94329bcf326c148e232394f028affe9a96074405d6dada6"
+      "sha256": "55194ed95e8c61492ac68e5263d0eadb9db00c64c3876651c4fc9ac9916b990d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3001/manifest.jsonl",
-      "sha256": "0eaeb5800c4e4058e3c643cce29c59f10e1d0662a459c9112c6172ddafc749ae"
+      "sha256": "e9cf4e7b387bc25e426ce70e9eeb116d9734969fcf2f17561b3b0fad1da48180"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3001/raw.jsonl",
-      "sha256": "2a0c9e0e5907fada40bb89bbc18804f3b6147761c95f4b5b6c7743dfd87a3df4"
+      "sha256": "1c664097acfc491d08c94932ea63c237da9ad43b4c057abda878f59c52f1bfaf"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ts/seed-3001/summary.jsonl",
-      "sha256": "fb4def7c688eedc8d5d147ae6abc32db0122602c6441e72fb0399334224e723e"
+      "sha256": "6c9161ac375b19c6e1d99c92b763f70b8558e2d264c9eaa219cb44d2f14166f3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3000/manifest.jsonl",
-      "sha256": "52e8e592bf538ae12bc8deaf5f9006101db178eb8bef7936308f528c5a888e91"
+      "sha256": "f510c2bb768cf7ed84adcd9e85e88bf0ce595d6aecb629181f494296cc7c9f3a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3000/raw.jsonl",
-      "sha256": "c576fa0ba495fb307ee150d62161506b8c8dc1eb4c1e5a0e0d6acbc32df893e4"
+      "sha256": "c7128bac792fa60e7fc395695ed455ab76284d8d577f1433cb27fea136ab4897"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3000/summary.jsonl",
-      "sha256": "8d30cc2957959c62040df554defcad30d054a5f459f153f5aef5053ab1cce38e"
+      "sha256": "6e6dbd4bed856ef0a0f7cb5b095439812c4a57281ff9f465bf819635ba3e0311"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3001/manifest.jsonl",
-      "sha256": "805b263c3febeb717f699e5b28e2d97036c75f498d892349c7488b97dc70df09"
+      "sha256": "54d8599940b4ab1b7241e161db883cfd1f4a697ef5aafeecd12075759be672a3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3001/raw.jsonl",
-      "sha256": "b34ed479b17e79f22de088f14cf972e6db824f9b3884f6cca91626909ff5997c"
+      "sha256": "fe0380c6f6441a60224dc80941fea63fcc7a245645b9eb9fb730146051600945"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/local_neural_ucb/seed-3001/summary.jsonl",
-      "sha256": "5ce8920b01648603ea8e225d4ba2658357f098b8e31bad69010d984e6c981eff"
+      "sha256": "fe4dce26dcfd2bb1a9e96a2f6838c883c0e41cd1be107dc11a68c29d9f5f8754"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3000/manifest.jsonl",
-      "sha256": "63aa42f2036d7a83f4f960e41fd16299986e648c042cc4f360c160a623717bcc"
+      "sha256": "c1e3a3c32dd585718ebfa60dc4905dd4a698bcf7767e2c60ff4580e4e1d796d5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3000/raw.jsonl",
-      "sha256": "b0e21b62dd875e5854e4deb37b7003452e879f801cb9589ba0024e6cfc0ca09d"
+      "sha256": "6cb9d6d1cdb2f7c3a83d43d022fafb1255680059310f1a14e893f9ea27ea3cfd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3000/summary.jsonl",
-      "sha256": "20a9fb1d2e1b5b94b6cbf2fdf9d75516b8244bf98c4100cdeb9bc3ee5c6877cb"
+      "sha256": "f6b7b80de27074b1838fa9f59fc1502803746504594884eb1a6eaa3a542d5e8c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3001/manifest.jsonl",
-      "sha256": "4325faaf51a914682281b5ce33639754aded1afd8853676084e6ec19b9d0ad38"
+      "sha256": "d3149085317be4e5aa34e744f2a25496070b9e8d3d87d3bad4f22fd810a6c217"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3001/raw.jsonl",
-      "sha256": "d4087734060c11b6265f6b42f52f97fae0bd873b37b5cce1af9b0e1246f70cb4"
+      "sha256": "3cec36c2ec74a18e443e06a34b79214e4cd9d71ddf2398458518c30744e46179"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/oracle/seed-3001/summary.jsonl",
-      "sha256": "15bab297319515a295cf716d899d0ac785e2ef662d7aedf2d1b29ccef196a5a9"
+      "sha256": "56cfa7f1ca2088aed124cccbd315589714cd3a1e81ab0f9fd5483eedd497b8fc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3000/manifest.jsonl",
-      "sha256": "a55b61ae79f59ac5453744c488555568af92e79e5d19b196d0a0425620c92496"
+      "sha256": "517cbbf19f4855e08eae24f4e58c1d79a650ff4c580b26041c68f3fadad80750"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3000/raw.jsonl",
-      "sha256": "381fc909182356507aba5848bdc68c1a26ca8a34518fb5d10ca9b71688746d10"
+      "sha256": "2ad0bcb34471338b4ef386520a60d4546b465b29ba781fe30f16c961713f17b2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3000/summary.jsonl",
-      "sha256": "687526e67a10459e453b3db2f2e796f6d30bd387689ef3b6f8dffc0da423f7b4"
+      "sha256": "8fdfc5e77ce09c1697264447dbeba674fc7f81e13b238d22a583f28b28eb88cf"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3001/manifest.jsonl",
-      "sha256": "0db0c0c0268851d42ee456d7a674c24fafc280416c798d12fde522b6024a93af"
+      "sha256": "f292ad62059f7d08ca2cbc20791911e642e07758a51a93b5fa6ca3903d3f7a30"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3001/raw.jsonl",
-      "sha256": "245d20dc1ea870fa56a90909dc93b4abff38637072d72385cba77d7c878d870d"
+      "sha256": "dd3a97a66aad9b6b372ba2de268394fdaf70b1d367e0a45c792ef9a0da92586e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/random/seed-3001/summary.jsonl",
-      "sha256": "090510332438068495f36bb04f2e770ec2247002a2c86962e4eb766c930c7bb6"
+      "sha256": "6775a5f0fa9e7b66931d49a23154fc2f40ad814db95ba01269788f982b7a2926"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3000/manifest.jsonl",
-      "sha256": "78e23064aaf5d5f1e5d62a8771db71828bc50f0b9dbbb3c0c684f8ee4c0cbf38"
+      "sha256": "3ac7d1a09a77c50bcf7901674f212830fbceb2517bfcebbd90e37d71eee38778"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3000/raw.jsonl",
-      "sha256": "5c4f4df30bd939bc279439b29a11c3682a42453adab1c477994d401ad3916b72"
+      "sha256": "86dcf36b241b28173fb200a4b6274218895d3eadde03b10b4bb710757cd2861d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3000/summary.jsonl",
-      "sha256": "cdbdc21927b37dffeba9ff87f965c1630549826b517aa87e747a183fa7ec1287"
+      "sha256": "d3ce7ea9473fd290b4f9f390d7f649ef8a1f7917e0d42e27298bcade4c6156f7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3001/manifest.jsonl",
-      "sha256": "4ad4a51cbe89d5d3e43261c4df213f6fa566669bb57e5b51d6564d3ec8a07d73"
+      "sha256": "63b42c61242d4bad4eca755177cfaec15a2cf0dfabca5f01dfc04760493f8aff"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3001/raw.jsonl",
-      "sha256": "b16262ce3ede826137d0a7dab5b9cd227850c8e06cc1140fea6bc580333c92b1"
+      "sha256": "f79a9158c77eeb9d3ecc64db17ea338a31631665a3b8d9a64d88e776168200a6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p9/safe/seed-3001/summary.jsonl",
-      "sha256": "c6c078323affe3cd8db8ead7d2681e1988976d3d84d90a2333b0375b8d66bdf0"
+      "sha256": "0e9252fdea1ab3971ed1acb3f5a77f11434c1ff6841a40064922fb99cba83011"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3000/manifest.jsonl",
+      "sha256": "8540810289bc11959042e2f90b302bcc0ce886f13e12af1e9e86d0ed4c6f1888"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3000/raw.jsonl",
+      "sha256": "2a9c79772cc722ad6f04c008ba14f753bd23ab1e92fb7098ce63969fbcc5ebfb"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3000/summary.jsonl",
+      "sha256": "689f969ad604103dd63cbbfbeff764074d059f3d5921132a79fede00d5be8b40"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3001/manifest.jsonl",
+      "sha256": "02da70cb22c5a24c7a54060cdccb6eda3c3f786e812e855021e5af5b4c92d827"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3001/raw.jsonl",
+      "sha256": "d25db124a944cf7dbbc77750dd122cd3099566581a5c433777573c4e3d5e28e3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/all_layer_diagonal_ucb/seed-3001/summary.jsonl",
+      "sha256": "a8591b65bdce5b74d16cb8e5370f4ce838db2023632d685aa200508ca0859cf6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3000/manifest.jsonl",
-      "sha256": "bfe3c9db380c93b4593637483fe2492f9d35c4ab9df019e525456f9f6e5432ab"
+      "sha256": "c803d590b8880b48f7e69518fd47423699523107c56b097458286e47b87c77f9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3000/raw.jsonl",
-      "sha256": "dd356a18a95697a96feabca37f01c279d4230fc57d6734dbb2fa896d983507f9"
+      "sha256": "0220d78bd891c6f7be24cd7b4c82e6ff7d2520ce17a192dae604be2ab365ffc1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3000/summary.jsonl",
-      "sha256": "c9c248b53f64555fcb8ecad0dde61c6cd5819343a36ce78b2bfc584e94f7742c"
+      "sha256": "99eec0bee23cb761c392b1bdb245e0f3af6530ca4d1f31d379d892c8298cf3c8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3001/manifest.jsonl",
-      "sha256": "2825596fea85c33a07bab6f8f289b8e630f2b63c09435f644e657f9efb09aefa"
+      "sha256": "1ee12dae24dff10a444119f811aaedf3b661ee6e281809fb4410e5aaf430a40c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3001/raw.jsonl",
-      "sha256": "f0945fc9fc8eff317ed4a881571bdbf8c604393212f1cc5e9b08d217aca5d60c"
+      "sha256": "4793bf0533da4831b287cb967b1dbb1a248a3e45a813ce2244f4f7e046a6140b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/cc_ucb_full_ggn_cg/seed-3001/summary.jsonl",
-      "sha256": "3bc99cb5f7dc8bab224a2014d9c709eab12823c8a53f0cde8d67547d3ef31f13"
+      "sha256": "36ea11364780e02f1800a365420ceaa3bcd71977e481cfc64b4c4afaff2521d2"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3000/manifest.jsonl",
+      "sha256": "3e18ae97ddc093979203ada712cc7cb220cf9f0f5f8f8ef7c19d601b77c5b79d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3000/raw.jsonl",
+      "sha256": "4bc8b980b305d5d173b96c744938817c15df6a2813c7db10856e3832080eb79f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3000/summary.jsonl",
+      "sha256": "ff9bb88863a230e1f006f9040d0f8dbc2da7628c405511aaf83008dc9c363113"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3001/manifest.jsonl",
+      "sha256": "88a927094a6be8190133f4c3a395f87669d6a5b5e7d0ae51de77199c3cb50e81"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3001/raw.jsonl",
+      "sha256": "da9ee39e2f359a31412bd8590db0b3b43e92c91735c7bcffc79a431a6bb9eaf3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/frozen_backbone_last_layer_ucb/seed-3001/summary.jsonl",
+      "sha256": "6d9d3b76558153e45fb782244c1d5725a1032ef8b5ecd5179f2bd0cccf2effd0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3000/manifest.jsonl",
+      "sha256": "920aa11862e9d32c54096f3f5d184741731cd80fcd0ce3c1576c014a54f59dc4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3000/raw.jsonl",
+      "sha256": "0614c0c374734a5dc212114a40c13450a9d767978e897faaffc6b4bb7ceb06f0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3000/summary.jsonl",
+      "sha256": "b10187ded437282fad03d3f63fd1b13e5f76c7be279ada66b19657ff5dbf7ea7"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3001/manifest.jsonl",
+      "sha256": "3b73664e4da503862a0a706fad011935d567b5cb79b540fa7905a4786303df89"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3001/raw.jsonl",
+      "sha256": "7b5ba55cb4f37701c03b5bd0a0ecf909accd10c1babc73566c938e2bce4c9510"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/greedy/seed-3001/summary.jsonl",
+      "sha256": "91ef096bad72c760e92964c71d76e8a29fbf22c505fa7098522dc7d14840afc6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3000/manifest.jsonl",
-      "sha256": "3ef27a04f4ff93f0bcb24416444ae44f5d9acd5bd687325f1f05dacc05ae7896"
+      "sha256": "084f94c9b11fa3ae1d4f0eaa3acc51effe442603f3640aff955bdc9223cd9be5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3000/raw.jsonl",
-      "sha256": "d0da98056b28b5ae9aa0f206a4ec9618003c048e3597576034a96b9f29dd6755"
+      "sha256": "eb2469656d4434f837afb20cb7936cb8b47883e650e4e8156e7c579d141669ec"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3000/summary.jsonl",
-      "sha256": "5bb00dd91c73e6b4e3a4c4054a5e8df8b4c609f22b15b31ad5553686f8082fd9"
+      "sha256": "da28109765271031a13f6f1a1a7fea5c8905b13f116eaeaa193bd3cb2d7eb53c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3001/manifest.jsonl",
-      "sha256": "65334773f61326e7ea36a88f3be28eae2577144110112d9c669be15ac83a001a"
+      "sha256": "8d462a0e92e61154b0f1a2c3dfca95f7e9d24c573a884c016a6b717e49339b27"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3001/raw.jsonl",
-      "sha256": "e56e8cfd41fe0f4f3d67c3562227cfcc01f6bedb9e227e62b2e4ab45428321b0"
+      "sha256": "7568beac7917ac69eecd6d52bc73888afa8f5e2fbdda9f2537113262a792a632"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linear_ts/seed-3001/summary.jsonl",
-      "sha256": "70e108aab2a9fbe064066c8f60cf7e28073904a25bf3d016459e470777eccb6b"
+      "sha256": "42afdd6babcad2210a306dcec91ca8522a9d50a90600207b31ee74865e4f255e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3000/manifest.jsonl",
-      "sha256": "7304765a6ab15ad84a65ee7dff42fd13aed894499f2eed457a3136905439f437"
+      "sha256": "d5b41818b01570f3c7ec31818ef87496ebc90e9bf7e4e6e576d8ba03dac22e6f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3000/raw.jsonl",
-      "sha256": "cc94216d55aa84e47709351756a49f94b81d7d2a5b2352bc706a601ee448c5fa"
+      "sha256": "17d1bb2793e05ba65a4adffceb16e4e62c27640e34f5a52ce012b4f83243ab12"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3000/summary.jsonl",
-      "sha256": "552ebbd8c05358a4ef6071e14a02e3a5347de3eb6665d3743c02d96c18dced9e"
+      "sha256": "449bf6ab6f35f15a6c4218397405a2107ea984f0aff6ee7c1c38838f0dce2f6c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3001/manifest.jsonl",
-      "sha256": "b17eeadf9e7bbeaa68836f738ebac2fbcd606ab259097cedcabd5bb658296ed6"
+      "sha256": "d455912749ef7af138ab1352195b4485ef3052c0ed8be9e038ad805500970ab2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3001/raw.jsonl",
-      "sha256": "48332e8afedaf9c0a729704156ce77b6ae754b4e903a3c800502373a9581d3ec"
+      "sha256": "92659befb4f73e6e92e54b1fcce5e4043a5bdcfadc20f4b74d55127bb206cfd8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/linucb/seed-3001/summary.jsonl",
-      "sha256": "08dd7d9b86e376e41bbb5a3c4d32e6c6815747867bad04984abd09e0fcbc65a3"
+      "sha256": "4ec3c60503c60c1a84d37f26bfb5ad0d0b1dfa884f1661f9c52023b137efb76f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3000/manifest.jsonl",
+      "sha256": "849a6fb99125ab5fb023f17bdf3d8712558f696feadf0636effd327b1d22f6d5"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3000/raw.jsonl",
+      "sha256": "e6539152da9ae0c8f74eef6b0971cd21c22dfced3acbe32263c952a867389123"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3000/summary.jsonl",
+      "sha256": "6810261178aba129bd6cf15255e628e127f14546553b216997c094181251ea9d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3001/manifest.jsonl",
+      "sha256": "53193975c3f5874906ca09da276830006d608be67f98786d8612846039187ea0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3001/raw.jsonl",
+      "sha256": "a26adf659cf961b1bc55efa06a4146cd04fe176f5bc7d3e93a1ed9daacb8dffc"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_linear/seed-3001/summary.jsonl",
+      "sha256": "42e780fb312b1a90c5e86f174d225699b85cd319d32b25468565ef03da6e842d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3000/manifest.jsonl",
-      "sha256": "3eb90acdc045abdccdfd4e5e66867faf80c89bacfcd29e15b3009647f2399835"
+      "sha256": "af0d7bb22e7265a670b889cf30532f32cd90e87c581b9fe2462345d35663d47a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3000/raw.jsonl",
-      "sha256": "21847ad170002fd2aff6cefc7821c7c2485c36c2365dbf94fc0f08351f0d6cba"
+      "sha256": "62c4459a27e6507bf551ad2fb6e5e9dc9620f30077685323b68d8ece67eaa069"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3000/summary.jsonl",
-      "sha256": "4cfdb11151294a449f8dd2e0abef26ffaa1439a4830d88eff2a1edcf7c3709e9"
+      "sha256": "9e222d6f24a943c01d540870a9d6e7daa705fdd2fb17d492436f63a43b715096"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3001/manifest.jsonl",
-      "sha256": "48a2d752dcf8598071f488cf240f19f663cf7a39bf3b10f8280fad3c7f4bf8d1"
+      "sha256": "bc561d3fe2cd30e3391f08ae2abaedae096d6ec3ccfc10236e5b8f559aeecb9c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3001/raw.jsonl",
-      "sha256": "956c1d07a1e083ddabfeced2840f62b478335cc7d79d18ad57e0fb5aeeb56b02"
+      "sha256": "91c40b6644d57d361bebb2eb6ae09bf17df87fbd36b1c084dd507a513dcef524"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ts/seed-3001/summary.jsonl",
-      "sha256": "2eafe567a9245b12b39f5e60096702674d633527914b8ae27b3fd75804675645"
+      "sha256": "21d702f3de9fc1789de94275df543a7e60ee6477b99c733ad8edb32cd646a1ce"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3000/manifest.jsonl",
-      "sha256": "a4e11f171b504c22d32554769c76b6d491615b538af55bd97796405e715ec808"
+      "sha256": "84a91d80c9a5015f257152c677ee219ce54a73371776b8d632cb9eb09a8147d6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3000/raw.jsonl",
-      "sha256": "7f6d26a66aab84c8f3f7c81a05701e6a9a1058b4b4cf0b073a8ccd56e47c03b5"
+      "sha256": "674a9029e8c32a77fa601d9bf1ec09db0fa0db5763c20213a1bef995ddedf653"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3000/summary.jsonl",
-      "sha256": "fdc8bbf1d85fbad18db69ac1ceea8b725f681ed4873c7d12b08ba60a518ee15c"
+      "sha256": "d7de3177b6c7d26ddfb040bfda8d3b031372981d687a705336371f3760f31857"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3001/manifest.jsonl",
-      "sha256": "999a4721e9f97ad10013d5e29712ccad61699935cf8607222045d8b78b1e4252"
+      "sha256": "c2c177e52f1e5679b0b5ed3c94e85b5611a51219988ec31592121e76d2f74f6a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3001/raw.jsonl",
-      "sha256": "e6327043d87ba0a80c87e61994cd7f65b441adc901e26a57044a331b690066cd"
+      "sha256": "09844fa7d4e788468ac3a1870d8db8d982c6798b5accd347cbc6bb2cc485b566"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/local_neural_ucb/seed-3001/summary.jsonl",
-      "sha256": "44b26be13c18f464d18e209e715093e6ba05efd4862d7c7662058227f99d3827"
+      "sha256": "08c2c168601301b92cf64226bf6280ad061394b0b240dafb8eabb91047c9f075"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3000/manifest.jsonl",
-      "sha256": "8cb43d496b2001710cde8c755f24a55c8580dd02cc6f57f895fc6231c0124f10"
+      "sha256": "43e7027131e63c84de64f76885b9c76e43e761e9a6a3d1cdc3103dc4f6fd780e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3000/raw.jsonl",
-      "sha256": "02c670d0b735f15e88ebf8cd40cb2f1556b7083f0f429030126f9d5963d5824e"
+      "sha256": "5571cc819d12b5bfee45d4fc58eee98667c0152b922e1689819c781070c54be9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3000/summary.jsonl",
-      "sha256": "29577e45cdb4c12d3994702d11944b7020d68ff1684d108803bb087e5c2d9bc4"
+      "sha256": "1997cc28308a389bfce0dda3eea51029ebe75f9a1d1581d94edf9513b3f05998"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3001/manifest.jsonl",
-      "sha256": "846ef4eecc0881e3bdb988c07f51dde110e493ce80469d804835fb7b51968568"
+      "sha256": "f4b2aabd2bcafd6a628111318d41d6933c64910ea8b290d5dcb0ee76d8abf16c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3001/raw.jsonl",
-      "sha256": "189d5d66e7a7b83767c8d077230f6866ff8ea69f57b98c2331cf710e7eed4a35"
+      "sha256": "48275c07d9170305aa92fb0aa5c37ba6f33ada6ac1583591133562cbbbe3958b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/oracle/seed-3001/summary.jsonl",
-      "sha256": "23551cd0654789ee666ec47feaef777766c3e7da89bfe4f1af6e3298b06e310c"
+      "sha256": "a58533775b86bf1980b43ce9a456cd2b0e61a2b6463ce082b8296250a8fd6b67"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3000/manifest.jsonl",
-      "sha256": "0b5a94015af6be7ae94a392f59101326bcb729f96dafe667bdd6f7ee6f8171fe"
+      "sha256": "e370df1012c557f0674d5d3fa7d0ddf413388ac4af31d66345dc1eacab70b223"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3000/raw.jsonl",
-      "sha256": "7ec6e30053f2cb55f733ee36f2b8de0248ab9e95ed7c3cc6a7bf520170fced9c"
+      "sha256": "77aabddde5c77e61c2749643c679218579662f59bb3e137d79f302a3f276801c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3000/summary.jsonl",
-      "sha256": "aa47f6c5c26694f8975618e6f27bb0d2097fb2ee5318c523e7e08af9d701ff00"
+      "sha256": "7f18c0f7c24b29fc07d7eb8016afb762c477f890bf09e3a9d23175c78d058b50"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3001/manifest.jsonl",
-      "sha256": "6fd73ba00e404afcbfeab3703b433ebcdd7e3a72d86be1f681fff9fd1f8714ce"
+      "sha256": "253e905f00a7c360a7aef38fb22d5a48555d2dde33f9f1425b9a5587e13b8586"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3001/raw.jsonl",
-      "sha256": "7e64dacc54d336fbd7985a7e019452be58e8ee7494e88db6b951bb98eb3ceb80"
+      "sha256": "4efdef0519c4d9515bc7f153d6c7d25b5812e20a312888771229a71a7eb92226"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/random/seed-3001/summary.jsonl",
-      "sha256": "71ec58cd08dade74d9ec2b8b50cab55cc8ad2208acfc88a8ba7fe9ee8380649e"
+      "sha256": "b71c33930f4f132491468158b2e52cff614e3d418d51bd130f2352ee3b14f0d2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3000/manifest.jsonl",
-      "sha256": "e9be0d62acc23158432301144547118fed0d35b99691778063e998bac0f100a7"
+      "sha256": "2682be2bd38e051ebe6caa7efd30908e6c9a98ffd939382a551c7b9cdb7110e2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3000/raw.jsonl",
-      "sha256": "6790be57cf476b04dc6b1a487528ab9c274ae881ed1f9e7e90b3483eb24cffad"
+      "sha256": "86a6c4df345c4b2f363df968ba71422bd34a3183acaf11c1d2776b16311a349a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3000/summary.jsonl",
-      "sha256": "b1239f4e4dc60ad5d4719b40694f9099abe3a4db084f11817b62330481bc2c9e"
+      "sha256": "f74ff3d7117887b47fdf20b029daf5003eba0a61bbd5a662865bc525bf6d2649"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3001/manifest.jsonl",
-      "sha256": "d35c9ff2b7c54e59105053340a50efaa2cd7bf8167ce98960022c9832009228a"
+      "sha256": "f7ad7f8dda9dfe907e168b7449ede7dc8bde0f9aee0ee61485d4f357edff2e0e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3001/raw.jsonl",
-      "sha256": "853ac6a45ef03c56fad6026d1418c84891853f54af5ece90ea302efb11f62207"
+      "sha256": "8ead642da1301b475fb3d8f692d2aee9bd3ca0768f176b054cad60084ce1b198"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/evaluation/delta-0p95/safe/seed-3001/summary.jsonl",
-      "sha256": "85993ece15426cd2e577492e4a084d34b7a634cb64192b39e2399a207951a00b"
+      "sha256": "f87844fff60a9f03e3a3cd3a7180866a7fc1b3a81e00b919d3f2f5e51ab6ce15"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "1e66c6d6e8945c024fbafae2b3aadc4d5b0a335a8cce0f0446b67426eed36060"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "ce7c886f2bdbdfae73bf6cd76fa4175385b7c7572b42fff220e83243917f8a7f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "50c43cb99527219d7d548eccceed3da13db4c1b15caeb2896b129fe5f7c48ce6"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "f1ae6339f307ec69eab755daff67c0f0db0c37a0b67c2c9915a3ab1e07d9c07e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "ba696fcc3a95ab9e55e5ec2a399950eccdd167b6a62a7905030d808e609f88a9"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "abaa909231708a6870156482ce754c2bd823dae28d6af1e45fde69eb34581a56"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "647c01c111fc23ab39e8cb94562fcdc0bd2f3e0706824dc1c1e037b93e56056b"
+      "sha256": "36d196baeb459e150be4cd766063f89298d93330ac85e3bd96f03c2688cf79a6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "5312085df98bbad3dedd3aa90250950e629865ef1026efe0e44736eb0e13e6f9"
+      "sha256": "d953dc1cf963483a7aae6b4c8abaa083736d7126ecc6bdacd096fa64d548a5d0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "e542014d6a0d4978b902649e6174966a8af53ab8f30a25575a952b3297ef90bb"
+      "sha256": "482119a398e92c01d334d1c21498926aa5dfdef7ac7f11d5c698462bddf27617"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "4df400489b215c6d1a60020147ea69c25a3faf4ddcb0a0ec2e5e89dcf82f62c1"
+      "sha256": "6c6dca617ecfeeef8b223a15f7c34970b829e69d6f11cd85e5fe3fcc672ce71e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "056291cf5b2c67879524cc89e5c8487f00161f3239f42860cd1ef025fbc92721"
+      "sha256": "ef63a7e9bf9622f780a7959dbb3d7acf23e6d31f42b0bac900731e0f0a57095e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "35eb17ff53dda6edeb5735453490d1f6f8654969757c7fd06b6fab63949a6b5d"
+      "sha256": "081f0a12ebaf73c18ec7b6a154062e66c7f187eee0608d58ca64fccc0fbb0629"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "a3fadd90cb9dd121ee749fc9732ff4aa0f4e9a1f57de74eb07166faec170660c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "3b7435114203a58b29d7be749789467bef26e7a84419f6819105eb0401da2be4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "a8826a696c042b81e690ad4f77bcefd7af26cdd314cdb7496f2119f0c424e76c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "edafe71f7782b3a41098539d5e2cfd9a60e216c195b9547f4d6b3ee5f13ba383"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "eb0cffa7f38912b416b229b8998d6c76bf39b0d8e866dffe84053cc6d6297400"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "5363667ea74b3fc257bdd8b91cf03972de1676571b2af2ed8c6ced7b8e28c513"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2000/manifest.jsonl",
+      "sha256": "8396598ef542b2e25b70e93f8fd55cc14410c49f8a7e7b23251cb86a20c98edf"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2000/raw.jsonl",
+      "sha256": "7ab22c270c38c833b336e49a924282fabbcba956eed8778dbd52106d89b4fab2"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2000/summary.jsonl",
+      "sha256": "edbd7c6e051410f5b6e034e16eb0fa0bc656b9e5c7519045ef7ae469bb048e2f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2001/manifest.jsonl",
+      "sha256": "928f86e0cf696a41069be214c873d70ed546ee5900692b1264064c8ac5da085d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2001/raw.jsonl",
+      "sha256": "a4291a984a4032041871b33a89d39e01c3e3e86f694000b5c632366adb4599c1"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/greedy/ridge-0_bonus-0/seed-2001/summary.jsonl",
+      "sha256": "7167940317b1df2a72da9603846ca63a627796057372e8e55ae469d420aaac55"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "21b27a91c28ec39e3eeee6e58c87e92482d4440b38d5ca9ad729385099026427"
+      "sha256": "d6bb666e5e2425d6a22390c166541680ee85104016cc886d3f38edb6ea7c8d31"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "d2fc9bc5b5739ae0fbaed938428ead8ba868357d28933b95374a6e71d8b217fb"
+      "sha256": "12f3324dbff516401b3da8c5d601fd95a34cf8945221211b3b94aa43ec652fd9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "c0ee3d9b068484de562476ce6ba7dcd680fba548ef33b0f340e4e47b2df41d5b"
+      "sha256": "9aef9cc523eb9eadea9cf3db2625f84b68dcf9d1b27021695f382d5b84dbc8ea"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "3ffb89bd7b6005619a4b148c8d1150e456edf1b2f4e87af499979ac51bf4711e"
+      "sha256": "3008588b1095b9e6e22ff934a75c16f3affb13160b443eb0b80e6cb077c30873"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "d84c3bb84699ad9fe1b953ad68fd545e456f2cc697d4bdcf426f5108a3c1f877"
+      "sha256": "ec02da57f3e77490d3c8c48e0d7c295a459b82a24e93b5aabc2c8a16f5151eac"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linear_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "ecc744d43f030c153b95541e162ef30b65a6da195eacecbfa493b99dc802fd01"
+      "sha256": "c8a9af1836893bcf54b5065135effe1ca559ae87108e2f6e3b337ff37d992091"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "7e51f93e9577399617d3d08485fce46182d3606e5c74b18c89ebd07ff17627db"
+      "sha256": "5edbc3c7849029822a2e42a9ea2eef2a018caaba7e31a50528ac1616f7173a37"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "e37b1dcf3d6ebfd992c56e2d22f8f546f4e707e598eeadeef525cc88e5dc8dd7"
+      "sha256": "e592452b330d098bc42b1fcfc98b3f5cab88a6cd41e6a7ecdca03e455c45d406"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "51ea32cac16aecad55a3816e5cf3601827bd63f18b290270f5320974dd3a8022"
+      "sha256": "ebbe8ca8681aac02c6567fc3188f0857c39763467de180b15061808c44892f5b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "fd5096047f70f6ed34c7bd67c6b4d1184b2c926828ce98d501d2728201e44bae"
+      "sha256": "0ec3712694c81cbf744e70fa0d184d0df54b34bdc473684f2dab126482272574"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "f29e1c39fa34c733ec1bc291b40a97c92f4b23e25104ebc1f8edbaab550cb60a"
+      "sha256": "0a75a2654c2c3c9b5e7978cb19f15fb7a52002124789ac01c44c277171199b37"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/linucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "1373fd47eb2f2d4a840f7376472d7fc9fe985c9ad71b918aa3934a51d56f7424"
+      "sha256": "7d1f759c1525809f76fc163ff94f81a18f3221983ff343fabaf4e7f28c875a6a"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "a533a732f28b7ddb5ecc1cd2f7ac54ec2fa7319e644fe705a9e199ffb662f6d3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "881186c9d347c2ca8ed019252fccfbce796f7cff215dc0b49bd475054268da33"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "630312e75d427eb5733f047a5dda2236c6e761c949844ccca2ad3a20d35143aa"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "a2c9c3a210e5175c845e37c89390710d5b6c63ad3bc12d5f4152284773e22635"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "cefd0102c2f958b1d7b987028d4c79937d33443082f4d5c45b7a5274743d5f3d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_linear/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "f792c30b2e116ea123a6978102ac40d9866a8535a0b8948aafd7d5a746a41c6f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "1c1ac86b5a363a6396ea7a56218040bb385814a678f867ceb81826b1e2a021c4"
+      "sha256": "ca5f9f2f4562d424a4e4fa725a139b0980b0794c6dc8de829e22d39e0db67a22"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "2c484fe81ed8d78712cbe0244ef0140a898fb3917851e3c03ecdaec84ac73503"
+      "sha256": "db362923edd663cda1d6757001df0f92b80ab90cd8cc97a090d042b7362b2f09"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "4319643534a5f5bc8c068c29be0372eb786fe1b0c16dc7834f1df02ef8a6e91f"
+      "sha256": "86f22e20bc8af8be1a69fbe299ffe943b641f4292af44450bc5b893010bf2d92"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "9638cbe7cdd776dff46d4140c2a7465740404a5c59d5f1a0622f1e2b7415ad41"
+      "sha256": "f0907ef2b8911b70fd2200c7202aed690594de00cb664eff4883912c018bdd12"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "1565278abb51e51f808934d031d19c2eb28b5231b89bf9687ed921a15797ac99"
+      "sha256": "683b4136150599de547d1414ff35b754279976e1bd4acbdfe270dffb871c6dd3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "a97fcd7e962038b21f7a171a8fb8236a4a32120b1529b305121796fb5b0f5e05"
+      "sha256": "b6ad048f52f30ba0b0174e8e2aa9451b9a79866455300fa4ff6202e94c45305e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "58c3e481f95185128d194fb372727379e9b42a54b548f5ba5aac7c3ee00a9b0a"
+      "sha256": "c2d1fae7ca65cc418cf847d06b77fee9c8498ec0fc2f56e5469645359c10868b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "d94e7d8b21e9273d6b1a4735455d19faabbffd3676d75c3011817ce2fe070fab"
+      "sha256": "2c4748a821412663409b0ee5de8d1c01c83e1d224c019f801c4e04a89e23ed5a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "71980cbea325439c801fcddf5a5d6a64008a2a292d3fbdc451d6ee03e94dff82"
+      "sha256": "6e8ce68c9f5115f5cde3b12f3e6530606fe2e2396dd0a52260e2a36cdcc72f3f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "391ae7c3a070d4a85780686478190a25d1f001c698590321f1aa3f92c37f3475"
+      "sha256": "49d0a51de67b5f2522975b18984b987514f69f130062dd169f9472483326c31f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "3daaf89e5481fff205cf8420f77c89163e55ac47928522205275d7f1cb8ca7f9"
+      "sha256": "9a3a2d26eedf6cf16dc4bdcd324b8361eff3637988411d7d6b5245a95e3b9475"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "6b1c2806c2fd0dee42d21bc17266f6c68118d76c5a8333d3c6f03f30a9f15b6c"
+      "sha256": "d729c3a1800d2fc209860023fa77a57f20aa24dd9102e5722329ee3f9df74fdd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "19bc4b34a27412733034626a22131043de5e392fe80495c77cf721408679e7c0"
+      "sha256": "ebbbc64a46fe05a08b39ec1e311619d0c90855737d6f825c94a9d03fd6df9cc2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "72951f45414fc56bd90b3c15884f1d1a9e65e933df620d935a481be8ed925315"
+      "sha256": "9050acdd454123ff335e9f8cfdcb5e507e0ea5226c4998123b08fbb3224c98d2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "53bbe517ef673a33f1909578a15b4016456d6e83a93a086ede8d8af813e9b3fd"
+      "sha256": "5d5a2e0fe46e17d7fd6ba96ab5d434466e3ce5835ac2f208b3c76e20001580c2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "79eb0cb4bb8b72e01628f4abd81526efabbe0c1bc57838d168df1fcad0a0c055"
+      "sha256": "8af8cacce03954a872d4cc40bcbf33a13ff396462b1d7445f24bce643136223f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "f3d4ead91b141d9fb21bd124df4965a1f4c3e8d89bf8cd6c37329ac31a8f2564"
+      "sha256": "e17a312b071de4f0b79c0624b6f6408ee8dc86b4772f933a784ba931d7eba276"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/oracle/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "fda3c9e249907440cbc8501c22d4b4e674a92bc2819f0bdf78424a1a90e8fe1e"
+      "sha256": "7b68b18c15519cfc3de43853ce32326993e4e5eadeedc87edbdc6f9787a0040c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "e58339c219aa17abb8857310345d6648fd83de3fa8e8819e3d8dfb8af422051c"
+      "sha256": "40de426117460d6fc0489990a26fc3bed58b3b192db6ea0c06af820ef0d5adbe"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "6381cc3202a618dd2183dcf8f1c3adc3f840d462ae67ee8c211658fa910bc9e7"
+      "sha256": "c7ebcca345ac94268c5df00a2dc04359fe030c3e62c1d85777f8bed354e63ce3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "3615b30daf4466328efa8b061c48a2fa6548488ce9075c2b12119fe75906d7c7"
+      "sha256": "5e6488b1204184c3621a4f752c92de2644de3fa08e37b1878c513889b0827f84"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "280c2e13b62a711c01d4343c8bce3f4d8eb366fbbafc0164549b332b09bbfccd"
+      "sha256": "c3189abc0b2819e59f2824fb6cbab9b03773de0b7c6cdddc57e8f83d08c28926"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "01489e0b42a1531d54ff9633185db722979f8b8a5a32d26091b9e640e31f36a2"
+      "sha256": "52b926b76cfde08a0af4d73634b4c2024116422cf775ce291480f648104b4af3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/random/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "2700cfa7fca85c2f45d072a8389438d9afd523bba0fe29a5e81cb06616d895cb"
+      "sha256": "aeac7bfe7a8bccc9bcb5f1e425e027f7262e04cb4f1b82335853b74a4545e51e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "0b32c07b4cd7146606a25569cfbffcdf622969e6db83a6aed396d1e56596c5e0"
+      "sha256": "81f5100fa61363585b6e3f804ea0c446879a324e773927f21c8c6295ef5147d8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "da35488f53cd73cfd2e60860d63109718207b9f16b95f0b3438ff14002f9f484"
+      "sha256": "a6c316ad9d817c05396164327fbaa118182fad6d74a8fe9e4566ce35e7e0ed85"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "e932859d895ad93c4582b46767f22be70a5ec69dd3ec5814232c56531c5aea4a"
+      "sha256": "70a96d885f67d7da192a4b06df82a3cbf05998fe49f7c40497127b9799fac190"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "2d7eda31e9a4e1ddb70889d4fd60dbf5bd4b8b4e38f6d98b37203781b2510c2a"
+      "sha256": "9beb4f3cc48fcd4385c2ee4fdbeadd6739ff8eb2a8fe63456fd11f2f0792ffbf"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "5200cc2cc9f26e620765b4d7310329183750ccf56b60186d2dff2057d3521b83"
+      "sha256": "a8302e43f57842b7748f5b21e335863a0070f040e700efdbb9716db2b07f0f65"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p5/safe/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "1b35babc0a3ab0dd71380921522e914175cb9561ff468d136dac78a6f5b462bc"
+      "sha256": "8e1dbb29c5f200bbfaa16dc539a6d15e48458d29c96eb07ca061533d467d7899"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "6b8b71ac9f6968f80f578b4b9af628ab129c8eaf2b42db22f1beb530ac121a92"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "3c247a328b3fe26914ea962ecb6bec5ffbf4e3879124bcb16f6bdfdd9326f1dd"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "a5548ac961a8cdcd0be2728b8dc4345bad33377d684bb94edee20715da364ad4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "b7e8efea99e08f4a2179a6a9ac7d3e2dadc316effc302f8f302cb663f2d3472e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "4e1eacc6bb921e9a3df348db6a042c1d9cb5afdab0c16fdbfaa13b7d9abb2cd8"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "dee876bc9e720ca75e3a27d38aaf3355cc848d4c04528bc52806d33102ffe51e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "8731094e20e2e641bbe762e72c251f80329e292cd50f82e78d45c90de0d80c07"
+      "sha256": "d2c7d7f891665b7a65cb003a6696b37915fd3708ea1571d1c5a0cdbb51396580"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "a8be73e4a84d08f08156b1722a7cf6c127c1a03e6fe98a69b1b17cc87f3ab446"
+      "sha256": "19d27693f7ac46f8689175c7eb583fa230b4b993e13f8b229d4494189ff75438"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "52a4e2377da46ded55fa48a11213795f156c638786cfc71d2f5e2c4fe589ae45"
+      "sha256": "dfd698ab92cd18ee5fedcf5159562724c87e9801b51fa9df1154d4fd7413584b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "89bafb3aa21d157aaa3b3552a3771504bc919c07180e21cb77012736f70f73ff"
+      "sha256": "d3a101d245e3a7023340b4498b68e4c42476ec4a3235778c0ac71ed14e020ef7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "1b33a15e8f6e4a3d3788dfd1a5d45f93a637929fafdb4d33e6a21be70148dcf5"
+      "sha256": "aadd72a674454759317d92d45e812873fdffd394f74d62f8f2b9c77aae0c4402"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "e5e592a236b0108f18cbbfb22a741b583accaf1e2520bddf621acdd382071006"
+      "sha256": "8324405060ef880051bad92d34656714d45fe9b848b65dd14a35f52205491446"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "a185e412460d8de00132e59d1bdf99418ffdcbad7a6a36a1460a04639f56c773"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "e6007c67cf15cbed07df39b1fd5c853d88129c7460dc211db54c60db23e9059b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "bd88ccc888eb2cbe7b64b983ff97da8cfdb303ffedfa676b8f017bef39feb2fb"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "30bc2f002e8447cf9df415371eb5d9cea36fd2ecbcc9ed9193ba04a37b392d67"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "c16562348970d9f92649dba0fe13dc59737524cf12740a2c41e78496569df1b1"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "0cb09fdcfc2f0e5f1f808e97d5c6882357b2c9a6c1d014d4c3a6d83db6043634"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2000/manifest.jsonl",
+      "sha256": "8ec87039dfc2a1fa26fa06bb0c7de2dda0027eb7e523376694524c8e731c954c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2000/raw.jsonl",
+      "sha256": "24df7ca16c78b1a3d8861bbc06620edb03331e48d637ad65e315f4b2c0e99422"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2000/summary.jsonl",
+      "sha256": "ef6528523d9eb5aef92b25c191f44b0fc7fc3048565a917ec4f3d66110b546cf"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2001/manifest.jsonl",
+      "sha256": "f568e51978579718a8777babc90fa78553c545e5bd1a3769e6eaabb7eb96e327"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2001/raw.jsonl",
+      "sha256": "144293e5499e7797df3970dfccd3fe62da56f33b8d7acd3f564e569a1811c8d0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/greedy/ridge-0_bonus-0/seed-2001/summary.jsonl",
+      "sha256": "7347f287219bb390d88a4f421c5c0ce0b9d00285b3cec670cc1dc26a4184d843"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "18f576056ee3608cc0cf3bcd7fa23984442b55d185663ed4f4a0b205e1da56ac"
+      "sha256": "0786d914b6aa076cd6b38e91f08511a4e8a596e2755c6bc8d3da10c39ee5a7be"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "8b26f06e5630b0f95a2ff7335904e8ea2dae23e6600aae1c58a2ad59b42eeb78"
+      "sha256": "3edaac4b5074478d9d764ced883645c19ebf7309673374ecaf4314054c3a9ada"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "d33eab42621101bf222abae3f942447c20a968cf8e0754ab5751f067d8d6373a"
+      "sha256": "f5be87514c367dcd53cea5849ca0754cebe6fde80de58f18db508bac4f1f2e72"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "0cbbe57dcac5dd028b86294e432e68f4eb6427c555d2252df5257e14a607ffed"
+      "sha256": "a04fad3808c29685e8e128c9b24bb2daac342951d02975787aa131b4b10f72ab"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "6c5588b19f002597f8d332e81eaa4850ed868245b5bfea9fe076fdd8d7df5c71"
+      "sha256": "0551dc4b3fa88d68417e8a1675d0e091a79c8f1a93cf28fd2df8647d2e0f3642"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linear_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "71e4d349855d73137f5ca08b68fe1defd3f5474d7eca6e6665d1085bd84666b1"
+      "sha256": "aafb800afa50f04f0c713e533bb02f67f1c3cfa53f8b8e71c7bfc44fd864f725"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "c686d10d131170247390d993228066304271cf178c3397093204fb46740462b3"
+      "sha256": "a79e1928c05aa1feda4a6253aa086e8335fcd0aaada790e35801c472c96909b1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "37a7f34d85abd88c5c5bab7035a8b8d4b840c00bad8ee375e2a7861e32392d48"
+      "sha256": "14febcad5cb3e32f691799ad110c4b0de8e05fefe6c59ff3fb6810153c2ce4eb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "b346f8ffbf7813aac63aca46d54a1dd88670561e2f8123102106b2f9b4bbc30a"
+      "sha256": "8581407e12b70691e80392ff3d6fcd62c66fb7e714a6a3bf2a772194cdd63289"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "683aa6ecd9e67dc799d34347f8e2c0af2eb3b21551a74e8c8b10823242b9150c"
+      "sha256": "0d4c5f416a5d7a518f7e787866f0e40189c2670c9156758b11c11f231ee2515f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "c84dc7314b4c5a8ff7a40cf7b12f7a71dd9ae51fac6e36b947e2ed04b2a08901"
+      "sha256": "7e450ff8b1d07d1550b7dd99462ce7cff19d29b3a249a738732db0596ad1c821"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/linucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "dbc2662c8e58f16c310f19382a0a933fc5ec53624c81db21f7ae0da1207f06ac"
+      "sha256": "3e6f25f4ff0778e8d51d192e0aa94cc2252837cae71a28df3313d8a66298ddf9"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "92e8868fedf86e9bf061d0d2e4a5e23cafb5a7b7a5c3257603c44e1c9bac1500"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "97c2b5a4e7294a151268bd3850b015dd0a7cb2f2c838db65d637cd6d1941852a"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "8a48b2438929924d05df63d63e8b4abe70f5c129bff77d765a8b19766b05bc1b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "81bf3e41bf8ef7f13322a6416743d90a4f3e55c117af19890365c28b3d1bc1f4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "9a7fe2a15441666cde8fe9fa74e9123dd89f2a95a639e3d93f404338c9332e2f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_linear/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "8276b6c3c0cceab9082cfaa128c08b98bf0039b1d1ec51a39caf9182523c9131"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "1299cdd47a0b57e221484a2542e38773395362827767aecb6a622cd1fc762951"
+      "sha256": "c4ec673e4b8219c034e1e9a01ca088e7ab11d6cfcd742552d09ec5f94bb465bb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "21dc0165d7c4e62b4ba53a26cf09d82b7729dfe2945f627eda89505449070dda"
+      "sha256": "1141b7f23e939751334144281fff39c77a71ef1317c0693d757a777fcd2e68b6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "4977978a3a8fc18139a1c4da1bcf69e5f025f924638963e5d71ab1dd16747c48"
+      "sha256": "055a931a598a996977cfc379b03ddf64a99bd9b6631bef3a281f5fcadb273a97"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "acad03ea8333d358ddd8a4af4a184cb2ac35ffbfafe1ee8a169d6beb0575f316"
+      "sha256": "deb65ddd2327f3b348d2ac66b246d34aa1952d864ef0b141aa61f82c28d600b5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "513adfd2b3d562bc735c1b7e6e6ebb0211d06dcbfc969d5d7c492433bdeec402"
+      "sha256": "638a95d98fca3591fb09fe307aa37a2ead0ecd1ca8221e36cadd04bf81f4bc1b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "131e8d4b30681ce0d936a7d31dbbd2bbd883afafd635f1f9e5ad33a1760d6266"
+      "sha256": "a41bea78ee983087b1fc0fd87386049a830b2f05aeafc61f4c9e1cf107dceb7b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "29246178f4de0c63952550eb3c61588c01f434ddaa784ac2c2adafe05cda31c8"
+      "sha256": "f9c8d6fe9e378f5e48bb40de0fea142a56f1185569be8612db6c43ecacf9fc3e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "77aa74b9282a90fda5006eb2f5483e24b046d4b8697266c2fd9ca50f07c9c79e"
+      "sha256": "1a95871b2fc7ed50a27f19e041a746c01c263aa259da88b85d54d416609ba12e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "e6456f1d1538897bb730a7476d734197bffd535d3f9c3759392db8c08dab0fa9"
+      "sha256": "d1b421130d140dced1a3ac619fe16df1a6ea2bbab68901d5e28d2297a9313840"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "64e242bc3e07b456dbf53875b0d5f591d3a02fee511f20def25f509e8066d25c"
+      "sha256": "8f18bc9b08d19bbe13ed9fe3efdfbb46a7815eb7b1d910e565ecc559aadd040e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "889c73bb5ca9a53ae4e44e12d977add544d197ff3f907647679a56d6dbf48c48"
+      "sha256": "99b058dadba50454b7a4259c4f30880da854fcd2e11ffd0edc89c89c51040c44"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "4ed4e16152741e1795b44a5401933833d02f88b34a78c1a1c0783769c938d80a"
+      "sha256": "2ac17d2fa667f62cbccb0e9e6a26a33f2f6861a9c3b3abefbdb3d8e3b129ff72"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "288020939a461aa980068f963e5c97b75815fa4a3c68e30a2eb68cbedc13b98c"
+      "sha256": "73994cf1a6e86ce26f6d5f2ae01e681a86e58235a8a6a485c9633a57899597ec"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "d874a4da157457a42b8d6cbbebe1e28107715292bfc653d519a1065fc61437e2"
+      "sha256": "df6a2b935b533113ea607aac240021cb74d986c48d759b4cecf196685e09e954"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "33f7e231b0b05c700e57002137c52ff16a0cc75f9bcd9bbdff20c0392f2b1303"
+      "sha256": "5db17a7bc917aaca5089a03206deabaf8121136a2e0f201ccbc90c55ffcb0fd1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "af2aaf564b7d2ccb4dad357571467b0aa0cf78852e2b5168bf51b9c31182bf53"
+      "sha256": "478f9caf43500e12e03f2ec9968b0eac7d6e0c4ca0cf642f03f62bb407cc478b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "4ea607fb960e2e52d0882caf1088d5a190bb25ef747ef1d2bf49c7a7d1261648"
+      "sha256": "2338a2c8122f67e2f9b19a48fe7e93ffe298887d5c29d9855de3bd43fa2ec3a4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/oracle/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "d4fc05b6a975410e69a13b31ec773d0e9b0193df4f3210a5e133dbd1a072cab9"
+      "sha256": "ab00cbd10c42f25f7708de4fa764eff2090f8b1d55f00f194795bcbf108495f0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "cf04546051ec682db0072e1ecf911a2f2288a0420a1806ed4a5b14c48f591bb8"
+      "sha256": "83db1e9350209db9e29caab9db5b25b993619616e6b04c32cfd21d21e1fd234f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "93f53c6a430288fc40011e398e2f83fb01c96f6f9bf6620c167af62b0dc9278b"
+      "sha256": "2e2442cb7265c449c5c011d8788520e9b5a2728c2e6d5786308f3af7f71c0119"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "8b5ee947f2ffe516a0b2a4ca76975b545874ab8c60afcdb5975920a1ad97fd71"
+      "sha256": "6656596745b35e0db80834fa67cc53198ba7cf4b3b7c137c5b40ff32d7af7118"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "8fb50ca48f8d0d74ae46c14433b07aee194fa8ffda9fc18903c64f721d1c5eaf"
+      "sha256": "c076d1e51192eb5d9cd4af25370eee596e5218e1488e215eb29613ef835bb699"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "4c21ec0d5f14186cfe217c33754bd6643fdce9ecb75e6ed0af7c197be98f9481"
+      "sha256": "cd7bc09a365002caed90ea316ecda09d9c23316f85d0ff1766b0cb02d9317ed7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/random/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "eeac948911259a5335bf2ad34ca66a7915cf2745136bd34aa285a0d64a8374c1"
+      "sha256": "dbd0fd896004ee797cd326a9758cc37b3b984b3ecf3f6ac4df1355570f73a578"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "cf353853448b1cde6be3b36fd206a227bfa45870e6e6be742a3cf44a2cb01752"
+      "sha256": "4b1104a18d6780ece44bf7aaac8c3de470701b118862e5cac0b1e09719b8ec73"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "c6a2342d366c349b81a546fe7827aec3db6b884aa411a856b9ce54b714290463"
+      "sha256": "63d2bd5babcafda32d9f7285579584258680d1f0efcbb5f51ff068e1eef757f4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "b1c0ea240ba0059fd8222f61734b6f842eb74bad57a719c4242995757270751f"
+      "sha256": "f7f1bd9493c3dd277564c08c0fe85428856b985dae57ce2d4483092753c067d4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "1abe001a45e8898cb496604ddad611ed154116969654ab53098af78bf556e01e"
+      "sha256": "748b99ce281634a4b9251466fbb5494972f08abbf771a6b82fcfcdf8cffc0f39"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "b6882ca631bc49e6c91222522d69edfc4de79a67bee9985de1060c475e636a9f"
+      "sha256": "8ca25c5aea05b9d67dc1019bf03f84489ab8d99d8b0c3ee599ec4b48cf6e2e4e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p7/safe/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "3fcb6b493598d8336e893efb23d3cb02e1219c55aab5253abc7abcc447a1eb11"
+      "sha256": "6512635026849b8cb670637b7fdc92d689172974a3ca03fa810ac60485c76fb2"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "ff75358b12e070fd115e990b277438087814583c31882764bd17a2ac7ac5d17e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "e7ab5a1b87369b95825d3af6f43986b10a7027f3caacb801362c6bc289bd2178"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "540a7c285c0e8d205ca9cc841a3b85a878dd58f5fe1414d6342eea7059e7fcf7"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "3f1172e57b6a74eb0def5864c9c050d4c6533d159df1bcd81320d4215f9c33a3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "ca899390d8569b7584910bd39413c483ceeebb41d9def2498ae2172dcacd3331"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "a8cbecc359ddbdcd48b0d958e2baeced84cf433eb615e25a95fc66f545f447bc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "f383f43859c6494c1e3347606d4d50f3259a264190c7f7a8fcf4ca178ef29d05"
+      "sha256": "00d500103a473bc1e59c9e237c5e0b855ebdd68024cf7263551df519954cba46"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "fb6d543311431abc03e8cda9fdc0a79ac3a916a5712901b27eb6304d3e35a36e"
+      "sha256": "92e51871c8996b32d03a57e09afd60e1ffeade008b5f64c2c9e30cb7f1ee2600"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "5dd5545919672ff3deed1a6d3285b702281b1e863325f94621df6b2f2f00f978"
+      "sha256": "19f0563f4b2193cf588a636e178fc81fcf7156a7b805966db9c3677de1db86c7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "9959e652a4dec2d5a82e5213c873d939c800a32ff3d6c53b15cbb03a9bc33566"
+      "sha256": "981c2fa006a1d18f0f4c139bd3e2df7281ca660234adf57b3ae75c2f5b9e8d4d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "16791fdbd469028172d478c1bf41c32e4d9042bdfbe25e5ddd9e2742fb2d7765"
+      "sha256": "05d2f5d551ad989db9daf111038c82f5ba2434d8892a912b30ed7ac57cc1126f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "b7ca4fa8e41304f17a0d074921daa8898527826cf00ea6579ca22675efa70982"
+      "sha256": "b7648f0be7b367d9ba30d39382d50890cbfad77cf90c9896a7076ff5964bffe4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "88bfc4d7fc2520a90c1610d67199039d69a2f3a87165a227b80199a8ea31cd64"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "ca1ca0e169fdbbbea449276ca688ab9d4e5f07900d97adeceaf5926d7f6a7451"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "7a835c9022d15340eadc95cf18ab76426817399f9e345444a1090d2030d5d9b0"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "66458508df05d0e99543b2c82b8e53e4056a70f8fa63fa9af98d69042f35562a"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "e8cede0287b03885b5a18d75da7ae99cae4805aedccf64aed0b395569324a15b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "1c710ed2f35891b738ff12a1662de04dd5b7a1a133f0b33e0d2cc207a7ce5f76"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2000/manifest.jsonl",
+      "sha256": "440f8b3c5a1e80438c2b1b61961ceba363268a2652485577cb3d1a29bf0983a7"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2000/raw.jsonl",
+      "sha256": "686e021a95967865d2f05c2f978fa56981fe8f3a944c18d16bcb9d3f13a98ee6"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2000/summary.jsonl",
+      "sha256": "a5cbd3d9ec5ba87b793b000a878db656e04bef4df97111ef47e150c17faecb57"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2001/manifest.jsonl",
+      "sha256": "d06ced1adb64ffd03dbfa3f3950f6ed876e5fc9de8031cb2d0fdd072041a7cb4"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2001/raw.jsonl",
+      "sha256": "d09da6ed84d5097224098eb2f7a372032d332715d6b7af1f5a690f9b71ce0d07"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/greedy/ridge-0_bonus-0/seed-2001/summary.jsonl",
+      "sha256": "3a0cda203a5f178bcdfbf03fdfea5d9f801f82d31aaeff1677654ec0c59c48b9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "203201eabb39bdd5b0cfbdbf102f0556bdf15780c48d9cc6eca50e3663b1b1f1"
+      "sha256": "db28dd3dad77319e8247fc543bafe58a8a3ecb5bd0c4b944c0a6fe29f848e825"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "9d3b7c6a430ecd3dc55a9307d2db1f474d063a5010c524b583a44a446c17d63d"
+      "sha256": "6a1066f2cad22e005b76cd167eab2308cb749f0251cc6dc82b9a1f542d958981"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "67da3ad544d1f47e8b26193015146106f673eaf5db812927c246cbde9abf4255"
+      "sha256": "fb8e7e742179babc6c429157728a5796ea00f5ad535601914e1599d467e954f8"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "3b2ca6fa919146d3ed34573774368263ac74b92c8851d4b1fcc7ccc4227ed733"
+      "sha256": "9c3f36d4c442a7741c92ae13d2c75ccd718c1bb02987f67f1e884a8f9f38d673"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "faf0dea344db1b824fb022dd2be4e9c44ce1f4e338bc4022e565cdbf47e0df1a"
+      "sha256": "19c1f72f439261dd9f68c29c9a0b3e0c66cfd56bd2e4b02c2b05d70e914025bf"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linear_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "849ec6e7b810bb6d50a7c7ac64cfa60f73dd9f6d84e049eb38a36217e5f884fe"
+      "sha256": "0754ce68d69afe1e87fa31f5d315dcac55d992df60591c5b3831b77f48b8c62e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "84be0a10fc7c603d76d6041af11c846f2c6215ea389963eb219bfb8dd502e139"
+      "sha256": "5978ada7c4f4ecda4e0f0324e6219dae047848addd87d27245efe140c36de922"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "608857ed61aa4de7716f5fd181e6c5a81b3d00f8f606edf5c5c69c66c265a5a0"
+      "sha256": "62a25a2f6df18964af966a3d9650bb365b7819e3b8e70ab4ec3585deaf21808c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "a61f31a138b183ab65be785886f997d7400b06b9acde49c7cda372db67f6f82f"
+      "sha256": "8fa42c75882b7d5c0476aa378a284b8e027a176dbe86b4104d073ce05d5bee18"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "3503a6f37210c2b80f3de9762775893a4a04a8e18f63b17e64c9cc14d82a0393"
+      "sha256": "107f569d06a2f92e9241b8bd0f83c15d91464108f0eb2d1fccf44121d7ca833d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "34527cda4681d732b5945791c83cac1e59fd765f0648b8ab5407fa1ac2d14837"
+      "sha256": "4f8f815d85fe9a5d245b3c83953c09478e2c6e0f0ebc47a2a741fda34c8a70b4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/linucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "7e0dc55f5bb0dd2e17e05f904dad01d8563cc7dce93facac29e12c85ed08e5d3"
+      "sha256": "3575b633a5df6c5f95e77b82fbb318b1062926ba7dafefa06e93c26c3ab753ee"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "3111267a92633f6a82c7d12c37d33a54dab4e60fabfeca917bf94cd87240d67c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "fd56bacdf773abda2fc75784889eb0069bd87cd46c0cf0f056864416cc060291"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "4b17b07e09f676f6c68d7103a76d7f643fca725403c33e99f0fa2a7100120581"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "927bfe7629b258f51bac31c032955ed34d1470700f678e31c7d12b7ebdd97360"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "b09708d552fad6c96eb333355e7ef02ca6895809d263bd9f6ea3a433ec27bde6"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_linear/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "3927e014c32955f72208f92a923803f8224710815c2020c3b0111b8e57deea4f"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "29b6461c2a70f91440a5825d96e907f365bbb0395310ae889ae932255a80f3fe"
+      "sha256": "c0eef54f1c3483a81e50539cef60eac278b93c383ebd82c2774f78b73121a011"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "99ba3f2547ad5d0fa6d6ad032dc6956d79c4f6253530c38987d95d66e561a423"
+      "sha256": "890eeaeb00ee75180c15f3e2a029d368b9181572348375be5b7e2e19b9d62f9e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "529f3799a6a25fb2c3b5a485426aadade6f266c0994a7be82da5c0ef3c254048"
+      "sha256": "e33026b2e4f364f4e81554763e6991186bb98feabce5f9049ae31ca62914b4a3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "9a5924e702dce6d81dcf94b37423435804dea6adbe097f2a566fe6b30bebb76d"
+      "sha256": "f1e6539f36b2789853826a8156c09e5dd7ba29f9e93c10d21cc1968850c5b296"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "b03c5602cf66c1bb0ccf898fed0a7d78ef9432de0fe569177fdf94e30872812c"
+      "sha256": "875ed5e6fff84dc8209076f0b634c3d49b0d01dc14863cc9962d12de6048e3f4"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "2544e66069e350da4887282c075ebf69ce28f35fa7b0c3af99e2fe8b8bdc222b"
+      "sha256": "ffe2b1da3ba089dc2101a808a66389603ee75faffb8309fc5192f8d32025bc84"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "2d7fed082865b2cf20aa3d65f1660153d07b371279ec385f23ab5f3c05215871"
+      "sha256": "83a805cbb67f1aa5f9734063247cfa2da869b36949510b3a775b131f0aa0d3fb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "8f50831ccfd02fd81fd736aab51004fda36748035f4d00aa8861fe40bb14e90c"
+      "sha256": "5c5578fa2b2475bb93a612255183c48b520d49aa829ccebcf94d808ff069580e"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "8cd66d9791ab2019bae7a318795affe51b29352fd88e474a26e265b058a6a057"
+      "sha256": "4d7ac4226c64746df61951f50c21a71313d89c5dd78f99634787b6ed56b8aa8d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "fd196648ef9266bb70cc4f8ef97698d65626269ced15e04c7aa654b91499a090"
+      "sha256": "6626f54ddf2dd7eca95a1603c4949fdcd5b6b41ade447d86a020065703c3c1bd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "a78c9096fb44bdeeb47aea7463a07f0d2d7c951ceaeba97c8a3e44975005286e"
+      "sha256": "4fedd371d1033cb2c8ac0e285ec83aaf62a1ec82eb69d46d6a8d2369eaf20604"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "e4d98f373bb1329276f2e07018ea0a9cbbbf2d5de3f2d71a91af70d84509affe"
+      "sha256": "57e86140c4374321f8e2cc2d46ca81ac258c15d8995aaca79f4f682e221c23f6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "cc3e5f4ce430615deed01f39c83b66beaee97b1dbfb87dba896fda6bcdc44b5b"
+      "sha256": "3427e1683b8387ee08dd3353e4bbfaa6ffb636252a892a96b5b598385491e818"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "25273d3a191b07df65f4085ec165ad3d4d491543430645e3dbfb714154f05260"
+      "sha256": "ff589adc6bf7a7d9e3e1e8b141ffefb2d5eae1ff99ebb3559af1fc679baec3c7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "dca27c9d9b91455a385531ce2c0441fe5a9b409426d5a10afbcad1e22f9bceb2"
+      "sha256": "36cbce4c46bfb5cc0b1302f922f2615bcde097fcfb81a2ee5afa60bcabb6d1f7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "55ee152b059f80b886697c09b512fa5c74f5f5355988e110c3eff70b43cd1756"
+      "sha256": "0de1c81dc58ea33815c0cb949aca13fd959f46eb3445c3e410587b6fe1634d3b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "8e3f4cca4c37887b3edd393213420a93e6600d8b13f71773c67bafc7b5260456"
+      "sha256": "8d928d378af713ac7c88ca191e11f8d013dd032b0e085aec9777a8f23a583ee0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/oracle/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "6309798644eb2c08e7ea4056dc193b4498c92e3fe801e31d970b8d6e94c02a98"
+      "sha256": "43ae7b7e9f5025391063a868c83448d4b93b8a180496542290629efe654e65ef"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "eb645a6689c766b13daafb71cf7d12d7f8bc8f3a587d205c9a356bc3a924b03b"
+      "sha256": "9b4dfbfb4e67088b75e9e87fb9bed8147fae22f5be722d9ca3baa4869b5289a6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "93eedd411b39fcaff4d9955d40b362737f398f8042914e2fd49808c8c3b92d03"
+      "sha256": "d6b7545a99bdebd1ee1c8e75764e317aef029a48d85304b3c7d34efd10ac45d3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "51722773424b8bec00f5b0943f82cac26f87d51aaa1da3b16bce1ac60702c2f6"
+      "sha256": "6e4a157bc14754650108d721bd41cca87369a5e2aaabb1e568c94445e52cca48"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "d5dd2c17bc1e2d653171d970cff7ea0c88191a7d7c7b700db24ad2d91278cdb2"
+      "sha256": "6e7111f38473f17091383291ff9cd642da63bb99ebdbfb81665d913464413e8a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "6ac51d2a3afcc3f5b0657f9c1efa33cecfdcc3c857ac13468c67511183b384be"
+      "sha256": "c28adc0b6b2b423f00c49dbfd69c7e3db3c42218d7fb2c8939c2ef5c62640c83"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/random/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "9c7db78c420b5b5069c9593b7dc3e580b926c2616c6f336096fbb3f83cbeab94"
+      "sha256": "fe408c3b16c756e01b4cbcee44b8305888b11032b8d87f5bfd4b62fb0d6dea2b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "29ff3cb892b6c3db0373ca3b3449a04bf467b1a15ab0480b28e5a9524a133651"
+      "sha256": "5273f3536c559b7e3517513fb2a3ec3d5eccbf284c390dc05c5671be7865ed67"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "a211d7924acb8e1c46a106ec600b70f183788626d01e5cb350914cfae33dbce7"
+      "sha256": "dc3744c082ef3e916108979f71234fe1772522196947fd878cb551cce431cf94"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "21938eab9ec10d4897dd4c6470540082bfb1c8c7d96789535d5414c04f58c9fd"
+      "sha256": "fd8a6c0d5ead735be8025c8df3a10a4fbb3182b6032e166bf10b0c1877f5472c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "e8b82aa5d64baf2ae2cc12b67d48f4d6e2190fdfefcf451dced2287f0ff73dbb"
+      "sha256": "a7a9ca6df9bd986ae2d5d2c43f5b54f8e89094080984db304a7e5566f276aba2"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "d45460afb9ebcb36f2bacb72d822c4cfe744b40c49d2d9405473436492f85ddc"
+      "sha256": "951ff495cdd891870fe7c0075fb79eb6cbd58511c6fa6cc1caf4eb797694f0b6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p9/safe/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "d2f4cb350ed17a178e738b67e79ea3d96da4e8fca708110d0693256276a1e449"
+      "sha256": "4afb6abfac927ccd5c9098bc430dbdc7d8ed94c39677a5e6d888ffa9057828b5"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "489d5781e7d38533b40043c54038e9a51122704fc889e69608907e66fbcc4c81"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "c2d44aad66556f3ee9e0bb1564c1a5327da86946d2204b54b16598ce0cb4dbd3"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "73d8ebc4f2dcd3ed785c43091328883a2a8d117a39f558992cfe95319d4fdb09"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "12777e666a79407261d73cebd871ac03f99fc453564bd3234cf5f49c78be6bf1"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "8650f817da47e867cc18a4d27929bfbf7c4153907a97d87d34e572216dd1117c"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/all_layer_diagonal_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "1cf557b7292631975764e76f12a5ee2f324bc4f9a50378859cb00056944f532a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "e687db474913a085992467fd9952a7f08de630183fe9ea05028d0f037b2e415c"
+      "sha256": "c1b0fa33d45dc270995c44637350ab57f8fa4f226c6521d8d9756f0507761814"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "09d39ea2a3e0a1efb8e83e493c97c7f786faebd77ad7a096d875107766ef45eb"
+      "sha256": "0afe3049bde3b2897d86ddb151016c0b91b9fda39489be305d21bb94aa0e9b7c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "5bfa04067d57ef1cc8bf892c378a902b4c64a33024f121f92390f0bd7b134288"
+      "sha256": "cc211ce26fdace23f3841a87711319b380eb2ce5dd59a9c68d69cc23bfcc79f3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "f6eff0902ae3a3c4fedd706a773babe3eafc0e3fb0d72eae94125fcc40af9252"
+      "sha256": "336b439a3b85675fb354500f801ca1b7cba217df896852419501074dcf0e0100"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "d425a928e90688b1fed1c4d6e046c5aacc213e62d7e8b8c98e555a53bd044529"
+      "sha256": "1818268513364cd6c5e836d30d1d3469177f5df3857f35ceedfe186db4fb3f95"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/cc_ucb_full_ggn_cg/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "3cce29d8ae235de1381560c705e705cf1a1b872cb48539d2b6d9deef659bd2b9"
+      "sha256": "2bfdf20c223c4fd513385cbb256cc5d457379493e3eea9c5a6947e9b3ce7d4dd"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "e10e51e56661dad741a30756e337c3b042a91e159adeb7d12af6aacb5d06cc7a"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "2e74ba4890d21f066db9f22ccbd4494a9652065ae6f98036e3763b2b8726a97b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "7d2d292c8e4686599477e3adce39093994e1a94ba8f95f044ecb9ee7f0017b7e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "4c1c12af51ac2972bb33edb3986d0d6225bebb590e5815e5ee37c684181dcbc8"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "fae641d6341b8b1f2f7b38b264c7e23c5b690ec1a572cbb8f0d6bb3678e4339e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/frozen_backbone_last_layer_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "71ccb29509b92237be00160475271694fc210f963ca3b6bb68e586bb44ba206d"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2000/manifest.jsonl",
+      "sha256": "6665b53575500c46a2b8bfad0ccf780695be1a95b1ae43de5f7d25430654a318"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2000/raw.jsonl",
+      "sha256": "eb09dfffb4efe3dd1ce8eba78b2339f4a22dfed42864ddfcdec3ededbe2e81ae"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2000/summary.jsonl",
+      "sha256": "2ab9bbc6f5421d294e5627e9da7f0b6019574343826b760f3f397608581e6ff9"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2001/manifest.jsonl",
+      "sha256": "b3fdcac33f35ab0843449c14ae589c8c9769e673f63f67317f4cdfb18b6b5c3f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2001/raw.jsonl",
+      "sha256": "0880a9505029c832aadf41adfd5b7ba50fc146ac35926c02449d4f3c5f48db85"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/greedy/ridge-0_bonus-0/seed-2001/summary.jsonl",
+      "sha256": "cea680ada00686f4710d02ae053da21a173c17977549f13ceb1e4528a33f39ab"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "c15678a091dc037d423fa86aa67a65764ddc544109db01c7a630cf3b33bf1e02"
+      "sha256": "24b2430068546fce3125673a263e909314882825cdbd2b7a188ab2dbb9574a18"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "6c5fcb0255e69d0d78e090d1fba08e16c7780fa22185e70c7198ba72e35af970"
+      "sha256": "c5e5a082aee1f21fe542491a5c50ec8d21f9a5e9487e947d63aaabd2ee8db58a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "a11cbc07a701f589ed230c058e734858de602ffa6a26e91b1e418c73cc9b54d5"
+      "sha256": "224d7ce76ff416b690b89631801fc76e5f19f2ed9a71bdc7bd31b81fa8f09098"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "17ae6c294193b69ef90f64c0a889b8e3c2b2e28bdffee8bf038d241b18b3e3ea"
+      "sha256": "9a96a9cef3d2dd95185cf5eff381e687f5c12c3aabc01191f43a307c6f4c8ec3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "5f1acb3b89af0b3596b30ece58ed1cf4257a45241ceadb27772b9a8390ea9d6c"
+      "sha256": "be7341d92abc2945f6b123a2bacb15fce6fca7d1371be523c1955db8e8ddeef0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linear_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "761947ff481b1a8222c685d8ccc8abf80caed3ec612e1f18ec4235b2c2fa0f6e"
+      "sha256": "1a349ec97eb5b6d42fbe8d938dc80e932b825898c44404348b93441f8037e2a5"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "57f80669d888bebac4b3596df4bd279b703545fd60a40fc3bf3244e146ef5a07"
+      "sha256": "7cd4325043ca01dda516c3e78754d18ab5023e5ca47531c4c3d137c448bc365d"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "767d80e607648db767e00c4e0405e08ab77ac76a72da3b922827d5e3f2dbb5c4"
+      "sha256": "1b446ebbaf761208e722d386b4f2610dc78bec20d80655e9fec6f7c9c8ac1b8a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "91f79a67f574337ea02ec9b3516535611f1d2501d90ea093b74bc6ffc6480b13"
+      "sha256": "c5ecf04cd0b2ad01f8cd2f201278d51e44412d0b43918ec51c731dccadf653e0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "a1126cf9e9ea7af66f08684a00770a7451d84a78a2b1cc72df8c2adeb52786cd"
+      "sha256": "9123066a2d53313dd1d3a8341cdf72e3ca82cad8f18cc9dffe220396e90ae284"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "21c5c0d9a4dcfdeec1c6b5a5bc8306c5b8eefecf543d81c19e08bfda002bd7d1"
+      "sha256": "87e2a270fecbf04a8cda50df759e73bbc303093be9ea9e0a339fa2b4a49db21b"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/linucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "48137d7b0249cf4de13d7a541ab81684b9c1cde80f52eede69881fb8d7750eff"
+      "sha256": "69a2e54d3a4bf3a284fe65141a0f63ad9ce470fa37313d7940e43f6e56e0c39f"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
+      "sha256": "69cdb24df235b2504bf1d082423fd688c01bf15f7afb9a20ef3b5a0507218dba"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
+      "sha256": "4ddb1a33581e1126e122b8682334ab236c4fe6f0b6e3812eaeb6e0945437103e"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
+      "sha256": "ae33210a63021c8683622449d0ab6a60f04095751503f1949f80316f21c82e31"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
+      "sha256": "13632bcfe0e53c6768a789c68c2f87b6c58611c96f9e90d57dd5ec981222214b"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
+      "sha256": "b2b6989414b40766337fa7d30610097cdf1df5a548b9ec7650da3f6f19b58069"
+    },
+    {
+      "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_linear/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
+      "sha256": "dd08f7d944b101a7c273a0a669d56d9da28b15d98c0d19366c0e169fe305c33a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "f783f2f5bd7cc596cfcd96c96a8ec1caa28cc70e916ebb3bce9861b04bb8c871"
+      "sha256": "94cb9a86789568ba5b03b68210eb9f25fd5a8723259691db3bfe75c9c274f233"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "5e6fc5d3f1aa66eb2c956b637b1821e778a6e838f5f299e411ec8ef005621674"
+      "sha256": "012f68b01682d85193498fb767977ab6a71dfbde8e29d8db93af21122df29738"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "e6de501166ad740f5f03bcf1fc57d8672db5e3a3a4ea580d86a90efc3b4a0fa3"
+      "sha256": "f55ead482990fc0e87499c32a8ce374bcb25d6f2432ba5ddd35f95a7d71b1ca0"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "a10efd3ff30d0785c6d9f8f96bb97d15ef54514700f4c5fb315a2039a1b2f2e6"
+      "sha256": "86ac6af97cbee65c2d2cfe9d0e6f217f1a48e181693bc0d6a81c39309b4c43f7"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "2bec9285cb08a74364917512499e6c192a484f92044fe1a1fb39578c86b61268"
+      "sha256": "175afa328b6fb3f74a5e6179a3b0aedb0e70d1f20fec4272e818a52aca8039ff"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ts/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "7f08ab1927b5620627ed8fd8ffa8e8480e659124db539689c46aaeac9c444983"
+      "sha256": "ded8c0fbcaac091c17d88aa9fe7d7b3052213b8d6545d01050a1f201c26e15d3"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/manifest.jsonl",
-      "sha256": "2ba9d7cc2dc79df83166bb77ed37be3d56e94e8ecd22959d9d7297502c370805"
+      "sha256": "5548ae82b65a2dbc352473c804cad8798fe77a5676689a59bc8d6bdd0a9a8671"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/raw.jsonl",
-      "sha256": "191eceabd21a3361292d6f34a19868f5027b96012b461f6f59a46768794dacc1"
+      "sha256": "e8251f70223051a7bd0b1b2fabfecd8c207974cebf649df2fcac7c6a9061ca10"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2000/summary.jsonl",
-      "sha256": "ccd2e62ff610e74a7fdde20eb8a1f8ce5e5fab1b48581dc6fdffedcf8a0068e1"
+      "sha256": "274f1cb78869f8207328c48426c10eb1e594f546aaa21b59e97f426ca4aabb27"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/manifest.jsonl",
-      "sha256": "989403507d9679f478b8de6076517d2a8301e8e45cb1e4780f29a7ffacf0e0a8"
+      "sha256": "be02d988dc4fc9e1b32ec2152924a5a97513ddde9d766fde14528a22ffd78146"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/raw.jsonl",
-      "sha256": "6228515d6c26a084a665c28359d2b72371db9b9949049e33dc8d994cfd468190"
+      "sha256": "697766460b516da15c2f538e75b2be075bf318e3e154e67d98ef94895c0fd942"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/local_neural_ucb/ridge-1_bonus-0.5/seed-2001/summary.jsonl",
-      "sha256": "3e37f3c390a28e4093be01a2a3bfad6bf702918d19fee30504e5b6c953c41e04"
+      "sha256": "d34c31de4f62d485af19a8b4666316d707a6d2c5d0c8332185500c691d89b895"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "6ac6f7352ebaa336c8775530333714db7d8af0bc1030b272b0615a379fa4ef0e"
+      "sha256": "93894333c323e1e8622e6ee695084d8952b922eda7f3b42ffb7bd6c0baf74325"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "55ea816306837b8ae855d3ed73c157c6ab0fb4b069cc7dce589211f6d9805bd7"
+      "sha256": "19b4c753cdc72377506836eec775573e1e20d4050810e6e8c656140d89093cfc"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "14597b96df0934d3ca1e50f45114cfb3bc4168cf96f32de6e9c5ce888f0277a2"
+      "sha256": "d5913bdf1d4b3ec49a6139ffbbcb0fa6d3e1f0a2c4866158297b3dfc8ec622e1"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "86d2deb737ed7198094c171d8887b3ccc65f3e498de276557acb40be5b12fe23"
+      "sha256": "96ab01fc7b9d1af5ffc486a0a6448b3c0f69d22ab02b5f4cf76f640783020c15"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "4fbe86b602b4c4ab213a40194286469a8ca4a06d4c2604af9cab560393228dd7"
+      "sha256": "3dcf1b6114387269b75e553cd39520548a08024cd98c987d39b1b06aa821a801"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/oracle/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "63a567874e623dd1a19999ac8b557783e07c693bf1d444dbda9405f4e2b8955d"
+      "sha256": "091b530a5da3c92dce2c22969896247b7fe04cf1997e4bc01ca7e4c29677122c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "a352a70fedaaccd81672639d354dc7bc5ee3d297548d340f790305608928b5a4"
+      "sha256": "e9c204be8f2cd451ff5c4529d8571ce43b3732d44e19b85a439501a66b1f4a84"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "af393f060248459fa1127a69400f561e46239b7edb4c9c20acc90648fdb61d86"
+      "sha256": "c5ca96975d6af432fb15a4e31e6e5a9b8556e4fca85e5f5359196ade40714dbb"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "71d58e2e6bc32257706d21ce79d2a61a80d5740928b81bd1f24d80e4e550402c"
+      "sha256": "9a91d2f9ad6d096eb97039cbb9397cf1261a915bedd6c15258be05d9b053face"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "66dfa30328610879b15fc83868e07fab73b75c4780ec2cb3c61778c87f7dbc36"
+      "sha256": "bd8b6277fb3c06598f8dbbb61f228181a5b46d2442478a8ed96e1f2d5e2cbc8a"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "f837cc8f226ed2d3a33f526cdabdc8e0146c1b9eb0fa3ffb0aac96ada379059d"
+      "sha256": "74112a3e7cb5da52e323e55dbf446af2c7f7502080e171fffa62ecc53578bbc6"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/random/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "3ab22a8d430c7a9b314f6e3fa865f17de548699b34c66863d1b41f97bb1aebcc"
+      "sha256": "27e151cf9e5130386cc338998e2d70e67c5ff3abde406796e237631f5efa4a9c"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2000/manifest.jsonl",
-      "sha256": "e7c99392588cbbe84c4cd6128e7bef4a749a14f7c7a182cd0da4ad626e8cc04a"
+      "sha256": "6d2bb0d27843a7946571e5a939fea9b8e2e20bb9ca2238a8ef57924159107985"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2000/raw.jsonl",
-      "sha256": "e4fe705cc4aea0339998740c8e87b84f78f41700540f456e32c5331aba665568"
+      "sha256": "d637807346fb645a57a2c840b95c990426c19d7127bb916ee0ff68107b65ae79"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2000/summary.jsonl",
-      "sha256": "cd51ffef70afd4386ecabbe0a7d79c99570673f51fe99680be0fb7c2ca8f6e5b"
+      "sha256": "5cbc8b5f2e67fecbccf25d06ec83c77cceb5e87a38d0f598acdd2c9731cd87cd"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2001/manifest.jsonl",
-      "sha256": "b9899a2de3ece0e92fd8a94e75ccb696d4bf61be90d9643651ed19c141ab476d"
+      "sha256": "f4a377a5027ccf019221f6326b17c93e4e1af5f3f6c052ff84e106a9b53dcd61"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2001/raw.jsonl",
-      "sha256": "f98b5fc04127a62035779f9e1095ac90028c55306de9aa4d3df41c5a71d10a6d"
+      "sha256": "560f366dabba5301071e8550d9c62d2de118985b800ebca0bdfc4449d4884894"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning/delta-0p95/safe/ridge-0_bonus-0/seed-2001/summary.jsonl",
-      "sha256": "b5838dc55423bf7b1c384cda46b2b9b1b1d215bb54765c6c7d0bd5e79d9beb8c"
+      "sha256": "3c712cdae3888a755012d7e66403858f1e296c00468dd9b452e169582d1704e9"
     },
     {
       "path": "results/raw/wheel_benchmark/smoke/tuning_selection.json",
-      "sha256": "d526564707a0eec2708f4d5176ef8c8e6d127d7d956ccf21dfadf1d0e903b5f0"
+      "sha256": "6c7e21fe9375f1ad85c9cda085ff9e7d6c1950f3ecd390bffe8654a6145a8d8a"
     }
   ],
   "schema_version": 1
