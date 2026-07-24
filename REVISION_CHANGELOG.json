@@ -1,0 +1,267 @@
+{
+  "schema_version": 2,
+  "generated_at_utc": "2026-07-24T00:06:28Z",
+  "repository": {
+    "branch": "codex/closed-rates-20260721",
+    "audited_revision": "bf5fa236297091e1b80dede777dfb03f8b3fdc72",
+    "revision_start": "4f94c3e56c9f27f02b58d16b949cb19420324eb4",
+    "working_tree_dirty": true,
+    "documentation_paths_modified_by_this_audit": [
+      "REVISION_REPORT.md",
+      "REVISION_AUDIT.md",
+      "REVISION_CHANGELOG.json"
+    ],
+    "source_or_artifact_paths_modified_by_this_audit": []
+  },
+  "commits": [
+    {"commit": "4f94c3e56c9f27f02b58d16b949cb19420324eb4", "summary": "docs: record scalar-link revision baseline"},
+    {"commit": "e4dac520cd924dc2d6d645bdf8a9f3acc63b4454", "summary": "paper: add structured scalar-link regret bounds"},
+    {"commit": "56286d35ca3cc4fe756797f3bcb1234a95984bce", "summary": "experiments: refine spectral-tail complexity audit"},
+    {"commit": "fb4a38b2c345f26dfa821498ed437992e85d9397", "summary": "experiments: add end-to-end systems benchmark"},
+    {"commit": "6a098a6bc1cee9c75f3e43c05bafc38cf9598d42", "summary": "experiments: add gap-dependent validation"},
+    {"commit": "6e4ee82945557ae91e09517622a1a1713debb7df", "summary": "experiments: add canonical Wheel benchmark"},
+    {"commit": "048570bdfe9daaf702309d0a662ef2f7e7d22b41", "summary": "experiments: add scaled-tanh theorem instantiation"},
+    {"commit": "50c1310b3c4964873d6ded8b45e485879464c327", "summary": "experiments: parallelize Wheel evaluation"},
+    {"commit": "6dc67cc1ef0fa78f241d65d03fdd48f80085994d", "summary": "build: register revision experiment pipelines"},
+    {"commit": "4596f2b738d85c86a29fd18a6d1c4ef26ca8a178", "summary": "experiments: add scaled-tanh artifact pipeline"},
+    {"commit": "5b64bdf0d5cd7be79a7bd28b7281924400ad322e", "summary": "docs: record scalar-link proof derivations"},
+    {"commit": "83cb8a108963ffddc6b70fe96481b61c08db5720", "summary": "artifacts: bundle scaled-tanh raw evidence"},
+    {"commit": "45c07d44805e07a6a759df42ec9d16644f0c75d5", "summary": "artifacts: add Wheel publication outputs"},
+    {"commit": "7eab84d9afe11b7e80068568ef6a24ab3e4f6a8f", "summary": "artifacts: harden gap and systems evidence"},
+    {"commit": "122a792e8bb36f97ffa7f4691624902c509ad327", "summary": "artifacts: decompose scaled-tanh premise failures"},
+    {"commit": "9ec62a3c1a49908e381062365776b98b7d5c25b3", "summary": "artifacts: clarify scaled-tanh audit labels"},
+    {"commit": "b65d38f2cd5354a08ebd595265b19d178fbd4af2", "summary": "artifacts: bundle Wheel raw evidence"},
+    {"commit": "cf3eea0c480d026b757009ecc8b91f2eb39bd316", "summary": "artifacts: mark failed scaled-tanh premise audit"},
+    {"commit": "aed39c5a43987ad925d70b364ab75cfc63dfa2f0", "summary": "results: retain failed scaled-tanh evaluation"},
+    {"commit": "49159324ce0c9268985ca662a663f8e77db50d84", "summary": "results: add full gap-dependent validation"},
+    {"commit": "5d297af78cad8b5d68f1b13b6bd699df28e4a878", "summary": "experiments: freeze efficient Wheel solver"},
+    {"commit": "95fe2d2ae201d4109605072942f9cadc4ad6fda1", "summary": "experiments: preserve Wheel run failures"},
+    {"commit": "51044565bca349805e1fd0c7e804273f5ad85fb7", "summary": "artifacts: index full scaled-tanh raw bundle"},
+    {"commit": "a999319c051091096fbfba64236a56c2171068aa", "summary": "experiments: expand and harden Wheel benchmark"},
+    {"commit": "f5d295b05be0346abe74eba2b9390c0a28fe3373", "summary": "experiments: record failed Wheel tuning stop"},
+    {"commit": "aa693eea99fd8cd42827afa67f215159cb25f02b", "summary": "paper: align claims with structured-link evidence"},
+    {"commit": "bf5fa236297091e1b80dede777dfb03f8b3fdc72", "summary": "paper: disclose raw bundle scope"}
+  ],
+  "theory_changes": [
+    {
+      "task": "relative_scalar_link",
+      "status": "completed",
+      "labels": ["lem:relative-link-drift"],
+      "summary": "Relative scalar-link drift, Loewner transfer, scalar-weight centering identity, frozen-metric centering bound, and O(t) scalar replay metadata disclosure."
+    },
+    {
+      "task": "scaled_tanh",
+      "status": "completed_conditional_theorem",
+      "labels": ["cor:scaled-tanh-relative"],
+      "summary": "Explicit scaled-tanh constants, relative-drift threshold, and conditional original-center rate. W is a scalar-link near-linearity scale.",
+      "empirical_instantiation_status": "failed_full_premise_audit"
+    },
+    {
+      "task": "spectral_tail",
+      "status": "completed",
+      "labels": ["lem:spectral-tail-logdet", "prop:spectral-tail-tightness"],
+      "summary": "Split head/tail log-determinant closure, old relaxation, predictable-envelope restriction, and equal-eigenvalue tightness construction."
+    },
+    {
+      "task": "gap_dependent",
+      "status": "completed",
+      "labels": ["cor:gap-dependent-exact-current"],
+      "summary": "Gap-dependent frozen-potential corollary under minimum-gap and linearization premises."
+    },
+    {
+      "task": "pcg",
+      "status": "completed",
+      "labels": ["lem:pcg"],
+      "summary": "Fixed history-measurable SPD preconditioner, symmetric transformed system, fixed-iteration bound, and preconditioned-residual stopping rule."
+    },
+    {
+      "task": "exponential_family",
+      "status": "not_added",
+      "labels": [],
+      "reason": "No complete proof was obtained."
+    }
+  ],
+  "experiments": {
+    "scaled_tanh_instantiation": {
+      "profile": "full",
+      "status": "completed_failed_premise_audit",
+      "expected_run_count": 8000,
+      "validated_run_count": 8000,
+      "evaluation_seeds": {"first": 1200, "last": 1249, "count": 50},
+      "support_criteria": {
+        "analytic_relative_transfer_below_one_all_cells": true,
+        "relative_transfer_strictly_below_welford_all_cells": true,
+        "rhs_per_round_decreases_each_width_ratio": true,
+        "minimum_exact_cg_action_agreement": 1.0,
+        "maximum_mean_relative_width_squared_error": 1.282047550845858e-12,
+        "primary_premises_pass_all_trajectories": false,
+        "supports_nonavacuous_instantiation_claim": false
+      },
+      "failure_audit": {
+        "exact_current_relative": {"failed_trajectories": 43, "failed_rounds": 72, "optimizer_rounds": 58, "transfer_rounds": 14},
+        "full_cg_relative": {"failed_trajectories": 51, "failed_rounds": 80, "optimizer_rounds": 58, "transfer_rounds": 14, "cg_convergence_rounds": 8},
+        "current_welford": {"failed_trajectories": 40, "failed_rounds": 77, "optimizer_rounds": 77},
+        "corrected_current": {"failed_trajectories": 14, "failed_rounds": 14, "transfer_rounds": 14}
+      },
+      "aggregate_path": "results/derived/scaled_tanh_instantiation/full/aggregate.json",
+      "aggregate_sha256": "6a0ce65521b669796172270de8d0d624e7976260f1f4160692b078f1c5fca0c7"
+    },
+    "spectral_tail_reanalysis": {
+      "profile": "full",
+      "status": "completed_analysis_only",
+      "policies_rerun": false,
+      "hyperparameters_reselected": false,
+      "path": "results/derived/spectral_tail_study/full/bound_reanalysis.json",
+      "sha256": "5f7f0db53b9d18d891a18febfc18e2cd49786577ae2a075356d94ec7ed4eb084"
+    },
+    "gap_dependent_validation": {
+      "profile": "full",
+      "status": "completed_recorded_premises_passed",
+      "expected_run_count": 1000,
+      "validated_run_count": 1000,
+      "evaluation_seed_count": 50,
+      "exact_and_full_cg_group_count": 8,
+      "maximum_cg_energy_error": 8.343101809119722e-7,
+      "all_applicable_bounds_dominate_regret": true,
+      "path": "results/derived/gap_dependent_validation/full/aggregate.json",
+      "sha256": "2da0c69d9a1a653e8b30a09499df5c8af02a9447177b9babf6428e072993f28c"
+    },
+    "wheel_benchmark": {
+      "profile": "full",
+      "status": "failed_during_tuning_evaluation_not_run",
+      "method_count": 12,
+      "faithful_lofi_included": false,
+      "faithful_kfac_included": false,
+      "evaluation_seeds_read": false,
+      "evaluation_policies_run": 0,
+      "tuning_attempts": [
+        {
+          "cg_max_iterations": 100,
+          "failure_record_count": 56,
+          "failure_sidecar_count": 56,
+          "retained_path": "results/raw/wheel_benchmark/failed_iter100_tuning",
+          "example": {"delta": 0.5, "seed": 2000, "ridge": 0.1, "bonus": 0.1, "round": 484, "relative_residual": 8.647020e-6}
+        },
+        {
+          "clean_source_revision": "a999319c051091096fbfba64236a56c2171068aa",
+          "cg_max_iterations": 300,
+          "failure_record_count": 27,
+          "failure_sidecar_count": 27,
+          "retained_path": "results/raw/wheel_benchmark/failed_iter300_tuning",
+          "example": {"delta": 0.5, "seed": 2008, "ridge": 0.1, "bonus": 0.5, "round": 2761, "relative_residual": 4.714088e-6}
+        }
+      ],
+      "periodic_residual_replacement_development_diagnostic": {"status": "failed", "round": 174, "relative_residual": 5.467890e-6},
+      "declared_tolerance": 1e-6
+    },
+    "end_to_end_systems": {
+      "profile": "full",
+      "status": "development_only_solver_residual_failure",
+      "seed_set": "development",
+      "seed": 7100,
+      "clean_source_revision": "95fe2d2ae201d4109605072942f9cadc4ad6fda1",
+      "device": "cuda",
+      "expected_run_count": 48,
+      "completed_run_count": 48,
+      "elapsed_seconds": 2210.240383006021,
+      "maximum_original_system_relative_residual": {
+        "current_replay_ggn_cg": 13.729890823364258,
+        "historical_gradient_cg": 15.497018814086914
+      },
+      "evaluation_run_count": 0,
+      "eligible_as_evaluation_evidence": false
+    }
+  },
+  "raw_artifacts": {
+    "scaled_tanh_full_bundle": {
+      "local_archive_path": "results/raw/bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz",
+      "archive_payload_tracked": false,
+      "archive_size_bytes": 4425351907,
+      "archive_sha256": "47674276eff5b84eb002cff39ac0a11facea6bc3fdd7416a0e60e695c7ec8c7d",
+      "validated_run_count": 8000,
+      "file_count": 48002,
+      "uncompressed_size_bytes": 4635298871,
+      "input_set_sha256": "1e059fa281eae5ba4461ddf359e9ee7d4bdb6adfc7f5d5fa846eee6815aa870f",
+      "inventory_path": "results/derived/raw_bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz.inventory.json",
+      "inventory_tracked": true,
+      "inventory_size_bytes": 10937302,
+      "inventory_sha256": "83c614b32407ae5d339f97e649346799a1d28c3d3d3454b6c0e8d0571f1bc490",
+      "public_fetch_url_available": false,
+      "verification_status": "verified"
+    },
+    "other_ignored_local_evidence": [
+      "results/raw/gap_dependent_validation/full",
+      "results/raw/wheel_benchmark/failed_iter100_tuning",
+      "results/raw/wheel_benchmark/failed_iter300_tuning",
+      "results/raw/end_to_end_systems_benchmark/full/development"
+    ]
+  },
+  "paper_packaging": {
+    "main_body_last_numbered_page": 6,
+    "physical_pdf_page_count": 71,
+    "pdf_size_bytes": 1711083,
+    "maximum_material_overfull_hbox_points": 5.1225,
+    "overfull_location": "abstract/style block",
+    "undefined_references": 0,
+    "undefined_citations": 0,
+    "duplicate_labels": 0,
+    "missing_figures": 0,
+    "type3_fonts": 0,
+    "target_year_style_status": "provisional_repository_aistats2026_style",
+    "target_year_checklist_status": "missing",
+    "final_target_year_compliance_claim": false
+  },
+  "changed_file_groups": {
+    "manuscript": ["paper/main.tex", "paper/macros.tex", "paper/main.pdf"],
+    "theory_support": ["experiments/theory_metrics.py", "experiments/curvature_operators.py", "experiments/nonlinear_environment.py", "tests/test_theory_metrics.py", "tests/test_curvature_operators.py", "tests/test_nonlinear_audit.py"],
+    "scaled_tanh": ["experiments/configs/scaled_tanh_instantiation.yaml", "experiments/run_scaled_tanh_instantiation.py", "experiments/make_scaled_tanh_instantiation_artifacts.py", "experiments/tests/test_scaled_tanh_instantiation.py", "experiments/tests/test_scaled_tanh_instantiation_artifacts.py", "scripts/reproduce_fig_scaled_tanh_instantiation.sh"],
+    "spectral_tail": ["experiments/make_spectral_tail_artifacts.py", "experiments/tests/test_spectral_tail_study.py", "scripts/reproduce_fig_spectral_tail.sh"],
+    "gap_dependent": ["experiments/configs/gap_dependent_validation.yaml", "experiments/run_gap_dependent_validation.py", "experiments/make_gap_dependent_validation_artifacts.py", "experiments/tests/test_gap_dependent_validation.py", "scripts/reproduce_fig_gap_dependent_validation.sh"],
+    "wheel": ["experiments/configs/wheel_benchmark.yaml", "experiments/run_wheel_benchmark.py", "experiments/make_wheel_benchmark_artifacts.py", "experiments/raw_artifact_bundle.py", "experiments/tests/test_wheel_benchmark.py", "experiments/tests/test_wheel_raw_artifact_bundle.py", "scripts/reproduce_wheel_benchmark.sh", "scripts/bundle_wheel_raw.sh"],
+    "end_to_end_systems": ["experiments/configs/end_to_end_systems_benchmark.yaml", "experiments/run_end_to_end_systems_benchmark.py", "experiments/make_end_to_end_systems_artifacts.py", "experiments/tests/test_end_to_end_systems_benchmark.py", "scripts/reproduce_fig_end_to_end_systems.sh"],
+    "build_and_bundle": ["experiments/BUCK", "scripts/bundle_scaled_tanh_raw.sh", "results/derived/raw_bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz.inventory.json", "results/derived/raw_bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz.inventory.json.sha256", "results/derived/raw_bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz.sha256"]
+  },
+  "artifact_hashes": [
+    {"path": "paper/main.tex", "size_bytes": 254821, "sha256": "bc1f03106767ff344bfc4729687e218d67e195e9b48a75fa0805e048d9d4bd3b"},
+    {"path": "paper/main.pdf", "size_bytes": 1711083, "sha256": "87286977ace5e29474221129fa0077a96615b2c80a5020d2d1e3f22d73247b4e"},
+    {"path": "THEORY_DERIVATIONS.md", "size_bytes": 11799, "sha256": "dcc913fd2a4e0657ee3da52ff644037d2148bf54f2824c0b35b775ef5390087c"},
+    {"path": "results/derived/scaled_tanh_instantiation/full/aggregate.json", "size_bytes": 12620407, "sha256": "6a0ce65521b669796172270de8d0d624e7976260f1f4160692b078f1c5fca0c7"},
+    {"path": "paper/figures/scaled_tanh_certificates.pdf", "size_bytes": 426087, "sha256": "46ca99024b413af0c87475abde2a5608d3c01233a3247eb728c4ad4f10074fc1"},
+    {"path": "paper/figures/scaled_tanh_regret_bounds.pdf", "size_bytes": 23314, "sha256": "c4bdbc7726b5adf88e9df896fc2d856f3ea0f1dc5fa451861e7b247aefce60b6"},
+    {"path": "paper/figures/scaled_tanh_compute.pdf", "size_bytes": 32910, "sha256": "40196789e826a208b550f7e05955300ab749e0ddb0abdefd9c96a9a65688044c"},
+    {"path": "tables/generated/scaled_tanh_instantiation.tex", "size_bytes": 2157, "sha256": "ab1b7ff2b67c6a17b150c927d959f18c80d390e8942b351c35756f00f4fb336a"},
+    {"path": "results/derived/gap_dependent_validation/full/aggregate.json", "size_bytes": 1182819, "sha256": "2da0c69d9a1a653e8b30a09499df5c8af02a9447177b9babf6428e072993f28c"},
+    {"path": "paper/figures/gap_dependent_validation.pdf", "size_bytes": 22181, "sha256": "10c089ee1bbcc300f4cd04c1f1a9d834ff33bbca1f1868015285f6f93164b559"},
+    {"path": "results/derived/spectral_tail_study/full/bound_reanalysis.json", "size_bytes": 10944688, "sha256": "5f7f0db53b9d18d891a18febfc18e2cd49786577ae2a075356d94ec7ed4eb084"},
+    {"path": "results/derived/raw_bundles/scaled_tanh_instantiation/scaled_tanh_instantiation-full.tar.gz.inventory.json", "size_bytes": 10937302, "sha256": "83c614b32407ae5d339f97e649346799a1d28c3d3d3454b6c0e8d0571f1bc490"}
+  ],
+  "validation": [
+    {"command": "buck2 run //tools:pytest_runner -- -q experiments/tests/test_wheel_benchmark.py", "status": "passed", "passed_test_count": 10},
+    {"command": "buck2 run //tools:pytest_runner -- -q experiments/tests/test_wheel_raw_artifact_bundle.py", "status": "passed", "passed_test_count": 3},
+    {"command": "buck2 build //experiments:run_wheel_benchmark //experiments:make_wheel_benchmark_artifacts", "status": "passed"},
+    {"command": "focused gap and end-to-end artifact tests", "status": "passed", "passed_test_count": 9},
+    {"command": "PROFILE=full scripts/bundle_scaled_tanh_raw.sh verify", "status": "passed", "validated_run_count": 8000, "validated_file_count": 48002},
+    {"command": "latex build and log audit", "status": "passed_with_provisional_style_warning_and_5.1225pt_overfull"},
+    {"command": "complete repository test suite after bf5fa236", "status": "not_run"}
+  ],
+  "failed_runs": [
+    {"experiment": "scaled_tanh_instantiation", "scope": "full evaluation premise audit", "retained": true, "claim_suppressed": "nonvacuous theorem instantiation"},
+    {"experiment": "wheel_benchmark", "scope": "100-iteration tuning", "failure_record_count": 56, "retained": true},
+    {"experiment": "wheel_benchmark", "scope": "300-iteration clean tuning", "failure_record_count": 27, "retained": true},
+    {"experiment": "wheel_benchmark", "scope": "periodic residual replacement development diagnostic", "failure_record_count": 1, "retained_in_config_note": true},
+    {"experiment": "end_to_end_systems", "scope": "full-profile development seed", "completed_cell_count": 48, "solver_accuracy_failed": true, "evaluation_claim_suppressed": true}
+  ],
+  "deliberately_unmade_claims": [
+    "unrestricted neural-network regret theorem",
+    "generic network width implies scaled-tanh assumptions",
+    "nonvacuous scaled-tanh theorem instantiation",
+    "completed full Wheel evaluation or selected full Wheel configuration",
+    "full-GGN Wheel superiority",
+    "faithful LO-FI or KFAC Wheel comparison",
+    "end-to-end evaluation from development seed 7100",
+    "end-to-end CG accuracy or scalability from failed residual checks",
+    "verified numerical enclosure from float64 point checks",
+    "tracked or publicly fetchable 4.43 GB scaled-tanh archive payload",
+    "final target-year AISTATS style or checklist compliance"
+  ]
+}
