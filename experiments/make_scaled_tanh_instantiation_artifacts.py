@@ -1321,7 +1321,7 @@ def make_certificates_figure(report: Mapping[str, Any], output: Path) -> None:
     figure.text(
         0.5,
         0.01,
-        f"T={cell['horizon']}, W/(T R_T)={float(cell['width_ratio']):g}, exact relative policy",
+        f"T={cell['horizon']}, W/(T P_T)={float(cell['width_ratio']):g}, exact relative policy",
         ha="center",
         fontsize=7,
     )
@@ -1455,7 +1455,7 @@ def make_compute_figure(report: Mapping[str, Any], output: Path) -> None:
         error_low = np.maximum(error_low, 1e-18)
         error_high = np.maximum(error_high, 1e-18)
         color = ratio_colors(index % 10)
-        label = rf"$W/(T R_T)={ratio:g}$"
+        label = rf"$W/(T P_T)={ratio:g}$"
         axes[1].plot(
             horizons, agreement, marker="o", color=color, linewidth=1.4, label=label
         )
@@ -1523,7 +1523,7 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
         )
     lines.extend(
         (
-            r"$T$ & $W/(T R_T)$ & $\rho_W$ & Premises & Failed traj. (Exact/CG/Welf./Corr.) & Regret & RHS/$T$ & CG agree. & Max width err. & Sample-CVPs \\",
+            r"$T$ & $W/(TP_T)$ & $\rho_W$ & Pass & Fail E/C/W/R & Regret & RHS/$T$ & CG agr. & Width err. & CVPs \\",
             r"\midrule",
         )
     )

@@ -78,141 +78,98 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-Curvature surrogates in differentiable-model bandits change exploration widths,
-but greater fidelity to full curvature need not improve online decisions.  We use
-the full generalized Gauss--Newton (GGN)/Fisher operator as a reference, computing
-its widths with curvature--vector products and conjugate gradients (CG) without
-materializing a $d\times d$ matrix.  Rewards have conditionally sub-Gaussian
-noise; the fitted curvature is the Gaussian squared-loss quasi-likelihood.  In
-the small-drift exact-current regime, a sharpened singular-value argument transfers
-the analysis to the monotone frozen-feature potential.  Splitting its spectrum at
-rank $r$ yields a full-dimensional conditional regret bound in terms of a
-rank-$r$ logarithmic trace term and the residual spectral mass $\Delta_{T,r}$,
-without assuming an
-exact tangent subspace.  Exact rank is a special case; a supplied subspace also
-permits an $r$-dimensional implementation.  A more general transfer theorem
-separates linearization, centering, feature and operator transfer, CG error, and
-realized width complexity.  Predictable Welford and residual statistics instantiate
-its nonlinear certificates with $O(d)$ additional path state.  These are
-conditional differentiable-model results, not guarantees for unrestricted neural
-training.  Experiments are reference-operator and failure-mode studies rather than
-a performance demonstration, and they show no uniform fidelity-based regret
-ordering in the tested regimes.
+Current-parameter generalized Gauss--Newton (GGN) exploration must reconcile
+relinearized gradients with the predictable frozen features required by
+self-normalized confidence.  We first isolate a structured resolution: for a
+fixed-feature scalar-link model, each replayed current gradient is a scalar
+multiple of its collection-time gradient.  This gives relative feature-transfer
+and centering certificates.  More generally, we prove a conditional
+Gaussian/squared-loss regret theorem for predictable positive-definite curvature
+operators with explicit linearization, centering, transfer, conjugate-gradient
+(CG), and realized-width terms.  For exact current GGN under certified small
+drift, the bound transfers to the frozen potential; a rank-$r$ spectral split
+then exposes the residual tail mass without assuming a known tangent subspace,
+and a positive-gap corollary follows.  Full-GGN widths are computed matrix-free
+with curvature--vector products and residual-checked CG.  These are conditional
+results, not guarantees for unrestricted neural training.  The predeclared
+scaled-tanh full grid does not support an empirical theorem-instantiation claim:
+148 of 4,000 theorem-labeled trajectories fail the required premise conjunction.
+A separate linear gap study passes its recorded exact/full-CG premises but its
+bounds remain vacuous; broader operator studies show no uniform
+fidelity--regret ordering.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
-Contextual bandits are a standard framework for sequential
-decision-making under partial feedback, and the reward predictor may be a
-differentiable parametric model or a pretrained representation composed with a
-reward head \citep{zhou2020neural,riquelme2018deep}.  The central algorithmic
-question is how to build an exploration bonus that faithfully reflects
-epistemic uncertainty over such a model's predictions.  We analyze the
-Gaussian/squared-loss curvature model with sub-Gaussian noise and uniformly
-Lipschitz parameter gradients on a known certified region.  The closed bounds
-also require small feature drift and a controlled spectral tail or an exact-rank
-special case; unrestricted neural training is not covered.
-
-In the \emph{white-box} setting---gradient and curvature--vector-product
-access to the model---the canonical bonus is the GGN/Fisher-linearized
-predictive variance
+Contextual bandits often use a differentiable reward model or a pretrained
+representation with a learned reward head
+\citep{zhou2020neural,riquelme2018deep}.  In a white-box model, the natural
+exploration primitive is the current GGN/Fisher-linearized variance
 \begin{equation}\label{eq:variance-intro}
   s_t^2(a) \;=\; \bg_t(a)^\top \bC_t^{-1}\,\bg_t(a),
 \end{equation}
-where $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ is the
-gradient feature (Jacobian of the mean reward) and $\bC_t$ is the
-damped Gauss--Newton (GGN) curvature at the current
-estimate~$\btheta_t$.  Exact full-history GGN/Fisher widths are costly at
-large $d$ or $t$: dense materialization uses $O(d^2)$ state, while matrix-free
-CG replays history at every iteration.  NeuralUCB retains the full neural-gradient
-Gram in its theoretical algorithm but diagonalizes it in experiments
-\citep{zhou2020neural}; neural-linear and scalable Laplace methods instead use
-last-layer or structured curvature approximations
-\citep{riquelme2018deep,ritter2018scalable,daxberger2021laplace}.
-Outside online bandits, implicit Jacobian/Fisher products and CG have already
-been used to compute full-network linearized predictive variances without
-forming the Gram matrix \citep{maddox2021fast}.  Each curvature surrogate
-changes the \emph{spectrum} of~$\bC_t$ and hence the value
-of~$s_t^2(a)$.  The spectral change does not by itself imply a change
-in the selected action, and therefore in regret; whether it does is an
-empirical question, which we make measurable and study directly.
+where $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ and $\bC_t$
+relinearizes all past examples at the current parameter.  That relinearization
+breaks the rank-one update used by predictable self-normalized analysis.  The
+collection-time frozen Gram retains predictability but answers a different
+geometric question.  The central problem is therefore transfer: when does a
+confidence statement in the frozen metric remain optimistic in the current
+metric?
 
-Current-parameter relinearization asks a different scientific question from a
-historical-gradient Gram.  The latter preserves the features that were
-predictable when data were collected and therefore supports a rank-one
-self-normalized confidence process.  The former re-evaluates every historical
-example under the representation used for the next decision, but destroys that
-monotone update.  Our analysis keeps the predictable frozen Gram for confidence
-and quantifies when its widths transfer to the current full-history GGN.  This
-separation is why feature drift, rather than curvature fidelity alone, appears
-explicitly in the regret bound.
+\textbf{Structured scalar links make this transfer explicit.}  If
+$\mu_{\btheta}(z)=h(\phi(z)^\top\btheta)$ with fixed $\phi$, then a replayed
+current gradient is the corresponding frozen gradient multiplied by a scalar
+derivative ratio.  The maximum relative ratio error directly controls a
+two-sided current/frozen curvature sandwich and yields a structured centering
+identity (\Cref{lem:relative-link-drift}).  This mechanism gives an analytic
+scaled-tanh specialization (\Cref{cor:scaled-tanh-relative}), but that
+corollary remains conditional: the completed full experiment fails its required
+premise conjunction and is reported as a stop, not as empirical validation.
 
-\textbf{We use full curvature as a reference operator in a falsification study.}
-Common-trajectory diagnostics isolate surrogate-induced width distortion, while
-independently executed policies test whether those distortions survive adaptive
-feedback.  We do not attribute a uniform fidelity--regret ordering claim to prior
-work; instead we use it as a deliberately strong diagnostic null hypothesis.  A
-controlled reversal rejects that hypothesis, whereas agreement does not establish
-superiority.  Because executed policies follow different histories,
-their regret contrasts are descriptive rather than causal operator effects.  We adapt the
-established matrix-free predictive-variance primitive to online contextual
-exploration: curvature--vector products (CVPs), available through automatic
-differentiation, let us
-solve $\bC_t\,\bu = \bg_t(a)$ by conjugate gradients (CG)
-\emph{without forming}~$\bC_t$: only $O(d)$ \emph{additional curvature-state}
-vectors (a constant number of CG vectors) are maintained and no $d\times d$
-curvature matrix or per-sample gradient vector is stored---though exact
-full-history curvature--vector products still require retaining or replaying the
-historical raw examples to recompute their Jacobian products, and model
-parameters, optimizer state, activations, replay data, and any frozen-feature
-parameter checkpoints are not counted in this $O(d)$ curvature state.  Because
-the damped GGN is symmetric positive definite, CG converges in exact arithmetic.
-All CG convergence and residual-to-energy statements below use exact arithmetic
-unless a verified rounding-error enclosure is supplied.  Building on this, we propose \textbf{Curvature-Calibrated
-UCB (CC-UCB)}, a bandit algorithm whose exploration bonus is the
-predictive variance under the \emph{uncompressed} GGN/Fisher metric,
-accessed entirely through implicit CG solves.
+\textbf{The general theorem separates the remaining obligations.}  Under
+conditionally sub-Gaussian noise and Gaussian squared loss,
+\Cref{thm:regret} handles any predictable SPD algorithmic curvature through a
+one-sided transfer factor, a residual-checked CG factor, explicit centering and
+linearization errors, and a realized width complexity.  Exact current GGN under
+certified small drift transfers further to the monotone frozen potential.  A
+rank-$r$ head/tail split closes its information gain without requiring a known
+subspace, and a positive-gap argument gives a separate conditional bound
+(\Cref{cor:exact-current-frozen-potential,cor:approx-rank-current-ggn,cor:gap-dependent-exact-current}).
+The formal presentation follows this dependency order: master reduction,
+exact-current transfer, spectral and gap closures, then operational
+specializations.  None controls unrestricted fine-tuning.
 
-\textbf{The analysis tracks predictable certificate requirements for each
-approximation source and constructs them for the nonlinear path terms.}  The Gaussian/squared-loss theorem
-(\Cref{thm:regret}) handles a general predictable SPD curvature sequence with a
-one-sided transfer factor, a per-round CG factor, and a realized width complexity
-$\Lamalg_T$.  Its exact determinant identity accounts for endpoint growth and
-determinant-destroying refreshes but does not itself bound either term.  More
-importantly, the previously external
-nonlinear inputs are computable: Welford parameter moments and observed collection
-residuals upper-bound feature transfer and centering, while an analytic Taylor
-schedule supplies the confidence radius (\Cref{lem:path-certificates,cor:operational}).
-These schedules are conservative and need known smoothness constants and a certified
-optimizer residual.  In the exact-current small-drift regime, the sharpened
-two-sided sandwich closes regret through the frozen potential, and a rank-$r$
-logarithmic-trace plus spectral-tail decomposition closes its information gain
-without a known subspace
-(\Cref{cor:exact-current-frozen-potential,cor:approx-rank-current-ggn}).  A
-supplied exact-rank path is a computational special case, while a persistently
-excited growing window gives a separate conditional regret and width-solve
-sample-CVP accounting bound
-(\Cref{cor:rank-near-linear,thm:growing-window}).  None of these results certifies
-unrestricted fine-tuning.
+\textbf{The operator is accessible without a dense curvature matrix.}
+Curvature--vector products and CG solve $\bC_t\bu=\bg_t(a)$ with a constant
+number of $O(d)$ Krylov vectors.  Exact full-history products still replay raw
+examples; model state, activations, replay storage, and any historical parameter
+checkpoints are not included in this additional curvature-state count.  Related
+implicit predictive-variance methods appear outside bandits
+\citep{maddox2021fast}; NeuralUCB, neural-linear, and structured Laplace methods
+motivate the operator comparisons
+\citep{zhou2020neural,riquelme2018deep,ritter2018scalable,daxberger2021laplace}.
+We use full curvature as a reference, not as a presumed winner: independently
+executed policy contrasts are descriptive because methods induce different
+histories.
 
 \paragraph{Contributions.}
-\textbf{(1)} A full-dimensional approximate-rank information-gain closure,
-yielding a conditional regret bound for exact current GGN under predictable small
-drift, using a sharpened frozen/current sandwich and a residual spectral-mass
-term; exact rank is a special case
-(\Cref{cor:exact-current-frozen-potential,lem:spectral-tail-logdet,cor:approx-rank-current-ggn}).
-\textbf{(2)} A general realized-width regret reduction with one-sided
-feature/operator transfer and explicit centering, linearization, and CG terms
+\textbf{(1)} Relative transfer and centering certificates for fixed-feature
+scalar-link models, including an analytic scaled-tanh conditional specialization
+(\Cref{lem:relative-link-drift,cor:scaled-tanh-relative}).
+\textbf{(2)} A modular realized-width regret theorem with explicit
+linearization, centering, one-sided operator transfer, and CG terms
 (\Cref{thm:regret,lem:whitened}).
-\textbf{(3)} Predictable $O(d)$ additional-state nonlinear transfer and
-centering certificates (\Cref{lem:path-certificates,cor:operational}).
-\textbf{(4)} A conditional projected-Gram shortcut for a supplied tangent
-subspace and a separate growing-window bound with its burn-in and certificate
-terms exposed (\Cref{cor:rank-near-linear,thm:growing-window}).
-\textbf{(5)} Matrix-free full-GGN/Fisher widths through residual-checked CG/CVP
-solves, together with executed nonlinear, operator-mechanism, baseline, and
-systems audits that separate policy outcomes from post-hoc diagnostics
+\textbf{(3)} Exact-current closures through a sharp two-sided drift sandwich, a
+full-dimensional rank-plus-spectral-tail information bound, and a positive-gap
+corollary
+(\Cref{cor:exact-current-frozen-potential,lem:spectral-tail-logdet,cor:approx-rank-current-ggn,cor:gap-dependent-exact-current}).
+\textbf{(4)} Matrix-free residual-checked GGN widths plus predictable Welford
+path certificates, a supplied-subspace shortcut, and a growing-window accounting
+bound (\Cref{cor:operational,cor:rank-near-linear,thm:growing-window}).
+\textbf{(5)} Predeclared failure-mode studies that retain negative results: the
+scaled-tanh premise stop, premise-clean but vacuous gap validation, mixed
+operator comparisons, and isolated real-autodiff systems measurements
 (\Cref{sec:experiments,prop:offdiag-witness}).
 
 \section{Problem Setup}\label{sec:problem}
@@ -410,28 +367,25 @@ and $u_t(a)\ge1$ is the one-sided transfer factor (\Cref{asm:transfer}).
 % [Computable curvature operator + cost model relocated to \Cref{app:deferred}]
 \section{Theoretical Analysis}\label{sec:theory}
 
-We state a regret bound for CC-UCB (\Cref{alg:ccucb}, with full action
-enumeration $K{=}|\cA_t|$) under the Gaussian/squared-loss setup of
-\Cref{sec:problem} and
-\Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.
-The analysis does not constitute a full exponential-family or generalized
-linear bandit proof; the extension in \Cref{app:expfam} is a
-curvature-definition extension only.
-The analysis handles a \emph{general predictable SPD algorithmic curvature
-sequence} $\Calg_t$~\eqref{eq:calg-props}.  Confidence is proved for the
-frozen-feature Gram $\bCbar_t$ (Eq.~\ref{eq:curvature-bar}), which has the
-sequential-update and predictability properties required by the
-self-normalized martingale bound; the \emph{one-sided} optimism-transfer
-factor~$u_t(a)$ (\Cref{asm:transfer}) bridges from $\bCbar_t$ to $\Calg_t$
-in the exploration direction only (no lower drift sandwich); the CG
-approximation enters through the per-round factor $\alpha_t$; and the
-nonmonotonicity of $\Calg_t$ is retained in the realized width complexity.
-Appendix~\Cref{sec:dynamic-potential} gives an exact determinant bookkeeping
-identity, not a primitive sublinear bound.
+The motivating scalar-link structure is formalized in
+\Cref{lem:relative-link-drift}, but the proof dependencies run in the opposite
+direction: we first state a master transfer theorem, then its exact-current,
+spectral-tail, and gap-dependent closures, and finally the operational and
+scalar-link specializations.  The master theorem analyzes CC-UCB
+(\Cref{alg:ccucb}, with full action enumeration $K{=}|\cA_t|$) under the
+Gaussian/squared-loss setup and
+\Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.  It is not a
+full exponential-family or generalized-linear-bandit proof; the extension in
+\Cref{app:expfam} defines curvature only.
 
-The theorem is a modular transfer result.  The path statistics below instantiate
-its nonlinear inputs from pre-action quantities; smallness still requires a
-restricted parameter path and is not claimed for unrestricted fine-tuning.
+For a general predictable SPD sequence $\Calg_t$, confidence is proved in the
+frozen Gram $\bCbar_t$, whose update and measurability support self-normalized
+concentration.  A one-sided factor $u_t(a)$ transfers optimism to $\Calg_t$,
+CG contributes $\alpha_t$, and nonmonotonicity remains in the realized width
+complexity.  \Cref{sec:dynamic-potential} gives exact determinant bookkeeping,
+not a primitive sublinear bound.  Later specializations make the nonlinear
+inputs observable, but their smallness still requires a restricted parameter
+path.
 
 \paragraph{Core conditions and links.}
 Assume conditionally $\sigma$-sub-Gaussian noise, $\|\bg_t(\bx_s,a)\|\le G$,
@@ -584,9 +538,11 @@ Writing $\tau_T=\sum_i\nu_i$ and
 $q_{T,r}=\min\{d-r,\max\{T-r,0\}\}$, the same lemma proves the sharper
 realized split bound
 \begin{equation}\label{eq:gamma-split-main}
- \Gamma^{\rm split}_{T,r}:=
- r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right)
- +q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}{q_{T,r}\lambda}\right),
+\begin{aligned}
+ \Gamma^{\rm split}_{T,r}:={}&
+ r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right)\\
+ &+q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}{q_{T,r}\lambda}\right),
+\end{aligned}
 \end{equation}
 where a term with zero multiplier is defined as zero.
 
@@ -638,10 +594,12 @@ $\tau_{t-1}=\operatorname{tr}(\bCbar_t-\lambda\bI)
 =\sigma^{-2}\sum_{s<t}\|\bg_s\|^2$.  With
 $q_{t-1,r}=\min\{d-r,\max\{t-1-r,0\}\}$, set
 \begin{equation}\label{eq:predictable-split-envelope}
- \bar\Gamma^{\rm split}_{t-1,r}:=
- r_{t-1}\log\!\left(1+\frac{\tau_{t-1}}{r_{t-1}\lambda}\right)
- +q_{t-1,r}\log\!\left(1+
+\begin{aligned}
+ \bar\Gamma^{\rm split}_{t-1,r}:={}&
+ r_{t-1}\log\!\left(1+\frac{\tau_{t-1}}{r_{t-1}\lambda}\right)\\
+ &+q_{t-1,r}\log\!\left(1+
  \frac{\bar\Delta_{t-1,r}}{q_{t-1,r}\lambda}\right),
+\end{aligned}
 \end{equation}
 again omitting zero-multiplier terms.  The head term deliberately uses the
 full trace: subtracting an \emph{upper} tail envelope could reduce the head
@@ -901,24 +859,23 @@ bound.  When $U$ is supplied, the projected Gram in
 All regret rows are independently executed policies.  Common random numbers are
 used only where pairing is valid.  Exact teacher and dense replay quantities are
 post-action audits; common-trajectory operator comparisons never report causal
-regret.  Tuning and evaluation seeds are disjoint.  The derived full-grid
-aggregate retains seed-level checkpoints and hash-indexed provenance metadata,
-although raw tiers needed to verify the complete chain are absent; release scope
-is stated in \Cref{app:availability}.
+regret.  Tuning and evaluation seeds are disjoint, intervals use whole-seed
+trajectories, and stopped or failed studies remain visible.  Derived full-grid
+aggregates retain hash-indexed provenance; release scope is stated in
+\Cref{app:availability}.
 
+\newcommand{\deferredSpectralComplexityFigure}{%
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/spectral_tail_regret.pdf}
   \caption{Full spectral-tail evaluation at $d=256$, $K=8$, and displayed
   rank $r=8$.  Curves are means over untouched evaluation seeds 1000--1049;
-  bands are 95\% whole-seed bootstrap intervals at the five preregistered
-  horizons.  Bonuses are selected once using tuning seeds 0--9 over the complete
-  preregistered cell set.  Head- and tail-aligned regimes are both shown, including
-  cells unfavorable to full curvature.}
+  bands are 95\% whole-seed bootstrap intervals at five predeclared horizons.
+  Bonuses are selected on tuning seeds 0--9 over the complete predeclared cell
+  set.  Head- and tail-aligned regimes include cells unfavorable to full
+  curvature.}
   \label{fig:spectral-tail-regret}
 \end{figure*}
-
-\newcommand{\deferredSpectralComplexityFigure}{%
 \begin{figure*}[t]
   \centering
   \includegraphics[width=.72\textwidth]{figures/spectral_tail_complexity.pdf}
@@ -928,40 +885,99 @@ is stated in \Cref{app:availability}.
   an upper bound rather than an estimator of $\gamma_T$.}
   \label{fig:spectral-tail-complexity}
 \end{figure*}
+
+The spectral-tail run contains 7,440 tuning and 8,400 evaluation trajectories.
+At $r=8,p=2$, head-aligned rank truncation has mean terminal regret $0.283$
+versus $0.714$ for exact full; moving the decision gap to the discarded tail
+reverses the comparison to $88.176$ versus $1.771$.  In the head-aligned cell,
+$\gamma_T=87.87$ and the tail bound is $330.75$, below the ambient-rank bound
+$1888.87$ but still conservative.  Dense full and full CG agree throughout,
+but the construction needs only one CG iteration and is an equivalence check,
+not a Krylov stress test.
 }
 
-The full spectral-tail run contains 7,440 tuning and 8,400 evaluation
-trajectories.  At $r=8,p=2$, the head-aligned rank truncation has terminal mean
-regret $0.283$ versus $0.714$ for exact full, whereas moving the decision gap to
-the discarded tail reverses the comparison sharply: $88.176$ versus $1.771$.
-Thus small total tail energy does not make discarded directions decision
-irrelevant.  In the same head-aligned cell,
-$\gamma_T=87.87$ and $\Gamma^{\rm tail}_{T,r}=330.75$, below the ambient
-$d$-rank bound $1888.87$ but still conservative.  For flat spectra the tail
-bound can exceed that ambient bound, which is reported rather than filtered.
-Dense full and full CG have identical actions, widths, and regret in every cell;
-the construction nevertheless gives one CG iteration and is therefore an
-equivalence check, not a Krylov stress test.  Greedy is often best, so this grid
-supports the tail-mechanism claim, not a performance advantage for CC-UCB.
+\textbf{Scaled-tanh stop.}  The predeclared finite-support full grid evaluates
+five horizons, four width ratios, eight methods, and 50 untouched seeds: 8,000
+trajectories in total.  The four theorem-labeled methods contribute 4,000
+trajectories.  Their failed-trajectory counts are 43 (exact relative), 51
+(full-CG relative), 40 (Welford), and 14 (corrected center), totaling 148; the
+failed fields are optimizer residual, relative transfer, and, in eight rounds,
+CG convergence.  Every method--horizon--width theorem cell therefore fails the
+joint premise criterion.  Exact and CG policies nevertheless have identical
+actions and widths agree to at worst $1.3\times10^{-12}$ relatively, which
+checks implementation but does not rescue the theorem premise.  We make no
+empirical theorem-instantiation or rate claim from this study.
 
-A separate rotated scaling grid supplies the nontrivial Krylov test: all 10,800
-trajectories pass the stated premises, more than 90\% of rounds require multiple
-CG iterations, and maximum relative energy error is below $2.4\times10^{-4}$.
-The real \texttt{torch.func} study completes all 360 JVP/VJP cells through a
-9,972,737-parameter MLP.  Coverage-matched operator comparisons remain mixed,
-the nonlinear benchmark favors simpler baselines, and balanced MNIST stays at
-chance for every local method.  These negative outcomes and the full protocols,
-figures, tables, and finite-grid fits are reported in
-\Cref{app:additional-experiments}; no policy-performance advantage is claimed.
+\textbf{Gap validation.}  A separate linear study executes 1,000 trajectories
+over gaps $0.05,0.1,0.2,0.4$.  All 400 exact/full-CG trajectories satisfy the
+recorded premises of \Cref{cor:gap-dependent-exact-current}; maximum CG energy
+error is $8.4\times10^{-7}$.  Exact-full mean terminal regret ranges from
+$5.05$ to $7.99$, while the gap-free RHS is about $2.2\times10^4$ and the
+gap-dependent RHS ranges from $1.28\times10^6$ to $1.00\times10^7$.  Thus the
+experiment validates the recorded implication but also shows that this
+gap-dependent constant is vacuous and looser than the gap-free bound here.
+
+The spectral-tail reversal, premise-clean Krylov grid, mixed coverage-matched
+operator comparisons, failed small-model baselines, and real JVP/VJP primitive
+measurements are deferred to \Cref{app:additional-experiments}.  They do not
+support a full-curvature performance advantage.  The full Wheel benchmark did
+not complete; smoke runs are engineering checks only and no Wheel result enters
+the paper.
 
 \newcommand{\deferredExperimentalEvidence}{%
+\subsection{Scaled-tanh premise stop}
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=.92\textwidth]{figures/scaled_tanh_certificates.pdf}
+  \caption{Full scaled-tanh certificate audit over five horizons, four width
+  ratios, and 50 evaluation seeds.  The displayed certificates are computed
+  from complete trajectories, but every theorem-labeled method--cell fails the
+  required joint premise criterion.  This is a failure audit, not an empirical
+  instantiation of \Cref{cor:scaled-tanh-relative}.}
+  \label{fig:scaled-tanh-certificates}
+\end{figure*}
+
+\begin{table*}[t]
+  \centering\scriptsize\setlength{\tabcolsep}{2pt}
+  \input{../tables/generated/scaled_tanh_instantiation.tex}
+  \caption{Scaled-tanh full-grid audit.  ``Premises'' is the conjunction of all
+  required fields for the corresponding theorem trajectory.  Failed-trajectory
+  counts are reported rather than discarding those runs; CG agreement and width
+  error are implementation checks only.}
+  \label{tab:scaled-tanh-instantiation}
+\end{table*}
+
+\subsection{Positive-gap validation details}
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/gap_dependent_validation.pdf}
+  \caption{Predeclared positive-gap validation at $T=4096$ with 50 untouched
+  evaluation seeds per method--gap cell.  Exact full and residual-checked full
+  CG satisfy the recorded gap, linearization, confidence, and operator premises
+  in all 400 theorem-eligible trajectories.  The gap-dependent RHS dominates
+  regret but is much larger than the gap-free RHS; approximate-operator and
+  greedy rows are decision diagnostics outside this corollary's premise.}
+  \label{fig:gap-dependent-validation}
+\end{figure*}
+
+\begin{table*}[t]
+  \centering\scriptsize
+  \input{../tables/generated/gap_dependent_validation.tex}
+  \caption{Predeclared gap-validation terminal results over 50 evaluation seeds
+  per method--gap cell.  PASS applies only to exact full and full CG.  The
+  approximate and greedy rows are decision diagnostics outside the premises of
+  \Cref{cor:gap-dependent-exact-current}.}
+  \label{tab:gap-dependent-validation}
+\end{table*}
+
+\subsection{Premise-clean scaling and operator studies}
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/certified_scaling.pdf}
   \caption{Premise-clean rotated scaling test.  The displayed $d=128$ panels
   vary active rank and condition number; the full grid also contains
   $d\in\{512,2048\}$.  Curves are 50-seed means with pointwise whole-trajectory
-  bootstrap 95\% intervals over six preregistered horizons.  Every theorem method
+  bootstrap 95\% intervals over six predeclared horizons.  Every theorem method
   in all 27 cells passes the optimizer, rank-information, excitation, CG
   convergence, and energy-error fields.  Slopes remain finite-grid diagnostics,
   not asymptotic-rate estimates.}
@@ -996,8 +1012,8 @@ energy audits; reported work is replay-equivalent sample-CVP accounting rather
 than controlled wall-clock timing.  All fitted slopes are in the generated
 appendix fit tables.
 
-\subsection{Predictable nonlinear execution}\label{sec:factorial-audit}
-We first use the genuinely nonlinear Gaussian model
+\subsection{Earlier bounded-tanh diagnostic}\label{sec:factorial-audit}
+This smaller predecessor to the scaled-tanh grid uses the nonlinear Gaussian model
 $\mu_\theta(x,a)=\tanh(\phi(x,a)^\top\theta)$ with $d=6$, four bounded actions,
 $T=100$, $\|\theta^*\|\le0.35$, and a radius-$0.5$ projected optimizer.  The
 analytic constants in \Cref{cor:tanh-link}, exact full-objective gradient norm,
@@ -1017,7 +1033,8 @@ $0.0520$ versus $\bar\psi_t=128.1$.  The mean observable RHS/regret ratios are
 $6{,}956.7$ and $1{,}328.9$, respectively, so the bounds are numerically vacuous.
 Because the residual and dense audit checks are ordinary float64 point computations,
 these executions are classified \emph{post-hoc theorem-event verified with fully
-predictable schedules}, not verified-enclosure theorem certified.
+predictable schedules}, not verified-enclosure theorem certified.  They do not
+override the failed conjunction in the larger predeclared scaled-tanh grid.
 
 \subsection{Reference-operator falsification and matched baselines}\label{sec:operator-cg-audit}
 An eight-cell phase map runs seven operators on 30 independent policies per cell
@@ -1033,7 +1050,7 @@ result (\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).
   \includegraphics[width=\textwidth]{figures/coverage_matched_mechanism.pdf}
   \caption{Coverage-matched operator mechanism map.  Entries are mean
   method-minus-current-full-GGN cumulative pseudo-regret in all eight
-  preregistered condition/rotation/gap cells (50 evaluation seeds).  Scalar
+  predeclared condition/rotation/gap cells (50 evaluation seeds).  Scalar
   coefficients are either identical, selected on tuning seeds 2000--2019 for
   95\% one-step coverage, or selected there to match mean bonus magnitude;
   evaluation seeds 2100--2149 are untouched during selection.  Policies execute
@@ -1116,7 +1133,7 @@ All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
 their bounds are vacuous.  Synthetic CPU operators reach $d=8192$, but use
 unmatched stored-feature primitives.  Small-model policies likewise materialize
 Jacobians for dense audits, validating algebra rather than on-the-fly $O(d)$
-Krylov state.  The separate real-autodiff study executes 360 preregistered cells
+Krylov state.  The separate real-autodiff study executes 360 predeclared cells
 using \texttt{torch.func} JVP/VJP operators without retaining an explicit
 sample-by-parameter Jacobian for the matrix-free methods
 (\Cref{fig:autodiff-ggn-systems}).  It covers ten evaluation instances for
@@ -1146,29 +1163,34 @@ method at every horizon (\Cref{sec:covertype-rerun}).
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
 
-CC-UCB supplies a matrix-free full-GGN/model-Fisher reference with explicit transfer,
-CG, and width terms.  The strongest full-dimensional result combines predictable
-small feature drift for exact current curvature with a rank-$r$ logarithmic-trace
-plus spectral-tail bound on the frozen
-potential; it does not require a known tangent subspace.  Exact rank recovers a
-projected-Gram special case where full-dimensional CG is unnecessary.  Neither
-result is an unrestricted neural-training guarantee.  Empirically, the executed
-studies test width and action-order preservation rather than demonstrate policy
-superiority: the tanh bound is vacuous, the legacy scaling grid exposes failed
-envelopes, coverage and bonus matching still produce mixed operator comparisons,
-the real-autodiff study measures isolated primitives rather than a training loop,
-full curvature is not uniformly preferred, balanced MNIST remains at chance for
-all local methods, and Covertype fails its baseline check.
-The explicit corrected-center rate additionally requires a nondecreasing
-predictable prefix information envelope and frozen-feature access.
+Fixed-feature scalar links expose a useful structure: current replay gradients
+are relative rescalings of predictable frozen gradients, so feature transfer and
+centering can be certified in the same coordinates.  The master CC-UCB theorem
+then separates those obligations from linearization, operator approximation, and
+CG error.  Under exact current curvature and certified small drift, the frozen
+potential yields full-dimensional spectral-tail and positive-gap closures;
+matrix-free CVP/CG solves avoid a dense curvature matrix but still require replay.
+
+The experiments delimit rather than enlarge these claims.  The scaled-tanh full
+grid fails the required premise conjunction in 148 of 4,000 theorem-labeled
+trajectories, so it provides no empirical theorem-instantiation or rate result.
+All 400 exact/full-CG trajectories in the separate gap study pass their recorded
+premises, but both displayed bounds are vacuous and the gap-dependent constant is
+larger.  Spectral-tail and operator studies reject a uniform fidelity--regret
+ordering; real-autodiff results concern isolated primitives; small nonlinear and
+real-data baselines fail their sanity checks.  The full Wheel study remains
+unrun and contributes no paper evidence.
 
 \paragraph{Limitations.}
-Theory assumes Gaussian squared loss, enumeration, realizability, smoothness,
-and, for the original center, an optimizer certificate; approximate operators
-and screening need further certificates.  Controlling feature drift and the
-spectral tail during unrestricted training remains open.  Float64 checks lack
-enclosures, bounds are vacuous, the measured autodiff models stop at roughly
-$10^7$ parameters on one accelerator, and adaptive comparisons are non-causal.
+Theory assumes Gaussian squared loss, action enumeration, realizability,
+smoothness, and, for the original center, an optimizer certificate.  Structured
+scalar-link replay stores per-sample scalar metadata; the corrected center needs
+frozen-feature access; approximate operators need additional transfer
+certificates.  Controlling drift and spectral tails during unrestricted training
+remains open.  The empirical checks are float64 rather than verified enclosures,
+the measured autodiff models stop near $10^7$ parameters on one accelerator,
+and independently executed adaptive-policy contrasts are descriptive, not
+causal.
 
 % --- references -----------------------------------------------------------
 \FloatBarrier % ensure no body float escapes past the references
@@ -4347,7 +4369,7 @@ and checkpoint sequence for all operators and is never mixed with online regret.
   \caption{Supplementary certificate-tightness and curvature-mechanism overview.
   Panel (a) compares final-round float64 audit quantities with predictable schedules
   in the 50-seed tanh execution.  Panel (b) gives paired regret differences in the
-  preregistered curvature phase map.  These are descriptive point audits.}
+  predeclared curvature phase map.  These are descriptive point audits.}
   \label{fig:theory-factor-drift}
 \end{figure*}
 
@@ -4395,7 +4417,7 @@ the legacy slopes in \Cref{tab:theory-scaling-slopes} remain descriptive only.
   \centering
   \includegraphics[width=.72\textwidth]{figures/spectral_tail_decisions.pdf}
   \caption{Decision effects of discarded spectral directions over all 24
-  preregistered rank/power/alignment cells.  The horizontal coordinate measures
+  predeclared rank/power/alignment cells.  The horizontal coordinate measures
   alignment of the decision margin with the discarded tail.  Regret differences
   are paired by evaluation seed and compare rank truncation with exact full; the
   figure is a mechanism diagnostic, not a dominance claim.}
@@ -4454,7 +4476,7 @@ $1+(t-1)G^2/(\lambda\sigma^2)$.  At every round the policy records $Q_t$,
 $R_t^{\rm col}$, $\bar F_t$, $\hat\gamma_t$, $\bar\chi_t$, $\bar M_t$,
 $\bar\psi_t$, $\bar\beta_t$, the optimizer gradient norm, all candidate
 residuals, and whether any post-hoc exact check fails.  No post-hoc field is
-read by action selection.  Seeds 60--69 run a preregistered eight-cell
+read by action selection.  Seeds 60--69 run a predeclared eight-cell
 one-factor sensitivity grid; the fixed reference configuration is rerun from
 scratch on evaluation seeds 160--209 for both centers.  The 50-seed means and
 intervals in \Cref{sec:factorial-audit} come only from those evaluation runs.
@@ -4541,7 +4563,7 @@ seeds, and no seed-level sensitivity or inferential analysis, this is neither a
 primary result nor a causal or inferential claim.  This stress test is secondary
 to the predictable tanh execution because its schedules fail.
 
-\paragraph{Preregistered curvature-mechanism map.}
+\paragraph{Predeclared curvature-mechanism map.}
 The fixed-gap bounded-linear family has $d=10$, four actions, $T=30$, and
 Gaussian noise $0.2$.  Its eight-cell fractional design crosses active-spectrum
 condition number $\{3,50\}$, rotation $\{0,60^\circ\}$, action gap
@@ -4663,7 +4685,7 @@ Jacobi diagonal is fixed during each solve, so its recurrence is the symmetric
 transformed PCG of \Cref{lem:pcg}.  We report its measured iterations and make
 no unproved claim that Jacobi improves the transformed condition number.  A
 Buck-managed Conda toolchain runs a separate real-\texttt{torch.func}
-pipeline.  All 360 preregistered evaluation cells complete for the 131,841- and
+pipeline.  All 360 predeclared evaluation cells complete for the 131,841- and
 9,972,737-parameter MLPs.  At $m=512$, $K=10$, and target residual $10^{-3}$,
 mean batched-CG times are 0.0395 and 0.5674 seconds with peak allocated
 accelerator memory 0.126 and 4.219 GiB, respectively.  The corresponding
@@ -5143,10 +5165,13 @@ online monitoring; the regret certificates here do not establish safety.
 \section{Data and Code Availability}\label{app:availability}
 The repository contains the Buck pipeline, tests, artifact scripts, validated
 legacy derived results, the retained $d=128,r=4$ slice, and deterministic
-reproduction entry points for the new spectral-tail, premise-clean scaling, and
-real-autodiff studies.  Those three full grids have run; their validated derived
-aggregates, generated figures, tables, hashes, and provenance records are in the
-reviewed tree, while their seed-level raw directories remain outside Git.  The
+reproduction entry points for the spectral-tail, premise-clean scaling,
+real-autodiff, scaled-tanh, and positive-gap studies.  Those full grids have run;
+their validated derived aggregates, generated figures, tables, hashes, and
+provenance records are in the reviewed tree, while their seed-level raw
+directories remain outside Git.  The scaled-tanh artifacts record the failed
+premise conjunction rather than a theorem-instantiation claim.  The Wheel full
+grid has not run; its smoke profile is not paper evidence.  The
 2.1~GB legacy scaling tree and historical inputs outside Git
 are absent, so not every legacy raw-derived chain is reproducible.  Public
 dataset caches are optional local accelerators rather than release requirements;
