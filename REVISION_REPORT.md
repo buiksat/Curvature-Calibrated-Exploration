@@ -4,7 +4,7 @@ Date: 2026-07-23
 
 Branch: `codex/closed-rates-20260721`
 
-Audited source revision: `bf5fa236297091e1b80dede777dfb03f8b3fdc72`
+Audited source revision: `10a22079a58ffecbc17448aa864c8ad0eb58b297`
 
 This report distinguishes proved statements, full evaluation evidence, failed
 premise audits, development-only diagnostics, smoke checks, and unavailable raw
@@ -23,6 +23,7 @@ payloads. Ordinary float64 residuals are audits, not verified enclosures.
 | Full gap-dependent validation | Executed; recorded exact/full-CG premises passed | 1,000/1,000 runs |
 | Refined spectral-tail reanalysis | Executed, analysis-only | Existing full trajectories |
 | Full Wheel benchmark | Failed during tuning; evaluation not run | 56 + 27 hashed failure records |
+| Wheel smoke reproduction | Complete engineering check | 192 runs; 577 files |
 | End-to-end systems full profile | Development seed only; solver residual checks failed | 48/48 cells, seed 7100 |
 | Full scaled-tanh raw bundle | Locally verified; inventory tracked, payload outside Git | 4,425,351,907 bytes |
 | Full exponential-family theorem | Not added | No complete proof obtained |
@@ -139,10 +140,16 @@ The full study produced no selected configuration and no evaluation result:
 3. A development-only periodic residual-replacement diagnostic also failed at
    round 174 with residual `5.467890e-6`.
 
-The failure logger preserved all observed failures. No evaluation policy was
-run, no evaluation seed (`3000--3029`) was read, and no favorable cell or seed
-was selected. Historical smoke artifacts predate the expanded inventory and
-remain engineering checks only.
+The failure logger preserved all observed failures. No full-profile evaluation
+policy was run, no full-profile evaluation seed (`3000--3029`) was read, and no
+favorable cell or seed was selected.
+
+After this failure, the smoke profile was regenerated under the current
+12-method contract. It contains 96 tuning and 96 evaluation trajectories using
+tuning seeds `2000--2001` and smoke evaluation seeds `3000--3001`. The selection
+artifact records `evaluation_outcomes_used=false`, and a repeated bundle build
+was byte-identical. This smoke run is an engineering pipeline check only; it
+does not constitute the missing full Wheel evaluation.
 
 ## End-to-End Systems: Development Diagnostic Only
 
@@ -188,6 +195,23 @@ The full gap raw tree, both failed Wheel tuning trees, and the end-to-end
 development tree also remain ignored local data. No full gap, Wheel, or
 end-to-end raw bundle is claimed.
 
+The current-contract Wheel smoke archive contains 192 validated runs and 577
+files. Its local archive is 1,850,306 bytes with SHA-256
+`eadf27a41ab21f32ac8188f93c7e75beb35e8b95e605dae8cf3c6e752320299d`.
+The 137,021-byte tracked inventory has SHA-256
+`66871634b4e4862cca7535c9443b4d55eb22adb6906e779e3ce81bef0bbc063e`.
+The archive payload remains ignored and outside Git.
+
+## Git History Cleanup
+
+The feature branch was rewritten from `aa0e5f26` to remove the previously
+committed `results/raw/` tree. The rewrite preserved the final tree hash
+`3e0ce44c9eaafb7fee6e73b5c7e4b3b818f9388c`, all 56 commit
+author/email/subject tuples, and linear history. No `results/raw/` object is
+reachable from the rewritten branch. `HISTORY_REWRITE_MAP.json` records every
+old/new commit pair, the observed remote lease, the external backup-bundle
+checksum, and the verification results.
+
 ## Paper Packaging
 
 - The main body ends on numbered page 6.
@@ -204,7 +228,7 @@ the official style and checklist are installed and revalidated.
 
 ## Changed Files
 
-The scalar-link revision range `4f94c3e5..bf5fa236` changes:
+The rewritten scalar-link revision range `0db89cf0..10a22079` changes:
 
 - manuscript sources and outputs: `paper/main.tex`, `paper/macros.tex`,
   `paper/main.pdf`, new/updated figures, generated tables, and provenance files;
@@ -218,25 +242,29 @@ The scalar-link revision range `4f94c3e5..bf5fa236` changes:
 - full derived scaled-tanh and gap aggregates, spectral-tail reanalysis, smoke
   Wheel/systems artifacts, and their sidecars; and
 - the tracked full scaled-tanh inventory and archive checksum.
+- the refreshed current-contract Wheel smoke outputs and bundle inventory; and
+- the history-rewrite map and final audit records.
 
 The machine-readable changelog records the full commit sequence and detailed
 file groups.
 
 ## Commit Sequence
 
-The revision begins at `4f94c3e5` and includes the theory/experiment/artifact
-commits through `aa693eea`, followed by the final availability disclosure
-`bf5fa236`. Important terminal commits are:
+The revision begins at rewritten commit `0db89cf0`. The complete pre/post
+mapping is machine-readable in `HISTORY_REWRITE_MAP.json`. Important rewritten
+terminal commits are:
 
-- `aed39c5a`: retain failed scaled-tanh full evaluation;
-- `49159324`: add full gap-dependent result;
-- `5d297af7`: freeze efficient Wheel solver implementation;
-- `95fe2d2a`: preserve Wheel failure records;
-- `51044565`: track full scaled-tanh inventory and archive checksum;
-- `a999319c`: expand and harden feasible Wheel baselines;
-- `f5d295b0`: record the stopped 300-iteration Wheel tuning attempt;
-- `aa693eea`: align manuscript claims with structured-link evidence; and
-- `bf5fa236`: disclose exact raw-bundle availability.
+- `d8e3e86e`: retain failed scaled-tanh full evaluation;
+- `fdcd2e49`: add full gap-dependent result;
+- `58067c35`: freeze efficient Wheel solver implementation;
+- `b7e39b44`: preserve Wheel failure records;
+- `19215f9f`: track full scaled-tanh inventory and archive checksum;
+- `6bbe855a`: expand and harden feasible Wheel baselines;
+- `230f0ab5`: record the stopped 300-iteration Wheel tuning attempt;
+- `741c7ca5`: align manuscript claims with structured-link evidence;
+- `bea1fa5f`: disclose exact raw-bundle availability;
+- `98657c55`: finalize the scalar-link audit; and
+- `10a22079`: refresh the current-contract Wheel smoke reproduction.
 
 ## Validation Performed
 
@@ -250,10 +278,15 @@ commits through `aa693eea`, followed by the final availability disclosure
   exact-tree membership, manifest bindings, readable archives, and checksums.
 - Both Wheel failed-tuning directories contain the reported number of
   `failure.json` files with matching checksum sidecars.
-- The manuscript compiled to the checked PDF; references and citations resolve.
-
-The complete repository test suite was not rerun after `bf5fa236`; this report
-does not claim otherwise.
+- The canonical Buck suite `//tests:tests //experiments/tests:tests` passed both
+  targets with zero failures or timeouts.
+- A clean manuscript build produced 71 pages; references and citations resolve,
+  and all 18 figure PDFs embed Type 42/FontFile2 fonts rather than Type 3.
+- Clean no-raw anonymous full and review tier builds passed identity and source
+  scans; they contain 411 and 412 files respectively and intentionally contain
+  no raw runs.
+- Full scaled-tanh and current Wheel smoke bundle verification passed with the
+  counts and hashes reported above.
 
 ## Deliberately Unmade Claims
 

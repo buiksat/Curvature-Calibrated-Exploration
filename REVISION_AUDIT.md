@@ -2,7 +2,7 @@
 
 Audit date: 2026-07-23
 
-Audited source revision: `bf5fa236297091e1b80dede777dfb03f8b3fdc72`
+Audited source revision: `10a22079a58ffecbc17448aa864c8ad0eb58b297`
 
 ## Verdict
 
@@ -28,8 +28,10 @@ claim.
   with KFAC and LO-FI still omitted. Full tuning failed before selection:
   56 checksum-bound failure records were retained from the 100-iteration
   attempt, and 27 from the clean 300-iteration `a999319c` attempt. A periodic
-  residual-replacement development diagnostic also failed. No evaluation
-  policy or evaluation seed was read.
+  residual-replacement development diagnostic also failed. No full-profile
+  evaluation policy or evaluation seed was read. A separate current-contract
+  smoke check ran 96 tuning and 96 evaluation trajectories; it is an
+  engineering check, not full-profile evidence.
 - **End-to-end systems:** one full-profile **development-seed** diagnostic at
   clean revision `95fe2d2a` completed 48/48 cells on CUDA in 2210.240383 s.
   It is not evaluation evidence: maximum original-system CG residuals were
@@ -52,10 +54,29 @@ payload remains outside Git and has no public fetch URL. The full gap tree,
 Wheel failure trees, and end-to-end development tree also remain ignored local
 data.
 
+The Wheel smoke archive was regenerated under the current 12-method contract
+and verified twice with byte-identical output: 192 runs, 577 files, 1,850,306
+archive bytes, and SHA-256
+`eadf27a41ab21f32ac8188f93c7e75beb35e8b95e605dae8cf3c6e752320299d`.
+Its tracked inventory has SHA-256
+`66871634b4e4862cca7535c9443b4d55eb22adb6906e779e3ce81bef0bbc063e`.
+Selection uses tuning seeds only and records
+`evaluation_outcomes_used=false`.
+
+## Git History Cleanup
+
+The feature branch was rewritten from base `aa0e5f26` to remove historical
+`results/raw/` blobs. The final source tree was unchanged, all 56 rewritten
+commit author/email/subject tuples matched their predecessors, and no
+`results/raw/` object remains reachable from the rewritten branch. The
+old-to-new mapping and verification record are in `HISTORY_REWRITE_MAP.json`.
+The complete pre-rewrite branch is retained outside the repository in the
+checksum-recorded backup bundle named there.
+
 ## Paper Packaging
 
 - The main body ends on numbered page 6.
-- The compiled PDF has 71 physical pages at `bf5fa236`.
+- The compiled PDF has 71 physical pages at the audited source revision.
 - The only material overfull warning is a 5.1225 pt abstract/style box.
 - No unresolved references, citations, duplicate labels, missing figures, or
   Type 3 fonts were reported by the final checks.
@@ -77,5 +98,5 @@ Do not claim:
 - final target-year AISTATS compliance until the official style and checklist
   are installed and validated.
 
-The source tree at `bf5fa236` is the audited state. Only these revision records
-were modified during this documentation pass.
+The source and generated-artifact tree at `10a22079` is the audited state. This
+documentation pass adds only the revision records and history-rewrite map.
