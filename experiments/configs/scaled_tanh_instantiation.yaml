@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "scaled_tanh_instantiation",
-  "description": "Predeclared finite-support scaled-tanh theorem-instantiation study with exact full-history sufficient statistics and relative-link certificates.",
+  "description": "Fresh final holdout after two disclosed diagnostic splits: finite-support scaled-tanh theorem-instantiation study with exact full-history sufficient statistics and relative-link certificates.",
   "base": {
     "rounds": 4096,
     "dimension": 32,

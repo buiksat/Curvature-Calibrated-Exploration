@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from experiments.config import load_config
+from experiments.config import config_digest, load_config
 from experiments.logging_utils import canonical_json
 from experiments.make_scaled_tanh_instantiation_artifacts import build_aggregate
 from experiments.raw_artifact_bundle import (
@@ -21,6 +21,10 @@ from experiments.raw_artifact_bundle import (
 from experiments.run_scaled_tanh_instantiation import (
     build_optimizer_selection,
     run_evaluation,
+)
+from experiments.scaled_tanh_config_compat import (
+    CURRENT_DESCRIPTION,
+    LEGACY_DESCRIPTION,
 )
 
 
@@ -135,7 +139,8 @@ def test_bundle_is_deterministic_verifiable_extractable_and_rebuildable(
         selection_path=restored_selection,
     )
     assert report["validated_run_count"] == report["expected_run_count"] == 2
-    assert len(inputs) == 15  # Selection/runs plus the runner source hash input.
+    # Selection/runs plus runner and two derived-artifact source hashes.
+    assert len(inputs) == 17
 
 
 def test_bundle_rejects_unexpected_raw_files_and_archive_corruption(
@@ -185,6 +190,8 @@ def test_inventory_records_smoke_scope_and_complete_selection(
         "smoke-only engineering verification; not main-paper evidence"
     )
     assert inventory["tuning_evaluation_seeds_disjoint"] is True
+    assert inventory["execution_config_digest"] == inventory["config_digest"]
+    assert inventory["config_wording_migration"]["applied"] is False
     assert inventory["expected_run_count"] == inventory["validated_run_count"] == 2
     assert inventory["validation"] == {
         "every_expected_manifest_sidecar_and_identity": True,
@@ -194,3 +201,67 @@ def test_inventory_records_smoke_scope_and_complete_selection(
         "round_archives_readable_without_object_arrays": True,
         "tuning_selection_sidecar_and_semantics": True,
     }
+
+
+def test_bundle_accepts_only_known_description_migration(
+    tiny_raw_chain: TinyRawChain, tmp_path: Path
+) -> None:
+    legacy_config = copy.deepcopy(tiny_raw_chain.config)
+    legacy_config["description"] = LEGACY_DESCRIPTION
+    legacy_raw = tmp_path / "legacy-raw"
+    legacy_selection = legacy_raw / "smoke" / "optimizer_selection.json"
+    build_optimizer_selection(
+        legacy_config,
+        profile="smoke",
+        selection_path=legacy_selection,
+        overwrite=False,
+    )
+    run_evaluation(
+        legacy_config,
+        profile="smoke",
+        output_root=legacy_raw,
+        selection_path=legacy_selection,
+        overwrite=False,
+        workers=1,
+    )
+
+    current_config = copy.deepcopy(tiny_raw_chain.config)
+    assert current_config["description"] == CURRENT_DESCRIPTION
+    bundle = tmp_path / "legacy-description.tar.gz"
+    result = create_scaled_tanh_bundle(
+        current_config,
+        config_path=tiny_raw_chain.config_path,
+        profile="smoke",
+        raw_root=legacy_raw,
+        bundle_path=bundle,
+    )
+    inventory = json.loads(Path(result["inventory"]).read_text(encoding="ascii"))
+    assert inventory["config_digest"] == config_digest(current_config)
+    assert inventory["execution_config_digest"] == config_digest(legacy_config)
+    assert inventory["config_wording_migration"]["applied"] is True
+    assert inventory["execution_config"] == legacy_config
+    assert verify_bundle(bundle)["status"] == "verified"
+    report, _ = build_aggregate(
+        current_config,
+        profile="smoke",
+        raw_root=legacy_raw,
+        selection_path=legacy_selection,
+    )
+    assert report["config_digest"] == config_digest(current_config)
+    assert report["execution_config_digest"] == config_digest(legacy_config)
+    assert report["config_wording_migration"]["applied"] is True
+
+    drifted = copy.deepcopy(current_config)
+    drifted["feature_bound"] = float(drifted["feature_bound"]) + 0.1
+    drifted_path = tmp_path / "drifted.yaml"
+    _write_resolved_config(drifted, drifted_path)
+    with pytest.raises(
+        RawArtifactBundleError, match="differs by more than.*description"
+    ):
+        create_scaled_tanh_bundle(
+            drifted,
+            config_path=drifted_path,
+            profile="smoke",
+            raw_root=legacy_raw,
+            bundle_path=tmp_path / "drifted.tar.gz",
+        )

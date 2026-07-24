@@ -25,6 +25,7 @@ from .artifact_utils import (
 )
 from .config import config_digest, get_seed_set, load_config
 from .logging_utils import canonical_json
+from .scaled_tanh_config_compat import resolve_execution_config
 
 
 SCHEMA_VERSION = 1
@@ -256,7 +257,7 @@ def _validated_scaled_tanh_sources(
     *,
     profile: str,
     raw_root: Path,
-) -> tuple[list[Path], str, str, int]:
+) -> tuple[list[Path], str, str, int, dict[str, Any], dict[str, Any]]:
     from .make_scaled_tanh_instantiation_artifacts import (
         ScaledTanhArtifactError,
         _load_selection,
@@ -275,9 +276,13 @@ def _validated_scaled_tanh_sources(
     profile_root = raw_root / profile
     selection_path = profile_root / "optimizer_selection.json"
     runner_source_sha256 = _runner_source_sha256()
+    selection_record = _source_json(selection_path)
     try:
+        execution_config, config_wording_migration = resolve_execution_config(
+            config, str(selection_record.get("config_digest", ""))
+        )
         _, selection_sha256, _ = _load_selection(
-            config,
+            execution_config,
             profile=profile,
             selection_path=selection_path,
             runner_source_sha256=runner_source_sha256,
@@ -293,14 +298,14 @@ def _validated_scaled_tanh_sources(
     validated_runs = 0
     environment_sha256: str | None = None
     stream_sha256_by_horizon_seed: dict[tuple[int, int], str] = {}
-    for cell in cells(config):
+    for cell in cells(execution_config):
         for seed in seeds:
             for method in methods:
                 directory = _run_directory(raw_root, profile, cell, method, seed)
                 try:
                     run_environment_sha256, run_stream_sha256 = _validate_source_run(
                         directory,
-                        config=config,
+                        config=execution_config,
                         profile=profile,
                         seed=seed,
                         cell=cell,
@@ -331,7 +336,7 @@ def _validated_scaled_tanh_sources(
                     expected_paths.update(_artifact_files(directory / name))
                 validated_runs += 1
 
-    expected_run_count = len(cells(config)) * len(methods) * len(seeds)
+    expected_run_count = len(cells(execution_config)) * len(methods) * len(seeds)
     if validated_runs != expected_run_count:
         raise RawArtifactBundleError(
             f"validated {validated_runs} runs, expected {expected_run_count}"
@@ -342,6 +347,8 @@ def _validated_scaled_tanh_sources(
         selection_sha256,
         runner_source_sha256,
         validated_runs,
+        execution_config,
+        config_wording_migration,
     )
 
 
@@ -776,6 +783,8 @@ def create_scaled_tanh_bundle(
         selection_sha256,
         runner_source_sha256,
         validated_runs,
+        execution_config,
+        config_wording_migration,
     ) = _validated_scaled_tanh_sources(config, profile=profile, raw_root=raw_root)
     entries = _source_entries(
         sources, raw_root=raw_root, experiment=SCALED_TANH_EXPERIMENT
@@ -793,7 +802,7 @@ def create_scaled_tanh_bundle(
         "evidence_scope": (
             "smoke-only engineering verification; not main-paper evidence"
             if profile == "smoke"
-            else "prespecified full-profile raw evidence"
+            else "fresh final holdout after two disclosed diagnostic splits"
         ),
         "archive": {
             "filename": bundle_path.name,
@@ -811,6 +820,8 @@ def create_scaled_tanh_bundle(
         ).as_posix(),
         "optimizer_selection_sha256": selection_sha256,
         "config_digest": config_digest(config),
+        "execution_config_digest": config_digest(execution_config),
+        "config_wording_migration": config_wording_migration,
         "config_source": {
             "filename": config_path.name,
             "sha256": sha256_file(config_path),
@@ -819,6 +830,7 @@ def create_scaled_tanh_bundle(
             "experiments/run_scaled_tanh_instantiation.py": runner_source_sha256,
         },
         "resolved_config": config,
+        "execution_config": execution_config,
         "tuning_seeds": list(get_seed_set(config, "tuning")),
         "evaluation_seeds": list(get_seed_set(config, "evaluation")),
         "tuning_evaluation_seeds_disjoint": bool(
@@ -1074,6 +1086,28 @@ def _validate_scaled_tanh_inventory_contract(
         raise RawArtifactBundleError("resolved config profile mismatch")
     if value.get("config_digest") != config_digest(resolved_config):
         raise RawArtifactBundleError("resolved config digest mismatch")
+    execution_digest = value.get("execution_config_digest")
+    if not isinstance(execution_digest, str):
+        raise RawArtifactBundleError("bundle lacks an execution config digest")
+    try:
+        expected_execution_config, expected_migration = resolve_execution_config(
+            resolved_config, execution_digest
+        )
+    except ValueError as error:
+        raise RawArtifactBundleError(
+            f"bundle config wording migration is invalid: {error}"
+        ) from error
+    if value.get("execution_config") != expected_execution_config:
+        raise RawArtifactBundleError("bundle execution config mismatch")
+    if value.get("config_wording_migration") != expected_migration:
+        raise RawArtifactBundleError("bundle config wording migration mismatch")
+    expected_scope = (
+        "smoke-only engineering verification; not main-paper evidence"
+        if profile == "smoke"
+        else "fresh final holdout after two disclosed diagnostic splits"
+    )
+    if value.get("evidence_scope") != expected_scope:
+        raise RawArtifactBundleError("bundle evidence scope is invalid")
     source_hashes = value.get("source_artifact_hashes")
     if not isinstance(source_hashes, dict) or set(source_hashes) != {
         "experiments/run_scaled_tanh_instantiation.py"
@@ -1402,12 +1436,12 @@ def _validate_selection_payload(
     inventory: Mapping[str, Any],
 ) -> None:
     value = _json_object(payload, path=str(entry["path"]))
-    config = inventory["resolved_config"]
+    config = inventory["execution_config"]
     expected = {
         "schema_version": 1,
         "event": "scaled_tanh_optimizer_selection",
         "profile": inventory["profile"],
-        "config_digest": inventory["config_digest"],
+        "config_digest": inventory["execution_config_digest"],
         "tuning_seeds": inventory["tuning_seeds"],
         "evaluation_seeds": inventory["evaluation_seeds"],
         "evaluation_metrics_read": False,
@@ -1507,7 +1541,7 @@ def _validate_manifest_payload(
         cell_token = _cell_token(int(cell["horizon"]), float(cell["width_ratio"]))
     except (KeyError, TypeError, ValueError) as error:
         raise RawArtifactBundleError(f"manifest cell is invalid in {path}") from error
-    config = inventory["resolved_config"]
+    config = inventory["execution_config"]
     expected = {
         "schema_version": 1,
         "experiment": EXPERIMENT,
@@ -1516,7 +1550,7 @@ def _validate_manifest_payload(
         "seed": seed,
         "method": parts[4],
         "config": config,
-        "config_digest": inventory["config_digest"],
+        "config_digest": inventory["execution_config_digest"],
         "optimizer_selection_sha256": inventory["optimizer_selection_sha256"],
         "evaluation_data_used_for_selection": False,
     }

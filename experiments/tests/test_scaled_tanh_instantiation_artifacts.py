@@ -18,8 +18,10 @@ from experiments.artifact_utils import (
 )
 from experiments.config import load_config
 from experiments.make_scaled_tanh_instantiation_artifacts import (
+    FLOAT64_AUDIT_TOLERANCE,
     ScaledTanhArtifactError,
     _add_scope_banner,
+    _failure_classification,
     _trajectory_interval,
     build_aggregate,
     make_artifacts,
@@ -107,6 +109,48 @@ def test_trajectory_bootstrap_resamples_complete_seed_rows() -> None:
     assert interval["n"] == 2
 
 
+def test_failure_classification_separates_float64_and_analytic_failures() -> None:
+    float64_only = _failure_classification(
+        required_event_failure_round_counts={"transfer_pass": 1},
+        minimum_exact_rho_minus_exact_chi=-0.5 * FLOAT64_AUDIT_TOLERANCE,
+        minimum_analytic_rho_W_minus_exact_rho=0.01,
+        analytic_rho_W=0.2,
+        maximum_trust_region_violation=0.0,
+    )
+    assert float64_only == {
+        "label": "float64_audit",
+        "analytic_premise_failure": False,
+        "float64_audit_failure": True,
+    }
+
+    mixed = _failure_classification(
+        required_event_failure_round_counts={
+            "transfer_pass": 1,
+            "optimizer_pass": 2,
+        },
+        minimum_exact_rho_minus_exact_chi=-0.5 * FLOAT64_AUDIT_TOLERANCE,
+        minimum_analytic_rho_W_minus_exact_rho=0.01,
+        analytic_rho_W=0.2,
+        maximum_trust_region_violation=0.0,
+    )
+    assert mixed["label"] == "analytic_premise_and_float64_audit"
+    assert mixed["analytic_premise_failure"] is True
+    assert mixed["float64_audit_failure"] is True
+
+    outside_tolerance = _failure_classification(
+        required_event_failure_round_counts={"transfer_pass": 1},
+        minimum_exact_rho_minus_exact_chi=-2.0 * FLOAT64_AUDIT_TOLERANCE,
+        minimum_analytic_rho_W_minus_exact_rho=0.01,
+        analytic_rho_W=0.2,
+        maximum_trust_region_violation=0.0,
+    )
+    assert outside_tolerance == {
+        "label": "analytic_premise",
+        "analytic_premise_failure": True,
+        "float64_audit_failure": False,
+    }
+
+
 def test_failed_full_profile_gets_visible_scope_banner() -> None:
     figure = plt.figure()
     top = _add_scope_banner(
@@ -169,6 +213,12 @@ def test_manifest_grid_artifacts_and_smoke_scope(
     report = json.loads(aggregate.read_text(encoding="ascii"))
     assert report["validated_run_count"] == report["expected_run_count"] == 16
     assert report["optimizer_selection_sha256"] == sha256_file(raw_fixture.selection)
+    assert report["execution_config_digest"] == report["config_digest"]
+    assert report["config_wording_migration"]["applied"] is False
+    assert set(report["derived_artifact_source_hashes"]) == {
+        "experiments/make_scaled_tanh_instantiation_artifacts.py",
+        "experiments/scaled_tanh_config_compat.py",
+    }
     assert all("seed-999" not in item["path"] for item in report["raw_inputs"])
     assert report["interval"]["unit"] == "one complete evaluation-seed trajectory"
     assert report["tuning_evaluation_seeds_disjoint"] is True
@@ -183,6 +233,22 @@ def test_manifest_grid_artifacts_and_smoke_scope(
             count == 0
             for count in audit["required_event_failure_round_counts"].values()
         )
+        assert audit["failed_trajectories"] == []
+        assert audit["failure_classification_trajectory_counts"] == {
+            "analytic_premise": 0,
+            "float64_audit": 0,
+            "analytic_premise_and_float64_audit": 0,
+        }
+        assert audit["failed_trajectory_numerical_slack"] == {
+            "failed_trajectory_count": 0,
+            "minimum_exact_rho_minus_exact_chi": None,
+            "minimum_analytic_rho_W_minus_exact_rho": None,
+            "maximum_trust_region_violation": None,
+            "float64_audit_tolerance": FLOAT64_AUDIT_TOLERANCE,
+        }
+    assert report["failure_classification_semantics"][
+        "recorded_failures_retained"
+    ] is True
     assert report["support_criteria"][
         "primary_exact_and_cg_premises_pass_all_trajectories"
     ] is True

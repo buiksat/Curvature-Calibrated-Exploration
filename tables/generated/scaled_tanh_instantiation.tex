@@ -25,13 +25,13 @@ $T$ & $W/(TP_T)$ & $\rho_W$ & Pass & Fail E/C/W/R & Regret & RHS/$T$ & CG agr. &
 \bottomrule
 \end{tabular}
 \par\smallskip
-\begin{tabular}{lrrp{0.53\linewidth}}
+\begin{tabular}{lrrrrp{0.23\linewidth}p{0.25\linewidth}}
 \toprule
-Method & Failed trajectories & Failed rounds & Required event-field failures \\
+Method & Failed traj. & Analytic & Float64 & Failed rounds & Numerical slack & Required event-field failures \\
 \midrule
-Exact relative & 43 & 72 & optimizer: 58; relative transfer: 14 \\
-Full CG relative & 51 & 80 & CG convergence: 8; optimizer: 58; relative transfer: 14 \\
-Current Welford & 40 & 77 & optimizer: 77 \\
-Corrected current & 14 & 14 & relative transfer: 14 \\
+Exact relative & 43 & 29 & 14 & 72 & $\min(\rho_{\rm exact}-\chi)=$-1.92e-09; $\min(\rho_W-\rho_{\rm exact})=$9.84e-03; max TR viol.=1.11e-16; tol.=2.00e-09 & optimizer: 58; relative transfer: 14 \\
+Full CG relative & 51 & 37 & 14 & 80 & $\min(\rho_{\rm exact}-\chi)=$-1.92e-09; $\min(\rho_W-\rho_{\rm exact})=$9.84e-03; max TR viol.=1.11e-16; tol.=2.00e-09 & CG convergence: 8; optimizer: 58; relative transfer: 14 \\
+Current Welford & 40 & 40 & 0 & 77 & $\min(\rho_{\rm exact}-\chi)=$0.00e+00; $\min(\rho_W-\rho_{\rm exact})=$9.84e-03; max TR viol.=1.11e-16; tol.=2.00e-09 & optimizer: 77 \\
+Corrected current & 14 & 0 & 14 & 14 & $\min(\rho_{\rm exact}-\chi)=$-1.92e-09; $\min(\rho_W-\rho_{\rm exact})=$9.84e-03; max TR viol.=0.00e+00; tol.=2.00e-09 & relative transfer: 14 \\
 \bottomrule
 \end{tabular}

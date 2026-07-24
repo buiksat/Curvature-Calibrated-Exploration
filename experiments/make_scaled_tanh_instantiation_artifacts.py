@@ -27,13 +27,18 @@ from .logging_utils import canonical_json, derive_seed
 from .run_scaled_tanh_instantiation import (
     THEOREM_METHODS,
     Cell,
+    ScaledTanhEnvironment,
+    ScaledTanhStream,
+    _scaled_tanh,
     cells,
     load_optimizer_selection,
     make_environment,
     make_stream,
+    optimize_full_history,
     optimizer_selection_cells,
     validate_config,
 )
+from .scaled_tanh_config_compat import resolve_execution_config
 
 
 FloatArray = NDArray[np.float64]
@@ -203,6 +208,10 @@ METHOD_PREMISE_FIELDS = {
     "corrected_current": ("transfer_pass",),
 }
 
+FLOAT64_AUDIT_TOLERANCE = 2e-9
+RECORDED_TRANSFER_TOLERANCE = 2e-11
+RECORDED_TRUST_REGION_TOLERANCE = 1e-12
+
 
 class ScaledTanhArtifactError(ValueError):
     """Raised when a raw record is incomplete or inconsistent."""
@@ -213,6 +222,18 @@ def _runner_source_sha256() -> str:
     if not source.is_file():
         raise ScaledTanhArtifactError(f"missing packaged runner source {source}")
     return sha256_file(source)
+
+
+def _derived_source_hashes() -> dict[str, str]:
+    sources = {
+        "experiments/make_scaled_tanh_instantiation_artifacts.py": Path(__file__),
+        "experiments/scaled_tanh_config_compat.py": Path(__file__).with_name(
+            "scaled_tanh_config_compat.py"
+        ),
+    }
+    if any(not path.is_file() for path in sources.values()):
+        raise ScaledTanhArtifactError("missing packaged scaled-tanh artifact source")
+    return {name: sha256_file(path) for name, path in sources.items()}
 
 
 def _run_directory(
@@ -325,7 +346,7 @@ def _validate_arrays(
     if np.any(selected < 0) or np.any(selected >= action_count):
         raise ScaledTanhArtifactError(f"selected action is out of range in {directory}")
 
-    tolerance = 2e-9
+    tolerance = FLOAT64_AUDIT_TOLERANCE
     if not (
         np.all(arrays["gamma"] <= arrays["Gamma_split"] + tolerance)
         and np.all(arrays["Gamma_split"] <= arrays["Gamma_tail"] + tolerance)
@@ -618,15 +639,175 @@ def _cell_key(cell: Cell) -> tuple[int, float]:
     return cell.horizon, cell.width_ratio
 
 
+def _replay_maximum_trust_region_excess(
+    config: Mapping[str, Any],
+    *,
+    cell: Cell,
+    environment: ScaledTanhEnvironment,
+    stream: ScaledTanhStream,
+    selected_actions: NDArray[np.generic],
+    recorded_optimizer_pass: NDArray[np.generic],
+) -> float:
+    """Replay the deterministic optimizer and return max_t ||theta_t|| - R."""
+
+    actions = np.asarray(selected_actions, dtype=np.int64)
+    recorded_pass = np.asarray(recorded_optimizer_pass, dtype=np.bool_)
+    if actions.shape != (cell.horizon,) or recorded_pass.shape != (cell.horizon,):
+        raise ScaledTanhArtifactError("trust-region replay has invalid round coverage")
+
+    rank = int(config["effective_rank"])
+    action_count = int(config["action_count"])
+    category_features = environment.active_features.reshape(-1, rank)
+    category_count = category_features.shape[0]
+    counts = np.zeros(category_count, dtype=np.float64)
+    reward_sums = np.zeros(category_count, dtype=np.float64)
+    reward_square_sums = np.zeros(category_count, dtype=np.float64)
+    theta = np.zeros(rank, dtype=np.float64)
+    radius = float(config["trust_region_radius"])
+    variance = float(config["noise_std"]) ** 2
+    target_residual = float(config["optimizer_zeta0"]) / np.sqrt(cell.width)
+    teacher_means = _scaled_tanh(
+        category_features @ environment.teacher, cell.width
+    ).reshape(int(config["context_count"]), action_count)
+    maximum_excess = -radius
+
+    for round_index, (context_value, action_value) in enumerate(
+        zip(stream.contexts, actions)
+    ):
+        theta, residual, _, converged = optimize_full_history(
+            theta,
+            category_features,
+            counts,
+            reward_sums,
+            reward_square_sums,
+            width=cell.width,
+            damping=float(config["damping"]),
+            variance=variance,
+            radius=radius,
+            target_residual=target_residual,
+            maximum_iterations=int(config["optimizer_max_iterations"]),
+            armijo=float(config["optimizer_armijo"]),
+            backtracking=float(config["optimizer_backtracking"]),
+        )
+        replayed_pass = bool(
+            converged and residual <= target_residual * (1.0 + 1e-8)
+        )
+        if replayed_pass != bool(recorded_pass[round_index]):
+            raise ScaledTanhArtifactError(
+                "trust-region replay does not reproduce optimizer_pass at "
+                f"{cell.token}/round-{round_index + 1}"
+            )
+        maximum_excess = max(maximum_excess, float(np.linalg.norm(theta)) - radius)
+
+        context = int(context_value)
+        action = int(action_value)
+        category = context * action_count + action
+        reward = float(
+            teacher_means[context, action]
+            + stream.noises[round_index, action]
+        )
+        counts[category] += 1.0
+        reward_sums[category] += reward
+        reward_square_sums[category] += reward * reward
+
+    return maximum_excess
+
+
+def _failure_classification(
+    *,
+    required_event_failure_round_counts: Mapping[str, int],
+    minimum_exact_rho_minus_exact_chi: float,
+    minimum_analytic_rho_W_minus_exact_rho: float,
+    analytic_rho_W: float,
+    maximum_trust_region_violation: float,
+    tolerance: float = FLOAT64_AUDIT_TOLERANCE,
+) -> dict[str, Any]:
+    transfer_failed = (
+        int(required_event_failure_round_counts.get("transfer_pass", 0)) > 0
+    )
+    transfer_failure_is_float64_audit = bool(
+        transfer_failed
+        and minimum_exact_rho_minus_exact_chi >= -tolerance
+        and minimum_analytic_rho_W_minus_exact_rho >= -tolerance
+        and analytic_rho_W < 1.0
+        and maximum_trust_region_violation <= tolerance
+    )
+    other_required_event_failed = any(
+        name != "transfer_pass" and int(count) > 0
+        for name, count in required_event_failure_round_counts.items()
+    )
+    analytic_premise_failed = bool(
+        other_required_event_failed
+        or maximum_trust_region_violation > tolerance
+        or (transfer_failed and not transfer_failure_is_float64_audit)
+    )
+    if analytic_premise_failed and transfer_failure_is_float64_audit:
+        label = "analytic_premise_and_float64_audit"
+    elif analytic_premise_failed:
+        label = "analytic_premise"
+    elif transfer_failure_is_float64_audit:
+        label = "float64_audit"
+    else:
+        label = "unclassified"
+    return {
+        "label": label,
+        "analytic_premise_failure": analytic_premise_failed,
+        "float64_audit_failure": transfer_failure_is_float64_audit,
+    }
+
+
+def _failure_slack_summary(
+    diagnostics: Sequence[Mapping[str, Any]],
+) -> dict[str, float | int | None]:
+    return {
+        "failed_trajectory_count": len(diagnostics),
+        "minimum_exact_rho_minus_exact_chi": (
+            min(
+                float(item["minimum_exact_rho_minus_exact_chi"])
+                for item in diagnostics
+            )
+            if diagnostics
+            else None
+        ),
+        "minimum_analytic_rho_W_minus_exact_rho": (
+            min(
+                float(item["minimum_analytic_rho_W_minus_exact_rho"])
+                for item in diagnostics
+            )
+            if diagnostics
+            else None
+        ),
+        "maximum_trust_region_violation": (
+            max(
+                float(item["maximum_trust_region_violation"])
+                for item in diagnostics
+            )
+            if diagnostics
+            else None
+        ),
+        "float64_audit_tolerance": FLOAT64_AUDIT_TOLERANCE,
+    }
+
+
 def _build_group(
     *,
+    config: Mapping[str, Any],
     profile: str,
     cell: Cell,
     method: str,
+    seeds: Sequence[int],
     summaries: Sequence[Mapping[str, Any]],
     runs: Sequence[Mapping[str, NDArray[np.generic]]],
+    environment: ScaledTanhEnvironment,
+    streams: Mapping[int, ScaledTanhStream],
+    trust_replay_cache: dict[tuple[str, int, bytes], float],
     resamples: int,
 ) -> dict[str, Any]:
+    if not (len(seeds) == len(summaries) == len(runs)):
+        raise ScaledTanhArtifactError(
+            f"seed/run coverage mismatch for {cell.token}/{method}"
+        )
+
     def terminal(name: str) -> FloatArray:
         return np.asarray([float(run[name][-1]) for run in runs], dtype=np.float64)
 
@@ -653,6 +834,75 @@ def _build_group(
         name: sum(failed_rounds(run, name) for run in runs)
         for name in required_fields
     }
+    failed_trajectory_diagnostics: list[dict[str, Any]] = []
+    if theorem:
+        for seed, summary, run in zip(seeds, summaries, runs):
+            if summary["all_required_premises_pass"] is True:
+                continue
+            per_event_failures = {}
+            for name in required_fields:
+                count = failed_rounds(run, name)
+                if count > 0:
+                    per_event_failures[name] = count
+            exact_chi = np.asarray(run["exact_chi_t"], dtype=np.float64)
+            exact_rho = np.asarray(run["exact_rho_t"], dtype=np.float64)
+            analytic_rho = np.asarray(run["analytic_rho_W"], dtype=np.float64)
+            minimum_rho_minus_chi = float(np.min(exact_rho - exact_chi))
+            minimum_width_minus_rho = float(np.min(analytic_rho - exact_rho))
+            cache_key = (
+                cell.token,
+                int(seed),
+                np.asarray(run["selected_actions"], dtype=np.int64).tobytes(),
+            )
+            maximum_excess = trust_replay_cache.get(cache_key)
+            if maximum_excess is None:
+                maximum_excess = _replay_maximum_trust_region_excess(
+                    config,
+                    cell=cell,
+                    environment=environment,
+                    stream=streams[int(seed)],
+                    selected_actions=run["selected_actions"],
+                    recorded_optimizer_pass=run["optimizer_pass"],
+                )
+                trust_replay_cache[cache_key] = maximum_excess
+            maximum_violation = max(0.0, maximum_excess)
+            analytic_rho_w = float(analytic_rho[0])
+            classification = _failure_classification(
+                required_event_failure_round_counts=per_event_failures,
+                minimum_exact_rho_minus_exact_chi=minimum_rho_minus_chi,
+                minimum_analytic_rho_W_minus_exact_rho=minimum_width_minus_rho,
+                analytic_rho_W=analytic_rho_w,
+                maximum_trust_region_violation=maximum_violation,
+            )
+            if classification["label"] == "unclassified":
+                raise ScaledTanhArtifactError(
+                    f"unclassified failed trajectory {cell.token}/{method}/seed-{seed}"
+                )
+            failed_trajectory_diagnostics.append(
+                {
+                    "cell": _expected_cell(cell),
+                    "method": method,
+                    "seed": int(seed),
+                    "failed_round_count": int(
+                        np.count_nonzero(
+                            ~np.asarray(run["premise_pass"], dtype=np.bool_)
+                        )
+                    ),
+                    "required_event_failure_round_counts": per_event_failures,
+                    "minimum_exact_rho_minus_exact_chi": minimum_rho_minus_chi,
+                    "minimum_analytic_rho_W_minus_exact_rho": (
+                        minimum_width_minus_rho
+                    ),
+                    "maximum_trust_region_excess": maximum_excess,
+                    "maximum_trust_region_violation": maximum_violation,
+                    "float64_audit_tolerance": FLOAT64_AUDIT_TOLERANCE,
+                    "recorded_transfer_tolerance": RECORDED_TRANSFER_TOLERANCE,
+                    "recorded_trust_region_tolerance": (
+                        RECORDED_TRUST_REGION_TOLERANCE
+                    ),
+                    "classification": classification,
+                }
+            )
     failed_trajectory_count = (
         sum(item["all_required_premises_pass"] is not True for item in summaries)
         if theorem
@@ -678,6 +928,25 @@ def _build_group(
         "premise_failure_round_count": premise_failure_round_count,
         "failed_trajectory_count": failed_trajectory_count,
         "required_event_failure_round_counts": failure_round_counts,
+        "failed_trajectory_diagnostics": failed_trajectory_diagnostics,
+        "failure_classification_trajectory_counts": {
+            "analytic_premise": sum(
+                bool(item["classification"]["analytic_premise_failure"])
+                for item in failed_trajectory_diagnostics
+            ),
+            "float64_audit": sum(
+                bool(item["classification"]["float64_audit_failure"])
+                for item in failed_trajectory_diagnostics
+            ),
+            "analytic_premise_and_float64_audit": sum(
+                item["classification"]["label"]
+                == "analytic_premise_and_float64_audit"
+                for item in failed_trajectory_diagnostics
+            ),
+        },
+        "failed_trajectory_numerical_slack": _failure_slack_summary(
+            failed_trajectory_diagnostics
+        ),
         "terminal_pseudo_regret": _bootstrap_interval(
             terminal("cumulative_pseudo_regret"),
             resamples=resamples,
@@ -807,19 +1076,34 @@ def build_aggregate(
         raise ScaledTanhArtifactError("tuning and evaluation seeds overlap")
 
     runner_source_sha256 = _runner_source_sha256()
+    derived_source_hashes = _derived_source_hashes()
+    selection_record = _load_json(selection_path)
+    try:
+        execution_config, config_wording_migration = resolve_execution_config(
+            config, str(selection_record.get("config_digest", ""))
+        )
+    except ValueError as error:
+        raise ScaledTanhArtifactError(
+            f"scaled-tanh execution config is incompatible: {error}"
+        ) from error
+    validate_config(execution_config)
     selection, selection_sha256, selection_inputs = _load_selection(
-        config,
+        execution_config,
         profile=profile,
         selection_path=selection_path,
         runner_source_sha256=runner_source_sha256,
     )
-    environment = make_environment(config)
+    environment = make_environment(execution_config)
     inputs: list[dict[str, str]] = [
         *selection_inputs,
         {
             "path": "experiments/run_scaled_tanh_instantiation.py",
             "sha256": runner_source_sha256,
         },
+        *(
+            {"path": path, "sha256": digest}
+            for path, digest in derived_source_hashes.items()
+        ),
     ]
     manifests: list[str] = []
     study_cells = cells(config)
@@ -842,6 +1126,7 @@ def build_aggregate(
     reference_runs: list[dict[str, FloatArray]] = []
     group_records: dict[tuple[int, float, str], dict[str, Any]] = {}
     comparisons: list[dict[str, Any]] = []
+    trust_replay_cache: dict[tuple[str, int, bytes], float] = {}
     load_methods = (
         "exact_current_relative",
         "full_cg_relative",
@@ -849,7 +1134,9 @@ def build_aggregate(
     )
 
     for cell in study_cells:
-        expected_streams = {seed: make_stream(config, cell, seed) for seed in seeds}
+        expected_streams = {
+            seed: make_stream(execution_config, cell, seed) for seed in seeds
+        }
         exact_actions: list[NDArray[np.int64]] = []
         exact_regrets: list[float] = []
         comparison_values: dict[str, list[float]] = {
@@ -867,7 +1154,7 @@ def build_aggregate(
                 directory = _run_directory(raw_root, profile, cell, method, seed)
                 manifest, summary, arrays, run_inputs = _load_run(
                     directory,
-                    config=config,
+                    config=execution_config,
                     profile=profile,
                     seed=seed,
                     cell=cell,
@@ -887,11 +1174,16 @@ def build_aggregate(
                 inputs.extend(run_inputs)
                 manifests.append((directory / "manifest.json").as_posix())
             group_records[(*_cell_key(cell), method)] = _build_group(
+                config=execution_config,
                 profile=profile,
                 cell=cell,
                 method=method,
+                seeds=seeds,
                 summaries=summaries,
                 runs=runs,
+                environment=environment,
+                streams=expected_streams,
+                trust_replay_cache=trust_replay_cache,
                 resamples=resamples,
             )
             if method == "exact_current_relative":
@@ -990,6 +1282,12 @@ def build_aggregate(
                         "required_event_failure_round_counts": group_records[
                             (*_cell_key(cell), method)
                         ]["required_event_failure_round_counts"],
+                        "failure_classification_trajectory_counts": group_records[
+                            (*_cell_key(cell), method)
+                        ]["failure_classification_trajectory_counts"],
+                        "failed_trajectory_numerical_slack": group_records[
+                            (*_cell_key(cell), method)
+                        ]["failed_trajectory_numerical_slack"],
                     }
                     for method in methods
                     if method in THEOREM_METHODS
@@ -1033,7 +1331,31 @@ def build_aggregate(
                 )
                 for name in event_names
             },
+            "failed_trajectories": [
+                diagnostic
+                for group in method_groups
+                for diagnostic in group["failed_trajectory_diagnostics"]
+            ],
         }
+        failed_trajectories = theorem_failure_audit[method]["failed_trajectories"]
+        theorem_failure_audit[method]["failure_classification_trajectory_counts"] = {
+            "analytic_premise": sum(
+                bool(item["classification"]["analytic_premise_failure"])
+                for item in failed_trajectories
+            ),
+            "float64_audit": sum(
+                bool(item["classification"]["float64_audit_failure"])
+                for item in failed_trajectories
+            ),
+            "analytic_premise_and_float64_audit": sum(
+                item["classification"]["label"]
+                == "analytic_premise_and_float64_audit"
+                for item in failed_trajectories
+            ),
+        }
+        theorem_failure_audit[method]["failed_trajectory_numerical_slack"] = (
+            _failure_slack_summary(failed_trajectories)
+        )
 
     primary_methods = ("exact_current_relative", "full_cg_relative")
     primary_premises_pass = all(
@@ -1093,7 +1415,7 @@ def build_aggregate(
     evidence_scope = (
         "smoke-only engineering verification; not main-paper evidence"
         if profile == "smoke"
-        else "prespecified full-profile evaluation"
+        else "fresh final holdout after two disclosed diagnostic splits"
     )
     report = {
         "schema_version": 1,
@@ -1102,6 +1424,8 @@ def build_aggregate(
         "evidence_scope": evidence_scope,
         "config": config,
         "config_digest": config_digest(config),
+        "execution_config_digest": config_digest(execution_config),
+        "config_wording_migration": config_wording_migration,
         "environment_sha256": environment.digest,
         "environment_reference_minimum_gap": environment.minimum_gap,
         "evaluation_seeds": list(seeds),
@@ -1113,6 +1437,7 @@ def build_aggregate(
         "optimizer_selection_path": selection_path.as_posix(),
         "optimizer_selection_sha256": selection_sha256,
         "runner_source_sha256": runner_source_sha256,
+        "derived_artifact_source_hashes": derived_source_hashes,
         "evaluation_data_used_for_selection": False,
         "manifest_policy": (
             "only the expected evaluation manifests enumerated from the resolved "
@@ -1134,6 +1459,26 @@ def build_aggregate(
         "groups": groups,
         "exact_cg_comparisons": comparisons,
         "theorem_failure_audit": theorem_failure_audit,
+        "failure_classification_semantics": {
+            "float64_audit_tolerance": FLOAT64_AUDIT_TOLERANCE,
+            "recorded_transfer_tolerance": RECORDED_TRANSFER_TOLERANCE,
+            "recorded_trust_region_tolerance": (
+                RECORDED_TRUST_REGION_TOLERANCE
+            ),
+            "analytic_premise_failure": (
+                "a required non-transfer event failed, a transfer inequality "
+                "missed by more than the float64 audit tolerance, rho_W was not "
+                "below one, or the replayed trust-region violation exceeded the "
+                "audit tolerance"
+            ),
+            "float64_audit_failure": (
+                "the recorded transfer_pass flag failed while both transfer "
+                "slacks and the replayed trust-region violation were within the "
+                "declared float64 audit tolerance"
+            ),
+            "classification_counts_overlap_for_mixed_trajectories": True,
+            "recorded_failures_retained": True,
+        },
         "support_criteria": {
             "primary_exact_and_cg_premises_pass_all_trajectories": primary_premises_pass,
             "analytic_relative_transfer_below_one_all_cells": rho_below_one,
@@ -1509,6 +1854,10 @@ def _format_mean(interval: Mapping[str, Any], *, digits: int = 3) -> str:
     return "--" if value is None else f"{float(value):.{digits}g}"
 
 
+def _format_scientific(value: Any) -> str:
+    return "--" if value is None else f"{float(value):.2e}"
+
+
 def make_table(report: Mapping[str, Any], output: Path) -> None:
     lines = [
         r"\begin{tabular}{rrrcrrrrrr}",
@@ -1556,9 +1905,9 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
     lines.extend((r"\bottomrule", r"\end{tabular}", r"\par\smallskip"))
     lines.extend(
         (
-            r"\begin{tabular}{lrrp{0.53\linewidth}}",
+            r"\begin{tabular}{lrrrrp{0.23\linewidth}p{0.25\linewidth}}",
             r"\toprule",
-            r"Method & Failed trajectories & Failed rounds & Required event-field failures \\",
+            r"Method & Failed traj. & Analytic & Float64 & Failed rounds & Numerical slack & Required event-field failures \\",
             r"\midrule",
         )
     )
@@ -1568,9 +1917,24 @@ def make_table(report: Mapping[str, Any], output: Path) -> None:
             for name, count in audit["required_event_failure_round_counts"].items()
             if int(count) > 0
         ]
+        classifications = audit["failure_classification_trajectory_counts"]
+        slack = audit["failed_trajectory_numerical_slack"]
+        slack_text = (
+            r"$\min(\rho_{\rm exact}-\chi)=$"
+            f"{_format_scientific(slack['minimum_exact_rho_minus_exact_chi'])}; "
+            r"$\min(\rho_W-\rho_{\rm exact})=$"
+            f"{_format_scientific(slack['minimum_analytic_rho_W_minus_exact_rho'])}; "
+            r"max TR viol.="
+            f"{_format_scientific(slack['maximum_trust_region_violation'])}; "
+            r"tol.="
+            f"{_format_scientific(slack['float64_audit_tolerance'])}"
+        )
         lines.append(
             f"{METHOD_LABELS[method]} & {int(audit['failed_trajectory_count'])} & "
+            f"{int(classifications['analytic_premise'])} & "
+            f"{int(classifications['float64_audit'])} & "
             f"{int(audit['failed_round_count'])} & "
+            f"{slack_text} & "
             f"{'; '.join(failures) if failures else 'none'} \\\\"
         )
     lines.extend((r"\bottomrule", r"\end{tabular}"))
@@ -1607,8 +1971,13 @@ def _write_provenance(
             "input_set_sha256": input_set_sha256(inputs),
             "generation_parameters": {
                 "config_digest": report["config_digest"],
+                "execution_config_digest": report["execution_config_digest"],
+                "config_wording_migration": report["config_wording_migration"],
                 "optimizer_selection_sha256": report["optimizer_selection_sha256"],
                 "runner_source_sha256": report["runner_source_sha256"],
+                "derived_artifact_source_hashes": report[
+                    "derived_artifact_source_hashes"
+                ],
                 "interval": report["interval"],
                 "pdf_fonttype": 42 if artifact.suffix == ".pdf" else None,
             },
