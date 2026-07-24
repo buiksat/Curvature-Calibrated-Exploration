@@ -119,7 +119,7 @@ reselected.
 
 ## Wheel Benchmark: Failed Before Evaluation
 
-Commit `a999319c` expands the feasible local inventory to 12 methods:
+Commit `6bbe855a` expands the feasible local inventory to 12 methods:
 current full GGN-CG, local neural UCB/TS, all-layer diagonal UCB, a clearly
 labeled local NeuralLinear-style sampler, frozen-backbone last-layer UCB,
 LinUCB, linear TS, greedy, and random/safe/oracle controls. KFAC and LO-FI remain
@@ -133,7 +133,7 @@ The full study produced no selected configuration and no evaluation result:
    matching SHA-256 sidecars. Its first failure was delta `0.5`, tuning seed
    `2000`, ridge `0.1`, bonus `0.1`, round 484, relative residual
    `8.647020e-6` against tolerance `1e-6`.
-2. Tuning was restarted cleanly from `a999319c` with a 300-iteration cap. It
+2. Tuning was restarted cleanly from `6bbe855a` with a 300-iteration cap. It
    retained 27 hashed failures before the run was stopped. The documented
    example is delta `0.5`, seed `2008`, ridge `0.1`, bonus `0.5`, round 2761,
    residual `4.714088e-6`.
@@ -154,7 +154,7 @@ does not constitute the missing full Wheel evaluation.
 ## End-to-End Systems: Development Diagnostic Only
 
 A full-profile development run at clean revision
-`95fe2d2ae201d4109605072942f9cadc4ad6fda1` completed all 48 configured cells
+`b7e39b44ab2d15bab33f53148552a17c660e43d6` completed all 48 configured cells
 for development seed `7100` on CUDA. It took `2210.240383006021` seconds and
 recorded no skipped cell under the 24-hour cap.
 
@@ -214,8 +214,8 @@ checksum, and the verification results.
 
 ## Paper Packaging
 
-- The main body ends on numbered page 6.
-- `paper/main.pdf` has 71 physical pages at `bf5fa236`.
+- The main body occupies pages 1--7; references begin on page 8.
+- `paper/main.pdf` has 71 physical pages at the audited source revision.
 - The only material overfull warning is 5.1225 pt in the abstract/style block.
 - Final checks report no unresolved reference, citation, duplicate-label,
   missing-figure, or Type 3 font issue.
@@ -283,7 +283,7 @@ terminal commits are:
 - A clean manuscript build produced 71 pages; references and citations resolve,
   and all 18 figure PDFs embed Type 42/FontFile2 fonts rather than Type 3.
 - Clean no-raw anonymous full and review tier builds passed identity and source
-  scans; they contain 411 and 412 files respectively and intentionally contain
+  scans; they contain 414 and 415 files respectively and intentionally contain
   no raw runs.
 - Full scaled-tanh and current Wheel smoke bundle verification passed with the
   counts and hashes reported above.

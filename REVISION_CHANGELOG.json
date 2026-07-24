@@ -396,7 +396,7 @@
     }
   },
   "paper_packaging": {
-    "main_body_last_numbered_page": 6,
+    "main_body_last_numbered_page": 7,
     "physical_pdf_page_count": 71,
     "pdf_size_bytes": 1711083,
     "maximum_material_overfull_hbox_points": 5.1225,
@@ -572,13 +572,12 @@
     {
       "command": "buck2 run //tools:build_anonymous_supplement -- --output release",
       "status": "passed_no_raw",
-      "file_count": 411,
-      "size_bytes": 148264118
+      "file_count": 414
     },
     {
       "command": "buck2 run //tools:build_anonymous_supplement -- --tier review",
       "status": "passed_no_raw",
-      "file_count": 412,
+      "file_count": 415,
       "representative_raw_run_count": 0
     },
     {

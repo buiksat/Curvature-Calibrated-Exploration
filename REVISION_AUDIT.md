@@ -27,13 +27,13 @@ claim.
 - **Wheel:** the feasible local baseline inventory was expanded to 12 methods,
   with KFAC and LO-FI still omitted. Full tuning failed before selection:
   56 checksum-bound failure records were retained from the 100-iteration
-  attempt, and 27 from the clean 300-iteration `a999319c` attempt. A periodic
+  attempt, and 27 from the clean 300-iteration `6bbe855a` attempt. A periodic
   residual-replacement development diagnostic also failed. No full-profile
   evaluation policy or evaluation seed was read. A separate current-contract
   smoke check ran 96 tuning and 96 evaluation trajectories; it is an
   engineering check, not full-profile evidence.
 - **End-to-end systems:** one full-profile **development-seed** diagnostic at
-  clean revision `95fe2d2a` completed 48/48 cells on CUDA in 2210.240383 s.
+  clean revision `b7e39b44` completed 48/48 cells on CUDA in 2210.240383 s.
   It is not evaluation evidence: maximum original-system CG residuals were
   13.7298908 for current replay and 15.4970188 for historical gradients.
   No full evaluation grid was run.
@@ -75,7 +75,7 @@ checksum-recorded backup bundle named there.
 
 ## Paper Packaging
 
-- The main body ends on numbered page 6.
+- The main body occupies pages 1--7; references begin on page 8.
 - The compiled PDF has 71 physical pages at the audited source revision.
 - The only material overfull warning is a 5.1225 pt abstract/style box.
 - No unresolved references, citations, duplicate labels, missing figures, or
