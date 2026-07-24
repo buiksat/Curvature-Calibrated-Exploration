@@ -97,8 +97,7 @@ print(f"[cites] {len(citekeys)} distinct cite keys, {len(misscite)} missing from
 if misscite: problems.append(f"missing citations: {misscite}")
 
 # 8. deleted macros must not be USED (definitions removed already)
-deleted = [r'\\diego', r'\\bahram', r'\\houssam', r'\\brett',
-           r'\\resultTBD', r'\\epsdrift\b', r'\\epsdriftbar', r'\\Eopt\b',
+deleted = [r'\\resultTBD', r'\\epsdrift\b', r'\\epsdriftbar', r'\\Eopt\b',
            r'\\iffinalresults', r'\\finalresults', r'\\ifcomments', r'\\commentsfalse']
 for d in deleted:
     hits = re.findall(d, main)

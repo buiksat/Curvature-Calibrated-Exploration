@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import hashlib
 import gzip
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,6 +11,7 @@ from tools.build_anonymous_supplement import (
     BuildError,
     FileRecord,
     IdentityScanner,
+    RELEASE_TOOLING_EXCLUSIONS,
     REVIEW_AUXILIARY_MAX_BYTES,
     REVIEW_OUTPUT,
     REVIEW_RAW_INDEX_PATH,
@@ -19,6 +20,7 @@ from tools.build_anonymous_supplement import (
     ReleaseBuilder,
     StructuredSanitizer,
     canonical_json,
+    discover_identity_terms,
     is_optional_paper_reference,
     parse_args,
     project_raw_record,
@@ -110,6 +112,21 @@ def test_identity_scanner_rejects_local_paths_emails_and_discovered_names() -> N
     }
 
 
+def test_identity_scanner_rejects_reconstructed_python_identity() -> None:
+    identity = "ReleaseIdentity"
+    split = len(identity) // 2
+    source = f"private_parts = ({identity[:split]!r}, {identity[split:]!r})\n"
+    scanner = IdentityScanner([identity])
+
+    scanner.scan_text("mapping.py", source)
+
+    with pytest.raises(BuildError, match="identity scan failed"):
+        scanner.raise_for_issues()
+    assert {issue["rule"] for issue in scanner.issues} == {
+        "local-identity-1-reconstructed"
+    }
+
+
 def test_binary_email_scan_does_not_join_across_invalid_bytes() -> None:
     scanner = IdentityScanner([])
     scanner.scan_bytes("numeric.bin", b"person@\xffexample.org")
@@ -120,11 +137,14 @@ def test_binary_email_scan_does_not_join_across_invalid_bytes() -> None:
         scanner.raise_for_issues()
 
 
-def test_builder_source_does_not_embed_forbidden_literals() -> None:
-    source = Path("tools/build_anonymous_supplement.py").read_text(encoding="utf-8")
-    scanner = IdentityScanner([])
+@pytest.mark.parametrize("relative", sorted(RELEASE_TOOLING_EXCLUSIONS))
+def test_private_release_tooling_does_not_embed_forbidden_literals(
+    relative: str,
+) -> None:
+    source = Path(relative).read_text(encoding="utf-8")
+    scanner = IdentityScanner(discover_identity_terms(Path.cwd()))
 
-    scanner.scan_text("tools/build_anonymous_supplement.py", source)
+    scanner.scan_text(relative, source)
 
     scanner.raise_for_issues()
 
@@ -687,14 +707,133 @@ def test_only_conditional_checklist_paper_inputs_are_optional() -> None:
     assert not is_optional_paper_reference("missing_checklist_notes.tex")
 
 
-def test_released_validator_removes_all_private_editor_macros(tmp_path: Path) -> None:
+def test_released_validator_removes_leading_private_editor_macro_class(
+    tmp_path: Path,
+) -> None:
     sanitizer = StructuredSanitizer(tmp_path, "a" * 64)
-    private_names = (("d", "iego"), ("b", "ahram"), ("h", "oussam"), ("b", "rett"))
-    source = " ".join("\\" + first + rest for first, rest in private_names)
-    source += " Public citation text remains unchanged"
+    source = r"""
+deleted = [r'\\firsteditor', r'\\secondeditor',
+           r'\\resultCheck', r'\\technical\b']
+public_text = "Public citation text remains unchanged"
+"""
 
     released = sanitize_source_text("paper/validate.py", source, sanitizer)
 
-    for first, rest in private_names:
-        assert "\\" + first + rest not in released
+    assert "firsteditor" not in released
+    assert "secondeditor" not in released
+    assert "resultCheck" in released
+    assert "technical" in released
     assert "Public citation text remains unchanged" in released
+    compile(released, "paper/validate.py", "exec")
+
+
+@pytest.mark.parametrize("tier", ["full", "review"])
+def test_final_release_tree_excludes_private_tooling_and_scans_every_file(
+    tmp_path: Path,
+    tier: str,
+) -> None:
+    repository = tmp_path / "repository"
+    identity = "ReleaseIdentity"
+    paper = repository / "paper"
+    paper.mkdir(parents=True)
+    (paper / "main.tex").write_text(
+        "\\documentclass{article}\n"
+        "\\author{Anonymous}\n"
+        "\\begin{document}x\\end{document}\n",
+        encoding="utf-8",
+    )
+    (paper / "validate.py").write_text(
+        "import re\n"
+        f"deleted = [r'\\\\{identity.casefold()}', r'\\\\resultCheck']\n"
+        "for pattern in deleted:\n"
+        "    re.findall(pattern, '')\n",
+        encoding="utf-8",
+    )
+    tools = repository / "tools"
+    tools.mkdir()
+    split = len(identity) // 2
+    (tools / "build_anonymous_supplement.py").write_text(
+        f"private_parts = ({identity[:split]!r}, {identity[split:]!r})\n",
+        encoding="utf-8",
+    )
+    tests = repository / "tests"
+    tests.mkdir()
+    (tests / "test_anonymous_supplement.py").write_text(
+        f"private_identity = {identity!r}\n",
+        encoding="utf-8",
+    )
+    (repository / "results" / "derived").mkdir(parents=True)
+
+    output = tmp_path / f"release-{tier}"
+    builder = ReleaseBuilder(repository, output, tier=tier)
+    identity_terms = (*discover_identity_terms(Path.cwd()), identity)
+    builder.identity_scanner = IdentityScanner(identity_terms)
+    builder.build()
+
+    released_paths = tuple(
+        sorted(
+            path.relative_to(output).as_posix()
+            for path in output.rglob("*")
+            if path.is_file()
+        )
+    )
+    assert "paper/validate.py" in released_paths
+    assert RELEASE_TOOLING_EXCLUSIONS.isdisjoint(released_paths)
+    manifest = json.loads((output / "MANIFEST.json").read_text(encoding="utf-8"))
+    assert RELEASE_TOOLING_EXCLUSIONS.isdisjoint(
+        item["path"] for item in manifest["files"]
+    )
+    source_manifest = json.loads(
+        (output / "manifests" / "source-tree.json").read_text(encoding="utf-8")
+    )
+    assert RELEASE_TOOLING_EXCLUSIONS.isdisjoint(
+        item["path"] for item in source_manifest["files"]
+    )
+    released_validator = (output / "paper" / "validate.py").read_text(
+        encoding="utf-8"
+    )
+    assert identity.casefold() not in released_validator.casefold()
+    assert "resultCheck" in released_validator
+
+    scanner = IdentityScanner(identity_terms)
+    for relative in released_paths:
+        scanner.scan_bytes(relative, (output / relative).read_bytes())
+    scanner.raise_for_issues()
+
+
+def test_anonymized_auxiliary_raw_sidecar_binds_released_payload(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    paper = repository / "paper"
+    paper.mkdir(parents=True)
+    (paper / "main.tex").write_text(
+        "\\documentclass{article}\n"
+        "\\author{Anonymous}\n"
+        "\\begin{document}x\\end{document}\n",
+        encoding="utf-8",
+    )
+    (repository / "results" / "derived").mkdir(parents=True)
+    raw_directory = repository / "results" / "raw" / "study" / "run"
+    raw_directory.mkdir(parents=True)
+    manifest = raw_directory / "manifest.json"
+    manifest.write_text(
+        json.dumps({"git_root": str(repository), "schema_version": 1}),
+        encoding="utf-8",
+    )
+    (raw_directory / "manifest.json.sha256").write_text(
+        f"{hashlib.sha256(manifest.read_bytes()).hexdigest()}  manifest.json\n",
+        encoding="ascii",
+    )
+
+    output = tmp_path / "release"
+    ReleaseBuilder(repository, output, tier="full").build()
+
+    released_manifest = output / manifest.relative_to(repository)
+    released_sidecar = released_manifest.with_name("manifest.json.sha256")
+    released_digest, released_name = released_sidecar.read_text(
+        encoding="ascii"
+    ).split()
+    assert released_name == "manifest.json"
+    assert released_digest == hashlib.sha256(released_manifest.read_bytes()).hexdigest()
+    assert str(repository) not in released_manifest.read_text(encoding="utf-8")

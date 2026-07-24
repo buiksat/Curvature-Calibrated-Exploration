@@ -11,6 +11,7 @@ installs a fully validated staging tree atomically.
 from __future__ import annotations
 
 import argparse
+import ast
 import contextlib
 import dataclasses
 import datetime as dt
@@ -119,6 +120,7 @@ TEXT_SUFFIXES = {
 }
 PAPER_TOP_LEVEL = {
     "aistats2026.sty",
+    "aistats2027.sty",
     "macros.tex",
     "main.pdf",
     "main.tex",
@@ -129,14 +131,13 @@ OPTIONAL_PAPER_INPUTS = {
     "aistats2027_checklist.tex",
     "aistats_checklist.tex",
 }
-PRIVATE_EDITOR_MACRO_REPLACEMENTS = {
-    "\\" + first + rest: "\\formerAuthor" + suffix
-    for (first, rest), suffix in zip(
-        (("d", "iego"), ("b", "ahram"), ("h", "oussam"), ("b", "rett")),
-        ("A", "B", "C", "D"),
-        strict=True,
-    )
-}
+RELEASE_TOOLING_EXCLUSIONS = frozenset(
+    {
+        "tests/test_anonymous_supplement.py",
+        "tools/build_anonymous_supplement.py",
+    }
+)
+PRIVATE_EDITOR_MACRO_PATTERN = re.compile(r"^\\\\[a-z]+$")
 DATA_FIXTURE_PATHS = (
     "experiments/data/sklearn/covertype/samples_py3",
     "experiments/data/sklearn/covertype/targets_py3",
@@ -314,10 +315,14 @@ class IdentityScanner:
         folded = text.casefold()
         fixed_markers = tuple(value.casefold() for value in FIXED_FORBIDDEN.values())
         identity_markers = tuple(term.casefold() for term in self.identity_terms)
+        may_reconstruct_identity = bool(
+            self.identity_terms and PurePosixPath(path).suffix.lower() == ".py"
+        )
         if (
             "@" not in text
             and not any(marker in folded for marker in fixed_markers)
             and not any(marker in folded for marker in identity_markers)
+            and not may_reconstruct_identity
         ):
             return
 
@@ -328,6 +333,18 @@ class IdentityScanner:
             for match in pattern.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1
                 self.issues.append({"path": path, "line": line, "rule": rule})
+
+        if may_reconstruct_identity:
+            for line, value in _python_reconstructed_strings(text):
+                for rule, pattern in self._identity:
+                    if pattern.search(value):
+                        self.issues.append(
+                            {
+                                "path": path,
+                                "line": line,
+                                "rule": f"{rule}-reconstructed",
+                            }
+                        )
 
     def scan_bytes(self, path: str, data: bytes, *, count: bool = True) -> None:
         self.scan_text(
@@ -416,6 +433,46 @@ class StructuredSanitizer:
         return value
 
 
+def _python_reconstructed_strings(text: str) -> tuple[tuple[int, str], ...]:
+    """Return strings assembled by Python syntax from multiple literals."""
+
+    try:
+        tree = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return ()
+
+    reconstructed: set[tuple[int, str]] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+            parts = _literal_addition_parts(node)
+            if parts is not None and len(parts) > 1:
+                reconstructed.add((node.lineno, "".join(parts)))
+        elif isinstance(node, (ast.List, ast.Set, ast.Tuple)):
+            run: list[str] = []
+            for element in node.elts:
+                if isinstance(element, ast.Constant) and isinstance(element.value, str):
+                    run.append(element.value)
+                    continue
+                if len(run) > 1:
+                    reconstructed.add((node.lineno, "".join(run)))
+                run = []
+            if len(run) > 1:
+                reconstructed.add((node.lineno, "".join(run)))
+    return tuple(sorted(reconstructed))
+
+
+def _literal_addition_parts(node: ast.expr) -> list[str] | None:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return [node.value]
+    if not isinstance(node, ast.BinOp) or not isinstance(node.op, ast.Add):
+        return None
+    left = _literal_addition_parts(node.left)
+    right = _literal_addition_parts(node.right)
+    if left is None or right is None:
+        return None
+    return [*left, *right]
+
+
 def _source_candidates(repository: Path) -> tuple[Path, ...]:
     candidates: set[Path] = set()
     for root_name in ("Makefile", "pytest.ini"):
@@ -470,7 +527,16 @@ def _source_candidates(repository: Path) -> tuple[Path, ...]:
                 if path.name.endswith(".provenance.json"):
                     continue
                 candidates.add(path)
-    return tuple(sorted(candidates, key=lambda path: relative_posix(path, repository)))
+    return tuple(
+        sorted(
+            (
+                path
+                for path in candidates
+                if relative_posix(path, repository) not in RELEASE_TOOLING_EXCLUSIONS
+            ),
+            key=lambda path: relative_posix(path, repository),
+        )
+    )
 
 
 def _is_source_hash_file(path: Path, repository: Path) -> bool:
@@ -511,9 +577,66 @@ def sanitize_source_text(
 ) -> str:
     result = sanitizer.normalize_string(text)
     if relative == "paper/validate.py":
-        for private_macro, neutral_macro in PRIVATE_EDITOR_MACRO_REPLACEMENTS.items():
-            result = result.replace(private_macro, neutral_macro)
+        result = _remove_private_validator_macros(result)
     return result
+
+
+def _remove_private_validator_macros(text: str) -> str:
+    """Remove the leading class of bare editor aliases from ``deleted``."""
+
+    try:
+        tree = ast.parse(text)
+    except SyntaxError as error:
+        raise BuildError(f"cannot parse paper validator: {error}") from error
+
+    deleted_value: ast.List | ast.Tuple | None = None
+    for statement in tree.body:
+        if not isinstance(statement, ast.Assign):
+            continue
+        if not any(
+            isinstance(target, ast.Name) and target.id == "deleted"
+            for target in statement.targets
+        ):
+            continue
+        if isinstance(statement.value, (ast.List, ast.Tuple)):
+            deleted_value = statement.value
+        break
+    if deleted_value is None:
+        return text
+
+    values: list[str] = []
+    for element in deleted_value.elts:
+        if not isinstance(element, ast.Constant) or not isinstance(element.value, str):
+            raise BuildError("paper validator deleted-macro list is not literal")
+        values.append(element.value)
+
+    private_prefix_length = 0
+    for value in values:
+        if not PRIVATE_EDITOR_MACRO_PATTERN.fullmatch(value):
+            break
+        private_prefix_length += 1
+    if not private_prefix_length:
+        return text
+
+    retained = values[private_prefix_length:]
+    replacement = "[\n" + "".join(f"    {value!r},\n" for value in retained) + "]"
+    lines = text.splitlines(keepends=True)
+    if deleted_value.end_lineno is None or deleted_value.end_col_offset is None:
+        raise BuildError("paper validator deleted-macro location is unavailable")
+    start = _ast_text_offset(lines, deleted_value.lineno, deleted_value.col_offset)
+    end = _ast_text_offset(
+        lines,
+        deleted_value.end_lineno,
+        deleted_value.end_col_offset,
+    )
+    return text[:start] + replacement + text[end:]
+
+
+def _ast_text_offset(lines: Sequence[str], line_number: int, byte_offset: int) -> int:
+    prefix = "".join(lines[: line_number - 1])
+    line = lines[line_number - 1]
+    column = len(line.encode("utf-8")[:byte_offset].decode("utf-8"))
+    return len(prefix) + column
 
 
 def anonymous_source_inventory(
@@ -1089,9 +1212,25 @@ class ReleaseBuilder:
             if path.name not in {"manifest.jsonl", "raw.jsonl", "summary.jsonl"}
         ]
         for source in auxiliary:
+            relative = relative_posix(source, self.repository)
+            if source.name.endswith(".sha256"):
+                payload_relative = relative.removesuffix(".sha256")
+                released_payload = self.references.get(payload_relative)
+                if released_payload is None:
+                    continue
+                data = (
+                    f"{released_payload.sha256}  "
+                    f"{PurePosixPath(released_payload.path).name}\n"
+                ).encode("ascii")
+                self._write_bytes(
+                    relative,
+                    data,
+                    role="raw-checksum",
+                    source_relative=relative,
+                )
+                continue
             if self.tier == "review" and source.stat().st_size > REVIEW_AUXILIARY_MAX_BYTES:
                 continue
-            relative = relative_posix(source, self.repository)
             if source.suffix == ".jsonl":
                 self._process_raw_jsonl(source, project_metrics=False)
                 continue
