@@ -16,13 +16,18 @@
   % style is unavailable.  Page geometry here is NOT the AISTATS page geometry.
   \usepackage[letterpaper,margin=1in]{geometry}
 \else
-  \IfFileExists{aistats2026.sty}{%
-    \ifaccepted\usepackage[accepted]{aistats2026}\else\usepackage{aistats2026}\fi
+  \IfFileExists{aistats2027.sty}{%
+    \ifaccepted\usepackage[accepted]{aistats2027}\else\usepackage{aistats2027}\fi
   }{%
-    \PackageError{main}{Official AISTATS style (aistats2026.sty) not found}{Place the
-      official target-year aistats<year>.sty next to main.tex for the anonymous
-      submission build, or set \string\provisionaltrue for a local, clearly
-      non-AISTATS content-review build.}}%
+    \IfFileExists{aistats2026.sty}{%
+      \PackageWarningNoLine{main}{Official AISTATS 2027 style is unavailable;
+        using AISTATS 2026 only as a provisional formatting baseline}%
+      \ifaccepted\usepackage[accepted]{aistats2026}\else\usepackage{aistats2026}\fi
+    }{%
+      \PackageError{main}{Official AISTATS style not found}{Place the official
+        target-year aistats<year>.sty next to main.tex for the anonymous
+        submission build, or set \string\provisionaltrue for a local, clearly
+        non-AISTATS content-review build.}}}%
 \fi
 
 % --- standard packages ----------------------------------------------------
@@ -91,9 +96,12 @@ drift, the bound transfers to the frozen potential; a rank-$r$ spectral split
 then exposes the residual tail mass without assuming a known tangent subspace,
 and a positive-gap corollary follows.  Full-GGN widths are computed matrix-free
 with curvature--vector products and residual-checked CG.  These are conditional
-results, not guarantees for unrestricted neural training.  The predeclared
-scaled-tanh full grid does not support an empirical theorem-instantiation claim:
-148 of 4,000 theorem-labeled trajectories fail the required premise conjunction.
+results, not guarantees for unrestricted neural training.  The final
+scaled-tanh holdout, reserved after two disclosed diagnostic splits, does not
+support an empirical theorem-instantiation claim: 148 of 4,000 theorem-labeled
+trajectories fail the recorded theorem-event conjunction.  The repeated
+relative-transfer flags are float64-only audit misses; optimizer and CG premise
+failures remain.
 A separate linear gap study passes its recorded exact/full-CG premises but its
 bounds remain vacuous; broader operator studies show no uniform
 fidelity--regret ordering.
@@ -124,8 +132,8 @@ derivative ratio.  The maximum relative ratio error directly controls a
 two-sided current/frozen curvature sandwich and yields a structured centering
 identity (\Cref{lem:relative-link-drift}).  This mechanism gives an analytic
 scaled-tanh specialization (\Cref{cor:scaled-tanh-relative}), but that
-corollary remains conditional: the completed full experiment fails its required
-premise conjunction and is reported as a stop, not as empirical validation.
+corollary remains conditional: the completed final holdout fails its recorded
+theorem-event criterion and is reported as a stop, not as empirical validation.
 
 \textbf{The general theorem separates the remaining obligations.}  Under
 conditionally sub-Gaussian noise and Gaussian squared loss,
@@ -167,9 +175,10 @@ corollary
 \textbf{(4)} Matrix-free residual-checked GGN widths plus predictable Welford
 path certificates, a supplied-subspace shortcut, and a growing-window accounting
 bound (\Cref{cor:operational,cor:rank-near-linear,thm:growing-window}).
-\textbf{(5)} Predeclared failure-mode studies that retain negative results: the
-scaled-tanh premise stop, premise-clean but vacuous gap validation, mixed
-operator comparisons, and isolated real-autodiff systems measurements
+\textbf{(5)} Failure-mode studies that disclose their selection chronology and
+retain negative results: the scaled-tanh premise stop, premise-clean but vacuous
+gap validation, mixed operator comparisons, and isolated real-autodiff systems
+measurements
 (\Cref{sec:experiments,prop:offdiag-witness}).
 
 \section{Problem Setup}\label{sec:problem}
@@ -896,16 +905,28 @@ but the construction needs only one CG iteration and is an equivalence check,
 not a Krylov stress test.
 }
 
-\textbf{Scaled-tanh stop.}  The predeclared finite-support full grid evaluates
-five horizons, four width ratios, eight methods, and 50 untouched seeds: 8,000
-trajectories in total.  The four theorem-labeled methods contribute 4,000
-trajectories.  Their failed-trajectory counts are 43 (exact relative), 51
-(full-CG relative), 40 (Welford), and 14 (corrected center), totaling 148; the
-failed fields are optimizer residual, relative transfer, and, in eight rounds,
-CG convergence.  Every method--horizon--width theorem cell therefore fails the
-joint premise criterion.  Exact and CG policies nevertheless have identical
-actions and widths agree to at worst $1.3\times10^{-12}$ relatively, which
-checks implementation but does not rescue the theorem premise.  We make no
+\textbf{Scaled-tanh stop.}  The reported evaluation is a final holdout following
+two disclosed pre-freeze diagnostic splits.  Nominal seeds 1000--1049 were
+abandoned after optimizer diagnostics; the replacement split 1100--1149 was
+also abandoned after only seeds 1100--1101 were read.  The residual threshold
+was set from development diagnostics, damping was then selected on tuning seeds
+0--9, and the protocol was frozen before fresh seeds 1200--1249 were reserved as
+the final holdout; no final-holdout metric was read during selection.
+This finite-support holdout evaluates five horizons, four width ratios, eight
+methods, and 50 seeds: 8,000 trajectories in total.  The four theorem-labeled
+methods contribute 4,000 trajectories.  Their failed-trajectory counts are 43
+(exact relative), 51 (full-CG relative), 40 (Welford), and 14 (corrected center),
+totaling 148.  The 14 transfer-flagged trajectories in each affected relative
+method are float64 audit misses, not analytic transfer-premise failures:
+$\min_t(\rho_t-\chi_t)=-1.92\times10^{-9}$ against audit tolerance
+$2\times10^{-9}$, while
+$\min_t(\rho_W-\rho_t)=9.84\times10^{-3}$ and the largest replayed trust-region
+violation is $1.12\times10^{-16}$.  The genuine premise failures are optimizer
+residuals and, in eight full-CG rounds, CG convergence.  Every
+method--horizon--width theorem cell nevertheless fails the recorded joint
+theorem-event criterion.  Exact and CG policies have identical actions, and
+their widths agree to at worst $1.3\times10^{-12}$ relatively.  This checks
+implementation but does not satisfy the theorem-event criterion.  We make no
 empirical theorem-instantiation or rate claim from this study.
 
 \textbf{Gap validation.}  A separate linear study executes 1,000 trajectories
@@ -920,30 +941,34 @@ gap-dependent constant is vacuous and looser than the gap-free bound here.
 The spectral-tail reversal, premise-clean Krylov grid, mixed coverage-matched
 operator comparisons, failed small-model baselines, and real JVP/VJP primitive
 measurements are deferred to \Cref{app:additional-experiments}.  They do not
-support a full-curvature performance advantage.  The full Wheel benchmark did
-not complete; smoke runs are engineering checks only and no Wheel result enters
-the paper.
+support a full-curvature performance advantage.  The full Wheel benchmark
+terminated during tuning after solver-residual failures, and no full-profile
+evaluation policy ran; smoke runs are engineering checks only and no Wheel
+result enters the paper.
 
 \newcommand{\deferredExperimentalEvidence}{%
 \subsection{Scaled-tanh premise stop}
 \begin{figure*}[t]
   \centering
   \includegraphics[width=.92\textwidth]{figures/scaled_tanh_certificates.pdf}
-  \caption{Full scaled-tanh certificate audit over five horizons, four width
-  ratios, and 50 evaluation seeds.  The displayed certificates are computed
+  \caption{Final-holdout scaled-tanh certificate audit over five horizons, four
+  width ratios, and 50 seeds.  The displayed certificates are computed
   from complete trajectories, but every theorem-labeled method--cell fails the
-  required joint premise criterion.  This is a failure audit, not an empirical
-  instantiation of \Cref{cor:scaled-tanh-relative}.}
+  recorded joint theorem-event criterion.  Transfer flags within the declared
+  float64 tolerance are separated from analytic premise failures.  This is a
+  failure audit, not an empirical instantiation of
+  \Cref{cor:scaled-tanh-relative}.}
   \label{fig:scaled-tanh-certificates}
 \end{figure*}
 
 \begin{table*}[t]
   \centering\scriptsize\setlength{\tabcolsep}{2pt}
   \input{../tables/generated/scaled_tanh_instantiation.tex}
-  \caption{Scaled-tanh full-grid audit.  ``Premises'' is the conjunction of all
-  required fields for the corresponding theorem trajectory.  Failed-trajectory
-  counts are reported rather than discarding those runs; CG agreement and width
-  error are implementation checks only.}
+  \caption{Scaled-tanh final-holdout audit.  ``Premises'' denotes the recorded
+  float64 theorem-event criterion for the corresponding theorem trajectory.
+  ``Analytic'' and ``Float64'' separate premise failures from transfer-audit
+  misses using the displayed slack/tolerance tuple.  Failed trajectories are
+  retained; CG agreement and width error are implementation checks only.}
   \label{tab:scaled-tanh-instantiation}
 \end{table*}
 
@@ -1034,7 +1059,8 @@ $6{,}956.7$ and $1{,}328.9$, respectively, so the bounds are numerically vacuous
 Because the residual and dense audit checks are ordinary float64 point computations,
 these executions are classified \emph{post-hoc theorem-event verified with fully
 predictable schedules}, not verified-enclosure theorem certified.  They do not
-override the failed conjunction in the larger predeclared scaled-tanh grid.
+override the failed theorem-event criterion in the larger final-holdout
+scaled-tanh grid.
 
 \subsection{Reference-operator falsification and matched baselines}\label{sec:operator-cg-audit}
 An eight-cell phase map runs seven operators on 30 independent policies per cell
@@ -1171,15 +1197,17 @@ CG error.  Under exact current curvature and certified small drift, the frozen
 potential yields full-dimensional spectral-tail and positive-gap closures;
 matrix-free CVP/CG solves avoid a dense curvature matrix but still require replay.
 
-The experiments delimit rather than enlarge these claims.  The scaled-tanh full
-grid fails the required premise conjunction in 148 of 4,000 theorem-labeled
-trajectories, so it provides no empirical theorem-instantiation or rate result.
+The experiments delimit rather than enlarge these claims.  The scaled-tanh
+final holdout fails the recorded theorem-event criterion in 148 of 4,000
+theorem-labeled trajectories, so it provides no empirical theorem-instantiation
+or rate result.
 All 400 exact/full-CG trajectories in the separate gap study pass their recorded
 premises, but both displayed bounds are vacuous and the gap-dependent constant is
 larger.  Spectral-tail and operator studies reject a uniform fidelity--regret
 ordering; real-autodiff results concern isolated primitives; small nonlinear and
-real-data baselines fail their sanity checks.  The full Wheel study remains
-unrun and contributes no paper evidence.
+real-data baselines fail their sanity checks.  The full Wheel study terminated
+during tuning; no full-profile evaluation policy ran, and its smoke profile
+contributes no paper evidence.
 
 \paragraph{Limitations.}
 Theory assumes Gaussian squared loss, action enumeration, realizability,
@@ -1271,7 +1299,9 @@ Let
  A_T:=\bCbar_{T+1}-\lambda\bI
  =\sigma^{-2}\sum_{t=1}^T\bg_t\bg_t^\top\succeq0
 \]
-have eigenvalues $\nu_1\ge\cdots\ge\nu_d\ge0$.  For an integer
+have eigenvalues $\nu_1\ge\cdots\ge\nu_d\ge0$, and suppose the frozen
+features in this sum satisfy $\|\bg_t\|_2\le G$ for every $t\le T$.
+For an integer
 $r\in\{0,\ldots,d\}$, let
 $\Delta_{T,r}:=\sum_{i>r}\nu_i$, $\tau_T:=\operatorname{tr}(A_T)$,
 $r_T:=\min\{r,T\}$, and
@@ -1299,7 +1329,7 @@ rank closure.  The statement also covers $T=0$, when both sides vanish.
 \end{lemma}
 \begin{proof}
 Because $A_T$ is a sum of $T$ rank-one matrices,
-$\operatorname{rank}(A_T)\le T$, and \Cref{asm:bounded} gives
+$\operatorname{rank}(A_T)\le T$, and the stated feature bound gives
 $\operatorname{tr}(A_T)\le TG^2/\sigma^2$.  If $r_T>0$, concavity of
 $x\mapsto\log(1+x/\lambda)$ on the leading eigenvalues gives
 \[
@@ -2498,9 +2528,9 @@ Substitute $\delta_{s,t}=(c_{s,t}-1)\bg_s$ in the definition of $M_t$:
  \bar r_{s,t}\delta_{s,t}+e_{s,t}\bg_s+e_{s,t}\delta_{s,t}
  =\{\bar r_{s,t}(c_{s,t}-1)+c_{s,t}e_{s,t}\}\bg_s.
 \]
-This proves the first identity in~\eqref{eq:relative-link-M}.  Since
-$M_t=\sigma^{-1}\Gmat_t\bv_t$ after left multiplication by
-$\bCbar_t^{-1/2}$,
+This proves the first identity in~\eqref{eq:relative-link-M}.  Left
+multiplication by $\bCbar_t^{-1/2}$ gives the transformed identity
+$\bCbar_t^{-1/2}M_t=\sigma^{-1}\Gmat_t\bv_t$, so
 \[
  \|M_t\|_{\bCbar_t^{-1}}
  =\sigma^{-1}\|\Gmat_t\bv_t\|_2
@@ -5172,9 +5202,10 @@ provenance records are in the reviewed tree, while their seed-level raw
 directories remain outside Git.  The deterministic 4.43~GB scaled-tanh bundle
 contains 8,000 runs and 48,002 files; its complete inventory and SHA-256 are
 tracked, but the archive payload is intentionally outside Git.  Those artifacts
-record the failed premise conjunction rather than a theorem-instantiation claim.
-The Wheel full grid has not run; its smoke profile is not paper evidence.  The
-2.1~GB legacy scaling tree and historical inputs outside Git
+record the failed theorem-event criterion rather than a theorem-instantiation
+claim.  The full Wheel run terminated during tuning after solver-residual
+failures; no full-profile evaluation policy ran, and its smoke profile is not
+paper evidence.  The 2.1~GB legacy scaling tree and historical inputs outside Git
 are absent, so not every legacy raw-derived chain is reproducible.  Public
 dataset caches are optional local accelerators rather than release requirements;
 the builder packages loaders/configurations and sanitizes identities and
