@@ -255,6 +255,8 @@ def test_jacobi_pcg_energy_width_and_preconditioned_residual_certificates() -> N
 
     dense = operator.to_dense()
     diagonal = operator.diagonal()
+    preconditioner = np.diag(diagonal)
+    assert np.linalg.norm(preconditioner @ dense - dense @ preconditioner) > 1e-6
     inverse_root = np.diag(1.0 / np.sqrt(diagonal))
     transformed = inverse_root @ dense @ inverse_root
     eigenvalues = np.linalg.eigvalsh(transformed)
@@ -266,6 +268,16 @@ def test_jacobi_pcg_energy_width_and_preconditioned_residual_certificates() -> N
     ):
         exact = np.linalg.solve(dense, rhs)
         error = exact - approximate
+        square_root = np.diag(np.sqrt(diagonal))
+        transformed_exact = square_root @ exact
+        transformed_approximate = square_root @ approximate
+        transformed_error = transformed_exact - transformed_approximate
+        np.testing.assert_allclose(
+            error @ dense @ error,
+            transformed_error @ transformed @ transformed_error,
+            rtol=2e-14,
+            atol=2e-14,
+        )
         exact_energy_squared = float(exact @ dense @ exact)
         relative_energy_error = float(
             np.sqrt((error @ dense @ error) / exact_energy_squared)
