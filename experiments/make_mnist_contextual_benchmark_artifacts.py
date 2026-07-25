@@ -20,6 +20,7 @@ from .artifact_utils import (
     sha256_file,
     validate_sha256_sidecar,
     write_json_artifact,
+    write_provenance_sidecar,
     write_sha256_sidecar,
 )
 from .logging_utils import canonical_json
@@ -165,7 +166,7 @@ def build_artifacts(
             for name in ("selection.json", "manifest.json", "evaluation_summaries.jsonl", "rounds.jsonl")
         ],
     }
-    derived, _ = write_json_artifact(derived_path, report)
+    derived, derived_hash = write_json_artifact(derived_path, report)
 
     evaluation_rounds = [row for row in rounds if row["phase"] == "evaluation"]
     by_method_seed: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
@@ -230,6 +231,26 @@ def build_artifacts(
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     table.write_text("\n".join(lines) + "\n", encoding="ascii")
     write_sha256_sidecar(table)
+    publication_inputs = [
+        {"path": derived.as_posix(), "sha256": sha256_file(derived)},
+        {
+            "path": derived_hash.as_posix(),
+            "sha256": sha256_file(derived_hash),
+        },
+    ]
+    for artifact, artifact_kind in (
+        (regret_path, "regret_accuracy_figure"),
+        (compute_path, "compute_regret_figure"),
+        (table, "benchmark_table"),
+    ):
+        write_provenance_sidecar(
+            artifact,
+            publication_inputs,
+            generation_parameters={
+                "artifact_kind": artifact_kind,
+                "study": "mnist_contextual_benchmark",
+            },
+        )
     return {"derived":derived.as_posix(),"regret_figure":regret_path.as_posix(),"compute_figure":compute_path.as_posix(),"table":table.as_posix()}
 
 

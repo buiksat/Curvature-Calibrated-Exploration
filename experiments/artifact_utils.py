@@ -46,6 +46,7 @@ def atomic_write_bytes(path: str | Path, payload: bytes) -> Path:
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary, destination)
+        os.chmod(destination, 0o644)
     except BaseException:
         temporary.unlink(missing_ok=True)
         raise
@@ -81,6 +82,40 @@ def write_json_artifact(path: str | Path, value: Any) -> tuple[Path, Path]:
         path, canonical_json(value) + "\n", encoding="ascii"
     )
     return artifact, write_sha256_sidecar(artifact)
+
+
+def write_provenance_sidecar(
+    artifact_path: str | Path,
+    inputs: Sequence[Mapping[str, str]],
+    *,
+    generation_parameters: Mapping[str, Any] | None = None,
+) -> Path:
+    artifact = Path(artifact_path)
+    normalized_inputs = sorted(
+        (
+            {"path": str(item["path"]), "sha256": str(item["sha256"])}
+            for item in inputs
+        ),
+        key=lambda item: (item["path"], item["sha256"]),
+    )
+    for item in normalized_inputs:
+        source = Path(item["path"])
+        if not source.is_file() or sha256_file(source) != item["sha256"]:
+            raise ValueError(f"provenance input is missing or stale: {source}")
+    value: dict[str, Any] = {
+        "artifact": artifact.as_posix(),
+        "artifact_sha256": sha256_file(artifact),
+        "input_set_sha256": input_set_sha256(normalized_inputs),
+        "inputs": normalized_inputs,
+        "schema_version": 1,
+    }
+    if generation_parameters is not None:
+        value["generation_parameters"] = dict(generation_parameters)
+    return atomic_write_text(
+        artifact.with_name(artifact.name + ".provenance.json"),
+        canonical_json(value) + "\n",
+        encoding="ascii",
+    )
 
 
 def write_deterministic_npz(
@@ -137,5 +172,6 @@ __all__ = [
     "validate_sha256_sidecar",
     "write_deterministic_npz",
     "write_json_artifact",
+    "write_provenance_sidecar",
     "write_sha256_sidecar",
 ]

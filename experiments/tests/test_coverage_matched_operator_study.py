@@ -56,6 +56,16 @@ def test_coverage_matched_smoke_pipeline(tmp_path: Path) -> None:
     ):
         assert path.is_file()
         assert path.with_name(path.name + ".sha256").is_file()
+        if path.name != "derived.json":
+            provenance = json.loads(
+                path.with_name(path.name + ".provenance.json").read_text(
+                    encoding="ascii"
+                )
+            )
+            assert provenance["artifact"] == path.as_posix()
+            assert provenance["inputs"][0]["path"] == (
+                tmp_path / "derived.json"
+            ).as_posix()
     comparison_text = (tmp_path / "comparisons.tex").read_text(encoding="ascii")
     assert "Holm adjustment uses the complete 168-test family" in comparison_text
     derived = json.loads((tmp_path / "derived.json").read_text(encoding="ascii"))

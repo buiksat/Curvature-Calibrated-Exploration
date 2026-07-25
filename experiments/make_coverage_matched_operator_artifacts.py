@@ -18,6 +18,7 @@ from .artifact_utils import (
     sha256_file,
     validate_sha256_sidecar,
     write_json_artifact,
+    write_provenance_sidecar,
     write_sha256_sidecar,
 )
 from .logging_utils import canonical_json
@@ -148,7 +149,7 @@ def build_artifacts(
             "and is not a causal operator contrast."
         ),
     }
-    derived, _ = write_json_artifact(derived_path, report)
+    derived, derived_hash = write_json_artifact(derived_path, report)
 
     methods = list(manifest["semantic_methods"])
     cells = sorted({str(row["cell_id"]) for row in aggregates})
@@ -287,6 +288,27 @@ def build_artifacts(
         )
     comparison_table.write_text("\n".join(comparison_lines), encoding="ascii")
     write_sha256_sidecar(comparison_table)
+    publication_inputs = [
+        {"path": derived.as_posix(), "sha256": sha256_file(derived)},
+        {
+            "path": derived_hash.as_posix(),
+            "sha256": sha256_file(derived_hash),
+        },
+    ]
+    for artifact, artifact_kind in (
+        (mechanism, "mechanism_figure"),
+        (heatmap, "full_grid_heatmap"),
+        (table, "calibration_table"),
+        (comparison_table, "comparison_table"),
+    ):
+        write_provenance_sidecar(
+            artifact,
+            publication_inputs,
+            generation_parameters={
+                "artifact_kind": artifact_kind,
+                "study": "coverage_matched_operator",
+            },
+        )
     return {
         "derived": derived.as_posix(),
         "mechanism_figure": mechanism.as_posix(),

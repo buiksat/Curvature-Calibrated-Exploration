@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,36 @@ from experiments.make_revision_paper_artifacts import (
     _phase_matrix,
     generate_revision_artifacts,
 )
+
+
+def test_every_main_publication_artifact_has_bound_provenance() -> None:
+    repository = Path.cwd().resolve()
+    main = repository / "paper" / "main.tex"
+    main_body = main.read_text(encoding="utf-8").split("\\appendix", 1)[0]
+    references = re.findall(
+        r"\\(?:includegraphics|input)(?:\[[^]]*\])?\{([^}]+)\}",
+        main_body,
+    )
+    artifacts = [
+        (main.parent / reference).resolve()
+        for reference in references
+        if reference.startswith("figures/")
+        or reference.startswith("../tables/generated/")
+    ]
+    assert artifacts
+    for artifact in artifacts:
+        sidecar = artifact.with_name(artifact.name + ".provenance.json")
+        provenance = json.loads(sidecar.read_text(encoding="ascii"))
+        assert provenance["artifact"] == artifact.relative_to(repository).as_posix()
+        assert provenance["artifact_sha256"] == hashlib.sha256(
+            artifact.read_bytes()
+        ).hexdigest()
+        for item in provenance["inputs"]:
+            source = repository / item["path"]
+            assert hashlib.sha256(source.read_bytes()).hexdigest() == item["sha256"]
+        assert provenance["input_set_sha256"] == hashlib.sha256(
+            canonical_json(provenance["inputs"]).encode("ascii")
+        ).hexdigest()
 
 
 def _stats(mean: float, *, positive: bool = False) -> dict[str, float]:
