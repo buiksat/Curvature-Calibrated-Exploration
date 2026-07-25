@@ -329,6 +329,18 @@ class IdentityScanner:
         self._byte_markers = tuple(
             marker.casefold().encode("utf-8") for marker in byte_marker_text
         )
+        numeric_body_marker_text = (
+            *(
+                value
+                for name, value in FIXED_FORBIDDEN.items()
+                if name != "ssh-repository-uri"
+            ),
+            *self.identity_terms,
+        )
+        self._numeric_body_markers = tuple(
+            marker.casefold().encode("utf-8")
+            for marker in numeric_body_marker_text
+        )
         self._requires_unicode_prefilter = any(
             not marker.isascii() for marker in byte_marker_text
         )
@@ -474,7 +486,18 @@ class IdentityScanner:
                     count=False,
                 )
                 payload = archive.read(info)
-                kinds = self._validate_npy_payload(member_path, payload)
+                kinds, body_start = self._validate_npy_payload(member_path, payload)
+                body = payload[body_start:]
+                folded_body = body.lower()
+                if any(
+                    marker in folded_body for marker in self._numeric_body_markers
+                ):
+                    self.scan_text(
+                        f"{member_path}!body",
+                        body.decode("utf-8", errors="replace"),
+                        count=False,
+                        scan_email=False,
+                    )
                 if kinds == {"S"}:
                     self._scan_plain_bytes(member_path, payload, count=False)
                 elif "S" in kinds:
@@ -482,7 +505,9 @@ class IdentityScanner:
                         f"NPY member has mixed string/numeric fields: {member_path}"
                     )
 
-    def _validate_npy_payload(self, path: str, payload: bytes) -> set[str]:
+    def _validate_npy_payload(
+        self, path: str, payload: bytes
+    ) -> tuple[set[str], int]:
         if len(payload) < 10 or payload[:6] != b"\x93NUMPY":
             raise BuildError(f"invalid NPY member: {path}")
         version = (payload[6], payload[7])
@@ -513,7 +538,7 @@ class IdentityScanner:
             raise BuildError(
                 f"NPY member has unauditable dtype kinds {sorted(unsupported)}: {path}"
             )
-        return kinds
+        return kinds, header_end
 
     def raise_for_issues(self) -> None:
         if not self.issues:
@@ -957,6 +982,8 @@ class ReleaseBuilder:
         self.references: dict[str, ReferenceTarget] = {}
         self.raw_inventory: list[dict[str, Any]] = []
         self.raw_source_index: dict[str, dict[str, Any]] = {}
+        self.raw_source_snapshot: dict[str, tuple[int, str]] = {}
+        self.raw_source_snapshot_validated = False
         self.raw_index_record: FileRecord | None = None
         self.unavailable_source_index_record: FileRecord | None = None
         self.unavailable_raw_occurrence_count = 0
@@ -1400,6 +1427,57 @@ class ReleaseBuilder:
             raise BuildError(f"source changed while hashing: {relative}")
         cache[relative] = (final_stat.st_size, final_stat.st_mtime_ns, digest)
         return digest
+
+    def _snapshot_raw_sources(self, raw_files: Sequence[Path]) -> None:
+        snapshot: dict[str, tuple[int, str]] = {}
+        for source in raw_files:
+            relative = self._raw_relative(source)
+            before = source.stat()
+            digest = sha256_file(source)
+            after = source.stat()
+            if (before.st_size, before.st_mtime_ns) != (
+                after.st_size,
+                after.st_mtime_ns,
+            ):
+                raise BuildError(f"raw source changed while snapshotting: {relative}")
+            snapshot[relative] = (after.st_size, digest)
+            self.source_digest_cache[relative] = (
+                after.st_size,
+                after.st_mtime_ns,
+                digest,
+            )
+        self.raw_source_snapshot = snapshot
+        self.raw_source_snapshot_validated = False
+
+    def _validate_raw_source_snapshot(self) -> int:
+        current = {
+            self._raw_relative(source): source for source in self._release_raw_files()
+        }
+        if set(current) != set(self.raw_source_snapshot):
+            added = sorted(set(current) - set(self.raw_source_snapshot))
+            removed = sorted(set(self.raw_source_snapshot) - set(current))
+            details: list[str] = []
+            if added:
+                details.append("added=" + ",".join(added[:3]))
+            if removed:
+                details.append("removed=" + ",".join(removed[:3]))
+            raise BuildError(
+                "raw source tree changed during assembly: " + "; ".join(details)
+            )
+        for relative, source in sorted(current.items()):
+            expected_size, expected_digest = self.raw_source_snapshot[relative]
+            before = source.stat()
+            digest = sha256_file(source)
+            after = source.stat()
+            if (before.st_size, before.st_mtime_ns) != (
+                after.st_size,
+                after.st_mtime_ns,
+            ):
+                raise BuildError(f"raw source changed while validating: {relative}")
+            if after.st_size != expected_size or digest != expected_digest:
+                raise BuildError(f"raw source changed during assembly: {relative}")
+        self.raw_source_snapshot_validated = True
+        return len(current)
 
     def _validate_source_input_digest(self, relative: str, digest: Any) -> None:
         target = self._resolve_reference(relative)
@@ -1937,7 +2015,10 @@ class ReleaseBuilder:
         omitted_count = 0
         for source in raw_files:
             relative = self._raw_relative(source)
-            digest = self._source_digest(relative)
+            snapshot = self.raw_source_snapshot.get(relative)
+            if snapshot is None:
+                raise BuildError(f"raw source is absent from the build snapshot: {relative}")
+            size, digest = snapshot
             target = self.references.get(relative)
             if source.parent in selected and source.name in {
                 "manifest.jsonl",
@@ -1958,7 +2039,7 @@ class ReleaseBuilder:
                 "path": relative,
                 "release_status": status,
                 "sha256": digest,
-                "size_bytes": source.stat().st_size,
+                "size_bytes": size,
             }
             if target is not None:
                 entry["released_copy"] = {
@@ -2061,6 +2142,7 @@ class ReleaseBuilder:
         raw_files = self._release_raw_files()
         if self.hydrate_raw and not raw_files:
             raise BuildError("raw hydration requires a non-empty results/raw tree")
+        self._snapshot_raw_sources(raw_files)
         self._process_auxiliary_raw_files(raw_files)
 
         run_directories = sorted(
@@ -2282,13 +2364,10 @@ class ReleaseBuilder:
             if value.get("availability") == UNAVAILABLE_RAW_STATUS:
                 path = value.get("path")
                 digest = value.get("sha256")
-                if (
-                    not isinstance(path, str)
-                    or not path.startswith(f"{RAW_ROOT.as_posix()}/")
-                    or not isinstance(digest, str)
-                    or not HASH_PATTERN.fullmatch(digest)
-                ):
+                if not self._is_valid_unavailable_raw_reference(value):
                     raise BuildError("invalid unavailable raw reference")
+                assert isinstance(path, str)
+                assert isinstance(digest, str)
                 previous = unique.setdefault(path, digest)
                 if previous != digest:
                     raise BuildError(
@@ -2351,7 +2430,9 @@ class ReleaseBuilder:
             "compression": self.compression,
             "lossless": False,
             "lossless_for_reported_artifacts": (
-                (self.tier == "full" or self.hydrate_raw) and raw_sources_available
+                (self.tier == "full" or self.hydrate_raw)
+                and raw_sources_available
+                and self.unavailable_raw_unique_count == 0
             ),
             "projection": {
                 "record_envelope": "all fields retained",
@@ -2546,8 +2627,8 @@ inventories are under `manifests`.
             source_path = self.repository.joinpath(*PurePosixPath(path).parts)
             if not source_path.is_file() or source_path.stat().st_size != size:
                 raise BuildError(f"review raw indexed source size is stale: {path}")
-            if self._source_digest(path) != digest:
-                raise BuildError(f"review raw indexed source hash is stale: {path}")
+            if self.raw_source_snapshot.get(path) != (size, digest):
+                raise BuildError(f"review raw indexed source snapshot is stale: {path}")
             released_copy = item.get("released_copy")
             if released_copy is None:
                 if self.hydrate_raw:
@@ -2745,6 +2826,8 @@ inventories are under `manifests`.
         total_bytes = sum(record.size_bytes for record in self.records.values())
         if self.unavailable_source_index_record is None:
             raise BuildError("unavailable-source index was not released")
+        if not self.raw_source_snapshot_validated:
+            raise BuildError("raw source snapshot was not validated")
         release_kind = (
             "anonymous_review_supplement"
             if self.tier == "review"
@@ -2772,6 +2855,10 @@ inventories are under `manifests`.
             "raw_hydration": {
                 "legacy_smoke_workspace_excluded": not self.hydrate_raw,
                 "source_bundle_workspace_excluded": True,
+                "source_snapshot": {
+                    "file_count": len(self.raw_source_snapshot),
+                    "status": "passed",
+                },
                 "status": (
                     (
                         HYDRATED_LEGACY_GAPS_STATUS
@@ -2836,6 +2923,7 @@ inventories are under `manifests`.
             self._write_release_metadata()
             validation = self._validate_provenance()
             self._scan_staging()
+            self._validate_raw_source_snapshot()
             top_manifest = self._write_top_manifest(validation)
             self.identity_scanner.scan_bytes(
                 top_manifest.path, self._stage_path(top_manifest.path).read_bytes()

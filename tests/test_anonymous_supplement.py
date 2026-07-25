@@ -226,6 +226,31 @@ def test_npz_email_scan_applies_only_to_string_arrays() -> None:
         scanner.raise_for_issues()
 
 
+def test_npz_numeric_body_scans_identities_without_treating_bytes_as_email() -> None:
+    identity = b"ReleaseIdentity"
+    scanner = IdentityScanner([identity.decode("ascii")])
+    scanner.scan_bytes(
+        "identity.npz",
+        _npz_payload(
+            _npy_v1_payload("|u1", identity, shape=(len(identity),))
+        ),
+    )
+    with pytest.raises(BuildError, match="local-identity-1"):
+        scanner.raise_for_issues()
+
+    binary_email = b"git" + bytes([64]) + b"example.test"
+    scanner = IdentityScanner([])
+    scanner.scan_bytes(
+        "numeric.npz",
+        _npz_payload(
+            _npy_v1_payload(
+                "|u1", binary_email, shape=(len(binary_email),)
+            )
+        ),
+    )
+    scanner.raise_for_issues()
+
+
 def test_npz_identity_scan_rejects_excessive_compression_ratio() -> None:
     payload = b"\x00" * (1024 * 1024)
     scanner = IdentityScanner([])
@@ -287,6 +312,7 @@ def _auxiliary_builder(repository: Path, staging: Path, *, tier: str) -> Release
     builder.references = {}
     builder.raw_inventory = []
     builder.raw_source_index = {}
+    builder.source_digest_cache = {}
     builder.raw_index_record = None
     builder.removed_raw_fields = set()
     builder.run_id_maps = {}
@@ -987,6 +1013,34 @@ def test_partial_raw_tree_retains_missing_legacy_binding(tmp_path: Path) -> None
     assert direct["selection"]["availability"] == UNAVAILABLE_RAW_STATUS
 
 
+def test_unavailable_source_inventory_rejects_present_raw_file(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    present = repository / "results" / "raw" / "current" / "raw.jsonl"
+    present.parent.mkdir(parents=True)
+    present.write_text("{}\n", encoding="utf-8")
+    relative = present.relative_to(repository).as_posix()
+    digest = hashlib.sha256(present.read_bytes()).hexdigest()
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+    builder._write_bytes(
+        "results/derived/false-unavailable.json",
+        canonical_json(
+            {
+                "input": {
+                    "availability": UNAVAILABLE_RAW_STATUS,
+                    "path": relative,
+                    "sha256": digest,
+                }
+            }
+        ).encode("ascii"),
+        role="derived",
+    )
+
+    with pytest.raises(BuildError, match="invalid unavailable raw reference"):
+        builder._collect_unavailable_raw_references()
+
+
 def test_compact_checkout_retains_public_dataset_cache_binding(
     tmp_path: Path,
 ) -> None:
@@ -1065,6 +1119,7 @@ def test_review_raw_index_binds_source_and_released_hashes(tmp_path: Path) -> No
     builder.records = {}
     builder.references = {}
     builder.raw_source_index = {}
+    builder.source_digest_cache = {}
     builder.raw_index_record = None
     builder.review_run_directories = ()
     builder.identity_scanner = IdentityScanner([])
@@ -1075,6 +1130,7 @@ def test_review_raw_index_binds_source_and_released_hashes(tmp_path: Path) -> No
         builder.references[relative] = ReferenceTarget(record.path, record.sha256)
 
     raw_files = sorted(path for path in raw_root.rglob("*") if path.is_file())
+    builder._snapshot_raw_sources(raw_files)
     builder._write_review_raw_index(raw_files, [selected])
     validation = builder._validate_review_raw_index()
 
@@ -1096,14 +1152,56 @@ def test_review_raw_index_binds_source_and_released_hashes(tmp_path: Path) -> No
     omitted_raw_path = omitted / "raw.jsonl"
     original_omitted_raw = omitted_raw_path.read_bytes()
     omitted_raw_path.write_text('{"marker":"mutated"}\n', encoding="utf-8")
-    with pytest.raises(BuildError, match="indexed source hash is stale"):
-        builder._validate_review_raw_index()
+    with pytest.raises(BuildError, match="raw source changed during assembly"):
+        builder._validate_raw_source_snapshot()
     omitted_raw_path.write_bytes(original_omitted_raw)
     (raw_root / "study" / "full" / "new-unindexed.json").write_text(
         "{}\n", encoding="utf-8"
     )
     with pytest.raises(BuildError, match="does not match source tree"):
         builder._validate_review_raw_index()
+
+
+def test_build_rejects_raw_mutation_after_transformed_copy(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository = tmp_path / "repository"
+    paper = repository / "paper"
+    paper.mkdir(parents=True)
+    (paper / "main.tex").write_text(
+        "\\documentclass{article}\n"
+        "\\author{Anonymous}\n"
+        "\\begin{document}x\\end{document}\n",
+        encoding="utf-8",
+    )
+    (repository / "results" / "derived").mkdir(parents=True)
+    run = repository / "results" / "raw" / "study" / "full" / "seed-1"
+    _write_complete_run(run, "before")
+    raw = run / "raw.jsonl"
+    original_write_index = ReleaseBuilder._write_review_raw_index
+
+    def mutate_then_write_index(
+        builder: ReleaseBuilder,
+        raw_files: list[Path],
+        selected_directories: list[Path],
+    ) -> None:
+        raw.write_text('{"marker":"mutate"}\n', encoding="utf-8")
+        original_write_index(builder, raw_files, selected_directories)
+
+    monkeypatch.setattr(
+        ReleaseBuilder,
+        "_write_review_raw_index",
+        mutate_then_write_index,
+    )
+
+    with pytest.raises(BuildError, match="raw source changed during assembly"):
+        ReleaseBuilder(
+            repository,
+            tmp_path / "release_review",
+            hydrate_raw=True,
+            tier="review",
+        ).build()
 
 
 def test_review_grouped_provenance_keeps_full_indexed_counts() -> None:
@@ -1239,7 +1337,7 @@ def test_review_tier_build_is_hash_valid_with_indexed_omissions(tmp_path: Path) 
     hydrated_raw_manifest = json.loads(
         (hydrated_output / "manifests" / "compact-raw.json").read_text()
     )
-    assert hydrated_raw_manifest["lossless_for_reported_artifacts"] is True
+    assert hydrated_raw_manifest["lossless_for_reported_artifacts"] is False
     assert (
         hydrated_raw_manifest["coverage"]["scope"]
         == "complete_available_source_payloads_with_declared_legacy_gaps"
