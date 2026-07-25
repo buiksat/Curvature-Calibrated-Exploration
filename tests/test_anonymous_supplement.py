@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import io
 import json
+import zipfile
 from pathlib import Path
 
 import pytest
+
+import tools.build_anonymous_supplement as anonymous_supplement
 
 from tools.build_anonymous_supplement import (
     BuildError,
@@ -19,6 +23,7 @@ from tools.build_anonymous_supplement import (
     ReferenceTarget,
     ReleaseBuilder,
     StructuredSanitizer,
+    UNAVAILABLE_RAW_STATUS,
     canonical_json,
     discover_identity_terms,
     is_optional_paper_reference,
@@ -137,6 +142,103 @@ def test_binary_email_scan_does_not_join_across_invalid_bytes() -> None:
         scanner.raise_for_issues()
 
 
+def test_binary_identity_scan_is_case_insensitive_after_invalid_bytes() -> None:
+    scanner = IdentityScanner(["ReleaseIdentity"])
+
+    scanner.scan_bytes("metadata.bin", b"\xffreleaseidentity\x00")
+
+    with pytest.raises(BuildError, match="local-identity-1"):
+        scanner.raise_for_issues()
+
+
+def _npy_v1_payload(
+    descriptor: str,
+    payload: bytes,
+    *,
+    shape: tuple[int, ...] = (1,),
+) -> bytes:
+    header = (
+        "{'descr': "
+        + repr(descriptor)
+        + f", 'fortran_order': False, 'shape': {shape!r}, }}"
+    )
+    padding = (-(10 + len(header) + 1)) % 16
+    header_bytes = (header + " " * padding + "\n").encode("latin1")
+    return (
+        b"\x93NUMPY\x01\x00"
+        + len(header_bytes).to_bytes(2, "little")
+        + header_bytes
+        + payload
+    )
+
+
+def _npz_payload(
+    member: bytes,
+    *,
+    compression: int = zipfile.ZIP_DEFLATED,
+) -> bytes:
+    output = io.BytesIO()
+    with zipfile.ZipFile(output, "w", compression=compression) as archive:
+        archive.writestr("values.npy", member)
+    return output.getvalue()
+
+
+def test_npz_identity_scan_inspects_deflated_members() -> None:
+    identity = b"ReleaseIdentity"
+    scanner = IdentityScanner([identity.decode("ascii")])
+
+    scanner.scan_bytes("rounds.npz", _npz_payload(_npy_v1_payload("|S15", identity)))
+
+    with pytest.raises(BuildError, match="local-identity-1"):
+        scanner.raise_for_issues()
+
+
+def test_npz_identity_scan_accepts_numeric_and_rejects_unauditable_dtype() -> None:
+    scanner = IdentityScanner([])
+    scanner.scan_bytes(
+        "numeric.npz",
+        _npz_payload(_npy_v1_payload("<f8", b"\x00" * 8)),
+    )
+    scanner.raise_for_issues()
+
+    with pytest.raises(BuildError, match="unauditable dtype"):
+        scanner.scan_bytes(
+            "unicode.npz",
+            _npz_payload(_npy_v1_payload("<U1", b"x\x00\x00\x00")),
+        )
+
+
+def test_npz_email_scan_applies_only_to_string_arrays() -> None:
+    email = b"git" + bytes([64]) + b"example.test"
+    scanner = IdentityScanner([])
+    scanner.scan_bytes(
+        "numeric.npz",
+        _npz_payload(_npy_v1_payload("|u1", email, shape=(len(email),))),
+    )
+    scanner.raise_for_issues()
+
+    scanner = IdentityScanner([])
+    scanner.scan_bytes(
+        "strings.npz",
+        _npz_payload(_npy_v1_payload(f"|S{len(email)}", email)),
+    )
+    with pytest.raises(BuildError, match="email-address"):
+        scanner.raise_for_issues()
+
+
+def test_npz_identity_scan_rejects_excessive_compression_ratio() -> None:
+    payload = b"\x00" * (1024 * 1024)
+    scanner = IdentityScanner([])
+
+    with pytest.raises(BuildError, match="compression ratio is too high"):
+        scanner.scan_bytes(
+            "compressed.npz",
+            _npz_payload(
+                _npy_v1_payload("|u1", payload, shape=(len(payload),))
+            ),
+        )
+
+
 @pytest.mark.parametrize("relative", sorted(RELEASE_TOOLING_EXCLUSIONS))
 def test_private_release_tooling_does_not_embed_forbidden_literals(
     relative: str,
@@ -180,9 +282,12 @@ def _auxiliary_builder(repository: Path, staging: Path, *, tier: str) -> Release
     builder.staging = staging
     staging.mkdir()
     builder.tier = tier
+    builder.hydrate_raw = False
     builder.records = {}
     builder.references = {}
     builder.raw_inventory = []
+    builder.raw_source_index = {}
+    builder.raw_index_record = None
     builder.removed_raw_fields = set()
     builder.run_id_maps = {}
     builder.compression = "gzip"
@@ -226,6 +331,297 @@ def test_review_omits_large_auxiliary_raw_file_for_source_index(tmp_path: Path) 
     assert large.relative_to(repository).as_posix() not in builder.references
 
 
+def test_hydrated_review_includes_large_auxiliary_raw_file(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "phase"
+    raw.mkdir(parents=True)
+    large = raw / "rounds.npz"
+    values = b"\x00" * (REVIEW_AUXILIARY_MAX_BYTES + 1)
+    large.write_bytes(
+        _npz_payload(
+            _npy_v1_payload("|u1", values, shape=(len(values),)),
+            compression=zipfile.ZIP_STORED,
+        )
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+    builder.hydrate_raw = True
+
+    builder._process_auxiliary_raw_files([large])
+
+    relative = large.relative_to(repository).as_posix()
+    assert builder.references[relative].path == relative
+    assert (builder.staging / relative).read_bytes() == large.read_bytes()
+
+
+def test_parallel_npz_staging_preserves_scanned_records(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "phase"
+    raw.mkdir(parents=True)
+    payloads = []
+    for index in range(2):
+        path = raw / f"rounds-{index}.npz"
+        path.write_bytes(_npz_payload(_npy_v1_payload("<f8", b"\x00" * 8)))
+        payloads.append(path)
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+    builder.hydrate_raw = True
+    monkeypatch.setattr(anonymous_supplement, "NPZ_PROCESS_POOL_MIN_FILES", 1)
+    monkeypatch.setattr(anonymous_supplement, "NPZ_PROCESS_POOL_WORKERS", 2)
+
+    builder._process_auxiliary_raw_files(payloads)
+
+    for path in payloads:
+        relative = path.relative_to(repository).as_posix()
+        assert builder.records[relative].sha256 == hashlib.sha256(
+            path.read_bytes()
+        ).hexdigest()
+        assert builder.references[relative].path == relative
+        assert relative in builder.identity_scanner.scanned_paths
+        assert (builder.staging / relative).read_bytes() == path.read_bytes()
+
+
+def test_release_raw_files_excludes_source_bundle_workspace(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw"
+    evidence = raw / "study" / "manifest.json"
+    source_bundle = raw / "bundles" / "private-source.tar.gz"
+    legacy_smoke = raw / "smoke" / "manifest.json"
+    evidence.parent.mkdir(parents=True)
+    source_bundle.parent.mkdir(parents=True)
+    legacy_smoke.parent.mkdir(parents=True)
+    evidence.write_text('{"schema_version":1}\n', encoding="utf-8")
+    source_bundle.write_bytes(b"private source archive")
+    legacy_smoke.write_text('{"smoke":true}\n', encoding="utf-8")
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+
+    released = builder._release_raw_files()
+
+    assert released == [evidence]
+    builder.hydrate_raw = True
+    assert builder._release_raw_files() == [legacy_smoke, evidence]
+
+
+def test_release_raw_files_rejects_symlinks(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "study"
+    raw.mkdir(parents=True)
+    outside = tmp_path / "outside.json"
+    outside.write_text('{"private":true}\n', encoding="utf-8")
+    (raw / "linked.json").symlink_to(outside)
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+
+    with pytest.raises(BuildError, match="raw release input cannot be a symlink"):
+        builder._release_raw_files()
+
+
+def test_auxiliary_manifest_resolves_parent_relative_inputs_after_payloads(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "study"
+    deepest = raw / "data" / "payload.bin"
+    deepest.parent.mkdir(parents=True)
+    deepest.write_bytes(b"payload")
+    payload = raw / "payloads" / "payload.json"
+    payload.parent.mkdir(parents=True)
+    payload_inputs = [
+        {
+            "path": "../data/payload.bin",
+            "sha256": hashlib.sha256(deepest.read_bytes()).hexdigest(),
+        }
+    ]
+    payload.write_text(
+        json.dumps(
+            {
+                "git_root": str(repository),
+                "input_set_sha256": hashlib.sha256(
+                    canonical_json(payload_inputs).encode("ascii")
+                ).hexdigest(),
+                "inputs": payload_inputs,
+                "schema_version": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    owner = raw / "aggregate" / "manifest.json"
+    owner.parent.mkdir()
+    source_inputs = [
+        {
+            "path": "../payloads/payload.json",
+            "sha256": hashlib.sha256(payload.read_bytes()).hexdigest(),
+        }
+    ]
+    owner.write_text(
+        json.dumps(
+            {
+                "input_set_sha256": hashlib.sha256(
+                    canonical_json(source_inputs).encode("ascii")
+                ).hexdigest(),
+                "inputs": source_inputs,
+                "schema_version": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    sidecar = owner.with_name("manifest.json.sha256")
+    sidecar.write_text(
+        f"{hashlib.sha256(owner.read_bytes()).hexdigest()}  manifest.json\n",
+        encoding="ascii",
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="full")
+
+    builder._process_auxiliary_raw_files(
+        sorted(path for path in raw.rglob("*") if path.is_file())
+    )
+
+    owner_relative = owner.relative_to(repository).as_posix()
+    payload_relative = payload.relative_to(repository).as_posix()
+    released = json.loads((builder.staging / owner_relative).read_text())
+    released_inputs = [
+        {
+            "path": payload_relative,
+            "sha256": builder.records[payload_relative].sha256,
+        }
+    ]
+    assert released["inputs"] == released_inputs
+    assert released["input_set_sha256"] == hashlib.sha256(
+        canonical_json(released_inputs).encode("ascii")
+    ).hexdigest()
+    assert (
+        builder._rewrite_known_paths(released, source_relative=owner_relative)
+        == released
+    )
+    released_payload = json.loads((builder.staging / payload_relative).read_text())
+    deepest_relative = deepest.relative_to(repository).as_posix()
+    assert released_payload["inputs"] == [
+        {
+            "path": deepest_relative,
+            "sha256": builder.records[deepest_relative].sha256,
+        }
+    ]
+    assert str(repository) not in canonical_json(released_payload)
+    released_sidecar = builder.staging / sidecar.relative_to(repository)
+    sidecar_digest, sidecar_name = released_sidecar.read_text(encoding="ascii").split()
+    assert sidecar_name == "manifest.json"
+    assert sidecar_digest == builder.records[owner_relative].sha256
+
+
+def test_auxiliary_manifest_validates_digest_before_sanitizing_absolute_input(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "study"
+    raw.mkdir(parents=True)
+    payload = raw / "payload.json"
+    payload.write_text('{"schema_version":1}\n', encoding="utf-8")
+    inputs = [
+        {
+            "path": str(payload),
+            "sha256": hashlib.sha256(payload.read_bytes()).hexdigest(),
+        }
+    ]
+    manifest = raw / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "input_set_sha256": hashlib.sha256(
+                    canonical_json(inputs).encode("ascii")
+                ).hexdigest(),
+                "inputs": inputs,
+            }
+        ),
+        encoding="utf-8",
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="full")
+
+    builder._process_auxiliary_raw_files([manifest, payload])
+
+    released = json.loads(
+        (builder.staging / manifest.relative_to(repository)).read_text()
+    )
+    assert released["inputs"] == [
+        {
+            "path": payload.relative_to(repository).as_posix(),
+            "sha256": builder.records[
+                payload.relative_to(repository).as_posix()
+            ].sha256,
+        }
+    ]
+
+
+def test_contextual_input_resolver_rejects_ambiguity_escape_and_stale_hash(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    owner = repository / "results" / "raw" / "study" / "manifest.json"
+    owner.parent.mkdir(parents=True)
+    direct = repository / "payload.json"
+    contextual = owner.parent / "payload.json"
+    direct.write_text("direct", encoding="utf-8")
+    contextual.write_text("contextual", encoding="utf-8")
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="full")
+    builder.planned_auxiliary_paths = {
+        direct.relative_to(repository).as_posix(),
+        contextual.relative_to(repository).as_posix(),
+    }
+
+    with pytest.raises(BuildError, match="ambiguous provenance input path"):
+        builder._rewrite_known_paths(
+            {"inputs": [{"path": "payload.json", "sha256": "a" * 64}]},
+            source_relative=owner.relative_to(repository).as_posix(),
+        )
+
+    with pytest.raises(BuildError, match="escapes repository"):
+        builder._rewrite_known_paths(
+            {"inputs": [{"path": "../../../../outside", "sha256": "a" * 64}]},
+            source_relative=owner.relative_to(repository).as_posix(),
+        )
+
+    direct.unlink()
+    builder.planned_auxiliary_paths.remove("payload.json")
+    with pytest.raises(BuildError, match="input hash is stale"):
+        builder._rewrite_known_paths(
+            {"inputs": [{"path": "payload.json", "sha256": "a" * 64}]},
+            source_relative=owner.relative_to(repository).as_posix(),
+        )
+
+
+def test_review_cascade_omits_manifest_with_large_auxiliary_dependency(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    raw = repository / "results" / "raw" / "study"
+    raw.mkdir(parents=True)
+    large = raw / "payload.bin"
+    large.write_bytes(b"x" * (REVIEW_AUXILIARY_MAX_BYTES + 1))
+    source_inputs = [
+        {
+            "path": "payload.bin",
+            "sha256": hashlib.sha256(large.read_bytes()).hexdigest(),
+        }
+    ]
+    manifest = raw / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "input_set_sha256": hashlib.sha256(
+                    canonical_json(source_inputs).encode("ascii")
+                ).hexdigest(),
+                "inputs": source_inputs,
+            }
+        ),
+        encoding="utf-8",
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+
+    builder._process_auxiliary_raw_files(sorted(raw.iterdir()))
+
+    assert large.relative_to(repository).as_posix() not in builder.references
+    assert manifest.relative_to(repository).as_posix() not in builder.references
+
+
 def test_copy_derived_recurses_into_study_directories(tmp_path: Path) -> None:
     repository = tmp_path / "repository"
     aggregate = (
@@ -247,6 +643,30 @@ def test_copy_derived_recurses_into_study_directories(tmp_path: Path) -> None:
     assert json.loads((builder.staging / relative).read_text()) == {
         "schema_version": 1
     }
+
+
+def test_copy_derived_validates_absolute_input_before_sanitizing(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    derived = repository / "results" / "derived"
+    derived.mkdir(parents=True)
+    payload = derived / "payload.bin"
+    payload.write_bytes(b"payload")
+    aggregate = derived / "aggregate.json"
+    aggregate.write_text(
+        json.dumps(
+            {
+                "inputs": [{"path": str(payload), "sha256": "a" * 64}],
+                "schema_version": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="full")
+
+    with pytest.raises(BuildError, match="provenance input hash is stale"):
+        builder._copy_derived()
 
 
 def test_grouped_sidecar_inputs_are_standardized_to_released_files() -> None:
@@ -366,6 +786,40 @@ def test_paper_sidecar_can_bind_a_derived_provenance_sidecar(tmp_path: Path) -> 
     ]
 
 
+def test_provenance_sidecar_validates_absolute_input_before_sanitizing(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    artifact = repository / "paper" / "figure.pdf"
+    artifact.parent.mkdir(parents=True)
+    artifact.write_bytes(b"%PDF-1.4\n")
+    payload = repository / "results" / "derived" / "payload.bin"
+    payload.parent.mkdir(parents=True)
+    payload.write_bytes(b"payload")
+    sidecar = artifact.with_suffix(".pdf.provenance.json")
+    sidecar.write_text(
+        json.dumps(
+            {
+                "artifact": artifact.relative_to(repository).as_posix(),
+                "inputs": [{"path": str(payload), "sha256": "a" * 64}],
+                "schema_version": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="full")
+    artifact_relative = artifact.relative_to(repository).as_posix()
+    builder._write_bytes(
+        artifact_relative,
+        artifact.read_bytes(),
+        role="paper",
+        source_relative=artifact_relative,
+    )
+
+    with pytest.raises(BuildError, match="provenance input hash is stale"):
+        builder._write_provenance_sidecars()
+
+
 def _write_complete_run(directory: Path, marker: str) -> None:
     directory.mkdir(parents=True)
     for name in ("manifest.jsonl", "raw.jsonl", "summary.jsonl"):
@@ -396,6 +850,18 @@ def test_missing_raw_root_is_an_empty_release_input(tmp_path: Path) -> None:
     builder = ReleaseBuilder(repository, tmp_path / "release", tier="review")
 
     assert builder._release_raw_files() == []
+
+
+def test_hydrated_review_rejects_empty_raw_tree(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    (repository / "results" / "raw").mkdir(parents=True)
+    builder = _auxiliary_builder(repository, tmp_path / "staging", tier="review")
+    builder.hydrate_raw = True
+
+    with pytest.raises(
+        BuildError, match="raw hydration requires a non-empty results/raw tree"
+    ):
+        builder._copy_raw()
 
 
 def test_review_tier_has_separate_default_output() -> None:
@@ -481,7 +947,7 @@ def test_compact_checkout_retains_unavailable_raw_binding(tmp_path: Path) -> Non
 
     item = rewritten["inputs"][0]
     assert item == {
-        "availability": "not_in_compact_checkout",
+        "availability": UNAVAILABLE_RAW_STATUS,
         "path": source_path,
         "sha256": source_digest,
     }
@@ -490,6 +956,35 @@ def test_compact_checkout_retains_unavailable_raw_binding(tmp_path: Path) -> Non
         builder._rewrite_known_paths(
             {"inputs": [{"path": source_path, "sha256": "invalid"}]}
         )
+
+
+def test_partial_raw_tree_retains_missing_legacy_binding(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    present = repository / "results" / "raw" / "current" / "raw.jsonl"
+    present.parent.mkdir(parents=True)
+    present.write_text("{}\n", encoding="utf-8")
+    source_path = "results/raw/legacy/full/seed-1/raw.jsonl"
+    builder = object.__new__(ReleaseBuilder)
+    builder.repository = repository
+    builder.tier = "review"
+    builder.raw_index_record = None
+    builder.raw_source_index = {}
+    builder.records = {}
+    builder.references = {}
+    builder.sanitizer = StructuredSanitizer(repository, "a" * 64)
+
+    rewritten = builder._rewrite_known_paths(
+        {"inputs": [{"path": source_path, "sha256": "c" * 64}]}
+    )
+
+    item = rewritten["inputs"][0]
+    assert item["availability"] == UNAVAILABLE_RAW_STATUS
+    assert builder._is_valid_unavailable_raw_reference(item)
+
+    direct = builder._rewrite_known_paths(
+        {"selection": {"path": source_path, "sha256": "c" * 64}}
+    )
+    assert direct["selection"]["availability"] == UNAVAILABLE_RAW_STATUS
 
 
 def test_compact_checkout_retains_public_dataset_cache_binding(
@@ -566,6 +1061,7 @@ def test_review_raw_index_binds_source_and_released_hashes(tmp_path: Path) -> No
     builder.staging = tmp_path / "staging"
     builder.staging.mkdir()
     builder.tier = "review"
+    builder.hydrate_raw = False
     builder.records = {}
     builder.references = {}
     builder.raw_source_index = {}
@@ -662,6 +1158,12 @@ def test_review_tier_build_is_hash_valid_with_indexed_omissions(tmp_path: Path) 
         }
         for path in sorted((*first.iterdir(), *second.iterdir()))
     ]
+    source_inputs.append(
+        {
+            "path": "results/raw/legacy/full/evaluation/seed-1/raw.jsonl",
+            "sha256": "c" * 64,
+        }
+    )
     derived = repository / "results" / "derived"
     derived.mkdir(parents=True)
     aggregate = derived / "aggregate.json"
@@ -689,15 +1191,72 @@ def test_review_tier_build_is_hash_valid_with_indexed_omissions(tmp_path: Path) 
     assert report["representative_raw_runs"] == 1
     assert report["indexed_raw_files"] == 6
     assert report["indexed_provenance_input_references_checked"] == 3
+    assert report["unavailable_raw_unique_files"] == 1
     raw_manifest = json.loads((output / "manifests/compact-raw.json").read_text())
     assert raw_manifest["lossless_for_reported_artifacts"] is False
     assert raw_manifest["coverage"]["scope"] == "representative_trajectories_only"
     top_manifest = json.loads((output / "MANIFEST.json").read_text())
     assert top_manifest["release_kind"] == "anonymous_review_supplement"
+    assert top_manifest["raw_hydration"]["status"] == "compact"
     for item in top_manifest["files"]:
         assert hashlib.sha256((output / item["path"]).read_bytes()).hexdigest() == item[
             "sha256"
         ]
+
+    hydrated_output = tmp_path / "release_review_hydrated"
+    hydrated_report = ReleaseBuilder(
+        repository,
+        hydrated_output,
+        hydrate_raw=True,
+        tier="review",
+    ).build()
+    assert hydrated_report["raw_hydrated"] is True
+    assert hydrated_report["representative_raw_runs"] == 2
+    hydrated_manifest = json.loads(
+        (hydrated_output / "MANIFEST.json").read_text()
+    )
+    assert (
+        hydrated_manifest["raw_hydration"]["status"]
+        == "complete_available_source_payloads_with_declared_legacy_gaps"
+    )
+    assert hydrated_manifest["raw_hydration"]["unavailable_source_inputs"] == {
+        "occurrence_count": 2,
+        "path": "manifests/unavailable-source-inputs.json",
+        "sha256": hashlib.sha256(
+            (
+                hydrated_output
+                / "manifests"
+                / "unavailable-source-inputs.json"
+            ).read_bytes()
+        ).hexdigest(),
+        "unique_file_count": 1,
+    }
+    assert hydrated_manifest["release_kind"] == "anonymous_review_supplement"
+    assert (
+        hydrated_manifest["raw_hydration"]["legacy_smoke_workspace_excluded"]
+        is False
+    )
+    hydrated_raw_manifest = json.loads(
+        (hydrated_output / "manifests" / "compact-raw.json").read_text()
+    )
+    assert hydrated_raw_manifest["lossless_for_reported_artifacts"] is True
+    assert (
+        hydrated_raw_manifest["coverage"]["scope"]
+        == "complete_available_source_payloads_with_declared_legacy_gaps"
+    )
+    assert (
+        hydrated_raw_manifest["coverage"]["selection_algorithm"]
+        == "all-complete-runs-v1"
+    )
+    hydrated_index = json.loads(
+        (hydrated_output / REVIEW_RAW_INDEX_PATH).read_text()
+    )
+    assert hydrated_index["indexed_not_released_count"] == 0
+    assert hydrated_index["selection"]["algorithm"] == "all-complete-runs-v1"
+    assert (
+        hydrated_index["selection"]["grouping_key"]
+        == "none; all complete runs selected"
+    )
 
 
 def test_only_conditional_checklist_paper_inputs_are_optional() -> None:

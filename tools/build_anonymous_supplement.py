@@ -17,6 +17,7 @@ import dataclasses
 import datetime as dt
 import gzip
 import hashlib
+import io
 import json
 import os
 import re
@@ -25,7 +26,9 @@ import socket
 import subprocess
 import sys
 import tempfile
+import zipfile
 from collections.abc import Iterable, Iterator, Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path, PurePosixPath
 from typing import Any, BinaryIO
 
@@ -36,10 +39,22 @@ REVIEW_OUTPUT = "release_review"
 RELEASE_TIERS = ("full", "review")
 RAW_ROOT = PurePosixPath("results/raw")
 REVIEW_RAW_INDEX_PATH = "manifests/full-raw-index.json"
+UNAVAILABLE_SOURCE_INDEX_PATH = "manifests/unavailable-source-inputs.json"
+UNAVAILABLE_RAW_STATUS = "not_in_source_tree"
+HYDRATED_COMPLETE_STATUS = "complete_payloads"
+HYDRATED_LEGACY_GAPS_STATUS = (
+    "complete_available_source_payloads_with_declared_legacy_gaps"
+)
 REVIEW_SELECTION_ALGORITHM = (
     "lexicographically-first-complete-run-per-top-level-study-v1"
 )
 REVIEW_AUXILIARY_MAX_BYTES = 1024 * 1024
+MAX_NPZ_MEMBERS = 1024
+MAX_NPZ_MEMBER_BYTES = 16 * 1024 * 1024
+MAX_NPZ_UNCOMPRESSED_BYTES = 64 * 1024 * 1024
+MAX_NPZ_COMPRESSION_RATIO = 100
+NPZ_PROCESS_POOL_MIN_FILES = 64
+NPZ_PROCESS_POOL_WORKERS = min(8, os.cpu_count() or 1)
 
 # Build these strings in pieces so the scanner implementation can itself be
 # shipped in the supplement without tripping its literal-token checks.
@@ -173,6 +188,14 @@ class BuildError(RuntimeError):
     """Raised when the release cannot be made complete and anonymous."""
 
 
+class _UnresolvedReference(BuildError):
+    """Raised when a release input must be processed in a later pass."""
+
+
+class _IntentionallyOmittedReference(BuildError):
+    """Raised when a review-tier dependency was deliberately excluded."""
+
+
 @dataclasses.dataclass(frozen=True)
 class FileRecord:
     path: str
@@ -299,6 +322,16 @@ class IdentityScanner:
             )
             for index, term in enumerate(self.identity_terms)
         )
+        byte_marker_text = (
+            *FIXED_FORBIDDEN.values(),
+            *self.identity_terms,
+        )
+        self._byte_markers = tuple(
+            marker.casefold().encode("utf-8") for marker in byte_marker_text
+        )
+        self._requires_unicode_prefilter = any(
+            not marker.isascii() for marker in byte_marker_text
+        )
         self.issues: list[dict[str, Any]] = []
         self.scanned_paths: set[str] = set()
 
@@ -347,15 +380,140 @@ class IdentityScanner:
                         )
 
     def scan_bytes(self, path: str, data: bytes, *, count: bool = True) -> None:
-        self.scan_text(
-            path,
-            data.decode("utf-8", errors="replace"),
-            count=count,
-            scan_email=False,
+        if PurePosixPath(path).suffix.lower() == ".npz":
+            self._scan_npz(path, data, count=count)
+            return
+        self._scan_plain_bytes(path, data, count=count)
+
+    def _scan_plain_bytes(
+        self,
+        path: str,
+        data: bytes,
+        *,
+        count: bool,
+        scan_email: bool = True,
+    ) -> None:
+        if count:
+            self.scanned_paths.add(path)
+        may_reconstruct_identity = bool(
+            self.identity_terms and PurePosixPath(path).suffix.lower() == ".py"
         )
-        for match in EMAIL_BYTES_PATTERN.finditer(data):
-            line = data.count(b"\n", 0, match.start()) + 1
-            self.issues.append({"path": path, "line": line, "rule": "email-address"})
+        has_email_marker = scan_email and b"@" in data
+        requires_text_scan = (
+            self._requires_unicode_prefilter or may_reconstruct_identity
+        )
+        if not requires_text_scan:
+            folded = data.lower()
+            requires_text_scan = any(
+                marker in folded for marker in self._byte_markers
+            )
+        if requires_text_scan:
+            self.scan_text(
+                path,
+                data.decode("utf-8", errors="replace"),
+                count=False,
+                scan_email=False,
+            )
+        if has_email_marker:
+            for match in EMAIL_BYTES_PATTERN.finditer(data):
+                line = data.count(b"\n", 0, match.start()) + 1
+                self.issues.append(
+                    {"path": path, "line": line, "rule": "email-address"}
+                )
+
+    def _scan_npz(self, path: str, data: bytes, *, count: bool) -> None:
+        if count:
+            self.scanned_paths.add(path)
+        try:
+            archive = zipfile.ZipFile(io.BytesIO(data))
+        except zipfile.BadZipFile as error:
+            raise BuildError(f"invalid NPZ container: {path}") from error
+        with archive:
+            infos = archive.infolist()
+            if not infos:
+                raise BuildError(f"empty NPZ container: {path}")
+            if len(infos) > MAX_NPZ_MEMBERS:
+                raise BuildError(f"NPZ container has too many members: {path}")
+            total_size = sum(info.file_size for info in infos)
+            if total_size > MAX_NPZ_UNCOMPRESSED_BYTES:
+                raise BuildError(f"NPZ container is too large to inspect: {path}")
+            compressed_size = sum(info.compress_size for info in infos)
+            if total_size > MAX_NPZ_COMPRESSION_RATIO * max(compressed_size, 1):
+                raise BuildError(
+                    f"NPZ compression ratio is too high to inspect: {path}"
+                )
+            seen: set[str] = set()
+            self._scan_plain_bytes(
+                f"{path}!archive-comment",
+                archive.comment,
+                count=False,
+            )
+            for info in infos:
+                member = PurePosixPath(info.filename)
+                if (
+                    info.is_dir()
+                    or member.is_absolute()
+                    or ".." in member.parts
+                    or member.suffix.lower() != ".npy"
+                    or info.filename in seen
+                    or info.flag_bits & 0x1
+                ):
+                    raise BuildError(
+                        f"unsafe or unsupported NPZ member {info.filename!r} in {path}"
+                    )
+                if info.file_size > MAX_NPZ_MEMBER_BYTES:
+                    raise BuildError(
+                        f"NPZ member is too large to inspect: {path}!{info.filename}"
+                    )
+                seen.add(info.filename)
+                member_path = f"{path}!{info.filename}"
+                self.scan_text(member_path, info.filename, count=False)
+                self._scan_plain_bytes(
+                    f"{member_path}!metadata",
+                    info.extra + info.comment,
+                    count=False,
+                )
+                payload = archive.read(info)
+                kinds = self._validate_npy_payload(member_path, payload)
+                if kinds == {"S"}:
+                    self._scan_plain_bytes(member_path, payload, count=False)
+                elif "S" in kinds:
+                    raise BuildError(
+                        f"NPY member has mixed string/numeric fields: {member_path}"
+                    )
+
+    def _validate_npy_payload(self, path: str, payload: bytes) -> set[str]:
+        if len(payload) < 10 or payload[:6] != b"\x93NUMPY":
+            raise BuildError(f"invalid NPY member: {path}")
+        version = (payload[6], payload[7])
+        if version == (1, 0):
+            length_bytes = 2
+            encoding = "latin1"
+        elif version in {(2, 0), (3, 0)}:
+            length_bytes = 4
+            encoding = "utf-8" if version == (3, 0) else "latin1"
+        else:
+            raise BuildError(f"unsupported NPY version {version} in {path}")
+        header_start = 8 + length_bytes
+        header_length = int.from_bytes(payload[8:header_start], "little")
+        header_end = header_start + header_length
+        if header_end > len(payload):
+            raise BuildError(f"truncated NPY header: {path}")
+        try:
+            header_text = payload[header_start:header_end].decode(encoding)
+            header = ast.literal_eval(header_text.strip())
+        except (SyntaxError, ValueError, UnicodeDecodeError) as error:
+            raise BuildError(f"invalid NPY header: {path}") from error
+        if not isinstance(header, dict) or "descr" not in header:
+            raise BuildError(f"invalid NPY header fields: {path}")
+        self.scan_text(f"{path}!header", header_text, count=False)
+        kinds = _npy_dtype_kinds(header["descr"])
+        unsupported = kinds & {"O", "U", "V"}
+        if unsupported:
+            raise BuildError(
+                f"NPY member has unauditable dtype kinds {sorted(unsupported)}: {path}"
+            )
+        return kinds
 
     def raise_for_issues(self) -> None:
         if not self.issues:
@@ -367,6 +525,28 @@ class IdentityScanner:
         remainder = len(self.issues) - min(len(self.issues), 12)
         suffix = f"; {remainder} more" if remainder else ""
         raise BuildError(f"identity scan failed: {sample}{suffix}")
+
+
+def _scan_and_stage_npz(
+    task: tuple[str, str, str, tuple[str, ...]],
+) -> tuple[str, str, int]:
+    source_text, destination_text, relative, identity_terms = task
+    source = Path(source_text)
+    destination = Path(destination_text)
+    before = source.stat()
+    data = source.read_bytes()
+    after = source.stat()
+    if (before.st_size, before.st_mtime_ns) != (
+        after.st_size,
+        after.st_mtime_ns,
+    ):
+        raise BuildError(f"source changed while copying: {relative}")
+    scanner = IdentityScanner(identity_terms)
+    scanner.scan_bytes(relative, data)
+    scanner.raise_for_issues()
+    destination.write_bytes(data)
+    os.chmod(destination, 0o644)
+    return relative, sha256_bytes(data), len(data)
 
 
 class StructuredSanitizer:
@@ -471,6 +651,26 @@ def _literal_addition_parts(node: ast.expr) -> list[str] | None:
     if left is None or right is None:
         return None
     return [*left, *right]
+
+
+def _npy_dtype_kinds(descriptor: Any) -> set[str]:
+    if isinstance(descriptor, str):
+        normalized = descriptor.lstrip("<>=|")
+        if not normalized:
+            raise BuildError(f"invalid NPY dtype descriptor: {descriptor!r}")
+        return {normalized[0]}
+    if isinstance(descriptor, tuple):
+        if not descriptor:
+            raise BuildError("empty NPY dtype tuple")
+        return _npy_dtype_kinds(descriptor[0])
+    if isinstance(descriptor, list):
+        kinds: set[str] = set()
+        for field in descriptor:
+            if not isinstance(field, tuple) or len(field) < 2:
+                raise BuildError(f"invalid structured NPY dtype field: {field!r}")
+            kinds.update(_npy_dtype_kinds(field[1]))
+        return kinds
+    raise BuildError(f"invalid NPY dtype descriptor: {descriptor!r}")
 
 
 def _source_candidates(repository: Path) -> tuple[Path, ...]:
@@ -733,16 +933,20 @@ class ReleaseBuilder:
         repository: Path,
         output: Path,
         *,
+        hydrate_raw: bool = False,
         overwrite: bool = False,
         tier: str = "full",
     ) -> None:
         if tier not in RELEASE_TIERS:
             raise BuildError(f"unknown release tier: {tier}")
+        if hydrate_raw and tier != "review":
+            raise BuildError("raw hydration is available only for the review tier")
         self.repository = repository.resolve()
         self.output = output if output.is_absolute() else self.repository / output
         self.output = self.output.absolute()
         self.overwrite = overwrite
         self.tier = tier
+        self.hydrate_raw = hydrate_raw
         self.identity_scanner = IdentityScanner(discover_identity_terms(self.repository))
         self.source_candidates = _source_candidates(self.repository)
         self.source_hash, self.source_inventory = anonymous_source_inventory(
@@ -754,9 +958,13 @@ class ReleaseBuilder:
         self.raw_inventory: list[dict[str, Any]] = []
         self.raw_source_index: dict[str, dict[str, Any]] = {}
         self.raw_index_record: FileRecord | None = None
+        self.unavailable_source_index_record: FileRecord | None = None
+        self.unavailable_raw_occurrence_count = 0
+        self.unavailable_raw_unique_count = 0
         self.review_run_directories: tuple[str, ...] = ()
         self.removed_raw_fields: set[str] = set()
         self.run_id_maps: dict[str, dict[str, str]] = {}
+        self.source_digest_cache: dict[str, tuple[int, int, str]] = {}
         self.compression, self.compression_extension = self._select_compression()
         self.staging: Path | None = None
 
@@ -888,28 +1096,57 @@ class ReleaseBuilder:
         record["run_id"] = new
         self.run_id_maps.setdefault(str(PurePosixPath(source_relative).parent), {})[old] = new
 
-    def _rewrite_known_paths(self, value: Any) -> Any:
+    def _rewrite_known_paths(
+        self,
+        value: Any,
+        *,
+        contextual_inputs_validated: bool = False,
+        source_relative: str | None = None,
+    ) -> Any:
         if isinstance(value, list):
-            return [self._rewrite_known_paths(item) for item in value]
+            return [
+                self._rewrite_known_paths(
+                    item,
+                    contextual_inputs_validated=contextual_inputs_validated,
+                    source_relative=source_relative,
+                )
+                for item in value
+            ]
         if not isinstance(value, dict):
             return value
+
+        if not contextual_inputs_validated:
+            value = self._resolve_contextual_inputs(value, source_relative)
 
         source_path = value.get("path")
         if self.tier == "review" and isinstance(source_path, str) and "sha256" in value:
             normalized_source = self.sanitizer.normalize_string(
                 source_path, path_context=True
             )
-            source_entry = self.raw_source_index.get(normalized_source)
+            source_entry = getattr(self, "raw_source_index", {}).get(normalized_source)
             if source_entry is not None and value.get("sha256") != source_entry["sha256"]:
                 raise BuildError(f"indexed raw input hash is stale: {normalized_source}")
 
-        result = {key: self._rewrite_known_paths(item) for key, item in value.items()}
+        result = {
+            key: self._rewrite_known_paths(
+                item,
+                contextual_inputs_validated=contextual_inputs_validated,
+                source_relative=source_relative,
+            )
+            for key, item in value.items()
+        }
         path_value = result.get("path")
         target = self._resolve_reference(path_value) if isinstance(path_value, str) else None
         if target is not None:
             result["path"] = target.path
             if "sha256" in result:
                 result["sha256"] = target.sha256
+        elif isinstance(path_value, str) and "sha256" in result:
+            unavailable = self._unavailable_raw_reference(
+                path_value, result.get("sha256")
+            )
+            if unavailable is not None:
+                result.update(unavailable)
 
         for key, item in list(result.items()):
             if not isinstance(item, str):
@@ -959,9 +1196,9 @@ class ReleaseBuilder:
                             if external is not None:
                                 rewritten.append(external)
                             else:
-                                raise BuildError(
-                                    "provenance references an omitted file: "
-                                    f"{normalized}"
+                                self._raise_for_missing_input(
+                                    normalized,
+                                    source_relative=source_relative,
                                 )
                 else:
                     rewritten.append({"path": target.path, "sha256": target.sha256})
@@ -973,6 +1210,208 @@ class ReleaseBuilder:
             if "input_manifest_sha256" in result:
                 result["input_manifest_sha256"] = digest
         return result
+
+    def _raise_for_missing_input(
+        self,
+        relative: str,
+        *,
+        source_relative: str | None,
+    ) -> None:
+        if source_relative is None:
+            raise _UnresolvedReference(
+                f"provenance references an omitted file: {relative}"
+            )
+        if relative in getattr(self, "omitted_auxiliary_paths", set()):
+            raise _IntentionallyOmittedReference(
+                f"review dependency was intentionally omitted: {relative}"
+            )
+        if relative in getattr(self, "planned_auxiliary_paths", set()):
+            raise _UnresolvedReference(
+                f"provenance dependency is not released yet: {relative}"
+            )
+        if self._source_path(relative).is_file():
+            raise BuildError(f"provenance input is not scheduled for release: {relative}")
+        raise BuildError(f"provenance input does not exist: {relative}")
+
+    def _resolve_contextual_inputs(
+        self,
+        value: dict[str, Any],
+        source_relative: str | None,
+    ) -> dict[str, Any]:
+        inputs = value.get("inputs")
+        if source_relative is None or not isinstance(inputs, list):
+            return value
+
+        source_input_digest = sha256_bytes(canonical_json(inputs).encode("ascii"))
+        for digest_key in ("input_set_sha256", "input_manifest_sha256"):
+            if digest_key in value and value[digest_key] != source_input_digest:
+                raise BuildError(
+                    f"provenance {digest_key} is stale in {source_relative}"
+                )
+
+        resolved_inputs: list[Any] = []
+        for index, item in enumerate(inputs):
+            if not isinstance(item, dict):
+                raise BuildError(f"invalid provenance input at index {index}")
+            path = item.get("path")
+            if not isinstance(path, str):
+                raise BuildError(f"provenance input {index} has no path")
+            resolved_path = self._resolve_contextual_input_path(
+                path,
+                source_relative=source_relative,
+            )
+            digest = item.get("sha256")
+            self._validate_source_input_digest(resolved_path, digest)
+            resolved_item = dict(item)
+            resolved_item["path"] = resolved_path
+            resolved_inputs.append(resolved_item)
+
+        resolved = dict(value)
+        resolved["inputs"] = resolved_inputs
+        return resolved
+
+    def _resolve_contextual_input_tree(
+        self,
+        value: Any,
+        source_relative: str,
+    ) -> Any:
+        if isinstance(value, list):
+            return [
+                self._resolve_contextual_input_tree(item, source_relative)
+                for item in value
+            ]
+        if not isinstance(value, dict):
+            return value
+        resolved = self._resolve_contextual_inputs(value, source_relative)
+        return {
+            key: self._resolve_contextual_input_tree(item, source_relative)
+            for key, item in resolved.items()
+        }
+
+    def _resolve_contextual_input_path(
+        self,
+        path: str,
+        *,
+        source_relative: str,
+    ) -> str:
+        normalized = self.sanitizer.normalize_string(path, path_context=True)
+        source = self._canonical_repository_path(source_relative)
+        contextual = self._canonical_repository_path(
+            str(PurePosixPath(source).parent / normalized)
+        )
+        try:
+            direct = self._canonical_repository_path(normalized)
+        except BuildError:
+            direct = None
+
+        candidates = {
+            candidate
+            for candidate in (direct, contextual)
+            if candidate is not None and self._source_reference_exists(candidate)
+        }
+        if len(candidates) > 1:
+            raise BuildError(
+                f"ambiguous provenance input path from {source}: {path}"
+            )
+        if candidates:
+            return candidates.pop()
+
+        actual_candidates = {
+            candidate
+            for candidate in (direct, contextual)
+            if candidate is not None and self._source_path(candidate).is_file()
+        }
+        if len(actual_candidates) > 1:
+            raise BuildError(
+                f"ambiguous provenance input path from {source}: {path}"
+            )
+        if actual_candidates:
+            return actual_candidates.pop()
+        if direct is not None and PurePosixPath(direct).parts[0] in {
+            "experiments",
+            "external-data",
+            "manifests",
+            "paper",
+            "results",
+            "tables",
+        }:
+            return direct
+        return contextual
+
+    @staticmethod
+    def _canonical_repository_path(path: str) -> str:
+        if not path or "\\" in path or "\x00" in path:
+            raise BuildError(f"invalid provenance input path: {path!r}")
+        pure = PurePosixPath(path)
+        if pure.is_absolute():
+            raise BuildError(f"absolute provenance input path: {path}")
+
+        parts: list[str] = []
+        for part in pure.parts:
+            if part in {"", "."}:
+                continue
+            if part == "..":
+                if not parts:
+                    raise BuildError(f"provenance input escapes repository: {path}")
+                parts.pop()
+                continue
+            parts.append(part)
+        if not parts:
+            raise BuildError(f"invalid provenance input path: {path!r}")
+        return PurePosixPath(*parts).as_posix()
+
+    def _source_reference_exists(self, relative: str) -> bool:
+        if (
+            relative in self.references
+            or relative in self.records
+            or relative in getattr(self, "raw_source_index", {})
+            or relative in getattr(self, "planned_auxiliary_paths", set())
+        ):
+            return True
+        return False
+
+    def _source_path(self, relative: str) -> Path:
+        repository = self.repository.resolve()
+        path = repository.joinpath(*PurePosixPath(relative).parts)
+        try:
+            path.resolve(strict=False).relative_to(repository)
+        except ValueError as error:
+            raise BuildError(
+                f"provenance input escapes repository: {relative}"
+            ) from error
+        return path
+
+    def _source_digest(self, relative: str) -> str:
+        cache = getattr(self, "source_digest_cache", None)
+        if cache is None:
+            cache = {}
+            self.source_digest_cache = cache
+        source = self._source_path(relative)
+        stat = source.stat()
+        cached = cache.get(relative)
+        if cached is not None and cached[:2] == (stat.st_size, stat.st_mtime_ns):
+            return cached[2]
+        digest = sha256_file(source)
+        final_stat = source.stat()
+        if (stat.st_size, stat.st_mtime_ns) != (
+            final_stat.st_size,
+            final_stat.st_mtime_ns,
+        ):
+            raise BuildError(f"source changed while hashing: {relative}")
+        cache[relative] = (final_stat.st_size, final_stat.st_mtime_ns, digest)
+        return digest
+
+    def _validate_source_input_digest(self, relative: str, digest: Any) -> None:
+        target = self._resolve_reference(relative)
+        if target is not None and digest == target.sha256:
+            return
+        source = self._source_path(relative)
+        if not source.is_file():
+            return
+        if not isinstance(digest, str) or not HASH_PATTERN.fullmatch(digest):
+            raise BuildError(f"provenance input hash is invalid: {relative}")
+        if self._source_digest(relative) != digest:
+            raise BuildError(f"provenance input hash is stale: {relative}")
 
     def _resolve_reference(self, path: str) -> ReferenceTarget | None:
         target = self.references.get(path)
@@ -1006,13 +1445,16 @@ class ReleaseBuilder:
     def _unavailable_raw_reference(
         self, path: str, digest: Any
     ) -> dict[str, Any] | None:
-        raw_root = self.repository / "results" / "raw"
-        if raw_root.exists() or not path.startswith(f"{RAW_ROOT.as_posix()}/"):
+        if not path.startswith(f"{RAW_ROOT.as_posix()}/"):
+            return None
+        if path in getattr(self, "raw_source_index", {}):
+            return None
+        if self._source_path(path).is_file():
             return None
         if not isinstance(digest, str) or not HASH_PATTERN.fullmatch(digest):
             raise BuildError(f"unavailable raw input hash is invalid: {path}")
         return {
-            "availability": "not_in_compact_checkout",
+            "availability": UNAVAILABLE_RAW_STATUS,
             "path": path,
             "sha256": digest,
         }
@@ -1040,16 +1482,16 @@ class ReleaseBuilder:
         )
 
     def _is_valid_unavailable_raw_reference(self, item: Mapping[str, Any]) -> bool:
-        raw_root = self.repository / "results" / "raw"
         path = item.get("path")
         digest = item.get("sha256")
         return bool(
-            not raw_root.exists()
-            and isinstance(path, str)
+            isinstance(path, str)
             and path.startswith(f"{RAW_ROOT.as_posix()}/")
+            and path not in getattr(self, "raw_source_index", {})
+            and not self._source_path(path).is_file()
             and isinstance(digest, str)
             and HASH_PATTERN.fullmatch(digest)
-            and item.get("availability") == "not_in_compact_checkout"
+            and item.get("availability") == UNAVAILABLE_RAW_STATUS
         )
 
     @staticmethod
@@ -1207,48 +1649,155 @@ class ReleaseBuilder:
 
     def _process_auxiliary_raw_files(self, raw_files: Sequence[Path]) -> None:
         auxiliary = [
-            path
+            (path, self._raw_relative(path))
             for path in raw_files
             if path.name not in {"manifest.jsonl", "raw.jsonl", "summary.jsonl"}
         ]
-        for source in auxiliary:
-            relative = relative_posix(source, self.repository)
-            if source.name.endswith(".sha256"):
-                payload_relative = relative.removesuffix(".sha256")
-                released_payload = self.references.get(payload_relative)
-                if released_payload is None:
-                    continue
-                data = (
-                    f"{released_payload.sha256}  "
-                    f"{PurePosixPath(released_payload.path).name}\n"
-                ).encode("ascii")
-                self._write_bytes(
-                    relative,
-                    data,
-                    role="raw-checksum",
-                    source_relative=relative,
-                )
-                continue
-            if self.tier == "review" and source.stat().st_size > REVIEW_AUXILIARY_MAX_BYTES:
-                continue
-            if source.suffix == ".jsonl":
-                self._process_raw_jsonl(source, project_metrics=False)
-                continue
-            if source.suffix == ".json":
+        skipped = {
+            relative
+            for source, relative in auxiliary
+            if self.tier == "review"
+            and not self.hydrate_raw
+            and source.stat().st_size > REVIEW_AUXILIARY_MAX_BYTES
+        }
+        self.omitted_auxiliary_paths = set(skipped)
+        pending = [
+            (source, relative)
+            for source, relative in auxiliary
+            if relative not in skipped
+            and not (
+                source.name.endswith(".sha256")
+                and relative.removesuffix(".sha256") in skipped
+            )
+        ]
+        self.planned_auxiliary_paths = {relative for _, relative in pending}
+        parallel_npz = [
+            (source, relative)
+            for source, relative in pending
+            if source.suffix.lower() == ".npz"
+        ]
+        if len(parallel_npz) >= NPZ_PROCESS_POOL_MIN_FILES:
+            self._process_npz_payloads_parallel(parallel_npz)
+            released_npz = {relative for _, relative in parallel_npz}
+            pending = [
+                (source, relative)
+                for source, relative in pending
+                if relative not in released_npz
+            ]
+        while pending:
+            deferred: list[tuple[Path, str]] = []
+            last_error: _UnresolvedReference | None = None
+            progress = False
+            for source, relative in pending:
                 try:
-                    value = json.loads(source.read_text(encoding="utf-8"))
-                except json.JSONDecodeError as error:
-                    raise BuildError(f"cannot parse {relative}: {error}") from error
-                value = self._rewrite_known_paths(self.sanitizer.sanitize(value))
-                data = _json_bytes(value)
-            else:
-                data = source.read_bytes()
+                    self._process_auxiliary_raw_file(source, relative)
+                except _IntentionallyOmittedReference:
+                    self.planned_auxiliary_paths.discard(relative)
+                    self.omitted_auxiliary_paths.add(relative)
+                    progress = True
+                except _UnresolvedReference as error:
+                    deferred.append((source, relative))
+                    last_error = error
+                else:
+                    progress = True
+            if not progress:
+                raise last_error or BuildError("raw auxiliary dependency cycle")
+            pending = deferred
+
+    def _process_npz_payloads_parallel(
+        self,
+        payloads: Sequence[tuple[Path, str]],
+    ) -> None:
+        tasks: list[tuple[str, str, str, tuple[str, ...]]] = []
+        for source, relative in payloads:
+            destination = self._stage_path(relative)
+            tasks.append(
+                (
+                    str(source),
+                    str(destination),
+                    relative,
+                    self.identity_scanner.identity_terms,
+                )
+            )
+        with ProcessPoolExecutor(max_workers=NPZ_PROCESS_POOL_WORKERS) as executor:
+            results = executor.map(_scan_and_stage_npz, tasks, chunksize=8)
+            for relative, digest, size in results:
+                record = FileRecord(
+                    path=relative,
+                    sha256=digest,
+                    size_bytes=size,
+                    role="raw-fixture",
+                )
+                self.records[relative] = record
+                self.references[relative] = ReferenceTarget(relative, digest)
+                self.identity_scanner.scanned_paths.add(relative)
+
+    def _process_auxiliary_raw_file(self, source: Path, relative: str) -> None:
+        if source.name.endswith(".sha256"):
+            payload_relative = relative.removesuffix(".sha256")
+            if payload_relative in getattr(self, "omitted_auxiliary_paths", set()):
+                raise _IntentionallyOmittedReference(
+                    f"checksum payload was intentionally omitted: {payload_relative}"
+                )
+            released_payload = self.references.get(payload_relative)
+            if released_payload is None:
+                raise _UnresolvedReference(
+                    f"checksum payload was not released: {payload_relative}"
+                )
+            self._validate_checksum_sidecar(source, payload_relative)
+            data = (
+                f"{released_payload.sha256}  "
+                f"{PurePosixPath(released_payload.path).name}\n"
+            ).encode("ascii")
             self._write_bytes(
                 relative,
                 data,
-                role="raw-fixture",
+                role="raw-checksum",
                 source_relative=relative,
             )
+            return
+        if source.suffix == ".jsonl":
+            self._process_raw_jsonl(source, project_metrics=False)
+            return
+        if source.suffix == ".json":
+            try:
+                value = json.loads(source.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as error:
+                raise BuildError(f"cannot parse {relative}: {error}") from error
+            value = self._resolve_contextual_input_tree(value, relative)
+            value = self._rewrite_known_paths(
+                self.sanitizer.sanitize(value),
+                contextual_inputs_validated=True,
+                source_relative=relative,
+            )
+            data = _json_bytes(value)
+        else:
+            data = source.read_bytes()
+        self._write_bytes(
+            relative,
+            data,
+            role="raw-fixture",
+            source_relative=relative,
+        )
+
+    def _validate_checksum_sidecar(
+        self,
+        source: Path,
+        payload_relative: str,
+    ) -> None:
+        try:
+            fields = source.read_text(encoding="ascii").split()
+        except UnicodeDecodeError as error:
+            raise BuildError(f"checksum sidecar is not ASCII: {source}") from error
+        expected_name = PurePosixPath(payload_relative).name
+        if (
+            len(fields) != 2
+            or not HASH_PATTERN.fullmatch(fields[0])
+            or fields[1].removeprefix("*") != expected_name
+        ):
+            raise BuildError(f"checksum sidecar is invalid: {source}")
+        if fields[0] != self._source_digest(payload_relative):
+            raise BuildError(f"checksum sidecar is stale: {source}")
 
     def _process_small_jsonl(self, source: Path, role: str) -> FileRecord:
         relative = relative_posix(source, self.repository)
@@ -1263,8 +1812,13 @@ class ReleaseBuilder:
                     raise BuildError(f"cannot parse {relative}:{line_number}: {error}") from error
                 if not isinstance(value, dict):
                     raise BuildError(f"JSONL record is not an object: {relative}:{line_number}")
+                value = self._resolve_contextual_input_tree(value, relative)
                 value = self.sanitizer.sanitize(value)
-                value = self._rewrite_known_paths(value)
+                value = self._rewrite_known_paths(
+                    value,
+                    contextual_inputs_validated=True,
+                    source_relative=relative,
+                )
                 if source.name == "manifest.jsonl":
                     self._rewrite_run_id(value, relative)
                 records.append(value)
@@ -1290,13 +1844,12 @@ class ReleaseBuilder:
                     yield compressed
             return
 
-        with destination.open("wb") as output_handle:
-            process = subprocess.Popen(
-                ["zstd", "-q", "-10", "-T1", "-c"],
-                stdin=subprocess.PIPE,
-                stdout=output_handle,
-                stderr=subprocess.PIPE,
-            )
+        with destination.open("wb") as output_handle, subprocess.Popen(
+            ["zstd", "-q", "-10", "-T1", "-c"],
+            stdin=subprocess.PIPE,
+            stdout=output_handle,
+            stderr=subprocess.PIPE,
+        ) as process:
             if process.stdin is None:
                 raise BuildError("failed to open zstd input stream")
             try:
@@ -1308,10 +1861,16 @@ class ReleaseBuilder:
                 raise
             else:
                 process.stdin.close()
-                stderr = process.stderr.read().decode("utf-8", errors="replace") if process.stderr else ""
+                stderr = (
+                    process.stderr.read().decode("utf-8", errors="replace")
+                    if process.stderr
+                    else ""
+                )
                 return_code = process.wait()
                 if return_code:
-                    raise BuildError(f"zstd failed with status {return_code}: {stderr.strip()}")
+                    raise BuildError(
+                        f"zstd failed with status {return_code}: {stderr.strip()}"
+                    )
 
     def _process_raw_jsonl(self, source: Path, *, project_metrics: bool = True) -> None:
         source_relative = relative_posix(source, self.repository)
@@ -1377,15 +1936,19 @@ class ReleaseBuilder:
         source_bindings: list[dict[str, str]] = []
         omitted_count = 0
         for source in raw_files:
-            relative = relative_posix(source, self.repository)
-            digest = sha256_file(source)
+            relative = self._raw_relative(source)
+            digest = self._source_digest(relative)
             target = self.references.get(relative)
             if source.parent in selected and source.name in {
                 "manifest.jsonl",
                 "raw.jsonl",
                 "summary.jsonl",
             }:
-                status = "representative_transformed_copy_released"
+                status = (
+                    "complete_transformed_copy_released"
+                    if self.hydrate_raw
+                    else "representative_transformed_copy_released"
+                )
             elif target is not None:
                 status = "supporting_anonymized_copy_released"
             else:
@@ -1406,6 +1969,16 @@ class ReleaseBuilder:
             source_bindings.append({"path": relative, "sha256": digest})
             self.raw_source_index[relative] = entry
 
+        if self.hydrate_raw and omitted_count:
+            omitted = [
+                item["path"]
+                for item in entries
+                if item["release_status"] == "indexed_not_released"
+            ]
+            raise BuildError(
+                "hydrated review omitted raw files: " + ", ".join(omitted[:3])
+            )
+
         selected_paths = tuple(
             relative_posix(directory, self.repository)
             for directory in selected_directories
@@ -1421,9 +1994,21 @@ class ReleaseBuilder:
             "indexed_not_released_count": omitted_count,
             "schema_version": SCHEMA_VERSION,
             "selection": {
-                "algorithm": REVIEW_SELECTION_ALGORITHM,
-                "candidate_filter": "all complete runs except results/raw/smoke",
-                "grouping_key": "first path component below results/raw",
+                "algorithm": (
+                    "all-complete-runs-v1"
+                    if self.hydrate_raw
+                    else REVIEW_SELECTION_ALGORITHM
+                ),
+                "candidate_filter": (
+                    "all complete runs excluding source bundle archives"
+                    if self.hydrate_raw
+                    else "all complete runs excluding source bundles and results/raw/smoke"
+                ),
+                "grouping_key": (
+                    "none; all complete runs selected"
+                    if self.hydrate_raw
+                    else "first path component below results/raw"
+                ),
                 "selected_run_count": len(selected_paths),
                 "selected_run_directories": list(selected_paths),
             },
@@ -1441,21 +2026,41 @@ class ReleaseBuilder:
         raw_root = self.repository / "results" / "raw"
         if not raw_root.exists():
             return []
-        if not raw_root.is_dir():
+        if raw_root.is_symlink() or not raw_root.is_dir():
             raise BuildError("results/raw is missing")
-        raw_files = [
-            path
-            for path in raw_root.rglob("*")
-            if path.is_file()
-            and path.name not in {".DS_Store", ".gitkeep"}
-            and path.relative_to(raw_root).parts[0] != "smoke"
-        ]
-        raw_files.sort(key=lambda path: relative_posix(path, self.repository))
-        return raw_files
+        raw_files: list[tuple[str, Path]] = []
+        for path in raw_root.rglob("*"):
+            if path.is_symlink():
+                raise BuildError(f"raw release input cannot be a symlink: {path}")
+            if (
+                not path.is_file()
+                or path.name in {".DS_Store", ".gitkeep"}
+                or path.relative_to(raw_root).parts[0] == "bundles"
+                or (
+                    path.relative_to(raw_root).parts[0] == "smoke"
+                    and not self.hydrate_raw
+                )
+            ):
+                continue
+            raw_files.append((self._raw_relative(path), path))
+        raw_files.sort(key=lambda item: item[0])
+        return [path for _, path in raw_files]
+
+    def _raw_relative(self, path: Path) -> str:
+        if path.is_symlink():
+            raise BuildError(f"raw release input cannot be a symlink: {path}")
+        root_parts = self.repository.parts
+        path_parts = path.parts
+        relative_parts = path_parts[len(root_parts) :]
+        if path_parts[: len(root_parts)] != root_parts or not relative_parts:
+            raise BuildError(f"raw release input escapes repository: {path}")
+        return PurePosixPath(*relative_parts).as_posix()
 
     def _copy_raw(self) -> None:
         raw_root = self.repository / "results" / "raw"
         raw_files = self._release_raw_files()
+        if self.hydrate_raw and not raw_files:
+            raise BuildError("raw hydration requires a non-empty results/raw tree")
         self._process_auxiliary_raw_files(raw_files)
 
         run_directories = sorted(
@@ -1463,7 +2068,7 @@ class ReleaseBuilder:
             key=lambda path: relative_posix(path, self.repository),
         )
         selected_directories: Sequence[Path] = run_directories
-        if self.tier == "review":
+        if self.tier == "review" and not self.hydrate_raw:
             selected_directories = select_review_run_directories(raw_root)
             studies = {
                 path.relative_to(raw_root).parts[0]
@@ -1516,6 +2121,7 @@ class ReleaseBuilder:
                     value = json.loads(source.read_text(encoding="utf-8"))
                 except json.JSONDecodeError as error:
                     raise BuildError(f"cannot parse {relative}: {error}") from error
+                value = self._resolve_contextual_input_tree(value, relative)
                 pending_json[relative] = (source, self.sanitizer.sanitize(value))
                 continue
             elif source.suffix.lower() in TEXT_SUFFIXES:
@@ -1537,7 +2143,10 @@ class ReleaseBuilder:
             last_error: BuildError | None = None
             for relative, (source, value) in pending_json.items():
                 try:
-                    rewritten = self._rewrite_known_paths(value)
+                    rewritten = self._rewrite_known_paths(
+                        value,
+                        contextual_inputs_validated=True,
+                    )
                     rewritten = self._refresh_grouped_provenance(rewritten)
                 except BuildError as error:
                     if "provenance references an omitted file" not in str(error):
@@ -1591,7 +2200,10 @@ class ReleaseBuilder:
             progress = False
             last_error: BuildError | None = None
             for relative, (source, source_value) in pending.items():
-                value = self.sanitizer.sanitize(source_value)
+                resolved_source = self._resolve_contextual_input_tree(
+                    source_value, relative
+                )
+                value = self.sanitizer.sanitize(resolved_source)
                 artifact = value.get("artifact")
                 if not isinstance(artifact, str):
                     artifact = relative.removesuffix(".provenance.json")
@@ -1602,7 +2214,10 @@ class ReleaseBuilder:
                 value["artifact"] = artifact_target.path
                 value["artifact_sha256"] = artifact_target.sha256
                 try:
-                    value = self._rewrite_known_paths(value)
+                    value = self._rewrite_known_paths(
+                        value,
+                        contextual_inputs_validated=True,
+                    )
                     value = self._refresh_grouped_provenance(value)
                     value = self._standardize_grouped_sidecar_inputs(value)
                 except BuildError as error:
@@ -1650,7 +2265,76 @@ class ReleaseBuilder:
                 role="provenance",
             )
 
+    def _collect_unavailable_raw_references(
+        self,
+    ) -> tuple[int, dict[str, str]]:
+        occurrence_count = 0
+        unique: dict[str, str] = {}
+
+        def collect(value: Any) -> None:
+            nonlocal occurrence_count
+            if isinstance(value, list):
+                for item in value:
+                    collect(item)
+                return
+            if not isinstance(value, dict):
+                return
+            if value.get("availability") == UNAVAILABLE_RAW_STATUS:
+                path = value.get("path")
+                digest = value.get("sha256")
+                if (
+                    not isinstance(path, str)
+                    or not path.startswith(f"{RAW_ROOT.as_posix()}/")
+                    or not isinstance(digest, str)
+                    or not HASH_PATTERN.fullmatch(digest)
+                ):
+                    raise BuildError("invalid unavailable raw reference")
+                previous = unique.setdefault(path, digest)
+                if previous != digest:
+                    raise BuildError(
+                        f"conflicting unavailable raw input hashes: {path}"
+                    )
+                occurrence_count += 1
+            for item in value.values():
+                collect(item)
+
+        for relative, record in sorted(self.records.items()):
+            if (
+                record.path == UNAVAILABLE_SOURCE_INDEX_PATH
+                or PurePosixPath(relative).suffix.lower() != ".json"
+            ):
+                continue
+            value = json.loads(
+                self._stage_path(relative).read_text(encoding="utf-8")
+            )
+            collect(value)
+        return occurrence_count, unique
+
+    def _write_unavailable_source_index(self) -> None:
+        occurrence_count, unique = self._collect_unavailable_raw_references()
+        value = {
+            "files": [
+                {"path": path, "sha256": digest}
+                for path, digest in sorted(unique.items())
+            ],
+            "occurrence_count": occurrence_count,
+            "schema_version": SCHEMA_VERSION,
+            "semantics": (
+                "recorded source bindings absent from the local source raw tree; "
+                "digests are retained but not independently reverified"
+            ),
+            "unique_file_count": len(unique),
+        }
+        self.unavailable_raw_occurrence_count = occurrence_count
+        self.unavailable_raw_unique_count = len(unique)
+        self.unavailable_source_index_record = self._write_bytes(
+            UNAVAILABLE_SOURCE_INDEX_PATH,
+            _json_bytes(value),
+            role="manifest",
+        )
+
     def _write_release_metadata(self) -> None:
+        self._write_unavailable_source_index()
         raw_sources_available = (self.repository / "results" / "raw").is_dir()
         source_manifest = {
             "anonymous_source_tree_sha256": self.source_hash,
@@ -1667,7 +2351,7 @@ class ReleaseBuilder:
             "compression": self.compression,
             "lossless": False,
             "lossless_for_reported_artifacts": (
-                self.tier == "full" and raw_sources_available
+                (self.tier == "full" or self.hydrate_raw) and raw_sources_available
             ),
             "projection": {
                 "record_envelope": "all fields retained",
@@ -1688,12 +2372,30 @@ class ReleaseBuilder:
                     "sha256": self.raw_index_record.sha256,
                 },
                 "scope": (
-                    "representative_trajectories_only"
+                    (
+                        (
+                            HYDRATED_LEGACY_GAPS_STATUS
+                            if self.unavailable_raw_unique_count
+                            else HYDRATED_COMPLETE_STATUS
+                        )
+                        if self.hydrate_raw
+                        else "representative_trajectories_only"
+                    )
                     if raw_sources_available
                     else "derived_artifacts_only"
                 ),
                 "selected_run_count": len(self.review_run_directories),
-                "selection_algorithm": REVIEW_SELECTION_ALGORITHM,
+                "selection_algorithm": (
+                    "all-complete-runs-v1"
+                    if self.hydrate_raw
+                    else REVIEW_SELECTION_ALGORITHM
+                ),
+                "unavailable_source_inputs": {
+                    "occurrence_count": self.unavailable_raw_occurrence_count,
+                    "path": self.unavailable_source_index_record.path,
+                    "sha256": self.unavailable_source_index_record.sha256,
+                    "unique_file_count": self.unavailable_raw_unique_count,
+                },
             }
         self._write_bytes(
             "manifests/compact-raw.json",
@@ -1719,14 +2421,32 @@ artifact, and the table and figure regeneration inputs.  Seed-level raw outputs
 are intentionally stored outside Git and are not included.  `MANIFEST.json`
 binds every released file.  The anonymous source-tree digest is
 `{self.source_hash}`."""
-            raw_notes = """No raw trajectory is present in this compact-checkout build.
-Provenance entries marked `not_in_compact_checkout` retain the recorded source
+            raw_notes = f"""No raw trajectory is present in this compact-checkout build.
+Provenance entries marked `{UNAVAILABLE_RAW_STATUS}` retain the recorded source
 path and SHA-256, but the release does not claim to have independently verified
 or locally supplied those inputs.  Re-run the deterministic experiment entry
 points to reconstruct them.  Entries marked
 `public_dataset_cache_not_in_checkout` likewise identify optional public-data
 cache inputs that are fetched by the released loaders rather than shipped in
 the bundle."""
+        elif self.tier == "review" and self.hydrate_raw:
+            introduction = f"""This hydrated review-tier release contains the anonymous
+paper, implementation, tests, derived artifacts, and anonymized copies of every
+source raw payload.  Original source bundle archives are excluded because they
+duplicate these payloads and may contain private local metadata.  `MANIFEST.json`
+binds every released file.  The anonymous source-tree digest is
+`{self.source_hash}`."""
+            raw_notes = f"""The command above restores every compressed raw trajectory.
+The released payloads are sufficient to rerun raw-to-figure checks whose
+tracked provenance has no declared source-tree gap, without the excluded source
+bundle archives.
+
+`{REVIEW_RAW_INDEX_PATH}` binds every source raw payload by its original path and
+SHA-256 and binds its anonymized released copy.  Hydrated validation rejects any
+`indexed_not_released` entry.  A derived legacy artifact can still declare a
+`{UNAVAILABLE_RAW_STATUS}` input when that path is absent from the source raw
+tree; such a declaration is counted in `MANIFEST.json` and is not a claim of
+independent reproducibility for that legacy artifact."""
         elif self.tier == "review":
             introduction = f"""This review-tier release contains the anonymous paper,
 experiment implementation and configuration, tests, every derived artifact,
@@ -1738,7 +2458,7 @@ one deterministic representative raw trajectory per top-level study.
 It does not reconstruct the full experiment corpus, so the published full
 aggregates cannot be regenerated from this smaller tier alone.
 
-`{REVIEW_RAW_INDEX_PATH}` binds every non-smoke source raw file by its original
+`{REVIEW_RAW_INDEX_PATH}` binds every indexed source raw file by its original
 path and SHA-256 and records whether an anonymized copy is released.  Provenance
 entries marked `indexed_not_released` are deliberately absent and are validated
 against that index; they are not claimed as locally available inputs."""
@@ -1800,6 +2520,8 @@ inventories are under `manifests`.
         files = value.get("files")
         if not isinstance(files, list) or value.get("file_count") != len(files):
             raise BuildError("review raw index file inventory is invalid")
+        if self.hydrate_raw and value.get("indexed_not_released_count") != 0:
+            raise BuildError("hydrated review raw index contains omitted files")
         source_bindings: list[dict[str, str]] = []
         seen: set[str] = set()
         for item in files:
@@ -1824,10 +2546,12 @@ inventories are under `manifests`.
             source_path = self.repository.joinpath(*PurePosixPath(path).parts)
             if not source_path.is_file() or source_path.stat().st_size != size:
                 raise BuildError(f"review raw indexed source size is stale: {path}")
-            if sha256_file(source_path) != digest:
+            if self._source_digest(path) != digest:
                 raise BuildError(f"review raw indexed source hash is stale: {path}")
             released_copy = item.get("released_copy")
             if released_copy is None:
+                if self.hydrate_raw:
+                    raise BuildError(f"hydrated review raw file is omitted: {path}")
                 if item.get("release_status") != "indexed_not_released":
                     raise BuildError(f"review raw index status is invalid: {path}")
                 continue
@@ -1843,7 +2567,7 @@ inventories are under `manifests`.
         if value.get("source_input_set_sha256") != expected_digest:
             raise BuildError("review raw source input-set hash is stale")
         current_paths = {
-            relative_posix(path, self.repository)
+            self._raw_relative(path)
             for path in self._release_raw_files()
         }
         if current_paths != seen:
@@ -1858,9 +2582,14 @@ inventories are under `manifests`.
                 "review raw index does not match source tree: " + "; ".join(details)
             )
         selection = value.get("selection")
+        expected_algorithm = (
+            "all-complete-runs-v1"
+            if self.hydrate_raw
+            else REVIEW_SELECTION_ALGORITHM
+        )
         if (
             not isinstance(selection, dict)
-            or selection.get("algorithm") != REVIEW_SELECTION_ALGORITHM
+            or selection.get("algorithm") != expected_algorithm
             or selection.get("selected_run_directories")
             != list(self.review_run_directories)
         ):
@@ -1874,11 +2603,41 @@ inventories are under `manifests`.
             "representative_raw_runs_checked": len(self.review_run_directories),
         }
 
+    def _validate_unavailable_source_index(self) -> dict[str, int]:
+        if self.unavailable_source_index_record is None:
+            raise BuildError("unavailable-source index was not released")
+        record = self.unavailable_source_index_record
+        if sha256_file(self._stage_path(record.path)) != record.sha256:
+            raise BuildError("unavailable-source index hash is stale")
+        value = json.loads(
+            self._stage_path(record.path).read_text(encoding="utf-8")
+        )
+        occurrence_count, unique = self._collect_unavailable_raw_references()
+        expected_files = [
+            {"path": path, "sha256": digest}
+            for path, digest in sorted(unique.items())
+        ]
+        if (
+            value.get("occurrence_count") != occurrence_count
+            or value.get("unique_file_count") != len(unique)
+            or value.get("files") != expected_files
+        ):
+            raise BuildError("unavailable-source index is stale")
+        if occurrence_count != self.unavailable_raw_occurrence_count or len(
+            unique
+        ) != self.unavailable_raw_unique_count:
+            raise BuildError("unavailable-source counters are stale")
+        return {
+            "unavailable_raw_reference_occurrences": occurrence_count,
+            "unavailable_raw_unique_files": len(unique),
+        }
+
     def _validate_provenance(self) -> dict[str, int]:
         sidecars = 0
         input_references = 0
         indexed_input_references = 0
         unavailable_input_references = 0
+        unavailable_raw_paths: set[str] = set()
         unavailable_external_data_references = 0
         for relative, record in sorted(self.records.items()):
             if record.role != "provenance":
@@ -1906,6 +2665,8 @@ inventories are under `manifests`.
                     indexed_input_references += 1
                 elif self._is_valid_unavailable_raw_reference(item):
                     unavailable_input_references += 1
+                    if isinstance(path, str):
+                        unavailable_raw_paths.add(path)
                 elif self._is_valid_unavailable_external_data_reference(item):
                     unavailable_external_data_references += 1
                 else:
@@ -1934,12 +2695,16 @@ inventories are under `manifests`.
             references_checked += 1
         return {
             **self._validate_review_raw_index(),
+            **self._validate_unavailable_source_index(),
             "indexed_provenance_input_references_checked": indexed_input_references,
             "paper_references_checked": references_checked,
             "provenance_input_references_checked": input_references,
             "provenance_sidecars_checked": sidecars,
             "unavailable_raw_provenance_input_references": (
                 unavailable_input_references
+            ),
+            "unavailable_raw_provenance_unique_files": len(
+                unavailable_raw_paths
             ),
             "unavailable_external_data_provenance_input_references": (
                 unavailable_external_data_references
@@ -1966,6 +2731,8 @@ inventories are under `manifests`.
         # Raw logical streams were scanned before compression.  Scan all other
         # released bytes after provenance and metadata generation.
         for relative in sorted(self.records):
+            if relative in self.identity_scanner.scanned_paths:
+                continue
             if relative.endswith((".jsonl.zst", ".jsonl.gz")) or (
                 PurePosixPath(relative).suffix.lower() in OPAQUE_GENERATED_SUFFIXES
             ):
@@ -1976,6 +2743,8 @@ inventories are under `manifests`.
 
     def _write_top_manifest(self, validation: Mapping[str, int]) -> FileRecord:
         total_bytes = sum(record.size_bytes for record in self.records.values())
+        if self.unavailable_source_index_record is None:
+            raise BuildError("unavailable-source index was not released")
         release_kind = (
             "anonymous_review_supplement"
             if self.tier == "review"
@@ -1984,7 +2753,7 @@ inventories are under `manifests`.
         validation_status = (
             "passed_with_declared_unavailable_inputs"
             if (
-                validation.get("unavailable_raw_provenance_input_references", 0)
+                validation.get("unavailable_raw_reference_occurrences", 0)
                 or validation.get(
                     "unavailable_external_data_provenance_input_references", 0
                 )
@@ -1999,6 +2768,29 @@ inventories are under `manifests`.
             "identity_scan": {
                 "files_scanned": len(self.identity_scanner.scanned_paths),
                 "status": "passed",
+            },
+            "raw_hydration": {
+                "legacy_smoke_workspace_excluded": not self.hydrate_raw,
+                "source_bundle_workspace_excluded": True,
+                "status": (
+                    (
+                        HYDRATED_LEGACY_GAPS_STATUS
+                        if validation.get("unavailable_raw_unique_files", 0)
+                        else HYDRATED_COMPLETE_STATUS
+                    )
+                    if self.hydrate_raw
+                    else "compact"
+                ),
+                "unavailable_source_inputs": {
+                    "occurrence_count": validation.get(
+                        "unavailable_raw_reference_occurrences", 0
+                    ),
+                    "path": self.unavailable_source_index_record.path,
+                    "sha256": self.unavailable_source_index_record.sha256,
+                    "unique_file_count": validation.get(
+                        "unavailable_raw_unique_files", 0
+                    ),
+                },
             },
             "release_kind": release_kind,
             "release_tier": self.tier,
@@ -2063,6 +2855,7 @@ inventories are under `manifests`.
                 "output": str(self.output),
                 "raw_archive_bytes": raw_archive_bytes,
                 "raw_logical_bytes": raw_logical_bytes,
+                "raw_hydrated": self.hydrate_raw,
                 "release_tier": self.tier,
                 "representative_raw_runs": len(self.review_run_directories),
                 "total_bytes": total_bytes,
@@ -2100,6 +2893,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="fresh release directory (defaults to release or release_review by tier)",
     )
     parser.add_argument(
+        "--hydrate-raw",
+        action="store_true",
+        help=(
+            "include all raw payload sizes in the review tier; original source "
+            "bundle archives remain excluded"
+        ),
+    )
+    parser.add_argument(
         "--overwrite",
         action="store_true",
         help="replace only the selected output after a new staging tree validates",
@@ -2117,6 +2918,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = ReleaseBuilder(
             repository,
             args.output,
+            hydrate_raw=args.hydrate_raw,
             overwrite=args.overwrite,
             tier=args.tier,
         ).build()
@@ -2144,6 +2946,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"{report['representative_raw_runs']} representative runs; "
             f"{report['indexed_raw_files']} source files indexed"
         )
+        print(f"review raw hydration: {report['raw_hydrated']}")
     print(f"identity scan: passed ({report['identity_scan_files']} files)")
     print(
         "source references: passed "
