@@ -58,14 +58,13 @@
 \newcommand{\Gmat}{\mathsf{G}}                  % whitened frozen-feature columns
 \newcommand{\Dmat}{\mathsf{D}}                  % whitened replayed-drift columns
 \newcommand{\cHist}{\mathcal{H}}                % pre-action history sigma-algebra H_t
-\newcommand{\cbonus}{c_{\mathrm{bonus}}} % empirical UCB bonus coefficient (distinct from theoretical CG inflation alpha_t)
 
 % (Prior venue-specific checklist answer macros removed; the official
 %  AISTATS reproducibility checklist from the target-year paper pack provides its own
 %  format and must be inserted after the references.)
 
 % --- title ----------------------------------------------------------------
-\title{Curvature-Calibrated Exploration: Matrix-Free GGN Widths and Conditional Regret Bounds}
+\title{Confidence Transport for Relinearized Curvature in Contextual Bandits}
 \author{Anonymous Author(s)}
 
 \begin{document}
@@ -75,7 +74,7 @@
   \maketitle
 \else
   \twocolumn[%
-    \aistatstitle{Curvature-Calibrated Exploration: Matrix-Free GGN Widths and Conditional Regret Bounds}%
+    \aistatstitle{Confidence Transport for Relinearized Curvature in Contextual Bandits}%
     \aistatsauthor{Anonymous Author(s)}%
     \aistatsaddress{Anonymous Institution(s)}%
   ]%
@@ -83,605 +82,98 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-Current-parameter generalized Gauss--Newton (GGN) exploration must reconcile
-relinearized gradients with the predictable frozen features required by
-self-normalized confidence.  We first isolate a structured resolution: for a
-fixed-feature scalar-link model, each replayed current gradient is a scalar
-multiple of its collection-time gradient.  This gives relative feature-transfer
-and centering certificates.  More generally, we prove a conditional
-Gaussian/squared-loss regret theorem for predictable positive-definite curvature
-operators with explicit linearization, centering, transfer, conjugate-gradient
-(CG), and realized-width terms.  For exact current GGN under certified small
-drift, the bound transfers to the frozen potential; a rank-$r$ spectral split
-then exposes the residual tail mass without assuming a known tangent subspace,
-and a positive-gap corollary follows.  Full-GGN widths are computed matrix-free
-with curvature--vector products and residual-checked CG.  These are conditional
-results, not guarantees for unrestricted neural training.  The final
-scaled-tanh holdout, reserved after two disclosed diagnostic splits, does not
-support an empirical theorem-instantiation claim: 148 of 4,000 theorem-labeled
-trajectories fail the recorded theorem-event conjunction.  The repeated
-relative-transfer flags are float64-only audit misses; optimizer and CG premise
-failures remain.
-A separate linear gap study passes its recorded exact/full-CG premises but its
-bounds remain vacuous; broader operator studies show no uniform
-fidelity--regret ordering.
+Relinearized generalized Gauss--Newton and Fisher metrics use current model
+Jacobians, while bandit confidence sequences are naturally built from
+predictable collection-time features.  We study when confidence can be
+transported between these geometries.  A logarithmic path length for
+positive-definite metrics gives a two-sided exponential comparison without a
+small-drift assumption or fixed tangent subspace.  Combining this comparison
+with a two-sided approximate-operator certificate yields an
+estimator-agnostic, solver-agnostic UCB theorem for measurable action spaces and
+approximate score maximization.  Its regret closes through the sequential
+frozen information gain rather than an uncontrolled dynamic-width term.  For
+differentiable squared-loss models, a corrected center makes the representation
+path arbitrary and predictable: no nonlinear optimizer certificate is needed.
+The construction also permits explicit historical and current
+misspecification envelopes and recovers the standard finite-dimensional LinUCB
+rate in the frozen linear exact-solve limit.  The result is conditional on
+computable path, operator, confidence, and solver certificates; it is not a
+guarantee for unrestricted neural training, a complete exponential-family
+theorem, or verified floating-point certification.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
-Contextual bandits often use a differentiable reward model or a pretrained
-representation with a learned reward head
-\citep{zhou2020neural,riquelme2018deep}.  In a white-box model, the natural
-exploration primitive is the current GGN/Fisher-linearized variance
-\begin{equation}\label{eq:variance-intro}
-  s_t^2(a) \;=\; \bg_t(a)^\top \bC_t^{-1}\,\bg_t(a),
-\end{equation}
-where $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ and $\bC_t$
-relinearizes all past examples at the current parameter.  That relinearization
-breaks the rank-one update used by predictable self-normalized analysis.  The
-collection-time frozen Gram retains predictability but answers a different
-geometric question.  The central problem is therefore transfer: when does a
-confidence statement in the frozen metric remain optimistic in the current
-metric?
-
-\textbf{Structured scalar links make this transfer explicit.}  If
-$\mu_{\btheta}(z)=h(\phi(z)^\top\btheta)$ with fixed $\phi$, then a replayed
-current gradient is the corresponding frozen gradient multiplied by a scalar
-derivative ratio.  The maximum relative ratio error directly controls a
-two-sided current/frozen curvature sandwich and yields a structured centering
-identity (\Cref{lem:relative-link-drift}).  This mechanism gives an analytic
-scaled-tanh specialization (\Cref{cor:scaled-tanh-relative}), but that
-corollary remains conditional: the completed final holdout fails its recorded
-theorem-event criterion and is reported as a stop, not as empirical validation.
-
-\textbf{The general theorem separates the remaining obligations.}  Under
-conditionally sub-Gaussian noise and Gaussian squared loss,
-\Cref{thm:regret} handles any predictable SPD algorithmic curvature through a
-one-sided transfer factor, a residual-checked CG factor, explicit centering and
-linearization errors, and a realized width complexity.  Exact current GGN under
-certified small drift transfers further to the monotone frozen potential.  A
-rank-$r$ head/tail split closes its information gain without requiring a known
-subspace, and a positive-gap argument gives a separate conditional bound
-(\Cref{cor:exact-current-frozen-potential,cor:approx-rank-current-ggn,cor:gap-dependent-exact-current}).
-The formal presentation follows this dependency order: master reduction,
-exact-current transfer, spectral and gap closures, then operational
-specializations.  None controls unrestricted fine-tuning.
-
-\textbf{The operator is accessible without a dense curvature matrix.}
-Curvature--vector products and CG solve $\bC_t\bu=\bg_t(a)$ with a constant
-number of $O(d)$ Krylov vectors.  Exact full-history products still replay raw
-examples; model state, activations, replay storage, and any historical parameter
-checkpoints are not included in this additional curvature-state count.  Related
-implicit predictive-variance methods appear outside bandits
-\citep{maddox2021fast}; NeuralUCB, neural-linear, and structured Laplace methods
-motivate the operator comparisons
+A differentiable contextual-bandit model supplies a current prediction query,
+typically a Jacobian
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$.  The corresponding current
+GGN or Fisher width is geometrically natural for action selection.  Statistical
+confidence, however, is built from the queries that were predictable when past
+rewards were collected.  Relinearizing every replay item at $\btheta_t$ changes
+all summands at once and destroys the sequential rank-one update behind the
+usual self-normalized argument.  This mismatch appears in neural UCB,
+neural-linear, and Laplace-style exploration
 \citep{zhou2020neural,riquelme2018deep,ritter2018scalable,daxberger2021laplace}.
-We use full curvature as a reference, not as a presumed winner: independently
-executed policy contrasts are descriptive because methods induce different
-histories.
+
+The central question is not whether one curvature approximation is uniformly
+better.  It is when a confidence statement in the predictable frozen metric can
+be transported to a current relinearized metric, and then to the operator and
+linear solver used by the policy.  The required chain is
+\[
+ \text{reference confidence}\ \longrightarrow\
+ \text{current metric}\ \longrightarrow\
+ \text{algorithmic operator}\ \longrightarrow\
+ \text{certified score}.
+\]
+Each arrow needs its own operational certificate.
+
+Our primary transport quantity is the integrated normalized speed of an SPD
+path.  For a path $V(\tau)$ it is
+$\int_0^1\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}d\tau$.  Differentiating
+$\log(v^\top V(\tau)v)$ for a fixed vector gives an exponential Loewner
+sandwich for every finite path length.  Unlike the previous additive endpoint
+argument, the result does not require a smallness condition.  A rectangular
+factor-path bound covers relinearized scalar GGN factors and, conditionally on
+an absolutely continuous output-weight factor, vector-output Fisher geometry.
+
+The transported-UCB theorem is abstract at the confidence and solver
+interfaces.  It permits a measurable action domain, a predictable approximate
+score oracle, action-dependent model bias, a certified upper width over the
+score domain, and solver sharpness only at the played action.  A two-sided
+algorithmic-operator comparison then transports the selected width back to the
+sequential frozen potential.  This lower comparison is essential.  When only a
+one-sided operator certificate is available, the previous dynamic-width theorem
+remains valid but does not give the new closed guarantee.
+
+For differentiable squared-loss models, we make the corrected center primary.
+It combines the current nonlinear prediction with a frozen-feature ridge
+correction.  The resulting identity holds for any predictable representation
+sequence in the certified region, not only an ERM or approximate stationary
+point.  Historical linearization and misspecification enter the confidence
+radius through an explicit energy; current errors enter additively.  Constant
+nonvanishing misspecification can still make regret linear.
 
 \paragraph{Contributions.}
-\textbf{(1)} Relative transfer and centering certificates for fixed-feature
-scalar-link models, including an analytic scaled-tanh conditional specialization
-(\Cref{lem:relative-link-drift,cor:scaled-tanh-relative}).
-\textbf{(2)} A modular realized-width regret theorem with explicit
-linearization, centering, one-sided operator transfer, and CG terms
-(\Cref{thm:regret,lem:whitened}).
-\textbf{(3)} Exact-current closures through a sharp two-sided drift sandwich, a
-full-dimensional rank-plus-spectral-tail information bound, and a positive-gap
-corollary
-(\Cref{cor:exact-current-frozen-potential,lem:spectral-tail-logdet,cor:approx-rank-current-ggn,cor:gap-dependent-exact-current}).
-\textbf{(4)} Matrix-free residual-checked GGN widths plus predictable Welford
-path certificates, a supplied-subspace shortcut, and a growing-window accounting
-bound (\Cref{cor:operational,cor:rank-near-linear,thm:growing-window}).
-\textbf{(5)} Failure-mode studies that disclose their selection chronology and
-retain negative results: the scaled-tanh premise stop, premise-clean but vacuous
-gap validation, mixed operator comparisons, and isolated real-autodiff systems
-measurements
-(\Cref{sec:experiments,prop:offdiag-witness}).
+\textbf{(1)} A logarithmic metric-transport lemma and factor-path certificates
+for moving, relinearized curvature, including a Hessian certificate that allows
+arbitrary gradient rotation and requires no small-drift premise
+(\Cref{lem:log-spd-path,lem:factor-spd-path,cor:hessian-path-new}).
+\textbf{(2)} A transported-UCB regret theorem with arbitrary predictable
+centers, measurable approximate score maximization, generic certified solver
+widths, two-sided approximate operators, and a closed frozen-potential bound
+(\Cref{thm:transported-ucb}).
+\textbf{(3)} A corrected-center squared-loss specialization with approximate
+realizability and a primitive finite-dimensional rate that reduces to LinUCB in
+the frozen linear exact-solve case
+(\Cref{cor:corrected-center-new,cor:finite-d-rate-new}).
 
-\section{Problem Setup}\label{sec:problem}
-
-We present the problem setup for the \emph{Gaussian/squared-loss}
-instantiation, which is the setting analyzed in \Cref{thm:regret}.
-An extension to exponential-family likelihoods is discussed in
-\Cref{app:expfam}.
-
-\paragraph{Protocol.}
-At each round $t=1,\dots,T$ the learner observes a context
-$\bx_t\in\mathcal{X}$ and a finite action set~$\cA_t$.  It selects
-$a_t\in\cA_t$ and observes a stochastic reward
-\begin{equation}\label{eq:reward}
-  r_t \;=\; \mu^*(\bx_t, a_t) + \eta_t, \qquad
-  \eta_t \text{ is } \sigma\text{-sub-Gaussian},
-\end{equation}
-where $\mu^*:\mathcal{X}\times\mathcal{A}\to\R$ is the unknown mean reward.
-The goal is to minimize cumulative regret
-$R_T = \sum_{t=1}^{T}\bigl[\mu^*(\bx_t,a_t^*) - \mu^*(\bx_t,a_t)\bigr]$,
-where $a_t^* = \argmax_{a\in\cA_t}\mu^*(\bx_t,a)$.
-We assume $|\cA_t|\le A_{\max}$ deterministically for all~$t$.
-
-% [filtration construction -> app:deferred]
-\paragraph{Reward model and parameterization convention.}
-We fix a pretrained initialization $\btheta_0\in\R^d$ and parameterize the model
-by the \emph{displacement} $\btheta\in\R^d$ from it: the deployed predictor is
-$\mu_{\btheta_0+\btheta}(\bx,a)$, and we abbreviate
-$\mu_{\btheta}(\bx,a):=\mu_{\btheta_0+\btheta}(\bx,a)$ throughout.  The initial
-displacement is $\btheta_1=\mathbf 0$ (the deployed model starts at the pretrained
-weights $\btheta_0$).  With this convention the ridge penalty below is a penalty
-on the \emph{displacement from the pretrained weights}, not a zero-centered prior
-on the raw weights, and the realizability radius $S$ bounds
-$\|\btheta^\star\|=\|\btheta^\star_{\mathrm{orig}}-\btheta_0\|$, the distance of
-the true parameter from the pretrained initialization.
-Define the regularized loss at round~$t$:
-\begin{equation}\label{eq:erm}
-  \cL_t(\btheta)
-  \;:=\;
-    \frac{1}{2\sigma^2}\sum_{s=1}^{t-1}
-      \bigl(r_s - \mu_{\btheta}(\bx_s,a_s)\bigr)^2
-    \;+\; \frac{\lambda}{2}\|\btheta\|^2 .
-\end{equation}
-We write $\btheta_t$ for the parameter returned by the warm-started
-optimizer on~$\cL_t$.
-Let $\mathcal D_{t-1}:=\{(\bx_s,a_s,r_s):s<t\}$ and
-$N_t:=|\mathcal D_{t-1}|=t-1$.  Equation~\eqref{eq:erm} is a
-\emph{full-history} objective.  The curvature replay set
-$\mathcal S_t\subseteq\{1,\ldots,t-1\}$ and its size
-$m_t:=|\mathcal S_t|$ affect $\Calg_t$, but do not replace
-$\mathcal D_{t-1}$ in~\eqref{eq:erm}.  Thus a generic full-batch evaluation of
-$\nabla\cL_t$ replays $N_t$ observations even when $m_t\ll N_t$.
-In convex settings (e.g.\ a frozen backbone with a linear head), under exact
-optimization this coincides with the global minimizer; in nonconvex settings $\btheta_t$
-may be a local minimizer or approximate stationary point.
-The gap between $\btheta_t$ and an idealized global minimizer is absorbed
-by the action-scaled centering certificate (\Cref{asm:optim}).
-
-\paragraph{Gradient features and curvature matrices.}
-Define the \emph{gradient feature} (Jacobian of the mean reward) at the
-current parameter estimate:
-\begin{equation}\label{eq:gfeat}
-  \bg_t(\bx,a) \;:=\; \nabla_{\btheta}\,\mu_{\btheta_t}(\bx,a)
-  \;\in\;\R^d.
-\end{equation}
-The algorithm uses the \emph{relinearized curvature matrix}
-\begin{equation}\label{eq:curvature}
-  \bC_t
-  \;=\;
-  \lambda\,\bI
-  \;+\;
-  \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
-    \bg_t(\bx_s,a_s)\,\bg_t(\bx_s,a_s)^{\!\top},
-\end{equation}
-the \emph{damped GGN curvature} for the Gaussian/squared-loss model
-at the current parameter~$\btheta_t$.
-(For the Gaussian working model underlying this squared-loss quasi-likelihood,
-the GGN coincides with the model Fisher information; see the remark below.)
-While $\bC_t$ is the natural object for
-computing predictive variances at $\btheta_t$, it
-re-evaluates all past Jacobians at~$\btheta_t$ and therefore does
-\emph{not} admit a sequential rank-one update---all summands change
-when $\btheta_t$ changes.
-
-For the regret analysis we introduce the
-\emph{frozen-feature Gram matrix}:
-\begin{equation}\label{eq:curvature-bar}
-  \bCbar_t
-  \;:=\;
-  \lambda\,\bI
-  \;+\;
-  \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
-    \bg_s(\bx_s,a_s)\,\bg_s(\bx_s,a_s)^{\!\top},
-\end{equation}
-where each $\bg_s(\bx_s,a_s)=\nabla_{\btheta}\mu_{\btheta_s}(\bx_s,a_s)$
-is evaluated at the parameter~$\btheta_s$ that was current when the sample
-was collected.  This matrix satisfies the recursive update
-\begin{equation}\label{eq:bar-update}
-  \bCbar_{t+1}=\bCbar_t+\sigma^{-2}\bg_t(\bx_t,a_t)\bg_t(\bx_t,a_t)^\top,
-\end{equation}
-and, critically, each realized design vector
-$\bg_s(\bx_s,a_s)$ is measurable with respect to the pre-reward
-sigma-algebra $\cG_s=\cHist_s\vee\sigma(a_s)$ of~\eqref{eq:filtration},
-which is the filtration used in the self-normalized bound.
-Both the additive update~\eqref{eq:bar-update} and
-this measurability are structural requirements of the
-self-normalized martingale bound and the elliptic potential lemma invoked
-in~\Cref{sec:theory}.
-The algorithm computes UCB widths using the algorithmic curvature~$\Calg_t$
-(via CG; the exact case is $\Calg_t=\bC_t$), but the confidence analysis is
-conducted in terms of~$\bCbar_t$; the one-sided optimism-transfer factor
-of \Cref{asm:transfer}, certified by \Cref{lem:whitened}, provides the
-bridge.
-
-% [auxiliary ridge estimator -> app:deferred]
-% [GGN-vs-Hessian -> app:deferred]
-% [exp-family extension -> app:deferred]
-% [Assumptions + primitive certificates relocated to \Cref{app:deferred}]
-\section{Method: Curvature-Calibrated Exploration}\label{sec:method}
-
-\subsection{CC-UCB Algorithm}
-
-For a predictable SPD oracle $\Calg_t\succeq\lambda\bI$, set
-$\omega_t=\bar\beta_t+\bar\psi_t$ for the original nonlinear center.
-\Cref{alg:ccucb} is the analyzed full-enumeration policy.  The same fixed
-curvature operator is reused across separate per-action CG solves; a solution
-for one action is not reused as the solution for another action.
-\begin{algorithm}[H]
-\caption{Curvature-Calibrated UCB (CC-UCB)}\label{alg:ccucb}
-\begin{algorithmic}[1]
-\STATE Observe context $\bx_t$ and finite action set $\cA_t$.
-\STATE Construct a fixed predictable SPD oracle $\bv\mapsto\Calg_t\bv$ with $\Calg_t\succeq\lambda\bI$.
-\FOR{each $a\in\cA_t$}
-  \STATE Compute $\widehat\mu_t(a)=\mu_{\btheta_t}(\bx_t,a)$ and $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$.
-  \STATE If $\bg_t(a)\ne\mathbf0$, solve $\Calg_t\bu=\bg_t(a)$ separately by CG until the certified tolerance holds; otherwise set $\tilde\bu=\mathbf0$. \label{line:cg}
-  \STATE Set $\tilde s_t^2(a)=\bg_t(a)^\top\tilde\bu$.
-\ENDFOR
-\STATE Select and play $a_t\in\argmax_{a\in\cA_t}\{\widehat\mu_t(a)+\omega_t\sqrt{u_t(a)/(1-\bar\varepsilon_t)}\sqrt{\tilde s_t^2(a)}\}$. \label{line:ucb}
-\STATE Observe $r_t$, append $(\bx_t,a_t,r_t)$, and update $\btheta_{t+1}$.
-\end{algorithmic}
-\end{algorithm}
-
-The oracle is accessed only through matrix--vector products.  At each round the
-agent computes,
-for every candidate action~$a$, the gradient feature
-$\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ and the
-\emph{curvature-calibrated variance proxy}, the generic algorithmic width,
-\begin{equation}\label{eq:variance}
-  s_{\Calg,t}^2(a)
-  \;=\;
-  \bg_t(a)^\top\Calg_t^{-1}\,\bg_t(a).
-\end{equation}
-Under the GGN/Fisher-linearized Gaussian approximation with covariance
-$\Calg_t^{-1}$, the quantity $s_{\Calg,t}^2(a)$ is the metric-dependent
-predictive variance of the linearized reward at $(\bx_t,a)$.
-The \emph{exact} full-history instantiation of CC-UCB takes $\Calg_t=\bC_t$, the
-relinearized curvature~\eqref{eq:curvature}; weighted replay, subsampling,
-sliding windows, periodic refreshes, and randomized sketches are special
-implementations of $\Calg_t$ (\S\ref{sec:curvop}), covered by the theory only
-when the corresponding one-sided transfer factor is certified.
-
-Because $\Calg_t\succ 0$ by construction, conjugate gradients (CG) is guaranteed
-to converge on the system $\Calg_t\bu=\bg_t(a)$, provided the operator is held
-\emph{fixed} across all iterations of the solve (the randomized sketch/subsample
-is drawn into $\Omega_t$ before action selection; \S\ref{sec:problem}).  For each
-action with $\bg_t(a)\ne\mathbf0$ we run CG to the per-action relative
-energy-norm error
-\begin{equation}\label{eq:cg-err-eta}
-  \varepsilon_{t,a}
-  \;:=\;
-  \frac{\|\bu_{t,a}-\tilde\bu_{t,a}\|_{\Calg_t}}{\|\bu_{t,a}\|_{\Calg_t}},
-  \qquad
-  \bu_{t,a}:=\Calg_t^{-1}\bg_t(a),
-\end{equation}
-yielding the computable proxy $\tilde{s}_t^2(a)=\bg_t(a)^\top\tilde\bu_{t,a}$;
-if $\bg_t(a)=\mathbf0$ we set $\tilde{s}_t^2(a)=0$ and skip the solve (leaving the
-residual ratio $\|r_I\|/\|\bg\|$ undefined), and by convention put
-$\varepsilon_{t,a}:=0$ in this case, so that $\varepsilon_{t,a}$ is defined for
-every $a\in\cA_t$ and~\eqref{eq:cg-quad} holds trivially there.
-\Cref{lem:cg} shows $\tilde{s}_t^2(a)$ approximates $s_{\Calg,t}^2(a)$ within a
-multiplicative $(1\pm\varepsilon_{t,a})$ factor.  To ensure the UCB bonus
-\emph{upper-bounds} the confidence width $\omega_t\,\bar s_t(a)$ despite the
-approximation, the algorithm inflates the width by
-$\sqrt{u_t(a)/(1-\bar\varepsilon_t)}$ (line~\ref{line:ucb}), where
-$\bar\varepsilon_t\in(0,1)$ is a \emph{per-round} known tolerance enforced
-uniformly over all actions,
-\begin{equation}\label{eq:cg-tol-uniform}
-  \max_{a\in\cA_t}\varepsilon_{t,a}
-  \;\le\;\bar\varepsilon_t\;<\;1,
-\end{equation}
-and $u_t(a)\ge1$ is the one-sided transfer factor (\Cref{asm:transfer}).
-
-% [CG tolerance / action screening / corrected-center -> app:deferred]
-% [Novelty subsection relocated to \Cref{app:deferred}]
-% [Computable curvature operator + cost model relocated to \Cref{app:deferred}]
-\section{Theoretical Analysis}\label{sec:theory}
-
-The motivating scalar-link structure is formalized in
-\Cref{lem:relative-link-drift}, but the proof dependencies run in the opposite
-direction: we first state a master transfer theorem, then its exact-current,
-spectral-tail, and gap-dependent closures, and finally the operational and
-scalar-link specializations.  The master theorem analyzes CC-UCB
-(\Cref{alg:ccucb}, with full action enumeration $K{=}|\cA_t|$) under the
-Gaussian/squared-loss setup and
-\Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.  It is not a
-full exponential-family or generalized-linear-bandit proof; the extension in
-\Cref{app:expfam} defines curvature only.
-
-For a general predictable SPD sequence $\Calg_t$, confidence is proved in the
-frozen Gram $\bCbar_t$, whose update and measurability support self-normalized
-concentration.  A one-sided factor $u_t(a)$ transfers optimism to $\Calg_t$,
-CG contributes $\alpha_t$, and nonmonotonicity remains in the realized width
-complexity.  \Cref{sec:dynamic-potential} gives exact determinant bookkeeping,
-not a primitive sublinear bound.  Later specializations make the nonlinear
-inputs observable, but their smallness still requires a restricted parameter
-path.
-
-\paragraph{Core conditions and links.}
-Assume conditionally $\sigma$-sub-Gaussian noise, $\|\bg_t(\bx_s,a)\|\le G$,
-realizability by $\|\btheta^*\|\le S$, and a local expansion with round-$t$
-remainder at most $\epslin(t)$.  For the original center assume the
-action-scaled discrepancy is at most $\bar\psi_t\bar s_t(a)$.  The operator
-$\Calg_t$ is predictable, SPD, satisfies $\Calg_t\succeq\lambda\bI$ and
-$\Calg_1=\lambda\bI$, and remains fixed throughout every CG solve.  Define
-\begin{equation}\label{eq:main-widths}
-\begin{aligned}
- \bar s_t^2(a)&=\bg_t(a)^\top\bCbar_t^{-1}\bg_t(a),&
- s_{\Calg,t}^2(a)&=\bg_t(a)^\top\Calg_t^{-1}\bg_t(a),\\
- \tilde s_t^2(a)&=\bg_t(a)^\top\tilde\bu_t(a).&&
-\end{aligned}
-\end{equation}
-The analysis requires only the one-sided transfer and uniform CG relations
-\begin{equation}\label{eq:main-transfer-cg}
-\begin{aligned}
- \bar s_t^2(a)&\le u_t(a)s_{\Calg,t}^2(a),\\
- (1-\bar\varepsilon_t)s_{\Calg,t}^2(a)&\le\tilde s_t^2(a)
- \le(1+\bar\varepsilon_t)s_{\Calg,t}^2(a),
-\end{aligned}
-\end{equation}
-for every candidate action, where $u_t(a)\ge1$, $\bar\varepsilon_t<1$, and
-$\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$.  Sufficient
-feature-drift and approximate-operator constructions are given in
-\Cref{lem:whitened,thm:spectral-distortion}; no lower spectral transfer is
-needed.
-
-\paragraph{Dynamic width complexity.}
-The realized quantity used below is
-\begin{equation}\label{eq:main-lambda}
- \Lamalg_T:=\sum_{t=1}^T\log\!\left(1+\sigma^{-2}s_{\Calg,t}^2(a_t)\right).
-\end{equation}
-The bounded-width cap gives
-\begin{equation}\label{eq:main-dynamic}
- \sum_{t=1}^T s_{\Calg,t}^2(a_t)
- \le(\sigma^2+G^2/\lambda)\Lamalg_T.
-\end{equation}
-For a general predictable nonmonotone SPD sequence, we do not derive a
-primitive sublinear bound on $\Lamalg_T$.  Appendix
-\Cref{sec:dynamic-potential} gives an exact determinant bookkeeping identity,
-but its upper bound is informative only when both the terminal log determinant
-and determinant-decreasing refresh charge are independently controlled, for
-example under the rank and spectral-floor hypotheses of
-\Cref{lem:rank-refresh}.
-
-\subsection{Regret Bound}
-
-Let $\cE_{\mathrm{conf}}$ denote the simultaneous self-normalized confidence
-event and let $\cE_{\mathrm{cert}}$ collect the predictable linearization,
-centering, transfer, condition-number, CG, and randomized-operator certificates.
-The appendix defines each component and its failure allocation; write their
-total failure probability as $\delta_{\mathrm{cert}}$.
-
-\begin{theorem}[Dynamic transfer regret bound for CC-UCB (Gaussian/squared-loss)]\label{thm:regret}
-Under the conditions above and \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer},
-suppose $|\cA_t|\le A_{\max}$, the optimal action is present, and
-\Cref{alg:ccucb} enumerates all actions using a predictable schedule
-$\bar\beta_t\ge\beta_t$ and uniform per-round CG tolerance.  Let
-$E_T=\sum_{t=1}^T\epslin(t)$, $\omega_t=\bar\beta_t+\bar\psi_t$,
-$\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$, and
-$S_T=\sum_{t=1}^T\alpha_t^2u_t(a_t)\omega_t^2$.  On
-$\cE_{\mathrm{conf}}\cap\cE_{\mathrm{cert}}$,
-\begin{equation}\label{eq:regret-bound}
-  R_T
-  \;\le\;
-  2\sqrt{(\sigma^2 + G^2/\lambda)\;\Lamalg_T\;S_T}
-  \;+\; 2\,E_T,
-\end{equation}
-with probability at least $1-\delta-\delta_{\mathrm{cert}}$.  Deterministic or
-almost-sure certificates contribute zero to $\delta_{\mathrm{cert}}$.  For the
-corrected center, the same statement holds without \Cref{asm:optim} after
-replacing $\omega_t$ by $\bar\beta_t$.
-\end{theorem}
-
-In particular, the bound is sublinear whenever
-$\Lamalg_T S_T=o(T^2)$ and $E_T=o(T)$.
-The exact-curvature instantiation is $\Calg_t=\bC_t$ with
-$u_t=(1+\bar\chi_t)^2$ from \Cref{lem:whitened}; approximate operators are
-covered through \Cref{thm:spectral-distortion}.  The proof is in
-\Cref{app:proof}.
-
-\paragraph{Proof sketch.}
-Self-normalized confidence plus the centering and linearization terms gives
-$|\mu^*(a)-\mu_{\btheta_t}(a)|\le\omega_t\bar s_t(a)+\epslin(t)$.
-The one-sided relation and CG lower bound make the computed bonus optimistic,
-so instantaneous regret is at most $2w_t(a_t)+2\epslin(t)$.  The CG upper
-bound gives $w_t(a_t)\le\alpha_t\omega_t\sqrt{u_t(a_t)}s_{\Calg,t}(a_t)$.
-Summing, applying Cauchy--Schwarz only once, and using \eqref{eq:main-dynamic}
-yields \eqref{eq:regret-bound}; hence time-varying factors remain inside $S_T$
-rather than being replaced by horizon maxima.  The corrected center replaces
-$\omega_t$ by $\bar\beta_t$ and removes the centering certificate, but requires
-exact or certified frozen-feature access (\Cref{cor:corrected-center}).
-
-\begin{corollary}[Exact-current regret through the frozen potential]
-\label{cor:exact-current-frozen-potential}
-Adopt \Cref{thm:regret} with exact current curvature $\Calg_t=\bC_t$.
-Suppose a predictable certificate satisfies
-$\chi_t\le\bar\chi_t<1$ for every $t$, and use the valid transfer factor
-$u_t=(1+\bar\chi_t)^2$.  Then, on the event of \Cref{thm:regret},
-\begin{equation}\label{eq:exact-current-frozen-potential}
-\begin{aligned}
- R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,\gamma_T\\[-1mm]
- &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
- \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
- +2E_T.
-\end{aligned}
-\end{equation}
-For the corrected center of \Cref{cor:corrected-center}, the same statement
-holds without \Cref{asm:optim} after replacing $\omega_t$ by $\bar\beta_t$.
-This removes the nonmonotone dynamic-width term only in the small-drift,
-exact-current regime.
-\end{corollary}
-\begin{proof}
-The sharpened sandwich in \Cref{cor:drift-sandwich} and Loewner inversion give
-\[
- s_t(a)\le\frac{\bar s_t(a)}{1-\bar\chi_t}.
-\]
-The per-round proof of \Cref{thm:regret}, together with
-$\sqrt{u_t}=1+\bar\chi_t$, therefore gives
-\[
- \operatorname{regret}_t\le
- 2\alpha_t\omega_t
- \frac{1+\bar\chi_t}{1-\bar\chi_t}\bar s_t(a_t)
- +2\epslin(t).
-\]
-Sum and apply Cauchy--Schwarz once.  The frozen rank-one update and the usual
-elliptic-potential inequality give
-$\sum_t\bar s_t^2(a_t)\le
-(\sigma^2+G^2/\lambda)\gamma_T$, proving the display.  The corrected-center
-claim follows from the prediction identity in \Cref{cor:corrected-center}.
-\end{proof}
-
-For an integer $0\le r\le d$, define
-\begin{equation}\label{eq:gamma-tail-main}
-\begin{aligned}
- \Delta_{T,r}&:=\sum_{i>r}\nu_i,\qquad
- r_T:=\min\{r,T\},\\
- \Gamma^{\rm tail}_{T,r}
- &:=r_T\log\!\left(1+\frac{TG^2}
- {r_T\lambda\sigma^2}\right)+\frac{\Delta_{T,r}}{\lambda},
-\end{aligned}
-\end{equation}
-where $\nu_1\ge\cdots\ge\nu_d\ge0$ are the eigenvalues of
-$\bCbar_{T+1}-\lambda\bI$ and the first term is defined to be zero when
-$r_T=0$.  \Cref{lem:spectral-tail-logdet} proves
-$\gamma_T\le\Gamma^{\rm tail}_{T,r}$.
-Writing $\tau_T=\sum_i\nu_i$ and
-$q_{T,r}=\min\{d-r,\max\{T-r,0\}\}$, the same lemma proves the sharper
-realized split bound
-\begin{equation}\label{eq:gamma-split-main}
-\begin{aligned}
- \Gamma^{\rm split}_{T,r}:={}&
- r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right)\\
- &+q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}{q_{T,r}\lambda}\right),
-\end{aligned}
-\end{equation}
-where a term with zero multiplier is defined as zero.
-
-\begin{corollary}[Approximate-rank exact-current GGN]
-\label{cor:approx-rank-current-ggn}
-Under \Cref{cor:exact-current-frozen-potential}, on the same confidence event
-the following holds simultaneously for every $r\in\{0,\ldots,d\}$:
-\begin{equation}\label{eq:approx-rank-current-ggn}
-\begin{aligned}
- R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,
- \Gamma^{\rm tail}_{T,r}\\[-1mm]
- &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
- \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
- +2E_T.
-\end{aligned}
-\end{equation}
-The same display holds with $\Gamma^{\rm tail}_{T,r}$ replaced by the
-smaller $\Gamma^{\rm split}_{T,r}$ from~\eqref{eq:gamma-split-main}.
-This is a realized-complexity statement: the policy may retain the existing
-observable $\hat\gamma_{t-1}$ schedule, but a terminal realized
-$\Delta_{T,r}$ is not used in any action-time radius.  Because the deterministic
-spectral inequality holds for every $r$, the terminal report may minimize
-$\Gamma^{\rm tail}_{T,r}$ over $r$ a posteriori, provided that choice does not
-alter any past action, radius, or other action-time quantity.
-
-Operationally, if before round $t$ a supplied deterministic or
-$\cHist_t$-measurable envelope $\bar\Delta_{t-1,r}$ upper-bounds the spectral
-tail of $\bCbar_t-\lambda\bI$, the old predictable envelope below remains
-valid:
-\[
-\begin{aligned}
- r_{t-1}&:=\min\{r,t-1\},\\
- \bar\Gamma^{\rm tail}_{t-1,r}
- &:=r_{t-1}\log\!\left(1+\frac{(t-1)G^2}
- {r_{t-1}\lambda\sigma^2}\right)
- +\frac{\bar\Delta_{t-1,r}}\lambda.
-\end{aligned}
-\]
-again taking the first term as zero when $r_{t-1}=0$.
-Replacing $\gamma_{t-1}$ in the constructive confidence radius by this
-predictable upper bound is valid.  In that version,
-\eqref{eq:approx-rank-current-ggn} holds with
-$\Gamma^{\rm tail}_{T,r}$ replaced by any supplied terminal envelope
-$\bar\Gamma^{\rm tail}_{T,r}$ and with $\omega_t$ formed from the resulting
-radius.
-
-A refined predictable alternative uses the observable frozen trace
-$\tau_{t-1}=\operatorname{tr}(\bCbar_t-\lambda\bI)
-=\sigma^{-2}\sum_{s<t}\|\bg_s\|^2$.  With
-$q_{t-1,r}=\min\{d-r,\max\{t-1-r,0\}\}$, set
-\begin{equation}\label{eq:predictable-split-envelope}
-\begin{aligned}
- \bar\Gamma^{\rm split}_{t-1,r}:={}&
- r_{t-1}\log\!\left(1+\frac{\tau_{t-1}}{r_{t-1}\lambda}\right)\\
- &+q_{t-1,r}\log\!\left(1+
- \frac{\bar\Delta_{t-1,r}}{q_{t-1,r}\lambda}\right),
-\end{aligned}
-\end{equation}
-again omitting zero-multiplier terms.  The head term deliberately uses the
-full trace: subtracting an \emph{upper} tail envelope could reduce the head
-term and invalidate an upper bound.  Thus
-$\bar\Gamma^{\rm split}_{t-1,r}\ge\gamma_{t-1}$ is a valid action-time
-schedule, although it can be looser than the realized split expression.
-
-No exact tangent subspace is assumed.  A small spectral tail can contain
-decision-relevant directions and does not supply their basis, so
-full-dimensional CG may still be necessary.  Exact rank is recovered when
-$\Delta_{T,r}=0$; the supplied-subspace result
-\Cref{cor:rank-near-linear} is then an additional computational special case.
-The corrected-center version again replaces $\omega_t$ by $\bar\beta_t$.
-\end{corollary}
-\begin{proof}
-Apply \Cref{lem:spectral-tail-logdet} to substitute either
-$\gamma_T\le\Gamma^{\rm split}_{T,r}\le\Gamma^{\rm tail}_{T,r}$ in
-\eqref{eq:exact-current-frozen-potential}.  The prefix version of the same
-lemma makes either $\bar\Gamma^{\rm tail}_{t-1,r}$ or
-$\bar\Gamma^{\rm split}_{t-1,r}$ a predictable upper bound on
-$\gamma_{t-1}$, so \Cref{lem:confidence,cor:beta-constructive} justify the
-operational radius.  No eigenspace is used by either argument.
-\end{proof}
-
-\begin{corollary}[Gap-dependent exact-current regret]
-\label{cor:gap-dependent-exact-current}
-Adopt \Cref{cor:exact-current-frozen-potential}.  Define the realized gap
-$\Delta_t:=\mu^*(\bx_t,a_t^*)-\mu^*(\bx_t,a_t)$ and suppose every
-suboptimal candidate action at every round has gap at least a deterministic
-(or almost-sure) $\Delta_{\min}>0$.  This gap is an analysis condition and is
-not used to tune the policy; if it holds only on a high-probability event, that
-event must be added to the certificate failure allocation.  Suppose also
-$\epslin(t)\le\Delta_{\min}/4$ for all $t$, and set
-\[
- H_t^{\rm gap}:=\alpha_t\omega_t
- \frac{1+\bar\chi_t}{1-\bar\chi_t},\qquad
- H_{\max}^{\rm gap}:=\max_{t\le T}H_t^{\rm gap}.
-\]
-Then, on the event of \Cref{thm:regret},
-\begin{equation}\label{eq:gap-dependent-exact-current}
- R_T\le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}
- \left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T.
-\end{equation}
-Consequently $\gamma_T$ in this display may be replaced by the exact-rank
-bound $\Gamma_{T,r}$ of~\eqref{eq:rank-gamma-main}, the simple tail bound
-$\Gamma^{\rm tail}_{T,r}$ of~\eqref{eq:gamma-tail-main}, or the refined
-$\Gamma^{\rm split}_{T,r}$ of~\eqref{eq:gamma-split-main}, under the
-corresponding premises.  The corrected-center version replaces $\omega_t$ by
-$\bar\beta_t$ as usual.  This result is not a minimax-optimality claim: unlike
-the gap-free result, it requires a uniform positive gap and a per-round
-linearization error smaller than one quarter of that gap.
-\end{corollary}
-\begin{proof}
-The per-round argument in
-\Cref{cor:exact-current-frozen-potential} gives
-\[
- \Delta_t\le2H_t^{\rm gap}\bar s_t(a_t)+2\epslin(t).
-\]
-On a suboptimal round, $\Delta_t\ge\Delta_{\min}$ and hence
-$2\epslin(t)\le\Delta_t/2$.  Rearranging and using
-$H_t^{\rm gap}\le H_{\max}^{\rm gap}$ gives
-$\Delta_t\le4H_{\max}^{\rm gap}\bar s_t(a_t)$.  Squaring this inequality and using
-$\Delta_t\ge\Delta_{\min}$ yields
-\[
- \Delta_t\le\frac{\Delta_t^2}{\Delta_{\min}}
- \le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}\bar s_t^2(a_t).
-\]
-Optimal rounds contribute zero.  Sum over $t$ and apply
-$\sum_t\bar s_t^2(a_t)\le
-(\sigma^2+G^2/\lambda)\gamma_T$ to prove the display; the three substitutions
-follow from \Cref{lem:rank-logdet,lem:spectral-tail-logdet}.
-\end{proof}
-
+The contribution is the confidence transport and its contextual-bandit
+instantiation, not generic conjugate gradients, a generic UCB-to-regret
+reduction, or uniform superiority of full curvature.  Earlier numerical work is
+scoped separately in \Cref{app:legacy-evidence}; it does not instantiate the new
+path and two-sided-operator premises.
+\input{transport_theory}
 \newcommand{\deferredConditionalRates}{%
 \subsection{Online nonlinear certificates}\label{sec:operational-certificates}
 At the start of round $t$, let $n_t=t-1$, and let $\bar\btheta_{<t}$ and
@@ -856,369 +348,45 @@ identification; contextual diversity alone does not imply it.  For $\dim U=r>1$
 one must choose $\tau_w$ after a rank-$r$ burn-in, as the formal early charge
 records.  The predictable rank schedule in
 \Cref{cor:rank-near-linear} makes $H_T$ polylogarithmic under the same bounded-path
-conditions.  Illustrative achieved upper-bound exponents are reported in
-\Cref{sec:systems}; they are not a Pareto frontier or a lower
-bound.  When $U$ is supplied, the projected Gram in
+conditions.  These sufficient upper-bound exponents are not a Pareto frontier
+or a lower bound.  When $U$ is supplied, the projected Gram in
 \eqref{eq:projected-width} can instead be solved directly.
 }
 
 % [approximate-curvature results (window, subsample, spectral-distortion) relocated to \Cref{app:deferred}]
-\section{Experiments}\label{sec:experiments}
-
-All regret rows are independently executed policies.  Common random numbers are
-used only where pairing is valid.  Exact teacher and dense replay quantities are
-post-action audits; common-trajectory operator comparisons never report causal
-regret.  Tuning and evaluation seeds are disjoint, intervals use whole-seed
-trajectories, and stopped or failed studies remain visible.  Derived full-grid
-aggregates retain hash-indexed provenance; release scope is stated in
-\Cref{app:availability}.
-
-\newcommand{\deferredSpectralComplexityFigure}{%
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spectral_tail_regret.pdf}
-  \caption{Full spectral-tail evaluation at $d=256$, $K=8$, and displayed
-  rank $r=8$.  Curves are means over untouched evaluation seeds 1000--1049;
-  bands are 95\% whole-seed bootstrap intervals at five predeclared horizons.
-  Bonuses are selected on tuning seeds 0--9 over the complete predeclared cell
-  set.  Head- and tail-aligned regimes include cells unfavorable to full
-  curvature.}
-  \label{fig:spectral-tail-regret}
-\end{figure*}
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=.72\textwidth]{figures/spectral_tail_complexity.pdf}
-  \caption{Realized frozen information gain and the spectral-tail upper bound for
-  the exact-full $r=8$ trajectories.  The bound is informative for decaying
-  spectra but is not uniformly tighter than the ambient trace/rank bound; it is
-  an upper bound rather than an estimator of $\gamma_T$.}
-  \label{fig:spectral-tail-complexity}
-\end{figure*}
-
-The spectral-tail run contains 7,440 tuning and 8,400 evaluation trajectories.
-At $r=8,p=2$, head-aligned rank truncation has mean terminal regret $0.283$
-versus $0.714$ for exact full; moving the decision gap to the discarded tail
-reverses the comparison to $88.176$ versus $1.771$.  In the head-aligned cell,
-$\gamma_T=87.87$ and the tail bound is $330.75$, below the ambient-rank bound
-$1888.87$ but still conservative.  Dense full and full CG agree throughout,
-but the construction needs only one CG iteration and is an equivalence check,
-not a Krylov stress test.
-}
-
-\textbf{Scaled-tanh stop.}  The reported evaluation is a final holdout following
-two disclosed pre-freeze diagnostic splits.  Nominal seeds 1000--1049 were
-abandoned after optimizer diagnostics; the replacement split 1100--1149 was
-also abandoned after only seeds 1100--1101 were read.  The residual threshold
-was set from development diagnostics, damping was then selected on tuning seeds
-0--9, and the protocol was frozen before fresh seeds 1200--1249 were reserved as
-the final holdout; no final-holdout metric was read during selection.
-This finite-support holdout evaluates five horizons, four width ratios, eight
-methods, and 50 seeds: 8,000 trajectories in total.  The four theorem-labeled
-methods contribute 4,000 trajectories.  Their failed-trajectory counts are 43
-(exact relative), 51 (full-CG relative), 40 (Welford), and 14 (corrected center),
-totaling 148.  The 14 transfer-flagged trajectories in each affected relative
-method are float64 audit misses, not analytic transfer-premise failures:
-$\min_t(\rho_t-\chi_t)=-1.92\times10^{-9}$ against audit tolerance
-$2\times10^{-9}$, while
-$\min_t(\rho_W-\rho_t)=9.84\times10^{-3}$ and the largest replayed trust-region
-violation is $1.12\times10^{-16}$.  The genuine premise failures are optimizer
-residuals and, in eight full-CG rounds, CG convergence.  Every
-method--horizon--width theorem cell nevertheless fails the recorded joint
-theorem-event criterion.  Exact and CG policies have identical actions, and
-their widths agree to at worst $1.3\times10^{-12}$ relatively.  This checks
-implementation but does not satisfy the theorem-event criterion.  We make no
-empirical theorem-instantiation or rate claim from this study.
-
-\textbf{Gap validation.}  A separate linear study executes 1,000 trajectories
-over gaps $0.05,0.1,0.2,0.4$.  All 400 exact/full-CG trajectories satisfy the
-recorded premises of \Cref{cor:gap-dependent-exact-current}; maximum CG energy
-error is $8.4\times10^{-7}$.  Exact-full mean terminal regret ranges from
-$5.05$ to $7.99$, while the gap-free RHS is about $2.2\times10^4$ and the
-gap-dependent RHS ranges from $1.28\times10^6$ to $1.00\times10^7$.  Thus the
-experiment validates the recorded implication but also shows that this
-gap-dependent constant is vacuous and looser than the gap-free bound here.
-
-The spectral-tail reversal, premise-clean Krylov grid, mixed coverage-matched
-operator comparisons, failed small-model baselines, and real JVP/VJP primitive
-measurements are deferred to \Cref{app:additional-experiments}.  They do not
-support a full-curvature performance advantage.  The full Wheel benchmark
-terminated during tuning after solver-residual failures, and no full-profile
-evaluation policy ran; smoke runs are engineering checks only and no Wheel
-result enters the paper.
-
-\newcommand{\deferredExperimentalEvidence}{%
-\subsection{Scaled-tanh premise stop}
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=.92\textwidth]{figures/scaled_tanh_certificates.pdf}
-  \caption{Final-holdout scaled-tanh certificate audit over five horizons, four
-  width ratios, and 50 seeds.  The displayed certificates are computed
-  from complete trajectories, but every theorem-labeled method--cell fails the
-  recorded joint theorem-event criterion.  Transfer flags within the declared
-  float64 tolerance are separated from analytic premise failures.  This is a
-  failure audit, not an empirical instantiation of
-  \Cref{cor:scaled-tanh-relative}.}
-  \label{fig:scaled-tanh-certificates}
-\end{figure*}
-
-\begin{table*}[t]
-  \centering\scriptsize\setlength{\tabcolsep}{2pt}
-  \input{../tables/generated/scaled_tanh_instantiation.tex}
-  \caption{Scaled-tanh final-holdout audit.  ``Premises'' denotes the recorded
-  float64 theorem-event criterion for the corresponding theorem trajectory.
-  ``Analytic'' and ``Float64'' separate premise failures from transfer-audit
-  misses using the displayed slack/tolerance tuple.  Failed trajectories are
-  retained; CG agreement and width error are implementation checks only.}
-  \label{tab:scaled-tanh-instantiation}
-\end{table*}
-
-\subsection{Positive-gap validation details}
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/gap_dependent_validation.pdf}
-  \caption{Predeclared positive-gap validation at $T=4096$ with 50 untouched
-  evaluation seeds per method--gap cell.  Exact full and residual-checked full
-  CG satisfy the recorded gap, linearization, confidence, and operator premises
-  in all 400 theorem-eligible trajectories.  The gap-dependent RHS dominates
-  regret but is much larger than the gap-free RHS; approximate-operator and
-  greedy rows are decision diagnostics outside this corollary's premise.}
-  \label{fig:gap-dependent-validation}
-\end{figure*}
-
-\begin{table*}[t]
-  \centering\scriptsize
-  \input{../tables/generated/gap_dependent_validation.tex}
-  \caption{Predeclared gap-validation terminal results over 50 evaluation seeds
-  per method--gap cell.  PASS applies only to exact full and full CG.  The
-  approximate and greedy rows are decision diagnostics outside the premises of
-  \Cref{cor:gap-dependent-exact-current}.}
-  \label{tab:gap-dependent-validation}
-\end{table*}
-
-\subsection{Premise-clean scaling and operator studies}
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/certified_scaling.pdf}
-  \caption{Premise-clean rotated scaling test.  The displayed $d=128$ panels
-  vary active rank and condition number; the full grid also contains
-  $d\in\{512,2048\}$.  Curves are 50-seed means with pointwise whole-trajectory
-  bootstrap 95\% intervals over six predeclared horizons.  Every theorem method
-  in all 27 cells passes the optimizer, rank-information, excitation, CG
-  convergence, and energy-error fields.  Slopes remain finite-grid diagnostics,
-  not asymptotic-rate estimates.}
-  \label{fig:certified-scaling}
-\end{figure*}
-
-\begin{table*}[t]
-\centering\scriptsize
-\resizebox{\textwidth}{!}{\input{../tables/generated/certified_scaling_premises.tex}}
-\caption{Premise status for all 27 rotated scaling cells.  PASS is the
-conjunction over 50 evaluation trajectories and all rounds.  Diagonal and greedy
-are performance controls rather than theorem methods.  These are analytic
-construction checks plus float64 residual/energy audits, not directed-rounding
-enclosures.}
-\label{tab:certified-scaling-premises}
-\end{table*}
-
-The complete run contains 10,800 trajectories over three dimensions, three
-active ranks, three condition numbers, eight methods, and 50 fixed evaluation
-seeds.  Feature drift and linearization error are identically zero, the model
-update is a closed-form ridge solve, and cyclic excitation has a prespecified
-analytic lower bound.  Every full-CG and window solve converges from zero;
-more than 90\% of rounds use multiple iterations, and the largest observed
-relative energy error is below $2.4\times10^{-4}$ versus the $10^{-3}$ target.
-At $d=128,r=8,\kappa=1000$, mean work slopes are $1.498$, $1.674$, and $2.027$
-for $q=1/2,2/3,1$, respectively.  They are below the worst-case CG upper-bound
-exponents because iteration counts saturate in the fixed-rank active space.
-All methods have the same regret in this sign-symmetric construction, so the
-experiment validates premises and work accounting, not policy superiority.  The
-implementation uses dense active-coordinate matrices for simulation and exact
-energy audits; reported work is replay-equivalent sample-CVP accounting rather
-than controlled wall-clock timing.  All fitted slopes are in the generated
-appendix fit tables.
-
-\subsection{Earlier bounded-tanh diagnostic}\label{sec:factorial-audit}
-This smaller predecessor to the scaled-tanh grid uses the nonlinear Gaussian model
-$\mu_\theta(x,a)=\tanh(\phi(x,a)^\top\theta)$ with $d=6$, four bounded actions,
-$T=100$, $\|\theta^*\|\le0.35$, and a radius-$0.5$ projected optimizer.  The
-analytic constants in \Cref{cor:tanh-link}, exact full-objective gradient norm,
-the path statistics in \eqref{eq:path-stats-main}, and the analytic condition bound
-$1+(t-1)G^2/(\lambda\sigma^2)$ are computed before action selection.  No teacher,
-future reward, exact $\chi_t$, exact $\psi_t$, or exact Taylor error enters the
-policy.  A fixed protocol is evaluated on 50 seeds (160--209); an eight-cell
-one-factor sensitivity grid is confined to ten tuning seeds.
-
-Every original- and corrected-center trajectory passes every recorded transfer,
-centering, linearization, information, CG, confidence, optimism, and regret event:
-zero observed failures over 5,000 rounds per center.  Mean regret is $7.86$
-$[7.66,8.07]$ for the original center and $5.69$ $[5.46,5.92]$ for the corrected
-center.  The schedules are deliberately conservative: at the final round, original
-$\chi_t$ averages $0.0216$ versus $\bar\chi_t=4.89$, and $\psi_t$ averages
-$0.0520$ versus $\bar\psi_t=128.1$.  The mean observable RHS/regret ratios are
-$6{,}956.7$ and $1{,}328.9$, respectively, so the bounds are numerically vacuous.
-Because the residual and dense audit checks are ordinary float64 point computations,
-these executions are classified \emph{post-hoc theorem-event verified with fully
-predictable schedules}, not verified-enclosure theorem certified.  They do not
-override the failed theorem-event criterion in the larger final-holdout
-scaled-tanh grid.
-
-\subsection{Reference-operator falsification and matched baselines}\label{sec:operator-cg-audit}
-An eight-cell phase map runs seven operators on 30 independent policies per cell
-and replays the exact-full path for detailed width/rank diagnostics.  Full CG
-matches dense full regret; diagonal has lower regret in all eight cells, block in
-six, while full beats window and stale refresh in all eight and rank-3 Lanczos in
-seven.  Thus fidelity does not order regret.  The separate linear-Gram witness
-changes the diagonal policy's action, but is existential rather than a dominance
-result (\Cref{fig:offdiagonal-witness,tab:offdiagonal-witness}).
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/coverage_matched_mechanism.pdf}
-  \caption{Coverage-matched operator mechanism map.  Entries are mean
-  method-minus-current-full-GGN cumulative pseudo-regret in all eight
-  predeclared condition/rotation/gap cells (50 evaluation seeds).  Scalar
-  coefficients are either identical, selected on tuning seeds 2000--2019 for
-  95\% one-step coverage, or selected there to match mean bonus magnitude;
-  evaluation seeds 2100--2149 are untouched during selection.  Policies execute
-  independently, so differences are descriptive rather than causal operator
-  effects.}
-  \label{fig:coverage-matched-mechanism}
-\end{figure*}
-
-Scalar calibration changes conclusions but does not induce a uniform ordering.
-For each comparison we use a two-sided paired Student-$t$ test on the 50
-seed-level terminal-regret differences; an identically zero difference receives
-$p=1$, while a constant nonzero difference receives the limiting value $p=0$.
-Holm's step-down procedure controls familywise error at $0.05$ over all 168
-prespecified tests.  Across the 56 surrogate--cell comparisons per protocol, the
-adjustment leaves 35 significant under the identical coefficient
-(13 favor a surrogate, 22 favor full), 20 under coverage matching (8/12), and 27
-under mean-bonus matching (11/16).  Evaluation coverage under the tuning-selected
-95\% protocol averages 94.6\% across method--cell means and ranges from 85.6\% to
-99.2\%.  Current and historical full Grams coincide in this fixed-feature linear
-environment; their separate labels audit the protocol rather than representation
-drift.  The added low-rank-plus-diagonal method is a batch-refit LO-FI-style
-surrogate, not an official LO-FI implementation; none of its 24 comparisons is
-significant after Holm adjustment.  The frozen coefficients are in
-\Cref{tab:coverage-matched-calibration},
-all mean paired differences and raw/adjusted $p$-values are in the generated
-appendix comparison tables, and full coverage/decision heatmaps are in
-\Cref{fig:coverage-matched-heatmaps}.
-
-The balanced nonlinear benchmark uses separate tuning and 30 evaluation seeds;
-local NeuralUCB is the historical-time full-gradient-Gram comparison, alongside
-NeuralTS, NeuralLinear, last-layer, diagonal, linear, greedy, and context-free
-baselines.  These are local matched implementations, not verified reproductions.
-At $T=200$, CC-UCB full
-GGN-CG has regret $21.94$ $[20.64,23.23]$; diagonal has $16.11$
-$[14.62,17.61]$, LinUCB $10.58$ $[9.82,11.33]$, NeuralLinear $10.01$
-$[9.33,10.68]$, and frozen last-layer UCB $7.44$ $[6.90,7.99]$.  Context-free
-controls have regret $90.35$ and $89.40$; the sanity check passes, but the
-experiment is negative evidence for full-curvature superiority.
-
-A separate balanced-MNIST pipeline fixes disjoint supervised-pretraining,
-tuning, and online-evaluation splits.  Both online pools have exactly 10\% of
-each digit; 480 tuning policies select among four configurations per method
-before 240 untouched evaluation policies (12 methods, 20 seeds, $T=5000$).
-The deliberately compute-bounded nonlinear model uses 64 fixed pixels, one tanh
-hidden unit, and 85 trainable parameters.  Current and historical full Grams use
-exact dense solves here, not the matrix-free primitive benchmarked in
-\Cref{fig:autodiff-ggn-systems}; their maximum original-system residual is below
-$7\times10^{-12}$.  All implementations are local matched baselines, not
-official reproductions.
-
-The result is a failed algorithmic benchmark (\Cref{fig:mnist-contextual,tab:mnist-contextual}):
-mean accuracy ranges only from 9.885\% to 10.068\%, and mean regret from 4496.6
-to 4505.75.  Current full GGN has regret 4501.75
-$[4490.97,4512.53]$ and accuracy 9.965\%; none of its 11 paired method
-comparisons is significant after Holm adjustment.  We retain the full result as
-negative evidence rather than selecting a favorable method or seed subset.
-Multi-process wall times are resource accounting under host contention, not a
-controlled speed comparison.
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/mnist_contextual_regret.pdf}
-  \caption{Balanced-MNIST evaluation over 20 untouched seeds.  Every method
-  remains near the 10\% context-free baseline; the plot is a failed sanity check
-  for this small local model, not evidence of algorithmic parity.}
-  \label{fig:mnist-contextual}
-\end{figure*}
-
-\begin{table*}[t]
-  \centering\scriptsize
-  \caption{Balanced-MNIST terminal results.  Times are contention-affected
-  resource accounting.  ``Max res.'' is the maximum original-system relative
-  residual over evaluation seeds for the three dense full-Gram methods.}
-  \label{tab:mnist-contextual}
-  \input{../tables/generated/mnist_contextual_benchmark.tex}
-\end{table*}
-
-\subsection{Audits and systems scope}
-All 280 bounded linear traces pass float64 checks, but lack verified enclosures;
-their bounds are vacuous.  Synthetic CPU operators reach $d=8192$, but use
-unmatched stored-feature primitives.  Small-model policies likewise materialize
-Jacobians for dense audits, validating algebra rather than on-the-fly $O(d)$
-Krylov state.  The separate real-autodiff study executes 360 predeclared cells
-using \texttt{torch.func} JVP/VJP operators without retaining an explicit
-sample-by-parameter Jacobian for the matrix-free methods
-(\Cref{fig:autodiff-ggn-systems}).  It covers ten evaluation instances for
-131,841- and 9,972,737-parameter MLPs, buffers 32/128/512, 5/10 actions, and
-residual targets $10^{-1}/10^{-2}/10^{-3}$; all cells finish within 0.167
-accelerator-hours and none is dropped.  These single-host primitive timings do
-not include model training, distributed communication, or a bandit loop and do
-not support a deployment or foundation-model claim.
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/autodiff_ggn_systems.pdf}
-  \caption{Real neural JVP/VJP systems benchmark (ten evaluation instances per
-  cell; medians are aggregated with 95\% seed intervals).  Matrix-free methods
-  use \texttt{torch.func.jvp}/\texttt{vjp}; the explicit Jacobian is an audit
-  available only for the 131,841-parameter model.  The study measures isolated
-  uncertainty primitives after warm-up on one NVIDIA accelerator, not training
-  or end-to-end policy throughput.}
-  \label{fig:autodiff-ggn-systems}
-\end{figure*}
-
-\paragraph{Real-data baseline check.}
-Covertype fails its baseline check: context-free controls beat every contextual
-method at every horizon (\Cref{sec:covertype-rerun}).
-}
-
+% Legacy empirical material is summarized in \Cref{app:legacy-evidence}.
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
 
-Fixed-feature scalar links expose a useful structure: current replay gradients
-are relative rescalings of predictable frozen gradients, so feature transfer and
-centering can be certified in the same coordinates.  The master CC-UCB theorem
-then separates those obligations from linearization, operator approximation, and
-CG error.  Under exact current curvature and certified small drift, the frozen
-potential yields full-dimensional spectral-tail and positive-gap closures;
-matrix-free CVP/CG solves avoid a dense curvature matrix but still require replay.
+Relinearized exploration can be analyzed without identifying the current metric
+with the predictable confidence metric.  The logarithmic path comparison gives
+a two-sided transport certificate for every finite path length, and the
+transported-UCB theorem composes it with approximate operators, generic solver
+upper widths, and approximate score maximization.  A lower operator certificate
+is what closes the selected width through the sequential frozen potential; the
+one-sided dynamic theorem remains the appropriate fallback when that premise is
+unavailable.
 
-The experiments delimit rather than enlarge these claims.  The scaled-tanh
-final holdout fails the recorded theorem-event criterion in 148 of 4,000
-theorem-labeled trajectories, so it provides no empirical theorem-instantiation
-or rate result.
-All 400 exact/full-CG trajectories in the separate gap study pass their recorded
-premises, but both displayed bounds are vacuous and the gap-dependent constant is
-larger.  Spectral-tail and operator studies reject a uniform fidelity--regret
-ordering; real-autodiff results concern isolated primitives; small nonlinear and
-real-data baselines fail their sanity checks.  The full Wheel study terminated
-during tuning; no full-profile evaluation policy ran, and its smoke profile
-contributes no paper evidence.
+The corrected center removes nonlinear optimizer convergence from the concrete
+squared-loss confidence proof.  Representation learning may follow any
+predictable path inside the certified region.  The remaining obligations are
+visible rather than implicit: historical and current approximation error,
+metric path length, two-sided operator distortion, solver validity, and score
+oracle accuracy.  In the frozen linear exact-solve limit these terms reduce to
+the usual LinUCB determinant-potential guarantee.
 
 \paragraph{Limitations.}
-Theory assumes Gaussian squared loss, action enumeration, realizability,
-smoothness, and, for the original center, an optimizer certificate.  Structured
-scalar-link replay stores per-sample scalar metadata; the corrected center needs
-frozen-feature access; approximate operators need additional transfer
-certificates.  Controlling drift and spectral tails during unrestricted training
-remains open.  The empirical checks are float64 rather than verified enclosures,
-the measured autodiff models stop near $10^7$ parameters on one accelerator,
-and independently executed adaptive-policy contrasts are descriptive, not
-causal.
+The abstract theorem assumes a valid reference confidence event, measurable
+score supremum and approximate selector, a finite predictable path certificate,
+and a two-sided operator comparison.  The squared-loss specialization requires
+a fixed ex-ante reference model and predictable linearization and
+misspecification envelopes.  Constant misspecification can yield linear regret.
+The corrected center also needs access to the frozen-feature ridge estimator.
+The factor-path geometry does not by itself prove an exponential-family
+confidence theorem, and no unrestricted neural-training guarantee is claimed.
+Ordinary floating-point residual checks are diagnostics rather than verified
+numerical certificates.  Legacy audits are summarized in
+\Cref{app:legacy-evidence}; none instantiates the revised theorem event.
 
 % --- references -----------------------------------------------------------
 \FloatBarrier % ensure no body float escapes past the references
@@ -1244,13 +412,11 @@ causal.
 % --- appendix -------------------------------------------------------------
 \appendix
 \onecolumn % AISTATS supplement/appendix is single-column (per the official template)
+\input{transport_proofs}
+\input{legacy_dynamic}
+
 \section{Additional conditional rates}\label{app:additional-rates}
 \deferredConditionalRates
-
-\section{Additional experimental evidence}\label{app:additional-experiments}
-\deferredSpectralComplexityFigure
-\deferredExperimentalEvidence
-\FloatBarrier
 
 \section{Deferred main-text derivations}\label{app:deferred}
 This appendix collects the formal statements, proofs, and derivations deferred
@@ -1550,23 +716,24 @@ through $\omega_t=\bar\beta_t+\bar\psi_t$
 
 \begin{table}[h]
 \centering\footnotesize
-\begin{tabular}{p{0.17\textwidth}p{0.10\textwidth}p{0.19\textwidth}p{0.16\textwidth}p{0.18\textwidth}}
+\begin{tabular}{p{0.21\textwidth}p{0.12\textwidth}p{0.27\textwidth}p{0.25\textwidth}}
 \toprule
-Assumption & Status & Use & Checkability & Experimental instantiation\\
+Assumption & Status & Use & Operational check\\
 \midrule
-Conditional sub-Gaussian noise & Standard & Self-normalized confidence & Distributional & Gaussian generator\\
-Realizability, $\|\theta^*\|\le S$ & Restrictive & Bias and Taylor schedules & Not generally testable & Known synthetic teacher\\
-Bounded gradients & Standard on compact sets & Width and condition bounds & Analytic or monitored & Analytic tanh bound\\
-$L_\mu,L_g$ on convex $\Theta$ & Restrictive & Linearization, transfer, centering & Analytic for tanh; otherwise hard & Global tanh Hessian bound and projection\\
-Optimizer residual $\zeta_t$ & Algorithmic & Centering certificate & Pre-action gradient norm & Exact full-objective gradient norm\\
-Operator and CG certificates & Algorithmic & Optimism and solve error & Residual/Loewner proof required & Analytic condition bound; float64 audit\\
-Residual-energy envelope & Rate-only & Near-linear scaling & Observable after collection & Reported, not assumed by policy\\
-Fixed active rank $r$ & Restrictive & Closes $\gamma_T$ & Supplied subspace, not terminal audit & Constructed active embedding\\
-Window excitation $\kappa_w$ & Restrictive & Closes $\Lamalg_T$ & Analytic construction or assumed & Cyclic construction after burn-in\\
+Conditional sub-Gaussian noise & Standard & Self-normalized confidence & Distributional premise\\
+Realizability, $\|\theta^*\|\le S$ & Restrictive & Bias and Taylor schedules & Not generally testable\\
+Bounded gradients & Standard on compact sets & Width and condition bounds & Analytic bound or pre-reward monitor\\
+$L_\mu,L_g$ on convex $\Theta$ & Restrictive & Linearization, transfer, centering & Analytic for a specified model class\\
+Optimizer residual $\zeta_t$ & Algorithmic & Centering certificate & Pre-action full-objective gradient norm\\
+Operator and CG certificates & Algorithmic & Optimism and solve error & Analytic Loewner and residual proof\\
+Residual-energy envelope & Rate-only & Near-linear scaling & Observable after collection, not policy input\\
+Fixed active rank $r$ & Restrictive & Closes $\gamma_T$ & Supplied subspace, not a terminal audit\\
+Window excitation $\kappa_w$ & Restrictive & Closes $\Lamalg_T$ & Analytic construction or explicit premise\\
 \bottomrule
 \end{tabular}
-\caption{Assumption ledger.  Analytic and pre-action quantities are policy
-available; teacher comparisons and exact whitened quantities are post-hoc only.}
+\caption{Assumption ledger for the legacy one-sided theorem.  Analytic and
+pre-action quantities are policy available; post-reward quantities are used
+only in the theorem statement or its audit.}
 \label{tab:assumptions}
 \end{table}
 
@@ -2284,7 +1451,7 @@ $u_t(a)\ge 1$ such that, for every candidate action $a\in\cA_t$,
 \end{equation}
 \end{assumption}
 
-This is the \emph{only} spectral relation the main theorem needs, and it is
+This is the \emph{only} spectral relation the one-sided fallback theorem needs, and it is
 one-sided: it dominates the predictable frozen-feature width $\bar s_t(a)$
 (the object of the self-normalized confidence bound) by an inflated
 algorithmic width.  No \emph{lower} Loewner factor on $\Calg_t$ is required
@@ -2591,7 +1758,7 @@ $(1-\bar\chi_t)^2\le(1-\chi_t)^2$ and
 $(1+\chi_t)^2\le(1+\bar\chi_t)^2$, proving the certificate version.
 \end{proof}
 
-The main theorem uses only the one-sided bound~\eqref{eq:onesided-C}, which
+The one-sided fallback theorem uses only the bound~\eqref{eq:onesided-C}, which
 holds for \emph{any} $\chi_t\ge0$; the smallness condition
 $\chi_t<1$ is needed only for the lower half of the two-sided
 sandwich~\eqref{eq:drift-sandwich}, which in turn is used by the explicit
@@ -2826,8 +1993,8 @@ outer products, so the $\hat\bC_t\preceq\bC_t$ argument of \Cref{prop:window} do
 not apply and the stale operator can both over- and under-estimate $\bC_t$.  This
 remains a heuristic: \Cref{thm:spectral-distortion} covers it only when a
 one-sided factor $\kappa_{+,t}$ (an explicit bound
-$\hat\bC_t\preceq\kappa_{+,t}\bC_t$) is separately verified, which we evaluate
-empirically.  The rescaled subsample of~(i), with weights $w_s=(t{-}1)/n>1$, is
+$\hat\bC_t\preceq\kappa_{+,t}\bC_t$) is separately certified.  The rescaled
+subsample of~(i), with weights $w_s=(t{-}1)/n>1$, is
 likewise not covered by \Cref{prop:window}; it instead uses the two-sided matrix
 Bernstein bound of \Cref{lem:subsample}.
 
@@ -2860,12 +2027,9 @@ not the on-the-fly JVP/VJP implementation analyzed by this operation count.
 
 Krylov methods for Hessian spectral analysis have been run on networks with
 $>10^8$ parameters under distributed training \citep{granziol2026hessian}, which
-indicates that curvature--vector primitives of this general form are implementable
-at scale.  We do \emph{not} claim foundation-model feasibility from this: that
-work times Hessian--vector products, not the exact per-example GGN JVP/VJP used
-here.  Our real-\texttt{torch.func} study reaches roughly $10^7$ parameters and
-$m=512$ on one accelerator; it does not measure distributed execution or model
-training.
+shows that related curvature--vector primitives can be implemented at that
+scale.  This does not establish feasibility for the exact per-example GGN
+JVP/VJP path analyzed here, nor does it measure end-to-end bandit training.
 Warm-starting CG from the previous round's solution can reduce the
 iteration count in practice.
 
@@ -3751,7 +2915,7 @@ $u_t=(1+\bar\chi_t)^2$.  Only the \emph{stale periodic-refresh} operator
 (\S\ref{sec:curvop}(iii)), which reuses Jacobians from an older parameter, lacks
 a deterministic $\kappa_{+,t}$; there \Cref{thm:spectral-distortion} provides a
 guarantee only when a one-sided bound $\hat\bC_t\preceq\kappa_{+,t}\bC_t$ is
-separately verified, which we evaluate empirically.
+separately certified.
 
 \paragraph{What remains open.}
 The path schedules close the computability gap, but their constants can be
@@ -3773,7 +2937,7 @@ backbone for contextual bandit exploration.  Neural extensions---NeuralUCB
 \citep{zhou2020neural}, NeuralTS \citep{zhang2021neural}, neural-linear
 models \citep{riquelme2018deep}---use different neural feature covariances.
 NeuralUCB and NeuralTS accumulate full neural-gradient Grams in their stated
-algorithms (and diagonalize them in experiments), while NeuralLinear maintains
+algorithms, while NeuralLinear maintains
 Bayesian linear uncertainty over learned last-layer features.  CC-UCB instead
 re-evaluates every replayed Jacobian at the current parameter and accesses the
 resulting full operator implicitly.
@@ -4256,11 +3420,12 @@ no-stored-feature design unless a frozen-feature oracle, replay mechanism, or
 certified sketch is supplied (see the remark after
 \Cref{cor:corrected-center}).
 
-CC-UCB is the analyzed method throughout.
+The remainder of this legacy appendix analyzes the optimizer-centered CC-UCB
+specialization.
 
 
 
-\paragraph{How to read the theorem.}
+\paragraph{How to read the legacy one-sided theorem.}
 The theorem is a transfer result for a general predictable SPD curvature
 sequence.  \Cref{lem:path-certificates,cor:operational} instantiate its
 nonlinear confidence, centering, and feature-transfer inputs from $O(d)$ path
@@ -4328,8 +3493,9 @@ a frozen-feature solve.
 The bound itself does not prove that full curvature yields strictly lower
 regret than diagonal or last-layer methods in any specific regime; it
 provides an upper bound with explicit per-round factors.
-\emph{Demonstrating regret improvement is an empirical hypothesis}
-(\Cref{sec:experiments}).  The theorem exposes the transfer factor $u_t$ and
+\emph{Demonstrating regret improvement requires a separate empirical study.}
+No such confirmatory study is reported here.
+The theorem exposes the transfer factor $u_t$ and
 realized width complexity $\Lamalg_T$ as operator-dependent terms along the
 realized trajectory; it does not identify a causal regret cost because the
 adaptive path and other factors may also change.
@@ -4341,7 +3507,7 @@ data-dependent Fisher weights~$\nabla^2 A(z)$ and is left as future work
 (\Cref{app:expfam}).
 \end{itemize}
 
-\begin{corollary}[Sanity-check: frozen features recover linear UCB]\label{cor:frozen}
+\begin{corollary}[Legacy one-sided sanity check: frozen features recover linear UCB]\label{cor:frozen}
 Suppose the backbone is frozen and the reward head is linear in its
 parameters, the ridge objective is optimized exactly, and take the algorithmic curvature to be the sequential frozen
 Gram matrix, $\Calg_t=\bCbar_t$.  Then:
@@ -4374,461 +3540,22 @@ information gain $\gamma_T$.  The LinUCB form is \Cref{cor:worstcase} with
 $\alpha_t\le\alpha_I$, $u_t=1$, $\omega_t=\bar\beta_t\le\bar\beta_{\max,T}$.
 \end{proof}
 
-
-
-\section{Executed-Policy Audit Protocols}\label{app:new-experiments}
-
-\paragraph{Interpretation and statistics.}
-Primary regret results are generated by online policies executed from scratch.
-Synthetic evaluators know the teacher only to compute pseudo-regret, optimism
-failures, and post-hoc theorem-event checks; the action rule never receives it.  Hyperparameter
-selection, where used, is performed on the declared tuning seeds before evaluation.
-Common random numbers pair methods within an evaluation seed.  We report arithmetic
-means, marginal 95\% Student-$t$ intervals, and paired Student-$t$ intervals for
-method differences.  No multiplicity adjustment is applied, so the intervals are
-descriptive.  Scaling-curve bands instead use pointwise percentile bootstrap
-intervals.  Their slope intervals resample whole seed trajectories, reaverage the
-same five nested prefixes, and refit the specified unweighted OLS model; they
-measure seed sensitivity conditional on that finite grid, not whether a power law
-is appropriate.  An offline common-trajectory diagnostic uses one logged action
-and checkpoint sequence for all operators and is never mixed with online regret.
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/theory_factor_drift.pdf}
-  \caption{Supplementary certificate-tightness and curvature-mechanism overview.
-  Panel (a) compares final-round float64 audit quantities with predictable schedules
-  in the 50-seed tanh execution.  Panel (b) gives paired regret differences in the
-  predeclared curvature phase map.  These are descriptive point audits.}
-  \label{fig:theory-factor-drift}
-\end{figure*}
-
-\begin{table*}[t]
-\centering\small
-\input{tables/theory_scaling_slopes.tex}
-\caption{Five-point OLS diagnostics for every method at $d=2048$.  Slope
-brackets are obtained from 2,000 paired resamples of whole seed trajectories.
-$R^2$ and maximum absolute log residual describe the fit to the five selected
-prefix means; they are not tests of a power-law model or asymptotic exponents.}
-\label{tab:theory-scaling-slopes}
-\end{table*}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/theory_scaling_full_grid.pdf}
-  \caption{Legacy finite-horizon scaling diagnostic retained for disclosure.
-  The first panel is the event-clean $d=128,r=4$ reference; remaining panels use
-  $d=2048$.  Labels report the conjunction of float64 event fields.  Failed cells
-  are not interpreted as tests of \Cref{thm:growing-window}; the main replacement
-  is the premise-clean construction in \Cref{fig:certified-scaling}.}
-  \label{fig:theory-scaling-full-grid}
-\end{figure*}
-
-\begin{table*}[t]
-\centering\small
-\input{tables/theory_scaling_full_grid.tex}
-\caption{Legacy scaling summary.  Panel (a) reports terminal mean regret; panel
-(b) decomposes failed float64 fields by method.  O is the prescribed optimizer
-envelope, $P_e$ the path bound using excitation, and $P_\lambda$ the damping path
-bound.  Any nonzero entry precludes a theorem-test interpretation.}
-\label{tab:theory-scaling-full-grid}
-\end{table*}
-
-The legacy grid uses a predeclared $\zeta_t=10^{-6}$ and at most 40 optimizer
-iterations rather than enforcing the envelope.  Its full CG row is also a
-one-step diagonal-basis equivalence test.  Non-diagonal active-coordinate widths
-are ambient-invariant in exact arithmetic, while the coordinate-diagonal control
-depends on the embedding.  These limitations motivated the rotated replacement;
-the legacy slopes in \Cref{tab:theory-scaling-slopes} remain descriptive only.
-
-\input{../tables/generated/certified_scaling_fits.tex}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=.72\textwidth]{figures/spectral_tail_decisions.pdf}
-  \caption{Decision effects of discarded spectral directions over all 24
-  predeclared rank/power/alignment cells.  The horizontal coordinate measures
-  alignment of the decision margin with the discarded tail.  Regret differences
-  are paired by evaluation seed and compare rank truncation with exact full; the
-  figure is a mechanism diagnostic, not a dominance claim.}
-  \label{fig:spectral-tail-decisions}
-\end{figure*}
-
-\begin{table*}[p]
-\centering\scriptsize
-\input{../tables/generated/spectral_tail_summary.tex}
-\caption{Complete displayed-rank ($r=8$) spectral-tail summary at $T=4096$.
-All six power/alignment regimes and all seven methods are retained.  The
-disagreement column is the common-trajectory top-score diagnostic; online regret
-comes from independently executed paired policies.}
-\label{tab:spectral-tail-summary}
-\end{table*}
-
-\begin{table*}[t]
-\centering\small
-\input{tables/executed_policy_results.tex}
-\caption{Supplementary executed-policy summary.  Tanh rows use one fixed
-theoretical configuration; balanced rows are selected only on tuning seeds and
-rerun on disjoint evaluation seeds.  Float64 event checks are not verified
-enclosures, and balanced rows are uncertified performance comparisons.  Measured
-run times are resource accounting under each executed implementation, not a
-controlled speed or matched-wall-clock comparison.}
-\label{tab:executed-policy-results}
-\end{table*}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/offdiagonal_witness.pdf}
-  \caption{Off-diagonal linear-Gram witness.  The analytic cell is constructive;
-  the noisy cells are uncertified extensions.  Paired differences are descriptive
-  and establish no uniform ordering of curvature surrogates.}
-  \label{fig:offdiagonal-witness}
-\end{figure*}
-
-\begin{table*}[t]
-\centering\small
-\input{tables/offdiagonal_witness.tex}
-\caption{Executed analytic off-diagonal linear-Gram witness by horizon.  Every value is
-generated from the provenance-validated derived artifact; fitted slopes are
-finite-horizon diagnostics.}
-\label{tab:offdiagonal-witness}
-\end{table*}
-
-\paragraph{Predictable tanh execution.}
-The analytically bounded tanh instance is
-$\mu_\theta(x,a)=\tanh(\phi(x,a)^\top\theta)$ with $d=6$, four actions,
-$\|\phi\|\le0.75$, Gaussian noise $\sigma=0.20$, teacher radius $S=0.35$,
-and an optimizer projected to radius $0.50$.  We use the global constants
-$G=0.75$ and $L_g=L_\mu=4(0.75)^2/(3\sqrt3)$, $\lambda=1$,
-$\delta=0.05$, eight clipped gradient steps per round, and a CG energy target
-$0.05$ with the analytic condition bound
-$1+(t-1)G^2/(\lambda\sigma^2)$.  At every round the policy records $Q_t$,
-$R_t^{\rm col}$, $\bar F_t$, $\hat\gamma_t$, $\bar\chi_t$, $\bar M_t$,
-$\bar\psi_t$, $\bar\beta_t$, the optimizer gradient norm, all candidate
-residuals, and whether any post-hoc exact check fails.  No post-hoc field is
-read by action selection.  Seeds 60--69 run a predeclared eight-cell
-one-factor sensitivity grid; the fixed reference configuration is rerun from
-scratch on evaluation seeds 160--209 for both centers.  The 50-seed means and
-intervals in \Cref{sec:factorial-audit} come only from those evaluation runs.
-
-\paragraph{Linear theorem-event audit.}
-The context is $x\in\{-1,+1\}^8/\sqrt8$, there are five actions, and
-$\phi(x,a)=[x,e_a,x\otimes e_a]$ has dimension 53 and norm $\sqrt3$.  The fixed
-teacher contains shared, arm-intercept, and context--arm interaction blocks; exact
-enumeration of all $2^8$ contexts confirms that multiple arms are optimal.  Noise
-is $\mathcal N(0,0.25^2)$.  Evaluation uses seeds 100--119 after tuning on seeds
-0--9.  The tuning grid is $\lambda\in\{0.5,1,2\}$ and
-$\cbonus\in\{1,1.25\}$; a candidate is eligible only if every tuning run passes
-the recorded confidence and small-scale numerical checks.  Fresh
-evaluation policies use dense full Gram, CG full Gram, diagonal, window 64,
-rescaled subsample 64, rank-16 Lanczos--Ritz, and refresh period 20.  The CG target
-is 0.05 with at most 106 iterations.  Fixed-reference and independently tuned
-comparisons are both saved.
-
-\paragraph{Linear policy checks and bound scale.}
-The implemented base radius is
-\[
- \beta_t^{\rm base}=
- \sqrt{d\log\!\left(1+\frac{(t-1)G^2}{d\lambda\sigma^2}\right)
-       +2\log(1/\delta)}+\sqrt{\lambda}\,S,
- \qquad
- \bar\beta_t=\cbonus\beta_t^{\rm base},\quad \cbonus\ge1,
-\]
-with $d=53$, $G=\sqrt3$, $S=\|\theta^*\|_2$, and $\delta=0.05$; hence tuning
-$\cbonus\in\{1,1.25\}$ can only inflate the valid radius.  Because
-$\bar\psi_t=0$, the policy uses $\omega_t=\bar\beta_t$.  Dense, CG, unrescaled
-window, and stale-refresh policies use the analytic factor $u_t=1$.
-Diagonal, rescaled-subsample, and Lanczos policies materialize dense float64 small
-matrices before action selection and use
-$u_t=\max\{1,(1+32\epsilon_{\rm mach})
-\lambda_{\max}(\bar C_t^{-1/2}\mathcal C_t\bar C_t^{-1/2})\}$.
-The multiplicative $1+32\epsilon_{\rm mach}$ is a heuristic inflation, not a
-verified rounding-error enclosure.  The CG policy likewise sets
-$\bar\kappa_t$ to a float64 point estimate of
-$\operatorname{cond}(\mathcal C_t)$ before action selection and enforces
-$\bar\varepsilon_t=0.05$ using
-relative residual target $\bar\varepsilon_t/\sqrt{\bar\kappa_t}$; the other
-policies have $\bar\varepsilon_t=0$.  These pre-action computations are
-deterministic conditional on each seeded operator draw, but predictability does
-not turn an unenclosed point estimate into an upper certificate.  The analytic
-$u_t=1$ transfer statements for dense full Gram, unrescaled window, and
-stale-refresh are unaffected; diagonal, rescaled-subsample, Lanczos, and full-Gram
-CG remain numerical audits of theorem semantics rather than certified executions.
-Tuning-run event checks are a selection gate, not the mathematical basis of the
-evaluation checks.  The machine-readable per-policy trace is
-\nolinkurl{results/derived/certification_audit.json}.
-
-\begin{table}[t]
-\centering\small
-\input{tables/linear_bound_ratios.tex}
-\caption{Fixed-reference linear RHS-to-regret ratio
-$\mathrm{RHS}/R_T$.  The JSON artifact also records $R_T$, RHS, $R_T/T$, and
-RHS$/T$ at every horizon for both fixed and tuned configurations.  Every displayed
-RHS exceeds $T$ times the exact maximum one-round pseudo-regret $0.8118$ on the
-finite context support, so the reported RHS values are numerically vacuous.  For
-the four affected policies they are not rigorously certified bounds because their
-spectral point estimates lack verified upper enclosures.}
-\label{tab:linear-bound-ratios}
-\end{table}
-
-\paragraph{Nonlinear drift stress test.}
-The teacher and student are one-hidden-layer width-four tanh networks with four
-inputs, five outputs, and 45 displacement parameters.  They share the initialized
-backbone, making the exact frozen-head ridge solve a 25-parameter linear regime.
-Full-network regimes use respectively $(\text{learning rate},\text{updates},
-\text{step cap})=(0.002,2,0.005),(0.004,3,0.020),(0.008,4,0.080)$.
-Each original- or corrected-center policy executes for 100 rounds on seeds 110--129
-with a fixed, time-only schedule; no evaluation-seed tuning occurs.  Dense float64
-replay computes $E_T,F_T$, the dense-reference centering ratio and primitive
-$\psi_t$, $\chi_t$, generalized transfer factors, condition numbers,
-dense-reference and residual-based CG errors, $\Lamalg_T$, endpoint log determinant,
-$\Valg_T$, $\Gamdyn_T$, and
-all-action optimism failures.  Policy-available and post-hoc fields are separated
-in every JSONL record.  The corrected-center identity is checked directly.
-
-A secondary post-hoc analysis across the eight dependent regime--center cell means gives
-descriptive Spearman correlation $0.83$ between the post-hoc decomposition score
-and regret, versus $0.57$ for relative curvature change.  With $n=8$, reused
-seeds, and no seed-level sensitivity or inferential analysis, this is neither a
-primary result nor a causal or inferential claim.  This stress test is secondary
-to the predictable tanh execution because its schedules fail.
-
-\paragraph{Predeclared curvature-mechanism map.}
-The fixed-gap bounded-linear family has $d=10$, four actions, $T=30$, and
-Gaussian noise $0.2$.  Its eight-cell fractional design crosses active-spectrum
-condition number $\{3,50\}$, rotation $\{0,60^\circ\}$, action gap
-$\{0.15,0.50\}$, nuisance strength $\{0.4,1.2\}$, effective rank
-$\{3,8\}$, and damping $\{0.5,2\}$ according to the generators stored in
-the configuration; all cells are fixed before execution and no tuning is run.
-Exact full, residual-checked full CG, diagonal, block-diagonal, rank-three
-Lanczos, window-eight, and refresh-period-five policies execute independently
-on seeds 200--229.  The exact-full trajectory is additionally replayed through
-every operator.  These common-trajectory records contain per-action width ratios,
-cross-action coefficient of variation, Spearman and Kendall ranks, raw and
-scalar-rescaled top-score disagreement, normalized decision-margin distortion,
-candidate-gradient alignment with retained and discarded eigenspaces, global and
-action-set transfer, effective rank, and condition number.  Paired intervals are
-method-minus-exact-full; they are descriptive and unadjusted across cells.
-
-\paragraph{Coverage-matched extension.}
-The extension retains the same eight cells and operator settings, but adds
-tuning seeds 2000--2019 and evaluation seeds 2100--2149.  Coefficients are
-pooled over every tuning cell, never selected per evaluation cell.  The three
-protocols use an identical theoretical coefficient, the empirical 95th
-percentile of all one-step prediction-error/width ratios, or the ratio needed to
-match the full operator's mean bonus on common tuning trajectories.  The latter
-two coefficients are frozen before any evaluation run.  Holm adjustment is over
-all $3\times8\times7=168$ prespecified surrogate comparisons.  Each marginal
-$p$-value comes from a two-sided paired Student-$t$ test of the 50 seed-level
-terminal-regret differences; Holm controls familywise error at $0.05$.  For zero
-variance, an identically zero difference is assigned $p=1$ and a constant nonzero
-difference the limiting value $p=0$.  Because this is
-a fixed-feature linear model, current and historical full-Gram rows are
-algebraically identical.  An official recursive LO-FI implementation is not
-included because the repository lacks a compatible recursive-precision
-implementation; the seventh surrogate is the batch-refit low-rank-plus-diagonal
-LO-FI-style control described in \Cref{sec:operator-cg-audit}.
-
-\begin{table}[t]
-\centering\small
-\input{../tables/generated/coverage_matched_calibration.tex}
-\caption{Tuning-selected scalar multipliers for the coverage-matched operator
-study.  Evaluation outcomes are not used to select these values.}
-\label{tab:coverage-matched-calibration}
-\end{table}
-
-\input{../tables/generated/coverage_matched_comparisons.tex}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{figures/coverage_matched_heatmaps.pdf}
-  \caption{Full-grid evaluation coverage and top-action disagreement under all
-  three frozen calibration protocols.  These are independently executed policy
-  diagnostics, not causal operator effects.}
-  \label{fig:coverage-matched-heatmaps}
-\end{figure*}
-
-\paragraph{Balanced contextual benchmark.}
-Normalized Rademacher contexts have dimension four, five available actions, and
-Gaussian noise $0.10$; exact enumeration of the 16 contexts verifies that every
-arm is optimal somewhere.  Each method selects $(\lambda,\cbonus)$ from
-$\{0.5,1\}\times\{0.5,1,2\}$ by mean pseudo-regret over tuning seeds 70--79
-at $T=80$, then runs from scratch for $T=200$ on seeds 260--289 with shared
-contexts and reward noise.  Full-network methods use the same width-four tanh
-backbone, one clipped float64 update per round, learning rate $0.01$, and model
-ridge $0.01$.  The CC-UCB row relinearizes all selected historical samples at
-the current parameter and solves one fixed full-GGN operator per action with
-explicit residual checks.  The local NeuralUCB row is the historical-time
-full-network gradient-Gram baseline: it stores each selected gradient at its
-collection parameter rather than relinearizing it.  NeuralLinear is a Bayesian Gaussian head on the
-frozen initialized representation; the frozen-last-layer row uses the same
-posterior with a UCB rule.  NeuralUCB and NeuralTS are identified as local
-matched implementations rather than exact reproductions of every published
-training detail.  The one-sample clipped updates do not optimize
-\eqref{eq:erm} or certify its full-gradient residual, so these benchmark rows
-are practical comparisons rather than theorem instantiations.  LinUCB, linear Thompson sampling, diagonal full-network UCB,
-greedy, Gaussian UCB1, and Gaussian context-free Thompson sampling complete the
-comparison.  Arithmetic means, marginal intervals, paired differences, selected
-hyperparameters, run times, and all seed-level records are retained.
-
-\paragraph{Secondary operator and CG audits.}
-The operator factorial varies windows 16/64, uniform resamples 16/64, Lanczos ranks
-4/16, and refresh periods 5/20 in addition to full, frozen, and diagonal operators.
-On both the bounded linear task and the medium-drift, corrected-center tanh task,
-twenty online evaluation seeds (120--139) and matching offline common trajectories
-record exact global and action-set transfer, widths, disagreement, determinant
-terms, regret, runtime, and memory.  The nonlinear policies use the fixed schedule
-and remain post-hoc audits rather than certified executions.  The CG audit uses
-$d=64,n=256,K=5$, condition
-numbers 10/100/1000, five target errors, two initializations, and two
-preconditioners on seeds 130--139.  Its solver audit contains 600,000 dense-reference
-action solves; its separate policy audit executes 200 full-enumeration linear-bandit
-policies for 200 rounds with the same five tolerances and start/preconditioner
-factorial.  Unlike the one-step scaling construction, the rotated-SPD right-hand
-sides exercise nontrivial Krylov convergence.  At target energy error $0.1$ with
-zero start and no preconditioner, mean iteration counts are $6.026$, $22.643$,
-and $55.043$ for condition numbers $10$, $10^2$, and $10^3$; mean measured
-energy errors are $2.23\times10^{-2}$, $6.87\times10^{-3}$, and
-$2.45\times10^{-3}$, and mean relative width errors are
-$2.54\times10^{-4}$, $2.43\times10^{-5}$, and $3.28\times10^{-6}$.
-The residual certificate is at most the prescribed $0.1$ in every retained
-solve.  These solver audits do not establish a method-speed advantage or a
-policy benefit.
-
-\paragraph{Systems audit.}
-Five evaluation seeds (140--144) cross
-$d\in\{32,64,128\}$, $n\in\{32,128,512\}$, $K\in\{5,10\}$, and
-$I\in\{5,15,30\}$.  We measure dense exact, separate full CG, diagonal,
-final-coordinate block, Lanczos--Ritz, row-batched independent CG, and
-row-batched Jacobi-PCG.  Every action retains its own original-system residual;
-batched methods share only the operator evaluation.  An additional matrix-free
-CPU grid uses $d\in\{512,2048,8192\}$, $n=32$, $K=4$, and $I=16$ for the
-two batched solvers, with no dense allocation.  Records include wall time, host
-memory, operator calls, equivalent sample CVPs, per-action iterations and
-residuals, and width error.  These are synthetic float64 operator timings on one
-CPU host and use different computational primitives.  The timed operator stores
-an $n\times d$ random-feature matrix and applies an averaged Gram; it does not
-time model training or on-the-fly network JVP/VJP.  Timings are descriptive
-resource accounting under the executed implementations, not matched-wall-clock
-comparisons; no trained-network or accelerator extrapolation is made.  The
-Jacobi diagonal is fixed during each solve, so its recurrence is the symmetric
-transformed PCG of \Cref{lem:pcg}.  We report its measured iterations and make
-no unproved claim that Jacobi improves the transformed condition number.  A
-Buck-managed Conda toolchain runs a separate real-\texttt{torch.func}
-pipeline.  All 360 predeclared evaluation cells complete for the 131,841- and
-9,972,737-parameter MLPs.  At $m=512$, $K=10$, and target residual $10^{-3}$,
-mean batched-CG times are 0.0395 and 0.5674 seconds with peak allocated
-accelerator memory 0.126 and 4.219 GiB, respectively.  The corresponding
-separate-CG times are 0.2101 and 0.7532 seconds.  On the small model, the strict
-target's upper 95\% aggregate bound on maximum relative squared-width error is
-$9.38\times10^{-5}$; one of the prespecified groups has top-action and complete
-rank agreement 0.9 because a near tie changes order.  The large model has no
-explicit-Jacobian reference.  \Cref{fig:autodiff-ggn-accuracy} and
-\Cref{tab:autodiff-ggn-summary} report the full accuracy and resource audit.
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=0.82\textwidth]{figures/autodiff_ggn_accuracy.pdf}
-  \caption{Accuracy diagnostics for the real-autodiff GGN study.  Dense
-  energy/width errors are available only for the 131,841-parameter model; no
-  reference value is imputed for the larger model.}
-  \label{fig:autodiff-ggn-accuracy}
-\end{figure}
-
-\begin{table}[p]
-  \centering\scriptsize
-  \caption{Real-autodiff resource summary at $m=512$, $K=10$, and target
-  original-system residual $10^{-3}$.  Values are evaluation-seed means of the
-  timed primitive; the explicit reference is intentionally skipped for the
-  larger model.}
-  \label{tab:autodiff-ggn-summary}
-  \input{../tables/generated/autodiff_ggn_summary.tex}
-\end{table}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=0.78\textwidth]{figures/mnist_contextual_compute.pdf}
-  \caption{Balanced-MNIST terminal regret versus contention-affected per-policy
-  wall time.  The online model has 85 parameters and dense full-Gram solves, so
-  this figure is not a matrix-free scalability comparison.}
-  \label{fig:mnist-contextual-compute}
-\end{figure}
-
-\subsection{Covertype real-data baseline audit}\label{sec:covertype-rerun}
-We use UCI Covertype DOI \texttt{10.24432/C50K5N} via scikit-learn 1.9.0; the
-cached dataset checksum is
-\nolinkurl{eeab5db05bb3a9c00c62ced4c7d13112a00cd3487f59ac1943aaf5983d7c3ddf}.
-A PCG64 permutation with seed 20260717 creates non-stratified train/validation/test
-counts 348,607/116,202/116,203.  Training means and scales standardize columns
-0--9; binary columns 10--53 are unchanged.  A width-four tanh network is initialized
-from seeded fan-in normals and optimized by one online SGD step (learning rate 0.01,
-ridge 1) using only selected-arm feedback.  Full-GGN, frozen-Gram, diagonal, and
-greedy policies train all 255 parameters; last-layer policies train 35 head
-parameters.  This one-sample update is not the full-history objective
-\eqref{eq:erm} and supplies no optimizer-residual certificate.  Damping
-$\{1,10\}$ and bonus $\{1,2,4\}$ are selected on validation
-seeds 50--59; greedy fixes bonus zero.  Evaluation seeds 150--159 use test contexts
-only after selection.  CG uses zero initialization, relative residual $10^{-3}$,
-at most 80 iterations, and one fixed operator per solve.  The selection artifact and
-its validation evidence are SHA-256 committed inside every evaluation manifest.
-
-The exact test-split label counts are
-$(42267,56737,7221,536,1902,3444,4096)$, giving a label-2 majority rate
-$0.488258$.  Uniform random has exact expected accuracy $1/7=0.142857$.
-The fixed majority arm is a whole-test-label oracle diagnostic, not a deployable
-policy.  We add deployable context-free UCB1 (one forced pull per arm, then
-$\hat\mu_a+\sqrt{2\log t/N_a}$) and independent Beta$(1,1)$--Bernoulli Thompson
-sampling.  All eight executed methods share evaluation seeds and context order.
-
-\begin{table*}[t]
-\centering\small
-\input{tables/covertype_horizon_results.tex}
-\caption{Covertype evaluation-seed means, shown as cumulative pseudo-regret /
-accuracy.  Contextual hyperparameters are selected only on validation seeds;
-UCB1 and Thompson sampling are parameter-free.  Per-horizon marginal and paired
-95\% Student-$t$ intervals, runtimes, policy types, and certification status are
-in \nolinkurl{results/derived/covertype_horizon_results.json}.}
-\label{tab:covertype-horizons}
-\end{table*}
-
-Both non-contextual policies beat every contextual method at every horizon.  At
-$T=1500$, UCB1 and Thompson sampling have regret $895.6$ and $802.6$ (accuracy
-$0.403$ and $0.465$), while full GGN-CG has $1189.7$ ($0.207$).  Their paired
-method-minus-full differences are $-294.1$ $[-388.1,-200.1]$ and
-$-387.1$ $[-479.3,-294.9]$.  Full and diagonal last-layer policies have regret
-$1273.1$ and $1274.9$ (accuracy $0.151$ and $0.150$).  Mean complete-run times
-at $T=1500$ are $5.665$ seconds for full GGN-CG, $0.602$ for diagonal
-full-network, $0.007$ for UCB1, and $0.017$ for Thompson sampling.  No method is
-theorem-certified: binary rewards are routed through Gaussian squared-loss
-curvature.  The full-GGN CG calls reach their relative-residual rule, but no
-energy-error certificate is supplied, so they are not called solver-certified.
-This study is a failed baseline check, not external validation of
-curvature-aware exploration.
-
-\paragraph{Environment and artifacts.}
-All reported new runs used CPython 3.14.0 on one arm64 host with 16 logical CPUs,
-64 GiB physical memory, Darwin 25.5.0, and no accelerator.  Core versions are NumPy
-2.5.1, SciPy 1.18.0, matplotlib 3.11.0, psutil 7.2.2, and scikit-learn 1.9.0.
-Each run directory contains the resolved configuration, seed, UTC timestamp, Git
-revision and dirty flag, package and hardware record, raw per-round JSONL, and a
-summary.  Derived JSON, CSV, table, and figure artifacts carry SHA-256 sidecars
-linking them to the aggregate and raw inputs.
-
 \begin{corollary}[Looser worst-case reduction]\label{cor:worstcase}
 If $\alpha_t\le\alpha_{\max}$, $u_t(a_t)\le u_{\max}$, and
 $\omega_t\le\omega_{\max}$ for all $t\le T$, then
-$S_T\le\alpha_{\max}^2 u_{\max}\omega_{\max}^2\,T$
-and
+$S_T\le\alpha_{\max}^2 u_{\max}\omega_{\max}^2T$ and
 \[
-  R_T \;\le\; 2\,\alpha_{\max}\,\omega_{\max}\,\sqrt{u_{\max}}\,
-  \sqrt{(\sigma^2+G^2/\lambda)\,T\,\Lamalg_T}\;+\;2E_T .
+  R_T \;\le\; 2\alpha_{\max}\omega_{\max}\sqrt{u_{\max}}
+  \sqrt{(\sigma^2+G^2/\lambda)T\Lamalg_T}+2E_T .
 \]
-This $\sqrt{T\,\Lamalg_T}$ form recovers the familiar worst-case expression;
-it is weakly looser than~\eqref{eq:regret-bound} (no tighter, with equality when
-the per-round factors are constant) and is \emph{not} the main result.
+This $\sqrt{T\Lamalg_T}$ form is weakly looser than
+\eqref{eq:regret-bound}, with equality when the per-round factors are constant.
+It is recorded only as a legacy reduction, not as the main result.
 \end{corollary}
 
-\section{Proof of \texorpdfstring{\Cref{thm:regret}}{the main regret theorem}}\label{app:proof}
+
+
+\section{Proof of the one-sided dynamic theorem}\label{app:proof}
 
 We recall the key objects:
 $\bg_s(\bx,a)=\nabla_{\btheta}\mu_{\btheta_s}(\bx,a)$ (frozen features),
@@ -5038,7 +3765,8 @@ iterations per solve---i.e.\ $I=O(\sqrt{t}\,\log(1/\epsCGbar))$ suffices under t
 bound (this is an upper-bound certificate, not a lower bound on the number of
 iterations CG actually needs).
 CG may converge faster than this worst-case certificate suggests under favorable
-spectral clustering of~$\Calg_t$; the realized iteration counts would be measured empirically.
+spectral clustering of~$\Calg_t$; the theorem does not predict realized iteration
+counts.
 
 \section{Two-Sided Spectral-Distortion Corollary}\label{app:cor}
 
@@ -5187,37 +3915,22 @@ for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
 Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
 Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 
+\input{legacy_experiments}
+
 \section{Broader Impact}\label{app:impact}
 Exploration can expose users to under-vetted actions and amplify feedback loops.
 Deployment requires safety constraints, action filters, offline evaluation, and
 online monitoring; the regret certificates here do not establish safety.
 
 \section{Data and Code Availability}\label{app:availability}
-The repository contains the Buck pipeline, tests, artifact scripts, validated
-legacy derived results, the retained $d=128,r=4$ slice, and deterministic
-reproduction entry points for the spectral-tail, premise-clean scaling,
-real-autodiff, scaled-tanh, and positive-gap studies.  Those full grids have run;
-their validated derived aggregates, generated figures, tables, hashes, and
-provenance records are in the reviewed tree, while their seed-level raw
-directories remain outside Git.  The deterministic 4.43~GB scaled-tanh bundle
-contains 8,000 runs and 48,002 files; its complete inventory and SHA-256 are
-tracked, but the archive payload is intentionally outside Git.  Those artifacts
-record the failed theorem-event criterion rather than a theorem-instantiation
-claim.  The full Wheel run terminated during tuning after solver-residual
-failures; no full-profile evaluation policy ran, and its smoke profile is not
-paper evidence.  The 2.1~GB legacy scaling tree and historical inputs outside Git
-are absent, so not every legacy raw-derived chain is reproducible.  Public
-dataset caches are optional local accelerators rather than release requirements;
-the builder packages loaders/configurations and sanitizes identities and
-hashes/provenance without depending on a specific scikit-learn cache layout.
-Covertype is CC BY
-4.0 (DOI \texttt{10.24432/C50K5N}) \citep{blackard1998covertype}.  The autodiff
-study status is \texttt{full\_evaluation}: 360 cells over ten fixed evaluation
-seeds completed with no skipped cell under the 24-accelerator-hour cap.
-The balanced-MNIST study is \texttt{full\_evaluation}: canonical archives pass
-their published checksums, both online pools are exactly class-balanced, and all
-480 tuning plus 240 evaluation policies complete.  The ignored local cache is
-not a clean-checkout fixture; the public download path is retained.  No public
-raw-bundle URL is claimed.
+The repository contains the manuscript, theory derivations, implementation,
+tests, experiment configurations, artifact generators, and legacy derived
+outputs with recorded hashes and provenance sidecars.  The manuscript does not
+use the legacy experiments as evidence for \Cref{thm:transported-ucb}; their
+scope is summarized in \Cref{app:legacy-evidence}.  Several seed-level raw
+payloads, including the full scaled-tanh archive, are stored outside the compact
+Git checkout.  Their inventories and digests are tracked, but no public
+raw-bundle URL is claimed.  Generated artifacts removed from the paper remain
+unchanged in the repository.
 
 \end{document}

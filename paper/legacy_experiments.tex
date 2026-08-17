@@ -1,0 +1,88 @@
+\section{Legacy empirical evidence and scope}
+\label{app:legacy-evidence}
+
+The repository contains several studies designed for the earlier
+optimizer-centered, one-sided dynamic theorem.  They are retained as scientific
+record, not as empirical validation of \Cref{thm:transported-ucb}.  None executes
+the headline exponential transported score while recording a predictable
+$\bar D_t$, a certified two-sided operator pair $\kappa_{-,t},\kappa_{+,t}$,
+all-domain solver upper validity, played-action sharpness, and the resulting new
+regret bound.  Most detailed figures, comparison tables, and protocol
+chronologies have therefore been removed from the manuscript.  The two compact
+tables below and the remaining generated files retain their original provenance.
+
+\paragraph{Corrected-center and local-transport traces.}
+The scaled-tanh and bounded-tanh studies record corrected centers, frozen
+information gain, path statistic $Q_t$, exact-current widths, and dense or CG
+solver diagnostics.  They used scalar-link or additive local scores rather than
+the exponential score in \eqref{eq:transported-score-new}.  Their reported
+PASS/FAIL fields refer only to the legacy theorem event.  In particular,
+optimizer and small-drift fields removed from the new headline theorem cannot be
+used to declare the revised event failed.  The tracked scaled-tanh aggregate is
+insufficient for a revised corrected-center analysis because the required
+per-round payload is stored in an external raw bundle.  Restoring that bundle
+would permit a post-hoc audit of the local-small-drift premises and of whether
+the executed score matches the revised local score.  It would not establish that
+compatibility by itself.  The headline exponential score requires a new policy
+execution.
+
+\paragraph{Exact-linear and solver sanity checks.}
+In the fixed-feature linear studies, the dense exact-current and full-CG rows
+exercise the specialization $\bar D_t=0$.  The dense row checks the LinUCB
+reduction; the full-CG row checks original-operator residual logic and float64
+all-action width agreement against dense solves.  These are algebra and
+implementation diagnostics, not verified numerical enclosures.  They do not
+test nontrivial metric transport.  Approximate-operator
+rows record upper comparisons or point generalized eigenvalues, not a reportable
+positive lower certificate $\kappa_{-,t}$.
+
+\begin{table}[t]
+  \centering\small
+  \input{tables/linear_bound_ratios.tex}
+  \caption{Legacy fixed-reference linear right-hand-side to regret ratios.
+  These values audit the earlier theorem and show numerical vacuity; they are
+  not evaluations of the revised bound.  Rows using unenclosed spectral or
+  condition-number point estimates are not rigorous legacy certificates either.}
+  \label{tab:compact-linear-bound-ratios}
+\end{table}
+
+\paragraph{Nonlinear path and operator mechanisms.}
+The nonlinear drift audit directly checks the corrected-center identity and
+records replay-path statistics, but its schedules fail and its scores predate
+the revised theorem.  Off-diagonal and operator-ablation studies provide
+diagnostic examples in which operator approximation error, width distortion,
+action disagreement, and regret do not share a total ordering.  They motivate
+separating the three metrics in \Cref{sec:abstract-transport}; they are not
+theorem instantiations.  The spectral-tail study's
+\texttt{rank\_truncation} control explicitly sets discarded-coordinate widths
+to zero.  That control cannot be represented by a finite SPD operator satisfying
+\eqref{eq:operator-sandwich-new}.
+
+\paragraph{Autodiff feasibility.}
+The real-\texttt{torch.func} study demonstrates JVP/VJP application of a GGN
+primitive and records residual, operator-call, time, and memory diagnostics.
+It measures isolated linear-algebra primitives rather than a transported-UCB
+policy.  The larger model has no dense reference oracle.  The study therefore
+supports implementation feasibility only.
+
+\begin{table}[t]
+  \centering\scriptsize
+  \caption{Legacy real-autodiff resource audit at history size $512$, ten
+  actions, and iterative-solver target original-system residual $10^{-3}$.
+  Values summarize the isolated primitive; no dense-reference accuracy is
+  imputed for the larger model.}
+  \label{tab:compact-autodiff-summary}
+  \input{../tables/generated/autodiff_ggn_summary.tex}
+\end{table}
+
+\paragraph{Negative and incomplete benchmarks.}
+The balanced synthetic comparison does not establish a full-curvature advantage.
+The MNIST study remains near its context-free baseline, and Covertype fails its
+contextual baseline gate.  None of these three benchmarks executes the corrected
+transported score or records the revised certificates.  The Wheel study
+terminated during tuning and
+has no reportable evaluation.  These outcomes remain available in the artifact
+record, but detailed benchmark plots and tables do not contribute to the present
+theory-first paper.
+
+\FloatBarrier

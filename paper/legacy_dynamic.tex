@@ -1,0 +1,505 @@
+\section{One-sided dynamic fallback: original setup}
+\label{app:one-sided-fallback}\label{sec:problem}
+This appendix preserves the earlier Gaussian/squared-loss, finite-action route.
+It remains applicable when only one-sided operator transfer is available, but
+its dynamic realized-width term is not the paper's headline closed guarantee.
+The optimizer-centered policy is retained as a secondary specialization.
+
+We present the problem setup for the \emph{Gaussian/squared-loss}
+instantiation, which is the setting analyzed in \Cref{thm:regret}.
+An extension to exponential-family likelihoods is discussed in
+\Cref{app:expfam}.
+
+\paragraph{Protocol.}
+At each round $t=1,\dots,T$ the learner observes a context
+$\bx_t\in\mathcal{X}$ and a finite action set~$\cA_t$.  It selects
+$a_t\in\cA_t$ and observes a stochastic reward
+\begin{equation}\label{eq:reward}
+  r_t \;=\; \mu^*(\bx_t, a_t) + \eta_t, \qquad
+  \eta_t \text{ is } \sigma\text{-sub-Gaussian},
+\end{equation}
+where $\mu^*:\mathcal{X}\times\mathcal{A}\to\R$ is the unknown mean reward.
+The goal is to minimize cumulative regret
+$R_T = \sum_{t=1}^{T}\bigl[\mu^*(\bx_t,a_t^*) - \mu^*(\bx_t,a_t)\bigr]$,
+where $a_t^* = \argmax_{a\in\cA_t}\mu^*(\bx_t,a)$.
+We assume $|\cA_t|\le A_{\max}$ deterministically for all~$t$.
+
+% [filtration construction -> app:deferred]
+\paragraph{Reward model and parameterization convention.}
+We fix a pretrained initialization $\btheta_0\in\R^d$ and parameterize the model
+by the \emph{displacement} $\btheta\in\R^d$ from it: the deployed predictor is
+$\mu_{\btheta_0+\btheta}(\bx,a)$, and we abbreviate
+$\mu_{\btheta}(\bx,a):=\mu_{\btheta_0+\btheta}(\bx,a)$ throughout.  The initial
+displacement is $\btheta_1=\mathbf 0$ (the deployed model starts at the pretrained
+weights $\btheta_0$).  With this convention the ridge penalty below is a penalty
+on the \emph{displacement from the pretrained weights}, not a zero-centered prior
+on the raw weights, and the realizability radius $S$ bounds
+$\|\btheta^\star\|=\|\btheta^\star_{\mathrm{orig}}-\btheta_0\|$, the distance of
+the true parameter from the pretrained initialization.
+Define the regularized loss at round~$t$:
+\begin{equation}\label{eq:erm}
+  \cL_t(\btheta)
+  \;:=\;
+    \frac{1}{2\sigma^2}\sum_{s=1}^{t-1}
+      \bigl(r_s - \mu_{\btheta}(\bx_s,a_s)\bigr)^2
+    \;+\; \frac{\lambda}{2}\|\btheta\|^2 .
+\end{equation}
+We write $\btheta_t$ for the parameter returned by the warm-started
+optimizer on~$\cL_t$.
+Let $\mathcal D_{t-1}:=\{(\bx_s,a_s,r_s):s<t\}$ and
+$N_t:=|\mathcal D_{t-1}|=t-1$.  Equation~\eqref{eq:erm} is a
+\emph{full-history} objective.  The curvature replay set
+$\mathcal S_t\subseteq\{1,\ldots,t-1\}$ and its size
+$m_t:=|\mathcal S_t|$ affect $\Calg_t$, but do not replace
+$\mathcal D_{t-1}$ in~\eqref{eq:erm}.  Thus a generic full-batch evaluation of
+$\nabla\cL_t$ replays $N_t$ observations even when $m_t\ll N_t$.
+In convex settings (e.g.\ a frozen backbone with a linear head), under exact
+optimization this coincides with the global minimizer; in nonconvex settings $\btheta_t$
+may be a local minimizer or approximate stationary point.
+The gap between $\btheta_t$ and an idealized global minimizer is absorbed
+by the action-scaled centering certificate (\Cref{asm:optim}).
+
+\paragraph{Gradient features and curvature matrices.}
+Define the \emph{gradient feature} (Jacobian of the mean reward) at the
+current parameter estimate:
+\begin{equation}\label{eq:gfeat}
+  \bg_t(\bx,a) \;:=\; \nabla_{\btheta}\,\mu_{\btheta_t}(\bx,a)
+  \;\in\;\R^d.
+\end{equation}
+The algorithm uses the \emph{relinearized curvature matrix}
+\begin{equation}\label{eq:curvature}
+  \bC_t
+  \;=\;
+  \lambda\,\bI
+  \;+\;
+  \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
+    \bg_t(\bx_s,a_s)\,\bg_t(\bx_s,a_s)^{\!\top},
+\end{equation}
+the \emph{damped GGN curvature} for the Gaussian/squared-loss model
+at the current parameter~$\btheta_t$.
+(For the Gaussian working model underlying this squared-loss quasi-likelihood,
+the GGN coincides with the model Fisher information; see the remark below.)
+While $\bC_t$ is the natural object for
+computing predictive variances at $\btheta_t$, it
+re-evaluates all past Jacobians at~$\btheta_t$ and therefore does
+\emph{not} admit a sequential rank-one update---all summands change
+when $\btheta_t$ changes.
+
+For the regret analysis we introduce the
+\emph{frozen-feature Gram matrix}:
+\begin{equation}\label{eq:curvature-bar}
+  \bCbar_t
+  \;:=\;
+  \lambda\,\bI
+  \;+\;
+  \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
+    \bg_s(\bx_s,a_s)\,\bg_s(\bx_s,a_s)^{\!\top},
+\end{equation}
+where each $\bg_s(\bx_s,a_s)=\nabla_{\btheta}\mu_{\btheta_s}(\bx_s,a_s)$
+is evaluated at the parameter~$\btheta_s$ that was current when the sample
+was collected.  This matrix satisfies the recursive update
+\begin{equation}\label{eq:bar-update}
+  \bCbar_{t+1}=\bCbar_t+\sigma^{-2}\bg_t(\bx_t,a_t)\bg_t(\bx_t,a_t)^\top,
+\end{equation}
+and, critically, each realized design vector
+$\bg_s(\bx_s,a_s)$ is measurable with respect to the pre-reward
+sigma-algebra $\cG_s=\cHist_s\vee\sigma(a_s)$ of~\eqref{eq:filtration},
+which is the filtration used in the self-normalized bound.
+Both the additive update~\eqref{eq:bar-update} and
+this measurability are structural requirements of the
+self-normalized martingale bound and the elliptic potential lemma invoked
+in~\Cref{sec:theory}.
+The algorithm computes UCB widths using the algorithmic curvature~$\Calg_t$
+(via CG; the exact case is $\Calg_t=\bC_t$), but the confidence analysis is
+conducted in terms of~$\bCbar_t$; the one-sided optimism-transfer factor
+of \Cref{asm:transfer}, certified by \Cref{lem:whitened}, provides the
+bridge.
+
+% [auxiliary ridge estimator -> app:deferred]
+% [GGN-vs-Hessian -> app:deferred]
+% [exp-family extension -> app:deferred]
+% [Assumptions + primitive certificates relocated to \Cref{app:deferred}]
+\section{Original-center CC-UCB specialization}\label{sec:method}
+
+\subsection{CC-UCB Algorithm}
+
+For a predictable SPD oracle $\Calg_t\succeq\lambda\bI$, set
+$\omega_t=\bar\beta_t+\bar\psi_t$ for the original nonlinear center.
+\Cref{alg:ccucb} is the analyzed full-enumeration policy.  The same fixed
+curvature operator is reused across separate per-action CG solves; a solution
+for one action is not reused as the solution for another action.
+\begin{algorithm}[H]
+\caption{Curvature-Calibrated UCB (CC-UCB)}\label{alg:ccucb}
+\begin{algorithmic}[1]
+\STATE Observe context $\bx_t$ and finite action set $\cA_t$.
+\STATE Construct a fixed predictable SPD oracle $\bv\mapsto\Calg_t\bv$ with $\Calg_t\succeq\lambda\bI$.
+\FOR{each $a\in\cA_t$}
+  \STATE Compute $\widehat\mu_t(a)=\mu_{\btheta_t}(\bx_t,a)$ and $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$.
+  \STATE If $\bg_t(a)\ne\mathbf0$, solve $\Calg_t\bu=\bg_t(a)$ separately by CG until the certified tolerance holds; otherwise set $\tilde\bu=\mathbf0$. \label{line:cg}
+  \STATE Set $\tilde s_t^2(a)=\bg_t(a)^\top\tilde\bu$.
+\ENDFOR
+\STATE Select and play $a_t\in\argmax_{a\in\cA_t}\{\widehat\mu_t(a)+\omega_t\sqrt{u_t(a)/(1-\bar\varepsilon_t)}\sqrt{\tilde s_t^2(a)}\}$. \label{line:ucb}
+\STATE Observe $r_t$, append $(\bx_t,a_t,r_t)$, and update $\btheta_{t+1}$.
+\end{algorithmic}
+\end{algorithm}
+
+The oracle is accessed only through matrix--vector products.  At each round the
+agent computes,
+for every candidate action~$a$, the gradient feature
+$\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$ and the
+\emph{curvature-calibrated variance proxy}, the generic algorithmic width,
+\begin{equation}\label{eq:variance}
+  s_{\Calg,t}^2(a)
+  \;=\;
+  \bg_t(a)^\top\Calg_t^{-1}\,\bg_t(a).
+\end{equation}
+Under the GGN/Fisher-linearized Gaussian approximation with covariance
+$\Calg_t^{-1}$, the quantity $s_{\Calg,t}^2(a)$ is the metric-dependent
+predictive variance of the linearized reward at $(\bx_t,a)$.
+The \emph{exact} full-history instantiation of CC-UCB takes $\Calg_t=\bC_t$, the
+relinearized curvature~\eqref{eq:curvature}; weighted replay, subsampling,
+sliding windows, periodic refreshes, and randomized sketches are special
+implementations of $\Calg_t$ (\S\ref{sec:curvop}), covered by the theory only
+when the corresponding one-sided transfer factor is certified.
+
+Because $\Calg_t\succ 0$ by construction, conjugate gradients (CG) is guaranteed
+to converge on the system $\Calg_t\bu=\bg_t(a)$, provided the operator is held
+\emph{fixed} across all iterations of the solve (the randomized sketch/subsample
+is drawn into $\Omega_t$ before action selection; \S\ref{sec:problem}).  For each
+action with $\bg_t(a)\ne\mathbf0$ we run CG to the per-action relative
+energy-norm error
+\begin{equation}\label{eq:cg-err-eta}
+  \varepsilon_{t,a}
+  \;:=\;
+  \frac{\|\bu_{t,a}-\tilde\bu_{t,a}\|_{\Calg_t}}{\|\bu_{t,a}\|_{\Calg_t}},
+  \qquad
+  \bu_{t,a}:=\Calg_t^{-1}\bg_t(a),
+\end{equation}
+yielding the computable proxy $\tilde{s}_t^2(a)=\bg_t(a)^\top\tilde\bu_{t,a}$;
+if $\bg_t(a)=\mathbf0$ we set $\tilde{s}_t^2(a)=0$ and skip the solve (leaving the
+residual ratio $\|r_I\|/\|\bg\|$ undefined), and by convention put
+$\varepsilon_{t,a}:=0$ in this case, so that $\varepsilon_{t,a}$ is defined for
+every $a\in\cA_t$ and~\eqref{eq:cg-quad} holds trivially there.
+\Cref{lem:cg} shows $\tilde{s}_t^2(a)$ approximates $s_{\Calg,t}^2(a)$ within a
+multiplicative $(1\pm\varepsilon_{t,a})$ factor.  To ensure the UCB bonus
+\emph{upper-bounds} the confidence width $\omega_t\,\bar s_t(a)$ despite the
+approximation, the algorithm inflates the width by
+$\sqrt{u_t(a)/(1-\bar\varepsilon_t)}$ (line~\ref{line:ucb}), where
+$\bar\varepsilon_t\in(0,1)$ is a \emph{per-round} known tolerance enforced
+uniformly over all actions,
+\begin{equation}\label{eq:cg-tol-uniform}
+  \max_{a\in\cA_t}\varepsilon_{t,a}
+  \;\le\;\bar\varepsilon_t\;<\;1,
+\end{equation}
+and $u_t(a)\ge1$ is the one-sided transfer factor (\Cref{asm:transfer}).
+
+% [CG tolerance / action screening / corrected-center -> app:deferred]
+% [Novelty subsection relocated to \Cref{app:deferred}]
+% [Computable curvature operator + cost model relocated to \Cref{app:deferred}]
+\section{One-sided dynamic analysis}\label{sec:theory}
+
+The motivating scalar-link structure is formalized in
+\Cref{lem:relative-link-drift}, but the proof dependencies run in the opposite
+direction: we first state a master transfer theorem, then its exact-current,
+spectral-tail, and gap-dependent closures, and finally the operational and
+scalar-link specializations.  The one-sided fallback theorem analyzes CC-UCB
+(\Cref{alg:ccucb}, with full action enumeration $K{=}|\cA_t|$) under the
+Gaussian/squared-loss setup and
+\Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.  It is not a
+full exponential-family or generalized-linear-bandit proof; the extension in
+\Cref{app:expfam} defines curvature only.
+
+For a general predictable SPD sequence $\Calg_t$, confidence is proved in the
+frozen Gram $\bCbar_t$, whose update and measurability support self-normalized
+concentration.  A one-sided factor $u_t(a)$ transfers optimism to $\Calg_t$,
+CG contributes $\alpha_t$, and nonmonotonicity remains in the realized width
+complexity.  \Cref{sec:dynamic-potential} gives exact determinant bookkeeping,
+not a primitive sublinear bound.  Later specializations make the nonlinear
+inputs observable, but their smallness still requires a restricted parameter
+path.
+
+\paragraph{Core conditions and links.}
+Assume conditionally $\sigma$-sub-Gaussian noise, $\|\bg_t(\bx_s,a)\|\le G$,
+realizability by $\|\btheta^*\|\le S$, and a local expansion with round-$t$
+remainder at most $\epslin(t)$.  For the original center assume the
+action-scaled discrepancy is at most $\bar\psi_t\bar s_t(a)$.  The operator
+$\Calg_t$ is predictable, SPD, satisfies $\Calg_t\succeq\lambda\bI$ and
+$\Calg_1=\lambda\bI$, and remains fixed throughout every CG solve.  Define
+\begin{equation}\label{eq:main-widths}
+\begin{aligned}
+ \bar s_t^2(a)&=\bg_t(a)^\top\bCbar_t^{-1}\bg_t(a),&
+ s_{\Calg,t}^2(a)&=\bg_t(a)^\top\Calg_t^{-1}\bg_t(a),\\
+ \tilde s_t^2(a)&=\bg_t(a)^\top\tilde\bu_t(a).&&
+\end{aligned}
+\end{equation}
+The analysis requires only the one-sided transfer and uniform CG relations
+\begin{equation}\label{eq:main-transfer-cg}
+\begin{aligned}
+ \bar s_t^2(a)&\le u_t(a)s_{\Calg,t}^2(a),\\
+ (1-\bar\varepsilon_t)s_{\Calg,t}^2(a)&\le\tilde s_t^2(a)
+ \le(1+\bar\varepsilon_t)s_{\Calg,t}^2(a),
+\end{aligned}
+\end{equation}
+for every candidate action, where $u_t(a)\ge1$, $\bar\varepsilon_t<1$, and
+$\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$.  Sufficient
+feature-drift and approximate-operator constructions are given in
+\Cref{lem:whitened,thm:spectral-distortion}; no lower spectral transfer is
+needed.
+
+\paragraph{Dynamic width complexity.}
+The realized quantity used below is
+\begin{equation}\label{eq:main-lambda}
+ \Lamalg_T:=\sum_{t=1}^T\log\!\left(1+\sigma^{-2}s_{\Calg,t}^2(a_t)\right).
+\end{equation}
+The bounded-width cap gives
+\begin{equation}\label{eq:main-dynamic}
+ \sum_{t=1}^T s_{\Calg,t}^2(a_t)
+ \le(\sigma^2+G^2/\lambda)\Lamalg_T.
+\end{equation}
+For a general predictable nonmonotone SPD sequence, we do not derive a
+primitive sublinear bound on $\Lamalg_T$.  Appendix
+\Cref{sec:dynamic-potential} gives an exact determinant bookkeeping identity,
+but its upper bound is informative only when both the terminal log determinant
+and determinant-decreasing refresh charge are independently controlled, for
+example under the rank and spectral-floor hypotheses of
+\Cref{lem:rank-refresh}.
+
+\subsection{Regret Bound}
+
+Let $\cE_{\mathrm{conf}}$ denote the simultaneous self-normalized confidence
+event and let $\cE_{\mathrm{cert}}$ collect the predictable linearization,
+centering, transfer, condition-number, CG, and randomized-operator certificates.
+The appendix defines each component and its failure allocation; write their
+total failure probability as $\delta_{\mathrm{cert}}$.
+
+\begin{theorem}[Dynamic transfer regret bound for CC-UCB (Gaussian/squared-loss)]\label{thm:regret}
+Under the conditions above and \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer},
+suppose $|\cA_t|\le A_{\max}$, the optimal action is present, and
+\Cref{alg:ccucb} enumerates all actions using a predictable schedule
+$\bar\beta_t\ge\beta_t$ and uniform per-round CG tolerance.  Let
+$E_T=\sum_{t=1}^T\epslin(t)$, $\omega_t=\bar\beta_t+\bar\psi_t$,
+$\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$, and
+$S_T=\sum_{t=1}^T\alpha_t^2u_t(a_t)\omega_t^2$.  On
+$\cE_{\mathrm{conf}}\cap\cE_{\mathrm{cert}}$,
+\begin{equation}\label{eq:regret-bound}
+  R_T
+  \;\le\;
+  2\sqrt{(\sigma^2 + G^2/\lambda)\;\Lamalg_T\;S_T}
+  \;+\; 2\,E_T,
+\end{equation}
+with probability at least $1-\delta-\delta_{\mathrm{cert}}$.  Deterministic or
+almost-sure certificates contribute zero to $\delta_{\mathrm{cert}}$.  For the
+corrected center, the same statement holds without \Cref{asm:optim} after
+replacing $\omega_t$ by $\bar\beta_t$.
+\end{theorem}
+
+In particular, the bound is sublinear whenever
+$\Lamalg_T S_T=o(T^2)$ and $E_T=o(T)$.
+The exact-curvature instantiation is $\Calg_t=\bC_t$ with
+$u_t=(1+\bar\chi_t)^2$ from \Cref{lem:whitened}; approximate operators are
+covered through \Cref{thm:spectral-distortion}.  The proof is in
+\Cref{app:proof}.
+
+\paragraph{Proof sketch.}
+Self-normalized confidence plus the centering and linearization terms gives
+$|\mu^*(a)-\mu_{\btheta_t}(a)|\le\omega_t\bar s_t(a)+\epslin(t)$.
+The one-sided relation and CG lower bound make the computed bonus optimistic,
+so instantaneous regret is at most $2w_t(a_t)+2\epslin(t)$.  The CG upper
+bound gives $w_t(a_t)\le\alpha_t\omega_t\sqrt{u_t(a_t)}s_{\Calg,t}(a_t)$.
+Summing, applying Cauchy--Schwarz only once, and using \eqref{eq:main-dynamic}
+yields \eqref{eq:regret-bound}; hence time-varying factors remain inside $S_T$
+rather than being replaced by horizon maxima.  The corrected center replaces
+$\omega_t$ by $\bar\beta_t$ and removes the centering certificate, but requires
+exact or certified frozen-feature access (\Cref{cor:corrected-center}).
+
+\begin{corollary}[Exact-current regret through the frozen potential]
+\label{cor:exact-current-frozen-potential}
+Adopt \Cref{thm:regret} with exact current curvature $\Calg_t=\bC_t$.
+Suppose a predictable certificate satisfies
+$\chi_t\le\bar\chi_t<1$ for every $t$, and use the valid transfer factor
+$u_t=(1+\bar\chi_t)^2$.  Then, on the event of \Cref{thm:regret},
+\begin{equation}\label{eq:exact-current-frozen-potential}
+\begin{aligned}
+ R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,\gamma_T\\[-1mm]
+ &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
+ \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
+ +2E_T.
+\end{aligned}
+\end{equation}
+For the corrected center of \Cref{cor:corrected-center}, the same statement
+holds without \Cref{asm:optim} after replacing $\omega_t$ by $\bar\beta_t$.
+This removes the nonmonotone dynamic-width term only in the small-drift,
+exact-current regime.
+\end{corollary}
+\begin{proof}
+The sharpened sandwich in \Cref{cor:drift-sandwich} and Loewner inversion give
+\[
+ s_t(a)\le\frac{\bar s_t(a)}{1-\bar\chi_t}.
+\]
+The per-round proof of \Cref{thm:regret}, together with
+$\sqrt{u_t}=1+\bar\chi_t$, therefore gives
+\[
+ \operatorname{regret}_t\le
+ 2\alpha_t\omega_t
+ \frac{1+\bar\chi_t}{1-\bar\chi_t}\bar s_t(a_t)
+ +2\epslin(t).
+\]
+Sum and apply Cauchy--Schwarz once.  The frozen rank-one update and the usual
+elliptic-potential inequality give
+$\sum_t\bar s_t^2(a_t)\le
+(\sigma^2+G^2/\lambda)\gamma_T$, proving the display.  The corrected-center
+claim follows from the prediction identity in \Cref{cor:corrected-center}.
+\end{proof}
+
+For an integer $0\le r\le d$, define
+\begin{equation}\label{eq:gamma-tail-main}
+\begin{aligned}
+ \Delta_{T,r}&:=\sum_{i>r}\nu_i,\qquad
+ r_T:=\min\{r,T\},\\
+ \Gamma^{\rm tail}_{T,r}
+ &:=r_T\log\!\left(1+\frac{TG^2}
+ {r_T\lambda\sigma^2}\right)+\frac{\Delta_{T,r}}{\lambda},
+\end{aligned}
+\end{equation}
+where $\nu_1\ge\cdots\ge\nu_d\ge0$ are the eigenvalues of
+$\bCbar_{T+1}-\lambda\bI$ and the first term is defined to be zero when
+$r_T=0$.  \Cref{lem:spectral-tail-logdet} proves
+$\gamma_T\le\Gamma^{\rm tail}_{T,r}$.
+Writing $\tau_T=\sum_i\nu_i$ and
+$q_{T,r}=\min\{d-r,\max\{T-r,0\}\}$, the same lemma proves the sharper
+realized split bound
+\begin{equation}\label{eq:gamma-split-main}
+\begin{aligned}
+ \Gamma^{\rm split}_{T,r}:={}&
+ r_T\log\!\left(1+\frac{\tau_T-\Delta_{T,r}}{r_T\lambda}\right)\\
+ &+q_{T,r}\log\!\left(1+\frac{\Delta_{T,r}}{q_{T,r}\lambda}\right),
+\end{aligned}
+\end{equation}
+where a term with zero multiplier is defined as zero.
+
+\begin{corollary}[Approximate-rank exact-current GGN]
+\label{cor:approx-rank-current-ggn}
+Under \Cref{cor:exact-current-frozen-potential}, on the same confidence event
+the following holds simultaneously for every $r\in\{0,\ldots,d\}$:
+\begin{equation}\label{eq:approx-rank-current-ggn}
+\begin{aligned}
+ R_T&\le 2\Biggl\{(\sigma^2+G^2/\lambda)\,
+ \Gamma^{\rm tail}_{T,r}\\[-1mm]
+ &\qquad\quad\times\sum_{t=1}^T\alpha_t^2\omega_t^2
+ \left(\frac{1+\bar\chi_t}{1-\bar\chi_t}\right)^2\Biggr\}^{1/2}
+ +2E_T.
+\end{aligned}
+\end{equation}
+The same display holds with $\Gamma^{\rm tail}_{T,r}$ replaced by the
+smaller $\Gamma^{\rm split}_{T,r}$ from~\eqref{eq:gamma-split-main}.
+This is a realized-complexity statement: the policy may retain the existing
+observable $\hat\gamma_{t-1}$ schedule, but a terminal realized
+$\Delta_{T,r}$ is not used in any action-time radius.  Because the deterministic
+spectral inequality holds for every $r$, the terminal report may minimize
+$\Gamma^{\rm tail}_{T,r}$ over $r$ a posteriori, provided that choice does not
+alter any past action, radius, or other action-time quantity.
+
+Operationally, if before round $t$ a supplied deterministic or
+$\cHist_t$-measurable envelope $\bar\Delta_{t-1,r}$ upper-bounds the spectral
+tail of $\bCbar_t-\lambda\bI$, the old predictable envelope below remains
+valid:
+\[
+\begin{aligned}
+ r_{t-1}&:=\min\{r,t-1\},\\
+ \bar\Gamma^{\rm tail}_{t-1,r}
+ &:=r_{t-1}\log\!\left(1+\frac{(t-1)G^2}
+ {r_{t-1}\lambda\sigma^2}\right)
+ +\frac{\bar\Delta_{t-1,r}}\lambda.
+\end{aligned}
+\]
+again taking the first term as zero when $r_{t-1}=0$.
+Replacing $\gamma_{t-1}$ in the constructive confidence radius by this
+predictable upper bound is valid.  In that version,
+\eqref{eq:approx-rank-current-ggn} holds with
+$\Gamma^{\rm tail}_{T,r}$ replaced by any supplied terminal envelope
+$\bar\Gamma^{\rm tail}_{T,r}$ and with $\omega_t$ formed from the resulting
+radius.
+
+A refined predictable alternative uses the observable frozen trace
+$\tau_{t-1}=\operatorname{tr}(\bCbar_t-\lambda\bI)
+=\sigma^{-2}\sum_{s<t}\|\bg_s\|^2$.  With
+$q_{t-1,r}=\min\{d-r,\max\{t-1-r,0\}\}$, set
+\begin{equation}\label{eq:predictable-split-envelope}
+\begin{aligned}
+ \bar\Gamma^{\rm split}_{t-1,r}:={}&
+ r_{t-1}\log\!\left(1+\frac{\tau_{t-1}}{r_{t-1}\lambda}\right)\\
+ &+q_{t-1,r}\log\!\left(1+
+ \frac{\bar\Delta_{t-1,r}}{q_{t-1,r}\lambda}\right),
+\end{aligned}
+\end{equation}
+again omitting zero-multiplier terms.  The head term deliberately uses the
+full trace: subtracting an \emph{upper} tail envelope could reduce the head
+term and invalidate an upper bound.  Thus
+$\bar\Gamma^{\rm split}_{t-1,r}\ge\gamma_{t-1}$ is a valid action-time
+schedule, although it can be looser than the realized split expression.
+
+No exact tangent subspace is assumed.  A small spectral tail can contain
+decision-relevant directions and does not supply their basis, so
+full-dimensional CG may still be necessary.  Exact rank is recovered when
+$\Delta_{T,r}=0$; the supplied-subspace result
+\Cref{cor:rank-near-linear} is then an additional computational special case.
+The corrected-center version again replaces $\omega_t$ by $\bar\beta_t$.
+\end{corollary}
+\begin{proof}
+Apply \Cref{lem:spectral-tail-logdet} to substitute either
+$\gamma_T\le\Gamma^{\rm split}_{T,r}\le\Gamma^{\rm tail}_{T,r}$ in
+\eqref{eq:exact-current-frozen-potential}.  The prefix version of the same
+lemma makes either $\bar\Gamma^{\rm tail}_{t-1,r}$ or
+$\bar\Gamma^{\rm split}_{t-1,r}$ a predictable upper bound on
+$\gamma_{t-1}$, so \Cref{lem:confidence,cor:beta-constructive} justify the
+operational radius.  No eigenspace is used by either argument.
+\end{proof}
+
+\begin{corollary}[Gap-dependent exact-current regret]
+\label{cor:gap-dependent-exact-current}
+Adopt \Cref{cor:exact-current-frozen-potential}.  Define the realized gap
+$\Delta_t:=\mu^*(\bx_t,a_t^*)-\mu^*(\bx_t,a_t)$ and suppose every
+suboptimal candidate action at every round has gap at least a deterministic
+(or almost-sure) $\Delta_{\min}>0$.  This gap is an analysis condition and is
+not used to tune the policy; if it holds only on a high-probability event, that
+event must be added to the certificate failure allocation.  Suppose also
+$\epslin(t)\le\Delta_{\min}/4$ for all $t$, and set
+\[
+ H_t^{\rm gap}:=\alpha_t\omega_t
+ \frac{1+\bar\chi_t}{1-\bar\chi_t},\qquad
+ H_{\max}^{\rm gap}:=\max_{t\le T}H_t^{\rm gap}.
+\]
+Then, on the event of \Cref{thm:regret},
+\begin{equation}\label{eq:gap-dependent-exact-current}
+ R_T\le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}
+ \left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T.
+\end{equation}
+Consequently $\gamma_T$ in this display may be replaced by the exact-rank
+bound $\Gamma_{T,r}$ of~\eqref{eq:rank-gamma-main}, the simple tail bound
+$\Gamma^{\rm tail}_{T,r}$ of~\eqref{eq:gamma-tail-main}, or the refined
+$\Gamma^{\rm split}_{T,r}$ of~\eqref{eq:gamma-split-main}, under the
+corresponding premises.  The corrected-center version replaces $\omega_t$ by
+$\bar\beta_t$ as usual.  This result is not a minimax-optimality claim: unlike
+the gap-free result, it requires a uniform positive gap and a per-round
+linearization error smaller than one quarter of that gap.
+\end{corollary}
+\begin{proof}
+The per-round argument in
+\Cref{cor:exact-current-frozen-potential} gives
+\[
+ \Delta_t\le2H_t^{\rm gap}\bar s_t(a_t)+2\epslin(t).
+\]
+On a suboptimal round, $\Delta_t\ge\Delta_{\min}$ and hence
+$2\epslin(t)\le\Delta_t/2$.  Rearranging and using
+$H_t^{\rm gap}\le H_{\max}^{\rm gap}$ gives
+$\Delta_t\le4H_{\max}^{\rm gap}\bar s_t(a_t)$.  Squaring this inequality and using
+$\Delta_t\ge\Delta_{\min}$ yields
+\[
+ \Delta_t\le\frac{\Delta_t^2}{\Delta_{\min}}
+ \le\frac{16(H_{\max}^{\rm gap})^2}{\Delta_{\min}}\bar s_t^2(a_t).
+\]
+Optimal rounds contribute zero.  Sum over $t$ and apply
+$\sum_t\bar s_t^2(a_t)\le
+(\sigma^2+G^2/\lambda)\gamma_T$ to prove the display; the three substitutions
+follow from \Cref{lem:rank-logdet,lem:spectral-tail-logdet}.
+\end{proof}

@@ -1,0 +1,341 @@
+\section{Proofs for confidence transport}
+\label{app:transport-proofs}
+
+\begin{proof}[Proof of \Cref{thm:transported-ucb}]
+\Cref{lem:log-spd-path} and \eqref{eq:path-length-new} imply
+\begin{equation}\label{eq:path-width-proof}
+ \bar s_t(a)\le e^{\bar D_t/2}s_t(a),\qquad
+ s_t(a)\le e^{\bar D_t/2}\bar s_t(a).
+\end{equation}
+Inverting \eqref{eq:operator-sandwich-new} gives
+\begin{equation}\label{eq:operator-width-proof}
+ s_t(a)\le\sqrt{\kappa_{+,t}}s_{\Calg,t}(a),\qquad
+ s_{\Calg,t}(a)\le\kappa_{-,t}^{-1/2}s_t(a).
+\end{equation}
+Thus, for every scored action,
+\[
+ \mu_t^*(a)
+ \le m_t(a)+\beta_t\bar s_t(a)+b_t(a)
+ \le U_t(a),
+\]
+where the final step uses the first inequalities in
+\eqref{eq:path-width-proof}--\eqref{eq:operator-width-proof} and the all-domain
+solver upper certificate.  Taking suprema does not require an optimizer to
+exist, so
+\[
+ \sup_{a\in\cA_t}\mu_t^*(a)
+ \le\sup_{a\in\cA_t}U_t(a)
+ \le U_t(a_t)+\xi_t.
+\]
+The lower side of confidence at the played action gives
+\[
+ m_t(a_t)-\mu_t^*(a_t)
+ \le\beta_t\bar s_t(a_t)+b_t(a_t).
+\]
+Substituting the score and combining the last two displays yields
+\begin{align*}
+ \operatorname{reg}_t
+ &\le\beta_t\bar s_t(a_t)
+ +\beta_te^{\bar D_t/2}\sqrt{\kappa_{+,t}}\hat s_t(a_t)
+ +2b_t(a_t)+\xi_t\\
+ &\le\beta_t\!\left[1+\alpha_te^{\bar D_t}
+ \sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]\bar s_t(a_t)
+ +2b_t(a_t)+\xi_t,
+\end{align*}
+where the second line uses played-action sharpness and then the second
+inequalities in \eqref{eq:operator-width-proof}--\eqref{eq:path-width-proof}.
+This proves \eqref{eq:instantaneous-transport-new}.
+
+Let
+$c_t=\beta_t[1+\alpha_te^{\bar D_t}
+\sqrt{\kappa_{+,t}/\kappa_{-,t}}]$.  Summation and one
+Cauchy--Schwarz application give
+\[
+ R_T-2\sum_tb_t(a_t)-\sum_t\xi_t
+ \le\sqrt{\sum_tc_t^2}\sqrt{\sum_t\bar s_t^2(a_t)}.
+\]
+Since $\bar s_t^2(a_t)\le G^2/\lambda$, the scalar inequality
+$x\le(1+M)\log(1+x)$ for $0\le x\le M$, with
+$x=\sigma^{-2}\bar s_t^2(a_t)$ and
+$M=G^2/(\lambda\sigma^2)$, yields
+\begin{equation}\label{eq:frozen-potential-proof}
+ \sum_{t=1}^T\bar s_t^2(a_t)
+ \le\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T.
+\end{equation}
+This proves \eqref{eq:sharp-transport-regret-new}.  Finally,
+$\alpha_te^{\bar D_t}\sqrt{\kappa_{+,t}/\kappa_{-,t}}\ge1$, hence
+$1+x\le2x$ gives \eqref{eq:simple-transport-regret-new}.  The probability
+statement follows by a union bound; independence is not required.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{cor:finite-enumeration-new}]
+A finite maximum is attained.  Applying the fixed deterministic tie rule to
+the measurable score vector gives a measurable selected action and zero oracle
+error.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{lem:log-spd-path}]
+Fix $v\ne0$ and set $f_v(\tau)=v^\top\bV(\tau)v$.  The path is continuous and
+positive definite on a compact interval, so $f_v$ is absolutely continuous and
+bounded away from zero.  Thus $\log f_v$ is absolutely continuous and, almost
+everywhere,
+\[
+ \frac{d}{d\tau}\log f_v(\tau)
+ =\frac{v^\top\dot\bV(\tau)v}{v^\top\bV(\tau)v}.
+\]
+With $w=\bV(\tau)^{1/2}v$, the absolute value of this derivative is at most
+$\|\bV(\tau)^{-1/2}\dot\bV(\tau)
+\bV(\tau)^{-1/2}\|_{\rm op}$.  Integrating gives
+\[
+ e^{-\mathcal D(\bV)}v^\top\bV(0)v
+ \le v^\top\bV(1)v
+ \le e^{\mathcal D(\bV)}v^\top\bV(0)v.
+\]
+The inequality holds for every $v$, which is exactly
+\eqref{eq:log-path-sandwich-new}.  Inverting the sandwich gives the
+corresponding inverse-quadratic-form comparison.  The proof never
+differentiates a matrix square root.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{lem:factor-spd-path}]
+Almost everywhere,
+$\dot\bV=\dot\Bmat^\top\Bmat+\Bmat^\top\dot\Bmat$.  Put
+$E=\dot\Bmat\bV^{-1/2}$ and $H=\Bmat\bV^{-1/2}$.  Then
+\[
+ \bV^{-1/2}\dot\bV\bV^{-1/2}=E^\top H+H^\top E.
+\]
+Moreover,
+\[
+ H^\top H
+ =\bV^{-1/2}\Bmat^\top\Bmat\bV^{-1/2}
+ =\bI-\lambda\bV^{-1}\preceq\bI,
+\]
+so $\|H\|_{\rm op}\le1$.  Therefore the normalized SPD speed is at most
+$2\|E\|_{\rm op}$, which proves \eqref{eq:factor-path-bound-new} after
+integration.  For the PSD form, congruence by $\bV^{-1/2}$ gives
+\[
+ \|\dot\Bmat\bV^{-1/2}\|_{\rm op}^2
+ =\|\bV^{-1/2}\dot\Bmat^\top\dot\Bmat\bV^{-1/2}\|_{\rm op}
+ \le\nu_t(\tau)^2.
+\]
+\end{proof}
+
+\begin{proof}[Proof of \Cref{cor:hessian-path-new}]
+The $s$th factor-row derivative is
+\[
+ \sigma^{-1}\left[
+ \nabla_\theta^2\mu_{\btheta_s+\tau(\btheta_t-\btheta_s)}(x_s,a_s)
+ (\btheta_t-\btheta_s)\right]^\top.
+\]
+Hence
+$\|\dot\Bmat_t(\tau)\|_F^2\le L_g^2Q_t/\sigma^2$.  Since
+$\bV_t(\tau)\succeq\lambda\bI$,
+\[
+ \dot\Bmat_t(\tau)^\top\dot\Bmat_t(\tau)
+ \preceq\frac{L_g^2Q_t}{\sigma^2\lambda}\bV_t(\tau).
+\]
+Apply \Cref{lem:factor-spd-path} with the constant
+$\nu_t=L_g\sqrt{Q_t}/(\sigma\sqrt\lambda)$.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{prop:width-transport-new}]
+The logarithmic sandwich and inversion give
+\[
+ \bar s_t^2(a)\le e^{\bar D_t}s_t^2(a),\qquad
+ s_t^2(a)\le e^{\bar D_t}\bar s_t^2(a).
+\]
+Inverting the operator sandwich gives
+\[
+ s_t^2(a)\le\kappa_{+,t}s_{\Calg,t}^2(a),\qquad
+ s_{\Calg,t}^2(a)\le\kappa_{-,t}^{-1}s_t^2(a).
+\]
+Composition proves \eqref{eq:two-way-width-new}.  For
+\eqref{eq:relative-operator-certificate-new}, congruence gives
+$-\varepsilon_t\bI\preceq
+\bV_t^{-1/2}(\Calg_t-\bV_t)\bV_t^{-1/2}
+\preceq\varepsilon_t\bI$; undoing the congruence gives the claimed factors.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{cor:corrected-center-new}]
+Taylor expansion around $\btheta_s$ gives
+\[
+ \mu_{\btheta^\circ}(x_s,a_s)
+ =\mu_{\btheta_s}(x_s,a_s)
+ +\bq_s(a_s)^\top(\btheta^\circ-\btheta_s)+\rho_s^\circ.
+\]
+Combining this with \eqref{eq:approx-realizability-new} and the reward model
+turns \eqref{eq:pseudo-response-new} into
+\[
+ y_s=\bq_s(a_s)^\top\btheta^\circ+\eta_s+e_s,
+ \qquad e_s=\rho_s^\circ+m^\circ(x_s,a_s).
+\]
+The ridge normal equations therefore give
+\begin{equation}\label{eq:corrected-normal-equation-proof}
+ \bVbar_t(\hat\btheta_t^{\rm lin}-\btheta^\circ)
+ =-\lambda\btheta^\circ
+ +\sum_{s<t}\frac{\bq_s(a_s)}{\sigma}\frac{\eta_s}{\sigma}
+ +\frac1\sigma\Phi_t e,
+\end{equation}
+where $\Phi_t=[\bq_1(a_1)/\sigma,\ldots,
+\bq_{t-1}(a_{t-1})/\sigma]$.  The self-normalized martingale inequality
+bounds the middle term in $\bVbar_t^{-1}$ norm by
+$\sqrt{\gamma_{t-1}+2\log(1/\delta)}$ simultaneously over $t$.  The ridge
+term is at most $\sqrt\lambda S$.  Finally,
+$\bVbar_t=\lambda\bI+\Phi_t\Phi_t^\top$ implies
+$\Phi_t^\top\bVbar_t^{-1}\Phi_t\preceq\bI$, so
+\[
+ \left\|\frac1\sigma\Phi_t e\right\|_{\bVbar_t^{-1}}
+ \le\frac{\|e\|_2}{\sigma}
+ \le\frac1\sigma\sqrt{\sum_{s<t}
+ [\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2}.
+\]
+Cauchy--Schwarz in the $\bVbar_t$ metric bounds
+$|\bq_t(a)^\top(\btheta^\circ-\hat\btheta_t^{\rm lin})|$ by
+$\beta_t^{\rm corr}\bar s_t(a)$.
+
+For the prediction itself, direct algebra gives the exact identity
+\[
+ \mu_t^*(a)-m_t^{\rm corr}(a)
+ =\bq_t(a)^\top(\btheta^\circ-\hat\btheta_t^{\rm lin})
+ +\rho_t^\circ(a)+m^\circ(x_t,a).
+\]
+Applying the current actionwise envelopes proves
+\eqref{eq:corrected-confidence-new}.  No optimality property of
+$\btheta_t$ appears in the argument.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{cor:finite-d-rate-new}]
+Let
+$A_T=\sigma^{-2}\sum_{t=1}^T\bq_t(a_t)\bq_t(a_t)^\top$.  Its rank is at most
+$r_T=\min\{d,T\}$ and its trace is at most $TG^2/\sigma^2$.  Concavity of
+$x\mapsto\log(1+x)$ over the nonzero eigenvalues gives
+\[
+ \gamma_T=\log\det(\bI+A_T/\lambda)
+ \le r_T\log\!\left(1+\frac{TG^2}{r_T\lambda\sigma^2}\right).
+\]
+The radius in \eqref{eq:beta-corrected-new} is bounded by the bracketed term in
+\eqref{eq:finite-d-rate-new-display}.  Substitute this bound, the uniform
+transport factors, and \eqref{eq:finite-d-gamma-new} into
+\eqref{eq:simple-transport-regret-new}.  The current bias envelope is exactly
+$b_t(a_t)=\epsilon_{\rm lin,t}(a_t)+\epsilon_{\rm mis,t}(a_t)$.
+\end{proof}
+
+\begin{proof}[Proof of \Cref{cor:local-small-drift-new}]
+Inverting \eqref{eq:local-additive-new} gives
+\[
+ \bar s_t(a)\le(1+\chi_t)s_t(a),\qquad
+ s_t(a)\le(1-\chi_t)^{-1}\bar s_t(a).
+\]
+The first inequality, the upper operator comparison, and solver upper validity
+make the local score optimistic.  At the played action, solver sharpness, the
+lower operator comparison, and the second inequality bound its width term by
+\[
+ \alpha_t\frac{1+\chi_t}{1-\chi_t}
+ \sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\,\bar s_t(a_t).
+\]
+Repeat the proof of \Cref{thm:transported-ucb} and apply
+\eqref{eq:frozen-potential-proof}.
+\end{proof}
+
+\subsection{A concrete solver certificate}
+
+\begin{lemma}[Inverse-quadratic interval from the original residual]
+\label{lem:inverse-quadratic-certificate-new}
+Let $\Calg=\Calg^\top\succeq\lambda_{\Calg}\bI$ with
+$\lambda_{\Calg}>0$.  For an approximate solution $\tilde\bu$ to
+$\Calg\bu=\bq$, recompute the original residual
+$\br=\bq-\Calg\tilde\bu$.  In exact arithmetic,
+\begin{equation}\label{eq:inverse-quadratic-identity-new}
+ \bq^\top\Calg^{-1}\bq
+ =\bq^\top\tilde\bu+\tilde\bu^\top\br
+ +\br^\top\Calg^{-1}\br.
+\end{equation}
+Consequently,
+\begin{equation}\label{eq:inverse-quadratic-interval-new}
+ L=\bq^\top\tilde\bu+\tilde\bu^\top\br
+ \le\bq^\top\Calg^{-1}\bq
+ \le L+\frac{\|\br\|_2^2}{\lambda_{\Calg}}=U.
+\end{equation}
+\end{lemma}
+\begin{proof}
+The exact solution is
+$\Calg^{-1}\bq=\tilde\bu+\Calg^{-1}\br$.  Substitute this expression and
+$\bq=\Calg\tilde\bu+\br$ into the quadratic form.  The remainder is
+$\br^\top\Calg^{-1}\br$, which lies between zero and
+$\|\br\|_2^2/\lambda_{\Calg}$.
+\end{proof}
+
+Set $\hat s=\sqrt{U}$.  If the played lower endpoint is positive, the
+observable factor $\alpha=\sqrt{U/L}$ verifies played-action sharpness.  If
+$L=0<U$, no finite multiplicative factor follows; the solve must continue or
+an additive solver theorem must be used.  For $\bq=0$, skip the solve and
+return $\hat s=0$.
+
+\begin{corollary}[CG and PCG as solver-interface instances]
+\label{cor:cg-interface-new}
+Suppose CG or PCG supplies, in exact arithmetic, an original-system energy
+certificate
+$\|\bu-\tilde\bu\|_{\Calg}\le\varepsilon\|\bu\|_{\Calg}$ with
+$\varepsilon<1$.  Then
+\[
+ (1-\varepsilon)s_{\Calg}^2
+ \le\bq^\top\tilde\bu
+ \le(1+\varepsilon)s_{\Calg}^2.
+\]
+Thus
+\[
+ \hat s=\sqrt{\frac{\bq^\top\tilde\bu}{1-\varepsilon}},
+ \qquad
+ \alpha=\sqrt{\frac{1+\varepsilon}{1-\varepsilon}}
+\]
+instantiate \eqref{eq:solver-interface-new}.  A preconditioner may change the
+recurrence, but certificate checks must use the original operator.
+\end{corollary}
+\begin{proof}
+Let $\bu=\Calg^{-1}\bq$.  Since
+$s_{\Calg}^2=\bq^\top\bu=\|\bu\|_{\Calg}^2$,
+\[
+ \left|\bq^\top\tilde\bu-s_{\Calg}^2\right|
+ =\left|\langle\bu,\tilde\bu-\bu\rangle_{\Calg}\right|
+ \le\|\bu\|_{\Calg}\|\tilde\bu-\bu\|_{\Calg}
+ \le\varepsilon s_{\Calg}^2.
+\]
+This proves the two-sided quadratic-form comparison.  Dividing its lower side
+by $1-\varepsilon$ gives upper validity, while combining both sides gives the
+displayed sharpness factor.  For PCG the argument is unchanged once the
+certificate is expressed in the original $\Calg$-energy norm.
+\end{proof}
+
+Neither \Cref{lem:inverse-quadratic-certificate-new} nor
+\Cref{cor:cg-interface-new} turns an ordinary floating-point residual into a
+verified enclosure.  Literal numerical certification requires interval
+arithmetic, directed rounding with derived norm bounds, or another verified
+residual enclosure.  Float64 point checks remain engineering diagnostics.
+
+\subsection{Measurability, randomized certificates, and edge cases}
+
+For certificate source $j$, it is sufficient to allocate a predictable failure
+budget before drawing its random object:
+\[
+ \Pr(\mathcal E_{j,t}^c\mid\cHist_t^-)\le\delta_{j,t},
+ \qquad
+ \sum_{j,t}\delta_{j,t}\le\delta_{\rm cert}\quad\text{almost surely}.
+\]
+The tower property and a union bound give simultaneous validity at least
+$1-\delta_{\rm cert}$ without independence.  On an uncountable score domain,
+the solver upper event must already be simultaneous.  A pointwise certificate
+cannot be union-bounded after adaptive selection unless it is independently
+verified at the selected action with the correct conditioning.
+Realized terminal spectral quantities may be used for post-hoc analysis, but
+they cannot be inserted into an earlier action-time radius unless a predictable
+prefix envelope was supplied at that time.
+
+The logarithmic theorem remains correct for finite $\bar D_t\ge1$, but an
+exponentially large factor can be vacuous.  Rotating ill-conditioned metrics
+can have large path length even with fixed eigenvalues; conversely, a closed
+path can have positive length and equal endpoints.  The direct SPD length is
+canonical, whereas a factor-path bound depends on the chosen factorization.
+For data-dependent Fisher weights, an explicit absolutely continuous factor is
+required: a singular principal square root need not be differentiable.  A
+uniform positive spectral floor is essential; positive damping supplies it
+automatically.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static LaTeX validation (no TeX engine available in this environment)."""
+"""Static validation of the complete transitive LaTeX manuscript."""
 import collections
 from pathlib import Path
 import re
@@ -12,6 +12,30 @@ MACROS = PAPER_DIR / "macros.tex"
 def read(p):
     with open(p) as f:
         return f.read()
+
+
+INPUT_RE = re.compile(r"\\input\{([^}]+)\}")
+
+
+def read_with_inputs(path, stack=()):
+    r"""Expand existing ``\input`` dependencies relative to their source file."""
+    path = path.resolve()
+    if path in stack:
+        cycle = " -> ".join(str(p) for p in (*stack, path))
+        raise RuntimeError(f"cyclic LaTeX input: {cycle}")
+    source = read(path)
+
+    def replace(match):
+        target = Path(match.group(1))
+        if not target.suffix:
+            target = target.with_suffix(".tex")
+        target = (path.parent / target).resolve()
+        # Conditional target-year style/checklist inputs may not exist yet.
+        if not target.is_file():
+            return match.group(0)
+        return read_with_inputs(target, (*stack, path))
+
+    return INPUT_RE.sub(replace, source)
 
 def strip_comments(s):
     # remove % comments (not \%), line by line
@@ -26,7 +50,7 @@ def strip_comments(s):
         out.append(''.join(res))
     return '\n'.join(out)
 
-main_raw = read(MAIN)
+main_raw = read_with_inputs(MAIN)
 main = strip_comments(main_raw)
 macros = strip_comments(read(MACROS))
 
@@ -113,7 +137,7 @@ defined = set(re.findall(r'\\newcommand\{\\(\w+)\}', macros)) | \
           set(re.findall(r'\\newcommand\*?\{\\(\w+)\}', main))
 custom = ['bh','Calg','Lamalg','Valg','Gamdyn','Gmat','Dmat','cHist','epsCGbar',
           'cE','cF','cG','cA','cH','cO','cL','R','btheta','bx','bg','bu','bv','bI',
-          'bH','bC','bCbar','epslin','argmin','argmax','tr']
+          'bH','bC','bCbar','bV','bVbar','bq','Bmat','epslin','argmin','argmax','tr']
 for m in custom:
     if m not in defined:
         print(f"[macro def] NOTE: '{m}' not found in newcommand scan (may be builtin/aliascnt)")

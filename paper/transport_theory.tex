@@ -1,0 +1,417 @@
+\section{Abstract confidence transport}\label{sec:abstract-transport}
+
+The analysis separates the statistical confidence metric from the current
+relinearized metric and from the operator used by the algorithm.  This
+separation is the main object of the paper; the squared-loss construction in
+\Cref{sec:corrected-center} is one way to instantiate it.
+
+\paragraph{Protocol and timing.}
+Let $(\mathsf A,\mathcal B)$ be a measurable action space.  At round $t$, the
+learner observes a context and a nonempty measurable action domain
+$\cA_t\subseteq\mathsf A$.  Write $\cHist_t^-$ for the sigma-algebra before
+fresh round-$t$ algorithmic randomization, and
+$\cHist_t=\cHist_t^-\vee\sigma(\Omega_t)$ after that randomization but before
+the reward.  All quantities used to select the action are
+$\cHist_t$-measurable.  We assume the action-indexed scores have measurable,
+finite suprema and that the score oracle below returns a measurable action.
+This is automatic for finite actions with a deterministic tie rule; a bare
+measurable action space alone does not guarantee a measurable selector.
+
+Let $\bq_t(a)\in\R^d$ be the prediction query.  The three metrics are
+\begin{align}
+ \bVbar_1&=\lambda\bI, &
+ \bVbar_{t+1}&=\bVbar_t+\sigma^{-2}\bq_t(a_t)\bq_t(a_t)^\top,
+ \label{eq:reference-update-new}\\
+ \bV_t&=\text{the exact current relinearized metric}, &
+ \Calg_t&=\text{the algorithmic SPD metric}.
+\end{align}
+Here $\lambda>0$.  Define the corresponding widths
+\begin{equation}\label{eq:three-widths-new}
+ \bar s_t^2(a)=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\qquad
+ s_t^2(a)=\bq_t(a)^\top\bV_t^{-1}\bq_t(a),\qquad
+ s_{\Calg,t}^2(a)=\bq_t(a)^\top\Calg_t^{-1}\bq_t(a).
+\end{equation}
+The frozen information gain is
+\begin{equation}\label{eq:frozen-gamma-new}
+ \gamma_T
+ :=\log\frac{\det\bVbar_{T+1}}{\det\bVbar_1}
+ =\sum_{t=1}^T\log\!\left(1+\sigma^{-2}\bar s_t^2(a_t)\right).
+\end{equation}
+Set $\gamma_0=0$, and define
+\begin{equation}\label{eq:regret-definition-new}
+ \operatorname{reg}_t
+ :=\sup_{a\in\cA_t}\mu_t^*(a)-\mu_t^*(a_t),
+ \qquad R_T=\sum_{t=1}^T\operatorname{reg}_t.
+\end{equation}
+
+\begin{assumption}[Reference confidence and operational certificates]
+\label{asm:abstract-transport}
+For predictable $\beta_t\ge0$, center $m_t(a)$, and action-dependent envelope
+$b_t(a)\ge0$, a simultaneous confidence event satisfies
+\begin{equation}\label{eq:abstract-confidence-new}
+ |\mu_t^*(a)-m_t(a)|\le\beta_t\bar s_t(a)+b_t(a)
+ \qquad\text{for every }a\in\cA_t.
+\end{equation}
+There is an absolutely continuous SPD path $\bV_t(\tau)$ from
+$\bVbar_t$ to $\bV_t$ with a predictable certificate
+\begin{equation}\label{eq:path-length-new}
+ \mathcal D_t
+ :=\int_0^1\!\left\|
+ \bV_t(\tau)^{-1/2}\dot\bV_t(\tau)\bV_t(\tau)^{-1/2}
+ \right\|_{\rm op}d\tau
+ \le\bar D_t<\infty.
+\end{equation}
+The algorithmic operator has a predictable two-sided certificate
+\begin{equation}\label{eq:operator-sandwich-new}
+ 0<\kappa_{-,t}\le\kappa_{+,t}<\infty,\qquad
+ \kappa_{-,t}\bV_t\preceq\Calg_t\preceq\kappa_{+,t}\bV_t.
+\end{equation}
+Finally, the solver returns $\hat s_t(a)\ge0$ such that
+\begin{equation}\label{eq:solver-interface-new}
+ s_{\Calg,t}(a)\le\hat s_t(a)\quad\text{for every }a\in\cA_t,
+ \qquad
+ \hat s_t(a_t)\le\alpha_t s_{\Calg,t}(a_t),\quad\alpha_t\ge1.
+\end{equation}
+The first condition is an all-domain optimism certificate.  The second is
+required only at the played action.
+\end{assumption}
+
+Use the transported score
+\begin{equation}\label{eq:transported-score-new}
+ U_t(a)=m_t(a)
+ +\beta_t e^{\bar D_t/2}\sqrt{\kappa_{+,t}}\,\hat s_t(a)
+ +b_t(a),
+\end{equation}
+and let a predictable score oracle return $a_t$ satisfying
+\begin{equation}\label{eq:approx-score-oracle-new}
+ U_t(a_t)\ge\sup_{a\in\cA_t}U_t(a)-\xi_t,\qquad \xi_t\ge0.
+\end{equation}
+Regret is defined against the mean-reward supremum, so an optimal action need
+not exist.
+
+\begin{theorem}[Corrected-center, estimator- and solver-agnostic transport]
+\label{thm:transported-ucb}
+Suppose \Cref{asm:abstract-transport} holds, the score obeys
+\eqref{eq:transported-score-new}--\eqref{eq:approx-score-oracle-new}, and
+$\|\bq_t(a)\|_2\le G$.  On the joint confidence and certificate event, the
+instantaneous regret satisfies
+\begin{equation}\label{eq:instantaneous-transport-new}
+ \operatorname{reg}_t\le
+ \beta_t\!\left[1+\alpha_t e^{\bar D_t}
+ \sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]\bar s_t(a_t)
+ +2b_t(a_t)+\xi_t.
+\end{equation}
+Consequently,
+\begin{align}
+R_T
+&\le
+\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+\sum_{t=1}^T\beta_t^2
+\left[1+\alpha_t e^{\bar D_t}
+\sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]^2}
+\nonumber\\[-1mm]
+&\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.\label{eq:sharp-transport-regret-new}
+\end{align}
+In particular, the simpler bound
+\begin{align}
+R_T
+&\le2\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+\sum_{t=1}^T\alpha_t^2\beta_t^2e^{2\bar D_t}
+\frac{\kappa_{+,t}}{\kappa_{-,t}}}
+\nonumber\\[-1mm]
+&\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t
+\label{eq:simple-transport-regret-new}
+\end{align}
+holds.  The bias envelope enters twice and the approximate-oracle error enters
+once.  If the confidence event has probability at least $1-\delta$ and the
+joint certificate event has probability at least $1-\delta_{\rm cert}$, these
+bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
+\end{theorem}
+
+\begin{corollary}[Finite full enumeration]
+\label{cor:finite-enumeration-new}
+If $\cA_t$ is finite and the learner maximizes \eqref{eq:transported-score-new}
+with a deterministic tie rule, then \eqref{eq:approx-score-oracle-new} holds
+with $\xi_t=0$, and all score-supremum and selector measurability conditions in
+\Cref{thm:transported-ucb} are automatic.
+\end{corollary}
+
+The headline theorem contains no optimizer residual, CG-specific quantity, or
+dynamic-width complexity.  Its price is explicit: closing through the frozen
+potential requires the lower operator factor $\kappa_{-,t}$.  The previous
+one-sided theorem remains useful when that factor is unavailable and is retained
+in \Cref{app:one-sided-fallback}.
+
+\begin{algorithm}[t]
+\caption{Corrected-center transported UCB}\label{alg:transported-ucb}
+\begin{algorithmic}[1]
+\STATE Observe the context and measurable action domain $\cA_t$.
+\STATE Choose any predictable representation parameter $\btheta_t$ in the certified region.
+\STATE Form the query map $\bq_t(a)$, corrected center $m_t^{\rm corr}(a)$, and bias envelope $b_t(a)$.
+\STATE Construct $\Calg_t$ and obtain certificates $\bar D_t$, $\kappa_{-,t}$, and $\kappa_{+,t}$.
+\STATE Obtain solver upper widths $\hat s_t(a)$ over the score domain.
+\STATE Return an $\xi_t$-approximate maximizer of the score in \eqref{eq:transported-score-new}.
+\STATE Observe the reward; update the frozen ridge estimator and \eqref{eq:reference-update-new}.
+\end{algorithmic}
+\end{algorithm}
+
+\section{Logarithmic transport for relinearized curvature}
+\label{sec:logarithmic-transport}
+
+\begin{lemma}[Logarithmic comparison along an SPD path]
+\label{lem:log-spd-path}
+Let $\bV:[0,1]\to\mathbb{S}_{++}^d$ be entrywise absolutely continuous and
+let $\dot\bV(\tau)$ denote its almost-everywhere derivative.  If
+\begin{equation}\label{eq:generic-path-length-new}
+ \mathcal D(\bV)=\int_0^1
+ \|\bV(\tau)^{-1/2}\dot\bV(\tau)\bV(\tau)^{-1/2}\|_{\rm op}\,d\tau,
+\end{equation}
+then
+\begin{equation}\label{eq:log-path-sandwich-new}
+ e^{-\mathcal D(\bV)}\bV(0)\preceq\bV(1)
+ \preceq e^{\mathcal D(\bV)}\bV(0).
+\end{equation}
+No commutativity or small-path assumption is required.
+\end{lemma}
+
+\begin{lemma}[Rectangular factor-path certificate]
+\label{lem:factor-spd-path}
+Let $\Bmat:[0,1]\to\R^{m\times d}$ be absolutely continuous and set
+$\bV(\tau)=\lambda\bI+\Bmat(\tau)^\top\Bmat(\tau)$, with $\lambda>0$.
+Then
+\begin{equation}\label{eq:factor-path-bound-new}
+ \mathcal D(\bV)\le2\int_0^1
+ \|\dot\Bmat(\tau)\bV(\tau)^{-1/2}\|_{\rm op}\,d\tau.
+\end{equation}
+Equivalently, if
+$\dot\Bmat(\tau)^\top\dot\Bmat(\tau)\preceq
+\nu_t(\tau)^2\bV(\tau)$ almost everywhere, then
+$\mathcal D(\bV)\le2\int_0^1\nu_t(\tau)d\tau$.
+\end{lemma}
+
+For scalar differentiable means, take the $s$th row of $\Bmat_t(\tau)$ to be
+\begin{equation}\label{eq:scalar-factor-path-new}
+ \sigma^{-1}\nabla_\theta\mu_{\btheta_s+
+ \tau(\btheta_t-\btheta_s)}(x_s,a_s)^\top.
+\end{equation}
+This interpolates from collection-time frozen curvature to the exact current
+relinearized curvature.
+Predictably weighted or heteroscedastic squared loss uses row
+$\sqrt{w_s}\,\nabla\mu^\top$ for a nonnegative collection-time weight $w_s$.
+If the weight is fixed along the interpolation, the same proof only rescales
+the corresponding row.  If it changes with the path, the derivative of
+$\sqrt{w_s(\tau)}$ is an additional obligation.
+
+\begin{corollary}[Hessian path certificate]
+\label{cor:hessian-path-new}
+Suppose the parameter region is convex and
+$\|\nabla_\theta^2\mu_\theta(x_s,a_s)\|_{\rm op}\le L_g$ along every segment
+in \eqref{eq:scalar-factor-path-new}.  With
+\begin{equation}\label{eq:Qt-new}
+ Q_t=\sum_{s<t}\|\btheta_t-\btheta_s\|_2^2,
+\end{equation}
+the exact current and frozen metrics satisfy
+\begin{equation}\label{eq:hessian-path-sandwich-new}
+ e^{-\bar D_t}\bVbar_t\preceq\bV_t\preceq e^{\bar D_t}\bVbar_t,
+ \qquad
+ \bar D_t=\frac{2L_g\sqrt{Q_t}}{\sigma\sqrt\lambda}.
+\end{equation}
+This remains valid when $\bar D_t\ge1$.  At $t=1$, the factor has zero rows,
+$Q_1=0$, and both metrics equal $\lambda\bI$.
+\end{corollary}
+
+The relative condition in \Cref{lem:factor-spd-path} can be much sharper than
+the ridge-only bound in \Cref{cor:hessian-path-new}: excitation in the current
+metric attenuates motion in already-observed directions.  It permits arbitrary
+gradient rotation and requires neither a fixed subspace nor known rank.
+
+\begin{proposition}[Width transport and approximate operators]
+\label{prop:width-transport-new}
+Under \eqref{eq:path-length-new} and \eqref{eq:operator-sandwich-new},
+\begin{align}
+ \bar s_t^2(a)&\le e^{\bar D_t}\kappa_{+,t}s_{\Calg,t}^2(a),
+ &s_{\Calg,t}^2(a)&\le
+ e^{\bar D_t}\kappa_{-,t}^{-1}\bar s_t^2(a).
+ \label{eq:two-way-width-new}
+\end{align}
+Exact current curvature has $\kappa_{-,t}=\kappa_{+,t}=1$.  More generally,
+the operational relative-error certificate
+\begin{equation}\label{eq:relative-operator-certificate-new}
+ \|\bV_t^{-1/2}(\Calg_t-\bV_t)\bV_t^{-1/2}\|_{\rm op}
+ \le\varepsilon_t<1
+\end{equation}
+gives $\kappa_{-,t}=1-\varepsilon_t$ and
+$\kappa_{+,t}=1+\varepsilon_t$.  An upper comparison alone does not imply a
+lower factor.
+\end{proposition}
+
+For vector outputs, let $J_s(\theta)\in\R^{p_s\times d}$ and supply an
+absolutely continuous factor $R_s(\theta)\in\R^{r_s\times p_s}$ satisfying
+$R_s^\top R_s=W_s\succeq0$.  Stacking
+$B_s=R_sJ_s\in\R^{r_s\times d}$ gives
+$\lambda I+\sum_sJ_s^\top W_sJ_s$.  Along a path,
+$\dot B_s=\dot R_sJ_s+R_s\dot J_s$; both terms must be controlled.  This
+covers the geometry of weighted Fisher/GGN factors but does not by itself prove
+a likelihood confidence sequence or an exponential-family regret theorem.
+
+\section{Corrected-center squared-loss specialization}
+\label{sec:corrected-center}
+
+We now construct \eqref{eq:abstract-confidence-new} without assuming that the
+representation parameter minimizes a nonlinear loss.  Let $\sigma>0$ and let
+the reward obey $r_t=\mu_t^*(a_t)+\eta_t$, where, for every $u\in\R$,
+\begin{equation}\label{eq:new-noise-condition}
+ \mathbb E[\exp(u\eta_t)\mid\cHist_t]
+ \le\exp(u^2\sigma^2/2).
+\end{equation}
+Thus the noise condition is imposed after the action is selected and before
+the reward is revealed.  Fix before data collection a reference parameter
+$\btheta^\circ\in\Theta$ with $\|\btheta^\circ\|_2\le S$, and allow
+approximate realizability
+\begin{equation}\label{eq:approx-realizability-new}
+ \mu^*(z)=\mu_{\btheta^\circ}(z)+m^\circ(z),qquad
+ |m^\circ(z)|\le\epsilon_{\rm mis}(z).
+\end{equation}
+The predictable sequence $\btheta_t\in\Theta$ is otherwise arbitrary.  Set
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$ and define collection-time
+pseudo-responses and the frozen ridge estimator by
+\begin{align}
+ y_s&=r_s-\mu_{\btheta_s}(x_s,a_s)+\bq_s(a_s)^\top\btheta_s,
+ \label{eq:pseudo-response-new}\\
+ \hat\btheta_t^{\rm lin}
+ &=\bVbar_t^{-1}\sigma^{-2}\sum_{s<t}\bq_s(a_s)y_s.
+ \label{eq:frozen-ridge-new}
+\end{align}
+The corrected center is
+\begin{equation}\label{eq:corrected-center-new}
+ m_t^{\rm corr}(a)=\mu_{\btheta_t}(x_t,a)
+ +\bq_t(a)^\top(\hat\btheta_t^{\rm lin}-\btheta_t).
+\end{equation}
+
+Fix $\delta\in(0,1)$.  Let $\rho_s^\circ$ be the Taylor remainder of
+$\mu_{\btheta^\circ}$ around $\btheta_s$, and supply envelopes
+\begin{equation}\label{eq:lin-mis-envelopes-new}
+ |\rho_s^\circ|\le\epsilon_{\rm lin}(s),\qquad
+ |m^\circ(x_s,a_s)|\le\epsilon_{\rm mis}(s),
+\end{equation}
+with the corresponding actionwise current envelopes
+$\epsilon_{\rm lin,t}(a)$ and $\epsilon_{\rm mis,t}(a)$.  Each envelope is
+deterministic or measurable before the reward at the round where it is used;
+the complete historical sum below is known before selecting $a_t$.  Define
+\begin{equation}\label{eq:beta-corrected-new}
+ \beta_t^{\rm corr}
+ =\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt\lambda S
+ +\frac1\sigma\sqrt{\sum_{s<t}
+ [\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2}.
+\end{equation}
+
+\begin{corollary}[Corrected-center confidence without optimizer assumptions]
+\label{cor:corrected-center-new}
+With probability at least $1-\delta$, simultaneously over rounds and actions,
+\begin{equation}\label{eq:corrected-confidence-new}
+ |\mu_t^*(a)-m_t^{\rm corr}(a)|
+ \le\beta_t^{\rm corr}\bar s_t(a)
+ +\epsilon_{\rm lin,t}(a)+\epsilon_{\rm mis,t}(a).
+\end{equation}
+The identity and bound hold for any predictable $\btheta_t$ in the certified
+region.  They require no exact ERM, approximate stationarity, optimizer
+residual, or optimizer convergence rate.
+\end{corollary}
+
+The historical deterministic term in \eqref{eq:beta-corrected-new} follows from
+$\Phi_t^\top\bVbar_t^{-1}\Phi_t\preceq I$ for
+$\Phi_t=[\bq_1/\sigma,\ldots,\bq_{t-1}/\sigma]$.  Its scaling is
+$1/\sigma$, not $1/\sigma^2$.  Fixed nonvanishing misspecification generally
+creates a linear current-bias term and can also make the historical radius
+vacuous.  This is a graceful-degradation statement, not a robust
+misspecified-bandit guarantee.
+
+\section{Closed finite-dimensional rates and local alternatives}
+\label{sec:closed-rates-new}
+
+Let $r_T=\min\{d,T\}$.  Rank--trace concavity gives the primitive closure
+\begin{equation}\label{eq:finite-d-gamma-new}
+ \gamma_T\le\Gamma_{T,d}:=
+ r_T\log\!\left(1+\frac{TG^2}{r_T\lambda\sigma^2}\right).
+\end{equation}
+No fixed tangent subspace is required.
+
+\begin{corollary}[Finite-dimensional corrected-center rate]
+\label{cor:finite-d-rate-new}
+Suppose $\bar D_t\le D$, $\alpha_t\le\alpha$, and
+$\kappa_{+,t}/\kappa_{-,t}\le K$ for all $t$.  Let
+\begin{align*}
+ B_T&=\sum_{s<T}[\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2,\\
+ E_T^{\rm cur}&=\sum_{t=1}^T
+ [\epsilon_{\rm lin,t}(a_t)+\epsilon_{\rm mis,t}(a_t)].
+\end{align*}
+Then \Cref{thm:transported-ucb,cor:corrected-center-new} imply
+\begin{align}
+R_T
+&\le2\alpha e^D\sqrt K
+\left[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda S
++\frac{\sqrt{B_T}}{\sigma}\right]
+\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)T\Gamma_{T,d}}
+\nonumber\\
+&\quad+2E_T^{\rm cur}+\sum_{t=1}^T\xi_t.
+\label{eq:finite-d-rate-new-display}
+\end{align}
+With exact realizability and a frozen linear model, $B_T=E_T^{\rm cur}=0$.
+For fixed $d$ and problem constants, the leading term is then
+$O(e^D\sqrt K\,d\sqrt T\log T)$.  Exact solves set $\alpha=1$, exact current
+curvature sets $K=1$, and exact score maximization sets $\xi_t=0$, recovering
+the standard LinUCB determinant-potential rate up to displayed constants.
+\end{corollary}
+
+The previous additive stacked-design result remains a useful local corollary.
+If $\chi_t<1$ and
+\begin{equation}\label{eq:local-additive-new}
+ (1-\chi_t)^2\bVbar_t\preceq\bV_t
+ \preceq(1+\chi_t)^2\bVbar_t,
+\end{equation}
+use the local score obtained from \eqref{eq:transported-score-new} by replacing
+$e^{\bar D_t/2}$ with $1+\chi_t$.
+\begin{corollary}[Local small-drift transport]
+\label{cor:local-small-drift-new}
+Under the remaining hypotheses of \Cref{thm:transported-ucb}, the local score
+satisfies
+\begin{align}
+R_T
+&\le\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+\sum_{t=1}^T\beta_t^2
+\left[1+\alpha_t\frac{1+\chi_t}{1-\chi_t}
+\sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]^2}
+\nonumber\\
+&\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.
+\label{eq:local-small-drift-regret-new}
+\end{align}
+\end{corollary}
+Neither the local factor nor the exponential factor uniformly dominates the
+other because they summarize different paths.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{p{.25\linewidth}p{.31\linewidth}p{.18\linewidth}cc}
+\toprule
+Route & Assumption & two-way factor & smallness & rotation \\
+\midrule
+Logarithmic path & normalized SPD path length $\bar D_t$ & $e^{\bar D_t}$ & no & yes \\
+Additive endpoint & whitened design error $\chi_t$ & $(1+\chi_t)/(1-\chi_t)$ & yes & yes \\
+Scalar link & fixed features, derivative ratios & ratio bound & lower ratio & scalar only \\
+Exact current & $\Calg_t=\bV_t$ & $1$ & no & yes \\
+Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kappa_-}$ & $\kappa_->0$ & yes \\
+\bottomrule
+\end{tabular}
+\caption{Transport certificates.  ``Rotation'' records whether replay
+gradients may change direction.}
+\label{tab:transport-comparison-new}
+\end{table}
+
+\paragraph{Scope.}
+The abstract theorem applies to any estimator that supplies
+\eqref{eq:abstract-confidence-new}.  A complete exponential-family
+specialization would additionally require a likelihood-score confidence event,
+prediction conversion, predictable collection-time Fisher weights, control of
+weight and Jacobian transport, and an information-potential bound.  The factor
+geometry above does not establish those statistical steps, so no such theorem
+is claimed here.
