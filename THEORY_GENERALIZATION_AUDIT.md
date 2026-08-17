@@ -1,23 +1,27 @@
 # Theory generalization audit
 
-Baseline: `codex/cc-ucb-theory-experiments` at
-`7f8cc0a7414f11e61adcd4dc5842c577e043f0a9`.
+Reviewed baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e`
+(`9128276`). This audit describes the modified working tree based directly on
+that commit. No post-edit commit hash exists.
 
 This audit compares the previous headline theorem with the revised theorem
 derived in `THEORY_TRANSPORT_DERIVATIONS.md`. It also records restrictions that
 were not removed and claims that remain out of scope.
+The abstract result is titled “Estimator- and solver-agnostic confidence
+transport”; the corrected center is its primary squared-loss specialization,
+not an assumption of the abstract theorem.
 
 ## 1. Headline theorem comparison
 
 | Topic | Previous headline theorem | Revised headline theorem | Status |
 |---|---|---|---|
-| Predictive center | Original nonlinear center plus an optimizer-centering certificate | Arbitrary predictable center; concrete result uses the corrected center | Removed from headline |
+| Predictive center | Original nonlinear center plus an optimizer-centering certificate | Generic pre-reward center; concrete result uses the corrected center | Removed from headline |
 | Representation update | Warm-started optimizer for the full-history nonlinear loss | Any predictable parameter sequence inside the certified region | Relaxed |
-| Current/reference transport | One-sided endpoint comparison; two-sided closure needs `chi_t<1` | Logarithmic SPD path comparison for every finite path length | Removed smallness from primary exact-current closure |
-| Action domain | Finite enumeration and exact argmax | Measurable arbitrary action domain and measurable `xi_t`-approximate score oracle | Generalized, with explicit measurability requirement |
+| Current/reference transport | One-sided endpoint comparison; two-sided closure needs `chi_t<1` | Classical Thompson-Finsler selected-path comparison for every finite path length | Removed smallness from primary exact-current closure |
+| Action domain | Finite enumeration and exact argmax | Standard-Borel space, graph-measurable random correspondence, measurable finite suprema, and measurable `xi_t`-approximate selector | Generalized under explicit formal premises |
 | Solver | Uniform relative CG energy error over all actions | Any simultaneous upper-width certificate plus played-action sharpness | Solver-agnostic |
 | Realizability | Exact realizability | Fixed ex-ante reference model plus historical and current misspecification envelopes | Relaxed, with explicit bias cost |
-| Algorithmic operator | Exact current or one-sided predictable comparison | Two-sided predictable comparison to current curvature | Stronger closure, but adds a lower-factor requirement |
+| Algorithmic operator | Exact current or one-sided pre-reward comparison | Two-sided pre-reward comparison to current curvature | Stronger closure, but adds a lower-factor requirement |
 | Width complexity | Dynamic realized `Lambda_T^C` remains in the general theorem | Sequential frozen `gamma_T` closes the main theorem | Closed under the two-sided certificate |
 | Main additive terms | Linearization and centering errors | Current linearization, misspecification, and score-oracle errors | Optimizer term removed |
 | Statistical model | Gaussian/squared-loss construction | Abstract confidence theorem plus a squared-loss corrected-center construction | Estimator-agnostic headline |
@@ -45,25 +49,33 @@ dominance.
 ## 3. Assumptions still required
 
 1. The reference metric is a predictable sequential rank-one update formed
-   from collection-time queries.
-2. The abstract reference-metric confidence event holds simultaneously over
-   the score domain.
-3. The action supremum and approximate score selector are measurable. A bare
-   measurable action space does not guarantee either property.
-4. The logarithmic path has a predictable finite upper certificate. A finite
+   from collection-time queries, with `lambda>0` and `sigma>0`.
+2. The action space is standard Borel. The random action correspondence has an
+   `H_t^- \otimes B`-measurable graph.
+3. The mean, query, center, bias, solver width, and score maps are jointly
+   measurable on that graph. Both mean-reward and score suprema are finite
+   measurable random variables.
+4. The abstract reference-metric confidence event and every certificate event,
+   including universal all-action events, are measurable.
+5. The oracle returns an `H_t`-measurable selector in the random domain.
+6. The Thompson-Finsler path has a finite pre-reward upper envelope. A finite
    but large value may be numerically vacuous.
-5. The algorithmic operator has both lower and upper predictable comparison
-   factors relative to exact current curvature.
-6. The solver upper width is valid for every action considered by the oracle.
-7. The solver has a finite sharpness certificate at the played action.
-8. The query norm is bounded and the reference ridge has `lambda>0` for the
-   displayed potential constant.
-9. The corrected-center specialization uses a fixed ex-ante reference
-   parameter in the certified smoothness region.
-10. Historical and current linearization and misspecification envelopes are
-    supplied predictably.
-11. Randomized certificate failure budgets are allocated before their random
-    objects are drawn.
+7. The algorithmic operator has lower and upper pre-reward comparison factors
+   relative to exact current curvature.
+8. The solver upper width is valid for every action considered by the oracle.
+   Finite sharpness is required only at the played action.
+9. The solver-upper, played-sharpness, and score-oracle inequalities use the
+   same realized width map.
+10. The query norm is bounded for the displayed potential constant.
+11. The corrected-center specialization uses a fixed ex-ante reference
+    parameter in the certified smoothness region and a zero-centered ridge in
+    the chosen coordinates. For a pretrained model, those are displacement
+    coordinates from initialization.
+12. Historical and current linearization and misspecification envelopes are
+    supplied before the reward where they are used.
+13. Randomized certificate budgets are `H_t^-`-measurable and allocated before
+    their random objects are drawn. Validity is conditioned on the sigma-field
+    immediately before each draw.
 
 ## 4. New restrictions and tradeoffs
 
@@ -95,26 +107,61 @@ algorithm needs access to the frozen-feature ridge estimator. That can require
 stored frozen queries, replay with historical checkpoints, an explicit
 low-dimensional representation, or a separately certified approximation.
 
+### Filtration and random domains
+
+`H_t^-` is the history after the context and action correspondence are observed
+but before fresh round-`t` randomization. `H_t` adds the aggregate pre-reward
+randomization. The reference metric, representation parameter, exact current
+metric, confidence radius, and certificate budgets are predictable when stated
+as `H_t^-`-measurable. The realized randomized operator, path envelope,
+condition factors, solver outputs, oracle tolerance, and selected action may be
+only `H_t`-measurable. The reward is observed afterward.
+
+A finite random action set is not automatically measurable. The repaired
+corollary assumes an `H_t^-`-measurable size `K_t` and an `H_t^-`-measurable
+enumeration `a_{t,1},...,a_{t,K_t}`. The smallest maximizing index is then an
+`H_t`-measurable exact selector. Without such a premise, a singleton-valued
+correspondence can encode a non-Borel set and have no measurable selector.
+
+### Certificate status
+
+| Certificate | Status |
+|---|---|
+| Reference confidence event | Statistical or model-specific premise |
+| Path-length envelope | Analytic or separately certified |
+| Two-sided operator comparison | Deterministic, analytic, or randomized with failure allocation |
+| All-domain solver upper validity | Exact-arithmetic or verified numerical certificate |
+| Played-action sharpness | Exact-arithmetic or verified selected-action certificate |
+| Linearization and misspecification envelopes | Supplied pre-reward bounds |
+| Measurable approximate selector | Oracle premise |
+
+“Supplied” or “valid” does not mean efficiently computable. Float64 residuals,
+empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
+
 ## 5. Proof-obligation audit
 
 | Obligation | Result | Notes |
 |---|---|---|
-| Logarithmic SPD path sandwich | Complete | Uses absolute continuity and fixed-vector log differentiation |
-| Rectangular factor-path bound | Complete | Orientation checked for `B in R^{m x d}` |
-| Scalar Hessian/`Q_t` certificate | Complete | Gives `2 L_g sqrt(Q_t)/(sigma sqrt(lambda))` |
-| Vector-output factor dimensions | Complete | Uses `R_s J_s in R^{r_s x d}` |
-| Weighted Fisher path | Conditional but complete | Requires an explicit absolutely continuous weight factor and controls both derivative terms |
-| Current/reference width transport | Complete | Every Loewner inversion direction checked |
-| Two-sided approximate-operator transport | Complete | Exact current is the unit-factor case |
-| Generic solver interface | Complete | Upper validity is global; sharpness is played-action only |
-| Concrete inverse-quadratic certificate | Complete in exact arithmetic | Ordinary float64 residual checks are not verified enclosures |
-| Arbitrary-action approximate oracle | Complete | Uses suprema; assumes measurable approximate selector |
-| Instantaneous regret constants | Complete | Sharp factor is `1+alpha exp(D)sqrt(Kappa)`; bias twice, oracle error once |
-| Frozen potential closure | Complete | One Cauchy-Schwarz step after the per-round bound |
-| Corrected-center identity | Complete | Holds for any predictable representation path |
-| Historical misspecification contraction | Complete | Uses `Phi^T bar V^{-1} Phi <= I`; factor is `1/sigma` |
-| Finite-dimensional information bound | Complete | Uses `min(d,T)` rank and trace; no supplied subspace |
-| Frozen linear reduction | Complete | Recovers the standard LinUCB determinant-potential form |
+| Standard-Borel random-domain formalism | Resolved in working tree | Measurable graph, joint maps, both finite measurable suprema, measurable selector, and measurable universal events are explicit |
+| Measurably enumerated finite-domain corollary | Resolved in working tree | Random size and enumeration are `H_t^-`-measurable; smallest maximizing index is measurable |
+| Filtration classification | Resolved in working tree | Predictable means `H_t^-`; randomized score objects may be `H_t` pre-reward measurable |
+| Logarithmic SPD path sandwich | Verified | Uses absolute continuity and fixed-vector log differentiation |
+| Thompson endpoint consequence | Verified | `d_Th(V(0),V(1))<=D(V)`; endpoint, path, and factor bounds are distinguished |
+| Rectangular factor-path bound | Repaired and verified | `B in R^{m x d}`; `nu_t>=0`, measurable, and `L^1` before integration |
+| Scalar Hessian/`Q_t` certificate | Verified | Gives `2 L_g sqrt(Q_t)/(sigma sqrt(lambda))`; stacked path is synthetic |
+| Vector-output factor dimensions | Verified | Uses `R_s J_s in R^{r_s x d}` |
+| Weighted Fisher path | Conditional but verified | Requires an explicit absolutely continuous weight factor and controls both derivative terms |
+| Current/reference width transport | Verified | Every Loewner inversion direction checked |
+| Two-sided approximate-operator transport | Verified | Exact current is the unit-factor case |
+| Generic solver interface | Verified | Upper validity is global; sharpness is played-action only; all inequalities use one width map |
+| Concrete inverse-quadratic certificate | Repaired in exact arithmetic | Covers `L>0`, `L<=0<U`, `U=0`, and `q=0`; float64 point residuals are not enclosures |
+| Standard-Borel approximate oracle | Resolved in working tree | Uses measurable finite suprema and an explicitly assumed measurable selector |
+| Instantaneous regret constants | Verified | Sharp factor is `1+alpha exp(D)sqrt(Kappa)`; bias twice, oracle error once |
+| Frozen potential closure | Verified | One Cauchy-Schwarz step after the per-round bound |
+| Corrected-center identity | Verified | Holds for any predictable representation path |
+| Historical misspecification contraction | Verified | Uses `Phi^T bar V^{-1} Phi <= I`; factor is `1/sigma` |
+| Finite-dimensional information bound | Verified | Uses `min(d,T)` rank and trace; no supplied subspace |
+| Frozen linear reduction | Verified | Recovers the standard LinUCB determinant-potential form |
 | Exponential-family confidence theorem | Not attempted | Factor geometry alone is insufficient; retained as future work |
 | Unrestricted neural-training guarantee | Not attempted | Outside the proved scope |
 
@@ -157,11 +204,13 @@ No proof step assumes `D_t<1`. The exponential comparison remains correct for
 large finite `D_t`. A large factor is not described as useful merely because it
 is finite.
 
-### Approximate operator near singularity
+### Approximate-operator condition ratio
 
-As `kappa_{-,t}` tends to zero, the bound diverges. This is unavoidable for the
-chosen proof because the algorithmic metric can otherwise make played widths
-arbitrarily large relative to the reference potential.
+The bound deteriorates as the certified ratio
+`kappa_{+,t}/kappa_{-,t}` becomes large. A common scalar rescaling
+`C_t=c_t V_t` may use `kappa_-=kappa_+=c_t`, leaving the ratio equal to one
+even if `c_t` tends to zero. An upper-only comparison still cannot close the
+played algorithmic width through the frozen potential.
 
 ### Zero and empty cases
 
@@ -177,10 +226,12 @@ arbitrarily large relative to the reference potential.
 
 ### Measurability and randomization
 
-All schedules used in the score are fixed before reward observation. Conditional
-failure probabilities may be predictable and random but must be allocated
-before the relevant random draw. Independence is not assumed. Terminal spectral
-quantities never enter an action-time confidence radius.
+All score inputs are fixed before reward observation. Objects selected before
+fresh randomization are `H_t^-`-measurable; realized randomized objects may be
+`H_t`-measurable. Conditional failure budgets may be predictable and random but
+must be allocated before the relevant draw. Validity is conditioned on the
+sigma-algebra immediately before that draw. Independence is not assumed.
+Terminal spectral quantities never enter an action-time confidence radius.
 
 ### Weighted Fisher factors
 
@@ -188,11 +239,30 @@ For `J_s in R^{p_s x d}` and `R_s in R^{r_s x p_s}`, both
 `Rdot_s J_s` and `R_s Jdot_s` lie in `R^{r_s x d}`. Omitting the weight-factor
 derivative would make the path certificate false for data-dependent weights.
 
+### Counterexamples that force the repaired premises
+
+- **Negative `nu_t`.** Constant `B` and `nu_t=-1` satisfy the squared PSD
+  inequality but would assert `0=D(V)<=-2`. Nonnegativity and `L^1`
+  integrability are explicit.
+- **No all-action solver upper validity.** With two scalar actions, identity
+  metrics, `beta=1`, zero bias, an optimal unit-query action of mean one, and a
+  zero-query action of mean zero, reporting both widths as zero can make a tie
+  rule select the zero-query action. Played sharpness holds, but regret is one
+  while the played frozen width is zero.
+- **No lower operator factor.** For `bar V=V=I_2` and
+  `C=diag(epsilon,1)`, the upper comparison holds while the `e_1` algorithmic
+  width is `epsilon^{-1/2}`. A bad action can win the UCB score by this width,
+  and no frozen-potential bound independent of a lower factor follows.
+- **Finite but nonmeasurable random domain.** A singleton correspondence that
+  selects `{1}` on a non-Borel subset of `[0,1]` and `{0}` elsewhere has no
+  measurable selector. Finiteness alone is not a replacement for graph
+  measurability or a measurable enumeration.
+
 ## 8. Transport comparison table
 
 | Transport route | Assumption | Width factor | Smallness required | Gradient rotation allowed |
 |---|---|---:|---:|---:|
-| Logarithmic metric path | Finite normalized SPD path length `bar D_t` | `exp(bar D_t/2)` per one-way width comparison | No | Yes |
+| Thompson-Finsler metric path | Finite normalized selected-path length `bar D_t` | `exp(bar D_t/2)` per one-way width comparison | No | Yes |
 | Additive endpoint drift | Whitened stacked-design error `chi_t<1` | `(1+chi_t)/(1-chi_t)` for two-way width use | Yes | Yes, within endpoint norm control |
 | Scalar-link relative | Fixed features and bounded derivative ratios | Relative derivative-ratio factor | Depends on lower ratio | Only scalar rescaling per feature |
 | Exact current curvature | `C_t=V_t` | Operator factor one | No | Yes |
@@ -205,6 +275,10 @@ the other numerically because they summarize different geometric information.
 
 - The abstract theorem is estimator-agnostic. Squared loss is one concrete
   confidence construction, not a headline restriction.
+- The normalized SPD path length and endpoint Thompson distance are classical.
+  The paper claims novelty for their operational composition with frozen bandit
+  confidence, replayed GGN/Fisher curvature, approximate operators, certified
+  solver widths, approximate selection, and frozen-information closure.
 - Weighted Fisher/GGN geometry is included only as a factor-path statement.
   No exponential-family confidence or regret corollary is claimed.
 - CG and PCG are solver-interface examples, not theorem assumptions.
@@ -214,19 +288,27 @@ the other numerically because they summarize different geometric information.
   history.
 - Retained negative findings remain in the appendix without numerical edits and
   are explicitly not evidence for the logarithmic-transport theorem.
+- The full policy has no end-to-end scalability theorem.
 
-## 10. Unresolved blockers
+## 10. Current formal status and remaining scope limits
 
-There is no unresolved algebraic proof obligation for the new abstract theorem,
-path lemmas, corrected-center squared-loss specialization, or finite-dimensional
-rate. The following are deliberately not claimed:
+The baseline working tree had unresolved formal obligations involving random
+action domains, filtration terminology, the sign of `nu_t`, the `L<0` solver
+case, and width-map consistency. The modified working tree repairs those items,
+and the independent checks recorded above found no remaining algebraic blocker
+for the abstract theorem, path lemmas, corrected-center squared-loss
+specialization, or finite-dimensional rate. The following remain deliberately
+outside the result:
 
-1. computable nonvacuous path certificates for unrestricted neural training;
+1. unrestricted neural-network training or generic fine-tuning guarantees;
 2. a complete exponential-family confidence theorem;
 3. sublinear regret under fixed nonzero misspecification;
 4. floating-point verified solver certification from ordinary residual checks;
-5. two-sided guarantees for arbitrary sketches or diagonal approximations;
-6. empirical validation of the revised theorem.
+5. uniform regret improvement from full curvature;
+6. two-sided guarantees for arbitrary diagonal, low-rank, stale, or sketched
+   operators;
+7. empirical validation of the revised transported theorem;
+8. end-to-end scalability of the full policy.
 
 An earlier exact-current stable-excitation route was also abandoned rather than
 stated as a theorem.  Its constrained approximate-minimizer proof still lacks a

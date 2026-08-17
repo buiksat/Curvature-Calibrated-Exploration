@@ -6,16 +6,30 @@ separation is the main object of the paper; the squared-loss construction in
 \Cref{sec:corrected-center} is one way to instantiate it.
 
 \paragraph{Protocol and timing.}
-Let $(\mathsf A,\mathcal B)$ be a measurable action space.  At round $t$, the
-learner observes a context and a nonempty measurable action domain
-$\cA_t\subseteq\mathsf A$.  Write $\cHist_t^-$ for the sigma-algebra before
-fresh round-$t$ algorithmic randomization, and
-$\cHist_t=\cHist_t^-\vee\sigma(\Omega_t)$ after that randomization but before
-the reward.  All quantities used to select the action are
-$\cHist_t$-measurable.  We assume the action-indexed scores have measurable,
-finite suprema and that the score oracle below returns a measurable action.
-This is automatic for finite actions with a deterministic tie rule; a bare
-measurable action space alone does not guarantee a measurable selector.
+Let $(\mathsf A,\mathcal B)$ be a standard Borel action space.  At round $t$,
+the learner observes a context and a nonempty random action correspondence
+$\cA_t:\Omega\to 2^{\mathsf A}$ whose graph
+\[
+ \operatorname{Gr}(\cA_t)
+ :=\{(\omega,a):a\in\cA_t(\omega)\}
+ \in\cHist_t^-\otimes\mathcal B.
+\]
+Here $\cHist_t^-$ is the history after the context and action correspondence
+are observed but before fresh round-$t$ algorithmic randomization.  The variable
+$\Omega_t$ records all round-$t$ pre-reward randomization, which may be revealed
+in sequential stages, and $\cHist_t=\cHist_t^-\vee\sigma(\Omega_t)$ contains
+that randomization but not the reward.  The restrictions to
+$\operatorname{Gr}(\cA_t)$ of
+$(\omega,a)\mapsto\mu_t^*(a),\bq_t(a),m_t(a),b_t(a),\hat s_t(a)$, and, once
+defined below, $U_t(a)$ are assumed jointly measurable with respect to
+$\cHist_t\otimes\mathcal B$.  We also assume explicitly that
+$\sup_{a\in\cA_t}\mu_t^*(a)$ and $\sup_{a\in\cA_t}U_t(a)$ are finite
+$\cHist_t$-measurable random variables, that the oracle below returns a $\cHist_t$-measurable
+selector in $\cA_t$, and that the simultaneous confidence and all certificate
+events below, including path, operator, all-domain solver-upper, and
+played-action sharpness validity, are measurable.  These are
+substantive assumptions; standard-Borel structure
+and graph measurability alone do not make every supremum or selector measurable.
 
 Let $\bq_t(a)\in\R^d$ be the prediction query.  The three metrics are
 \begin{align}
@@ -25,7 +39,7 @@ Let $\bq_t(a)\in\R^d$ be the prediction query.  The three metrics are
  \bV_t&=\text{the exact current relinearized metric},\nonumber\\
  \Calg_t&=\text{the algorithmic SPD metric}.
 \end{align}
-Here $\lambda>0$.  Define the corresponding widths
+Here $\lambda>0$ and $\sigma>0$.  Define the corresponding widths
 \begin{equation}\label{eq:three-widths-new}
  \begin{aligned}
   \bar s_t^2(a)&=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\\
@@ -46,16 +60,29 @@ Set $\gamma_0=0$, and define
  \qquad R_T=\sum_{t=1}^T\operatorname{reg}_t.
 \end{equation}
 
+The reference metric $\bVbar_t$ and, when used, the representation parameter
+$\btheta_t$ are determined from the prefix history and are
+$\cHist_t^-$-measurable.  The exact current metric $\bV_t$ is likewise formed
+before the fresh certificate randomization and is $\cHist_t^-$-measurable.  The realized algorithmic operator
+$\Calg_t$, path envelope $\bar D_t$, condition factors
+$\kappa_{-,t},\kappa_{+,t}$, solver-width map $\hat s_t(\cdot)$, sharpness
+factor $\alpha_t$, oracle tolerance $\xi_t$, and selected action $a_t$ may
+depend on $\Omega_t$ and are required only to be $\cHist_t$-measurable.  Thus
+``predictable'' below is reserved for $\cHist_t^-$-measurable quantities;
+quantities that may use $\Omega_t$ are called pre-reward measurable.  The
+reward is observed only after $a_t$ is selected.
+
 \begin{assumption}[Reference confidence and operational certificates]
 \label{asm:abstract-transport}
-For predictable $\beta_t\ge0$, center $m_t(a)$, and action-dependent envelope
-$b_t(a)\ge0$, a simultaneous confidence event satisfies
+For predictable $\beta_t\ge0$ and pre-reward measurable center $m_t(a)$ and
+action-dependent envelope $b_t(a)\ge0$, a measurable simultaneous confidence
+event satisfies
 \begin{equation}\label{eq:abstract-confidence-new}
  |\mu_t^*(a)-m_t(a)|\le\beta_t\bar s_t(a)+b_t(a)
  \qquad\text{for every }a\in\cA_t.
 \end{equation}
 There is an absolutely continuous SPD path $\bV_t(\tau)$ from
-$\bVbar_t$ to $\bV_t$ with a predictable certificate
+$\bVbar_t$ to $\bV_t$ with a pre-reward certificate
 \begin{equation}\label{eq:path-length-new}
  \begin{aligned}
   \mathcal D_t
@@ -65,12 +92,13 @@ $\bVbar_t$ to $\bV_t$ with a predictable certificate
   &\le\bar D_t<\infty.
  \end{aligned}
 \end{equation}
-The algorithmic operator has a predictable two-sided certificate
+The algorithmic operator has a pre-reward two-sided certificate
 \begin{equation}\label{eq:operator-sandwich-new}
  0<\kappa_{-,t}\le\kappa_{+,t}<\infty,\qquad
  \kappa_{-,t}\bV_t\preceq\Calg_t\preceq\kappa_{+,t}\bV_t.
 \end{equation}
-Finally, the solver returns $\hat s_t(a)\ge0$ such that
+Finally, the solver returns a jointly measurable pre-reward width map
+$\hat s_t(a)\ge0$ such that, on a measurable solver event,
 \begin{equation}\label{eq:solver-interface-new}
  \begin{aligned}
   s_{\Calg,t}(a)&\le\hat s_t(a)
@@ -89,16 +117,50 @@ Use the transported score
  +\beta_t e^{\bar D_t/2}\sqrt{\kappa_{+,t}}\,\hat s_t(a)
  +b_t(a),
 \end{equation}
-and let a predictable score oracle return $a_t$ satisfying
+and let a pre-reward oracle return a $\cHist_t$-measurable selector
+$a_t\in\cA_t$ satisfying
 \begin{equation}\label{eq:approx-score-oracle-new}
  U_t(a_t)\ge\sup_{a\in\cA_t}U_t(a)-\xi_t,\qquad \xi_t\ge0.
 \end{equation}
 Regret is defined against the mean-reward supremum, so an optimal action need
 not exist.
 
-\begin{theorem}[Corrected-center, estimator- and solver-agnostic transport]
+\begin{remark}[One realized solver-width map]
+The all-domain solver upper condition, the played-action sharpness condition,
+and the approximate-score-oracle inequality refer to the same realized width
+map $\hat s_t(\cdot)$.  Refining the selected action's solve after selection
+must not silently replace the value used in $U_t(a_t)$.  If refinement changes
+$\hat s_t(a_t)$, the oracle inequality must be checked again, or the original
+score width must remain the theorem object.  Any randomized post-selection
+verification needs its own pre-draw filtration and conditional failure
+allocation.  No all-action sharpness condition is required.
+\end{remark}
+
+\begin{table}[t]
+\centering\scriptsize
+\begin{tabularx}{\columnwidth}{@{}p{.39\columnwidth}X@{}}
+\toprule
+Certificate & Status \\
+\midrule
+Reference confidence event & Statistical or model-specific premise \\
+Path-length envelope & Analytic or separately certified \\
+Two-sided operator comparison & Deterministic, analytic, or randomized with failure allocation \\
+All-domain solver upper validity & Exact-arithmetic or verified numerical certificate \\
+Played-action sharpness & Exact-arithmetic or verified selected-action certificate \\
+Linearization and misspecification envelopes & Supplied pre-reward bounds \\
+Measurable approximate selector & Oracle premise \\
+\bottomrule
+\end{tabularx}
+\caption{Assumption ledger for abstract confidence transport.  A float64 point
+residual, empirical eigenvalue estimate, or unenclosed numerical check is not a
+mathematical certificate.}
+\label{tab:transport-assumption-ledger}
+\end{table}
+
+\begin{theorem}[Estimator- and solver-agnostic confidence transport]
 \label{thm:transported-ucb}
-Suppose \Cref{asm:abstract-transport} holds, the score obeys
+Under the protocol above with $\lambda>0$ and $\sigma>0$, suppose
+\Cref{asm:abstract-transport} holds, the score obeys
 \eqref{eq:transported-score-new}--\eqref{eq:approx-score-oracle-new}, and
 $\|\bq_t(a)\|_2\le G$.  On the joint confidence and certificate event, the
 instantaneous regret satisfies
@@ -135,12 +197,20 @@ joint certificate event has probability at least $1-\delta_{\rm cert}$, these
 bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
 \end{theorem}
 
-\begin{corollary}[Finite full enumeration]
+\begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
-If $\cA_t$ is finite and the learner maximizes \eqref{eq:transported-score-new}
-with a deterministic tie rule, then \eqref{eq:approx-score-oracle-new} holds
-with $\xi_t=0$, and all score-supremum and selector measurability conditions in
-\Cref{thm:transported-ucb} are automatic.
+Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and
+$\cHist_t^-$-measurable actions $a_{t,k}:\Omega\to\mathsf A$, $k\ge1$, such
+that
+\[
+ \cA_t=\{a_{t,1},\ldots,a_{t,K_t}\}.
+\]
+If the learner chooses the smallest index attaining the score maximum, then the
+selected action is $\cHist_t$-measurable and
+\eqref{eq:approx-score-oracle-new} holds with $\xi_t=0$.  The score and
+mean-reward suprema and the universal actionwise events reduce to measurable
+finite maxima and intersections.  A fixed finite action set is the immediate
+special case.
 \end{corollary}
 
 The headline theorem contains no optimizer residual, CG-specific quantity, or
@@ -150,14 +220,14 @@ one-sided theorem remains useful when that factor is unavailable and is retained
 in \Cref{app:one-sided-fallback}.
 
 \begin{algorithm}[t]
-\caption{Corrected-center transported UCB}\label{alg:transported-ucb}
+\caption{Corrected-center specialization of transported UCB}\label{alg:transported-ucb}
 \begin{algorithmic}[1]
-\STATE Observe the context and measurable action domain $\cA_t$.
-\STATE Choose any predictable representation parameter $\btheta_t$ in the certified region.
-\STATE Form the query map $\bq_t(a)$, corrected center $m_t^{\rm corr}(a)$, and bias envelope $b_t(a)$.
-\STATE Construct $\Calg_t$ and obtain certificates $\bar D_t$, $\kappa_{-,t}$, and $\kappa_{+,t}$.
-\STATE Obtain solver upper widths $\hat s_t(a)$ over the score domain.
-\STATE Return an $\xi_t$-approximate maximizer of the score in \eqref{eq:transported-score-new}.
+\STATE Observe the context and graph-measurable action correspondence $\cA_t$; this defines $\cHist_t^-$.
+\STATE Take the prefix-determined $\btheta_t$, $\bVbar_t$, and $\bV_t$; using the observed context, form $\bq_t(a)$, $m_t^{\rm corr}(a)$, and $b_t(a)$.
+\STATE Choose $\cHist_t^-$-measurable failure budgets before their corresponding draws; reveal the pre-reward randomness $\Omega_t$.
+\STATE Construct $\Calg_t$ and obtain pre-reward certificates $\bar D_t$, $\kappa_{-,t}$, and $\kappa_{+,t}$.
+\STATE Obtain one jointly measurable solver upper-width map $\hat s_t(a)$ over the score domain.
+\STATE Return a $\cHist_t$-measurable $\xi_t$-approximate selector for the score in \eqref{eq:transported-score-new}.
 \STATE Observe the reward; update the frozen ridge estimator and \eqref{eq:reference-update-new}.
 \end{algorithmic}
 \end{algorithm}
@@ -181,6 +251,30 @@ then
 No commutativity or small-path assumption is required.
 \end{lemma}
 
+\begin{remark}[Thompson distance and selected-path length]
+The integrand in \eqref{eq:generic-path-length-new} is the classical Thompson
+Finsler norm on the positive-definite cone
+\citep{thompson1963certain,nussbaum1994finsler}.  Its endpoint metric is
+\[
+ d_{\rm Th}(A,B)
+ :=\inf\{r\ge0:e^{-r}A\preceq B\preceq e^rA\}.
+\]
+Equivalently,
+\[
+ d_{\rm Th}(A,B)
+ =\left\|\log(A^{-1/2}BA^{-1/2})\right\|_{\rm op}.
+\]
+Therefore \Cref{lem:log-spd-path} gives
+\begin{align*}
+ d_{\rm Th}(\bV(0),\bV(1))&\le\mathcal D(\bV),\\
+ d_{\rm Th}(\bVbar_t,\bV_t)&\le\mathcal D_t\le\bar D_t.
+\end{align*}
+The endpoint distance depends only on the two metrics, whereas
+$\mathcal D(\bV)$ depends on the selected path.  The direct SPD path length is
+independent of a factorization; the upper bound from
+\Cref{lem:factor-spd-path} depends on the chosen factorization and interpolation.
+\end{remark}
+
 \begin{lemma}[Rectangular factor-path certificate]
 \label{lem:factor-spd-path}
 Let $\Bmat:[0,1]\to\R^{m\times d}$ be absolutely continuous and set
@@ -190,10 +284,16 @@ Then
  \mathcal D(\bV)\le2\int_0^1
  \|\dot\Bmat(\tau)\bV(\tau)^{-1/2}\|_{\rm op}\,d\tau.
 \end{equation}
-Equivalently, if
-$\dot\Bmat(\tau)^\top\dot\Bmat(\tau)\preceq
-\nu_t(\tau)^2\bV(\tau)$ almost everywhere, then
-$\mathcal D(\bV)\le2\int_0^1\nu_t(\tau)d\tau$.
+More generally, suppose there is a measurable function
+$\nu_t:[0,1]\to[0,\infty)$ with $\nu_t\in L^1([0,1])$ such that
+\[
+ \dot\Bmat(\tau)^\top\dot\Bmat(\tau)
+ \preceq\nu_t(\tau)^2\bV(\tau)
+\]
+almost everywhere.  Then
+$\mathcal D(\bV)\le2\int_0^1\nu_t(\tau)d\tau$.  For nonnegative $\nu_t$, the
+displayed PSD premise is equivalently the norm condition
+$\|\dot\Bmat(\tau)\bV(\tau)^{-1/2}\|_{\rm op}\le\nu_t(\tau)$ almost everywhere.
 \end{lemma}
 
 For scalar differentiable means, take the $s$th row of $\Bmat_t(\tau)$ to be
@@ -202,9 +302,13 @@ For scalar differentiable means, take the $s$th row of $\Bmat_t(\tau)$ to be
  \tau(\btheta_t-\btheta_s)}(x_s,a_s)^\top.
 \end{equation}
 This interpolates from collection-time frozen curvature to the exact current
-relinearized curvature.
-Predictably weighted or heteroscedastic squared loss uses row
-$\sqrt{w_s}\,\nabla\mu^\top$ for a nonnegative collection-time weight $w_s$.
+relinearized curvature.  It is a synthetic path in stacked factor space: each
+replay factor follows its own segment from the collection-time Jacobian to the
+current relinearized Jacobian.  The stacked path need not equal the GGN evaluated
+at one common intermediate parameter shared by all replay samples.
+A weighted or heteroscedastic squared loss uses row
+$\sqrt{w_s}\,\nabla\mu^\top$ for a nonnegative collection-time weight $w_s$
+fixed before the corresponding reward.
 If the weight is fixed along the interpolation, the same proof only rescales
 the corresponding row.  If it changes with the path, the derivative of
 $\sqrt{w_s(\tau)}$ is an additional obligation.
@@ -272,8 +376,14 @@ the reward obey $r_t=\mu_t^*(a_t)+\eta_t$, where, for every $u\in\R$,
  \le\exp(u^2\sigma^2/2).
 \end{equation}
 Thus the noise condition is imposed after the action is selected and before
-the reward is revealed.  Fix before data collection a reference parameter
-$\btheta^\circ\in\Theta$ with $\|\btheta^\circ\|_2\le S$, and allow
+the reward is revealed.  The ridge penalty is centered at zero in the chosen
+parameter coordinates, and every norm bound below, including
+$\|\btheta^\circ\|_2\le S$, uses those coordinates.  For a pretrained
+initialization $\btheta_0$, the intended convention is displacement coordinates
+$\btheta=\btheta_{\rm orig}-\btheta_0$; then $S$ bounds the displacement of the
+reference model from initialization rather than its raw parameter norm.  Fix
+before data collection a reference parameter $\btheta^\circ\in\Theta$ with
+$\|\btheta^\circ\|_2\le S$, and allow
 approximate realizability
 \begin{equation}\label{eq:approx-realizability-new}
  \mu^*(z)=\mu_{\btheta^\circ}(z)+m^\circ(z),qquad
@@ -427,7 +537,7 @@ gradients may change direction.}
 The abstract theorem applies to any estimator that supplies
 \eqref{eq:abstract-confidence-new}.  A complete exponential-family
 specialization would additionally require a likelihood-score confidence event,
-prediction conversion, predictable collection-time Fisher weights, control of
+prediction conversion, pre-reward collection-time Fisher weights, control of
 weight and Jacobian transport, and an information-potential bound.  The factor
 geometry above does not establish those statistical steps, so no such theorem
 is claimed here.

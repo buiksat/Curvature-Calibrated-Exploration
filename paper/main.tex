@@ -52,13 +52,13 @@
 \newcommand{\epsCGbar}{\bar\varepsilon_{\mathrm{CG}}}
 % --- notation introduced by the dynamic-transfer revision ------------------
 \newcommand{\bh}{\mathbf{h}}                     % played gradient feature h_t
-\newcommand{\Calg}{\mathcal{C}}                 % generic predictable SPD algorithmic curvature
+\newcommand{\Calg}{\mathcal{C}}                 % generic pre-reward SPD algorithmic curvature
 \newcommand{\Lamalg}{\Lambda^{\Calg}}           % realized width complexity
 \newcommand{\Valg}{V^{\Calg}}                   % determinant-destroying variation charge
 \newcommand{\Gamdyn}{\Gamma^{\mathrm{dyn}}}     % dynamic potential bound
 \newcommand{\Gmat}{\mathsf{G}}                  % whitened frozen-feature columns
 \newcommand{\Dmat}{\mathsf{D}}                  % whitened replayed-drift columns
-\newcommand{\cHist}{\mathcal{H}}                % pre-action history sigma-algebra H_t
+\newcommand{\cHist}{\mathcal{H}}                % pre-reward history sigma-algebra H_t
 
 % (Prior venue-specific checklist answer macros removed; the official
 %  AISTATS reproducibility checklist from the target-year paper pack provides its own
@@ -85,22 +85,24 @@
 \begin{abstract}
 Relinearized generalized Gauss--Newton and Fisher metrics use current model
 Jacobians, while bandit confidence sequences are naturally built from
-predictable collection-time features.  We study when confidence can be
-transported between these geometries.  A logarithmic path length for
-positive-definite metrics gives a two-sided exponential comparison without a
-small-drift assumption or fixed tangent subspace.  Combining this comparison
-with a two-sided approximate-operator certificate yields an
-estimator-agnostic, solver-agnostic UCB theorem for measurable action spaces and
-approximate score maximization.  Its regret closes through the sequential
-frozen information gain rather than an uncontrolled dynamic-width term.  For
-differentiable squared-loss models, a corrected center makes the representation
-path arbitrary and predictable: no nonlinear optimizer certificate is needed.
+features fixed before their corresponding rewards.  We study when confidence can be
+transported between these geometries.  We instantiate the classical Thompson
+Finsler path length on positive-definite metrics as an operational bandit
+certificate, obtaining a two-sided exponential comparison without a small-drift
+assumption or fixed tangent subspace.  Combining this comparison with a
+two-sided approximate-operator certificate yields an estimator-agnostic,
+solver-agnostic UCB theorem for general standard-Borel action spaces under
+explicit measurable-supremum and measurable-selector assumptions.  Its regret
+closes through the sequential frozen information gain rather than an
+uncontrolled dynamic-width term.  For differentiable squared-loss models, a
+corrected center permits any prefix-measurable representation path: no nonlinear
+optimizer certificate is needed.
 The construction also permits explicit historical and current
 misspecification envelopes and recovers the standard finite-dimensional LinUCB
 rate in the frozen linear exact-solve limit.  The result is conditional on
-computable path, operator, confidence, and solver certificates; it is not a
-guarantee for unrestricted neural training, a complete exponential-family
-theorem, or verified floating-point certification.
+valid supplied pre-reward path, operator, confidence, and solver certificates;
+it is not a guarantee for unrestricted neural training, a complete
+exponential-family theorem, or verified floating-point certification.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -110,8 +112,8 @@ A differentiable contextual-bandit model supplies a current prediction query,
 typically a Jacobian
 $\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$.  The corresponding current
 GGN or Fisher width is geometrically natural for action selection.  Statistical
-confidence, however, is built from the queries that were predictable when past
-rewards were collected.  Relinearizing every replay item at $\btheta_t$ changes
+confidence, however, is built from the queries fixed before the corresponding
+past rewards were observed.  Relinearizing every replay item at $\btheta_t$ changes
 all summands at once and destroys the sequential rank-one update behind the
 usual self-normalized argument.  This mismatch appears in neural UCB,
 neural-linear, and Laplace-style exploration
@@ -132,16 +134,22 @@ Each arrow needs its own operational certificate.
 
 Our primary transport quantity is the integrated normalized speed of an SPD
 path.  For a path $V(\tau)$ it is
-$\int_0^1\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}d\tau$.  Differentiating
-$\log(v^\top V(\tau)v)$ for a fixed vector gives an exponential Loewner
-sandwich for every finite path length.  Unlike the previous additive endpoint
-argument, the result does not require a smallness condition.  A rectangular
-factor-path bound covers relinearized scalar GGN factors and, conditionally on
-an absolutely continuous output-weight factor, vector-output Fisher geometry.
+$\int_0^1\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}d\tau$, the Finsler path length
+associated with the classical Thompson metric on the positive-definite cone
+\citep{thompson1963certain,nussbaum1994finsler}.  Differentiating
+$\log(v^\top V(\tau)v)$ for a fixed vector gives the corresponding exponential
+Loewner sandwich for every finite selected-path length.  Unlike the previous
+additive endpoint argument, this use does not require a smallness condition.  A
+rectangular factor-path bound covers relinearized scalar GGN factors and,
+conditionally on an absolutely continuous output-weight factor, vector-output
+Fisher geometry.  We do not claim the underlying Thompson geometry or the
+path-to-Loewner inequality as new.
 
 The transported-UCB theorem is abstract at the confidence and solver
-interfaces.  It permits a measurable action domain, a predictable approximate
-score oracle, action-dependent model bias, a certified upper width over the
+interfaces.  It permits a standard-Borel action space with a graph-measurable
+random action correspondence, finite measurable reward and score suprema, and a
+pre-reward measurable approximate selector.  It also permits a generic
+pre-reward center, action-dependent model bias, a certified upper width over the
 score domain, and solver sharpness only at the played action.  A two-sided
 algorithmic-operator comparison then transports the selected width back to the
 sequential frozen potential.  This lower comparison is essential.  When only a
@@ -157,18 +165,26 @@ radius through an explicit energy; current errors enter additively.  Constant
 nonvanishing misspecification can still make regret linear.
 
 \paragraph{Contributions.}
-\textbf{(1)} A logarithmic metric-transport lemma and factor-path certificates
-for moving, relinearized curvature, including a Hessian certificate that allows
-arbitrary gradient rotation and requires no small-drift premise
+\textbf{(1)} An operational instantiation of classical Thompson Finsler geometry
+for moving, relinearized curvature, together with factor-path and Hessian
+certificates that allow arbitrary gradient rotation and require no small-drift premise
 (\Cref{lem:log-spd-path,lem:factor-spd-path,cor:hessian-path-new}).
-\textbf{(2)} A transported-UCB regret theorem with arbitrary predictable
-centers, measurable approximate score maximization, generic certified solver
-widths, two-sided approximate operators, and a closed frozen-potential bound
+\textbf{(2)} A transported-UCB regret theorem with generic pre-reward centers,
+measurable approximate score maximization, generic certified solver widths,
+two-sided approximate operators, and a closed frozen-potential bound
 (\Cref{thm:transported-ucb}).
 \textbf{(3)} A corrected-center squared-loss specialization with approximate
 realizability and a primitive finite-dimensional rate that reduces to LinUCB in
 the frozen linear exact-solve case
 (\Cref{cor:corrected-center-new,cor:finite-d-rate-new}).
+
+The new contribution is the composition of predictable frozen statistical
+confidence; a current relinearized GGN or Fisher metric; factor-path and Hessian
+certificates tailored to replayed curvature; a two-sided approximate operator;
+generic certified solver widths; approximate score maximization; closure through
+the frozen sequential information gain; and a corrected-center squared-loss
+specialization.  Each component has antecedents.  Their operational composition
+for relinearized contextual-bandit curvature is the result claimed here.
 
 The contribution is the confidence transport and its contextual-bandit
 instantiation, not generic conjugate gradients, a generic UCB-to-regret
@@ -222,7 +238,9 @@ Under the structural hypotheses of \Cref{thm:regret}, with its certificate
 inputs instantiated by valid smoothness constants, the
 optimizer residual bound $\zeta_t$, uniform CG certificates, and a valid
 $\kappa_{+,t}$, \eqref{eq:path-stats-main}--\eqref{eq:operational-beta-main}
-are predictable and satisfy every nonlinear input of the theorem.  Thus
+give predictable prefix-derived schedules, while $u_t$ and any current
+randomized operator factor are pre-reward measurable.  Together they satisfy
+every nonlinear input of the theorem.  Thus
 \Cref{thm:regret} holds with $E_T$ replaced by
 $\bar E_T=\sum_{t\le T}\bar\epsilon_t^{\rm lin}$ and the observable CG upper
 bound on $\Lamalg_T$ from \Cref{cor:lam-observable}.
@@ -361,10 +379,10 @@ or a lower bound.  When $U$ is supplied, the projected Gram in
 \section{Conclusion}\label{sec:conclusion}
 
 Relinearized exploration can be analyzed without identifying the current metric
-with the predictable confidence metric.  The logarithmic path comparison gives
-a two-sided transport certificate for every finite path length, and the
-transported-UCB theorem composes it with approximate operators, generic solver
-upper widths, and approximate score maximization.  A lower operator certificate
+with the predictable confidence metric.  Classical Thompson Finsler geometry
+gives a two-sided transport certificate for every finite selected-path length,
+and the transported-UCB theorem composes it with approximate operators, generic
+solver upper widths, and approximate score maximization.  A lower operator certificate
 is what closes the selected width through the sequential frozen potential; the
 one-sided dynamic theorem remains the appropriate fallback when that premise is
 unavailable.
@@ -378,16 +396,23 @@ oracle accuracy.  In the frozen linear exact-solve limit these terms reduce to
 the usual LinUCB determinant-potential guarantee.
 
 \paragraph{Limitations.}
-The abstract theorem assumes a valid reference confidence event, measurable
-score supremum and approximate selector, a finite predictable path certificate,
-and a two-sided operator comparison.  The squared-loss specialization requires
-a fixed ex-ante reference model and predictable linearization and
-misspecification envelopes.  Constant misspecification can yield linear regret.
+The abstract theorem assumes a standard-Borel action space, a graph-measurable
+random action correspondence, finite measurable mean-reward and score suprema,
+a measurable approximate selector and universal events, a finite pre-reward
+path envelope, and a two-sided operator comparison.  The squared-loss
+specialization requires a fixed ex-ante reference model, a prefix-measurable
+representation path, and supplied pre-reward linearization and misspecification
+envelopes.  Constant misspecification can yield linear regret.
 The corrected center also needs access to the frozen-feature ridge estimator.
 The factor-path geometry does not by itself prove an exponential-family
-confidence theorem, and no unrestricted neural-training guarantee is claimed.
-Ordinary floating-point residual checks are diagnostics rather than verified
-numerical certificates.  Legacy audits are summarized in
+confidence theorem.  We do not claim unrestricted neural-network training or
+generic fine-tuning guarantees, verified floating-point certification, uniform
+regret improvement from full curvature, sublinear regret under fixed
+nonvanishing misspecification, two-sided guarantees for arbitrary diagonal,
+low-rank, stale, or sketched operators, empirical validation of the transported
+theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
+residual checks are diagnostics rather than verified numerical certificates.
+Legacy audits are summarized in
 \Cref{app:legacy-evidence}; none instantiates the revised theorem event.
 
 % --- references -----------------------------------------------------------
@@ -1427,8 +1452,8 @@ $W\ge CTP_T$ in~\eqref{eq:scaled-tanh-relative-psi} to prove
 \eqref{eq:scaled-tanh-residual-factor}.
 \end{proof}
 
-\paragraph{Predictable algorithmic curvature under certified transfer.}
-The analysis is conducted for a \emph{generic predictable SPD algorithmic
+\paragraph{Pre-reward algorithmic curvature under certified transfer.}
+The analysis is conducted for a \emph{generic pre-reward measurable SPD algorithmic
 curvature sequence} $\{\Calg_t\}_{t\ge1}$ satisfying
 \begin{equation}\label{eq:calg-props}
   \Calg_t\ \text{is symmetric},\qquad
@@ -2127,7 +2152,7 @@ Unlike $\bCbar_t$, the algorithmic curvature $\Calg_t$ need \emph{not} be
 monotone in~$t$: relinearization, subsampling, windowing, and periodic
 refresh can all \emph{shrink} it, so the elementary determinant
 telescoping of~\eqref{eq:infogain} no longer applies.  The following lemma is an
-exact pathwise bookkeeping identity for a general predictable SPD sequence.  It
+exact pathwise bookkeeping identity for a general pre-reward SPD sequence.  It
 is not a standalone rate result: its upper bound is informative only when the
 terminal log determinant and determinant-decreasing refresh charge are
 independently controlled, as in \Cref{lem:rank-refresh}.
@@ -2416,7 +2441,7 @@ $\tilde\bu_I=P_t^{-1/2}\tilde\by_I$.  Then
  {\sqrt{\bar\kappa_t^P}+1}\right)^I,
 \end{equation}
 where
-$\bar\kappa_t^P\ge\kappa(\widehat C_t)$ is a certified predictable bound.
+$\bar\kappa_t^P\ge\kappa(\widehat C_t)$ is a certified pre-reward bound.
 In particular, positive $\cHist_t$-measurable certified quantities
 $\ell_t,L_t$ satisfying the spectral equivalence
 $\ell_tP_t\preceq\Calg_t\preceq L_tP_t$ with
@@ -2658,7 +2683,7 @@ $\bar F_t=\sum_{s<t}(\bar\epsilon_s^{\rm lin})^2$; a tighter externally
 certified predictable sequence may replace it.
 
 \begin{corollary}[Observable information-gain surrogate via the one-sided transfer factor]\label{cor:gammahat}
-Run \Cref{alg:ccucb} with a predictable algorithmic curvature
+Run \Cref{alg:ccucb} with a pre-reward algorithmic curvature
 sequence~$\Calg_s$, per-round CG tolerance with
 $\varepsilon_{s,a_s}\le\bar\varepsilon_s<1$ for the played action, and an
 $\cHist_s$-measurable one-sided optimism-transfer factor $u_s(a)\ge1$ satisfying
@@ -2932,6 +2957,17 @@ spectral calculations remain open.
 
 \section{Related Work}\label{sec:related}
 
+\paragraph{Positive-cone metric geometry.}
+\citet{thompson1963certain} introduced the part metric now commonly called the
+Thompson metric on ordered cones.  \citet{nussbaum1994finsler} developed its
+Finsler structure and applications.  On the positive-definite cone, the
+normalized operator norm
+$\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}$ is the corresponding tangent norm.
+Our contribution is not this geometry or its path-to-endpoint comparison.  We
+instantiate it as an operational confidence-transport device linking frozen
+bandit confidence, current replayed GGN/Fisher curvature, approximate operators,
+and certified solver widths.
+
 \paragraph{Neural and linear contextual bandits.}
 LinUCB \citep{abbasi2011improved} and Thompson sampling
 \citep{thompson1933likelihood,agrawal2013thompson} provide the analytical
@@ -3058,15 +3094,19 @@ estimators \citep{ubaru2017fast}, without forming the matrix.
 
 
 \paragraph{Filtration.}
-We separate \emph{pre-action} randomness, revealed before the agent commits to
-$a_t$, from \emph{post-reward} randomness, drawn only after $r_t$ is observed.
-Let $\Omega_t$ collect all pre-action algorithmic randomness used at round~$t$:
-curvature subsampling indices, randomized sketches, and stochastic solver seeds.
-The randomized sketch or subsample that defines the curvature operator is drawn
-into $\Omega_t$ and \emph{fixed before action selection}; it is not re-randomized
+We separate \emph{pre-reward} randomness, revealed before the reward, from
+\emph{post-reward} randomness, drawn only after $r_t$ is observed.  Let
+$\Omega_t$ collect all pre-reward algorithmic randomness used at round~$t$,
+revealed in stages.  Curvature subsampling indices, randomized sketches, and
+stochastic solver seeds used to construct the score are revealed before action
+selection.  The randomized sketch or subsample that defines the curvature
+operator is then \emph{fixed before action selection}; it is not re-randomized
 during any conjugate-gradient (CG) solve at round~$t$.  (Standard CG requires a
 fixed symmetric positive definite matrix--vector oracle across its iterations and
-does not apply to a stochastic oracle that changes between iterations.)
+does not apply to a stochastic oracle that changes between iterations.)  Optional
+selected-action verification randomness may be revealed after a provisional
+selection but before the reward, subject to the same-width and oracle-recheck
+requirements in \Cref{asm:abstract-transport}.
 Let $U_{t+1}$ collect the \emph{post-reward} randomness used to form the next
 parameter estimate $\btheta_{t+1}$ (minibatch order, dropout, perturbed warm
 starts).
@@ -3088,12 +3128,15 @@ $\sigma$-algebra
   \qquad
   \cG_t \;:=\; \cHist_t\vee\sigma(a_t).
 \end{equation}
-At round~$t$ the context $\bx_t$, the finite action set $\cA_t$, and the
-pre-action randomness $\Omega_t$ are revealed; the agent selects $a_t$; then the
-reward $r_t=\mu^*(\bx_t,a_t)+\eta_t$ is observed; finally $U_{t+1}$ is drawn and
-$\btheta_{t+1}$ is computed.
-$\cH_t^-$ is the history immediately before the randomized certificate draw;
-after that draw, its realized operator and schedules are $\cHist_t$-measurable.
+At round~$t$ the context $\bx_t$ and finite action set $\cA_t$ are revealed;
+the score-building part of $\Omega_t$ is drawn; the agent selects $a_t$; any
+optional selected-action verification is completed and the oracle inequality is
+rechecked when required; then the reward
+$r_t=\mu^*(\bx_t,a_t)+\eta_t$ is observed.  Finally $U_{t+1}$ is drawn and
+$\btheta_{t+1}$ is computed.  $\cH_t^-$ is the history immediately before the
+first randomized certificate draw; after all pre-reward draws, the realized
+operator, schedules, verification outputs, and action are
+$\cHist_t$-measurable.
 By construction of \Cref{alg:ccucb} the selection rule is a deterministic function
 of $\cHist_t$-measurable quantities, so the chosen action $a_t$ is itself
 $\cHist_t$-measurable and hence $\cG_t=\cHist_t$; we retain the symbol $\cG_t$
@@ -3115,9 +3158,15 @@ after $r_t$ preserves the conditional sub-Gaussian property of \Cref{asm:noise}
 for the future noise $\{\eta_s\}_{s>t}$.
 Index every randomized certificate source (operator sketch, transfer bound,
 condition bound, or other randomized oracle) by $j\in\mathcal J$.  For its
-round-$t$ validity event $\cE_{j,t}$ choose in advance
-$\delta_{j,t}\ge0$ such that its stated conditional guarantee gives
-$\Pr(\cE_{j,t}^c\mid\cH_t^-)\le\delta_{j,t}$ and
+round-$t$ validity event $\cE_{j,t}$ choose an $\cH_t^-$-measurable budget
+$\delta_{j,t}\ge0$ before the corresponding draw.  Let $\mathcal P_{j,t}$ be
+the sigma-algebra immediately before that draw: it equals $\cH_t^-$ for the
+first round-start draw and includes earlier randomization, and possibly $a_t$,
+for later draws.  Require
+\[
+ \Pr(\cE_{j,t}^c\mid\mathcal P_{j,t})\le\delta_{j,t}.
+\]
+Also require
 \[
  \sum_{j\in\mathcal J}\sum_{t=1}^T\delta_{j,t}
  \le\delta_{\rm cert},\qquad
@@ -3428,7 +3477,7 @@ specialization.
 
 
 \paragraph{How to read the legacy one-sided theorem.}
-The theorem is a transfer result for a general predictable SPD curvature
+The theorem is a transfer result for a general pre-reward SPD curvature
 sequence.  \Cref{lem:path-certificates,cor:operational} instantiate its
 nonlinear confidence, centering, and feature-transfer inputs from $O(d)$ path
 state, observed collection residuals, analytic smoothness constants, and a
@@ -3788,7 +3837,7 @@ convex last-layer regime under exact optimization, $\bar\psi_t=0$ and
 $\omega_t=\bar\beta_t$), and a uniform
 CG tolerance $\bar\varepsilon_t\le\bar\varepsilon$ so that
 $\alpha_t\le\alpha_I:=\sqrt{(1+\bar\varepsilon)/(1-\bar\varepsilon)}$.
-Suppose predictable factors $\rho_{-,t},\rho_{+,t}$ are certified before
+Suppose pre-reward factors $\rho_{-,t},\rho_{+,t}$ are certified before
 action selection and the \emph{two-sided} sandwich
 $\rho_{-,t}\bCbar_t\preceq\hat\bC_t\preceq\rho_{+,t}\bCbar_t$ holds for all
 $t\le T$ with $0<\rho_{-,t}\le\rho_{+,t}<\infty$; set

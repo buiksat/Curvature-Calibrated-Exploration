@@ -123,7 +123,7 @@ bridge.
 
 \subsection{CC-UCB Algorithm}
 
-For a predictable SPD oracle $\Calg_t\succeq\lambda\bI$, set
+For a pre-reward measurable SPD oracle $\Calg_t\succeq\lambda\bI$, set
 $\omega_t=\bar\beta_t+\bar\psi_t$ for the original nonlinear center.
 \Cref{alg:ccucb} is the analyzed full-enumeration policy.  The same fixed
 curvature operator is reused across separate per-action CG solves; a solution
@@ -132,7 +132,7 @@ for one action is not reused as the solution for another action.
 \caption{Curvature-Calibrated UCB (CC-UCB)}\label{alg:ccucb}
 \begin{algorithmic}[1]
 \STATE Observe context $\bx_t$ and finite action set $\cA_t$.
-\STATE Construct a fixed predictable SPD oracle $\bv\mapsto\Calg_t\bv$ with $\Calg_t\succeq\lambda\bI$.
+\STATE Construct a fixed pre-reward SPD oracle $\bv\mapsto\Calg_t\bv$ with $\Calg_t\succeq\lambda\bI$.
 \FOR{each $a\in\cA_t$}
   \STATE Compute $\widehat\mu_t(a)=\mu_{\btheta_t}(\bx_t,a)$ and $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$.
   \STATE If $\bg_t(a)\ne\mathbf0$, solve $\Calg_t\bu=\bg_t(a)$ separately by CG until the certified tolerance holds; otherwise set $\tilde\bu=\mathbf0$. \label{line:cg}
@@ -209,7 +209,7 @@ Gaussian/squared-loss setup and
 full exponential-family or generalized-linear-bandit proof; the extension in
 \Cref{app:expfam} defines curvature only.
 
-For a general predictable SPD sequence $\Calg_t$, confidence is proved in the
+For a general pre-reward SPD sequence $\Calg_t$, confidence is proved in the
 frozen Gram $\bCbar_t$, whose update and measurability support self-normalized
 concentration.  A one-sided factor $u_t(a)$ transfers optimism to $\Calg_t$,
 CG contributes $\alpha_t$, and nonmonotonicity remains in the realized width
@@ -223,7 +223,7 @@ Assume conditionally $\sigma$-sub-Gaussian noise, $\|\bg_t(\bx_s,a)\|\le G$,
 realizability by $\|\btheta^*\|\le S$, and a local expansion with round-$t$
 remainder at most $\epslin(t)$.  For the original center assume the
 action-scaled discrepancy is at most $\bar\psi_t\bar s_t(a)$.  The operator
-$\Calg_t$ is predictable, SPD, satisfies $\Calg_t\succeq\lambda\bI$ and
+$\Calg_t$ is pre-reward measurable, SPD, satisfies $\Calg_t\succeq\lambda\bI$ and
 $\Calg_1=\lambda\bI$, and remains fixed throughout every CG solve.  Define
 \begin{equation}\label{eq:main-widths}
 \begin{aligned}
@@ -256,7 +256,7 @@ The bounded-width cap gives
  \sum_{t=1}^T s_{\Calg,t}^2(a_t)
  \le(\sigma^2+G^2/\lambda)\Lamalg_T.
 \end{equation}
-For a general predictable nonmonotone SPD sequence, we do not derive a
+For a general pre-reward nonmonotone SPD sequence, we do not derive a
 primitive sublinear bound on $\Lamalg_T$.  Appendix
 \Cref{sec:dynamic-potential} gives an exact determinant bookkeeping identity,
 but its upper bound is informative only when both the terminal log determinant
@@ -267,8 +267,9 @@ example under the rank and spectral-floor hypotheses of
 \subsection{Regret Bound}
 
 Let $\cE_{\mathrm{conf}}$ denote the simultaneous self-normalized confidence
-event and let $\cE_{\mathrm{cert}}$ collect the predictable linearization,
-centering, transfer, condition-number, CG, and randomized-operator certificates.
+event and let $\cE_{\mathrm{cert}}$ collect the predictable linearization inputs
+and the pre-reward centering, transfer, condition-number, CG, and
+randomized-operator certificates.
 The appendix defines each component and its failure allocation; write their
 total failure probability as $\delta_{\mathrm{cert}}$.
 

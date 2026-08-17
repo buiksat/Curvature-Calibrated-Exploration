@@ -6,12 +6,42 @@ its proof is complete here.
 
 ## 1. Objects, timing, and dimensions
 
-At the start of round `t`, let `H_t^-` be the sigma-algebra before any fresh
-algorithmic randomization and let `H_t = H_t^- \/ sigma(Omega_t)` include that
-randomization but not reward `r_t`. The context, available action domain, score
-oracle, representation parameter, query map, centers, bias envelopes, metrics,
-solver outputs, and certificate budgets used to choose `a_t` are `H_t`-measurable.
-The reward noise is revealed only after the action is selected.
+Let `(A,B)` be a standard-Borel action space. At round `t`, `H_t^-` is the
+history after observing the context and action domain but before fresh
+algorithmic randomization. The nonempty random action correspondence satisfies
+
+```text
+Gr(A_t) = {(omega,a): a in A_t(omega)} in H_t^- \otimes B.
+```
+
+The aggregate variable `Omega_t` records all round-`t` pre-reward
+randomization, possibly revealed in sequential stages, and
+`H_t = H_t^- \/ sigma(Omega_t)` excludes reward `r_t`. We use *predictable* or
+*pre-randomization measurable* only for `H_t^-`-measurable objects and
+*pre-reward measurable* for `H_t`-measurable objects.
+
+The frozen reference metric `bar V_t` and representation parameter `theta_t`
+are determined by prefix history, and the exact current metric `V_t` is formed
+from those objects and the observed context. They are `H_t^-`-measurable. The
+realized randomized operator `C_t`, path envelope `bar D_t`, condition factors
+`kappa_{-,t},kappa_{+,t}`, width map `hat s_t`, played sharpness `alpha_t`,
+oracle tolerance `xi_t`, and selected action `a_t` may depend on `Omega_t` and
+are `H_t`-measurable. Randomized certificate budgets `delta_{j,t}` are selected
+before their corresponding draws and are `H_t^-`-measurable. The reward noise
+is revealed only after the action is selected.
+
+All action-indexed maps are defined on `Gr(A_t)`. The maps
+
+```text
+(omega,a) -> mu_t^*(a), q_t(a), m_t(a), b_t(a), hat s_t(a), U_t(a)
+```
+
+are jointly measurable for the trace of `H_t x B`. The theorem assumes
+explicitly that `sup_{a in A_t} mu_t^*(a)` and `sup_{a in A_t} U_t(a)` are
+finite `H_t`-measurable random variables, that the oracle returns an
+`H_t`-measurable selector in `A_t`, and that the simultaneous confidence and
+all certificate-validity events are measurable. Standard-Borel structure and
+graph measurability do not supply those properties by themselves.
 
 For a parameter dimension `d`:
 
@@ -24,7 +54,7 @@ For a parameter dimension `d`:
 - `s_{C,t}(a)^2 = q_t(a)^T C_t^{-1} q_t(a)`;
 - `hat s_t(a)` is a certified solver-produced upper width.
 
-The reference metric updates sequentially:
+Fix `lambda>0` and `sigma>0`. The reference metric updates sequentially:
 
 ```text
 bar V_1 = lambda I_d,
@@ -38,17 +68,15 @@ gamma_T = log det(bar V_{T+1}) / det(bar V_1)
         = sum_t log(1 + sigma^{-2} bar s_t(a_t)^2).
 ```
 
-For a general action space, regret is defined against a supremum:
+For the standard-Borel action space, regret is defined against a supremum:
 
 ```text
 reg_t = sup_{a in A_t} mu_t^*(a) - mu_t^*(a_t),
 R_T = sum_t reg_t.
 ```
 
-No maximizing action needs to exist. The theorem assumes that the displayed
-suprema are measurable and finite and that a measurable approximate score
-oracle exists. Finite enumeration with a deterministic tie rule is a special
-case.
+No maximizing action needs to exist. The measurable-selector premise applies
+only to the approximate score oracle, not to the mean-reward supremum.
 
 ## 2. Logarithmic transport along an SPD path
 
@@ -95,6 +123,28 @@ The proof does not assume commutativity, simultaneous diagonalization, or
 assumption because a globally Lipschitz Jacobian is differentiable only almost
 everywhere.
 
+This normalized speed is the Finsler norm associated with classical Thompson
+geometry on the positive-definite cone, not a new matrix geometry. Define
+
+```text
+d_Th(A,B) = inf{r>=0: exp(-r)A <= B <= exp(r)A}
+          = ||log(A^{-1/2} B A^{-1/2})||_op.
+```
+
+The Loewner sandwich proves
+
+```text
+d_Th(V(0),V(1)) <= D(V),
+d_Th(bar V_t,V_t) <= D_t <= bar D_t.
+```
+
+The endpoint distance depends only on the endpoints. `D(V)` depends on the
+selected SPD path but not on a factorization. A rectangular factor-path upper
+bound additionally depends on the selected factorization and interpolation.
+The manuscript cites Thompson (1963) and Nussbaum (1994) for the underlying
+metric and Finsler structure; its novelty claim is the contextual-bandit
+confidence-transport composition.
+
 ### Lemma 2: rectangular factor-path certificate
 
 Let `B:[0,1] -> R^{m x d}` be absolutely continuous and
@@ -126,14 +176,16 @@ so `||G||_op<=1`. Hence the normalized speed is at most `2||E||_op`.
 Integrating and applying Lemma 1 proves the result. The dimensions are
 `E,G in R^{m x d}` and `E^T G+G^T E in R^{d x d}`.
 
-An equivalent coordinate-free sufficient condition is
+Let `nu_t:[0,1]->[0,infinity)` be measurable with `nu_t in L^1([0,1])`. A
+sufficient PSD condition is
 
 ```text
 Bdot(tau)^T Bdot(tau) <= nu_t(tau)^2 V(tau).
 ```
 
-Congruence by `V^{-1/2}` shows that this is equivalent to
-`||Bdot V^{-1/2}||_op<=nu_t`. It gives
+Congruence by `V^{-1/2}` and nonnegativity of `nu_t` show that this PSD premise
+is equivalent to the norm condition
+`||Bdot V^{-1/2}||_op<=nu_t` almost everywhere. Integrability then gives
 
 ```text
 D(V) <= 2 integral_0^1 nu_t(tau) d tau.
@@ -142,6 +194,10 @@ D(V) <= 2 integral_0^1 nu_t(tau) d tau.
 This condition needs neither a fixed tangent subspace nor known rank. Excitation
 already present in `V(tau)` can make the relative speed small even when the
 ridge-only estimate `V^{-1}<=lambda^{-1}I` is loose.
+
+The sign condition is necessary for the stated integral conclusion. If `B` is
+constant and `nu_t(tau)=-1`, then `Bdot^T Bdot=0<=nu_t^2 V` holds, but the false
+conclusion would be `0=D(V)<=2 integral_0^1 nu_t=-2`.
 
 ### Corollary 3: Hessian certificate for scalar means
 
@@ -176,6 +232,11 @@ D_t <= 2 L_g sqrt(Q_t) / (sigma sqrt(lambda)).
 
 No smallness assumption is used. At `t=1`, the factor has zero rows, `Q_1=0`,
 and both metrics equal `lambda I`.
+
+This is a synthetic path in stacked factor space. Replay item `s` follows its
+own segment `theta_s+tau(theta_t-theta_s)`, from its collection-time Jacobian to
+its current relinearized Jacobian. In general `V_t(tau)` is not the GGN at one
+common intermediate parameter shared by all replay samples.
 
 ### Vector outputs and weighted Fisher factors
 
@@ -265,27 +326,36 @@ q^T C^{-1}q
   = q^T utilde + utilde^T r + r^T C^{-1}r.
 ```
 
-Therefore
+Therefore, in exact arithmetic, `U>=q^T C^{-1}q>=0` and
 
 ```text
 L = q^T utilde + utilde^T r,
 U = L + ||r||_2^2/lambda_C
 ```
 
-enclose the inverse quadratic form. Set `hat s=sqrt(max(0,U))`. If the played
-lower endpoint is positive, an observable sharpness factor is
+enclose the inverse quadratic form. Set `hat s=sqrt(U)`. If `L>0`, an
+observable played-action sharpness factor is
 
 ```text
-alpha_t = sqrt(U_t(a_t) / max(0,L_t(a_t))).
+alpha_t = sqrt(U_t(a_t) / L_t(a_t)).
 ```
 
-If `L=0<U`, this multiplicative interface has no finite sharpness certificate;
-the algorithm may continue the solve or use an additive-width theorem. For a
-zero query, require `hat s=0` and skip the solve. CG and PCG may instantiate
-this interface, but a preconditioned recurrence must still recompute the
-residual of the original operator. These are exact-arithmetic claims. A
-floating-point implementation needs verified interval arithmetic or a separate
-engineering safeguard; an ordinary float64 point residual is not a proof.
+If `L<=0<U`, this interval supplies no finite positive multiplicative sharpness
+factor; the algorithm must continue the solve or use an additive-width theorem.
+If `U=0`, the exact inverse quadratic form is zero and return `hat s=0`. For a
+zero query, skip the solve and return zero. CG and PCG may instantiate this
+interface, but a preconditioned recurrence must still recompute the residual of
+the original operator. These are exact-arithmetic claims. A floating-point
+implementation needs verified interval arithmetic or a separate engineering
+safeguard; an ordinary float64 point residual is not a proof.
+
+The all-domain upper condition, played-action sharpness condition, and
+approximate-score inequality must refer to the same realized map `hat s_t(.)`.
+If a selected-action solve is refined after selection and its reported width
+changes, either the original score width remains the theorem object or the
+score-oracle inequality is checked again. Fresh randomized refinement requires
+a failure budget selected before that draw and validity conditioned on the
+sigma-algebra immediately preceding the draw.
 
 For the standard CG/PCG relative-energy interface, let `u=C^{-1}q` and suppose
 
@@ -315,14 +385,19 @@ operator energy norm.
 
 ## 5. Abstract transported-UCB theorem
 
+This is the manuscript's “Estimator- and solver-agnostic confidence transport”
+theorem. The corrected center enters only in the later squared-loss
+specialization.
+
 Assume the uniform reference-metric confidence event
 
 ```text
 |mu_t^*(a)-m_t(a)| <= beta_t bar s_t(a)+b_t(a)
 ```
 
-for every action in the score domain, where `beta_t` and the nonnegative
-action-dependent `b_t(a)` are predictable. Define
+for every action in the score domain, where `beta_t` is predictable and the
+generic center `m_t(a)` and nonnegative action-dependent `b_t(a)` are jointly
+pre-reward measurable on the action graph. Define
 
 ```text
 U_t(a) = m_t(a)
@@ -330,13 +405,14 @@ U_t(a) = m_t(a)
        + b_t(a).
 ```
 
-Let a measurable oracle return `a_t` satisfying
+Let a pre-reward measurable oracle return an `H_t`-measurable selector `a_t`
+in `A_t` satisfying
 
 ```text
 U_t(a_t) >= sup_a U_t(a) - xi_t,
 ```
 
-with predictable `xi_t>=0`.
+with pre-reward measurable `xi_t>=0`.
 
 ### Instantaneous bound
 
@@ -430,18 +506,30 @@ R_T <= 2 sqrt{(sigma^2+G^2/lambda) gamma_T
 
 No uncontrolled dynamic-width term remains.
 
-For a finite action set, choose the score maximum with a deterministic tie
-rule. The maximum and selector are measurable, the supremum is attained, and
-`xi_t=0`. The abstract theorem then specializes to exact full enumeration; it
-is not an assumption of the headline result.
+For a finite random domain, finiteness alone is insufficient. A formal
+sufficient condition is an `H_t^-`-measurable positive integer `K_t` and
+`H_t^-`-measurable actions `a_{t,k}`, `k>=1`, with
+
+```text
+A_t(omega) = {a_{t,k}(omega): 1<=k<=K_t(omega)}.
+```
+
+On `{K_t=n}`, the finite score vector is `H_t`-measurable. Choosing the smallest
+maximizing index gives an `H_t`-measurable selector and `xi_t=0`; partitioning
+over `n` proves the random-size case. The two suprema are finite measurable
+maxima and the universal events are finite measurable intersections. A fixed
+finite action set is the immediate special case.
 
 ### Randomized certificate allocation
 
-For each certificate source `j`, it suffices that, before drawing its random
-object,
+For each certificate source `j`, choose an `H_t^-`-measurable
+`delta_{j,t}` before drawing its random object. Let `P_{j,t}` be the pre-reward
+sigma-algebra immediately before that draw. For a round-start random object,
+`P_{j,t}=H_t^-`; for post-selection verification, `P_{j,t}` also contains the
+selected action and earlier round-`t` randomness. Require
 
 ```text
-P(E_{j,t}^c | H_t^-) <= delta_{j,t},
+P(E_{j,t}^c | P_{j,t}) <= delta_{j,t},
 sum_{j,t} delta_{j,t} <= delta_cert almost surely.
 ```
 
@@ -450,6 +538,22 @@ tower property and a union bound give simultaneous certificate probability at
 least `1-delta_cert`. A sharpness check applied after action selection must be
 deterministically verified at the played action, uniformly valid, or based on
 fresh post-selection randomness with the correct conditioning.
+
+The theorem's certificate ledger is:
+
+| Certificate | Status |
+|---|---|
+| Reference confidence event | Statistical or model-specific premise |
+| Path-length envelope | Analytic or separately certified |
+| Two-sided operator comparison | Deterministic, analytic, or randomized with failure allocation |
+| All-domain solver upper validity | Exact-arithmetic or verified numerical certificate |
+| Played-action sharpness | Exact-arithmetic or verified selected-action certificate |
+| Linearization and misspecification envelopes | Supplied pre-reward bounds |
+| Measurable approximate selector | Oracle premise |
+
+Supplied validity is an assumption, not a claim of efficient computation. A
+float64 residual, empirical eigenvalue estimate, or unenclosed point check is a
+diagnostic rather than a mathematical certificate.
 
 ## 6. Corrected-center differentiable-model confidence
 
@@ -460,6 +564,12 @@ approximate realizability
 mu^*(z) = mu_{theta^circ}(z) + m^circ(z),
 |m^circ(z)| <= epsilon_mis(z).
 ```
+
+The ridge penalty is centered at zero in the chosen parameter coordinates, and
+all norm bounds use those coordinates. For pretrained initialization
+`theta_0`, use displacement coordinates
+`theta=theta_orig-theta_0`; then `S` bounds the reference model's displacement
+from initialization rather than its raw parameter norm.
 
 The predictable representation sequence `theta_t` is arbitrary inside a
 certified convex region. Take `sigma>0` and condition the sub-Gaussian noise
@@ -630,9 +740,11 @@ but it is not a strict superset of the old theorem.
   can be large and vacuous.
 - **Large finite path length.** The result remains valid for `D>=1`; a finite
   exponential factor is not automatically meaningful.
-- **Small lower operator factor.** As `kappa_-` approaches zero, the regret
-  factor diverges. This is expected: an upper-only surrogate cannot close the
-  frozen potential.
+- **Certified condition ratio.** The bound deteriorates as
+  `kappa_+/kappa_-` becomes large. A common scalar rescaling `C_t=c_t V_t`
+  may take `kappa_-=kappa_+=c_t`, leaving the ratio equal to one even when
+  `c_t` tends to zero. An upper-only comparison still cannot close the played
+  algorithmic width through the frozen potential.
 - **Bias accounting.** `b_t(a_t)` enters twice and `xi_t` once. Reversing either
   count breaks the instantaneous inequality.
 - **Played-action sharpness.** It is sufficient because only the selected
@@ -648,3 +760,25 @@ but it is not a strict superset of the old theorem.
 - **Spectral floor.** A uniform positive floor is essential. Positive damping
   supplies it automatically. With zero damping, the path lemma applies only if
   the factor Gram remains uniformly positive definite along the entire path.
+- **Negative factor-speed envelope.** Constant `B` and `nu_t=-1` satisfy the
+  squared PSD premise `Bdot^T Bdot<=nu_t^2 V`, but would imply the false
+  inequality `0<=-2`. This is why `nu_t` must be nonnegative and integrable.
+- **No all-action solver upper validity.** Take two actions with scalar
+  `bar V=V=C=1`, `beta=1`, `D=0`, unit operator factors, and zero bias. Let
+  action 1 have `q=1, mu=1, m=0`, action 2 have `q=0, mu=m=0`, report both
+  solver widths as zero, and break the score tie in favor of action 2.
+  Confidence and played-action sharpness hold, but regret is one while the
+  played frozen width is zero. Optimism therefore needs all-action upper
+  validity.
+- **No lower operator factor.** Let `bar V=V=I_2` and
+  `C=diag(epsilon,1)`, so the upper comparison `C<=V` holds but
+  `s_C(e_1)=epsilon^{-1/2}`. An exact-width zero-mean action with query `e_1`
+  can outscore an optimal zero-query action of mean `M<epsilon^{-1/2}`.
+  The resulting regret cannot be bounded through the played frozen width
+  without a positive lower comparison.
+- **Finite domains without measurable enumeration.** On `[0,1]` with its
+  Borel sigma-algebra, choose a non-Borel set `N` and let `A_t(omega)={1}` on
+  `N` and `{0}` off `N`. Every action set is a singleton and the maximizer is
+  unique, but the only selector is the nonmeasurable indicator of `N`; the graph
+  is nonmeasurable as well. Finiteness does not replace graph and enumeration
+  assumptions.

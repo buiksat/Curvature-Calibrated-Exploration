@@ -27,6 +27,8 @@ exist, so
  \le\sup_{a\in\cA_t}U_t(a)
  \le U_t(a_t)+\xi_t.
 \]
+Both suprema are finite measurable random variables by the protocol assumptions;
+no measurable maximizing action for the mean reward is used.
 The lower side of confidence at the played action gives
 \[
  m_t(a_t)-\mu_t^*(a_t)
@@ -44,6 +46,9 @@ Substituting the score and combining the last two displays yields
 \end{align*}
 where the second line uses played-action sharpness and then the second
 inequalities in \eqref{eq:operator-width-proof}--\eqref{eq:path-width-proof}.
+The substitution uses the same realized value $\hat s_t(a_t)$ that appeared in
+the selected score; replacing it after selection would require rechecking the
+oracle inequality.
 This proves \eqref{eq:instantaneous-transport-new}.
 
 Let
@@ -69,9 +74,13 @@ statement follows by a union bound; independence is not required.
 \end{proof}
 
 \begin{proof}[Proof of \Cref{cor:finite-enumeration-new}]
-A finite maximum is attained.  Applying the fixed deterministic tie rule to
-the measurable score vector gives a measurable selected action and zero oracle
-error.
+On the measurable event $\{K_t=n\}$, the finite vector
+$\{U_t(a_{t,k})\}_{k=1}^n$ is $\cHist_t$-measurable by joint measurability on
+the graph.  Its maximum and the smallest maximizing index are measurable.  A
+countable partition over $n\ge1$ therefore gives a $\cHist_t$-measurable random
+index and hence a measurable selected action.  The score maximum is attained,
+so $\xi_t=0$.  The same finite-max argument applies to the mean-reward supremum,
+and each universal event is a finite intersection on $\{K_t=n\}$.
 \end{proof}
 
 \begin{proof}[Proof of \Cref{lem:log-spd-path}]
@@ -118,6 +127,10 @@ integration.  For the PSD form, congruence by $\bV^{-1/2}$ gives
  =\|\bV^{-1/2}\dot\Bmat^\top\dot\Bmat\bV^{-1/2}\|_{\rm op}
  \le\nu_t(\tau)^2.
 \]
+Because $\nu_t(\tau)\ge0$, taking square roots gives
+$\|\dot\Bmat\bV^{-1/2}\|_{\rm op}\le\nu_t(\tau)$ almost everywhere.
+The assumed $L^1$ integrability permits integration in
+\eqref{eq:factor-path-bound-new}.
 \end{proof}
 
 \begin{proof}[Proof of \Cref{cor:hessian-path-new}]
@@ -265,11 +278,19 @@ $\br^\top\Calg^{-1}\br$, which lies between zero and
 $\|\br\|_2^2/\lambda_{\Calg}$.
 \end{proof}
 
-Set $\hat s=\sqrt{U}$.  If the played lower endpoint is positive, the
-observable factor $\alpha=\sqrt{U/L}$ verifies played-action sharpness.  If
-$L=0<U$, no finite multiplicative factor follows; the solve must continue or
-an additive solver theorem must be used.  For $\bq=0$, skip the solve and
-return $\hat s=0$.
+Set $\hat s=\sqrt{U}$.  If $L>0$, the observable factor
+$\alpha=\sqrt{U/L}$ verifies played-action sharpness.  If $L\le0<U$, the
+interval supplies no finite positive multiplicative sharpness factor; the solve
+must continue or an additive-width theorem must be used.  If $U=0$, the exact
+inverse quadratic form is zero and the solver returns $\hat s=0$.  For
+$\bq=0$, skip the solve and return zero.
+
+These certificates and the approximate-score oracle must use the same realized
+map $\hat s_t(\cdot)$.  A selected-action refinement may keep the original score
+width as the theorem object, or it must update $U_t(a_t)$ and recheck the oracle
+inequality.  Fresh randomized refinement or verification must be conditioned on
+the sigma-algebra immediately before that draw and assigned failure probability
+before the draw.
 
 \begin{corollary}[CG and PCG as solver-interface instances]
 \label{cor:cg-interface-new}
@@ -314,17 +335,20 @@ residual enclosure.  Float64 point checks remain engineering diagnostics.
 
 \subsection{Measurability, randomized certificates, and edge cases}
 
-For certificate source $j$, it is sufficient to allocate a predictable failure
-budget before drawing its random object:
+For certificate source $j$, choose an $\cHist_t^-$-measurable failure budget
+$\delta_{j,t}$ before drawing its random object.  Let $\mathcal P_{j,t}$ be the
+pre-reward sigma-algebra immediately before that draw.  It may equal
+$\cHist_t^-$ for a round-start draw or include the selected action and earlier
+randomness for a post-selection check.  It is sufficient that
 \[
- \Pr(\mathcal E_{j,t}^c\mid\cHist_t^-)\le\delta_{j,t},
+ \Pr(\mathcal E_{j,t}^c\mid\mathcal P_{j,t})\le\delta_{j,t},
  \qquad
  \sum_{j,t}\delta_{j,t}\le\delta_{\rm cert}\quad\text{almost surely}.
 \]
 The tower property and a union bound give simultaneous validity at least
 $1-\delta_{\rm cert}$ without independence.  On an uncountable score domain,
 the solver upper event must already be simultaneous.  A pointwise certificate
-cannot be union-bounded after adaptive selection unless it is independently
+cannot be union-bounded after adaptive selection unless it is separately
 verified at the selected action with the correct conditioning.
 Realized terminal spectral quantities may be used for post-hoc analysis, but
 they cannot be inserted into an earlier action-time radius unless a predictable
@@ -333,8 +357,10 @@ prefix envelope was supplied at that time.
 The logarithmic theorem remains correct for finite $\bar D_t\ge1$, but an
 exponentially large factor can be vacuous.  Rotating ill-conditioned metrics
 can have large path length even with fixed eigenvalues; conversely, a closed
-path can have positive length and equal endpoints.  The direct SPD length is
-canonical, whereas a factor-path bound depends on the chosen factorization.
+path can have positive length and equal endpoints.  The endpoint Thompson
+distance ignores the selected path.  The Thompson-Finsler length of the
+selected direct SPD path is factorization-independent, whereas a factor-path
+upper bound depends on the chosen factorization and interpolation.
 For data-dependent Fisher weights, an explicit absolutely continuous factor is
 required: a singular principal square root need not be differentiable.  A
 uniform positive spectral floor is essential; positive damping supplies it
