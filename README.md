@@ -50,5 +50,6 @@ To build the PDF with a local TeX installation:
 make pdf
 ```
 
-Generated Buck output is written under `buck-out/`.  That directory and the
-generated `paper/main.pdf` are ignored by Git.
+Generated Buck output is written under `buck-out/` and ignored by Git. The
+compiled manuscript is committed as `paper/main.pdf`; refresh it with
+`make pdf` after changing the paper sources.

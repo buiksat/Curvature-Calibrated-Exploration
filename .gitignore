@@ -12,7 +12,6 @@ buck-out/
 
 # LaTeX build outputs.
 paper/.backups/
-paper/main.pdf
 paper/*.aux
 paper/*.bbl
 paper/*.bcf
