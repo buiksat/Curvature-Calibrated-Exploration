@@ -1,4 +1,4 @@
-"""Fixed, float64 curvature operators and a small conjugate-gradient solver."""
+"""Validated dense SPD operators and conjugate gradient for the linear audit."""
 
 from __future__ import annotations
 
@@ -20,14 +20,14 @@ def _as_float64_array(
     ndim: int,
     copy: bool = False,
 ) -> FloatArray:
-    raw = np.asarray(value)
-    if np.iscomplexobj(raw):
+    if np.iscomplexobj(np.asarray(value)):
         raise TypeError(f"{name} must be real-valued")
     try:
-        if copy:
-            array = np.array(value, dtype=np.float64, copy=True)
-        else:
-            array = np.asarray(value, dtype=np.float64)
+        array = (
+            np.array(value, dtype=np.float64, copy=True)
+            if copy
+            else np.asarray(value, dtype=np.float64)
+        )
     except (TypeError, ValueError) as error:
         raise TypeError(f"{name} must be convertible to float64") from error
     if array.ndim != ndim:
@@ -65,16 +65,12 @@ def _validate_vector(value: ArrayLike, dimension: int, *, name: str) -> FloatArr
 
 @runtime_checkable
 class SPDOperator(Protocol):
-    """Structural interface used by the solver and metric routines."""
-
     shape: tuple[int, int]
     dtype: np.dtype[np.float64]
 
-    def matvec(self, vector: ArrayLike) -> FloatArray:
-        """Apply the fixed operator to one vector."""
+    def matvec(self, vector: ArrayLike) -> FloatArray: ...
 
-    def to_dense(self) -> FloatArray:
-        """Materialize the operator for diagnostics only."""
+    def to_dense(self) -> FloatArray: ...
 
 
 class DenseSPDLinearOperator:
@@ -103,286 +99,33 @@ class DenseSPDLinearOperator:
         self.shape = dense.shape
         self.dtype = np.dtype(np.float64)
 
-    @property
-    def matrix(self) -> FloatArray:
-        return self._matrix
-
     def matvec(self, vector: ArrayLike) -> FloatArray:
         checked = _validate_vector(vector, self.shape[0], name="vector")
         result = np.asarray(self._matrix @ checked, dtype=np.float64)
         if not np.all(np.isfinite(result)):
-            raise FloatingPointError(
-                "dense operator matvec produced a non-finite value"
-            )
+            raise FloatingPointError("dense operator matvec produced a non-finite value")
         return result
-
-    def __call__(self, vector: ArrayLike) -> FloatArray:
-        return self.matvec(vector)
 
     def to_dense(self) -> FloatArray:
         return self._matrix.copy()
 
 
-class CurvatureOperator:
-    r"""Damped nonnegative weighted outer-product curvature.
+OperatorLike = SPDOperator | ArrayLike | Matvec
 
-    The represented matrix is
 
-    ``damping * I + features.T @ diag(weights) @ features / noise_variance``.
-
-    All state is copied into read-only float64 arrays. Consequently a matvec, and
-    every CG solve using it, sees one fixed operator.
-    """
-
-    def __init__(
-        self,
-        features: ArrayLike,
-        *,
-        damping: float,
-        noise_variance: float = 1.0,
-        weights: ArrayLike | None = None,
-    ) -> None:
-        feature_matrix = _as_float64_array(
-            features, name="features", ndim=2, copy=True
+def _matvec(operator: OperatorLike, vector: FloatArray) -> FloatArray:
+    if hasattr(operator, "matvec"):
+        result = operator.matvec(vector)  # type: ignore[union-attr]
+    elif callable(operator):
+        result = operator(vector)
+    else:
+        result = _as_float64_array(operator, name="operator", ndim=2) @ vector
+    checked = _as_float64_array(result, name="operator result", ndim=1)
+    if checked.shape != vector.shape:
+        raise ValueError(
+            f"operator result must have shape {vector.shape}, got {checked.shape}"
         )
-        sample_count, dimension = feature_matrix.shape
-        if dimension == 0:
-            raise ValueError("features must have a positive parameter dimension")
-
-        if weights is None:
-            weight_vector = np.ones(sample_count, dtype=np.float64)
-        else:
-            weight_vector = _as_float64_array(
-                weights, name="weights", ndim=1, copy=True
-            )
-            if weight_vector.shape != (sample_count,):
-                raise ValueError(
-                    f"weights must have shape ({sample_count},), got "
-                    f"{weight_vector.shape}"
-                )
-            if np.any(weight_vector < 0.0):
-                raise ValueError("weights must be nonnegative")
-
-        self._features = _readonly(feature_matrix)
-        self._weights = _readonly(weight_vector)
-        self.damping = _positive_float(damping, name="damping")
-        self.noise_variance = _positive_float(
-            noise_variance, name="noise_variance"
-        )
-        self.shape = (dimension, dimension)
-        self.dtype = np.dtype(np.float64)
-
-    @property
-    def dimension(self) -> int:
-        return self.shape[0]
-
-    @property
-    def sample_count(self) -> int:
-        return self._features.shape[0]
-
-    @property
-    def features(self) -> FloatArray:
-        return self._features
-
-    @property
-    def weights(self) -> FloatArray:
-        return self._weights
-
-    def matvec(self, vector: ArrayLike) -> FloatArray:
-        checked = _validate_vector(vector, self.dimension, name="vector")
-        projections = self._features @ checked
-        result = self.damping * checked + (
-            self._features.T @ (self._weights * projections)
-        ) / self.noise_variance
-        result = np.asarray(result, dtype=np.float64)
-        if not np.all(np.isfinite(result)):
-            raise FloatingPointError("curvature matvec produced a non-finite value")
-        return result
-
-    def matmat(self, vectors: ArrayLike) -> FloatArray:
-        """Apply the operator to row-oriented vectors in one shared batch."""
-
-        checked = _as_float64_array(vectors, name="vectors", ndim=2)
-        if checked.shape[1] != self.dimension:
-            raise ValueError(
-                f"vectors must have shape (batch, {self.dimension}), got "
-                f"{checked.shape}"
-            )
-        projections = checked @ self._features.T
-        result = self.damping * checked + (
-            (projections * self._weights[None, :]) @ self._features
-        ) / self.noise_variance
-        result = np.asarray(result, dtype=np.float64)
-        if not np.all(np.isfinite(result)):
-            raise FloatingPointError("curvature matmat produced a non-finite value")
-        return result
-
-    def diagonal(self) -> FloatArray:
-        """Return the exact positive diagonal for fixed Jacobi PCG."""
-
-        result = self.damping + np.sum(
-            self._weights[:, None] * self._features**2,
-            axis=0,
-        ) / self.noise_variance
-        result = np.asarray(result, dtype=np.float64)
-        if np.any(result <= 0.0) or not np.all(np.isfinite(result)):
-            raise FloatingPointError("curvature diagonal is not finite and positive")
-        return result
-
-    def __call__(self, vector: ArrayLike) -> FloatArray:
-        return self.matvec(vector)
-
-    def to_dense(self) -> FloatArray:
-        dense = self.damping * np.eye(self.dimension, dtype=np.float64)
-        dense += (
-            self._features.T @ (self._weights[:, None] * self._features)
-        ) / self.noise_variance
-        if not np.all(np.isfinite(dense)):
-            raise FloatingPointError("dense curvature materialization is non-finite")
-        return np.asarray(dense, dtype=np.float64)
-
-
-class FixedSubsampleCurvatureOperator(CurvatureOperator):
-    """A uniformly subsampled curvature whose indices are drawn exactly once."""
-
-    def __init__(
-        self,
-        features: ArrayLike,
-        *,
-        damping: float,
-        sample_size: int,
-        rng: np.random.Generator | int,
-        noise_variance: float = 1.0,
-        weights: ArrayLike | None = None,
-        replace: bool = False,
-        rescale: bool = True,
-    ) -> None:
-        full_features = _as_float64_array(
-            features, name="features", ndim=2, copy=True
-        )
-        full_count = full_features.shape[0]
-        if isinstance(sample_size, (bool, np.bool_)) or not isinstance(
-            sample_size, (int, np.integer)
-        ):
-            raise TypeError("sample_size must be an integer")
-        sample_size = int(sample_size)
-        if sample_size <= 0:
-            raise ValueError("sample_size must be positive")
-        if full_count == 0:
-            raise ValueError("cannot subsample an empty feature matrix")
-        if not replace and sample_size > full_count:
-            raise ValueError(
-                "sample_size cannot exceed the sample count without replacement"
-            )
-
-        generator = _coerce_rng(rng)
-        indices = np.asarray(
-            generator.choice(full_count, size=sample_size, replace=replace),
-            dtype=np.int64,
-        )
-
-        if weights is None:
-            full_weights = np.ones(full_count, dtype=np.float64)
-        else:
-            full_weights = _as_float64_array(
-                weights, name="weights", ndim=1, copy=True
-            )
-            if full_weights.shape != (full_count,):
-                raise ValueError(
-                    f"weights must have shape ({full_count},), got {full_weights.shape}"
-                )
-            if np.any(full_weights < 0.0):
-                raise ValueError("weights must be nonnegative")
-
-        scale = float(full_count / sample_size) if rescale else 1.0
-        selected_weights = full_weights[indices] * scale
-        super().__init__(
-            full_features[indices],
-            damping=damping,
-            noise_variance=noise_variance,
-            weights=selected_weights,
-        )
-        self._sample_indices = indices.copy()
-        self._sample_indices.setflags(write=False)
-        self.full_sample_count = full_count
-        self.rescale_factor = scale
-        self.replace = bool(replace)
-
-    @property
-    def sample_indices(self) -> NDArray[np.int64]:
-        return self._sample_indices
-
-
-class FixedGaussianSketchCurvatureOperator(CurvatureOperator):
-    """A Gaussian feature sketch drawn once and then held fixed for all matvecs."""
-
-    def __init__(
-        self,
-        features: ArrayLike,
-        *,
-        damping: float,
-        sketch_size: int,
-        rng: np.random.Generator | int,
-        noise_variance: float = 1.0,
-        weights: ArrayLike | None = None,
-    ) -> None:
-        full_features = _as_float64_array(
-            features, name="features", ndim=2, copy=True
-        )
-        sample_count = full_features.shape[0]
-        if isinstance(sketch_size, (bool, np.bool_)) or not isinstance(
-            sketch_size, (int, np.integer)
-        ):
-            raise TypeError("sketch_size must be an integer")
-        sketch_size = int(sketch_size)
-        if sketch_size <= 0:
-            raise ValueError("sketch_size must be positive")
-        if sample_count == 0:
-            raise ValueError("cannot sketch an empty feature matrix")
-
-        if weights is None:
-            weight_vector = np.ones(sample_count, dtype=np.float64)
-        else:
-            weight_vector = _as_float64_array(
-                weights, name="weights", ndim=1, copy=True
-            )
-            if weight_vector.shape != (sample_count,):
-                raise ValueError(
-                    f"weights must have shape ({sample_count},), got "
-                    f"{weight_vector.shape}"
-                )
-            if np.any(weight_vector < 0.0):
-                raise ValueError("weights must be nonnegative")
-
-        generator = _coerce_rng(rng)
-        projection = generator.normal(
-            loc=0.0,
-            scale=1.0 / np.sqrt(float(sketch_size)),
-            size=(sketch_size, sample_count),
-        ).astype(np.float64, copy=False)
-        weighted_features = np.sqrt(weight_vector)[:, None] * full_features
-        sketched_features = projection @ weighted_features
-        super().__init__(
-            sketched_features,
-            damping=damping,
-            noise_variance=noise_variance,
-        )
-        self._projection = _readonly(projection.copy())
-        self.source_sample_count = sample_count
-
-    @property
-    def projection(self) -> FloatArray:
-        return self._projection
-
-
-def _coerce_rng(rng: np.random.Generator | int) -> np.random.Generator:
-    if isinstance(rng, np.random.Generator):
-        return rng
-    if isinstance(rng, (bool, np.bool_)):
-        raise TypeError("rng must be a numpy Generator or an integer seed")
-    if isinstance(rng, (int, np.integer)):
-        return np.random.default_rng(int(rng))
-    raise TypeError("rng must be a numpy Generator or an integer seed")
+    return checked
 
 
 @dataclass(frozen=True)
@@ -396,30 +139,9 @@ class ConjugateGradientResult:
 
 
 class ConjugateGradientError(RuntimeError):
-    """Raised when CG exhausts its iteration budget before meeting tolerance."""
-
     def __init__(self, message: str, result: ConjugateGradientResult) -> None:
         super().__init__(message)
         self.result = result
-
-
-OperatorLike = SPDOperator | ArrayLike | Matvec
-
-
-def _matvec(operator: OperatorLike, vector: FloatArray) -> FloatArray:
-    if hasattr(operator, "matvec"):
-        result = operator.matvec(vector)  # type: ignore[union-attr]
-    elif callable(operator):
-        result = operator(vector)
-    else:
-        dense = _as_float64_array(operator, name="operator", ndim=2)
-        result = dense @ vector
-    checked = _as_float64_array(result, name="operator result", ndim=1)
-    if checked.shape != vector.shape:
-        raise ValueError(
-            f"operator result must have shape {vector.shape}, got {checked.shape}"
-        )
-    return checked
 
 
 def conjugate_gradient(
@@ -432,7 +154,7 @@ def conjugate_gradient(
     initial_solution: ArrayLike | None = None,
     raise_on_nonconvergence: bool = True,
 ) -> ConjugateGradientResult:
-    """Solve an SPD system using standard CG and one fixed matvec oracle."""
+    """Solve a fixed SPD system with standard conjugate gradient."""
 
     rhs = _as_float64_array(
         right_hand_side, name="right_hand_side", ndim=1, copy=True
@@ -440,7 +162,6 @@ def conjugate_gradient(
     dimension = rhs.size
     if dimension == 0:
         raise ValueError("right_hand_side must have positive dimension")
-
     if not hasattr(operator, "matvec") and not callable(operator):
         prepared_operator: OperatorLike = DenseSPDLinearOperator(operator)
     else:
@@ -457,28 +178,25 @@ def conjugate_gradient(
     )
     if max_iterations is None:
         iteration_limit = dimension
+    elif isinstance(max_iterations, (bool, np.bool_)) or not isinstance(
+        max_iterations, (int, np.integer)
+    ):
+        raise TypeError("max_iterations must be an integer")
     else:
-        if isinstance(max_iterations, (bool, np.bool_)) or not isinstance(
-            max_iterations, (int, np.integer)
-        ):
-            raise TypeError("max_iterations must be an integer")
         iteration_limit = int(max_iterations)
         if iteration_limit < 0:
             raise ValueError("max_iterations must be nonnegative")
 
-    if initial_solution is None:
-        solution = np.zeros(dimension, dtype=np.float64)
-    else:
-        solution = _validate_vector(
-            initial_solution, dimension, name="initial_solution"
-        ).copy()
-
+    solution = (
+        np.zeros(dimension, dtype=np.float64)
+        if initial_solution is None
+        else _validate_vector(initial_solution, dimension, name="initial_solution").copy()
+    )
     residual = rhs - _matvec(prepared_operator, solution)
     rhs_norm = float(np.linalg.norm(rhs))
     residual_norm = float(np.linalg.norm(residual))
     threshold = max(absolute_tolerance, relative_tolerance * rhs_norm)
     history = [residual_norm]
-
     if residual_norm <= threshold:
         return _cg_result(solution, True, 0, residual_norm, rhs_norm, history)
 
@@ -486,7 +204,6 @@ def conjugate_gradient(
     residual_squared = float(residual @ residual)
     iterations = 0
     converged = False
-
     for iterations in range(1, iteration_limit + 1):
         applied_direction = _matvec(prepared_operator, direction)
         direction_curvature = float(direction @ applied_direction)
@@ -506,8 +223,6 @@ def conjugate_gradient(
         if residual_norm <= threshold:
             converged = True
             break
-        if residual_squared == 0.0:
-            raise ArithmeticError("CG reached a zero denominator before convergence")
         direction = residual + (next_residual_squared / residual_squared) * direction
         residual_squared = next_residual_squared
 
@@ -531,18 +246,23 @@ def _cg_result(
     rhs_norm: float,
     residual_history: list[float],
 ) -> ConjugateGradientResult:
-    frozen_solution = _readonly(np.asarray(solution, dtype=np.float64).copy())
-    frozen_history = _readonly(np.asarray(residual_history, dtype=np.float64))
     relative = residual_norm / rhs_norm if rhs_norm > 0.0 else 0.0
     return ConjugateGradientResult(
-        solution=frozen_solution,
+        solution=_readonly(np.asarray(solution, dtype=np.float64).copy()),
         converged=converged,
         iterations=iterations,
         residual_norm=float(residual_norm),
         relative_residual_norm=float(relative),
-        residual_history=frozen_history,
+        residual_history=_readonly(np.asarray(residual_history, dtype=np.float64)),
     )
 
 
-# More explicit name for callers that want to emphasize the construction.
-WeightedOuterProductCurvature = CurvatureOperator
+__all__ = [
+    "ConjugateGradientError",
+    "ConjugateGradientResult",
+    "DenseSPDLinearOperator",
+    "FloatArray",
+    "OperatorLike",
+    "SPDOperator",
+    "conjugate_gradient",
+]

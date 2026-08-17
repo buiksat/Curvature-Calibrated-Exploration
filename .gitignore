@@ -3,13 +3,16 @@
 .venv/
 buck-out/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 **/__pycache__/
 *.py[cod]
 *.swp
 *.swo
 
-# LaTeX build intermediates. The compiled paper/main.pdf is retained.
+# LaTeX build outputs.
 paper/.backups/
+paper/main.pdf
 paper/*.aux
 paper/*.bbl
 paper/*.bcf
@@ -28,43 +31,12 @@ paper/*.toc
 paper/*.vrb
 paper/*-blx.bib
 paper/main.txt
-paper/REVIEW_REQUEST_for_GPTPro.md
-paper/true_ggn.tex
-paper/figures/*.png
-paper/figures/*.png.provenance.json
-paper/tables/cg_accuracy_results.tex
-paper/tables/cg_accuracy_results.tex.provenance.json
-paper/tables/covertype_results.tex
-paper/tables/covertype_results.tex.provenance.json
-paper/tables/nonlinear_drift_results.tex
-paper/tables/nonlinear_drift_results.tex.provenance.json
-paper/tables/operator_ablation_results.tex
-paper/tables/operator_ablation_results.tex.provenance.json
-paper/tables/systems_scaling_results.tex
-paper/tables/systems_scaling_results.tex.provenance.json
 
-# Local datasets and scratch experiment outputs.
-experiments/data/*
-!experiments/data/.gitignore
-!experiments/data/.gitkeep
-experiments/results/*
-!experiments/results/.gitignore
-!experiments/results/.gitkeep
+# Local experiment outputs.
 results/logs/
 
-# Preserve derived artifacts, but keep all generated seed-level experiment
-# output out of Git. Raw runs belong in artifact storage and are represented in
-# the repository by compact derived reports and hash/provenance inventories.
+# Raw runs are local outputs. Only reviewed derived artifacts belong in Git.
 results/raw/
 
-# Generated release bundles are reproducible and substantially larger than the
-# source checkout. Rebuild them with tools/build_anonymous_supplement.py.
-release/
-release_review/
-anonymous_compact_supplement.zip
-anonymous_compact_supplement.zip.sha256
-anonymous_review_supplement.zip
-anonymous_review_supplement.zip.sha256
-
-# Historical working notes and editor backups are not release inputs.
+# Personal working notes are not repository inputs.
 notes/

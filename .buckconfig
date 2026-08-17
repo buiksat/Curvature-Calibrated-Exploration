@@ -67,7 +67,7 @@
   pex_use_absolute_shebang = true
 
 [project]
-  watchman_merge_base = origin/main
+  watchman_merge_base = origin/codex/cc-ucb-theory-experiments
 
 [fbcode]
   header_namespace_allowlist = arvr, third-party, xplat

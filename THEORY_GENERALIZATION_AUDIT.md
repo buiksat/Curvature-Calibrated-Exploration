@@ -208,10 +208,12 @@ the other numerically because they summarize different geometric information.
 - Weighted Fisher/GGN geometry is included only as a factor-path statement.
   No exponential-family confidence or regret corollary is claimed.
 - CG and PCG are solver-interface examples, not theorem assumptions.
-- The existing experiments are unchanged. They were designed for the previous
-  theorem stack and are not evidence for the new logarithmic-transport theorem.
-- Existing negative findings remain in the manuscript and appendix without
-  numerical edits.
+- The theory revision did not reinterpret legacy numerical values. A later
+  repository cleanup retained only the compact diagnostics used by the paper;
+  removed experiment code and detailed artifacts remain available in Git
+  history.
+- Retained negative findings remain in the appendix without numerical edits and
+  are explicitly not evidence for the logarithmic-transport theorem.
 
 ## 10. Unresolved blockers
 
@@ -226,3 +228,9 @@ rate. The following are deliberately not claimed:
 5. two-sided guarantees for arbitrary sketches or diagonal approximations;
 6. empirical validation of the revised theorem.
 
+An earlier exact-current stable-excitation route was also abandoned rather than
+stated as a theorem.  Its constrained approximate-minimizer proof still lacks a
+complete normal-cone argument for distance and path stability, followed by a
+time-uniform vector-martingale allocation with constants propagated through the
+path and residual schedules.  No result in the manuscript relies on that
+unfinished route.

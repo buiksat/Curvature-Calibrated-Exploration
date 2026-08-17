@@ -79,7 +79,7 @@ def tuning_grid(config: Mapping[str, Any]) -> tuple[dict[str, float], ...]:
     )
 
 
-def _with_hyperparameters(
+def resolved_policy_config(
     config: Mapping[str, Any], *, ridge: float, bonus_scale: float, rounds: int
 ) -> dict[str, Any]:
     resolved = copy.deepcopy(dict(config))
@@ -158,7 +158,7 @@ def _atomic_json(path: Path, value: Mapping[str, Any], *, overwrite: bool) -> No
         temporary.unlink(missing_ok=True)
 
 
-def _study_metadata(
+def study_metadata(
     config: Mapping[str, Any],
     *,
     phase: str,
@@ -240,13 +240,13 @@ def run_linear_study(
     for method in methods:
         for candidate_index, hyperparameters in enumerate(candidates):
             candidate_id = _candidate_identifier(candidate_index)
-            tuning_config = _with_hyperparameters(
+            tuning_config = resolved_policy_config(
                 resolved,
                 ridge=hyperparameters["ridge"],
                 bonus_scale=hyperparameters["bonus_scale"],
                 rounds=tuning_rounds,
             )
-            tuning_config["study"] = _study_metadata(
+            tuning_config["study"] = study_metadata(
                 resolved,
                 phase="tuning",
                 comparison="validation_tuning",
@@ -355,13 +355,13 @@ def run_linear_study(
             ("validation_tuned", selected[method]["hyperparameters"]),
         )
         for comparison, hyperparameters in comparisons:
-            evaluation_config = _with_hyperparameters(
+            evaluation_config = resolved_policy_config(
                 resolved,
                 ridge=float(hyperparameters["ridge"]),
                 bonus_scale=float(hyperparameters["bonus_scale"]),
                 rounds=evaluation_rounds,
             )
-            evaluation_config["study"] = _study_metadata(
+            evaluation_config["study"] = study_metadata(
                 resolved,
                 phase="evaluation",
                 comparison=comparison,
@@ -425,6 +425,8 @@ __all__ = [
     "LinearStudyError",
     "run_linear_study",
     "run_study",
+    "resolved_policy_config",
+    "study_metadata",
     "tuning_grid",
     "tuning_run_is_valid",
 ]

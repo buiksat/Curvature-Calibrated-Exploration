@@ -26,10 +26,9 @@ from .config import config_digest
 
 DEFAULT_PACKAGES = (
     "numpy",
+    "psutil",
     "scipy",
-    "scikit-learn",
     "torch",
-    "PyYAML",
 )
 
 

@@ -19,17 +19,19 @@ measurable action space alone does not guarantee a measurable selector.
 
 Let $\bq_t(a)\in\R^d$ be the prediction query.  The three metrics are
 \begin{align}
- \bVbar_1&=\lambda\bI, &
+ \bVbar_1&=\lambda\bI,\nonumber\\
  \bVbar_{t+1}&=\bVbar_t+\sigma^{-2}\bq_t(a_t)\bq_t(a_t)^\top,
  \label{eq:reference-update-new}\\
- \bV_t&=\text{the exact current relinearized metric}, &
+ \bV_t&=\text{the exact current relinearized metric},\nonumber\\
  \Calg_t&=\text{the algorithmic SPD metric}.
 \end{align}
 Here $\lambda>0$.  Define the corresponding widths
 \begin{equation}\label{eq:three-widths-new}
- \bar s_t^2(a)=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\qquad
- s_t^2(a)=\bq_t(a)^\top\bV_t^{-1}\bq_t(a),\qquad
- s_{\Calg,t}^2(a)=\bq_t(a)^\top\Calg_t^{-1}\bq_t(a).
+ \begin{aligned}
+  \bar s_t^2(a)&=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\\
+  s_t^2(a)&=\bq_t(a)^\top\bV_t^{-1}\bq_t(a),\\
+  s_{\Calg,t}^2(a)&=\bq_t(a)^\top\Calg_t^{-1}\bq_t(a).
+ \end{aligned}
 \end{equation}
 The frozen information gain is
 \begin{equation}\label{eq:frozen-gamma-new}
@@ -55,11 +57,13 @@ $b_t(a)\ge0$, a simultaneous confidence event satisfies
 There is an absolutely continuous SPD path $\bV_t(\tau)$ from
 $\bVbar_t$ to $\bV_t$ with a predictable certificate
 \begin{equation}\label{eq:path-length-new}
- \mathcal D_t
- :=\int_0^1\!\left\|
- \bV_t(\tau)^{-1/2}\dot\bV_t(\tau)\bV_t(\tau)^{-1/2}
- \right\|_{\rm op}d\tau
- \le\bar D_t<\infty.
+ \begin{aligned}
+  \mathcal D_t
+  &:=\int_0^1\!\left\|
+  \bV_t(\tau)^{-1/2}\dot\bV_t(\tau)\bV_t(\tau)^{-1/2}
+  \right\|_{\rm op}d\tau\\
+  &\le\bar D_t<\infty.
+ \end{aligned}
 \end{equation}
 The algorithmic operator has a predictable two-sided certificate
 \begin{equation}\label{eq:operator-sandwich-new}
@@ -68,9 +72,12 @@ The algorithmic operator has a predictable two-sided certificate
 \end{equation}
 Finally, the solver returns $\hat s_t(a)\ge0$ such that
 \begin{equation}\label{eq:solver-interface-new}
- s_{\Calg,t}(a)\le\hat s_t(a)\quad\text{for every }a\in\cA_t,
- \qquad
- \hat s_t(a_t)\le\alpha_t s_{\Calg,t}(a_t),\quad\alpha_t\ge1.
+ \begin{aligned}
+  s_{\Calg,t}(a)&\le\hat s_t(a)
+  &&\text{for every }a\in\cA_t,\\
+  \hat s_t(a_t)&\le\alpha_t s_{\Calg,t}(a_t),
+  &&\alpha_t\ge1.
+ \end{aligned}
 \end{equation}
 The first condition is an all-domain optimism certificate.  The second is
 required only at the played action.
@@ -299,10 +306,12 @@ $\epsilon_{\rm lin,t}(a)$ and $\epsilon_{\rm mis,t}(a)$.  Each envelope is
 deterministic or measurable before the reward at the round where it is used;
 the complete historical sum below is known before selecting $a_t$.  Define
 \begin{equation}\label{eq:beta-corrected-new}
- \beta_t^{\rm corr}
- =\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt\lambda S
- +\frac1\sigma\sqrt{\sum_{s<t}
- [\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2}.
+ \begin{aligned}
+  \beta_t^{\rm corr}
+  &=\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt\lambda S\\
+  &\quad+\frac1\sigma\sqrt{\sum_{s<t}
+  [\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2}.
+ \end{aligned}
 \end{equation}
 
 \begin{corollary}[Corrected-center confidence without optimizer assumptions]
@@ -348,9 +357,11 @@ $\kappa_{+,t}/\kappa_{-,t}\le K$ for all $t$.  Let
 Then \Cref{thm:transported-ucb,cor:corrected-center-new} imply
 \begin{align}
 R_T
-&\le2\alpha e^D\sqrt K
+&\le2\alpha e^D\sqrt K\nonumber\\
+&\quad{}\times
 \left[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda S
-+\frac{\sqrt{B_T}}{\sigma}\right]
++\frac{\sqrt{B_T}}{\sigma}\right]\nonumber\\
+&\quad{}\times
 \sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)T\Gamma_{T,d}}
 \nonumber\\
 &\quad+2E_T^{\rm cur}+\sum_{t=1}^T\xi_t.
@@ -390,8 +401,13 @@ Neither the local factor nor the exponential factor uniformly dominates the
 other because they summarize different paths.
 
 \begin{table}[t]
-\centering\small
-\begin{tabular}{p{.25\linewidth}p{.31\linewidth}p{.18\linewidth}cc}
+\centering\scriptsize
+\begin{tabularx}{\columnwidth}{@{}
+  >{\raggedright\arraybackslash}p{.17\columnwidth}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}p{.18\columnwidth}
+  >{\centering\arraybackslash}p{.10\columnwidth}
+  >{\centering\arraybackslash}p{.10\columnwidth}@{}}
 \toprule
 Route & Assumption & two-way factor & smallness & rotation \\
 \midrule
@@ -401,7 +417,7 @@ Scalar link & fixed features, derivative ratios & ratio bound & lower ratio & sc
 Exact current & $\Calg_t=\bV_t$ & $1$ & no & yes \\
 Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kappa_-}$ & $\kappa_->0$ & yes \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Transport certificates.  ``Rotation'' records whether replay
 gradients may change direction.}
 \label{tab:transport-comparison-new}

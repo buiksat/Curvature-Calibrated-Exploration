@@ -16,16 +16,16 @@ from typing import Any
 from .artifact_utils import write_json_artifact
 from .config import config_digest, get_seed_set, load_config
 from .logging_utils import canonical_json, collect_run_metadata, seed_everything
-from .run_autodiff_systems import (
-    _AutodiffGGN,
-    _batched_cg,
-    _candidate_gradients,
-    _exact_sample_space_reference,
-    _mlp_forward,
-    _scalar_cg,
-    _select_device,
-    _synchronize,
+from .autodiff_ggn import (
+    AutodiffGGN,
+    batched_cg,
+    candidate_gradients,
+    exact_sample_space_reference,
+    mlp_forward,
     mlp_parameter_count,
+    scalar_cg,
+    select_device,
+    synchronize_device,
     torch_capability,
 )
 
@@ -115,14 +115,14 @@ def _timed(
 ) -> tuple[Any, list[float], int]:
     for _ in range(warmups):
         function()
-    _synchronize(torch, device)
+    synchronize_device(torch, device)
     _reset_peak(torch, device)
     timings = []
     result = None
     for _ in range(repetitions):
         started = time.perf_counter()
         result = function()
-        _synchronize(torch, device)
+        synchronize_device(torch, device)
         timings.append(time.perf_counter() - started)
     return result, timings, _peak_accelerator(torch, device)
 
@@ -138,7 +138,7 @@ def _streaming_diagonal(
     chunk_size: int,
 ) -> Any:
     def output_one(flat: Any, sample: Any) -> Any:
-        return _mlp_forward(torch, flat, sample, architecture, activation)
+        return mlp_forward(torch, flat, sample, architecture, activation)
 
     gradient = torch.func.grad(output_one, argnums=0)
     diagonal = torch.full_like(parameters, damping)
@@ -157,7 +157,7 @@ def _streaming_diagonal(
 
 def _batched_pcg(
     torch: Any,
-    operator: _AutodiffGGN,
+    operator: AutodiffGGN,
     right_hand_sides: Any,
     diagonal: Any,
     maximum_iterations: int,
@@ -275,7 +275,7 @@ def _solver_record(
     right_hand_sides: Any,
     timings: Sequence[float],
     peak_memory: int,
-    operator: _AutodiffGGN,
+    operator: AutodiffGGN,
     reference_widths: Any | None,
     reference_solutions: Any | None,
 ) -> dict[str, Any]:
@@ -343,7 +343,7 @@ def run_cell(
     capability = torch_capability()
     if not capability.available:
         raise RuntimeError(capability.reason or "PyTorch is unavailable")
-    device, error = _select_device(torch, str(config["device"]))
+    device, error = select_device(torch, str(config["device"]))
     if device is None:
         raise RuntimeError(error or "requested device is unavailable")
     dtype = torch.float32 if config["dtype"] == "float32" else torch.float64
@@ -369,7 +369,7 @@ def run_cell(
     )
     damping = float(config["damping"])
     noise_variance = float(config["noise_variance"])
-    operator = _AutodiffGGN(
+    operator = AutodiffGGN(
         torch,
         parameters,
         history,
@@ -379,10 +379,10 @@ def run_cell(
         noise_variance,
     )
     candidate_started = time.perf_counter()
-    right_hand_sides = _candidate_gradients(
+    right_hand_sides = candidate_gradients(
         torch, parameters, candidates, architecture, str(config["activation"])
     )
-    _synchronize(torch, device)
+    synchronize_device(torch, device)
     candidate_seconds = time.perf_counter() - candidate_started
     warmups = int(config["warmup_repetitions"])
     repetitions = int(config["timing_repetitions"])
@@ -390,7 +390,7 @@ def run_cell(
 
     def scalar_call() -> dict[str, Any]:
         operator.reset_counts()
-        return _scalar_cg(
+        return scalar_cg(
             torch, operator, right_hand_sides, maximum_iterations, target
         )
 
@@ -401,7 +401,7 @@ def run_cell(
 
     def batched_call() -> dict[str, Any]:
         operator.reset_counts()
-        return _batched_cg(
+        return batched_cg(
             torch, operator, right_hand_sides, maximum_iterations, target
         )
 
@@ -472,7 +472,7 @@ def run_cell(
     if bool(model["dense_reference"]):
         def reference_call() -> tuple[Any, Any]:
             jacobian = torch.func.jacrev(operator.outputs)(parameters).detach()
-            return _exact_sample_space_reference(
+            return exact_sample_space_reference(
                 torch, jacobian, right_hand_sides, damping, noise_variance
             )
 
@@ -658,7 +658,7 @@ def run_grid(
     validate_benchmark_config(config)
     import torch
 
-    device, _ = _select_device(torch, str(config["device"]))
+    device, _ = select_device(torch, str(config["device"]))
     cap_hours = float(
         config[
             "compute_cap_accelerator_hours"

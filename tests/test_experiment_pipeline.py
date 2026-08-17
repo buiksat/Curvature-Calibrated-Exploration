@@ -14,26 +14,8 @@ from experiments.logging_utils import ExperimentLogger, derive_seed, seed_everyt
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = ROOT / "experiments" / "configs"
 CONFIG_NAMES = {
-    "balanced_benchmark",
-    "certified_tanh",
-    "certified_scaling",
-    "linear_audit",
-    "mnist_contextual_benchmark",
-    "nonlinear_drift",
-    "operator_ablation",
-    "cg_accuracy",
-    "systems_scaling",
-    "covertype_rerun",
-    "coverage_matched_operator",
-    "curvature_phase_diagram",
-    "end_to_end_systems_benchmark",
-    "gap_dependent_validation",
-    "offdiagonal_witness",
-    "scaled_tanh_instantiation",
-    "spectral_tail_study",
-    "autodiff_systems",
     "autodiff_ggn_benchmark",
-    "wheel_benchmark",
+    "linear_audit",
 }
 
 
@@ -137,7 +119,7 @@ def test_seed_derivation_and_stdlib_seeding_are_reproducible() -> None:
 
 
 def test_logger_writes_deterministic_manifest_and_round_jsonl(tmp_path: Path) -> None:
-    config = load_config(CONFIG_DIR / "cg_accuracy.yaml", profile="smoke")
+    config = load_config(CONFIG_DIR / "linear_audit.yaml", profile="smoke")
     run_bytes: list[tuple[bytes, bytes]] = []
 
     for name in ("first", "second"):

@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Any, Sequence
 
-from .aggregate_results import write_aggregate_with_provenance
+from .artifact_utils import write_aggregate_with_provenance
 from .logging_utils import canonical_json
 
 

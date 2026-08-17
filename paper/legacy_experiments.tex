@@ -1,15 +1,16 @@
 \section{Legacy empirical evidence and scope}
 \label{app:legacy-evidence}
 
-The repository contains several studies designed for the earlier
-optimizer-centered, one-sided dynamic theorem.  They are retained as scientific
-record, not as empirical validation of \Cref{thm:transported-ucb}.  None executes
+Earlier repository revisions contained several studies designed for the
+optimizer-centered, one-sided dynamic theorem.  They are summarized here as a
+scientific record, not as empirical validation of
+\Cref{thm:transported-ucb}.  None executes
 the headline exponential transported score while recording a predictable
 $\bar D_t$, a certified two-sided operator pair $\kappa_{-,t},\kappa_{+,t}$,
 all-domain solver upper validity, played-action sharpness, and the resulting new
 regret bound.  Most detailed figures, comparison tables, and protocol
 chronologies have therefore been removed from the manuscript.  The two compact
-tables below and the remaining generated files retain their original provenance.
+tables below retain provenance for their source aggregates.
 
 \paragraph{Corrected-center and local-transport traces.}
 The scaled-tanh and bounded-tanh studies record corrected centers, frozen
@@ -18,9 +19,9 @@ solver diagnostics.  They used scalar-link or additive local scores rather than
 the exponential score in \eqref{eq:transported-score-new}.  Their reported
 PASS/FAIL fields refer only to the legacy theorem event.  In particular,
 optimizer and small-drift fields removed from the new headline theorem cannot be
-used to declare the revised event failed.  The tracked scaled-tanh aggregate is
-insufficient for a revised corrected-center analysis because the required
-per-round payload is stored in an external raw bundle.  Restoring that bundle
+used to declare the revised event failed.  The historical scaled-tanh aggregate
+was insufficient for a revised corrected-center analysis because the required
+per-round payload was stored in an external raw bundle.  Restoring that bundle
 would permit a post-hoc audit of the local-small-drift premises and of whether
 the executed score matches the revised local score.  It would not establish that
 compatibility by itself.  The headline exponential score requires a new policy
@@ -72,7 +73,7 @@ supports implementation feasibility only.
   Values summarize the isolated primitive; no dense-reference accuracy is
   imputed for the larger model.}
   \label{tab:compact-autodiff-summary}
-  \input{../tables/generated/autodiff_ggn_summary.tex}
+  \input{tables/autodiff_ggn_summary.tex}
 \end{table}
 
 \paragraph{Negative and incomplete benchmarks.}
@@ -80,9 +81,8 @@ The balanced synthetic comparison does not establish a full-curvature advantage.
 The MNIST study remains near its context-free baseline, and Covertype fails its
 contextual baseline gate.  None of these three benchmarks executes the corrected
 transported score or records the revised certificates.  The Wheel study
-terminated during tuning and
-has no reportable evaluation.  These outcomes remain available in the artifact
-record, but detailed benchmark plots and tables do not contribute to the present
-theory-first paper.
+terminated during tuning and had no reportable evaluation.  The detailed legacy
+outputs are not part of the compact checkout; Git history preserves them.  Their
+plots and tables do not contribute to the present theory-first paper.
 
 \FloatBarrier

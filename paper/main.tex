@@ -40,6 +40,7 @@
 \hypersetup{hidelinks,pdfauthor={},pdftitle={},pdfsubject={},pdfkeywords={}}
 \usepackage{cleveref}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{enumitem}
 \usepackage{microtype}
@@ -121,10 +122,11 @@ better.  It is when a confidence statement in the predictable frozen metric can
 be transported to a current relinearized metric, and then to the operator and
 linear solver used by the policy.  The required chain is
 \[
- \text{reference confidence}\ \longrightarrow\
- \text{current metric}\ \longrightarrow\
- \text{algorithmic operator}\ \longrightarrow\
- \text{certified score}.
+ \begin{aligned}
+  \text{reference confidence}&\ \longrightarrow\ \text{current metric},\\
+  \text{current metric}&\ \longrightarrow\ \text{algorithmic operator},\\
+  \text{algorithmic operator}&\ \longrightarrow\ \text{certified score}.
+ \end{aligned}
 \]
 Each arrow needs its own operational certificate.
 
@@ -3924,13 +3926,13 @@ online monitoring; the regret certificates here do not establish safety.
 
 \section{Data and Code Availability}\label{app:availability}
 The repository contains the manuscript, theory derivations, implementation,
-tests, experiment configurations, artifact generators, and legacy derived
-outputs with recorded hashes and provenance sidecars.  The manuscript does not
-use the legacy experiments as evidence for \Cref{thm:transported-ucb}; their
-scope is summarized in \Cref{app:legacy-evidence}.  Several seed-level raw
-payloads, including the full scaled-tanh archive, are stored outside the compact
-Git checkout.  Their inventories and digests are tracked, but no public
-raw-bundle URL is claimed.  Generated artifacts removed from the paper remain
-unchanged in the repository.
+tests, experiment configurations, artifact generators, and the selected compact
+diagnostic aggregates used by the retained appendix tables.  The manuscript
+does not use the legacy experiments as evidence for
+\Cref{thm:transported-ucb}; their
+scope is summarized in \Cref{app:legacy-evidence}.  Detailed legacy figures,
+generated tables, raw-bundle inventories, and derived benchmark outputs are not
+part of the compact checkout; Git history preserves them.  No public raw-bundle
+URL is claimed.
 
 \end{document}

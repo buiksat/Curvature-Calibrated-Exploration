@@ -25,11 +25,6 @@ filegroup(
         "*.md",
         "paper/**",
         "results/derived/**",
-        "results/raw/autodiff_systems/**",
-        "results/raw/offdiagonal_witness/**",
-        "results/raw/theory_scaling_compact/**",
-        "scripts/**",
-        "tables/generated/**",
     ]),
     visibility = ["PUBLIC"],
 )

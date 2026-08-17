@@ -1,6 +1,11 @@
 filegroup(
     name = "test_sources",
-    srcs = glob(["test_*.py"]),
+    srcs = [
+        "test_aggregate_linear_audit.py",
+        "test_autodiff_ggn_benchmark.py",
+        "test_certification_audit.py",
+        "test_linear_audit.py",
+    ],
 )
 
 sh_test(

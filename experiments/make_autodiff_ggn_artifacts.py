@@ -33,16 +33,6 @@ METHOD_LABELS = {
     "last_layer": "Last layer",
     "explicit_dense_reference": "Explicit dense reference",
 }
-METHOD_COLORS = {
-    "separate_cg": "#111111",
-    "batched_cg": "#2474B5",
-    "jacobi_pcg": "#2E8B57",
-    "diagonal": "#D9822B",
-    "last_layer": "#6B4C9A",
-    "explicit_dense_reference": "#777777",
-}
-
-
 class AutodiffArtifactError(ValueError):
     """Raised when the benchmark grid or provenance is incomplete."""
 
@@ -293,135 +283,6 @@ def _mean(group: Mapping[str, Any], field: str) -> float | None:
     return None if interval is None else float(interval["mean"])
 
 
-def make_systems_figure(report: Mapping[str, Any], output: Path) -> None:
-    import matplotlib
-    import matplotlib.pyplot as plt
-
-    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
-
-    config = report["config"]
-    models = tuple(str(model["name"]) for model in config["models"])
-    buffers = np.asarray(config["buffer_sizes"], dtype=np.float64)
-    actions = max(int(value) for value in config["action_counts"])
-    target = min(float(value) for value in config["cg_targets"])
-    groups = _index(report)
-    figure, axes = plt.subplots(len(models), 2, figsize=(7.2, 2.8 * len(models)))
-    axes_array = np.atleast_2d(axes)
-    for row, model in enumerate(models):
-        for method in METHODS:
-            times = []
-            memories = []
-            for buffer_size in buffers.astype(int):
-                group = groups.get((model, buffer_size, actions, target, method))
-                times.append(None if group is None else _mean(group, "wall_time_seconds"))
-                memories.append(
-                    None
-                    if group is None
-                    else _mean(group, "peak_accelerator_memory_bytes")
-                )
-            if any(value is not None for value in times):
-                axes_array[row, 0].plot(
-                    buffers,
-                    np.asarray([np.nan if value is None else value for value in times]),
-                    marker="o",
-                    color=METHOD_COLORS[method],
-                    label=METHOD_LABELS[method],
-                )
-            if any(value is not None and value > 0.0 for value in memories):
-                axes_array[row, 1].plot(
-                    buffers,
-                    np.asarray(
-                        [np.nan if value is None else value / 2**30 for value in memories]
-                    ),
-                    marker="o",
-                    color=METHOD_COLORS[method],
-                    label=METHOD_LABELS[method],
-                )
-        axes_array[row, 0].set_ylabel(f"{model}\nSeconds")
-        axes_array[row, 1].set_ylabel("Peak accelerator GiB")
-        for axis in axes_array[row]:
-            axis.set_xscale("log", base=2)
-            axis.grid(alpha=0.2, linewidth=0.5)
-            axis.set_xlabel("Replay buffer size")
-        axes_array[row, 0].set_yscale("log")
-    handles, labels = axes_array[0, 0].get_legend_handles_labels()
-    figure.legend(
-        handles,
-        labels,
-        loc="lower center",
-        bbox_to_anchor=(0.5, 0.91),
-        ncol=3,
-        frameon=False,
-        fontsize=8,
-    )
-    figure.tight_layout(rect=(0, 0, 1, 0.85))
-    output.parent.mkdir(parents=True, exist_ok=True)
-    figure.savefig(output, bbox_inches="tight", metadata={"CreationDate": None})
-    plt.close(figure)
-    write_sha256_sidecar(output)
-
-
-def make_accuracy_figure(report: Mapping[str, Any], output: Path) -> None:
-    import matplotlib
-    import matplotlib.pyplot as plt
-
-    matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
-
-    config = report["config"]
-    reference_models = [
-        str(model["name"]) for model in config["models"] if model["dense_reference"]
-    ]
-    model = reference_models[0]
-    buffer_size = max(int(value) for value in config["buffer_sizes"])
-    actions = max(int(value) for value in config["action_counts"])
-    targets = np.asarray(config["cg_targets"], dtype=np.float64)
-    groups = _index(report)
-    figure, axes = plt.subplots(1, 2, figsize=(7.0, 3.0))
-    for method in ("separate_cg", "batched_cg", "jacobi_pcg", "diagonal"):
-        residuals = []
-        width_errors = []
-        for target in targets:
-            group = groups.get((model, buffer_size, actions, float(target), method))
-            residuals.append(
-                None
-                if group is None
-                else _mean(group, "maximum_original_relative_residual")
-            )
-            width_errors.append(
-                None
-                if group is None
-                else _mean(group, "maximum_width_squared_relative_error")
-            )
-        axes[0].plot(
-            targets,
-            [np.nan if value is None else value for value in residuals],
-            marker="o",
-            color=METHOD_COLORS[method],
-            label=METHOD_LABELS[method],
-        )
-        axes[1].plot(
-            targets,
-            [np.nan if value is None else value for value in width_errors],
-            marker="o",
-            color=METHOD_COLORS[method],
-            label=METHOD_LABELS[method],
-        )
-    axes[0].set_ylabel("Original-system relative residual")
-    axes[1].set_ylabel("Width-squared relative error")
-    for axis in axes:
-        axis.set_xscale("log")
-        axis.set_yscale("log")
-        axis.invert_xaxis()
-        axis.set_xlabel("CG target")
-        axis.grid(alpha=0.2, linewidth=0.5)
-    axes[0].legend(frameon=False, fontsize=8)
-    figure.tight_layout()
-    output.parent.mkdir(parents=True, exist_ok=True)
-    figure.savefig(output, bbox_inches="tight", metadata={"CreationDate": None})
-    plt.close(figure)
-    write_sha256_sidecar(output)
-
-
 def make_table(report: Mapping[str, Any], output: Path) -> None:
     config = report["config"]
     buffer_size = max(int(value) for value in config["buffer_sizes"])
@@ -488,27 +349,18 @@ def make_artifacts(
     profile: str,
     raw_root: Path,
     aggregate_path: Path,
-    systems_figure: Path,
-    accuracy_figure: Path,
     table_path: Path,
 ) -> dict[str, Any]:
     report, inputs = build_aggregate(config, profile=profile, raw_root=raw_root)
     write_json_artifact(aggregate_path, report)
-    make_systems_figure(report, systems_figure)
-    make_accuracy_figure(report, accuracy_figure)
     make_table(report, table_path)
-    for artifact in (systems_figure, accuracy_figure, table_path):
-        _provenance(artifact, aggregate_path, config)
+    _provenance(table_path, aggregate_path, config)
     return {
         "profile": profile,
         "aggregate": aggregate_path.as_posix(),
         "raw_input_count": len(inputs),
         "skipped_cell_count": len(report["skipped_cells"]),
-        "artifacts": [
-            systems_figure.as_posix(),
-            accuracy_figure.as_posix(),
-            table_path.as_posix(),
-        ],
+        "artifacts": [table_path.as_posix()],
     }
 
 
@@ -518,8 +370,6 @@ def _main() -> int:
     parser.add_argument("--profile", choices=("smoke", "full"), required=True)
     parser.add_argument("--raw-root", type=Path, required=True)
     parser.add_argument("--aggregate", type=Path, required=True)
-    parser.add_argument("--systems-figure", type=Path, required=True)
-    parser.add_argument("--accuracy-figure", type=Path, required=True)
     parser.add_argument("--table", type=Path, required=True)
     args = parser.parse_args()
     config = load_config(args.config, profile=args.profile)
@@ -528,8 +378,6 @@ def _main() -> int:
         profile=args.profile,
         raw_root=args.raw_root,
         aggregate_path=args.aggregate,
-        systems_figure=args.systems_figure,
-        accuracy_figure=args.accuracy_figure,
         table_path=args.table,
     )
     print(canonical_json(result))

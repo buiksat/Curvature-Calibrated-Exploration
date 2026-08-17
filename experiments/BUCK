@@ -3,17 +3,34 @@ load("@fbcode_macros//build_defs:native_rules.bzl", "buck_sh_binary")
 python_library(
     name = "config_lib",
     srcs = ["__init__.py", "config.py"],
-    resources = glob(["configs/*"]),
+    resources = [
+        "configs/autodiff_ggn_benchmark.yaml",
+        "configs/closed_rate_predictions.json",
+        "configs/linear_audit.yaml",
+    ],
     visibility = ["PUBLIC"],
 )
 
 python_library(
     name = "lib",
-    srcs = glob(["*.py"], exclude = ["__init__.py", "config.py"]),
-    resources = glob(["data/.gitkeep"]),
+    srcs = [
+        "aggregate_linear_audit.py",
+        "artifact_utils.py",
+        "autodiff_ggn.py",
+        "curvature_operators.py",
+        "linear_environment.py",
+        "logging_utils.py",
+        "make_autodiff_ggn_artifacts.py",
+        "make_certification_audit.py",
+        "make_closed_rate_artifact.py",
+        "make_linear_bound_artifact.py",
+        "run_autodiff_ggn_benchmark.py",
+        "run_linear_audit.py",
+        "run_linear_study.py",
+        "theory_metrics.py",
+    ],
     deps = [
         ":config_lib",
-        "//third_party:matplotlib",
         "//third_party:numpy",
         "//third_party:scipy",
         "fbsource//third-party/pypi/psutil/7.2.2:py",
@@ -28,49 +45,13 @@ python_library(
         deps = [":lib"],
     )
     for module in [
-        "aggregate_cg_policy",
-        "aggregate_results",
-        "aggregate_theory_scaling",
-        "make_balanced_benchmark_artifact",
+        "aggregate_linear_audit",
         "make_autodiff_ggn_artifacts",
         "make_certification_audit",
-        "make_certified_tanh_artifact",
-        "make_certified_scaling_artifacts",
-        "make_coverage_matched_operator_artifacts",
-        "make_end_to_end_systems_artifacts",
-        "make_gap_dependent_validation_artifacts",
         "make_closed_rate_artifact",
-        "make_covertype_horizon_artifact",
-        "make_curvature_phase_diagram_artifact",
         "make_linear_bound_artifact",
-        "make_mnist_contextual_benchmark_artifacts",
-        "make_offdiagonal_witness_artifact",
-        "make_offdiagonal_witness_paper_artifacts",
-        "make_paper_artifacts",
-        "make_primary_table",
-        "make_revision_paper_artifacts",
-        "make_scaled_tanh_instantiation_artifacts",
-        "make_spectral_tail_artifacts",
-        "make_theory_scaling_paper_artifacts",
-        "make_wheel_benchmark_artifacts",
-        "run_balanced_benchmark",
-        "run_certified_tanh",
-        "run_certified_scaling",
-        "run_coverage_matched_operator_study",
-        "run_cg_accuracy",
-        "run_covertype",
-        "run_gap_dependent_validation",
         "run_linear_audit",
         "run_linear_study",
-        "run_nonlinear_audit",
-        "run_offdiagonal_witness",
-        "run_operator_ablation",
-        "run_scaled_tanh_instantiation",
-        "run_systems_scaling",
-        "run_spectral_tail_study",
-        "run_wheel_benchmark",
-        "theory_scaling",
-        "theory_scaling_compact",
     ]
 ]
 
@@ -80,45 +61,12 @@ python_binary(
     deps = [":config_lib"],
 )
 
-python_binary(
-    name = "run_autodiff_systems",
-    main_module = "experiments.run_autodiff_systems",
-    deps = [
-        ":lib",
-        "fbsource//third-party/pypi/torch:torch",
-    ],
-)
-
-python_binary(
-    name = "record_autodiff_systems_not_run",
-    main_module = "experiments.run_autodiff_systems",
-    deps = [":lib"],
-)
-
-buck_sh_binary(
-    name = "run_autodiff_systems_conda",
-    main = "run_conda_python_module.sh",
-    resources = [
-        "run_conda_python_module.sh",
-        "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
-    ],
-)
-
 buck_sh_binary(
     name = "run_autodiff_ggn_benchmark_conda",
     main = "run_autodiff_ggn_benchmark_conda.sh",
     resources = [
         "run_autodiff_ggn_benchmark.py",
         "run_autodiff_ggn_benchmark_conda.sh",
-        "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
-    ],
-)
-
-buck_sh_binary(
-    name = "run_conda_module",
-    main = "run_conda_module.sh",
-    resources = [
-        "run_conda_module.sh",
         "fbcode//conda/buck_integration/toolchains/third-party:_conda_fbpkg[conda]",
     ],
 )
