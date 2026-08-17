@@ -343,9 +343,11 @@ alpha_t = sqrt(U_t(a_t) / L_t(a_t)).
 If `L<=0<U`, this interval supplies no finite positive multiplicative sharpness
 factor; the algorithm must continue the solve or use an additive-width theorem.
 If `U=0`, the exact inverse quadratic form is zero and return `hat s=0`. For a
-zero query, skip the solve and return zero. CG and PCG may instantiate this
-interface, but a preconditioned recurrence must still recompute the residual of
-the original operator. These are exact-arithmetic claims. A floating-point
+zero query, skip the solve and return zero. CG and PCG may supply these
+pointwise residual certificates; instantiating the all-domain interface still
+requires the jointly measurable simultaneous family described below. A
+preconditioned recurrence must still recompute the residual of the original
+operator. These are exact-arithmetic claims. A floating-point
 implementation needs verified interval arithmetic or a separate engineering
 safeguard; an ordinary float64 point residual is not a proof.
 
@@ -379,9 +381,14 @@ hat s = sqrt(q^T utilde/(1-epsilon)),
 alpha = sqrt((1+epsilon)/(1-epsilon))
 ```
 
-instantiate upper validity and played-action sharpness. PCG changes the
-recurrence, not this proof; its certificate must be expressed in the original
-operator energy norm.
+give upper validity and sharpness for that query. Applying the construction to
+a jointly measurable action-indexed family of solves, on a simultaneous energy
+certificate event for every scored action, supplies the all-domain upper
+condition. The sharpness certificate is invoked only at the played action. For
+a general standard-Borel domain, family measurability and simultaneous
+functional validity remain additional premises. PCG changes the recurrence,
+not this proof; its certificate must be expressed in the original operator
+energy norm.
 
 ## 5. Abstract transported-UCB theorem
 

@@ -1,8 +1,9 @@
 # Theory generalization audit
 
-Reviewed baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e`
-(`9128276`). This audit describes the modified working tree based directly on
-that commit. No post-edit commit hash exists.
+Baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e` (`9128276`).
+Reviewed commit: `c66f1bdde9190af14065eb0b04c4dcd24eb0e050` (`c66f1bd`).
+This audit incorporates the follow-up corrections prompted by review of that
+commit; the current source state is authoritative.
 
 This audit compares the previous headline theorem with the revised theorem
 derived in `THEORY_TRANSPORT_DERIVATIONS.md`. It also records restrictions that
@@ -96,9 +97,11 @@ not a pointwise union bound.
 ### Fixed reference model under misspecification
 
 The reference parameter must be fixed before data collection. Selecting it
-after observing rewards needs a separate model-selection argument. Nonvanishing
-misspecification generally produces a linear additive term and may also enlarge
-the historical radius linearly up to logarithmic factors.
+after observing rewards needs a separate model-selection argument. A fixed
+nonzero current misspecification envelope can produce a linear cumulative
+additive term. A constant historical envelope makes the confidence radius grow
+as $\Theta(\sqrt{t})$; after multiplication by widths and summation, its
+exploration contribution can be linear up to logarithmic factors.
 
 ### Corrected-center access cost
 
@@ -142,9 +145,9 @@ empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
 
 | Obligation | Result | Notes |
 |---|---|---|
-| Standard-Borel random-domain formalism | Resolved in working tree | Measurable graph, joint maps, both finite measurable suprema, measurable selector, and measurable universal events are explicit |
-| Measurably enumerated finite-domain corollary | Resolved in working tree | Random size and enumeration are `H_t^-`-measurable; smallest maximizing index is measurable |
-| Filtration classification | Resolved in working tree | Predictable means `H_t^-`; randomized score objects may be `H_t` pre-reward measurable |
+| Standard-Borel random-domain formalism | Resolved in current source | Measurable graph, joint maps, both finite measurable suprema, measurable selector, and measurable universal events are explicit |
+| Measurably enumerated finite-domain corollary | Resolved in current source | Random size and enumeration are `H_t^-`-measurable; smallest maximizing index is measurable |
+| Filtration classification | Repaired and verified | Predictable means `H_t^-`; the legacy confidence schedule now requires an `H_t^-`-measurable envelope, while randomized score objects may be `H_t` pre-reward measurable |
 | Logarithmic SPD path sandwich | Verified | Uses absolute continuity and fixed-vector log differentiation |
 | Thompson endpoint consequence | Verified | `d_Th(V(0),V(1))<=D(V)`; endpoint, path, and factor bounds are distinguished |
 | Rectangular factor-path bound | Repaired and verified | `B in R^{m x d}`; `nu_t>=0`, measurable, and `L^1` before integration |
@@ -153,9 +156,9 @@ empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
 | Weighted Fisher path | Conditional but verified | Requires an explicit absolutely continuous weight factor and controls both derivative terms |
 | Current/reference width transport | Verified | Every Loewner inversion direction checked |
 | Two-sided approximate-operator transport | Verified | Exact current is the unit-factor case |
-| Generic solver interface | Verified | Upper validity is global; sharpness is played-action only; all inequalities use one width map |
+| Generic solver interface | Verified | Upper validity is global; sharpness is played-action only; a fixed-query CG certificate needs a jointly measurable family and simultaneous all-action validity to instantiate the global interface |
 | Concrete inverse-quadratic certificate | Repaired in exact arithmetic | Covers `L>0`, `L<=0<U`, `U=0`, and `q=0`; float64 point residuals are not enclosures |
-| Standard-Borel approximate oracle | Resolved in working tree | Uses measurable finite suprema and an explicitly assumed measurable selector |
+| Standard-Borel approximate oracle | Resolved in current source | Uses measurable finite suprema and an explicitly assumed measurable selector |
 | Instantaneous regret constants | Verified | Sharp factor is `1+alpha exp(D)sqrt(Kappa)`; bias twice, oracle error once |
 | Frozen potential closure | Verified | One Cauchy-Schwarz step after the per-round bound |
 | Corrected-center identity | Verified | Holds for any predictable representation path |
@@ -281,7 +284,9 @@ the other numerically because they summarize different geometric information.
   solver widths, approximate selection, and frozen-information closure.
 - Weighted Fisher/GGN geometry is included only as a factor-path statement.
   No exponential-family confidence or regret corollary is claimed.
-- CG and PCG are solver-interface examples, not theorem assumptions.
+- CG and PCG give pointwise solver certificates. They instantiate the
+  all-domain interface only with a jointly measurable family and simultaneous
+  upper validity over every scored action; they are not theorem assumptions.
 - The theory revision did not reinterpret legacy numerical values. A later
   repository cleanup retained only the compact diagnostics used by the paper;
   removed experiment code and detailed artifacts remain available in Git
@@ -292,10 +297,10 @@ the other numerically because they summarize different geometric information.
 
 ## 10. Current formal status and remaining scope limits
 
-The baseline working tree had unresolved formal obligations involving random
-action domains, filtration terminology, the sign of `nu_t`, the `L<0` solver
-case, and width-map consistency. The modified working tree repairs those items,
-and the independent checks recorded above found no remaining algebraic blocker
+The baseline had unresolved formal obligations involving random action domains,
+filtration terminology, the sign of `nu_t`, the `L<0` solver case, and width-map
+consistency. The current source repairs those items, and the independent checks
+recorded above found no remaining algebraic blocker
 for the abstract theorem, path lemmas, corrected-center squared-loss
 specialization, or finite-dimensional rate. The following remain deliberately
 outside the result:

@@ -292,7 +292,7 @@ inequality.  Fresh randomized refinement or verification must be conditioned on
 the sigma-algebra immediately before that draw and assigned failure probability
 before the draw.
 
-\begin{corollary}[CG and PCG as solver-interface instances]
+\begin{corollary}[Pointwise CG and PCG solver certificates]
 \label{cor:cg-interface-new}
 Suppose CG or PCG supplies, in exact arithmetic, an original-system energy
 certificate
@@ -309,8 +309,14 @@ Thus
  \qquad
  \alpha=\sqrt{\frac{1+\varepsilon}{1-\varepsilon}}
 \]
-instantiate \eqref{eq:solver-interface-new}.  A preconditioner may change the
-recurrence, but certificate checks must use the original operator.
+give a pointwise upper-valid width and sharpness factor for this query.  A
+jointly measurable action-indexed family of such solves, together with a
+simultaneous energy-certificate event for every scored action, supplies the
+all-domain upper condition in \eqref{eq:solver-interface-new}; the sharpness
+conclusion is needed only at the played action.  For a general standard-Borel
+domain, measurability of the family and simultaneous functional validity remain
+additional premises.  A preconditioner may change the recurrence, but
+certificate checks must use the original operator.
 \end{corollary}
 \begin{proof}
 Let $\bu=\Calg^{-1}\bq$.  Since
@@ -321,10 +327,13 @@ $s_{\Calg}^2=\bq^\top\bu=\|\bu\|_{\Calg}^2$,
  \le\|\bu\|_{\Calg}\|\tilde\bu-\bu\|_{\Calg}
  \le\varepsilon s_{\Calg}^2.
 \]
-This proves the two-sided quadratic-form comparison.  Dividing its lower side
-by $1-\varepsilon$ gives upper validity, while combining both sides gives the
-displayed sharpness factor.  For PCG the argument is unchanged once the
-certificate is expressed in the original $\Calg$-energy norm.
+This proves the pointwise two-sided quadratic-form comparison.  Dividing its
+lower side by $1-\varepsilon$ gives upper validity for this query, while
+combining both sides gives the displayed sharpness factor.  Applying the lower
+inequality actionwise on the simultaneous family event gives the all-domain
+upper condition; only the played query uses the upper inequality for
+sharpness.  For PCG the argument is unchanged once the certificate is expressed
+in the original $\Calg$-energy norm.
 \end{proof}
 
 Neither \Cref{lem:inverse-quadratic-certificate-new} nor

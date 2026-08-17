@@ -238,9 +238,10 @@ Under the structural hypotheses of \Cref{thm:regret}, with its certificate
 inputs instantiated by valid smoothness constants, the
 optimizer residual bound $\zeta_t$, uniform CG certificates, and a valid
 $\kappa_{+,t}$, \eqref{eq:path-stats-main}--\eqref{eq:operational-beta-main}
-give predictable prefix-derived schedules, while $u_t$ and any current
-randomized operator factor are pre-reward measurable.  Together they satisfy
-every nonlinear input of the theorem.  Thus
+give valid pre-reward schedules.  Prefix-derived quantities are predictable;
+$\bar\psi_t$ is predictable when $\zeta_t$ is $\cHist_t^-$-measurable, while
+$u_t$ and any current randomized operator factor are pre-reward measurable.
+Together they satisfy every nonlinear input of the theorem.  Thus
 \Cref{thm:regret} holds with $E_T$ replaced by
 $\bar E_T=\sum_{t\le T}\bar\epsilon_t^{\rm lin}$ and the observable CG upper
 bound on $\Lamalg_T$ from \Cref{cor:lam-observable}.
@@ -251,9 +252,9 @@ $\bar\chi_t\ge\chi_t$, $\bar\psi_t\ge\psi_t$,
 $\bar F_t\ge F_t$, and $\bar E_T\ge E_T$.  The one-sided operator relation
 and \Cref{cor:gammahat} give $u_t$ and
 $\hat\gamma_{t-1}\ge\gamma_{t-1}$, hence
-$\bar\beta_t\ge\beta_t$.  All quantities use the summary through round $t-1$
-and the already formed $\btheta_t$; uniform candidate-action CG accuracy is
-checked before selection.  Substitution in \Cref{thm:regret} and
+$\bar\beta_t\ge\beta_t$.  All quantities are available before selection; when
+$\zeta_t$ is prefix measurable, so is $\bar\psi_t$.  Uniform candidate-action
+CG accuracy is checked before selection.  Substitution in \Cref{thm:regret} and
 \Cref{cor:lam-observable} proves the claim.
 \end{proof}
 The proof, filtration-order pseudocode, and a scalar-tanh specialization with
@@ -582,8 +583,9 @@ $x\in[0,1]$, $\log(1+x)\ge x/2$; apply this with
 $x=\Delta/(q\lambda)$ and multiply by $q$.
 \end{proof}
 
-A deterministic or history-measurable prefix envelope
-$\bar\Delta_{t,r}\ge\Delta_{t,r}$ may enter an online confidence schedule
+A deterministic prefix envelope, or one measurable with respect to the
+pre-randomization history before the round where it is used,
+$\bar\Delta_{t,r}\ge\Delta_{t,r}$, may enter an online confidence schedule
 through the prefix form of~\eqref{eq:spectral-tail-logdet}.  A second valid
 schedule is~\eqref{eq:predictable-split-envelope}, which uses the observable
 full trace for the head and the tail envelope only for the tail.  It does not
@@ -733,8 +735,10 @@ $\bar\psi_t$ entirely, at the cost of an explicit frozen-feature solve.
 \end{assumption}
 
 \begin{remark}[Status of Assumption~\ref{asm:optim}]
-\Cref{lem:path-certificates} supplies a predictable valid $\bar\psi_t$ from
+\Cref{lem:path-certificates} supplies a valid pre-reward $\bar\psi_t$ from
 the optimizer residual, Welford path moments, and observed residual energy.
+It is predictable when the optimizer-residual bound $\zeta_t$ is
+$\cHist_t^-$-measurable.
 We do not prove that this conservative quantity is small outside a restricted
 path.  It enters the exploration term
 through $\omega_t=\bar\beta_t+\bar\psi_t$
@@ -2658,7 +2662,7 @@ Summing gives~\eqref{eq:conf-lin}--\eqref{eq:beta}.
 \end{proof}
 
 \begin{corollary}[Predictable confidence schedule]\label{cor:beta-constructive}
-Suppose a nonnegative $\cHist_t$-measurable sequence
+Suppose a nonnegative $\cHist_t^-$-measurable sequence
 $\{\bar F_t\}_{t\ge 1}$
 satisfies $F_t \le \bar F_t$ for all~$t$.
 Then \Cref{alg:ccucb} may set
@@ -2674,7 +2678,7 @@ which is predictable and satisfies $\bar\beta_t \ge \beta_t$.
 $\bar F_t \ge F_t$ term-by-term implies each summand in~\eqref{eq:beta}
 is dominated, so $\bar\beta_t \ge \beta_t$.
 Predictability holds because $\gamma_{t-1}$, $S$, $\bar F_t$, $\lambda$,
-$\sigma$, and $\delta$ are all determined before round~$t$.
+$\sigma$, and $\delta$ are all $\cHist_t^-$-measurable.
 \end{proof}
 
 \noindent
@@ -2699,7 +2703,7 @@ Define the observable information-gain surrogate
 \]
 where $\tilde s_s^2(a_s)=\bg_s(a_s)^\top\tilde\bu_s$ is the CG variance
 proxy computed at round~$s$ for the played action.
-Then $\hat\gamma_{t-1}$ is $\cHist_t$-measurable and
+Then $\hat\gamma_{t-1}$ is $\cHist_t^-$-measurable and
 $\hat\gamma_{t-1}\ge\gamma_{t-1}$, so
 \[
   \hat\beta_t \;:=\;
@@ -2722,8 +2726,10 @@ $\bar s_s^2(a_s)\le u_s(a_s)\,\tilde s_s^2(a_s)/(1-\bar\varepsilon_s)$.
 By monotonicity of $x\mapsto\log(1+\sigma^{-2}x)$, each summand of
 $\gamma_{t-1}$ in~\eqref{eq:infogain} is dominated by the corresponding
 summand of $\hat\gamma_{t-1}$.
-Measurability holds because $\tilde s_s^2(a_s)$, $u_s(a_s)$, and
-$\bar\varepsilon_s$ are all $\cHist_s$-measurable.
+Predictability at round $t$ holds because every
+$\tilde s_s^2(a_s)$, $u_s(a_s)$, and $\bar\varepsilon_s$ in the sum was
+fixed before the corresponding past reward and belongs to the prefix history
+$\cHist_t^-$.
 The schedule property then follows term by term as in
 \Cref{cor:beta-constructive}.
 \end{proof}
@@ -2761,9 +2767,10 @@ Immediate from~\eqref{eq:pred-stab}.
 
 \begin{quote}\small
 \emph{Remark (status of the centering certificate $\bar\psi_t$).}
-\Cref{lem:path-certificates} computes a predictable
+\Cref{lem:path-certificates} computes a valid pre-reward
 $\bar\psi_t\ge\psi_t$ from the certified optimizer residual, Welford path
 moments, observed collection residuals, and analytic smoothness constants.
+It is predictable when $\zeta_t$ is $\cHist_t^-$-measurable.
 The schedule is operational but can be loose; the corrected-center variant
 (\Cref{cor:corrected-center}) removes it at the cost of frozen-feature access.
 \end{quote}
