@@ -3,9 +3,10 @@
 
 Earlier repository revisions contained several studies designed for the
 optimizer-centered, one-sided dynamic theorem.  They are summarized here as a
-scientific record, not as empirical validation of
-\Cref{thm:transported-ucb}.  None executes
-the headline exponential transported score while recording a predictable
+scientific record and are separate from the locked controlled execution in
+\Cref{sec:transport-instantiation}.  They are not empirical validation of
+\Cref{thm:transported-ucb}.  None of these historical studies executes
+the headline exponential transported score while recording a supplied pre-reward
 $\bar D_t$, a certified two-sided operator pair $\kappa_{-,t},\kappa_{+,t}$,
 all-domain solver upper validity, played-action sharpness, and the resulting new
 regret bound.  Most detailed figures, comparison tables, and protocol
@@ -24,8 +25,9 @@ was insufficient for a revised corrected-center analysis because the required
 per-round payload was stored in an external raw bundle.  Restoring that bundle
 would permit a post-hoc audit of the local-small-drift premises and of whether
 the executed score matches the revised local score.  It would not establish that
-compatibility by itself.  The headline exponential score requires a new policy
-execution.
+compatibility by itself.  The new policy execution is reported in
+\Cref{sec:transport-instantiation}; its event and results are not retroactively
+imputed to these historical runs.
 
 \paragraph{Exact-linear and solver sanity checks.}
 In the fixed-feature linear studies, the dense exact-current and full-CG rows

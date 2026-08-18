@@ -1,0 +1,62 @@
+\section{Additional transport-instantiation diagnostics}
+\label{app:transport-instantiation}
+
+This appendix expands the locked full aggregate summarized in
+\Cref{sec:transport-instantiation}.  The experiment protocol, configuration,
+selection record, aggregate, and every generated artifact carry provenance and
+SHA-256 hashes.  The figures use only the 50 evaluation seeds.  Smoke and tuning
+results are absent.
+
+\begin{table}[H]
+  \centering\scriptsize
+  \resizebox{\textwidth}{!}{%
+    \input{tables/transport_instantiation_tightness.tex}}
+  \caption{Certificate and bound tightness for the transport-Hessian policy.
+  Entries are medians over evaluation runs or eligible round/checkpoint ratios.
+  $n_0$ counts denominators at or below the preregistered ratio tolerance that
+  are excluded from that ratio.  ``Width/potential'' is the frozen squared-width
+  sum divided by its elliptic-potential upper bound; ``Sharp/simple'' is the
+  sharp cumulative right-hand side divided by the simpler right-hand side.}
+  \label{tab:transport-instantiation-tightness}
+\end{table}
+\clearpage
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_instantiation_regret.tex}
+  \caption{Mean cumulative pseudo-regret at $T=1000$.  Shaded bands are
+  pointwise paired-bootstrap 95\% intervals over the 50 evaluation seeds, not
+  simultaneous confidence bands.  All four methods are plotted; curves can
+  coincide where their selected actions agree.}
+  \label{fig:transport-instantiation-regret}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_instantiation_tightness.tex}
+  \caption{Path-certificate conservatism on log--log axes.  Blue circles bin
+  the per-round Hessian/$Q_t$ certificate $\bar D_t^Q$ against endpoint
+  Thompson distance.  Orange triangles bin the numerical selected factor-path
+  length at preregistered checkpoints.  Marker size encodes bin count for both
+  series, and the dashed line is equality.  Values at or below the
+  preregistered $10^{-12}$ ratio tolerance, including round-one zeros, are
+  omitted from the log axes and counted in
+  \Cref{tab:transport-instantiation-tightness}.  Quadrature and
+  generalized-eigenvalue calculations are dense float64 diagnostics, not
+  verified certificates.}
+  \label{fig:transport-instantiation-tightness}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_instantiation_bound.tex}
+  \caption{Mean cumulative decomposition of the sharp theorem right-hand side
+  for the transport-Hessian policy at $T=1000$.  Statistical confidence is the
+  dominant term; historical linearization, path inflation, and current bias are
+  shown separately.  The red sharp right-hand side remains far above realized
+  regret in every target condition.}
+  \label{fig:transport-instantiation-bound}
+\end{figure}
+\clearpage

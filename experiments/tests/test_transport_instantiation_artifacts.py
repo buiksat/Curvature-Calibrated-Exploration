@@ -16,6 +16,7 @@ from experiments.artifact_utils import (
 from experiments.make_transport_instantiation_artifacts import (
     DEFAULT_CONFIG,
     TransportArtifactError,
+    _curve_plot_rounds,
     escape_tex,
     make_artifacts,
     make_performance_table,
@@ -221,6 +222,15 @@ def test_tex_escaping_and_stable_table_ordering(tmp_path: Path) -> None:
     assert "uncertified" in first
 
 
+def test_curve_plot_rounds_are_deterministic_and_preserve_endpoints() -> None:
+    assert _curve_plot_rounds(32) == tuple(range(1, 33))
+    rounds = _curve_plot_rounds(1000)
+    assert len(rounds) == 101
+    assert rounds[0] == 1
+    assert rounds[-1] == 1000
+    assert rounds == tuple(sorted(set(rounds)))
+
+
 def test_artifact_generation_is_deterministic_and_bound_to_exact_aggregate(
     tmp_path: Path,
 ) -> None:
@@ -253,6 +263,27 @@ def test_artifact_generation_is_deterministic_and_bound_to_exact_aggregate(
         assert aggregate_sha256.encode("ascii") in path.read_bytes()
         provenance = Path(item["provenance"]).read_text(encoding="ascii")
         assert aggregate_sha256 in provenance
+
+    regret_tex = (figures / "transport_instantiation_regret.tex").read_text(
+        encoding="ascii"
+    )
+    path_tex = (figures / "transport_instantiation_tightness.tex").read_text(
+        encoding="ascii"
+    )
+    bound_tex = (figures / "transport_instantiation_bound.tex").read_text(
+        encoding="ascii"
+    )
+    assert regret_tex.count(r"xlabel={Round}") == 2
+    assert bound_tex.count(r"xlabel={Round}") == 2
+    assert path_tex.count(r"xlabel={$d_{\rm Th}$}") == 2
+    assert (
+        "scatter/use mapped color={draw=blue!75!black,fill=blue!75!black}"
+        in path_tex
+    )
+    assert (
+        "scatter/use mapped color={draw=orange!90!black,fill=orange!90!black}"
+        in path_tex
+    )
 
 
 def test_smoke_aggregate_is_never_accepted_as_publication_evidence(

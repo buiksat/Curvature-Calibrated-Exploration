@@ -53,6 +53,8 @@ class TransportArtifactError(ValueError):
 
 
 DEFAULT_CONFIG = Path("experiments/configs/transport_instantiation.yaml")
+PLOT_RATIO_TOLERANCE = 1e-12
+MAX_CURVE_PLOT_ROUNDS = 101
 
 
 def escape_tex(value: str) -> str:
@@ -126,6 +128,10 @@ def _load_full_aggregate(path: Path) -> dict[str, Any]:
 
 def _target_label(value: float) -> str:
     return format(float(value), ".3g")
+
+
+def _target_file_token(value: float) -> str:
+    return format(float(value), ".12g").replace("-", "m").replace(".", "p")
 
 
 def _coverage_text(record: Mapping[str, Any]) -> str:
@@ -275,6 +281,42 @@ def _csv_text(fieldnames: Sequence[str], records: Sequence[Mapping[str, Any]]) -
     return stream.getvalue()
 
 
+def _curve_plot_rounds(
+    horizon: int, *, maximum: int = MAX_CURVE_PLOT_ROUNDS
+) -> tuple[int, ...]:
+    """Return a deterministic endpoint-preserving round schedule."""
+
+    if horizon < 1:
+        raise TransportArtifactError("curve horizon must be positive")
+    if maximum < 2:
+        raise TransportArtifactError("curve plot limit must be at least two")
+    if horizon <= maximum:
+        return tuple(range(1, horizon + 1))
+    rounds = tuple(
+        1 + index * (horizon - 1) // (maximum - 1)
+        for index in range(maximum)
+    )
+    if len(set(rounds)) != maximum or rounds[0] != 1 or rounds[-1] != horizon:
+        raise TransportArtifactError("curve downsampling did not preserve endpoints")
+    return rounds
+
+
+def _downsample_curve_records(
+    records: Sequence[Mapping[str, Any]],
+) -> list[Mapping[str, Any]]:
+    """Retain at most 101 exact aggregate rows per curve horizon."""
+
+    schedules = {
+        int(record["horizon"]): set(_curve_plot_rounds(int(record["horizon"])))
+        for record in records
+    }
+    return [
+        record
+        for record in records
+        if int(record["round"]) in schedules[int(record["horizon"])]
+    ]
+
+
 def _path_plot_records(
     aggregate: Mapping[str, Any], *, bin_count: int = 40
 ) -> list[dict[str, Any]]:
@@ -286,24 +328,39 @@ def _path_plot_records(
         points = [item for item in source if float(item["target_D"]) == target]
         if not points:
             raise TransportArtifactError(f"no path points for target_D={target}")
-        endpoint_x = np.asarray([float(item["d_Th"]) for item in points])
-        endpoint_y = np.asarray([float(item["D_Q"]) for item in points])
+        endpoint_pairs = [
+            (float(item["d_Th"]), float(item["D_Q"]))
+            for item in points
+            if float(item["d_Th"]) > PLOT_RATIO_TOLERANCE
+            and float(item["D_Q"]) > PLOT_RATIO_TOLERANCE
+        ]
+        if not endpoint_pairs:
+            raise TransportArtifactError(
+                f"no positive path-plot points for target_D={target}"
+            )
+        endpoint_x = np.asarray([pair[0] for pair in endpoint_pairs])
+        endpoint_y = np.asarray([pair[1] for pair in endpoint_pairs])
         path_values = [
             float(item["D_path_quad"])
             for item in points
             if item.get("D_path_quad") is not None
         ]
-        maximum = max(
-            1e-15,
+        positive_values = [
+            float(np.min(endpoint_x)),
             float(np.max(endpoint_x)),
+            float(np.min(endpoint_y)),
             float(np.max(endpoint_y)),
-            max(path_values, default=0.0),
-        )
+        ]
+        positive_values.extend(value for value in path_values if value > 0.0)
+        lower = 10.0 ** math.floor(math.log10(min(positive_values)))
+        upper = 10.0 ** math.ceil(math.log10(max(positive_values)))
+        if upper <= lower:
+            upper = lower * 10.0
+        edges = np.geomspace(lower, upper, bin_count + 1)
         histogram, x_edges, y_edges = np.histogram2d(
             endpoint_x,
             endpoint_y,
-            bins=bin_count,
-            range=((0.0, maximum), (0.0, maximum)),
+            bins=(edges, edges),
         )
         for x_index, y_index in np.argwhere(histogram > 0.0):
             count = int(histogram[x_index, y_index])
@@ -311,24 +368,46 @@ def _path_plot_records(
                 {
                     "target_D": target,
                     "series_code": 0,
-                    "x": float((x_edges[x_index] + x_edges[x_index + 1]) / 2.0),
-                    "y": float((y_edges[y_index] + y_edges[y_index + 1]) / 2.0),
+                    "x": float(
+                        math.sqrt(x_edges[x_index] * x_edges[x_index + 1])
+                    ),
+                    "y": float(
+                        math.sqrt(y_edges[y_index] * y_edges[y_index + 1])
+                    ),
                     "count": count,
                     "marker_size": min(2.5, 0.25 + 0.18 * math.sqrt(count)),
                 }
             )
-        for item in points:
-            path_value = item.get("D_path_quad")
-            if path_value is None:
-                continue
+        path_pairs = [
+            (float(item["d_Th"]), float(item["D_path_quad"]))
+            for item in points
+            if item.get("D_path_quad") is not None
+            and float(item["d_Th"]) > PLOT_RATIO_TOLERANCE
+            and float(item["D_path_quad"]) > PLOT_RATIO_TOLERANCE
+        ]
+        path_histogram, path_x_edges, path_y_edges = np.histogram2d(
+            np.asarray([pair[0] for pair in path_pairs]),
+            np.asarray([pair[1] for pair in path_pairs]),
+            bins=(edges, edges),
+        )
+        for x_index, y_index in np.argwhere(path_histogram > 0.0):
+            count = int(path_histogram[x_index, y_index])
             records.append(
                 {
                     "target_D": target,
                     "series_code": 1,
-                    "x": float(item["d_Th"]),
-                    "y": float(path_value),
-                    "count": 1,
-                    "marker_size": 0.45,
+                    "x": float(
+                        math.sqrt(
+                            path_x_edges[x_index] * path_x_edges[x_index + 1]
+                        )
+                    ),
+                    "y": float(
+                        math.sqrt(
+                            path_y_edges[y_index] * path_y_edges[y_index + 1]
+                        )
+                    ),
+                    "count": count,
+                    "marker_size": min(2.5, 0.25 + 0.18 * math.sqrt(count)),
                 }
             )
     return records
@@ -342,34 +421,37 @@ def _figure_header() -> list[str]:
     ]
 
 
-def make_regret_figure_tex(aggregate: Mapping[str, Any], csv_name: str) -> str:
+def make_regret_figure_tex(
+    aggregate: Mapping[str, Any], csv_names: Mapping[float, str]
+) -> str:
     targets = sorted(float(value) for value in aggregate["target_D"])
     if len(targets) != 4:
         raise TransportArtifactError("regret figure expects four target-D conditions")
     lines = _figure_header()
     lines.append(
         r"\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.1cm,vertical sep=1.0cm},"
-        r"width=0.47\linewidth,height=0.32\linewidth,xlabel={Round},ylabel={Cumulative pseudo-regret},"
+        r"width=0.47\linewidth,height=0.32\linewidth,ylabel={Cumulative pseudo-regret},"
         r"grid=major,legend style={font=\scriptsize},tick label style={font=\scriptsize},"
         r"label style={font=\small}]"
     )
     for panel, target in enumerate(targets):
-        lines.append(rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}}]")
+        csv_name = csv_names[target]
+        xlabel = r",xlabel={Round}" if panel >= 2 else ""
+        lines.append(
+            rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}}{xlabel}]"
+        )
         for method in METHODS:
             token = f"p{panel}_{method}"
             color = METHOD_COLORS[method]
-            restriction = (
-                rf"restrict expr to domain={{\thisrow{{target_D}}}}{{{target:.17g}:{target:.17g}}}"
-            )
             method_restriction = (
                 rf"restrict expr to domain={{\thisrow{{method_index}}}}{{{METHODS.index(method)}:{METHODS.index(method)}}}"
             )
             lines.extend(
                 (
-                    rf"\addplot[name path={token}_lo,draw=none,forget plot] table[x=round,y=ci_low,col sep=comma,{restriction},{method_restriction}]{{figures/{csv_name}}};",
-                    rf"\addplot[name path={token}_hi,draw=none,forget plot] table[x=round,y=ci_high,col sep=comma,{restriction},{method_restriction}]{{figures/{csv_name}}};",
+                    rf"\addplot[name path={token}_lo,draw=none,forget plot] table[x=round,y=ci_low,col sep=comma,{method_restriction}]{{figures/{csv_name}}};",
+                    rf"\addplot[name path={token}_hi,draw=none,forget plot] table[x=round,y=ci_high,col sep=comma,{method_restriction}]{{figures/{csv_name}}};",
                     rf"\addplot[draw=none,fill={color},fill opacity=0.10,forget plot] fill between[of={token}_lo and {token}_hi];",
-                    rf"\addplot[{color},thick] table[x=round,y=mean,col sep=comma,{restriction},{method_restriction}]{{figures/{csv_name}}};",
+                    rf"\addplot[{color},thick] table[x=round,y=mean,col sep=comma,{method_restriction}]{{figures/{csv_name}}};",
                 )
             )
             if panel == 0:
@@ -378,31 +460,50 @@ def make_regret_figure_tex(aggregate: Mapping[str, Any], csv_name: str) -> str:
     return "\n".join(lines)
 
 
-def make_path_figure_tex(aggregate: Mapping[str, Any], csv_name: str) -> str:
+def make_path_figure_tex(
+    aggregate: Mapping[str, Any], csv_names: Mapping[float, str]
+) -> str:
     targets = sorted(float(value) for value in aggregate["target_D"])
     lines = _figure_header()
     lines.append(
+        "% Log axes omit values at or below 1e-12, including the exact t=1 zeros."
+    )
+    lines.append(
         r"\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.1cm,vertical sep=1.0cm},"
-        r"width=0.47\linewidth,height=0.32\linewidth,xlabel={$d_{\rm Th}$},ylabel={Path certificate},"
+        r"width=0.47\linewidth,height=0.32\linewidth,xmode=log,ymode=log,"
+        r"log basis x=10,log basis y=10,"
+        r"ylabel={Path quantity},"
         r"grid=major,unbounded coords=discard,tick label style={font=\scriptsize},label style={font=\small}]"
     )
-    for target in targets:
-        restriction = (
-            rf"restrict expr to domain={{\thisrow{{target_D}}}}{{{target:.17g}:{target:.17g}}}"
-        )
+    for panel, target in enumerate(targets):
+        csv_name = csv_names[target]
+        xlabel = r",xlabel={$d_{\rm Th}$}" if panel >= 2 else ""
+        positive_values = [
+            float(value)
+            for item in aggregate["path_points"]
+            if float(item["target_D"]) == target
+            for value in (item["d_Th"], item["D_Q"], item.get("D_path_quad"))
+            if value is not None and float(value) > PLOT_RATIO_TOLERANCE
+        ]
+        lower = 10.0 ** math.floor(math.log10(min(positive_values)))
+        upper = 10.0 ** math.ceil(math.log10(max(positive_values)))
+        if upper <= lower:
+            upper = lower * 10.0
         lines.extend(
             (
-                rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}}]",
-                rf"\addplot[scatter,only marks,mark=*,opacity=0.35,visualization depends on={{\thisrow{{marker_size}}\as\perpointmarksize}},scatter/@pre marker code/.append style={{/tikz/mark size=\perpointmarksize}},forget plot] table[x=x,y=y,meta=count,col sep=comma,{restriction},restrict expr to domain={{\thisrow{{series_code}}}}{{0:0}}]{{figures/{csv_name}}};",
-                rf"\addplot[only marks,mark=triangle*,mark size=0.55pt,orange!70!black,opacity=0.25,forget plot] table[x=x,y=y,col sep=comma,{restriction},restrict expr to domain={{\thisrow{{series_code}}}}{{1:1}}]{{figures/{csv_name}}};",
-                r"\addplot[black,dashed,domain=0:2.2,samples=2] {x};",
+                rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}},xmin={lower:.17g},xmax={upper:.17g},ymin={lower:.17g},ymax={upper:.17g}{xlabel}]",
+                rf"\addplot[scatter,only marks,mark=*,opacity=0.35,scatter/use mapped color={{draw=blue!75!black,fill=blue!75!black}},visualization depends on={{\thisrow{{marker_size}}\as\perpointmarksize}},scatter/@pre marker code/.append style={{/tikz/mark size=\perpointmarksize}},forget plot] table[x=x,y=y,meta=count,col sep=comma,restrict expr to domain={{\thisrow{{series_code}}}}{{0:0}}]{{figures/{csv_name}}};",
+                rf"\addplot[scatter,only marks,mark=triangle*,opacity=0.35,scatter/use mapped color={{draw=orange!90!black,fill=orange!90!black}},visualization depends on={{\thisrow{{marker_size}}\as\perpointmarksize}},scatter/@pre marker code/.append style={{/tikz/mark size=\perpointmarksize}},forget plot] table[x=x,y=y,meta=count,col sep=comma,restrict expr to domain={{\thisrow{{series_code}}}}{{1:1}}]{{figures/{csv_name}}};",
+                rf"\addplot[black,dashed,domain={lower:.17g}:{upper:.17g},samples=2] {{x}};",
             )
         )
     lines.extend((r"\end{groupplot}", r"\end{tikzpicture}", ""))
     return "\n".join(lines)
 
 
-def make_bound_figure_tex(aggregate: Mapping[str, Any], csv_name: str) -> str:
+def make_bound_figure_tex(
+    aggregate: Mapping[str, Any], csv_names: Mapping[float, str]
+) -> str:
     targets = sorted(float(value) for value in aggregate["target_D"])
     series = (
         ("statistical_bound_component", "blue!75!black", "statistical"),
@@ -415,19 +516,20 @@ def make_bound_figure_tex(aggregate: Mapping[str, Any], csv_name: str) -> str:
     lines = _figure_header()
     lines.append(
         r"\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.1cm,vertical sep=1.0cm},"
-        r"width=0.47\linewidth,height=0.32\linewidth,xlabel={Round},ylabel={Cumulative value},"
+        r"width=0.47\linewidth,height=0.32\linewidth,ylabel={Cumulative value},"
         r"grid=major,legend style={font=\scriptsize},tick label style={font=\scriptsize},"
         r"label style={font=\small}]"
     )
     for panel, target in enumerate(targets):
-        restriction = (
-            rf"restrict expr to domain={{\thisrow{{target_D}}}}{{{target:.17g}:{target:.17g}}}"
+        csv_name = csv_names[target]
+        xlabel = r",xlabel={Round}" if panel >= 2 else ""
+        lines.append(
+            rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}}{xlabel}]"
         )
-        lines.append(rf"\nextgroupplot[title={{${{D_{{\rm target}}}}={_target_label(target)}$}}]")
         for field, color, label in series:
             style = "very thick" if field in {"cumulative_pseudo_regret", "sharp_theorem_rhs"} else "thick"
             lines.append(
-                rf"\addplot[{color},{style}] table[x=round,y={field},col sep=comma,{restriction}]{{figures/{csv_name}}};"
+                rf"\addplot[{color},{style}] table[x=round,y={field},col sep=comma]{{figures/{csv_name}}};"
             )
             if panel == 0:
                 lines.append(rf"\addlegendentry{{{escape_tex(label)}}}")
@@ -491,9 +593,25 @@ def make_artifacts(
     regret_tex = figure_directory / "transport_instantiation_regret.tex"
     path_tex = figure_directory / "transport_instantiation_tightness.tex"
     bound_tex = figure_directory / "transport_instantiation_bound.tex"
+    targets = sorted(float(value) for value in aggregate["target_D"])
+    regret_panel_csv = {
+        target: figure_directory
+        / f"transport_instantiation_regret_D-{_target_file_token(target)}.csv"
+        for target in targets
+    }
+    path_panel_csv = {
+        target: figure_directory
+        / f"transport_instantiation_tightness_D-{_target_file_token(target)}.csv"
+        for target in targets
+    }
+    bound_panel_csv = {
+        target: figure_directory
+        / f"transport_instantiation_bound_D-{_target_file_token(target)}.csv"
+        for target in targets
+    }
 
     regret_records = sorted(
-        aggregate["regret_curves"],
+        _downsample_curve_records(aggregate["regret_curves"]),
         key=lambda item: (float(item["target_D"]), METHODS.index(str(item["method"])), int(item["round"])),
     )
     path_records = sorted(
@@ -506,7 +624,7 @@ def make_artifacts(
         ),
     )
     bound_records = sorted(
-        aggregate["bound_decomposition"],
+        _downsample_curve_records(aggregate["bound_decomposition"]),
         key=lambda item: (float(item["target_D"]), int(item["round"])),
     )
     if not regret_records or not path_records or not bound_records:
@@ -603,25 +721,116 @@ def make_artifacts(
             aggregate_path=aggregate_path,
             aggregate_provenance=aggregate_provenance,
         ),
-        _write_artifact(
-            regret_tex,
-            source_comment + make_regret_figure_tex(aggregate, regret_csv.name),
-            aggregate_path=aggregate_path,
-            aggregate_provenance=aggregate_provenance,
-        ),
-        _write_artifact(
-            path_tex,
-            source_comment + make_path_figure_tex(aggregate, path_csv.name),
-            aggregate_path=aggregate_path,
-            aggregate_provenance=aggregate_provenance,
-        ),
-        _write_artifact(
-            bound_tex,
-            source_comment + make_bound_figure_tex(aggregate, bound_csv.name),
-            aggregate_path=aggregate_path,
-            aggregate_provenance=aggregate_provenance,
-        ),
     ]
+    for target in targets:
+        artifacts.append(
+            _write_artifact(
+                regret_panel_csv[target],
+                _csv_text(
+                    (
+                        "target_D",
+                        "horizon",
+                        "method",
+                        "method_index",
+                        "round",
+                        "mean",
+                        "ci_low",
+                        "ci_high",
+                        "aggregate_sha256",
+                    ),
+                    [
+                        record
+                        for record in regret_csv_records
+                        if float(record["target_D"]) == target
+                    ],
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            )
+        )
+        artifacts.append(
+            _write_artifact(
+                path_panel_csv[target],
+                _csv_text(
+                    (
+                        "target_D",
+                        "series_code",
+                        "x",
+                        "y",
+                        "count",
+                        "marker_size",
+                        "aggregate_sha256",
+                    ),
+                    [
+                        record
+                        for record in path_csv_records
+                        if float(record["target_D"]) == target
+                    ],
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            )
+        )
+        artifacts.append(
+            _write_artifact(
+                bound_panel_csv[target],
+                _csv_text(
+                    (
+                        "target_D",
+                        "horizon",
+                        "round",
+                        "statistical_bound_component",
+                        "historical_bound_component",
+                        "path_inflation_component",
+                        "current_bias_cumulative",
+                        "cumulative_pseudo_regret",
+                        "sharp_theorem_rhs",
+                        "aggregate_sha256",
+                    ),
+                    [
+                        record
+                        for record in bound_csv_records
+                        if float(record["target_D"]) == target
+                    ],
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            )
+        )
+    artifacts.extend(
+        [
+            _write_artifact(
+                regret_tex,
+                source_comment
+                + make_regret_figure_tex(
+                    aggregate,
+                    {target: path.name for target, path in regret_panel_csv.items()},
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            ),
+            _write_artifact(
+                path_tex,
+                source_comment
+                + make_path_figure_tex(
+                    aggregate,
+                    {target: path.name for target, path in path_panel_csv.items()},
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            ),
+            _write_artifact(
+                bound_tex,
+                source_comment
+                + make_bound_figure_tex(
+                    aggregate,
+                    {target: path.name for target, path in bound_panel_csv.items()},
+                ),
+                aggregate_path=aggregate_path,
+                aggregate_provenance=aggregate_provenance,
+            ),
+        ]
+    )
     return {
         "schema_version": 1,
         "event": "transport_instantiation_artifacts",

@@ -42,6 +42,9 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{groupplots,fillbetween}
 \usepackage{enumitem}
 \usepackage{microtype}
 \usepackage{float}     % [H] fixed-placement algorithm
@@ -103,6 +106,10 @@ rate in the frozen linear exact-solve limit.  The result is conditional on
 valid supplied pre-reward path, operator, confidence, and solver certificates;
 it is not a guarantee for unrestricted neural training, a complete
 exponential-family theorem, or verified floating-point certification.
+A locked finite-dimensional scaled-tanh audit records no deterministic failure
+and simultaneous confidence and optimism in all 600 primary-policy runs, but
+also finds a highly conservative Hessian path certificate and a cumulative
+bound more than 126 times realized regret in every reported median.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
@@ -179,6 +186,10 @@ corollary that retains exponential transport without a small-drift assumption.
 The result reduces to LinUCB in the frozen linear exact-solve case
 (\Cref{cor:corrected-center-new,cor:finite-d-rate-new,%
 cor:global-near-linear-new}).
+\textbf{(4)} A locked controlled experiment that executes the corrected-center
+score with dense current and frozen metrics, audits every theorem input in
+float64, and measures confidence coverage, path-certificate conservatism, and
+bound nonvacuity (\Cref{sec:transport-instantiation}).
 
 The new contribution is the composition of predictable frozen statistical
 confidence; a current relinearized GGN or Fisher metric; factor-path and Hessian
@@ -190,10 +201,12 @@ for relinearized contextual-bandit curvature is the result claimed here.
 
 The contribution is the confidence transport and its contextual-bandit
 instantiation, not generic conjugate gradients, a generic UCB-to-regret
-reduction, or uniform superiority of full curvature.  Earlier numerical work is
+reduction, or uniform superiority of full curvature.  The new controlled audit
+is reported in \Cref{sec:transport-instantiation}.  Earlier numerical work is
 scoped separately in \Cref{app:legacy-evidence}; it does not instantiate the new
 path and two-sided-operator premises.
 \input{transport_theory}
+\input{transport_experiment}
 \newcommand{\deferredConditionalRates}{%
 \subsection{Online nonlinear certificates}\label{sec:operational-certificates}
 At the start of round $t$, let $n_t=t-1$, and let $\bar\btheta_{<t}$ and
@@ -402,6 +415,15 @@ Under the explicit global near-linearity scale of
 path factor bounded and yields the displayed controlled nonlinear rate without
 a $D_t<1$ premise.  Here $W$ is an abstract smoothness scale, not generic
 network width.
+The controlled scaled-tanh execution in \Cref{sec:transport-instantiation}
+found simultaneous reference confidence and transported optimism in all 600
+primary-policy runs and no deterministic audit failure across the locked grid.
+It also exposed the practical gap between validity and usefulness: the
+Hessian/$Q_t$ path envelope was orders of magnitude longer than the selected
+path diagnostic, and the median sharp bound was between $126.7$ and $155.7$
+times realized regret.  The denser endpoint and frozen-reference policies had
+lower descriptive regret than the operational Hessian-certificate policy in
+this environment.  This is not evidence of a uniform curvature advantage.
 
 \paragraph{Limitations.}
 The abstract theorem assumes a standard-Borel action space, a graph-measurable
@@ -420,7 +442,10 @@ nonvanishing misspecification, two-sided guarantees for arbitrary diagonal,
 low-rank, stale, or sketched operators, empirical validation of the transported
 theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
 residual checks are diagnostics rather than verified numerical certificates.
-Legacy audits are summarized in
+The new experiment is a controlled execution and audit, not empirical proof or
+validation of the theorem.  Its endpoint method is a dense diagnostic oracle,
+and its intentionally naive current-width control is uncertified even where its
+observed optimism rate is high.  Legacy audits are summarized in
 \Cref{app:legacy-evidence}; none instantiates the revised theorem event.
 
 % --- references -----------------------------------------------------------
@@ -4002,6 +4027,8 @@ for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
 Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
 Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 
+\input{transport_experiment_appendix}
+
 \input{legacy_experiments}
 
 \section{Broader Impact}\label{app:impact}
@@ -4011,13 +4038,15 @@ online monitoring; the regret certificates here do not establish safety.
 
 \section{Data and Code Availability}\label{app:availability}
 The repository contains the manuscript, theory derivations, implementation,
-tests, experiment configurations, artifact generators, and the selected compact
-diagnostic aggregates used by the retained appendix tables.  The manuscript
-does not use the legacy experiments as evidence for
-\Cref{thm:transported-ucb}; their
-scope is summarized in \Cref{app:legacy-evidence}.  Detailed legacy figures,
-generated tables, raw-bundle inventories, and derived benchmark outputs are not
-part of the compact checkout; Git history preserves them.  No public raw-bundle
-URL is claimed.
+tests, frozen transport-instantiation protocol and configuration, optimizer
+selection record, strict full aggregate, provenance records, and generated
+tables and figures used in \Cref{sec:transport-instantiation}.  The aggregate is
+bound to the complete raw-input inventory by SHA-256 provenance.  Raw run files
+remain outside the committed source tree; no public raw-bundle URL is claimed.
+The manuscript does not use the legacy experiments as evidence for
+\Cref{thm:transported-ucb}; their scope is summarized in
+\Cref{app:legacy-evidence}.  Detailed legacy figures, raw-bundle inventories,
+and derived benchmark outputs are not part of the compact checkout; Git history
+preserves them.
 
 \end{document}
