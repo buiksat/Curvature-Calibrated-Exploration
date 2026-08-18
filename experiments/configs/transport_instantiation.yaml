@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "name": "transport_instantiation",
+  "description": "Controlled exact-dense instantiation of corrected-center confidence transport in a scaled-tanh Gaussian contextual bandit.",
+  "base": {
+    "task": "scaled_tanh_gaussian_contextual_bandit",
+    "rounds": 1000,
+    "horizons": [250, 500, 1000],
+    "target_D": [0.25, 0.5, 1.0, 2.0],
+    "environment": {
+      "context_distribution": "normalized_rademacher",
+      "context_dimension": 4,
+      "action_count": 5,
+      "feature_map": "[x, one_hot(a), kron(x, one_hot(a))]",
+      "feature_dimension": 29,
+      "feature_bound": 1.0,
+      "noise_distribution": "gaussian",
+      "noise_std": 0.25,
+      "potential_noise_table": true,
+      "reveal_selected_reward_only": true,
+      "exact_realizability": true
+    },
+    "teacher": {
+      "construction": "regular_simplex_context_action_interactions",
+      "seed": 1729,
+      "context_block_mass": 0.0,
+      "action_block_mass": 0.0,
+      "interaction_block_mass": 1.0,
+      "theta_radius": 1.0,
+      "target_norm_fraction": 1.0,
+      "shared_across_methods_conditions_and_seeds": true
+    },
+    "model": {
+      "family": "scaled_tanh",
+      "mean": "sqrt(W) * tanh(phi(z)^T theta / sqrt(W))",
+      "gradient": "sech(phi(z)^T theta / sqrt(W))^2 * phi(z)",
+      "smoothness_constant_name": "c_h",
+      "smoothness_constant": "4 * feature_bound^2 / (3 * sqrt(3))",
+      "gradient_bound": "feature_bound",
+      "W_rule": "(4 * c_h * theta_radius * sqrt(horizon - 1) / (noise_std * sqrt(ridge) * target_D))^2"
+    },
+    "ridge": 1.0,
+    "training_ridge": 1.0,
+    "representation_update": {
+      "initial_theta": "zero",
+      "objective": "sum_selected_squared_residuals_over_2_sigma_squared_plus_training_ridge_norm_squared_over_2",
+      "optimizer": "projected_full_batch_gradient_descent",
+      "projection_radius": 1.0,
+      "shared_hyperparameters_across_methods": true,
+      "start_each_round_from_current_theta": true,
+      "update_after_reward": true,
+      "development_optimizer": {
+        "learning_rate": 0.0001,
+        "steps_per_round": 5,
+        "scope": "development_policy_runs_before_selection_only"
+      },
+      "tuning": {
+        "behavior_policy": "uniform_random",
+        "burn_in_rounds": 100,
+        "learning_rate_grid": [0.00003, 0.0001, 0.0003],
+        "steps_per_round_grid": [1, 5, 20],
+        "selection_metric": "mean_all_action_prediction_mse_after_burn_in",
+        "pool_over_target_D_and_tuning_seeds": true,
+        "selection_aggregation": "equal_weight_mean_of_seed_horizon_target_D_cell_means",
+        "reject_on_any_deterministic_failure": true,
+        "tie_break": ["fewer_steps_per_round", "smaller_learning_rate"]
+      }
+    },
+    "confidence": {
+      "delta": 0.05,
+      "reference_radius": "sqrt(gamma_previous + 2 * log(1 / delta)) + sqrt(ridge) * theta_radius + sqrt(sum_historical_envelope_squared) / noise_std",
+      "historical_envelope": "0.5 * L_mu * (theta_radius + norm(theta_collection))^2",
+      "current_envelope": "0.5 * L_mu * (theta_radius + norm(theta_current))^2",
+      "bonus_multiplier": 1.0,
+      "use_actual_remainders_in_policy": false
+    },
+    "metrics": {
+      "frozen": "ridge_identity_plus_collection_query_gram_over_sigma_squared",
+      "current": "ridge_identity_plus_current_relinearized_replay_query_gram_over_sigma_squared",
+      "operator": "exact_dense",
+      "solver": "float64_cholesky",
+      "form_explicit_inverse": false
+    },
+    "transport": {
+      "operational_certificate": "hessian_Q",
+      "Q": "sum_collection_parameter_to_current_parameter_squared_distance",
+      "D_Q": "2 * L_g * sqrt(Q) / (noise_std * sqrt(ridge))",
+      "endpoint_distance": "dense_generalized_eigenvalue_thompson_distance",
+      "factor_path": "synthetic_per_replay_linear_parameter_interpolation",
+      "quadrature": {
+        "rule": "gauss_legendre",
+        "development_orders": [16, 32],
+        "frozen_order": 32,
+        "full_checkpoint_period": 10,
+        "include_reported_horizons": true,
+        "smoke_every_round": true,
+        "convergence_absolute_tolerance": 1e-09,
+        "convergence_relative_tolerance": 1e-08,
+        "inequality_absolute_tolerance": 1e-09,
+        "inequality_relative_tolerance": 1e-08,
+        "policy_certificate": false
+      }
+    },
+    "methods": [
+      "transport_hessian",
+      "transport_endpoint",
+      "frozen_reference",
+      "naive_current"
+    ],
+    "method_roles": {
+      "transport_hessian": "primary_certified_theorem_instantiation",
+      "transport_endpoint": "dense_endpoint_diagnostic_oracle",
+      "frozen_reference": "certified_reference_geometry_comparison",
+      "naive_current": "uncertified_negative_control"
+    },
+    "action_selection": {
+      "enumeration": "fixed_actions_0_through_4",
+      "tie_rule": "smallest_index",
+      "approximation_error": 0.0
+    },
+    "diagnostic_baselines": {
+      "context_free_mean_only": {
+        "uses_context": false,
+        "initialization": "force_actions_0_through_4_once_in_index_order",
+        "subsequent_rule": "smallest_index_maximum_selected_reward_empirical_mean",
+        "uses_selected_rewards_only": true,
+        "publication_role": "environment_diagnostic_not_study_method"
+      }
+    },
+    "numerics": {
+      "dtype": "float64",
+      "linear_solve": "cholesky",
+      "generalized_eigensolver": "symmetric",
+      "algebra_tolerance_constant": 4096.0,
+      "algebra_tolerance": "C_tol * machine_epsilon * max(1, dimension) * max(1, operator_norm, abs(scalar_reference))",
+      "ratio_denominator_tolerance": 1e-12,
+      "silent_clamping": false,
+      "fail_on_nonfinite": true,
+      "fail_on_deterministic_violation": true
+    },
+    "deterministic_audit": {
+      "checks": [
+        "pseudo_response_identity",
+        "corrected_center_identity",
+        "frozen_gram_recursion",
+        "information_gain_recursion",
+        "endpoint_thompson_sandwich",
+        "endpoint_distance_le_D_Q",
+        "quadrature_path_inequalities_at_checkpoints",
+        "both_all_action_width_transports",
+        "frozen_width_sum_potential_closure",
+        "instantaneous_regret_bound_on_confidence_event",
+        "sharp_cumulative_bound_on_joint_prefix_event",
+        "simple_cumulative_bound_on_joint_prefix_event"
+      ],
+      "confidence_premise_false_status": "premise_false",
+      "on_event_violation_status": "bound_violation_on_event"
+    },
+    "statistics": {
+      "coverage_interval": "clopper_pearson",
+      "coverage_level": 0.95,
+      "paired_bootstrap_resamples": 10000,
+      "paired_bootstrap_level": 0.95,
+      "bootstrap_seed_source": "config_digest_and_bootstrap_namespace",
+      "descriptive_quantiles": [0.1, 0.25, 0.5, 0.75, 0.9],
+      "report_standard_error": true,
+      "zero_regret_ratios": "omit_ratio_and_report_count"
+    },
+    "reporting": {
+      "primary_horizon": 1000,
+      "publication_profile": "full",
+      "allow_smoke_or_tuning_in_paper": false
+    },
+    "seed_derivation": {
+      "stream_algorithm": "sha256_transport_instantiation_v1_seed_namespace_to_nonnegative_uint63",
+      "bootstrap_algorithm": "repository_derive_seed_from_resolved_config_digest_and_condition",
+      "namespaces": {
+        "context_stream": "transport_instantiation/context/v1",
+        "potential_noise_table": "transport_instantiation/potential_noise/v1",
+        "teacher_construction": "transport_instantiation/teacher/v1",
+        "behavior_policy_tuning_stream": "transport_instantiation/behavior_policy/v1",
+        "bootstrap_aggregation": "transport_instantiation/bootstrap/v1"
+      },
+      "python_randomized_hash_forbidden": true,
+      "common_context_and_potential_noise_across_methods": true
+    },
+    "execution": {
+      "horizon_execution": "independent_runs",
+      "workers": 4,
+      "blas_threads_per_worker": 1,
+      "fail_fast": true,
+      "overwrite_requires_flag": true,
+      "record_not_run_on_external_blocker": true,
+      "packages": ["numpy", "scipy", "psutil", "pytest"]
+    },
+    "outputs": {
+      "raw_root": "results/raw/transport_instantiation",
+      "smoke_raw_root": "results/raw/transport_instantiation/smoke",
+      "full_raw_root": "results/raw/transport_instantiation/full",
+      "derived_root": "results/derived/transport_instantiation",
+      "smoke_selection": "results/derived/transport_instantiation/smoke_selection.json",
+      "full_selection": "results/derived/transport_instantiation/selection.json",
+      "full_selection_provenance": "results/derived/transport_instantiation/selection.json.provenance.json",
+      "required_selection_export": "results/derived/transport_instantiation_selection.json",
+      "required_selection_export_provenance": "results/derived/transport_instantiation_selection.json.provenance.json",
+      "full_aggregate": "results/derived/transport_instantiation/full_aggregate.json",
+      "validity_table": "paper/tables/transport_instantiation_validity.tex",
+      "performance_table": "paper/tables/transport_instantiation_performance.tex",
+      "tightness_table": "paper/tables/transport_instantiation_tightness.tex",
+      "regret_figure_tex": "paper/figures/transport_instantiation_regret.tex",
+      "regret_figure_data": "paper/figures/transport_instantiation_regret.csv",
+      "transport_figure_tex": "paper/figures/transport_instantiation_tightness.tex",
+      "transport_figure_data": "paper/figures/transport_instantiation_tightness.csv",
+      "bound_figure_tex": "paper/figures/transport_instantiation_bound.tex",
+      "bound_figure_data": "paper/figures/transport_instantiation_bound.csv"
+    }
+  },
+  "profiles": {
+    "smoke": {
+      "rounds": 32,
+      "horizons": [16, 32],
+      "target_D": [0.5, 2.0],
+      "representation_update": {
+        "tuning": {"burn_in_rounds": 8}
+      },
+      "reporting": {"primary_horizon": 32},
+      "execution": {"workers": 1},
+      "seed_sets": {
+        "development": [0],
+        "tuning": [10],
+        "evaluation": [100]
+      }
+    },
+    "full": {
+      "seed_sets": {
+        "development": [0, 1, 2],
+        "tuning": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+        "evaluation": [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149]
+      }
+    }
+  }
+}

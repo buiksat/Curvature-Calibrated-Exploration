@@ -1,6 +1,6 @@
 # Experiment pipelines
 
-This directory contains the three experiment paths that remain relevant to the
+This directory contains the four experiment paths that remain relevant to the
 current paper. Historical benchmark drivers and their generated artifacts were
 removed from the working tree. They remain available in Git history.
 
@@ -12,6 +12,56 @@ without PyYAML. Run repository commands through Buck2 from the repository root.
 ```bash
 buck2 test //experiments/tests:tests -- --timeout=1200
 ```
+
+## Nonlinear confidence-transport instantiation
+
+`TRANSPORT_INSTANTIATION_PROTOCOL.md` preregisters the first direct experiment
+for the revised theorem. It uses a finite-dimensional scaled-tanh Gaussian
+bandit, exact dense frozen and current metrics, exact Cholesky solves, and four
+fixed policies. The Hessian/\(Q_t\) method is the operational theorem
+instantiation. The endpoint method is a dense diagnostic oracle, and the naive
+current-width method is intentionally uncertified.
+
+Resolve and run the smoke protocol first:
+
+```bash
+buck2 run //experiments:config -- \
+  experiments/configs/transport_instantiation.yaml \
+  --profile smoke --seed-set development --print
+buck2 run //experiments:run_transport_instantiation_study -- \
+  --config experiments/configs/transport_instantiation.yaml \
+  --profile smoke --phase development \
+  --output-root results/raw/transport_instantiation/smoke --overwrite
+buck2 run //experiments:run_transport_instantiation_study -- \
+  --config experiments/configs/transport_instantiation.yaml \
+  --profile smoke --phase tuning \
+  --output-root results/raw/transport_instantiation/smoke \
+  --selection-output results/derived/transport_instantiation/smoke_selection.json \
+  --overwrite
+buck2 run //experiments:run_transport_instantiation_study -- \
+  --config experiments/configs/transport_instantiation.yaml \
+  --profile smoke --phase evaluation \
+  --selection results/derived/transport_instantiation/smoke_selection.json \
+  --output-root results/raw/transport_instantiation/smoke --overwrite
+```
+
+Smoke results are never publication evidence. After the protocol and code are
+committed, run the full tuning and evaluation phases, then invoke the strict
+aggregator:
+
+```bash
+buck2 run //experiments:aggregate_transport_instantiation -- \
+  --config experiments/configs/transport_instantiation.yaml \
+  --profile full \
+  --selection results/derived/transport_instantiation/selection.json \
+  --raw-root results/raw/transport_instantiation/full \
+  --output results/derived/transport_instantiation/full_aggregate.json
+```
+
+The aggregator rejects incomplete Cartesian products, mixed revisions or
+configurations, selection mismatches, nonfinite values, and deterministic
+audit failures. Statistical confidence failures remain in the aggregate.
+Raw run directories remain untracked.
 
 ## Linear confidence audit
 

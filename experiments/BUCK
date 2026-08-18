@@ -7,6 +7,7 @@ python_library(
         "configs/autodiff_ggn_benchmark.yaml",
         "configs/closed_rate_predictions.json",
         "configs/linear_audit.yaml",
+        "configs/transport_instantiation.yaml",
     ],
     visibility = ["PUBLIC"],
 )
@@ -15,6 +16,7 @@ python_library(
     name = "lib",
     srcs = [
         "aggregate_linear_audit.py",
+        "aggregate_transport_instantiation.py",
         "artifact_utils.py",
         "autodiff_ggn.py",
         "curvature_operators.py",
@@ -24,10 +26,14 @@ python_library(
         "make_certification_audit.py",
         "make_closed_rate_artifact.py",
         "make_linear_bound_artifact.py",
+        "make_transport_instantiation_artifacts.py",
         "run_autodiff_ggn_benchmark.py",
         "run_linear_audit.py",
         "run_linear_study.py",
+        "run_transport_instantiation.py",
+        "run_transport_instantiation_study.py",
         "theory_metrics.py",
+        "transport_instantiation.py",
     ],
     deps = [
         ":config_lib",
@@ -46,12 +52,16 @@ python_library(
     )
     for module in [
         "aggregate_linear_audit",
+        "aggregate_transport_instantiation",
         "make_autodiff_ggn_artifacts",
         "make_certification_audit",
         "make_closed_rate_artifact",
         "make_linear_bound_artifact",
+        "make_transport_instantiation_artifacts",
         "run_linear_audit",
         "run_linear_study",
+        "run_transport_instantiation",
+        "run_transport_instantiation_study",
     ]
 ]
 

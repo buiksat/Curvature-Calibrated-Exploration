@@ -16,6 +16,7 @@ CONFIG_DIR = ROOT / "experiments" / "configs"
 CONFIG_NAMES = {
     "autodiff_ggn_benchmark",
     "linear_audit",
+    "transport_instantiation",
 }
 
 
