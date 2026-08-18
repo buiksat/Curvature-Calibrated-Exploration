@@ -145,6 +145,22 @@ The manuscript cites Thompson (1963) and Nussbaum (1994) for the underlying
 metric and Finsler structure; its novelty claim is the contextual-bandit
 confidence-transport composition.
 
+The symmetric exponential factors are individually sharp. For `D>=0`, take
+
+```text
+bar V = I_2,
+V(tau) = diag(exp(D tau), exp(-D tau)).
+```
+
+Then the normalized derivative is `diag(D,-D)`, so both the path length and
+the endpoint Thompson distance equal `D`. For `q_1=e_1`,
+`bar s(q_1)=1=exp(D/2)s(q_1)`. For `q_2=e_2`,
+`s(q_2)=exp(D/2)bar s(q_2)`. The comparator and played actions may use these
+different directions. Thus no uniform theorem using only the symmetric
+distance bound can improve either one-way factor, or the resulting `exp(D)`
+round trip. This is metric-factor sharpness, not a contextual-bandit regret
+lower bound and not a claim that every trajectory attains it.
+
 ### Lemma 2: rectangular factor-path certificate
 
 Let `B:[0,1] -> R^{m x d}` be absolutely continuous and
@@ -526,10 +542,15 @@ maximizing index gives an `H_t`-measurable selector and `xi_t=0`; partitioning
 over `n` proves the random-size case. The two suprema are finite measurable
 maxima and the universal events are finite measurable intersections. A fixed
 finite action set is the immediate special case.
+The retained one-sided finite-action fallback uses the same measurable
+enumeration and smallest-index rules for both its score maximizer and its
+mean-reward comparator. The finite score vector is `H_t`-measurable, while the
+finite true-mean vector and comparator are `H_t^-`-measurable.
 
 ### Randomized certificate allocation
 
-For each certificate source `j`, choose an `H_t^-`-measurable
+Let `J` be a finite or countable certificate-source index set. For each
+`j in J`, choose an `H_t^-`-measurable
 `delta_{j,t}` before drawing its random object. Let `P_{j,t}` be the pre-reward
 sigma-algebra immediately before that draw. For a round-start random object,
 `P_{j,t}=H_t^-`; for post-selection verification, `P_{j,t}` also contains the
@@ -537,12 +558,14 @@ selected action and earlier round-`t` randomness. Require
 
 ```text
 P(E_{j,t}^c | P_{j,t}) <= delta_{j,t},
-sum_{j,t} delta_{j,t} <= delta_cert almost surely.
+sum_{j in J} sum_{t=1}^T delta_{j,t} <= delta_cert almost surely.
 ```
 
 The budgets may be predictable and random. Independence is unnecessary. The
-tower property and a union bound give simultaneous certificate probability at
-least `1-delta_cert`. A sharpness check applied after action selection must be
+tower property and a countable union bound give simultaneous certificate
+probability at least `1-delta_cert`. Countability makes the joint event
+measurable and the nonnegative double sum well-defined. A sharpness check
+applied after action selection must be
 deterministically verified at the played action, uniformly valid, or based on
 fresh post-selection randomness with the correct conditioning.
 
@@ -588,6 +611,12 @@ collection-time query `q_s=grad mu_{theta_s}(z_s)`, and use pseudo-response
 ```text
 y_s = r_s - mu_{theta_s}(z_s) + q_s^T theta_s.
 ```
+
+Because `z_s` contains the selected action, `q_s` and the corresponding
+intercept are generally only `G_s`-measurable before the reward, not
+`H_s^-`-predictable. The self-normalized argument uses the interleaved
+filtration `Ftilde_{2s-1}=G_s`, `Ftilde_{2s}=F_s`: the design is measurable at
+the pre-increment sigma-algebra and the reward noise is revealed next.
 
 Taylor expansion around `theta_s` gives
 
@@ -685,6 +714,72 @@ R_T = O(exp(D) sqrt(Kappa) d sqrt(T) log T)
 
 plus cumulative linearization, misspecification, and oracle errors.
 
+### Global near-linearity under exponential transport
+
+Assume exact realizability, `||theta^circ||<=R`, `||theta_t||<=R`, and
+
+```text
+L_mu <= c_mu/sqrt(W),
+L_g  <= c_g/sqrt(W).
+```
+
+Use the corrected center, exact current curvature, exact dense solves, and
+exact score maximization. Thus `alpha_t=1`, `kappa_-=kappa_+=1`, and `xi_t=0`.
+The trust region gives
+
+```text
+Q_t = sum_{s<t} ||theta_t-theta_s||^2 <= 4 R^2 (t-1),
+bar D_t <= 4 c_g R sqrt(t-1)/(sigma sqrt(lambda W))
+        <= D_{T,W}:=4 c_g R sqrt(T-1)/(sigma sqrt(lambda W)).
+```
+
+Taylor's theorem gives both the historical and current envelopes
+
+```text
+epsilon_lin(s), epsilon_lin,t(a) <= 2 c_mu R^2/sqrt(W).
+```
+
+Therefore
+
+```text
+B_T <= 4 c_mu^2 R^4 T/W,
+E_T^cur <= 2 c_mu R^2 T/sqrt(W).
+```
+
+Substituting `S=R`, `alpha=1`, `K=1`, `xi_t=0`, these two bounds, and
+`bar D_t<=D_{T,W}` into the finite-dimensional corrected-center rate gives
+
+```text
+R_T <= 2 exp(D_{T,W})
+       [sqrt(Gamma_{T,d}+2 log(1/delta)) + sqrt(lambda) R
+        + 2 c_mu R^2 sqrt(T)/(sigma sqrt(W))]
+       sqrt{(sigma^2+G^2/lambda) T Gamma_{T,d}}
+       + 4 c_mu R^2 T/sqrt(W).
+```
+
+No step assumes `D_t<1`. With a sufficiently large problem-dependent
+constant, `W=Omega(T)` keeps `D_{T,W}=O(1)`. For fixed `d` and fixed problem
+constants, `Gamma_{T,d}=O(d log T)` and the result is
+`O(d sqrt(T) log T)+O(sqrt(T))`. Here `W` is an abstract near-linearity scale,
+not generic network width or parameter count. Because the corrected center is
+used, no optimizer-residual rate enters.
+
+For scaled tanh,
+
+```text
+mu_{theta,W}(z) = sqrt(W) tanh(phi(z)^T theta/sqrt(W)),
+||phi(z)|| <= B_phi,
+```
+
+the gradient is `sech^2(u) phi(z)` and the Hessian is
+`-(2/sqrt(W)) sech^2(u)tanh(u) phi(z)phi(z)^T`. Since
+`sup_u |2 sech^2(u)tanh(u)|=4/(3sqrt(3))`, the corollary uses
+
+```text
+G=B_phi,
+c_mu=c_g=c_h=4 B_phi^2/(3sqrt(3)).
+```
+
 Sanity reductions:
 
 1. A frozen linear model has `D=0` and zero linearization error.
@@ -728,6 +823,8 @@ operator two-sided certificate -----------------> frozen potential
 solver upper + played sharpness -----------------------+
                                                        |
 rank/trace log-det closure ----------------------------+--> finite-d rate
+Hessian/Q_t + radius-R trust region -------------------------> global near-linear
+finite-d rate + corrected center ----------------------------> exponential rate
 ```
 
 The old one-sided dynamic theorem is not implied by this graph because it does

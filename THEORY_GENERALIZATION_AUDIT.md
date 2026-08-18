@@ -1,9 +1,11 @@
 # Theory generalization audit
 
-Baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e` (`9128276`).
-Reviewed commit: `c66f1bdde9190af14065eb0b04c4dcd24eb0e050` (`c66f1bd`).
-This audit incorporates the follow-up corrections prompted by review of that
-commit; the current source state is authoritative.
+Original theory baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e`
+(`9128276`).
+Final-pass starting commit: `47037a2df6b81befd4a0cb3c5974e3565d8f61b6`
+(`47037a2`).
+The audit describes the source tree containing this file. The resulting commit
+SHA is reported in the completion report.
 
 This audit compares the previous headline theorem with the revised theorem
 derived in `THEORY_TRANSPORT_DERIVATIONS.md`. It also records restrictions that
@@ -76,7 +78,8 @@ dominance.
     supplied before the reward where they are used.
 13. Randomized certificate budgets are `H_t^-`-measurable and allocated before
     their random objects are drawn. Validity is conditioned on the sigma-field
-    immediately before each draw.
+    immediately before each draw. The certificate-source index set is finite or
+    countable.
 
 ## 4. New restrictions and tradeoffs
 
@@ -125,6 +128,9 @@ corollary assumes an `H_t^-`-measurable size `K_t` and an `H_t^-`-measurable
 enumeration `a_{t,1},...,a_{t,K_t}`. The smallest maximizing index is then an
 `H_t`-measurable exact selector. Without such a premise, a singleton-valued
 correspondence can encode a non-Borel set and have no measurable selector.
+The retained one-sided theorem now uses the same measurable enumeration for its
+learner and true-mean comparator. Its finite score vector is pre-reward
+measurable, and both smallest-index rules are measurable.
 
 ### Certificate status
 
@@ -146,10 +152,12 @@ empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
 | Obligation | Result | Notes |
 |---|---|---|
 | Standard-Borel random-domain formalism | Resolved in current source | Measurable graph, joint maps, both finite measurable suprema, measurable selector, and measurable universal events are explicit |
-| Measurably enumerated finite-domain corollary | Resolved in current source | Random size and enumeration are `H_t^-`-measurable; smallest maximizing index is measurable |
-| Filtration classification | Repaired and verified | Predictable means `H_t^-`; the legacy confidence schedule now requires an `H_t^-`-measurable envelope, while randomized score objects may be `H_t` pre-reward measurable |
+| Measurably enumerated finite domains | Resolved in current source | The headline corollary and legacy fallback use `H_t^-`-measurable sizes/enumerations and smallest-index rules for learner and comparator |
+| Filtration classification | Repaired and verified | Predictable means `H_t^-`; action-dependent realized designs are `G_t`-measurable before reward noise, while randomized score objects may be `H_t` pre-reward measurable |
+| Certificate failure allocation | Repaired and verified | The source index set is finite or countable, so the joint event is measurable and the union bound is countable |
 | Logarithmic SPD path sandwich | Verified | Uses absolute continuity and fixed-vector log differentiation |
 | Thompson endpoint consequence | Verified | `d_Th(V(0),V(1))<=D(V)`; endpoint, path, and factor bounds are distinguished |
+| Symmetric exponential-factor sharpness | Verified | The diagonal two-dimensional path attains each one-way `exp(D/2)` factor in a different query direction |
 | Rectangular factor-path bound | Repaired and verified | `B in R^{m x d}`; `nu_t>=0`, measurable, and `L^1` before integration |
 | Scalar Hessian/`Q_t` certificate | Verified | Gives `2 L_g sqrt(Q_t)/(sigma sqrt(lambda))`; stacked path is synthetic |
 | Vector-output factor dimensions | Verified | Uses `R_s J_s in R^{r_s x d}` |
@@ -164,6 +172,7 @@ empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
 | Corrected-center identity | Verified | Holds for any predictable representation path |
 | Historical misspecification contraction | Verified | Uses `Phi^T bar V^{-1} Phi <= I`; factor is `1/sigma` |
 | Finite-dimensional information bound | Verified | Uses `min(d,T)` rank and trace; no supplied subspace |
+| Global near-linearity corollary | Verified | The radius-`R` trust region gives `Q_t<=4R^2(t-1)`; the requested exponential rate follows without `D_t<1` |
 | Frozen linear reduction | Verified | Recovers the standard LinUCB determinant-potential form |
 | Exponential-family confidence theorem | Not attempted | Factor geometry alone is insufficient; retained as future work |
 | Unrestricted neural-training guarantee | Not attempted | Outside the proved scope |
@@ -207,6 +216,28 @@ No proof step assumes `D_t<1`. The exponential comparison remains correct for
 large finite `D_t`. A large factor is not described as useful merely because it
 is finite.
 
+### Sharpness of the exponential metric factor
+
+For `bar V=I_2` and
+`V(tau)=diag(exp(D tau),exp(-D tau))`, both the Thompson endpoint distance and
+selected-path length equal `D`. The `e_1` query attains
+`bar s=exp(D/2)s`, while the `e_2` query attains
+`s=exp(D/2)bar s`. Thus the two one-way factors, and the resulting uniform
+round trip, cannot be improved using only the symmetric distance information.
+This is not a bandit regret lower bound and does not say every trajectory pays
+the worst-case factor.
+
+### Global near-linearity scale
+
+With `||theta^circ||,||theta_t||<=R`,
+`L_mu<=c_mu/sqrt(W)`, and `L_g<=c_g/sqrt(W)`, the exact corrected-center
+specialization has `Q_t<=4R^2(t-1)` and
+`bar D_t<=4c_gR sqrt(t-1)/(sigma sqrt(lambda W))`. The Taylor envelopes are at
+most `2c_mu R^2/sqrt(W)`. Substitution into the finite-dimensional rate gives
+the displayed exponential corollary. Taking `W=Omega(T)` keeps the path factor
+bounded without any `D_t<1` condition. Here `W` is an abstract smoothness scale,
+not network width or parameter count.
+
 ### Approximate-operator condition ratio
 
 The bound deteriorates as the certified ratio
@@ -221,9 +252,13 @@ played algorithmic width through the frozen potential.
   `lambda I`, `D_1=0`, and `gamma_0=0`.
 - `q_t(a)=0`: every exact width is zero. A finite multiplicative solver factor
   requires the reported upper width to be zero.
-- `D_t=0`: endpoint metrics agree in the Loewner comparison, though a nonzero
-  path length can occur for a loop with equal endpoints.
-- Exact operator and exact solver: all distortion factors reduce to one.
+- `bar D_t=0`: the selected path has zero length, the endpoints agree, and the
+  exponential path factor is one.
+- `d_Th(bar V_t,V_t)=0`: the endpoints agree, but a selected loop may still
+  have positive path length.
+- Exact operator and exact solver set
+  `kappa_{-,t}=kappa_{+,t}=1` and `alpha_t=1`. The reference-to-current path
+  factor `exp(bar D_t)` remains and becomes one only when `bar D_t=0`.
 - Exact realizability: every misspecification envelope vanishes.
 - Frozen linear model: linearization and representation-drift terms vanish.
 
@@ -231,9 +266,12 @@ played algorithmic width through the frozen potential.
 
 All score inputs are fixed before reward observation. Objects selected before
 fresh randomization are `H_t^-`-measurable; realized randomized objects may be
-`H_t`-measurable. Conditional failure budgets may be predictable and random but
-must be allocated before the relevant draw. Validity is conditioned on the
-sigma-algebra immediately before that draw. Independence is not assumed.
+`H_t`-measurable. Played-action designs are `G_t`-measurable before the reward
+noise, which is the pre-increment condition used by the self-normalized bound.
+Conditional failure budgets may be predictable and random but must be allocated
+before the relevant draw. The finite or countable source family is conditioned
+source-by-source on the sigma-algebra immediately before each draw. Independence
+is not assumed.
 Terminal spectral quantities never enter an action-time confidence radius.
 
 ### Weighted Fisher factors
@@ -295,15 +333,24 @@ the other numerically because they summarize different geometric information.
   are explicitly not evidence for the logarithmic-transport theorem.
 - The full policy has no end-to-end scalability theorem.
 
-## 10. Current formal status and remaining scope limits
+## 10. Theory freeze
+
+The confidence-transport theorem API is frozen in this source tree. No
+additional theorem family will be added unless a concrete mathematical error is
+found. Remaining work is empirical instantiation and presentation. This freeze
+does not turn numerical diagnostics into proof and does not broaden any scope
+claim below.
+
+## 11. Current formal status and remaining scope limits
 
 The baseline had unresolved formal obligations involving random action domains,
 filtration terminology, the sign of `nu_t`, the `L<0` solver case, and width-map
 consistency. The current source repairs those items, and the independent checks
 recorded above found no remaining algebraic blocker
 for the abstract theorem, path lemmas, corrected-center squared-loss
-specialization, or finite-dimensional rate. The following remain deliberately
-outside the result:
+specialization, finite-dimensional rate, metric-factor sharpness statement, or
+global near-linearity corollary. The following remain deliberately outside the
+result:
 
 1. unrestricted neural-network training or generic fine-tuning guarantees;
 2. a complete exponential-family confidence theorem;

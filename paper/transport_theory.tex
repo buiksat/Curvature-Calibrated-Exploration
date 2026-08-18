@@ -275,6 +275,31 @@ independent of a factorization; the upper bound from
 \Cref{lem:factor-spd-path} depends on the chosen factorization and interpolation.
 \end{remark}
 
+\begin{remark}[Sharpness of the symmetric exponential factors]
+For $D\ge0$, let
+\[
+\begin{aligned}
+ \bVbar&=\bI_2,&
+ \bV&=\begin{pmatrix}e^D&0\\0&e^{-D}\end{pmatrix},\\
+ \bV(\tau)&=\begin{pmatrix}e^{D\tau}&0\\0&e^{-D\tau}\end{pmatrix}.
+\end{aligned}
+\]
+Then
+\[
+ \bV(\tau)^{-1/2}\dot\bV(\tau)\bV(\tau)^{-1/2}
+ =\begin{pmatrix}D&0\\0&-D\end{pmatrix},
+\]
+so $\mathcal D(\bV)=d_{\rm Th}(\bVbar,\bV)=D$.  For $q_1=e_1$,
+$\bar s(q_1)=1$ and $s(q_1)=e^{-D/2}$, so
+$\bar s=e^{D/2}s$ is attained.  For $q_2=e_2$,
+$s(q_2)=e^{D/2}$ and $\bar s(q_2)=1$, so
+$s=e^{D/2}\bar s$ is attained.  Thus each one-way factor is sharp, and a
+uniform argument based only on the symmetric Thompson-distance bound cannot
+improve the resulting round-trip factor $e^D$.  This is a metric-factor
+sharpness statement, not a contextual-bandit regret lower bound and not a
+claim that every trajectory attains the worst case.
+\end{remark}
+
 \begin{lemma}[Rectangular factor-path certificate]
 \label{lem:factor-spd-path}
 Let $\Bmat:[0,1]\to\R^{m\times d}$ be absolutely continuous and set
@@ -483,6 +508,78 @@ $O(e^D\sqrt K\,d\sqrt T\log T)$.  Exact solves set $\alpha=1$, exact current
 curvature sets $K=1$, and exact score maximization sets $\xi_t=0$, recovering
 the standard LinUCB determinant-potential rate up to displayed constants.
 \end{corollary}
+
+\begin{corollary}[Global near-linearity under exponential transport]
+\label{cor:global-near-linear-new}
+Assume exact realizability, $\mu^*(z)=\mu_{\btheta^\circ}(z)$, and suppose
+$\|\btheta^\circ\|_2\le R$ and $\|\btheta_t\|_2\le R$ for every $t$.
+On the certified convex radius-$R$ region, assume the prediction gradient is
+$L_\mu$-Lipschitz for the Taylor envelopes and satisfies the replay-path
+Hessian bound $L_g$ in \Cref{cor:hessian-path-new}, with
+\[
+ L_\mu\le\frac{c_\mu}{\sqrt W},\qquad
+ L_g\le\frac{c_g}{\sqrt W},
+\]
+with $W>0$.  Use the corrected center, exact current curvature, exact dense
+solves, and exact score maximization in finite parameter dimension $d$, and
+suppose $\|\bq_t(a)\|_2\le G$.  Thus
+$\alpha_t=1$, $\kappa_{-,t}=\kappa_{+,t}=1$, and $\xi_t=0$.
+Define
+\[
+ D_{T,W}:=\frac{4c_gR\sqrt{T-1}}{\sigma\sqrt{\lambda W}}.
+\]
+Then, with probability at least $1-\delta$,
+\begin{align}
+ R_T
+ &\le 2e^{D_{T,W}}
+ \Biggl[
+ \begin{aligned}
+  &\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda R\\[-1mm]
+  &\quad+\frac{2c_\mu R^2\sqrt T}{\sigma\sqrt W}
+ \end{aligned}
+ \Biggr]\nonumber\\[-1mm]
+ &\quad\times
+ \sqrt{\sigma^2+\frac{G^2}{\lambda}}\,
+ \sqrt{T\Gamma_{T,d}}\nonumber\\
+ &\quad+\frac{4c_\mu R^2T}{\sqrt W}.
+ \label{eq:global-near-linear-new}
+\end{align}
+Consequently, $W=\Omega(T)$ with a sufficiently large problem-dependent
+constant keeps $D_{T,W}=O(1)$.  For fixed $d$ and fixed problem constants,
+\[
+ R_T=O(d\sqrt T\log T)+O(\sqrt T).
+\]
+This conclusion requires no $D_t<1$ condition.  Here $W$ is an abstract
+near-linearity scale, not generic network width or parameter count, and the
+result is not an unrestricted neural-training theorem.  No optimizer-residual
+rate is required because the corrected center is used.
+\end{corollary}
+
+\begin{remark}[Scaled-tanh specialization]
+For
+\[
+ \mu_{\btheta,W}(z)=\sqrt W\tanh\!\left(
+ \frac{\phi(z)^\top\btheta}{\sqrt W}\right),
+ \qquad \|\phi(z)\|_2\le B_\phi,
+\]
+write $u=\phi(z)^\top\btheta/\sqrt W$.  Then
+\begin{align*}
+ \nabla_\theta\mu_{\btheta,W}(z)
+ &=\operatorname{sech}^2(u)\phi(z),\\
+ \nabla_\theta^2\mu_{\btheta,W}(z)
+ &=-\frac{2}{\sqrt W}\operatorname{sech}^2(u)\tanh(u)
+ \phi(z)\phi(z)^\top.
+\end{align*}
+Since
+$\sup_u|2\operatorname{sech}^2(u)\tanh(u)|=4/(3\sqrt3)$,
+\Cref{cor:global-near-linear-new} applies with
+\[
+ G=B_\phi,\qquad
+ c_\mu=c_g=c_h:=\frac{4B_\phi^2}{3\sqrt3}.
+\]
+The symbol $W$ is a smoothness scale here; it is not identified with hidden
+width or parameter count.
+\end{remark}
 
 The previous additive stacked-design result remains a useful local corollary.
 If $\chi_t<1$ and
