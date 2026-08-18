@@ -2643,10 +2643,11 @@ $|\bg_t(a)^\top\bCbar_t^{-1}\sigma^{-1}\Phi\hat\rho|
 \]
 holds for all $t\ge 1$ with probability at least $1-\delta$ by the
 time-uniform vector self-normalized martingale bound
-\citep{abbasi2011improved}.  Here $x_s=\bg_s/\sigma$ is predictable
-with respect to the pre-reward sigma-algebra $\cG_s$, and
-$\xi_s=\eta_s/\sigma$ is conditionally $1$-sub-Gaussian given
-$\cG_s$.  For any candidate action $a$, Cauchy--Schwarz in the
+\citep{abbasi2011improved}.  Here $x_s=\bg_s/\sigma$ is
+$\cG_s$-measurable before $\xi_s=\eta_s/\sigma$ is revealed, and
+$\xi_s$ is conditionally $1$-sub-Gaussian given $\cG_s$.  The alternating
+filtration $\cG_s\subseteq\cF_s\subseteq\cG_{s+1}$ supplies the required
+pre-increment measurability.  For any candidate action $a$, Cauchy--Schwarz in the
 $\bCbar_t$-norm gives
 \[
   \left|
@@ -3122,20 +3123,24 @@ $\sigma$-algebra
 \begin{equation}\label{eq:filtration-F}
   \cF_t \;:=\;
   \cF_{t-1}\vee
-  \sigma\!\bigl(\bx_t,\cA_t,\Omega_t,a_t,r_t,U_{t+1}\bigr),
+  \sigma\!\bigl(\bx_t,K_t,a_{t,1},\ldots,a_{t,A_{\max}},
+                  \Omega_t,a_t,r_t,U_{t+1}\bigr),
 \end{equation}
 so that $\btheta_{t+1}$---computed from the data through round~$t$ together with
 the post-reward randomness $U_{t+1}$---is $\cF_t$-measurable.
 Define the \emph{pre-action history} $\sigma$-algebra and the pre-reward
 $\sigma$-algebra
 \begin{equation}\label{eq:filtration}
-  \cH_t^-\;:=\;\cF_{t-1}\vee\sigma\!\bigl(\bx_t,\cA_t\bigr),
+  \cH_t^-\;:=\;\cF_{t-1}\vee
+  \sigma\!\bigl(\bx_t,K_t,a_{t,1},\ldots,a_{t,A_{\max}}\bigr),
   \qquad
   \cHist_t\;:=\;\cH_t^-\vee\sigma(\Omega_t),
   \qquad
   \cG_t \;:=\; \cHist_t\vee\sigma(a_t).
 \end{equation}
-At round~$t$ the context $\bx_t$ and finite action set $\cA_t$ are revealed;
+At round~$t$ the context $\bx_t$, finite size $K_t$, and padded measurable
+enumeration $a_{t,1},\ldots,a_{t,A_{\max}}$ are revealed, with
+$\cA_t=\{a_{t,k}:k\le K_t\}$;
 the score-building part of $\Omega_t$ is drawn; the agent selects $a_t$; any
 optional selected-action verification is completed and the oracle inequality is
 rechecked when required; then the reward
@@ -3144,12 +3149,15 @@ $\btheta_{t+1}$ is computed.  $\cH_t^-$ is the history immediately before the
 first randomized certificate draw; after all pre-reward draws, the realized
 operator, schedules, verification outputs, and action are
 $\cHist_t$-measurable.
-By construction of \Cref{alg:ccucb} the selection rule is a deterministic function
-of $\cHist_t$-measurable quantities, so the chosen action $a_t$ is itself
-$\cHist_t$-measurable and hence $\cG_t=\cHist_t$; we retain the symbol $\cG_t$
-where the played action is used.
+Assume, as part of the legacy solver/oracle premise, that for every active
+index the realized score
+$S_{t,k}:=\widehat\mu_t(a_{t,k})+w_t(a_{t,k})$ in \Cref{alg:ccucb} is
+$\cHist_t$-measurable.  Its finite maximum and smallest maximizing index $k_t$
+are measurable, so $a_t=a_{t,k_t}$ is $\cHist_t$-measurable and hence
+$\cG_t=\cHist_t$; we retain the symbol $\cG_t$ where the played action is used.
+The enumeration also makes $\cA_t$ a graph-measurable finite correspondence.
 The following are all $\cHist_t$-measurable (i.e.\ determined before the reward
-$r_t$): the candidate action set $\cA_t$ and every candidate feature
+$r_t$): $K_t$, the candidate enumeration and derived set $\cA_t$, and every candidate feature
 $\bg_t(\bx_t,a)$, $a\in\cA_t$; the chosen action $a_t$; the algorithmic
 curvature operator~$\Calg_t$ (\Cref{sec:method}); the confidence schedule
 $\bar\beta_t$; the centering certificate~$\bar\psi_t$
@@ -3164,7 +3172,8 @@ $\{\eta_s\}_{s\ge1}$, so that revealing $U_{t+1}$ and forming $\btheta_{t+1}$
 after $r_t$ preserves the conditional sub-Gaussian property of \Cref{asm:noise}
 for the future noise $\{\eta_s\}_{s>t}$.
 Index every randomized certificate source (operator sketch, transfer bound,
-condition bound, or other randomized oracle) by $j\in\mathcal J$.  For its
+condition bound, or other randomized oracle) by $j$ in a finite or countable
+set $\mathcal J$.  For its
 round-$t$ validity event $\cE_{j,t}$ choose an $\cH_t^-$-measurable budget
 $\delta_{j,t}\ge0$ before the corresponding draw.  Let $\mathcal P_{j,t}$ be
 the sigma-algebra immediately before that draw: it equals $\cH_t^-$ for the
@@ -3186,7 +3195,8 @@ separate and receives probability $\delta$.
 When \Cref{lem:bounded-output-residual} supplies the residual-energy envelope,
 include its time-uniform event $\cE_R$ as one certificate source and reserve
 $\delta_R$ inside $\delta_{\rm cert}$ (equivalently, require
-$\delta_R+\sum_{j,t}\delta_{j,t}\le\delta_{\rm cert}$ for the remaining
+$\delta_R+\sum_{j\in\mathcal J}\sum_{t=1}^T\delta_{j,t}
+\le\delta_{\rm cert}$ for the remaining
 sources).  The residual event is never counted again in the self-normalized
 failure probability $\delta$.
 
@@ -3194,7 +3204,7 @@ failure probability $\delta$.
 
 \paragraph{Auxiliary linearized ridge estimator.}
 For the analysis we define a \emph{linearized ridge estimator} based on
-frozen features.  Set the predictable intercept
+frozen features.  Set the pre-reward, $\cG_s$-measurable intercept
 $b_s := \mu_{\btheta_s}(\bx_s,a_s) - \bg_s(\bx_s,a_s)^\top\btheta_s$
 and the pseudo-response $y_s := r_s - b_s$.
 Under \Cref{asm:linear} and realizability ($\mu^*=\mu_{\btheta^*}$),
@@ -3221,10 +3231,12 @@ The linearized estimator is
   \bCbar_t^{-1}\,\frac{1}{\sigma^2}
     \sum_{s=1}^{t-1}\bg_s(\bx_s,a_s)\,y_s.
 \end{equation}
-This is a standard linear ridge regression with predictable design
-vectors~$\bg_s/\sigma$ and Gram matrix~$\bCbar_t$, so the
-self-normalized martingale bound
-\citep{abbasi2011improved} applies to it directly
+This is a standard linear ridge regression with design vectors
+$\bg_s/\sigma$ that are $\cG_s$-measurable before the corresponding noise,
+and Gram matrix~$\bCbar_t$.  The alternating filtration
+$\cG_s\subseteq\cF_s\subseteq\cG_{s+1}$ therefore supplies the pre-increment
+measurability required by the self-normalized martingale bound
+\citep{abbasi2011improved}, which applies directly
 (\Cref{lem:confidence}).
 
 
@@ -3385,8 +3397,10 @@ $a_t^*\in\cA_t^K$ for all~$t$.}
        $R^{\rm col}\gets0$, $\bar F\gets0$, $\hat\gamma\gets0$, and
        $\mathcal D_0\gets\emptyset$
 \FOR{$t = 1, 2, \ldots, T$}
-  \STATE Observe context $\bx_t$ and action set $\cA_t$; draw pre-action
-         randomness $\Omega_t$ \hfill\COMMENT{$\cHist_t$ of~\eqref{eq:filtration}}
+  \STATE Observe $\bx_t$, $K_t$, and candidates
+         $a_{t,1},\ldots,a_{t,K_t}$; set
+         $\cA_t=\{a_{t,k}:k\le K_t\}$; draw pre-action randomness $\Omega_t$
+         \hfill\COMMENT{$\cHist_t$ of~\eqref{eq:filtration}}
   \STATE $Q_t\gets J+n\|\btheta_t-\bar\btheta\|^2$;
          $\bar\chi_t\gets L_g\sqrt{Q_t}/(\sigma\sqrt\lambda)$;
          $u_t\gets\kappa_{+,t}(1+\bar\chi_t)^2$
@@ -3407,7 +3421,8 @@ $a_t^*\in\cA_t^K$ for all~$t$.}
          +\sigma^{-2}\!\sum_{s\in\mathcal{S}_t}\!w_s\,
          \bg_t(\bx_s,a_s)[\bg_t(\bx_s,a_s)^\top\bv]$, weights $w_s$ per
          \S\ref{sec:curvop}}
-  \FOR{each $a \in \cA_t$}
+  \FOR{$k=1,\ldots,K_t$}
+    \STATE $a\gets a_{t,k}$
     \STATE $\widehat\mu_t(a) \gets \mu_{\btheta_t}(\bx_t, a)$
         \hfill\COMMENT{mean prediction (or corrected center~\eqref{eq:corrected-center})}
     \STATE $\bg_t(a) \gets \nabla_{\btheta}\,\mu_{\btheta_t}(\bx_t, a)$
@@ -3424,10 +3439,12 @@ $a_t^*\in\cA_t^K$ for all~$t$.}
         \hfill\COMMENT{approx.\ predictive variance}
     \ENDIF
   \ENDFOR
-  \STATE $a_t \gets \argmax_{a\in\cA_t}\Bigl[\,\widehat\mu_t(a)
-    + \omega_t\,\sqrt{\dfrac{u_t(a)}{1-\bar\varepsilon_t}}\,
-      \sqrt{\tilde{s}_t^2(a)}\,\Bigr]$
-      \hfill\COMMENT{bonus~\eqref{eq:bonus}; ties broken by a fixed rule (e.g.\ lowest index) or by $\Omega_t$} \label{line:ucb-detailed}
+  \STATE $k_t\gets\min\operatorname*{arg\,max}_{1\le k\le K_t}
+    \Bigl[\,\widehat\mu_t(a_{t,k})
+    + \omega_t\,\sqrt{\dfrac{u_t(a_{t,k})}{1-\bar\varepsilon_t}}\,
+      \sqrt{\tilde{s}_t^2(a_{t,k})}\,\Bigr]$;
+      $a_t\gets a_{t,k_t}$
+      \hfill\COMMENT{measurable smallest-index tie rule} \label{line:ucb-detailed}
   \STATE Play $a_t$, observe $r_t$
   \STATE $\mathcal{D}_t \gets \mathcal{D}_{t-1} \cup \{(\bx_t, a_t, r_t)\}$
   \STATE $c_t\gets\mu_{\btheta_t}(\bx_t,a_t)-r_t$;
@@ -3639,8 +3656,8 @@ By \Cref{lem:confidence}, with probability $\ge 1-\delta$,
 where $\beta_t$ is as in~\eqref{eq:beta}.
 The self-normalized martingale inequality
 \citep{abbasi2011improved} is applied to the $1$-sub-Gaussian sequence
-$\xi_s=\eta_s/\sigma$ with the predictable design $\bg_s/\sigma$
-and Gram matrix~$\bCbar_t$.
+$\xi_s=\eta_s/\sigma$ with the design $\bg_s/\sigma$, which is
+$\cG_s$-measurable before $\xi_s$ is revealed, and Gram matrix~$\bCbar_t$.
 Each realized design vector~$\bg_s(\bx_s,a_s)$ is
 $\cG_s$-measurable (where $\cG_s=\cHist_s\vee\sigma(a_s)$ is
 the pre-reward sigma-algebra of~\eqref{eq:filtration}), and the sequential
@@ -3680,7 +3697,9 @@ $\mu^*(\bx_t,a)\le \widehat\mu_t(a)+w_t(a)+\epslin(t)$ for all~$a$: the UCB cove
 $\mu^*$ up to the additive $\epslin(t)$ model-mismatch term.
 
 \paragraph{Step 3: Instantaneous regret.}
-From the UCB rule $\widehat\mu_t(a_t)+w_t(a_t)\ge \widehat\mu_t(a_t^*)+w_t(a_t^*)$, and using
+Let $a_t^*=a_{t,k_t^*}$ be the measurable finite comparator from the legacy
+protocol.  The smallest-index score rule implies
+$\widehat\mu_t(a_t)+w_t(a_t)\ge \widehat\mu_t(a_t^*)+w_t(a_t^*)$, and using
 $\mu^*(a_t^*)\le \widehat\mu_t(a_t^*)+w_t(a_t^*)+\epslin(t)$ (Step~2 at $a_t^*$, valid
 since $a_t^*\in\cA_t$),
 \begin{align*}

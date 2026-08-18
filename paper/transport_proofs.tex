@@ -344,7 +344,8 @@ residual enclosure.  Float64 point checks remain engineering diagnostics.
 
 \subsection{Measurability, randomized certificates, and edge cases}
 
-For certificate source $j$, choose an $\cHist_t^-$-measurable failure budget
+Let $\mathcal J$ be a finite or countable certificate-source index set.  For
+$j\in\mathcal J$, choose an $\cHist_t^-$-measurable failure budget
 $\delta_{j,t}$ before drawing its random object.  Let $\mathcal P_{j,t}$ be the
 pre-reward sigma-algebra immediately before that draw.  It may equal
 $\cHist_t^-$ for a round-start draw or include the selected action and earlier
@@ -352,7 +353,8 @@ randomness for a post-selection check.  It is sufficient that
 \[
  \Pr(\mathcal E_{j,t}^c\mid\mathcal P_{j,t})\le\delta_{j,t},
  \qquad
- \sum_{j,t}\delta_{j,t}\le\delta_{\rm cert}\quad\text{almost surely}.
+ \sum_{j\in\mathcal J}\sum_{t=1}^T\delta_{j,t}
+ \le\delta_{\rm cert}\quad\text{almost surely}.
 \]
 The tower property and a union bound give simultaneous validity at least
 $1-\delta_{\rm cert}$ without independence.  On an uncountable score domain,

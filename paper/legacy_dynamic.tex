@@ -11,18 +11,35 @@ An extension to exponential-family likelihoods is discussed in
 \Cref{app:expfam}.
 
 \paragraph{Protocol.}
-At each round $t=1,\dots,T$ the learner observes a context
-$\bx_t\in\mathcal{X}$ and a finite action set~$\cA_t$.  It selects
+Let $(\mathcal X,\mathcal B_{\mathcal X})$ be a measurable context space, let
+$(\mathcal A,\mathcal B)$ be a standard Borel action space, and fix a
+deterministic $A_{\max}\in\mathbb N$.  Before any
+round-$t$ randomization, the learner observes a context $\bx_t\in\mathcal X$,
+an $\cH_t^-$-measurable integer $K_t\in\{1,\ldots,A_{\max}\}$, and
+$\cH_t^-$-measurable candidates
+$a_{t,1},\ldots,a_{t,A_{\max}}\in\mathcal A$.  Unused slots may repeat
+$a_{t,1}$, and
+\[
+ \cA_t=\{a_{t,k}:1\le k\le K_t\}.
+\]
+Assume $(x,a)\mapsto\mu^*(x,a)$ is
+$\mathcal B_{\mathcal X}\otimes\mathcal B$-measurable.  The learner selects
 $a_t\in\cA_t$ and observes a stochastic reward
 \begin{equation}\label{eq:reward}
   r_t \;=\; \mu^*(\bx_t, a_t) + \eta_t, \qquad
   \eta_t \text{ is } \sigma\text{-sub-Gaussian},
 \end{equation}
 where $\mu^*:\mathcal{X}\times\mathcal{A}\to\R$ is the unknown mean reward.
-The goal is to minimize cumulative regret
-$R_T = \sum_{t=1}^{T}\bigl[\mu^*(\bx_t,a_t^*) - \mu^*(\bx_t,a_t)\bigr]$,
-where $a_t^* = \argmax_{a\in\cA_t}\mu^*(\bx_t,a)$.
-We assume $|\cA_t|\le A_{\max}$ deterministically for all~$t$.
+Define the measurable finite comparator by
+\[
+ k_t^*:=\min\operatorname*{arg\,max}_{1\le k\le K_t}
+       \mu^*(\bx_t,a_{t,k}),qquad
+ a_t^*:=a_{t,k_t^*},qquad
+ \mu_t^*:=\mu^*(\bx_t,a_t^*).
+\]
+The finite maximum and its smallest maximizing index are
+$\cH_t^-$-measurable.  The goal is to minimize
+$R_T=\sum_{t=1}^T[\mu_t^*-\mu^*(\bx_t,a_t)]$.
 
 % [filtration construction -> app:deferred]
 \paragraph{Reward model and parameterization convention.}
@@ -131,14 +148,18 @@ for one action is not reused as the solution for another action.
 \begin{algorithm}[H]
 \caption{Curvature-Calibrated UCB (CC-UCB)}\label{alg:ccucb}
 \begin{algorithmic}[1]
-\STATE Observe context $\bx_t$ and finite action set $\cA_t$.
+\STATE Observe $\bx_t$, $K_t$, and candidates
+$a_{t,1},\ldots,a_{t,K_t}$; set $\cA_t=\{a_{t,k}:k\le K_t\}$.
 \STATE Construct a fixed pre-reward SPD oracle $\bv\mapsto\Calg_t\bv$ with $\Calg_t\succeq\lambda\bI$.
-\FOR{each $a\in\cA_t$}
+\FOR{$k=1,\ldots,K_t$}
+  \STATE Set $a=a_{t,k}$.
   \STATE Compute $\widehat\mu_t(a)=\mu_{\btheta_t}(\bx_t,a)$ and $\bg_t(a)=\nabla_{\btheta}\mu_{\btheta_t}(\bx_t,a)$.
   \STATE If $\bg_t(a)\ne\mathbf0$, solve $\Calg_t\bu=\bg_t(a)$ separately by CG until the certified tolerance holds; otherwise set $\tilde\bu=\mathbf0$. \label{line:cg}
   \STATE Set $\tilde s_t^2(a)=\bg_t(a)^\top\tilde\bu$.
 \ENDFOR
-\STATE Select and play $a_t\in\argmax_{a\in\cA_t}\{\widehat\mu_t(a)+\omega_t\sqrt{u_t(a)/(1-\bar\varepsilon_t)}\sqrt{\tilde s_t^2(a)}\}$. \label{line:ucb}
+\STATE Set $k_t$ to the smallest index maximizing
+$\widehat\mu_t(a_{t,k})+\omega_t\sqrt{u_t(a_{t,k})/(1-\bar\varepsilon_t)}
+\sqrt{\tilde s_t^2(a_{t,k})}$; play $a_t=a_{t,k_t}$. \label{line:ucb}
 \STATE Observe $r_t$, append $(\bx_t,a_t,r_t)$, and update $\btheta_{t+1}$.
 \end{algorithmic}
 \end{algorithm}
@@ -203,7 +224,8 @@ The motivating scalar-link structure is formalized in
 direction: we first state a master transfer theorem, then its exact-current,
 spectral-tail, and gap-dependent closures, and finally the operational and
 scalar-link specializations.  The one-sided fallback theorem analyzes CC-UCB
-(\Cref{alg:ccucb}, with full action enumeration $K{=}|\cA_t|$) under the
+(\Cref{alg:ccucb}, with full enumeration of the $K_t$ active candidate indices)
+under the
 Gaussian/squared-loss setup and
 \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer}.  It is not a
 full exponential-family or generalized-linear-bandit proof; the extension in
@@ -275,9 +297,10 @@ total failure probability as $\delta_{\mathrm{cert}}$.
 
 \begin{theorem}[Dynamic transfer regret bound for CC-UCB (Gaussian/squared-loss)]\label{thm:regret}
 Under the conditions above and \Cref{asm:noise,asm:bounded,asm:linear,asm:optim,asm:transfer},
-suppose $|\cA_t|\le A_{\max}$, the optimal action is present, and
-\Cref{alg:ccucb} enumerates all actions using a predictable schedule
-$\bar\beta_t\ge\beta_t$ and uniform per-round CG tolerance.  Let
+suppose the measurably enumerated finite-domain protocol above holds and
+\Cref{alg:ccucb} enumerates all active indices using its smallest-index score
+rule, a predictable schedule $\bar\beta_t\ge\beta_t$, and uniform per-round CG
+tolerance.  Let
 $E_T=\sum_{t=1}^T\epslin(t)$, $\omega_t=\bar\beta_t+\bar\psi_t$,
 $\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$, and
 $S_T=\sum_{t=1}^T\alpha_t^2u_t(a_t)\omega_t^2$.  On

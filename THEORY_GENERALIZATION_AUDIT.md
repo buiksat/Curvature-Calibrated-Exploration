@@ -1,7 +1,7 @@
 # Theory generalization audit
 
 Baseline: `9128276162c0fcb1d267c0a9043f8beed11f192e` (`9128276`).
-Reviewed commit: `c66f1bdde9190af14065eb0b04c4dcd24eb0e050` (`c66f1bd`).
+Reviewed input commit: `47037a2df6b81befd4a0cb3c5974e3565d8f61b6` (`47037a2`).
 This audit incorporates the follow-up corrections prompted by review of that
 commit; the current source state is authoritative.
 
@@ -76,7 +76,8 @@ dominance.
     supplied before the reward where they are used.
 13. Randomized certificate budgets are `H_t^-`-measurable and allocated before
     their random objects are drawn. Validity is conditioned on the sigma-field
-    immediately before each draw.
+    immediately before each draw. The certificate-source index set is finite or
+    countable.
 
 ## 4. New restrictions and tradeoffs
 
@@ -146,8 +147,9 @@ empirical eigenvalues, and unenclosed numerical point checks remain diagnostics.
 | Obligation | Result | Notes |
 |---|---|---|
 | Standard-Borel random-domain formalism | Resolved in current source | Measurable graph, joint maps, both finite measurable suprema, measurable selector, and measurable universal events are explicit |
-| Measurably enumerated finite-domain corollary | Resolved in current source | Random size and enumeration are `H_t^-`-measurable; smallest maximizing index is measurable |
-| Filtration classification | Repaired and verified | Predictable means `H_t^-`; the legacy confidence schedule now requires an `H_t^-`-measurable envelope, while randomized score objects may be `H_t` pre-reward measurable |
+| Measurably enumerated finite domains | Resolved in current source | The headline corollary and legacy fallback use `H_t^-`-measurable sizes/enumerations and smallest-index rules for learner and comparator |
+| Filtration classification | Repaired and verified | Predictable means `H_t^-`; action-dependent realized designs are `G_t`-measurable before reward noise, and randomized score objects may be `H_t` pre-reward measurable |
+| Certificate failure allocation | Repaired and verified | The source index set is finite or countable, so the joint event is measurable and the union bound is countable |
 | Logarithmic SPD path sandwich | Verified | Uses absolute continuity and fixed-vector log differentiation |
 | Thompson endpoint consequence | Verified | `d_Th(V(0),V(1))<=D(V)`; endpoint, path, and factor bounds are distinguished |
 | Rectangular factor-path bound | Repaired and verified | `B in R^{m x d}`; `nu_t>=0`, measurable, and `L^1` before integration |
@@ -221,9 +223,13 @@ played algorithmic width through the frozen potential.
   `lambda I`, `D_1=0`, and `gamma_0=0`.
 - `q_t(a)=0`: every exact width is zero. A finite multiplicative solver factor
   requires the reported upper width to be zero.
-- `D_t=0`: endpoint metrics agree in the Loewner comparison, though a nonzero
-  path length can occur for a loop with equal endpoints.
-- Exact operator and exact solver: all distortion factors reduce to one.
+- `bar D_t=0`: then the selected path has zero length, the endpoints agree, and
+  the exponential path factor is one.
+- `d_Th(bar V_t,V_t)=0`: the endpoints agree, but a selected loop may still
+  have positive path length.
+- Exact operator and exact solver: the operator condition ratio and solver
+  factor reduce to one. The path factor remains `exp(bar D_t)` and becomes one
+  only when `bar D_t=0`.
 - Exact realizability: every misspecification envelope vanishes.
 - Frozen linear model: linearization and representation-drift terms vanish.
 
@@ -231,9 +237,12 @@ played algorithmic width through the frozen potential.
 
 All score inputs are fixed before reward observation. Objects selected before
 fresh randomization are `H_t^-`-measurable; realized randomized objects may be
-`H_t`-measurable. Conditional failure budgets may be predictable and random but
-must be allocated before the relevant draw. Validity is conditioned on the
-sigma-algebra immediately before that draw. Independence is not assumed.
+`H_t`-measurable. Played-action designs are `G_t`-measurable before the reward
+noise, which is the pre-increment condition used by the self-normalized bound.
+Conditional failure budgets may be predictable and random but must be allocated
+before the relevant draw. The finite or countable source family is conditioned
+source-by-source on the sigma-algebra immediately before each draw. Independence
+is not assumed.
 Terminal spectral quantities never enter an action-time confidence radius.
 
 ### Weighted Fisher factors

@@ -526,10 +526,14 @@ maximizing index gives an `H_t`-measurable selector and `xi_t=0`; partitioning
 over `n` proves the random-size case. The two suprema are finite measurable
 maxima and the universal events are finite measurable intersections. A fixed
 finite action set is the immediate special case.
+The retained one-sided finite-action fallback uses the same measurable
+enumeration and smallest-index rules for both its score maximizer and its
+mean-reward comparator.
 
 ### Randomized certificate allocation
 
-For each certificate source `j`, choose an `H_t^-`-measurable
+Let `J` be a finite or countable certificate-source index set. For each
+`j in J`, choose an `H_t^-`-measurable
 `delta_{j,t}` before drawing its random object. Let `P_{j,t}` be the pre-reward
 sigma-algebra immediately before that draw. For a round-start random object,
 `P_{j,t}=H_t^-`; for post-selection verification, `P_{j,t}` also contains the
@@ -537,7 +541,7 @@ selected action and earlier round-`t` randomness. Require
 
 ```text
 P(E_{j,t}^c | P_{j,t}) <= delta_{j,t},
-sum_{j,t} delta_{j,t} <= delta_cert almost surely.
+sum_{j in J} sum_{t=1}^T delta_{j,t} <= delta_cert almost surely.
 ```
 
 The budgets may be predictable and random. Independence is unnecessary. The
