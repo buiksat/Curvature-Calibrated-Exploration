@@ -1,0 +1,38 @@
+{
+  "paired_bootstrap": {
+    "child_seeds": [
+      {
+        "horizon": 1000,
+        "seed": 3747268252,
+        "target_D": 0.25
+      },
+      {
+        "horizon": 1000,
+        "seed": 940512916,
+        "target_D": 0.5
+      },
+      {
+        "horizon": 1000,
+        "seed": 4118980767,
+        "target_D": 1.0
+      },
+      {
+        "horizon": 1000,
+        "seed": 1879110826,
+        "target_D": 2.0
+      }
+    ],
+    "level": 0.95,
+    "paired_by": [
+      "evaluation seed",
+      "horizon",
+      "target_D"
+    ],
+    "resamples": 10000,
+    "seed_source": "resolved config digest and fixed namespace"
+  },
+  "recomputable_from_committed_aggregate": false,
+  "schema_version": 1,
+  "source_json": "results/derived/transport_instantiation/full_aggregate.json",
+  "why_not_recomputable": "The aggregate stores only per-cell descriptive summaries of the paired differences. The per-seed values the deterministic paired bootstrap resamples are in results/raw/, which is not committed. The resampling algorithm and its child seeds are recorded here so the interval can be reproduced once the raw tree is available."
+}

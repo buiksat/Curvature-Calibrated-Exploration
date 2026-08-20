@@ -1,0 +1,15 @@
+{"order":0,"path":"experiments/BUCK","sha256":"d3e89bac738668666ac031508cafd0bf1a9c45d5fb3646a88a79b17de3f87c59"}
+{"order":1,"path":"experiments/README.md","sha256":"e52a9e90cdcbc74962d86e280859be1dee733a80f540e59bc7246116f6c2fbcc"}
+{"order":2,"path":"experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md","sha256":"6aee823a2e4f11b02ae4144b8f7c8f2be07d8adadc8e44cfaac1ee10c0ca59f0"}
+{"order":3,"path":"experiments/__init__.py","sha256":"c539b544fa3ed7b353fe2c70ccfe6139aa8d3bc35b5eca782758dd804dcdeeaf"}
+{"order":4,"path":"experiments/aggregate_transport_instantiation.py","sha256":"145a79d598ac27edcf4fe3a7cbbe7ed3482df4fb09a72a922e1d2a2382ee7afe"}
+{"order":5,"path":"experiments/artifact_utils.py","sha256":"5a246d33e387b2149a81876aa2f64434889b2a789c4a1fe9fb44a9ff46f30da4"}
+{"order":6,"path":"experiments/config.py","sha256":"8ed13f49df07e6e5d606572764ccbcca9e529b9a3291f0cb777b6ef8fb825410"}
+{"order":7,"path":"experiments/configs/transport_instantiation.yaml","sha256":"d6f6c0de47651a7e6a291f63ba609654afd5cff6cc13d11722d9fae587e7abdd"}
+{"order":8,"path":"experiments/curvature_operators.py","sha256":"8231fc8be87c90f9a3333ee5fb6743f14455885c1e317436a02bafb4238bbf95"}
+{"order":9,"path":"experiments/logging_utils.py","sha256":"9ddf4a586ce536bdf37575e2a7d68f955223fb249da298acce3b5aed678fea97"}
+{"order":10,"path":"experiments/make_transport_instantiation_artifacts.py","sha256":"2c950ca777347a47e753f5bc6aa0c3e39bc8d17386de9f9e712b1f0a6733181b"}
+{"order":11,"path":"experiments/run_transport_instantiation.py","sha256":"034a876331fa173877ebe7f7c873130160b35053df3cff176e43ca3ba1873550"}
+{"order":12,"path":"experiments/run_transport_instantiation_study.py","sha256":"6154655f8e31928fc3e6dd9cd7d92a8f77df6df63080c662e9af115a210859ed"}
+{"order":13,"path":"experiments/theory_metrics.py","sha256":"4d89ee79488f94a0e9d812af27d75fe638e57c1bebc4e038294dde3c9645f249"}
+{"order":14,"path":"experiments/transport_instantiation.py","sha256":"68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4"}

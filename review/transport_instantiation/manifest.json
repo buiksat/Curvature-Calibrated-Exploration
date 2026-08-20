@@ -1,0 +1,468 @@
+{
+  "bundle_inventory_digest": "e89393e0de99bb969468c664e9148f8d6503413a5e7a79e841f51bf430927f01",
+  "generated_artifacts": [
+    {
+      "path": "paper/tables/transport_instantiation_validity.tex",
+      "sha256": "0ec0451563890ea9373a0710bbcbc33b2db28a14e405a798e6033062fab7634a"
+    },
+    {
+      "path": "paper/tables/transport_instantiation_performance.tex",
+      "sha256": "5b2ea6000bfc123d9f52b38f37ddbb5aafb7eeb55139c8876a29d33879ee13ad"
+    },
+    {
+      "path": "paper/tables/transport_instantiation_tightness.tex",
+      "sha256": "940106f9f33decab26a9033277c5bc354c6c2e8d09dc629b5b3b6954deb45311"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret.tex",
+      "sha256": "239ae5e923801ed1a2f9eafa75ba6a642e8bd2bb14ec2875c8d080f22ea5ec98"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness.tex",
+      "sha256": "828590d0cab45e2621677474acec4ae1216857191d54e816d4f4b24a2fd276c2"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound.tex",
+      "sha256": "9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret.csv",
+      "sha256": "8d02c538d89fa11893dec6b48b29cbbb52800620e82031d412bf6b1c6c340d6f"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness.csv",
+      "sha256": "9b51c0652b8846a8cac19be0497b5bd6ec6d08ec3d94a46e6e352d38c9a9e253"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound.csv",
+      "sha256": "ce3a040ec9d593f4124148a7bcf96632780a3824b9ba5e1995af9e16a9c6f915"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret_D-0p25.csv",
+      "sha256": "1b11f1ef4d29ff859dd887d7d65d25a58cf79d0df7bb01035a119f742d7525a4"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret_D-0p5.csv",
+      "sha256": "dbf0333c0ce3ef894b92b006465cf6729ccaae7f4c01f461c429406584f8b1bc"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret_D-1.csv",
+      "sha256": "5b71b630e299e0eee0e326120eacb599fdf9403de6e4abace184b8b84d8c0aa5"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_regret_D-2.csv",
+      "sha256": "993cf2ba45b2655c2e44948dfe63ea5ed0223ff500c3877d386e7436a06b7167"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness_D-0p25.csv",
+      "sha256": "83fcccb74aa1cc6828991cc304356252c4aa18e9263d54ef349fb2540547ed3d"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness_D-0p5.csv",
+      "sha256": "ee50921f06665269b9cffe059e0adbd735885b1f8869c638e6c1efedefa152b1"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness_D-1.csv",
+      "sha256": "cbc469c4b885f4a512b0ada7a3242ffd2e8e03c4896e466ba7f97ed0f5fc4f5d"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_tightness_D-2.csv",
+      "sha256": "c57502cf62d3a8deb53c4bb1d6a0e6eff1fb71ce604c124e1be204ff884e0db8"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound_D-0p25.csv",
+      "sha256": "3959c9bcc08777c1c51ed7d9a1df24d5959dea87722651cc412e8cad1784e8dc"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound_D-0p5.csv",
+      "sha256": "f2f32585e282cb7a489a86b8d30b9f052c4c9966edcead37b3de3d194bb932bc"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound_D-1.csv",
+      "sha256": "7a8d614df8164249f7bf6304230f3bfe948979beaebf331cb90f6bfb8c055a47"
+    },
+    {
+      "path": "paper/figures/transport_instantiation_bound_D-2.csv",
+      "sha256": "f8f4e4d8fc055e71646f1df1a33cf7b6545b7b366f065ae0a7e3c1a6b4aae7f1"
+    }
+  ],
+  "generation_format": "transport-github-review-bundle/1",
+  "generator": {
+    "path": "tools/export_transport_github_review_bundle.py",
+    "sha256": "702cae39adc9ec23adf9b0e7aed12d1b8e4cb085032012ad084bfeb54d1fa308"
+  },
+  "implementation_commit": "93eaa537d2702d5d18b05905913b0b879e3d608f",
+  "indexes": {
+    "aggregate": {
+      "bound_decomposition": 4000,
+      "bound_nonvacuity": 12,
+      "certificate_tightness": 12,
+      "environment_diagnostics": 12,
+      "input_inventory": 13923,
+      "path_checkpoints": 35000,
+      "path_points_source": 350000,
+      "path_recomputed_summaries": 12,
+      "path_run_maxima": 600,
+      "policy_outcomes": 16,
+      "regret_curves": 16000,
+      "validity": 12
+    },
+    "selection": {
+      "candidates": 9,
+      "inputs": 4321,
+      "runs": 1080,
+      "study_source_inputs": 15
+    }
+  },
+  "limitations": {
+    "aggregate_raw_input_count_unverified": 13920,
+    "float64_diagnostics_are_verified_certificates": false,
+    "full_provenance_blocker": "experiments.artifact_utils.validate_aggregate_provenance_sidecar requires every declared input file to exist on disk",
+    "full_provenance_validation_possible": false,
+    "known_study_source_divergences": {
+      "experiments/make_transport_instantiation_artifacts.py": {
+        "diverged_in_commit": "93eaa537d2702d5d18b05905913b0b879e3d608f",
+        "expected_head_sha256": "5886932695fabfcc174798e94c93d372a09ffa9f51543ce3e1bcdc7c9297ba16",
+        "reason": "Render-only change committed after the selection was frozen. The file is not an input to tuning or aggregation and appears in neither selection.inputs nor aggregate.inputs. All 21 generated table, figure and CSV artifacts regenerate byte-identically from the committed aggregate using this HEAD revision of the renderer, which shows the locked artifacts were produced by it.",
+        "selection_inventory_sha256": "2c950ca777347a47e753f5bc6aa0c3e39bc8d17386de9f9e712b1f0a6733181b",
+        "selection_revision": "0cd6264c1f8b8751728f3c4a198207e8289aed74"
+      }
+    },
+    "paired_bootstrap_blocker": "per-seed values required for resampling are not present in the committed aggregate",
+    "paired_bootstrap_recomputable_from_committed_aggregate": false,
+    "pdf_byte_identical_rebuild_verified": false,
+    "raw_input_bytes_verified": false,
+    "raw_results_tree_committed": false,
+    "selection_raw_input_count_unverified": 4321,
+    "structural_pass_is_not_full_provenance": true
+  },
+  "locked_inputs": {
+    "aggregate": {
+      "input_count": 13923,
+      "input_set_sha256": "4af9f51467981326c4f99ef171dc21e3fb27beb4d519b65d28d18f678e65ef66",
+      "path": "results/derived/transport_instantiation/full_aggregate.json",
+      "sha256": "0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02"
+    },
+    "pdf": {
+      "bytes": 933908,
+      "pages": 63,
+      "path": "paper/main.pdf",
+      "sha256": "2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1"
+    },
+    "selection": {
+      "input_count": 4321,
+      "input_set_sha256": "fb202efb21389eb5a5f25d5ea5e28fa592dc237cf5d5410c76316fce8ca275a9",
+      "path": "results/derived/transport_instantiation/selection.json",
+      "sha256": "8c16bec7cc220109df3fd7173c3d06ae6c6e1b95e9db5bc5b8c3377b3564f6f4"
+    },
+    "selection_flat_copy": {
+      "path": "results/derived/transport_instantiation_selection.json",
+      "sha256": "8c16bec7cc220109df3fd7173c3d06ae6c6e1b95e9db5bc5b8c3377b3564f6f4"
+    }
+  },
+  "max_output_bytes": 749990,
+  "max_part_bytes_ceiling": 750000,
+  "output_count": 42,
+  "output_total_bytes": 17346340,
+  "outputs": [
+    {
+      "bytes": 6450,
+      "path": "README.md",
+      "record_count": 1,
+      "semantic_source": "generator template",
+      "sha256": "f93cd0c89cf6c10ceac057a5ef05bcafa44418b74d729157431c670127bd95fb"
+    },
+    {
+      "bytes": 1132,
+      "path": "aggregate/bootstrap.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/paired_bootstrap",
+      "sha256": "2d4dec6d214272c1de1baca368086f958575eebe44138f723597c7af7e276efb"
+    },
+    {
+      "bytes": 749974,
+      "path": "aggregate/bound_decomposition.part-000.jsonl",
+      "record_count": 2392,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_decomposition",
+      "sha256": "9979943a2025ff45f3cc8550332d14714a5f927ef41d26778ded11a4a8add2b3"
+    },
+    {
+      "bytes": 502278,
+      "path": "aggregate/bound_decomposition.part-001.jsonl",
+      "record_count": 1608,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_decomposition",
+      "sha256": "3dcd66047fabb9c21421ca859d1b833b6e25d548a6b28781b786c85d27af1aba"
+    },
+    {
+      "bytes": 18741,
+      "path": "aggregate/bound_nonvacuity.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_nonvacuity",
+      "sha256": "4c16310ab5aa6ab9befc5700c58d7b98b70ca5ad3266a6a9198f4dfe7ec0330e"
+    },
+    {
+      "bytes": 39709,
+      "path": "aggregate/certificate_tightness.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/certificate_tightness",
+      "sha256": "562d0a065941817a14fab33c3f91a2070cd469e65b6e5d67f60e04e2880497fc"
+    },
+    {
+      "bytes": 19438,
+      "path": "aggregate/environment_diagnostics.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/environment_diagnostics",
+      "sha256": "53e22bac533fb3809746206f3e0daf313bf0d13973399305371d10a1ef71b668"
+    },
+    {
+      "bytes": 11054,
+      "path": "aggregate/index.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json",
+      "sha256": "bcbc2504dd160ea780af48f1b6ecad7892fe641f797ed4ac44037fce57ef53d0"
+    },
+    {
+      "bytes": 749856,
+      "path": "aggregate/input_inventory.part-000.jsonl",
+      "record_count": 3669,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "7c572178f2335a65063116e1d0ceb82c20e5eebc3eed9bb3de9d70b55c52c144"
+    },
+    {
+      "bytes": 749944,
+      "path": "aggregate/input_inventory.part-001.jsonl",
+      "record_count": 3675,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "97003ac4fbafc2f4d0695ae18e77bbf9b8f2466d6ba65ea0a13f7ba09a5c0bf9"
+    },
+    {
+      "bytes": 749873,
+      "path": "aggregate/input_inventory.part-002.jsonl",
+      "record_count": 3733,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "ac64b2c9476b198f16f7a121cce3af0d408724a33b764baa8c285ed45b4ae4d4"
+    },
+    {
+      "bytes": 559895,
+      "path": "aggregate/input_inventory.part-003.jsonl",
+      "record_count": 2846,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "814cfb11b3a36e996070905b4530d6169297bb8e168281298172d821b9dfa037"
+    },
+    {
+      "bytes": 749888,
+      "path": "aggregate/path_checkpoints.part-000.jsonl",
+      "record_count": 2837,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "39b44eba97dd33ca5be6b9dc3bfe4a127313ea62d63d14a7ec915540ee203b51"
+    },
+    {
+      "bytes": 749982,
+      "path": "aggregate/path_checkpoints.part-001.jsonl",
+      "record_count": 2844,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "d86f5867cd40091e18f041af4ae959133219ae080c6cd5d9bd47dd02cdd370be"
+    },
+    {
+      "bytes": 749926,
+      "path": "aggregate/path_checkpoints.part-002.jsonl",
+      "record_count": 2834,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "955b3740392f1808afce11026e0aa89024b4781855ebe5d3efe44414d5b20ec2"
+    },
+    {
+      "bytes": 749858,
+      "path": "aggregate/path_checkpoints.part-003.jsonl",
+      "record_count": 2842,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "9aa3a25c4005353552b3b0751a2f1a9b9013cd813ade0207c51c86f96eb11cf8"
+    },
+    {
+      "bytes": 749759,
+      "path": "aggregate/path_checkpoints.part-004.jsonl",
+      "record_count": 2845,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "de3fdd141bbcb8d9c8ba409342e001f64e549223461146500bc1b8a5a3ed1390"
+    },
+    {
+      "bytes": 749810,
+      "path": "aggregate/path_checkpoints.part-005.jsonl",
+      "record_count": 2818,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "a831523f118d15ae70ae145fa7a0535b6e468fff38ef56932858c69a0549d711"
+    },
+    {
+      "bytes": 749931,
+      "path": "aggregate/path_checkpoints.part-006.jsonl",
+      "record_count": 2808,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "1f835f551a3e435e71d51ed6e1e7bf7910dd4144ab15c5b8acdd86c534b3a1ea"
+    },
+    {
+      "bytes": 749911,
+      "path": "aggregate/path_checkpoints.part-007.jsonl",
+      "record_count": 2829,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "db5a724345ba9d8a636f3c6a1b9a6384f6bd1cb47977bc9bbdca18051e1abaf1"
+    },
+    {
+      "bytes": 749945,
+      "path": "aggregate/path_checkpoints.part-008.jsonl",
+      "record_count": 2832,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "6cda2159f92a40dc8e5bbd245030a000fe5ee3062a061391ac1b227c3d085d22"
+    },
+    {
+      "bytes": 749892,
+      "path": "aggregate/path_checkpoints.part-009.jsonl",
+      "record_count": 2833,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "f838657a425e8ddf7560b7b03bbe9b25a9549d14a525af494a1ffa6f898e922c"
+    },
+    {
+      "bytes": 749752,
+      "path": "aggregate/path_checkpoints.part-010.jsonl",
+      "record_count": 2832,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "e52cc3ad06387a5d51712f318b196c585d066e3b0127aee6e2c95cca91ab447e"
+    },
+    {
+      "bytes": 749769,
+      "path": "aggregate/path_checkpoints.part-011.jsonl",
+      "record_count": 2833,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "7fe77ecd32dd51a229077d063dc4637f5036f3c4982e24e509ce8599d290516a"
+    },
+    {
+      "bytes": 268224,
+      "path": "aggregate/path_checkpoints.part-012.jsonl",
+      "record_count": 1013,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "a2a2164ad55514750ee829b1255a8cd21d6943db772aa3f9a5926312d0dedc12"
+    },
+    {
+      "bytes": 12223,
+      "path": "aggregate/path_recomputed_summaries.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points recomputed against results/derived/transport_instantiation/full_aggregate.json#/certificate_tightness",
+      "sha256": "e6fbc9d683db85124b77cbf79816bc476a5ddedef335274bc0fe0941fc95d6f9"
+    },
+    {
+      "bytes": 167199,
+      "path": "aggregate/path_run_maxima.jsonl",
+      "record_count": 600,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (grouped)",
+      "sha256": "a3f039371d3a96f25c57aec6329805f7ff291a1b13a954463c819a3e02696875"
+    },
+    {
+      "bytes": 22757,
+      "path": "aggregate/policy_outcomes.jsonl",
+      "record_count": 16,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/policy_outcomes",
+      "sha256": "17b7f69e66efec255c47cc2245e75e28dc8d4a0dcd4d055c0cdd51dd362f3e1e"
+    },
+    {
+      "bytes": 749990,
+      "path": "aggregate/regret_curves.part-000.jsonl",
+      "record_count": 4886,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "f97a0d3f7f8d80c36fe8f3349e3542795c4a9a9fecbada667bc5a4075ea11145"
+    },
+    {
+      "bytes": 749856,
+      "path": "aggregate/regret_curves.part-001.jsonl",
+      "record_count": 4906,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "b2a77dc70787f6a2fb9d350bf5164ac91bdd7e32c1e1f36b5d77073224f0523f"
+    },
+    {
+      "bytes": 749933,
+      "path": "aggregate/regret_curves.part-002.jsonl",
+      "record_count": 4916,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "761b22816997fc02ea9349a20ef0bc0b97d9694c4571437cb7d3b537f4d70a42"
+    },
+    {
+      "bytes": 193707,
+      "path": "aggregate/regret_curves.part-003.jsonl",
+      "record_count": 1292,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "ccecca676e0d7e0b63a921e38585e648f83838b832cd20005f6da358c1e240b6"
+    },
+    {
+      "bytes": 2331,
+      "path": "aggregate/top_level.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json",
+      "sha256": "832fc0478cfc6b17dc2e680926dd1047be72fbe8c9db6fa3b6d8886d58bf46ab"
+    },
+    {
+      "bytes": 22958,
+      "path": "aggregate/validity.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/validity",
+      "sha256": "7cb3dcfbb79c4ccd9111934472d775d3320b53880d37dd4d4c0b52efbbffb815"
+    },
+    {
+      "bytes": 35791,
+      "path": "locked_claims.json",
+      "record_count": 1,
+      "semantic_source": "recomputed from locked evidence",
+      "sha256": "f1fb68c57cb252acdf26c1e36387fafb4c16f5ad8a4b284ca9f5d6599fdbe0b0"
+    },
+    {
+      "bytes": 3695,
+      "path": "selection/candidates.jsonl",
+      "record_count": 9,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/candidates",
+      "sha256": "46a226196ef1b31bb2c8c0491701d8aa8883563207f27436016a77ca9ea2fa42"
+    },
+    {
+      "bytes": 2031,
+      "path": "selection/index.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/selection.json",
+      "sha256": "f0e01fe929f03a26d7c683199bc9b6d11f6584670212be0877bb8d530b1586c4"
+    },
+    {
+      "bytes": 749842,
+      "path": "selection/inputs.part-000.jsonl",
+      "record_count": 3826,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/inputs",
+      "sha256": "b4288a7f2d7240ae91a219f082fd156f62cc8631172243d160cedfed27517f8f"
+    },
+    {
+      "bytes": 96277,
+      "path": "selection/inputs.part-001.jsonl",
+      "record_count": 495,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/inputs",
+      "sha256": "47ec74f2748628b6d1a2c3760f17ac2a3b3d92cee952c0fcf2385b0dfa55b27d"
+    },
+    {
+      "bytes": 357848,
+      "path": "selection/runs.part-000.jsonl",
+      "record_count": 1080,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/candidates/*/runs",
+      "sha256": "bd58f3c4e26507d63ef69aa384b272bc72a34ad1fd1e6533e7c40fb9f5b7a022"
+    },
+    {
+      "bytes": 2000,
+      "path": "selection/source_inventory.jsonl",
+      "record_count": 15,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/study_source_inputs",
+      "sha256": "7284f84b88b006a269319d3c863fb602ed7f7e0d9012c21978788bcced4c98e3"
+    },
+    {
+      "bytes": 2911,
+      "path": "selection/summary.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/selection.json",
+      "sha256": "cb588e629fe0cc91dc5c975b8f87bac9f7d6c81031ba69562e821da8e903709f"
+    }
+  ],
+  "repository": "https://github.com/buiksat/Curvature-Calibrated-Exploration",
+  "review_base_commit": "47037a2df6b81befd4a0cb3c5974e3565d8f61b6",
+  "schema_version": 1,
+  "source_branch": "codex/cc-ucb-theory-experiments",
+  "source_head": "7a83c5f2c7f710be1e8178682cbfcd8566244a48"
+}

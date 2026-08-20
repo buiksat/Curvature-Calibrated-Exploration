@@ -1,0 +1,247 @@
+{
+  "files": [
+    {
+      "bytes": 2331,
+      "path": "aggregate/top_level.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json",
+      "sha256": "832fc0478cfc6b17dc2e680926dd1047be72fbe8c9db6fa3b6d8886d58bf46ab"
+    },
+    {
+      "bytes": 22958,
+      "path": "aggregate/validity.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/validity",
+      "sha256": "7cb3dcfbb79c4ccd9111934472d775d3320b53880d37dd4d4c0b52efbbffb815"
+    },
+    {
+      "bytes": 22757,
+      "path": "aggregate/policy_outcomes.jsonl",
+      "record_count": 16,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/policy_outcomes",
+      "sha256": "17b7f69e66efec255c47cc2245e75e28dc8d4a0dcd4d055c0cdd51dd362f3e1e"
+    },
+    {
+      "bytes": 39709,
+      "path": "aggregate/certificate_tightness.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/certificate_tightness",
+      "sha256": "562d0a065941817a14fab33c3f91a2070cd469e65b6e5d67f60e04e2880497fc"
+    },
+    {
+      "bytes": 18741,
+      "path": "aggregate/bound_nonvacuity.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_nonvacuity",
+      "sha256": "4c16310ab5aa6ab9befc5700c58d7b98b70ca5ad3266a6a9198f4dfe7ec0330e"
+    },
+    {
+      "bytes": 19438,
+      "path": "aggregate/environment_diagnostics.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/environment_diagnostics",
+      "sha256": "53e22bac533fb3809746206f3e0daf313bf0d13973399305371d10a1ef71b668"
+    },
+    {
+      "bytes": 1132,
+      "path": "aggregate/bootstrap.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/paired_bootstrap",
+      "sha256": "2d4dec6d214272c1de1baca368086f958575eebe44138f723597c7af7e276efb"
+    },
+    {
+      "bytes": 749990,
+      "path": "aggregate/regret_curves.part-000.jsonl",
+      "record_count": 4886,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "f97a0d3f7f8d80c36fe8f3349e3542795c4a9a9fecbada667bc5a4075ea11145"
+    },
+    {
+      "bytes": 749856,
+      "path": "aggregate/regret_curves.part-001.jsonl",
+      "record_count": 4906,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "b2a77dc70787f6a2fb9d350bf5164ac91bdd7e32c1e1f36b5d77073224f0523f"
+    },
+    {
+      "bytes": 749933,
+      "path": "aggregate/regret_curves.part-002.jsonl",
+      "record_count": 4916,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "761b22816997fc02ea9349a20ef0bc0b97d9694c4571437cb7d3b537f4d70a42"
+    },
+    {
+      "bytes": 193707,
+      "path": "aggregate/regret_curves.part-003.jsonl",
+      "record_count": 1292,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/regret_curves",
+      "sha256": "ccecca676e0d7e0b63a921e38585e648f83838b832cd20005f6da358c1e240b6"
+    },
+    {
+      "bytes": 749974,
+      "path": "aggregate/bound_decomposition.part-000.jsonl",
+      "record_count": 2392,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_decomposition",
+      "sha256": "9979943a2025ff45f3cc8550332d14714a5f927ef41d26778ded11a4a8add2b3"
+    },
+    {
+      "bytes": 502278,
+      "path": "aggregate/bound_decomposition.part-001.jsonl",
+      "record_count": 1608,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/bound_decomposition",
+      "sha256": "3dcd66047fabb9c21421ca859d1b833b6e25d548a6b28781b786c85d27af1aba"
+    },
+    {
+      "bytes": 749856,
+      "path": "aggregate/input_inventory.part-000.jsonl",
+      "record_count": 3669,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "7c572178f2335a65063116e1d0ceb82c20e5eebc3eed9bb3de9d70b55c52c144"
+    },
+    {
+      "bytes": 749944,
+      "path": "aggregate/input_inventory.part-001.jsonl",
+      "record_count": 3675,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "97003ac4fbafc2f4d0695ae18e77bbf9b8f2466d6ba65ea0a13f7ba09a5c0bf9"
+    },
+    {
+      "bytes": 749873,
+      "path": "aggregate/input_inventory.part-002.jsonl",
+      "record_count": 3733,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "ac64b2c9476b198f16f7a121cce3af0d408724a33b764baa8c285ed45b4ae4d4"
+    },
+    {
+      "bytes": 559895,
+      "path": "aggregate/input_inventory.part-003.jsonl",
+      "record_count": 2846,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/inputs",
+      "sha256": "814cfb11b3a36e996070905b4530d6169297bb8e168281298172d821b9dfa037"
+    },
+    {
+      "bytes": 167199,
+      "path": "aggregate/path_run_maxima.jsonl",
+      "record_count": 600,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (grouped)",
+      "sha256": "a3f039371d3a96f25c57aec6329805f7ff291a1b13a954463c819a3e02696875"
+    },
+    {
+      "bytes": 749888,
+      "path": "aggregate/path_checkpoints.part-000.jsonl",
+      "record_count": 2837,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "39b44eba97dd33ca5be6b9dc3bfe4a127313ea62d63d14a7ec915540ee203b51"
+    },
+    {
+      "bytes": 749982,
+      "path": "aggregate/path_checkpoints.part-001.jsonl",
+      "record_count": 2844,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "d86f5867cd40091e18f041af4ae959133219ae080c6cd5d9bd47dd02cdd370be"
+    },
+    {
+      "bytes": 749926,
+      "path": "aggregate/path_checkpoints.part-002.jsonl",
+      "record_count": 2834,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "955b3740392f1808afce11026e0aa89024b4781855ebe5d3efe44414d5b20ec2"
+    },
+    {
+      "bytes": 749858,
+      "path": "aggregate/path_checkpoints.part-003.jsonl",
+      "record_count": 2842,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "9aa3a25c4005353552b3b0751a2f1a9b9013cd813ade0207c51c86f96eb11cf8"
+    },
+    {
+      "bytes": 749759,
+      "path": "aggregate/path_checkpoints.part-004.jsonl",
+      "record_count": 2845,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "de3fdd141bbcb8d9c8ba409342e001f64e549223461146500bc1b8a5a3ed1390"
+    },
+    {
+      "bytes": 749810,
+      "path": "aggregate/path_checkpoints.part-005.jsonl",
+      "record_count": 2818,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "a831523f118d15ae70ae145fa7a0535b6e468fff38ef56932858c69a0549d711"
+    },
+    {
+      "bytes": 749931,
+      "path": "aggregate/path_checkpoints.part-006.jsonl",
+      "record_count": 2808,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "1f835f551a3e435e71d51ed6e1e7bf7910dd4144ab15c5b8acdd86c534b3a1ea"
+    },
+    {
+      "bytes": 749911,
+      "path": "aggregate/path_checkpoints.part-007.jsonl",
+      "record_count": 2829,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "db5a724345ba9d8a636f3c6a1b9a6384f6bd1cb47977bc9bbdca18051e1abaf1"
+    },
+    {
+      "bytes": 749945,
+      "path": "aggregate/path_checkpoints.part-008.jsonl",
+      "record_count": 2832,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "6cda2159f92a40dc8e5bbd245030a000fe5ee3062a061391ac1b227c3d085d22"
+    },
+    {
+      "bytes": 749892,
+      "path": "aggregate/path_checkpoints.part-009.jsonl",
+      "record_count": 2833,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "f838657a425e8ddf7560b7b03bbe9b25a9549d14a525af494a1ffa6f898e922c"
+    },
+    {
+      "bytes": 749752,
+      "path": "aggregate/path_checkpoints.part-010.jsonl",
+      "record_count": 2832,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "e52cc3ad06387a5d51712f318b196c585d066e3b0127aee6e2c95cca91ab447e"
+    },
+    {
+      "bytes": 749769,
+      "path": "aggregate/path_checkpoints.part-011.jsonl",
+      "record_count": 2833,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "7fe77ecd32dd51a229077d063dc4637f5036f3c4982e24e509ce8599d290516a"
+    },
+    {
+      "bytes": 268224,
+      "path": "aggregate/path_checkpoints.part-012.jsonl",
+      "record_count": 1013,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points (D_path_quad present)",
+      "sha256": "a2a2164ad55514750ee829b1255a8cd21d6943db772aa3f9a5926312d0dedc12"
+    },
+    {
+      "bytes": 12223,
+      "path": "aggregate/path_recomputed_summaries.jsonl",
+      "record_count": 12,
+      "semantic_source": "results/derived/transport_instantiation/full_aggregate.json#/path_points recomputed against results/derived/transport_instantiation/full_aggregate.json#/certificate_tightness",
+      "sha256": "e6fbc9d683db85124b77cbf79816bc476a5ddedef335274bc0fe0941fc95d6f9"
+    }
+  ],
+  "input_set_sha256": "4af9f51467981326c4f99ef171dc21e3fb27beb4d519b65d28d18f678e65ef66",
+  "path_points_note": "The full 350,000-record path_points array is intentionally not duplicated. path_run_maxima, path_checkpoints and path_recomputed_summaries are the smallest views that support the published certificate-tightness claims.",
+  "record_totals": {
+    "bound_decomposition": 4000,
+    "bound_nonvacuity": 12,
+    "certificate_tightness": 12,
+    "environment_diagnostics": 12,
+    "input_inventory": 13923,
+    "path_checkpoints": 35000,
+    "path_points_source": 350000,
+    "path_recomputed_summaries": 12,
+    "path_run_maxima": 600,
+    "policy_outcomes": 16,
+    "regret_curves": 16000,
+    "validity": 12
+  },
+  "schema_version": 1,
+  "source_json": "results/derived/transport_instantiation/full_aggregate.json",
+  "source_sha256": "0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02"
+}

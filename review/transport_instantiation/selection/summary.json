@@ -1,0 +1,137 @@
+{
+  "candidate_count": 9,
+  "cells_per_candidate": 120,
+  "complete_tuning_input_inventory": true,
+  "config_digest": "cf774ff572a356afb113e645b086ca4eb6912a99c069d313f6c02794c6ad6f9f",
+  "evaluation_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149
+  ],
+  "event": "transport_instantiation_selection",
+  "git_dirty": false,
+  "git_revision": "0cd6264c1f8b8751728f3c4a198207e8289aed74",
+  "input_count": 4321,
+  "input_set_sha256": "fb202efb21389eb5a5f25d5ea5e28fa592dc237cf5d5410c76316fce8ca275a9",
+  "learning_rate_steps_grid": [
+    {
+      "learning_rate": 3e-05,
+      "steps_per_round": 1
+    },
+    {
+      "learning_rate": 3e-05,
+      "steps_per_round": 5
+    },
+    {
+      "learning_rate": 3e-05,
+      "steps_per_round": 20
+    },
+    {
+      "learning_rate": 0.0001,
+      "steps_per_round": 1
+    },
+    {
+      "learning_rate": 0.0001,
+      "steps_per_round": 5
+    },
+    {
+      "learning_rate": 0.0001,
+      "steps_per_round": 20
+    },
+    {
+      "learning_rate": 0.0003,
+      "steps_per_round": 1
+    },
+    {
+      "learning_rate": 0.0003,
+      "steps_per_round": 5
+    },
+    {
+      "learning_rate": 0.0003,
+      "steps_per_round": 20
+    }
+  ],
+  "profile": "full",
+  "recompute_recipe": "For each candidate, average mean_all_action_prediction_mse with equal weight over its 120 (seed, horizon, target_D) cells. Keep candidates whose cells are all valid. Choose the smallest aggregate mean, then break ties by fewer steps_per_round, then by smaller learning_rate.",
+  "schema_version": 1,
+  "seed_sets_disjoint": true,
+  "selected": {
+    "aggregate_mean_all_action_prediction_mse": 0.00666914978044266,
+    "candidate_id": "candidate-008",
+    "learning_rate": 0.0003,
+    "steps_per_round": 20,
+    "tie_break": [
+      "fewer_steps_per_round",
+      "smaller_learning_rate"
+    ]
+  },
+  "selection_metric": "mean_all_action_prediction_mse_after_burn_in",
+  "selection_metric_description": "equal-weight mean of per-(seed,horizon,target_D) all-action prediction MSE after burn-in",
+  "source_json": "results/derived/transport_instantiation/selection.json",
+  "source_sha256": "8c16bec7cc220109df3fd7173c3d06ae6c6e1b95e9db5bc5b8c3377b3564f6f4",
+  "study_source_input_count": 15,
+  "study_source_input_set_sha256": "0776f1b55c8d6fdf297045ea2b96b5fe39eec01024e496f16b22107e0d60e76b",
+  "tie_break_rule": [
+    "fewer_steps_per_round",
+    "smaller_learning_rate"
+  ],
+  "tuning_seeds": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ]
+}

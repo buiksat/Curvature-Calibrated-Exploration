@@ -1,0 +1,55 @@
+{
+  "files": [
+    {
+      "bytes": 2911,
+      "path": "selection/summary.json",
+      "record_count": 1,
+      "semantic_source": "results/derived/transport_instantiation/selection.json",
+      "sha256": "cb588e629fe0cc91dc5c975b8f87bac9f7d6c81031ba69562e821da8e903709f"
+    },
+    {
+      "bytes": 3695,
+      "path": "selection/candidates.jsonl",
+      "record_count": 9,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/candidates",
+      "sha256": "46a226196ef1b31bb2c8c0491701d8aa8883563207f27436016a77ca9ea2fa42"
+    },
+    {
+      "bytes": 357848,
+      "path": "selection/runs.part-000.jsonl",
+      "record_count": 1080,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/candidates/*/runs",
+      "sha256": "bd58f3c4e26507d63ef69aa384b272bc72a34ad1fd1e6533e7c40fb9f5b7a022"
+    },
+    {
+      "bytes": 749842,
+      "path": "selection/inputs.part-000.jsonl",
+      "record_count": 3826,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/inputs",
+      "sha256": "b4288a7f2d7240ae91a219f082fd156f62cc8631172243d160cedfed27517f8f"
+    },
+    {
+      "bytes": 96277,
+      "path": "selection/inputs.part-001.jsonl",
+      "record_count": 495,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/inputs",
+      "sha256": "47ec74f2748628b6d1a2c3760f17ac2a3b3d92cee952c0fcf2385b0dfa55b27d"
+    },
+    {
+      "bytes": 2000,
+      "path": "selection/source_inventory.jsonl",
+      "record_count": 15,
+      "semantic_source": "results/derived/transport_instantiation/selection.json#/study_source_inputs",
+      "sha256": "7284f84b88b006a269319d3c863fb602ed7f7e0d9012c21978788bcced4c98e3"
+    }
+  ],
+  "record_totals": {
+    "candidates": 9,
+    "inputs": 4321,
+    "runs": 1080,
+    "study_source_inputs": 15
+  },
+  "schema_version": 1,
+  "source_json": "results/derived/transport_instantiation/selection.json",
+  "source_sha256": "8c16bec7cc220109df3fd7173c3d06ae6c6e1b95e9db5bc5b8c3377b3564f6f4"
+}
