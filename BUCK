@@ -25,6 +25,11 @@ filegroup(
         "*.md",
         "paper/**",
         "results/derived/**",
+        # Detached GitHub-auditability tooling and its committed review bundle.
+        # Listed so that editing either retriggers the test targets that read
+        # them from the project root.
+        "tools/*.py",
+        "review/**",
     ]),
     visibility = ["PUBLIC"],
 )
