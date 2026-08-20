@@ -1,0 +1,94 @@
+                Step 2: Bonus sandwiching. By Lemma 40 (which uses Lemma 38 with max                          ε    ≤ε¯ and the one-sided
+                                                                                                         a∈A t,a       t
+                                                                                                             t
+                transfer (100)), for all a,                                          p
+                                                       ω s¯ (a) ≤ w (a) ≤ α ω          u (a)s    (a).                                 (150)
+                                                         t t          t         t  t     t    C,t
+                The lower bound and (149) give µ∗(x ,a) ≤ µb (a)+w (a)+ε             (t) for all a: the UCB covers µ∗ up to the additive
+                                                         t        t        t       lin
+                ε   (t) model-mismatch term.
+                  lin
+                                                              ∗       ∗
+                Step 3: Instantaneous regret. Let a = a                 be the measurable ﬁnite comparator from the legacy protocol.
+                                                              t     t,kt
+                                                                                ∗         ∗               ∗  ∗         ∗         ∗
+                Thesmallest-index score rule implies µb (a )+w (a ) ≥ µb (a )+w (a ), and using µ (a ) ≤ µb (a )+w (a )+ε                (t)
+                                                          t  t     t  t      t  t      t  t                  t      t  t      t  t     lin
+                             ∗                ∗
+                (Step 2 at a , valid since a ∈ A ),
+                             t                t     t
+                                        ∗  ∗      ∗               ∗         ∗                ∗
+                                      µ (a )−µ (a ) ≤ [µb (a )+w (a )+ε (t)]−µ (a )
+                                           t         t        t   t      t  t     lin           t
+                                                         ≤ [µb (a ) + w (a ) + ε    (t)] − µ∗(a )   (UCB selection)
+                                                              t   t     t  t      lin           t
+                                                                                  ∗
+                                                         = w (a )+[µb (a )−µ (a )]+ε (t)
+                                                              t  t      t  t         t      lin
+                                                         ≤ w (a )+ω s¯ (a )+2ε (t) ((149) at a )
+                                                              t  t      t t  t       lin                t
+                                                         ≤ 2w (a )+2ε (t) (lower bound in (150)).
+                                                                t  t      lin
+                Step 4: Upper bonus bound. The upper bound in (150) gives
+                                                  ∗  ∗      ∗                p
+                                                µ (a )−µ (a ) ≤ 2α ω            u (a )s    (a ) + 2ε (t).                             (151)
+                                                     t         t         t  t    t   t  C,t  t        lin
+                Step 5: Cauchy–Schwarz after summing. Summing (151) over t = 1,...,T and applying Cauchy–Schwarz
+                to the sum (not per round),
+                                                                                  v                  v
+                                           T                                      uT                 uT
+                                                                                  u                  u
+                                          X p                                        X                  X
+                                                                                  t       2 2        t 2
+                                R ≤ 2         α ω    u (a )s    (a ) + 2E    ≤ 2         α ω u (a )         s   (a ) + 2E .
+                                  T            t  t    t  t  C,t  t       T               t  t  t  t         C,t  t       T
+                                          t=1                                        t=1                t=1
+                                                                                         P
+                                                                                            T    2           2      2     C
+                Step 6: Dynamic potential and collection. Lemma 35 gives                        s  (a ) ≤ (σ +G /λ)Λ . Substituting,
+                                                                                            t=1 C,t   t                   T
+                                                           v
+                                                           u                     T
+                                                           u                    X
+                                                           t 2        2      C       2          2
+                                                 R ≤ 2 (σ +G /λ)Λ                   α u (a )ω + 2E ,
+                                                   T                         T       t  t   t  t        T
+                                                                                t=1
+                                                                                                   C     dyn                      C    c
+                                                                                                                                         C
+                which is (55). The interpretable and observable versions (75) follow from ΛT ≤ ΓT            (Lemma 35) and ΛT ≤ Λ T
+                (Corollary 37). The Cauchy–Schwarz step is applied only after summing, so the time-varying factors α ,u (a ),ω
+                                                                                                                               t   t  t    t
+                enter through a sum of squares; no horizon maximum is taken before Cauchy–Schwarz, and the usual √T scaling
+                is recovered when the per-round factors are uniformly bounded (Corollary 50). The stated probability follows
+                from a union bound over the self-normalized conﬁdence event E                 (≥ 1 − δ) and the certiﬁcate event E
+                                                                                         conf                                           cert
+                (≥1−δ ),giving ≥1−δ−δ                  .
+                         cert                      cert
+                I    CGConvergence Analysis
+                Fix a round t and an action a with g := g (a) 6= 0. After I             iterations of CG on the SPD system C u = g
+                                                                 t                   t,a                                            t
+                                 ˜
+                (starting from u = 0), the standard energy-norm bound gives
+                                  0
+                                                                                      √         
+                                                               ˜        −1                         It,a
+                                                             ku     −C gk                 κ −1
+                                                                I       t     C             t
+                                                     ε    =      t,a           t ≤ 2 √                 ,
+                                                      t,a        kC−1gk                   κ +1
+                                                                    t     C                 t
+                                                                           t
+                where κ = λ        (C )/λ     (C ) is the true condition number. The bound is right-hand-side independent, so a
+                         t     max t      min   t
+                common iteration budget bounds max ε            . This zero-start form is what the ﬁxed-budget certiﬁcate (152) uses.
+                                                           a t,a
+                                    ˜
+                For a warm start u0 6= 0, energy-norm minimization over the shifted Krylov space instead gives
+                                              ˜        −1                           −1                √
+                                            ku     −C gk                    ˜                           κ −1
+                                               I            C              ku −C gk                       t
+                                                t,a −1 t      t ≤ 2qIt,a      0 −1t      Ct ,    q = √         ,
+                                                kC    gk                      kC   gk                   κ +1
+                                                   t    C                       t     C                   t
+                                                         t                             t

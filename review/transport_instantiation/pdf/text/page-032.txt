@@ -1,0 +1,76 @@
+                For explicit targets x¯     ∈(0,1) and Ψ,b ,η > 0, the suﬃcient conditions
+                                        drift                 F   E
+                                                     4c2R2(T −1)                  4c2R4T             4c2R4
+                                              W≥ g                  ,       W≥ µ           ,  W≥ µ ,
+                                                       λσ2x¯2                       σ2b2               η2
+                                                          drift                       F               E                             (88)
+                                                           4A2 2BT
+                                              W≥max            T , √
+                                                           λΨ2      λΨ
+                                                                                            2                        2   p¯
+                respectively ensure x     ≤x¯      <1(and therefore ρ ≥ (1−x¯              )  and ρ ≤ (1+x¯         ) ),   F     /σ ≤ b ,
+                                        T     drift                       −            drift        +           drift        T+1         F
+                 ¯                  ¯                                                                                         2
+                E /T ≤η , and ψ ≤ Ψ. Thus the centering requirement has leading suﬃcient scaling W = Ω(T P ); these
+                  T         E        T                                                                                           T
+                conditions do not bound γ .
+                                             T
+                Corollary 29 (Nonlinear tanh-link Gaussian bandit). For µ (x,a) = tanh(φ(x,a)⊤θ) with kφ(x,a)k ≤ B , one
+                                                                                   θ                                                φ
+                may take
+                                                                                         4    2
+                                                           G=Bφ,          Lµ =Lg = √ B .
+                                                                                       3 3 φ
+                On any certiﬁed trust region, Corollary 17 therefore gives an executable nonlinear Gaussian-reward CC-UCB
+                policy using only the online path statistics, a pre-action optimizer-residual certiﬁcate, and the stated operator/CG
+                certiﬁcates. Under realizability, both the model and teacher outputs have B = 1. Hence Lemma 24 removes the
+                                                                                                  µ
+                supplied residual-energy factor in Corollary 26: on its event one may take
+                                                        C =1,          P =8+4σ2log(2T/δ ),
+                                                          R             T                      R
+                and allocate δ    to the certiﬁcate failure budget.
+                               R
+                                     2  ⊤                                                                     2      ⊤
+                Proof. ∇ µ = sech (φ θ)φ, so its norm is at most B . The Hessian is −2tanh(z)sech (z)φφ . For y = |tanhz|,
+                          θ                           √                   φ √
+                2y(1−y2) is maximized at y = 1/ 3 with value 4/(3 3), proving both Lipschitz constants. Apply Lemma 25
+                and Corollary 17.
+                Corollary 30 (Scaled-tanh relative-link rate). Consider the explicit zero-oﬀset scalar-link family
+                                                  √          φ(z)⊤θ                                        ∗
+                                      µ     (z) =   W tanh       √        ,     kφ(z)k ≤ B ,        kθ k,kθ k ≤ R.                    (89)
+                                        θ,W                        W                        φ          t
+                This is a scaled generalized-linear family in the displacement coordinates, not a claim that generic neural-network
+                width provides the scale W. Let
+                                                              4B2                   4B R
+                                                                 φ                        φ
+                                                       ch := √ ,         ρW := exp     √        −1.
+                                                              3 3                        W
+                Then valid global constants on the certiﬁed region are
+                                                                    ch
+                                       G=B ,          L =L = √ ,qquad|µ               (z)| ≤ B R,qquadρ ≤ ρ .                         (90)
+                                              φ         µ     g      W            θ,W          φ           t     W
+                The stated exponential relative-drift certiﬁcate obeys ρW < 1 exactly when
+                                                                                  
+                                                                            4B R 2
+                                                                    W>         φ      .                                               (91)
+                                                                             log2
+                                                                           p                                            √            col
+                Fix a uniform CG certiﬁcate ε¯ ≤ ε¯ < 1, let α =              (1+ε¯)/(1−ε¯), and suppose ζ ≤ ζ / W and R                 ≤
+                                                   t                  I                                         t     0              t
+                C tP for P ≥ 1. Fix a rank index r and supply a predictable preﬁx information envelope G                      ≥γ ; write
+                  R T          T                                                                                          n,r     n
+                G↑ =max          G . The envelope may be the exact-rank bound or either valid predictable spectral-tail schedule in
+                  n,r        j≤n j,r
+                Corollary 15. Deﬁne
+                                                                    ( h                                 i
+                                                rel       ζ0      1        p                    √
+                                              Ψ      := √      +      ρ       C TP +2B R T −1
+                                                T,W       λW      σ    W       R     T      φ
+                                                                                               2√        )
+                                                                                2(1+ρW)chR         T −1
+                                                                             +            √                ,                          (92)
+                                                                                            W
+                                                        q                       √             2√
+                                                 rel        ↑                           2chR     T      rel
+                                               B     :=   G     +2log(1/δ)+ λR+             √       +Ψ .                              (93)
+                                                 T,r        T,r                            σ W          T,W

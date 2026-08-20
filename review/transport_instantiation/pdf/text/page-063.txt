@@ -1,0 +1,33 @@
+                   Table 9: Legacy real-autodiﬀ resource audit at history size 512, ten actions, and iterative-solver target original-
+                                          −3
+                   system residual 10        . Values summarize the isolated primitive; no dense-reference accuracy is imputed for the
+                   larger model.
+                                         Model        Method                     Time (s)     Peak GiB     Sample-CVPs      Max residual
+                                         mlp 100k     Separate CG                   0.2101        0.108            25600         1.40e-04
+                                         mlp 100k     Batched CG                    0.0395        0.126            25600         1.37e-04
+                                         mlp 100k     Jacobi-PCG                  0.05416         0.141            28570         9.44e-04
+                                         mlp 100k     Diagonal                      0.4428        0.086                 0       9.30e+00
+                                         mlp 100k     Last layer                 0.002994         0.097                 0               –
+                                         mlp 100k     Explicit dense reference    0.02338         1.477                 0       0.00e+00
+                                         mlp 10m      Separate CG                   0.7532        2.844            61440         6.17e-04
+                                         mlp 10m      Batched CG                    0.5674        4.219            61440         6.60e-04
+                                         mlp 10m      Jacobi-PCG                    0.5825        5.370            61440         7.65e-04
+                                         mlp 10m      Diagonal                      0.4889        1.839                 0       2.76e+02
+                                         mlp 10m      Last layer                 0.002785         2.387                 0               –
+                                         mlp 10m      Explicit dense reference    skipped             –                 –               –
+                   baseline gate. None of these three benchmarks executes the corrected transported score or records the revised
+                   certiﬁcates. The Wheel study terminated during tuning and had no reportable evaluation. The detailed legacy
+                   outputs are not part of the compact checkout; Git history preserves them. Their plots and tables do not contribute
+                   to the present theory-ﬁrst paper.
+                   O Broader Impact
+                   Exploration can expose users to under-vetted actions and amplify feedback loops. Deployment requires safety
+                   constraints, action ﬁlters, oﬄine evaluation, and online monitoring; the regret certiﬁcates here do not establish
+                   safety.
+                   P Data and Code Availability
+                   The repository contains the manuscript, theory derivations, implementation, tests, frozen transport-instantiation
+                   protocol and conﬁguration, optimizer selection record, strict full aggregate, provenance records, and generated
+                   tables and ﬁgures used in Section 6. The aggregate is bound to the complete raw-input inventory by SHA-256
+                   provenance. Raw run ﬁles remain outside the committed source tree; no public raw-bundle URL is claimed.
+                   The manuscript does not use the legacy experiments as evidence for Theorem 1; their scope is summarized in
+                   Appendix N. Detailed legacy ﬁgures, raw-bundle inventories, and derived benchmark outputs are not part of the
+                   compact checkout; Git history preserves them.

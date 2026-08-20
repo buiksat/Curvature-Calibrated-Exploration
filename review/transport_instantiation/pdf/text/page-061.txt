@@ -1,0 +1,31 @@
+                                               D       =0.25                                          D       =0.5
+                                                 target                                                 target
+                                  4                                                      4
+                                ·10                                                   ·10
+                             1                               statistical           1
+                                                       historical linearization
+                          alue                             path inﬂation        alue
+                          v                                 current bias        v
+                          e                                                     e
+                                                           realized regret
+                           0.5                               sharp RHS            0.5
+                          ulativ                                                ulativ
+                          Cum                                                   Cum
+                             0                                                     0
+                                  0      200     400     600    800    1,000             0     200     400     600     800    1,000
+                                                D       =1                                             D       =2
+                                                  target                                                 target
+                                  4                                                      4
+                                ·10                                                   ·10
+                             1
+                          alue                                                  alue1
+                          v                                                     v
+                          e                                                     e
+                          ulativ0.5                                             ulativ0.5
+                          Cum                                                   Cum
+                             0                                                     0
+                                  0      200     400     600    800    1,000             0     200     400     600     800    1,000
+                                                   Round                                                 Round
+                Figure 3: Mean cumulative decomposition of the sharp theorem right-hand side for the transport-Hessian policy
+                at T = 1000. Statistical conﬁdence is the dominant term; historical linearization, path inﬂation, and current bias
+                are shown separately. The red sharp right-hand side remains far above realized regret in every target condition.

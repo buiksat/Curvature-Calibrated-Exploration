@@ -1,0 +1,89 @@
+                                                                                                                                       ¯            ¯
+                        Proof. The parallel-axis identity follows after writing θt − θs = (θt − θ<t) + (θ<t − θs); the cross term sums to
+                        zero. Lemma 31 and k∇µ (z )−∇µ (z )k ≤ L kθ −θ k give (82). Let d                                                             =kθ −θ k. In Lemma 23,
+                                                                 θt    s            θs    s           g     t       s                            s,t          t       s
+                                                              |r¯    | ≤ |c | + Gd          ,        kδ     k ≤ L d ,                |e     | ≤ (L /2)d2 .
+                                                                 s,t         s           s,t             s,t         g s,t              s,t          g        s,t
+                       Thus each summand deﬁning M has norm at most
+                                                                           t
+                                                                                                                                 2
+                                                                                                           3GL                 L
+                                                                                                                  g 2            g 3
+                                                                                       L |c |d         +            d      +       d .
+                                                                                          g   s    s,t         2      s,t       2 s,t
+                                                             P                    p col                     P 2                          P 3               3/2
+                        Cauchy–Schwarz gives                      |c |d       ≤ R Q,while                        d     =Q and                d      ≤Q ,proving (83). Under the
+                                                                    s    s,t            t      t                   s,t        t                s,t         t
+                                                                   P 3                                                                                                         ¯
+                        trust region, d             ≤2R, so             d     ≤2RQ. The centering claim follows from Lemma 23 and C  λI. Finally
+                                               s,t                       s,t              t                                                                                      t
+                       Taylor’s theorem and kθ∗ −θ k ≤ S +kθ k prove the remainder, F , and E                                                       claims.
+                                                                       t                  t                                        t            T
+                        Filtration-order implementation. At round t, the summaries through t−1, θt, and the certiﬁcate ζt are
+                                                                                                                      ¯    ¯     lin          ¯
+                        available before selection. The learner computes Q ,χ¯ ,u ,M ,ψ ,ǫ¯                                           and β , then solves every candidate system
+                                                                                                       t    t    t      t    t   t             t
+                                                                                                                                    2         col
+                        to the uniform tolerance and selects a . After observing r , it adds c to R                                                , adds θ with the Welford update
+                                                                                    t                              t                t         t+1               t
+                                                                              ¯          ¯         ¯                                          ⊤           ¯
+                                                               d = θ −θ , θ                    =θ +d/t, J =J +d (θ −θ ),
+                                                                        t       <t         ≤t        <t                   ≤t        <t              t       ≤t
+                                             ¯
+                        and updates F               and γˆ . It then forms θ                   and certiﬁes the nonnegative bound ζ                             before the next action. No
+                                              t+1            t                           t+1                                                              t+1
+                        current reward enters the current score.
+                                                                                                                                                                 ¯          lin
+                        In frozen linear-head models Q may be nonzero while L = L = 0; then χ¯ = M = ǫ¯                                                                         = 0, and exact
+                                                                           t                                          g         µ                       t          t        t
+                                                              ¯
+                        optimization also gives ψ = 0.
+                                                               t
+                        Corollary 26 (Bounded-path near-linear rate). Fix T and suppose for every t ≤ T
+                                                            ∗                              √                         √                        √               col
+                                               kθ k,kθ k ≤ R,               L ≤c / W, L ≤c / W, ζ ≤ζ / W, R ≤C tP ,
+                                                   t                           µ       µ                  g       g                t       0                 t           R T
+                       where P ≥1 is an explicitly supplied residual-energy factor. For exact current-parameter curvature and a uniform
+                                    T
+                       CGtolerance ε¯ ≤ ε¯< 1, set
+                                               t
+                                                                           2cgR√T −1
+                                                                                  √                                        2                                 2
+                                                                 x =                           ,     ρ =(1−x ) ,                      ρ =(1+x ) .
+                                                                    T          σ λW                    −                T               +                T
+                                                      ¯                     ¯
+                       If x      <1, then ρ C C ρ C for all t≤T. Writing
+                             T                     − t           t       + t                   r
+                                                                                                   1+ε¯                              ρ
+                                                                                      α =                   ,        A =α2 +,
+                                                                                         I         1−ε¯                 inf        I ρ
+                                                                                                                                       −
+                       the observable information schedule satisﬁes γ                               ≤γˆ ≤A γ , and
+                                                                                                 T        T         inf  T
+                                                                                       p                op      p 2              2                    ¯
+                                                                       R ≤2α ρ /ρ ω                                 (σ +G /λ)Tγ +2E                                                                (84)
+                                                                          T          I      + − max,T                                       T           T
+                       holds with
+                                                                                                op                     ¯       ¯
+                                                                                              ω          := max(β +ψ )
+                                                                                                max,T          t≤T       t       t
+                       and
+                                                                               p                                     √                    2√
+                                                                  op                                                              2cµR         T
+                                                               ωmax,T ≤           AinfγT +2log(1/δ)+                    λR+             √
+                                                                                                                                     σ W
+                                                                                      A             B
+                                                                                +√T +√T ,
+                                                                                       λWh           λW                                                        i
+                                                                                         −2           p                                          2
+                                                                     A =ζ +σ                  2c R C T(T −1)P +6Gc R (T −1) ,
+                                                                        T       0                 g         R                   T            g
+                                                                                  2    3                2
+                                                                     B =4c R (T −1)/σ .
+                                                                        T         g
+                       In addition, (66) holds and
+                                                              (                   "          p                                       2                4c2R3(t−1)#)
+                                                          1        ζ           1     2c R C t(t−1)P +6Gc R (t−1)
+                                                ¯        √ √0                           g          R           √T               g                         g
+                                                ψ ≤                       +                                                                       +                             .
+                                                  t         λ        W σ2                                         W                                           W

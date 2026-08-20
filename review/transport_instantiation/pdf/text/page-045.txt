@@ -1,0 +1,106 @@
+                 (iii) Noise.                                  
+           
+
+                                                               
+           
+
+                                                                Xg η                p
+                                                               
+      s   s
+      ≤ γ +2log(1/δ)
+                                                               
+           
+            t−1
+                                                               
+s<t σ σ 
+¯−1
+                                                                            Ct
+                       holds for all t ≥ 1 with probability at least 1 − δ by the time-uniform vector self-normalized martingale
+                       bound (Abbasi-Yadkori et al., 2011). Here x = g /σ is G -measurable before ξ = η /σ is revealed, and ξ
+                                                                          s     s         s                        s     s                        s
+                                                                                                                     e                   e
+                       is conditionally 1-sub-Gaussian given G . Equivalently, the interleaved ﬁltration F                  =G andF =F
+                                                                    s                                                  2s−1      s        2s      s
+                       supplies the required pre-increment measurability. For any candidate action a, Cauchy–Schwarz in the
+                       ¯
+                       C-norm gives
+                         t                                                     
+                                                                     Xgη                p
+                                                              ⊤¯−1         s s ≤ s¯ (a)
+                                                         g (a) C                             γ     +2log(1/δ).
+                                                         t        t          2      t       t−1
+                 Summing gives (138)–(139).                          s<t σ 
+                                                                                                      −                           ¯
+                 Corollary 42 (Predictable conﬁdence schedule). Suppose a nonnegative H -measurable sequence {F }                         satisﬁes
+                        ¯                                                                             t                            t t≥1
+                 F ≤F for all t. Then Algorithm 2 may set
+                   t     t
+                                                      ¯       p                          √           −1p¯
+                                                      β :=       γ    +2log(1/δ) +         λS + σ          F ,
+                                                       t          t−1                                       t
+                                                        ¯
+                 which is predictable and satisﬁes β ≥ β .
+                                                         t     t
+                          ¯                                                                                     ¯
+                 Proof. F ≥ F term-by-term implies each summand in (139) is dominated, so β ≥ β . Predictability holds
+                           t      t                                                                              t      t
+                                      ¯                           −
+                 because γ      , S, F , λ, σ, and δ are all H -measurable.
+                            t−1        t                         t
+                                                                    ¯     P       lin 2
+                 Lemma 25 supplies the computable choice F =                    (ǫ¯  ) ; a tighter externally certiﬁed predictable sequence
+                                                                     t       s<t s
+                 may replace it.
+                 Corollary 43 (Observable information-gain surrogate via the one-sided transfer factor). Run Algorithm 2 with
+                 a pre-reward algorithmic curvature sequence C , per-round CG tolerance with ε                        ≤ ε¯ < 1 for the played
+                                                                         s                                       s,a      s
+                                                                                                                   s
+                                                                                                                            2                2
+                 action, and an H -measurable one-sided optimism-transfer factor u (a) ≥ 1 satisfying s¯ (a) ≤ u (a)s                           (a)
+                                      s                                                           s                         s         s      C,s
+                                                                                                   ¯             ¯
+                 (Assumption 6). Suppose also that the nonnegative predictable sequence F satisﬁes F ≥ F . Deﬁne the observable
+                                                                                                     t            t     t
+                 information-gain surrogate
+                                                                      t−1                             
+                                                                     X                  u (a )
+                                                                                    −2 s s 2
+                                                           γˆ    :=       log 1+σ               s˜ (a ) ,
+                                                            t−1                         1−ε¯ s s
+                                                                     s=1                      s
+                          2                ⊤˜
+                 where s˜ (a ) = g (a ) u is the CG variance proxy computed at round s for the played action. Then γˆ                            is
+                    −     s   s      s   s     s                                                                                            t−1
+                 H -measurable and γˆ          ≥γ ,so
+                    t                     t−1      t−1
+                                                       ˆ      p                          √            −1p¯
+                                                      β :=       γˆ    +2log(1/δ) +        λS + σ          F
+                                                        t         t−1                                        t
+                                                    ˆ
+                 is a predictable schedule with βt ≥ βt. Played-action CG accuracy is suﬃcient for this information comparison.
+                 If the same tolerance also holds uniformly for every candidate action before selection, then Theorem 13 holds with
+                  ¯     ˆ
+                 βt = βt.
+                                                          2                   2                                                         2
+                 Proof. The transfer factor gives s¯ (a ) ≤ u (a )s              (a ), and Lemma 38 with ε              ≤ ε¯ gives s       (a ) ≤
+                                                          s   s       s   s   C,s  s                               s,as      s          C,s  s
+                   2                         2                  2                                                         −2
+                 s˜ (a )/(1 − ε¯ ); hence s¯ (a ) ≤ u (a )s˜ (a )/(1 − ε¯ ). By monotonicity of x 7→ log(1 + σ               x), each summand
+                   s  s          s           s   s      s   s   s  s          s
+                 of γ     in (71) is dominated by the corresponding summand of γˆ                 . Predictability at round t holds because
+                      t−12                                                                    t−1
+                 every s˜ (a ), u (a ), and ε¯ in the sum was ﬁxed before the corresponding past reward and belongs to the preﬁx
+                         s   s    s   s         s
+                 history H−. The schedule property then follows term by term as in Corollary 42.
+                            t
+                 This makes the information-gain component observable when u (a ) is certiﬁed. Together with Lemma 25, it
+                                                                                            s   s
+                 renders the full conﬁdence and centering schedules operational; it does not make them tight.
+                 Remark (Computability and dimension dependence of βt). Two caveats about βt deserve emphasis. First, γt−1
+                                                                           ¯
+                 is deﬁned through the frozen-feature Gram matrix C , whose per-sample Jacobians the matrix-free implementation
+                                                                            t
+                 deliberately does not store; γt−1 is therefore not directly computable in the stated memory model. Second, the
+                                                                       2       2 
+                 worst-case substitute γ        ≤dlog 1+(t−1)G /(dλσ ) does not exploit low realized information gain and can
+                                           t−1

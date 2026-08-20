@@ -1,0 +1,23 @@
+                                                   Dtarget = 0.25                                              Dtarget = 0.5
+                              80                         transport Hessian                80
+                                                  transport endpoint (dense oracle)
+                              60                          frozen reference
+                                                                                          60
+                                                     naive current (uncertiﬁed)
+                            pseudo-regret40                                            pseudo-regret40
+                            e                                                          e
+                            ulativ20                                                   ulativ20
+                            Cum 0                                                      Cum 0
+                                     0       200     400      600     800     1,000              0      200     400      600     800     1,000
+                                                    D        =1                                                 Dtarget = 2
+                                                       target
+                                                                                         100
+                            pseudo-regret50                                           pseudo-regret50
+                            e                                                         e
+                            ulativ                                                    ulativ
+                            Cum 0                                                     Cum  0
+                                     0       200     400      600     800     1,000              0      200     400      600     800     1,000
+                                                       Round                                                       Round
+                  Figure 1: Mean cumulative pseudo-regret at T = 1000. Shaded bands are pointwise paired-bootstrap 95%
+                  intervals over the 50 evaluation seeds, not simultaneous conﬁdence bands. All four methods are plotted; curves
+                  can coincide where their selected actions agree.

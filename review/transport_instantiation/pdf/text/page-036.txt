@@ -1,0 +1,79 @@
+                     (d) If kθsk,kθtk ≤ R, the gradients are bounded by G and are Lg-Lipschitz on the radius-R region, then
+                                             ¯         q col           p                                                            ¯                            ⊤
+                                            kr k ≤         R +G Q,                                                                  r =(r¯ ,...,r¯              ) ,          (112)
+                                               t 2           t               t                                                       t        1,t        t−1,t
+                                                              p                                                                                                  ⊤
+                                           ke k ≤L R Q ,                                                                            e =(e ,...,e                ) ,          (113)
+                                               t 2        g        t                                                                 t        1,t         t−1,t
+                                                                                  
+                                                             q col          p                              p
+                                           kv k ≤ρ              R +G Q +(1+ρ)L R Q.                                                                                          (114)
+                                               t 2       t        t               t               t    g         t
+                          Consequently a valid original-center certiﬁcate is
+                                                                                          p col          √                            √
+                                                                             ζ        ρ (    R +G Q)+(1+ρ)L R Q
+                                                                   rel         t       t       t               t              t   g         t
+                                                                  ¯         √
+                                                                 ψt    :=         +                             σ                            .                               (115)
+                                                                               λ
+                          The right side remains valid after replacing ρ by a predictable upper bound ρ¯ .
+                                                                                           t                                             t
+                     The exact ρ requires replaying φ and retaining at least the collection scalar q (or h′(q )) for every sample.
+                                      t                              s                                                                   s             s
+                     Computing the exact v               additionally uses the stored reward and the same scalar-link replay; q suﬃces because
+                                                     s,t                                                                                                     s
+                                                                                                               ′
+                     both r¯      and e       can be reconstructed from q ,q                , h(q ), and h (q ). Thus the structured replay uses O(t) scalar
+                             s,t         s,t                                        s    s,t      s                s
+                     metadata in addition to raw-example replay. The Welford quantities Q ,Rcol remain O(d) path-summary state,
+                                                                                                                           t    t
+                     but neither implementation is O(d) total memory.
+                     Proof. Equation (106) is the chain rule. Applying it to each column of (101) gives (107). Since the operator
+                     norm of the diagonal matrix is ρ and kG k                        ≤1byLemma31,χ ≤ρ . Equations (108) and (109) then follow
+                                                                   t            t op                                t      t
+                     respectively from the one-sided part of Lemma 31 and Corollary 33.
+                     Substitute δ          =(c −1)g in the deﬁnition of M :
+                                      s,t        s,t         s                                t
+                                                              r¯   δ    +e g +e δ ={r¯ (c −1)+c e }g .
+                                                                s,t s,t      s,t  s      s,t s,t        s,t   s,t             s,t s,t    s
+                                                                                                              ¯−1/2                                                  ¯−1/2
+                     This proves the ﬁrst identity in (111). Left multiplication by C                                   gives the transformed identity C                     M =
+                                                                                                                t                                                      t        t
+                     σ−1G v , so
+                             t  t
+                                                                           kMk¯−1 =σ−1kG v k ≤σ−1kv k ,
+                                                                               t Ct                  t  t 2               t 2
+                     which proves the second identity and uses equivalently G⊤G  I                                   .
+                                                                                                       t   t      t−1
+                     Finally let d        =kθ −θ k. Thecollection residual c = µ (z )−r gives r¯                                  =c +g⊤(θ −θ ). Thetriangleand
+                                      s,t        t     s                                      s p θs s             s          s,t      s     s     t     s
+                                                                                       ¯               col       √                                                               2
+                     Cauchy–Schwarz inequalities therefore yield kr k ≤                             R +G Q. Taylor’s theorem gives |e | ≤ (L /2)d ;
+                                                                                        t 2            t              t                                      s,t         g    √s,t
+                     because both parameters lie in the radius-R region, d                               ≤2R, hence |e | ≤ L Rd                     and ke k ≤ L R Q .
+                                                                                                     s,t                       s,t        g     s,t            t 2        g        t
+                                                                                                 ¯
+                     Applying the triangle inequality to v = Diag(c −1)r +Diag(c )e , using kc −1k                                               =ρ and kc k            ≤1+ρ,
+                                                                          t              t         t              t   t              t       ∞        t           t ∞              t
+                     proves (114). Combine this with Lemma 23 and (111) to obtain (115).
+                     Corollary 33 (Sharp two-sided feature-drift sandwich). If χt < 1, then
+                                                                                       2 ¯                              2 ¯
+                                                                           (1 −χ ) C  C  (1+χ ) C .                                                                        (116)
+                                                                                    t      t         t                t      t
+                                                                                                                                 2 ¯                          2 ¯
+                     Consequently, if a predictable certiﬁcate satisﬁes χ ≤ χ¯ < 1, then (1 − χ¯ ) C  C  (1+χ¯ ) C .
+                                                                                             t       t                        t      t       t              t     t
+                     Proof. Because A⊤At = Id, all d singular values of the (d + nt) × d matrix At equal one. Singular-value
+                                               t
+                     perturbation and (103) give, for j = 1,...,d,
+                                                                             |σ (B )−1| ≤ kB −A k                    =χ.
+                                                                                j    t                 t       t op        t
+                     For χ < 1, every singular value of B therefore lies in [1 − χ ,1 + χ ]. Squaring the singular values and using
+                             t                                             t                                  t         t
+                        ⊤          ¯−1/2        ¯−1/2                          2       ¯−1/2        ¯−1/2                    2                                                 ¯1/2
+                     B B =C                 CC            yields (1 − χ ) I  C                 CC            (1+χ) I. Congruence by the principal C
+                        t    t        t        t  t                          t            t        t  t                    t                                                     t
+                                                                                         2                 2                    2                2
+                     proves (116). If 0 ≤ χ ≤ χ¯ < 1, then (1 − χ¯ ) ≤ (1 − χ ) and (1 + χ ) ≤ (1+χ¯ ) , proving the certiﬁcate
+                                                     t       t                         t                t                    t                 t
+                     version.

@@ -1,0 +1,74 @@
+                 A Proofs for conﬁdence transport
+                 Proof of Theorem 1. Lemma 3 and (7) imply
+                                                                  ¯                         ¯
+                                                                 Dt/2                       Dt/2
+                                                       s¯ (a) ≤ e     s (a),      s (a) ≤ e      s¯ (a).                                 (36)
+                                                         t             t           t              t
+                 Inverting (8) gives
+                                                     s (a) ≤ √κ     s   (a),      s   (a) ≤ κ−1/2s (a).                                  (37)
+                                                      t          +,t C,t           C,t        −,t   t
+                 Thus, for every scored action,
+                                                        µ∗(a) ≤ m (a)+β s¯ (a)+b (a) ≤ U (a),
+                                                          t         t        t t       t         t
+                 where the ﬁnal step uses the ﬁrst inequalities in (36)–(37) and the all-domain solver upper certiﬁcate. Taking
+                 suprema does not require an optimizer to exist, so
+                                                          sup µ∗(a) ≤ sup U (a) ≤ U (a )+ξ .
+                                                                 t              t        t  t      t
+                                                          a∈At           a∈At
+                 Both suprema are ﬁnite measurable random variables by the protocol assumptions; no measurable maximizing
+                 action for the mean reward is used. The lower side of conﬁdence at the played action gives
+                                                           m(a)−µ∗(a )≤β s¯(a )+b (a ).
+                                                             t   t     t   t      t t  t     t  t
+                 Substituting the score and combining the last two displays yields
+                                                                          ¯    √
+                                                                          Dt/2
+                                                   reg ≤ β s¯ (a ) + β e         κ   sˆ (a ) + 2b (a ) + ξ
+                                                      t     t t  t      t         +,t t   t      t  t     t
+                                                                      ¯ rκ+,t
+                                                                      Dt
+                                                        ≤β 1+αe                   s¯ (a ) + 2b (a ) + ξ ,
+                                                            t       t       κ       t  t      t   t     t
+                                                                             −,t
+                 where the second line uses played-action sharpness and then the second inequalities in (37)–(36). The substitution
+                 uses the same realized value sˆ (a ) that appeared in the selected score; replacing it after selection would require
+                                                  t  t
+                 rechecking the oracle inequality. This proves (12).
+                                      ¯ p
+                                      Dt
+                 Let c = β [1+α e          κ    /κ   ]. Summation and one Cauchy–Schwarz application give
+                      t     t       t        +,t  −,t
+                                                                          X s s
+                                                            X                         X2 X 2
+                                                    R −2        b (a ) −      ξ ≤         c        s¯ (a ).
+                                                      T          t   t         t           t        t   t
+                                                              t            t           t        t
+                         2          2                                                                                          −2 2
+                 Since s¯ (a ) ≤ G /λ, the scalar inequality x ≤ (1 + M)log(1 + x) for 0 ≤ x ≤ M, with x = σ                     s¯ (a ) and
+                         t  t                                                                                                      t  t
+                         2     2
+                 M=G/(λσ ),yields
+                                                                 T                     2
+                                                               X2                2    G
+                                                                    s¯ (a ) ≤  σ +         γ .                                           (38)
+                                                                     t  t             λ      T
+                                                                t=1
+                                                  ¯ p
+                                                 D
+                 This proves (13). Finally, α e t      κ   /κ     ≥1, hence 1+x ≤ 2x gives (14). The probability statement follows
+                                               t        +,t   −,t
+                 by a union bound; independence is not required.
+                 Proof of Corollary 2. On the measurable event {K = n}, the ﬁnite vector {U (a                 )}n    is H -measurable by
+                                                                          t                              t   t,k  k=1      t
+                 joint measurability on the graph. Its maximum and the smallest maximizing index are measurable. A countable
+                 partition over n ≥ 1 therefore gives a Ht-measurable random index and hence a measurable selected action. The
+                 score maximum is attained, so ξ = 0. The same ﬁnite-max argument applies to the mean-reward supremum, and
+                                                    t
+                 each universal event is a ﬁnite intersection on {K = n}.
+                                                                        t
+                 Proof of Lemma 3. Fix v 6= 0 and set f (τ) = v⊤V(τ)v. The path is continuous and positive deﬁnite on a
+                                                              v
+                 compact interval, so fv is absolutely continuous and bounded away from zero. Thus logfv is absolutely continuous
+                 and, almost everywhere,
+                                                                                   ⊤ ˙
+                                                                  d logf (τ) = v V(τ)v.
+                                                                 dτ       v       v⊤V(τ)v

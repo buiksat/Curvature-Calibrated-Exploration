@@ -1,0 +1,98 @@
+                          In the regret bound (Theorem 13), the CG inﬂation enters through the per-round factor α = p(1+ε¯ )/(1−ε¯ ),
+                                                                       P                                                                                                                 t                  t             t
+                          inside the sum of squares                           α2u (a )ω2; no horizon maximum over ε¯ is taken.
+                                                                            t   t   t    t     t                                                    t
+                          Action screening (practical heuristic).                                        When the action set At is large, computing the CG solve for every
+                          action is prohibitive (|A | × I CG steps per round). A practical heuristic is to screen the top-K actions by mean
+                                                                   t
+                          prediction µb (a) (forward passes only), then compute UCB widths for the K candidates. This reduces cost to
+                                                t
+                          K×ICGsolves. The regret guarantee in Theorem 13 analyzes full enumeration of all K active candidate indices;
+                                                                                                                                                                                 t
+                                                                                                                                                                                                                ∗         K
+                          screening can drop the optimal arm and is not covered by the theory unless one adds an assumption that a ∈ At
+                                                                                                                                                                                                                t
+                          for all t.
+                          Algorithm 3 Operational CC-UCB with path certiﬁcates
+                          Require: Reward predictor µθ, damping λ > 0, noise proxy σ, conﬁdence level δ, radius S, analytic constants
+                                                                                                                                                                             ˆ
+                                 G,L ,L ; algorithmic curvature mode C (exact full-history C or approximate C ) with certiﬁed one-sided
+                                        g      µ                                                       t                                      t                                 t
+                                 factor κ            and condition upper bound κ¯ ; per-round CG tolerance ε¯ < 1
+                                              +,t                                                       t                                                t
+                                                                                                                   ¯                             col            ¯
+                            1: Initialize θ , certiﬁed ζ ≥ k∇L (θ )k, n ← 0, θ ← 0, J ← 0, R                                                          ←0,F ←0,γˆ←0,andD ←∅
+                                                    1                    1              1     1                                                                                                      0
+                            2: for t = 1,2,...,T do
+                            3:       Observe x , K , and candidates a                               , . . . , a       ; set A = {a                : k ≤ K }; draw pre-action randomness Ω
+                                                       t      t                                 t,1            t,Kt               t          t,k               t                                                            t
+                                     {H of (145)}
+                                          t                                                √             √
+                                                                    ¯ 2                                                                           2
+                            4:       Q ←J+nkθ −θk ;χ¯ ←L Q/(σ λ);u ←κ (1+χ¯ )
+                                        t                     t                t          g       t                  t         +,t             t
+                                      ¯            −2        p col                                              2         3/2       ¯                   ¯       √
+                            5:       M ←σ [L R Q +(3GL /2)Q +(L /2)Q ];ψ ←(ζ +M )/ λ                                                                                             {in a radius-R region use
+                                         t                 g               t               g         t          g         t           t          t         t
+                                     L2RQ for the last term}
+                                       g       t                                             p                                √                   √
+                                      lin                                      2    ¯                                                         −1      ¯              ¯        ¯
+                            6:       ǫ¯    ←(L /2)(S+kθ k) ; β ←                                 γˆ + 2log(1/δ) +                λS+σ                F; ω ←β +ψ                        {corrected center uses
+                                      t              µ                    t          t                                                                       t         t        t
+                                              ¯
+                                     ωt = βt}
+                            7:       Form or receive a ﬁxed Ht-measurable SPD matrix–vector oracle v 7→ Ctv, Ct  λI, held ﬁxed across all
+                                     CGsolves this round                             {exact/buﬀered special case C v = λv +σ−2P                                                w g (x ,a )[g (x ,a )⊤v],
+                                                                                                                                          t                             s∈St s t            s    s      t    s     s
+                                    weights ws per §F.3}
+                            8:       for k = 1,...,Kt do
+                            9:           a ←a
+                                                   t,k
+                          10:            µb (a) ← µ (x ,a)                                                                                    {mean prediction (or corrected center (76))}
+                                           t              θt      t
+                          11:            g (a) ← ∇ µ (x ,a)                                                                                                                                 {gradient feature}
+                                           t               θ θt         t
+                          12:            if gt(a) = 0 then
+                                               2
+                          13:                s˜ (a) ← 0                                                                                                                     {skip CG; no residual ratio}
+                                               t
+                          14:            else                                                                                                  √
+                                             ˜
+                          15:                u ← CG(C , g (a)); stop only once kr k/kg (a)k ≤ ε¯ / κ¯ , or use a certiﬁed budget I from (152)
+                                                                t      t                                         I         t                t        t                                                  t
+                                             {recompute the original residual in ﬂoating point; a point check is not an enclosure}
+                                               2                     ⊤˜
+                          16:                s˜ (a) ← g (a) u                                                                                                             {approx. predictive variance}
+                                               t              t
+                          17:            end if
+                          18:        end for                                    h                        r                                    i
+                                                                                                              u (a       ) p
+                                                                                                                t    t,k          2
+                          19:        k ←minargmax                                  µb (a      ) +ω                              s˜ (a      ) ; a ← a                    {measurable smallest-index tie
+                                       t                           1≤k≤K             t    t,k          t                          t    t,k          t         t,k
+                                                                               t                               1−ε¯                                               t
+                                                                                                                        t
+                                     rule}
+                          20:        Play a , observe r
+                                                t                   t
+                          21:        D ←D ∪{(x,a,r)}
+                                        t         t−1             t     t    t
+                                                                              col          col        2    ¯        ¯          lin 2                                    −2        2
+                          22:        c ←µ (x ,a )−r ; R                            ←R +c;F←F+(ǫ¯ ) ;γˆ←γˆ+log[1+σ us˜ (a )/(1−ε¯)]
+                                      t         θt      t    t         t                              t                        t                                              t t      t              t
+                                                                          ¯ ¯           ¯                                 ⊤            ¯
+                          23:        n←n+1;d←θt−θ;θ←θ+d/n;J←J+d (θt−θ)                                                                                                           {vector Welford update}
+                          24:        Run Jopt warm-started optimizer steps on the full data set D to obtain θ                                                                 , projecting to the certiﬁed
+                                                t+1                                                                                               t                     t+1
+                                     region if required
+                          25:        Certify ζ            ≥k∇L (θ )k;unlesstheterminal optimizer evaluation supplies this quantity, this requires
+                                                    t+1                t+1      t+1
+                                     one additional full-data gradient evaluation
+                          26: end for
+                          For the exact-curvature theorem, Algorithm 2 is run with S = {1,...,t−1}, w = 1, full action enumeration,
+                                                                                                                                     t                                 s
+                                                                                                             2                                                                                                   ˆ
+                          C = C , and the transfer factor u = (1 + χ¯ ) from Lemma 31. For an approximate operator C = C , use
+                            t          t                                                t                 t                                                                                              t         t
+                          u =κ (1+χ¯ )2 from Theorem 46. The selection rule needs only the one-sided upper transfer factor u (a) for
+                            t        +,t             t                                                                                                                                                           t

@@ -1,0 +1,63 @@
+                require a smallness condition. A rectangular factor-         GGN or Fisher metric; factor-path and Hessian cer-
+                path bound covers relinearized scalar GGN factors            tiﬁcates tailored to replayed curvature; a two-sided
+                and, conditionally on an absolutely continuous output-       approximate operator; generic certiﬁed solver widths;
+                weight factor, vector-output Fisher geometry. We do          approximate score maximization; closure through the
+                not claim the underlying Thompson geometry or the            frozen sequential information gain; and a corrected-
+                path-to-Loewner inequality as new.                           center squared-loss specialization. Each component
+                The transported-UCB theorem is abstract at the conﬁ-         has antecedents. Their operational composition for
+                dence and solver interfaces. It permits a standard-Borel     relinearized contextual-bandit curvature is the result
+                action space with a graph-measurable random action           claimed here.
+                correspondence, ﬁnite measurable reward and score            The contribution is the conﬁdence transport and its
+                suprema, and a pre-reward measurable approximate             contextual-bandit instantiation, not generic conjugate
+                selector. It also permits a generic pre-reward center,       gradients, a generic UCB-to-regret reduction, or uni-
+                action-dependent model bias, a certiﬁed upper width          form superiority of full curvature. The new controlled
+                over the score domain, and solver sharpness only at the      audit is reported in Section 6. Earlier numerical work
+                played action. A two-sided algorithmic-operator com-         is scoped separately in Appendix N; it does not instan-
+                parison then transports the selected width back to the       tiate the new path and two-sided-operator premises.
+                sequential frozen potential. This lower comparison is
+                essential. When only a one-sided operator certiﬁcate is
+                available, the previous dynamic-width theorem remains        2    Abstract conﬁdence transport
+                valid but does not give the new closed guarantee.
+                For diﬀerentiable squared-loss models, we make the           The analysis separates the statistical conﬁdence metric
+                corrected center primary. It combines the current non-       from the current relinearized metric and from the op-
+                linear prediction with a frozen-feature ridge correction.    erator used by the algorithm. This separation is the
+                The resulting identity holds for any predictable rep-        main object of the paper; the squared-loss construction
+                resentation sequence in the certiﬁed region, not only        in Section 4 is one way to instantiate it.
+                an ERM or approximate stationary point. Historical
+                linearization and misspeciﬁcation enter the conﬁdence        Protocol and timing. Let (A,B) be a standard
+                radius through an explicit energy; current errors enter      Borel action space. At round t, the learner observes a
+                additively. Constant nonvanishing misspeciﬁcation can        context and a nonempty random action correspondence
+                still make regret linear.                                               A
+                                                                             A :Ω→2 whosegraph
+                                                                               t
+                Contributions. (1) An operational instantiation of                 Gr(A ) := {(ω,a) : a ∈ A (ω)} ∈ H− ⊗B.
+                classical Thompson Finsler geometry for moving, relin-                   t                    t         t
+                earized curvature, together with factor-path and Hes-
+                sian certiﬁcates that allow arbitrary gradient rotation      Here H− is the history after the context and ac-
+                                                                                     t
+                and require no small-drift premise (Lemmas 3 and 4           tion correspondence are observed but before fresh
+                and Corollary 5). (2) A transported-UCB regret the-          round-t algorithmic randomization.        The variable
+                orem with generic pre-reward centers, measurable ap-         Ωt records all round-t pre-reward randomization,
+                proximate score maximization, generic certiﬁed solver        which may be revealed in sequential stages, and
+                widths, two-sided approximate operators, and a closed        Ht = H− ∨σ(Ωt) contains that randomization but
+                                                                                      t
+                frozen-potential bound (Theorem 1). (3) A corrected-         not the reward.       The restrictions to Gr(A ) of
+                                                                                                                                t
+                center squared-loss specialization with approximate         (ω,a) 7→ µ∗(a),q (a),m (a),b (a),sˆ (a), and, once de-
+                                                                                       t      t       t     t     t
+                realizability, a primitive ﬁnite-dimensional rate, and a     ﬁned below, U (a) are assumed jointly measurable
+                                                                                             t
+                global near-linearity corollary that retains exponential     with respect to Ht ⊗ B. We also assume explicitly
+                transport without a small-drift assumption. The result       that sup      µ∗(a) and sup        U (a) are ﬁnite H -
+                                                                                      a∈A    t             a∈A    t                 t
+                                                                                          t                    t
+                reduces to LinUCB in the frozen linear exact-solve case      measurable random variables, that the oracle below
+               (Corollaries 7 to 9). (4) A locked controlled exper-          returns a H -measurable selector in A , and that the
+                                                                                         t                           t
+                iment that executes the corrected-center score with          simultaneous conﬁdence and all certiﬁcate events below,
+                dense current and frozen metrics, audits every theorem       including path, operator, all-domain solver-upper, and
+                input in ﬂoat64, and measures conﬁdence coverage,            played-action sharpness validity, are measurable. These
+                path-certiﬁcate conservatism, and bound nonvacuity           are substantive assumptions; standard-Borel structure
+               (Section 6).                                                  andgraphmeasurability alone do not make every supre-
+                The new contribution is the composition of predictable       mumorselector measurable.
+                frozen statistical conﬁdence; a current relinearized         Let qt(a) ∈ Rd be the prediction query. The three

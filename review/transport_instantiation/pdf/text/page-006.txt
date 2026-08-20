@@ -1,0 +1,86 @@
+                 pseudo-responses and the frozen ridge estimator by                  Corollary 8 (Finite-dimensional corrected-center
+                                                                                                        ¯
+                                                                                     rate). Suppose D ≤ D, α ≤ α, and κ                /κ     ≤K
+                              y =r −µ (x ,a )+q (a )⊤θ ,                   (25)      for all t. Let       t         t               +,t   −,t
+                               s     s     θs   s  s       s  s     s
+                            ˆlin    ¯−1 −2X                                                               X                       2
+                            θ    =V σ             q (a )y .                (26)
+                             t        t             s  s   s                                       B =        [ǫ   (s) +ǫ     (s)] ,
+                                                                                                     T          lin       mis
+                                              s<t                                                         s<T
+                                                                                                           T
+                 The corrected center is                                                           cur    X
+                                                                                                 E     =      [ǫ    (a ) + ǫ     (a )].
+                                                                                                   T            lin,t t      mis,t  t
+                         corr                           ⊤ ˆlin                                            t=1
+                      mt (a)=µθt(xt,a)+qt(a) (θt −θt).                     (27)     Then Theorem 1 and Corollary 7 imply
+                                         ◦                                     ◦                     D√
+                 Fix δ ∈ (0,1). Let ρ be the Taylor remainder of µ                        RT ≤2αe        K
+                                         s                                    θ                                                       √ 
+                 around θs, and supply envelopes                                                     q                        √           BT
+                                                                                                 ×     Γ     +2log(1/δ)+ λS+
+                                                                                                         T,d                             σ
+                         ◦                     ◦
+                       |ρ | ≤ ǫ   (s),      |m (x ,a )| ≤ ǫ       (s),     (28)
+                         s      lin                s   s      mis                                  s
+                                                                                                               2
+                                                                                                 ×      σ2 + G      TΓ
+                 with the corresponding actionwise current envelopes                                           λ        T,d
+                 ǫ    (a) and ǫ       (a). Each envelope is deterministic
+                  lin,t          mis,t                                                                        T
+                 or measurable before the reward at the round where                              +2Ecur+Xξt.                                   (32)
+                 it is used; the complete historical sum below is known                                T
+                 before selecting a . Deﬁne                                                                  t=1
+                                      t
+                                     p                        √                     With exact realizability and a frozen linear model,
+                            βcorr =     γ    +2log(1/δ)+ λS                          BT = Ecur = 0. For ﬁxed d and problem constants,
+                             t           t−1                                                   T                         √ √
+                                          s                                          the leading term is then O(eD Kd T logT). Exact
+                                        1   X                       2      (29)
+                                     +          [ǫ  (s) +ǫ      (s)] .               solves set α = 1, exact current curvature sets K = 1,
+                                        σ         lin       mis
+                                            s<t                                      and exact score maximization sets ξt = 0, recovering
+                                                                                     the standard LinUCB determinant-potential rate up to
+                 Corollary 7 (Corrected-center conﬁdence without op-                 displayed constants.
+                 timizer assumptions). With probability at least 1 −δ,               Corollary 9 (Global near-linearity under exponential
+                 simultaneously over rounds and actions,                             transport). Assume exact realizability, µ∗(z) = µ ◦(z),
+                                                                                                                                             θ
+                                                                                     and suppose kθ◦k ≤ R and kθ k ≤ R for every t.
+                     ∗         corr         corr                                                          2                t 2
+                  |µ (a) −m        (a)| ≤ β     s¯ (a) + ǫ    (a) +ǫ       (a).
+                     t         t            t    t        lin,t       mis,t          On the certiﬁed convex radius-R region, assume the
+                                                                           (30)      prediction gradient is L -Lipschitz for the Taylor en-
+                 The identity and bound hold for any predictable θ in                                            µ
+                                                                            t        velopes and satisﬁes the replay-path Hessian bound L
+                 the certiﬁed region. They require no exact ERM, ap-                                                                              g
+                 proximate stationarity, optimizer residual, or optimizer            in Corollary 5, with
+                                                                                                            c                   c
+                 convergence rate.                                                                  L ≤ √µ ,           L ≤ √g ,
+                                                                                                      µ      W           g      W
+                 The historical deterministic term in (29) follows from              with W > 0. Use the corrected center, exact current
+                   ⊤¯−1
+                 Φ V Φ  I for Φ = [q /σ,...,q                       /σ].    Its
+                   t   t    t                t 2      1           t−1                curvature, exact dense solves, and exact score maxi-
+                 scaling is 1/σ, not 1/σ .         Fixed nonvanishing mis-           mization in ﬁnite parameter dimension d, and suppose
+                 speciﬁcation generally creates a linear current-bias                kq (a)k ≤ G. Thus α = 1, κ                = κ       = 1, and
+                 term and can also make the historical radius vacu-                     t     2                  t         −,t      +,t
+                                                                                     ξt = 0. Deﬁne
+                 ous. This is a graceful-degradation statement, not a                                                   √
+                 robust misspeciﬁed-bandit guarantee.                                                             4c R T −1
+                                                                                                       D      :=     g √         .
+                                                                                                         T,W         σ λW
+                 5     Closed ﬁnite-dimensional rates and                           Then, with probability at least 1 − δ,
+                       local alternatives                                                                  "q                         √ #
+                                                                                                               Γ     +2log(1/δ)+ λR
+                                                                                                                 T,d      √
+                                                                                           R ≤2eDT,W                     2
+                 Let r    =min{d,T}. Rank–trace concavity gives the                          T                     2c R     T
+                        T                                                                                       + µ√
+                 primitive closure                                                                   r               σ W
+                                                                                                              2 p
+                                                               2                                  × σ2+G             TΓ
+                             γ ≤Γ :=r log 1+ TG                     .      (31)                                λ        T,d
+                              T      T,d      T           r λσ2
+                                                           T                                         4c R2T
+                                                                                                        µ
+                 No ﬁxed tangent subspace is required.                                            + √W .                                       (33)

@@ -1,0 +1,61 @@
+               entered that selection. The environment was not ﬁl-         7   Conclusion
+               tered after generation. At T = 1000, all ﬁve actions
+               were optimal somewhere in every evaluation stream,          Relinearized exploration can be analyzed without iden-
+               mean optimal-action entropy was 1.579, and the mean         tifying the current metric with the predictable conﬁ-
+               optimality gap was 0.123. Mean regret was 180.4 for the     dence metric. Classical Thompson Finsler geometry
+               best ﬁxed action and 185.4 for the online context-free      gives a two-sided transport certiﬁcate for every ﬁnite
+               mean-only baseline. These diagnostics were reported,        selected-path length, and the transported-UCB theo-
+               not used to select seeds.                                   rem composes it with approximate operators, generic
+                                                                           solver upper widths, and approximate score maximiza-
+               Validity audit.     For the primary policy, every one       tion. A lower operator certiﬁcate is what closes the
+               of the 50 runs in each of the 12 horizon–target cells       selected width through the sequential frozen potential;
+               retained simultaneous reference conﬁdence and trans-        the one-sided dynamic theorem remains the appropriate
+               ported optimism. The exact 95% Clopper–Pearson              fallback when that premise is unavailable.
+               interval is [92.9%,100%] in every cell. The strict ag-      The corrected center removes nonlinear optimizer con-
+               gregate accepted all 2400 policy trajectories with no       vergence from the concrete squared-loss conﬁdence
+               deterministic algebra or certiﬁcate-check failure, and      proof. Representation learning may follow any pre-
+               the primary policy had no bound violation on the joint      dictable path inside the certiﬁed region. The remaining
+               conﬁdence event (Table 3). This ﬁnite-sample observa-       obligations are visible rather than implicit: historical
+               tion does not prove or empirically validate the theorem.    and current approximation error, metric path length,
+               In particular, ordinary ﬂoat64 Cholesky, eigenvalue,        two-sided operator distortion, solver validity, and score
+               and quadrature checks are not veriﬁed enclosures.           oracle accuracy. In the frozen linear exact-solve limit
+                                                                           these terms reduce to the usual LinUCB determinant-
+               Certiﬁcate tightness and bound nonvacuity. At               potential guarantee. Under the explicit global near-
+                                                            ¯Q
+               T = 1000, the median maximum realized D          ranges     linearity scale of Corollary 9, taking W = Ω(T) keeps
+                                                             t
+               from 0.0486 to 0.384, while the median maximum end-         the exponential path factor bounded and yields the
+                                                    −7              −6
+               point distance ranges from 1.31 × 10     to 8.74 × 10  .    displayed controlled nonlinear rate without a Dt < 1
+               At quadrature checkpoints, the median selected factor-      premise. Here W is an abstract smoothness scale, not
+               path length is only 1.20–1.22 times the endpoint dis-       generic network width. The controlled scaled-tanh
+                                ¯Q             5           6
+               tance, whereas Dt is 2.51×10 –1.88×10 times the             execution in Section 6 found simultaneous reference
+               selected-path diagnostic. The large ratios arise be-        conﬁdenceandtransportedoptimisminall600primary-
+               cause the realized metric motion is extremely small;        policy runs and no deterministic audit failure across the
+                                            ¯Q
+               the corresponding median eDt /2 is 1.02–1.18. The cu-       locked grid. It also exposed the practical gap between
+               mulative guarantee is nevertheless vacuous here. The        validity and usefulness: the Hessian/Q path envelope
+                                                                                                                  t
+               median sharp right-hand side is 126.7–155.7 times re-       was orders of magnitude longer than the selected path
+               alized regret over all reported cells and 126.7–135.0       diagnostic, and the median sharp bound was between
+               times at T = 1000. No run has zero regret. Since            126.7 and 155.7 times realized regret. The denser end-
+               |µ∗(z)| ≤ kφ(z)kkθ◦k ≤ 1, cumulative pseudo-regret          point and frozen-reference policies had lower descriptive
+               has the deterministic cap 2T. In every cell the the-        regret than the operational Hessian-certiﬁcate policy
+               orem bound also exceeds this cap: the median right-         in this environment. This is not evidence of a uniform
+               hand sides are 3,989–12,607, versus caps of 500–2,000.      curvature advantage.
+               The appendix reports the complete tightness table and
+               bound decomposition.                                        Limitations. The abstract theorem assumes a
+                                                                           standard-Borel action space, a graph-measurable ran-
+               Policy outcomes. At T = 1000, mean regret for               dom action correspondence, ﬁnite measurable mean-
+               the operational Hessian-certiﬁcate policy rises from        reward and score suprema, a measurable approximate
+               81.0 to 94.0 across the four target conditions (Table 4).   selector and universal events, a ﬁnite pre-reward path
+               Thedenseendpoint, frozen reference, and naive-current       envelope, and a two-sided operator comparison. The
+               policies have lower descriptive regret in every condi-      squared-loss specialization requires a ﬁxed ex-ante ref-
+               tion. The endpoint result isolates conservatism in the      erence model, a preﬁx-measurable representation path,
+               analytic path envelope but does not provide a scalable      and supplied pre-reward linearization and misspeciﬁ-
+               policy certiﬁcate. The naive score’s observed optimism      cation envelopes. Constant misspeciﬁcation can yield
+               does not make it theoretically valid. These compar-         linear regret. The corrected center also needs access to
+               isons do not show a causal or uniform advantage for full    the frozen-feature ridge estimator. The factor-path ge-
+               curvature; they show that the operational certiﬁcate        ometry does not by itself prove an exponential-family
+               can change actions and increase regret here.                conﬁdence theorem. We do not claim unrestricted

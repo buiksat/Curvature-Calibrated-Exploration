@@ -1,0 +1,85 @@
+                 and set Γ0,r := 0 for the round-one conﬁdence schedule. The bound r must be known before selection; a terminal
+                 realized rank is only post-hoc. Then γ       ≤Γ andCorollary28givesthefullyexplicit conditional projected-Gram
+                                                           T      T,r
+                 bound                                         p              q
+                                                                                    2     2                ¯
+                                                   R ≤2α ρ /ρ Ω                  (σ +G /λ)TΓ          +2E ,                                 (68)
+                                                     T       I     + − T,r                         T,r      T
+                                       √            √                           2                     2
+                 where x      = 2c R T −1/(σ λW), ρ               = (1 − x ) , ρ        = (1 + x ) , and Ω           is displayed with every
+                           T        g                          −             T       +             T             T,r          2
+                 T,W,r,P ,λ,σ dependence in the appendix. At ﬁxed r and problem constants, W = Ω(T P ) makes the
+                            T                                          √                     √                                   T
+                 path inﬂation bounded and gives RT = O(r T logT) + O(T/ W). This is a low-rank tangent-space or
+                 parameter-eﬃcient adaptation regime, not generic full-network training.
+                 Theorem 18 (Conditional growing-window bound under ﬁxed-subspace excitation). Adopt the hypotheses, events,
+                 and valid predictable schedules of Theorem 13, let m = min{t−1,⌈tq⌉} for q ∈ (0,1], and let C be the unrescaled
+                                                                            t                                               t
+                                                                                                                                               2
+                 current-parameter Gram over the last m observations. Thus Proposition 45 gives κ                     =1and u =(1+χ¯ ) .
+                                                                t                                                 +,t             t          t
+                 Suppose candidate gradients lie in a ﬁxed subspace U, and let P               be its orthogonal projector. For a supplied
+                                                                                            U
+                 burn-in index τ     ∈{1,...,T +1}, assume the predictable window-excitation condition
+                                  w
+                                                                      C λI+κ mP
+                                                                        t          w t U
+                 holds for a known κ       >0and every t ≥ τ . Then, on the same event of probability at least 1 − δ − δ                      as
+                                         w                         w                                                                      cert
+                 Theorem 13,
+                                                                     C
+                                                                   Λ ≤L (T;τ ),
+                                                                     T      q     w               
+                                                                                                 2
+                                                            L (T;τ ) := (τ −1)log 1+ G
+                                                             q      w        w                 λσ2
+                                                                               2  T
+                                                                          +G X             1      ,                                         (69)
+                                                                             σ2       λ+κ m
+                                                                                 t=τ        w t
+                                                                          (         w
+                                                                            O(τ +T1−q), q <1,
+                                                            L (T;τ ) =          w
+                                                             q      w       O(τ +logT), q =1.
+                                                                                w
+                                                                  2   2   −1      −1                                                      1−q
+                 For τ   =1, more explicitly, L (T;1) ≤ (G /σ )[λ            +κ h (T)], where, for T ≥ 2, h (T) = 1+((T −1)                    −
+                       w                           q                              w q                               q
+                 1)/(1 − q) for q < 1 and h1(T) = 1 + log(T − 1), while hq(1) := 0 in both cases. Writing rU = dimU, the
+                 excitation premise can ﬁrst hold nontrivially only once m ≥ r , because rank(C −λI) ≤ m ; thus τ                       includes
+                                                                         p          t    U                    t            t         w
+                 the required rank-r     burn-in. If H     =max        α    u (a )ω , then
+                                      U                 T         t≤T   t    t   t   t
+                                                                    q 2         2
+                                                        R ≤2H          (σ +G /λ)TL (T;τ )+2E .                                              (70)
+                                                          T       T                     q      w        T
+                            e             e   1−q/2                                     e   1−q                          e
+                 If H =O(1), E =O(T                 ), and the burn-in obeys τ       =O(T       ) for q < 1 (or τ     =O(1) for q = 1), then
+                      T             T                                             w                                w
+                                             e   1−q/2
+                 (70) simpliﬁes to R     =O(T          ); otherwise its displayed L and E         terms remain. This is conditional on the
+                                       T                                              q        T
+                 ﬁxed subspace, excitation, and all conﬁdence, transfer, optimizer, and CG certiﬁcates above. Certiﬁed worst-case
+                 width-solve work is O(KT1+3q/2log(1/ε¯)) sample-CVPs when a ﬁxed uniform target ε¯∈ (0,1) is enforced; this
+                 count excludes model optimization, candidate-gradient computation, and certiﬁcate construction.
+                                                                              C               2      2
+                 Proof. Before τ , C  λI bounds each logarithm in Λ            by log(1+G /(λσ )). Thereafter, for g (a) ∈ U, inversion
+                                  w    t                                      T                                             t
+                                                       2           2                                                                           2
+                 of the excitation inequality gives s     (a) ≤ G /(λ+κ m ); summing log(1+x) ≤ x proves (69). Since S ≤ TH ,
+                                                       C,t                  w t                                                       T        T
+                 substitution in Theorem 13 proves (70). The condition-number bound κ(C ) ≤ 1+m G2/(λσ2) makes CG use
+                    √                                                                                  t            t
+                 O( m log(1/ε¯)) iterations, each replaying m samples; summing Km3/2 proves the cost claim.
+                         t                                           t                           t
+                 Under the hypotheses of Corollary 28, if the window policy uses the predictable rank envelope Γt−1,r instead
+                 of the realized γˆ      in its conﬁdence radius, then H          ≤ α (1 + x )Ωwin, where Ωwin is the explicit Ω               in
+                                    t−1                                        T      I        T    T,r            T,r                    T,r
+                 Corollary 28 with Ainf = 1. Hence (70) contains no uncontrolled information-gain placeholder. The excitation
+                 premise is restrictive and standard in persistently excited identiﬁcation; contextual diversity alone does not
+                 imply it. For dimU = r > 1 one must choose τ            after a rank-r burn-in, as the formal early charge records. The
+                                                                       w
+                 predictable rank schedule in Corollary 28 makes H            polylogarithmic under the same bounded-path conditions.
+                                                                            T
+                 These suﬃcient upper-bound exponents are not a Pareto frontier or a lower bound. When U is supplied, the
+                 projected Gram in (87) can instead be solved directly.

@@ -1,0 +1,18 @@
+# Structural PDF check
+#
+# Canonical command : qpdf --check paper/main.pdf
+# Substitute used   : gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=nullpage
+#   qpdf is not installed in this environment. The nullpage device fully
+#   interprets every page and content stream and fails on a structurally
+#   broken file, so it detects the same class of corruption qpdf --check
+#   reports. It does not reproduce qpdf's object-level warnings.
+#
+exit_status: 0
+stderr_bytes: 0
+
+## stdout
+
+
+## stderr
+
+

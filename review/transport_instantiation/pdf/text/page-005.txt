@@ -1,0 +1,85 @@
+                                      D/2                              D/2
+                 q =e , s(q ) = e           and s¯(q ) = 1, so s = e       s¯ is    Therelative condition in Lemma 4 can be much sharper
+                  2      2     2                    2
+                 attained. Thus each one-way factor is sharp, and a uni-            than the ridge-only bound in Corollary 5: excitation
+                 form argument based only on the symmetric Thompson-                in the current metric attenuates motion in already-
+                 distance bound cannot improve the resulting round-trip             observed directions. It permits arbitrary gradient rota-
+                 factor eD. This is a metric-factor sharpness statement,            tion and requires neither a ﬁxed subspace nor known
+                 not a contextual-bandit regret lower bound and not a               rank.
+                 claim that every trajectory attains the worst case.                Proposition 6 (Width transport and approximate
+                 Lemma 4 (Rectangular factor-path certiﬁcate). Let                  operators). Under (7) and (8),
+                                   m×d
+                 B : [0,1] → R        ⊤ be absolutely continuous and set                           ¯                              ¯   −1
+                 V(τ) = λI+B(τ) B(τ), with λ > 0. Then                                   2        Dt       2          2          Dt       2
+                                                                                        s¯ (a) ≤ e   κ+,ts    (a),   s   (a) ≤ e    κ    s¯ (a).
+                                                                                         t                 C,t        C,t             −,t t   (21)
+                                       Z 1    ˙          −1/2
+                            D(V)≤2          kB(τ)V(τ)         k   dτ.      (17)
+                                                               op                   Exact current curvature has κ            = κ      = 1. More
+                                         0                                                                              −,t      +,t
+                 More generally, suppose there is a measurable function             generally, the operational relative-error certiﬁcate
+                 νt : [0,1] → [0,∞) with νt ∈ L1([0,1]) such that                                  −1/2              −1/2
+                                                                                               kV       (C −V )V          k   ≤ε <1           (22)
+                                                                                                   t      t      t   t     op     t
+                                  ˙    ⊤ ˙              2
+                                  B(τ) B(τ)  νt(τ) V(τ)                            gives κ      = 1 − ε and κ           = 1 + ε . An upper
+                                                             R                               −,t           t         +,t           t
+                 almost everywhere. Then D(V) ≤ 2 1ν (τ)dτ. For                     comparison alone does not imply a lower factor.
+                                                              0   t
+                 nonnegative νt, the displayed PSD premise is equiva-                                                       p ×d
+                                                                                    For vector outputs, let J (θ) ∈ R s           and supply an
+                                                  ˙          −1/2                                                 s
+                 lently the norm condition kB(τ)V(τ)              k    ≤ν(τ)
+                                                                    op     t                                                     r ×p
+                                                                                    absolutely continuous factor R (θ) ∈ R s          s satisfying
+                 almost everywhere.                                                                                    s
+                                                                                    R⊤R =W 0. Stacking B = R J ∈ Rrs×d gives
+                                                                                      s   s       s                    s      s s
+                                                                                           P ⊤                               ˙      ˙            ˙
+                                                                                    λI +       J W J . Along a path, B = R J +R J ;
+                 For scalar diﬀerentiable means, take the sth row of                          s  s   s s                      s      s s       s s
+                 B(τ) to be                                                         both terms must be controlled. This covers the ge-
+                   t                                                                ometry of weighted Fisher/GGN factors but does not
+                                σ−1∇ µ                (x ,a )⊤.            (18)     by itself prove a likelihood conﬁdence sequence or an
+                                      θ θs+τ(θt−θs)      s  s
+                                                                                    exponential-family regret theorem.
+                 This interpolates from collection-time frozen curvature
+                 to the exact current relinearized curvature. It is a               4     Corrected-center squared-loss
+                 synthetic path in stacked factor space: each replay                      specialization
+                 factor follows its own segment from the collection-time
+                 Jacobian to the current relinearized Jacobian. The
+                 stacked path need not equal the GGN evaluated at one               Wenowconstruct (6) without assuming that the rep-
+                 common intermediate parameter shared by all replay                 resentation parameter minimizes a nonlinear loss. Let
+                                                                                    σ > 0 and let the reward obey r = µ∗(a )+η , where,
+                 samples. A weighted or heteroscedastic squared loss                                                     t     t   t     t
+                            √         ⊤                                             for every u ∈ R,
+                 uses row      ws∇µ for a nonnegative collection-time
+                 weight w ﬁxed before the corresponding reward. If the
+                           s                                                                                                  2 2
+                                                                                                 E[exp(uη ) | H ] ≤ exp(u σ /2).              (23)
+                 weight is ﬁxed along the interpolation, the same proof                                    t      t
+                 only rescales the corresponding row. If it changes with
+                 the path, the derivative of pws(τ) is an additional                Thus the noise condition is imposed after the action is
+                 obligation.                                                        selected and before the reward is revealed. The ridge
+                 Corollary 5 (Hessian path certiﬁcate). Suppose the                 penalty is centered at zero in the chosen parameter
+                                                         2                          coordinates, and every norm bound below, including
+                 parameter region is convex and k∇ µ (x ,a )k             ≤L           ◦
+                                                         θ θ   s   s   op     g     kθ k ≤S,usesthosecoordinates. For a pretrained ini-
+                 along every segment in (18). With                                        2
+                                                                                    tialization θ0, the intended convention is displacement
+                                           X              2                         coordinates θ = θorig−θ0; then S bounds the displace-
+                                    Q =        kθ −θ k ,                   (19)
+                                       t          t     s 2                         ment of the reference model from initialization rather
+                                           s<t                                      than its raw parameter norm. Fix before data collec-
+                                                                                    tion a reference parameter θ◦ ∈ Θ with kθ◦k ≤ S,
+                 the exact current and frozen metrics satisfy                                                                              2
+                                                                 √                  and allow approximate realizability
+                        ¯                 ¯                  2L    Q
+                      −Dt ¯              Dt ¯         ¯         g    t
+                     e    V V e V,                  D =       √ . (20)               ∗                   ◦               ◦
+                             t     t          t         t                             µ (z) = µ ◦(z)+m (z),qquad|m (z)| ≤ ǫ              (z). (24)
+                                                               σ λ                               θ                                   mis
+                                               ¯
+                 This remains valid when Dt ≥ 1. At t = 1, the factor               The predictable sequence θt ∈ Θ is otherwise arbitrary.
+                 has zero rows, Q = 0, and both metrics equal λI.                   Set q (a) = ∇ µ (x ,a) and deﬁne collection-time
+                                     1                                                     t          θ θt    t

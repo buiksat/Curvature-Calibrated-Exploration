@@ -1,0 +1,50 @@
+                   Conﬁdence Transport for Relinearized Curvature in Contextual
+                                                                Bandits
+                                                           Anonymous Author
+                                                           Anonymous Institution
+                                    Abstract                                 runs, but also ﬁnds a highly conservative Hes-
+                                                                             sian path certiﬁcate and a cumulative bound
+                   Relinearized generalized Gauss–Newton and                 more than 126 times realized regret in every
+                   Fisher metrics use current model Jacobians,               reported median.
+                   while bandit conﬁdence sequences are natu-
+                   rally built from features ﬁxed before their           1   Introduction
+                   corresponding rewards. We study when con-
+                   ﬁdence can be transported between these ge-
+                   ometries. We instantiate the classical Thomp-        Adiﬀerentiable contextual-bandit model supplies a cur-
+                   son Finsler path length on positive-deﬁnite           rent prediction query, typically a Jacobian qt(a) =
+                                                                         ∇ µ (x ,a).    The corresponding current GGN or
+                   metrics as an operational bandit certiﬁcate,           θ θt   t
+                   obtaining a two-sided exponential compari-            Fisher width is geometrically natural for action se-
+                   son without a small-drift assumption or ﬁxed          lection. Statistical conﬁdence, however, is built from
+                   tangent subspace. Combining this compari-             the queries ﬁxed before the corresponding past re-
+                   son with a two-sided approximate-operator            wards were observed. Relinearizing every replay item
+                   certiﬁcate yields an estimator-agnostic, solver-      at θt changes all summands at once and destroys
+                   agnostic UCB theorem for general standard-            the sequential rank-one update behind the usual self-
+                   Borel action spaces under explicit measurable-        normalized argument. This mismatch appears in neu-
+                   supremum and measurable-selector assump-              ral UCB, neural-linear, and Laplace-style exploration
+                   tions. Its regret closes through the sequential      (Zhou et al., 2020; Riquelme et al., 2018; Ritter et al.,
+                   frozen information gain rather than an un-            2018; Daxberger et al., 2021).
+                   controlled dynamic-width term. For diﬀeren-          The central question is not whether one curvature ap-
+                   tiable squared-loss models, a corrected center        proximation is uniformly better. It is when a conﬁdence
+                   permits any preﬁx-measurable representation           statement in the predictable frozen metric can be trans-
+                   path: no nonlinear optimizer certiﬁcate is            ported to a current relinearized metric, and then to
+                   needed. The construction also permits ex-             the operator and linear solver used by the policy. The
+                   plicit historical and current misspeciﬁcation         required chain is
+                   envelopes and recovers the standard ﬁnite-
+                   dimensional LinUCB rate in the frozen linear             reference conﬁdence −→ current metric,
+                   exact-solve limit. The result is conditional                   current metric −→ algorithmic operator,
+                   on valid supplied pre-reward path, operator,            algorithmic operator −→ certiﬁed score.
+                   conﬁdence, and solver certiﬁcates; it is not
+                   a guarantee for unrestricted neural training,         Each arrow needs its own operational certiﬁcate.
+                   a complete exponential-family theorem, or
+                   veriﬁed ﬂoating-point certiﬁcation. A locked          Our primary transport quantity is the integrated nor-
+                   ﬁnite-dimensional scaled-tanh audit records           malized speed of an SPD path. For a path V(τ) it
+                                                                           R1    −1/2 ˙  −1/2
+                   no deterministic failure and simultaneous con-        is   kV     VV      k dτ, the Finsler path length as-
+                                                                            0                 op
+                   ﬁdenceandoptimisminall600primary-policy               sociated with the classical Thompson metric on the
+                                                                         positive-deﬁnite cone (Thompson, 1963; Nussbaum,
+                                                                        1994). Diﬀerentiating log(v⊤V(τ)v) for a ﬁxed vector
+                                                                         gives the corresponding exponential Loewner sandwich
+               Preliminary work. Under review by AISTATS 2026. Do not    for every ﬁnite selected-path length. Unlike the pre-
+               distribute.                                              vious additive endpoint argument, this use does not

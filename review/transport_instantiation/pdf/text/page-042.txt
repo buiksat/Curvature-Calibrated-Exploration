@@ -1,0 +1,88 @@
+                        Proof. Let ξ             be the eigenvalues of Ξ . At most r are negative, each is at least −ν , and every nonnegative
+                                            t,i                                        t                Pt                                                           t
+                        eigenvalue makes a nonpositive contribution to −                                      log(1+ξ ). Hence [−logdet(I+Ξ )] ≤ r log(1/(1−ν )),
+                                                                                                            i               t,i                                        t   +        t                    t
+                        proving (126). List the nonzero eigenvalues of A and pad with zeros to obtain a ,...,a                                                              . Concavity gives
+                                                                                                                                                           1           rend
+                                                                                 X                                                    Pa
+                                                                                       log(1 +a /λ) ≤ r                  log 1+            i   i    ,
+                                                                                                      i            end                 r      λ
+                                                                                   i                                                     end
+                        and the trace premise plus Lemma 35 proves (127).
+                        Consequences. SequentialGramupdateshaveΞ =0. Ifcanonicalrank-oneupdatesareusedoutsideJ refresh
+                                                                                                          t                                                                                     T
+                        rounds, and each refresh has r ≤ r, ν ≤ ν < 1, then VC ≤ J rlog(1/(1−ν)); a geometric schedule is therefore
+                                                                         t           t                            T        T
+                                                                                                                                                                                   +          new         old
+                        polylogarithmic only when these rank and spectral-ﬂoor bounds hold. For a replacement Ct+1−C                                                                   =A −A
+                                                                                                                                                                                   t          t           t
+                        with both terms PSD and rank(Aold) ≤ r, Sylvester inertia gives rt ≤ r, but a spectral ﬂoor is still required.
+                                                                               t
+                        For a ﬁxed-feature window of length m, after warm-up each deletion has rank one. Writing N                                                                =max{0,T−m},
+                                                                                                                                                                           drop
+                        Sherman–Morrisongivesthefollowingexactchargeforeacht > m. Letvdrop = σ−1g                                                                   (x        , a       ) and let D =
+                                                                                                                                          t                   t−m t−m t−m                                t
+                          +        drop      drop ⊤                                                                                                                                drop ⊤       −1 drop
+                        C −v             (v        )    =Ct+1 be the remaining-window matrix. Then −logdet(I+Ξt) = log[1+(v                                                              ) D v              ],
+                          t        t        t                                                                                                                                      t            t     t
+                        and therefore                                                                                               
+                                                                                                                               G2
+                                                                                            VC ≤Ndroplog 1+                             .
+                                                                                               T                               λσ2
+                        This can be linear in T. A relinearized window need not be a rank-one replacement. Likewise, merely holding
+                        a stale operator ﬁxed does not make non-refresh transitions canonical rank-one updates, so geometric refresh
+                        timing alone does not imply a logarithmic charge.
+                        Corollary 37 (Observable CG upper bound on the width complexity). If the played-action CG solve satisﬁes
+                                                             2                           2
+                        ε       ≤ε¯ <1 so that s˜ (a ) ≥ (1−ε¯ )s                            (a ) (Lemma 38), then
+                          t,at        t                      t    t                 t    C,t    t
+                                                                                                              T                     2           
+                                                                                                            X                      s˜ (at)
+                                                                                    C         c                                      t
+                                                                                  Λ ≤ ΛCT :=                       log 1+                          .                                                 (128)
+                                                                                    T                                           σ2(1−ε¯)
+                                                                                                             t=1                              t
+                                      2               2                                                    −2                                                                C
+                        Proof. s         (a ) ≤ s˜ (a )/(1−ε¯ ) and x 7→ log(1+σ                               x) is increasing, so each summand of Λ                            is dominated term
+                                      C,t    t        t    t             t                                                                                                   T
+                        by term.
+                        This gives an observable upper bound on the dynamic width-complexity term, conditional on the certiﬁed CG
+                        tolerances; V C itself is not observable in general (it requires determinant estimation of the curvature sequence).
+                                             T
+                        F.6       CGApproximation Lemma
+                        Lemma 38 (CG multiplicative accuracy). Fix a round t and an action a with right-hand side g := g (a) 6= 0.
+                                                                                                                                                                                                t
+                                        −1                   ˜                                                                                                                                    ˜
+                        Let u = C           g and let u be the iterate after I                         steps of CG on the SPD system C u = g starting from u = 0,
+                                        t                                                         t,a                                                          t                                    0
+                        with Ct held ﬁxed across all iterations. The relative energy-norm error is the per-action quantity εt,a of (49), and
+                                                                                                                         √               
+                                                                                                         ˜                                  It,a
+                                                                                                ku−uk                           κ¯  −1
+                                                                                                             C                    t
+                                                                                   ε       =                   t   ≤ 2 √                          ,                                                  (129)
+                                                                                     t,a           kuk                          κ¯  +1
+                                                                                                          C                       t
+                                                                                                           t
+                        where κ := λ               (C )/λ          (C ) is the true condition number and κ¯ ≥ κ is a certiﬁed H -measurable upper bound.
+                                    t         max t           min     t                                                           t       t                          t
+                       The convergence rate in (129) is right-hand-side independent, so it holds for every action with the same κ¯ .
+                                                                                                                                       P                                                                    t
+                                                                                                                                   −2                                                  ⊤
+                        For a nonnegative weighted outer-product operator C = λI + σ                                                               w g (x ,a )g (x ,a )                    (w ≥0, so
+                                                                                                                 t                         s∈St      s    t    s    s    t    s     s          s
+                        Ct  λI ≻ 0 and CG is well-posed),
+                                                                                                                                  2
+                                                                                                λ       (C )              WG
+                                                                                       κ ≤ max t ≤1+ t                               =: κ¯ ,
+                                                                                         t            λ                     λσ2             t
+                        with W = P                    w and kg (x ,a )k ≤ G from Assumption 3; here W = n for unrescaled windowed/refresh
+                                    t         s∈S       s              t    s    s                                                            t
+                                                    t
+                        buﬀers, giving κ¯ and α independent of T, and W = t−1 for full history and for rescaled uniform subsampling
+                                                  t           t                                           t
+                        with w = (t−1)/n. For a general SPD operator that is not such an outer product, κ¯ must be certiﬁed separately.
+                                  s                                                                                                                             t
+                                    2             ⊤˜             2               ⊤ −1
+                       Write s˜ (a) = g u and s                      (a) = g Ct g.
+                                    t                            C,t

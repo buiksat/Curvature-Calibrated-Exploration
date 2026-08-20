@@ -1,0 +1,95 @@
+               Consequently,                                             Algorithm 1 Corrected-center specialization of trans-
+                       v                                                 ported UCB
+                       u
+                                        T              r      
+                       u          2      X                        2       1: Observe the context and graph-measurable action
+                                G                            κ
+                       t                      2         ¯     +,t
+                            2                           D
+                 R ≤       σ +        γ     β   1+αe t                                                         −
+                  T                    T      t       t                      correspondence At; this deﬁnes H .
+                                 λ                           κ                                                 t
+                                         t=1                  −,t                                            ¯
+                                                                          2: Take the preﬁx-determined θ , V , and V ; using
+                           T            T                                                                  t   t       t
+                           X           X                                     the observed context, form qt(a), mcorr(a), and
+                       +2     b (a ) +    ξ .                    (13)                                              t
+                               t  t        t                                 b (a).
+                           t=1         t=1                                    t
+                                                                          3: Choose H−-measurable failure budgets before their
+                                                                                       t
+               In particular, the simpler bound                              corresponding draws; reveal the pre-reward ran-
+                            v                                                domness Ωt.
+                            u                T                                                                             ¯
+                            u          2      X                           4: Construct C and obtain pre-reward certiﬁcates D ,
+                                      G                    κ                             t                                    t
+                            t                      2 2   ¯  +,t
+                                 2                     2Dt
+                     RT ≤2      σ +        γT    αtβte                       κ   , and κ   .
+                                      λ       t=1          κ−,t               −,t       +,t
+                                                                          5: Obtain one jointly measurable solver upper-width
+                               T           T
+                              X            X                                 map sˆ (a) over the score domain.
+                           +2     b (a ) +    ξ                  (14)              t
+                                   t  t        t                          6: Return a H -measurable ξ -approximate selector
+                               t=1         t=1                                           t              t
+                                                                             for the score in (10).
+               holds.   The bias envelope enters twice and the            7: Observe the reward; update the frozen ridge esti-
+               approximate-oracle error enters once. If the conﬁdence        mator and (1).
+               event has probability at least 1 − δ and the joint certiﬁ-
+               cate event has probability at least 1−δcert, these bounds
+               hold with probability at least 1 − δ − δcert.             Remark (Thompson distance and selected-path
+               Corollary 2 (Measurably enumerated ﬁnite domains).        length). The integrand in (15) is the classical Thomp-
+               Suppose there is a positive H−-measurable integer K       son Finsler norm on the positive-deﬁnite cone (Thomp-
+                                            t                       t
+               and H−-measurable actions a      : Ω → A, k ≥ 1, such     son, 1963; Nussbaum, 1994). Its endpoint metric is
+                     t                       t,k
+               that                                                                                     −r           r
+                                                                              d   (A,B):=inf{r ≥ 0 : e     ABeA}.
+                               A ={a ,...,a        }.                          Th
+                                 t     t,1      t,Kt
+               If the learner chooses the smallest index attaining       Equivalently,
+               the score maximum, then the selected action is Ht-                             
+                   
+
+               measurable and (11) holds with ξt = 0. The score                               
+      −1/2    −1/2 
+
+                                                                                 d   (A,B)= log(A         BA     )    .
+                                                                                   Th         
+                   
+
+               and mean-reward suprema and the universal actionwise                                                 op
+               events reduce to measurable ﬁnite maxima and intersec-    Therefore Lemma 3 gives
+               tions. A ﬁxed ﬁnite action set is the immediate special
+               case.                                                                  dTh(V(0),V(1)) ≤ D(V),
+                                                                                               ¯               ¯
+                                                                                          d   (V ,V ) ≤ D ≤ D .
+               The headline theorem contains no optimizer residual,                        Th    t  t      t     t
+               CG-speciﬁc quantity, or dynamic-width complexity. Its     The endpoint distance depends only on the two metrics,
+               price is explicit: closing through the frozen potential   whereas D(V) depends on the selected path. The direct
+               requires the lower operator factor κ−,t. The previous     SPD path length is independent of a factorization; the
+               one-sided theorem remains useful when that factor is      upper bound from Lemma 4 depends on the chosen
+               unavailable and is retained in Appendix B.                factorization and interpolation.
+               3    Logarithmic transport for                            Remark (Sharpness of the symmetric exponential fac-
+                    relinearized curvature                               tors). For D ≥ 0, let
+                                                                                                              D        
+                                                                                 ¯                             e     0
+                                                                                 V=I ,                  V=                ,
+               Lemma 3 (Logarithmic comparison along an SPD                            2                             −D
+                                                                                                               0    e
+                                          d                                                       
+               path). Let V : [0,1] → S      be entrywise absolutely
+                                          ++                                           eDτ      0
+                                   ˙                                          V(τ) =                 .
+               continuous and let V(τ) denote its almost-everywhere                      0    e−Dτ
+               derivative. If
+                           Z 1       −1/2 ˙        −1/2                  Then                                       
+                  D(V)= 0 kV(τ)          V(τ)V(τ)      kopdτ,    (15)                −1/2 ˙         −1/2     D 0
+                                                                                V(τ)      V(τ)V(τ)       = 0 −D ,
+               then
+                         e−D(V)V(0)  V(1)  eD(V)V(0).          (16)                     ¯
+                                                                         so D(V) = d (V,V) = D. For q = e , s¯(q ) = 1
+                                                                                       Th                    1     1     1
+                                                                                        −D/2            D/2
+               No commutativity or small-path assumption is required.    and s(q1) = e       , so s¯ = e    s is attained. For

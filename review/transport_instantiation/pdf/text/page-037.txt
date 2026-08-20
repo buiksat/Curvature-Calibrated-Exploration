@@ -1,0 +1,63 @@
+               The one-sided fallback theorem uses only the bound (104), which holds for any χt ≥ 0; the smallness condition
+               χt < 1 is needed only for the lower half of the two-sided sandwich (116), which in turn is used by the explicit
+               near-linear corollary and by any optional analysis that explicitly assumes a two-sided sandwich. An unrescaled
+               current-parameter window is handled by Proposition 45 through a one-sided relation and does not require this
+               condition. The binding quantity is the whitened ℓ accumulation χ ≤ kD k   of replayed-Jacobian drift, measured
+                                                              2               t      t F
+                      ¯−1
+               in the C   metric—a relative, whitened ℓ bound that can be sharper than an ℓ sum normalized only by λ
+                       t                                2                                      1
+               when the drift occurs in well-observed directions (it credits directions the design has already explored), though
+               it does not dominate uniformly. Together, Lemmas 23 and 31 identify exact whitened diagnostic targets. The
+               operational upper bounds in Lemma 25 replace those targets by the predictable path statistics Q and R , the
+                                                                                                               t      t
+                                                                                     ¯                   2
+               certiﬁed optimizer residual ζ , and analytic smoothness constants. Thus ψ and u = (1+χ¯ ) require only O(d)
+                                          t                                           t       t        t
+               additional state; the exact whitened quantities remain post-hoc diagnostics used to measure the conservatism of
+               these certiﬁcates.
+                                                   ¯
+               Positive deﬁniteness of both C and C follows from λ > 0 and the outer-product form; it is not an independent
+                                            t       t
+               assumption. All theoretical results hold under these explicit assumptions; we do not claim a regret guarantee for
+               the full nonlinear model outside the local-linearization regime.
+               F.2   Novelty Relative to Prior Neural Bandits
+               NeuralUCB/NeuralTS use historical-time full-gradient Grams in their stated algorithms, while NeuralLinear
+               and last-layer Laplace restrict uncertainty to a learned representation or ﬁnal layer (Zhou et al., 2020; Zhang
+               et al., 2021; Riquelme et al., 2018; Kristiadi et al., 2020). Matrix-free full-network predictive-variance solves also
+               predate this work (Maddox et al., 2021). CC-UCB’s narrower adaptation is to replay every historical Jacobian
+               at the current parameter, separate the predictable frozen conﬁdence Gram from that algorithmic operator, and
+               expose centering, drift, transfer, and residual-checked CG terms. We claim neither the CG/CVP primitive nor a
+               prior assertion of uniform full-metric superiority as new.
+               The one-sided whitened result in Lemma 31 is the main technical step: optimism transfer needs no lower spectral
+               comparison. The determinant formula is bookkeeping rather than a standalone rate, and the supplied-U closure
+               is exactly the projected Gram in (87), not a concrete neural-training theorem. Appendix G compares NTK,
+               regression, EKF/LO-FI, structured Laplace, and sketching alternatives.
+               F.3   Computable Curvature Operator
+               Applying C v = λv+σ−2P          g (x ,a )g (x ,a )⊤v naively requires one curvature–vector product (CVP)
+                          t                s<t t   s  s   t  s  s
+               per historical sample per CG step—cost O(It) CVPs per round. Each CVP evaluates one Jacobian–vector product
+              (forward mode) followed by one vector–Jacobian product (reverse mode) through the network, at roughly the cost
+               of one gradient evaluation (one JVP plus one VJP)1; we do not store per-sample gradient features gs, only a
+               constant number of O(d) CG vectors for CG, with CVPs computed on the ﬂy. We describe three strategies that
+               limit the per-step cost to |S | CVPs:
+                                          t
+               (i) Subsampled GGN (worst-case spectral baseline). At each round draw a uniform subsample S ⊂
+                                                                                                                        t
+               {1,...,t−1} of size n (without replacement) and set ws = (t−1)/n to obtain the rescaled operator. The following
+               lemma is a worst-case uniform spectral guarantee.
+               Lemma 34 (Worst-case uniform spectral guarantee for subsampled GGN). Fix round t and set m = t−1. Let
+                                                                                             P
+               Y =σ−2g (x ,a )g (x ,a )⊤ for s = 1,...,m, so that C = λI+V with V =            m Y . Each Y is PSD with
+                s        t  s  s  t  s  s                              t                       s=1 s          s
+                          2   2
+               kY k   ≤G/σ =:B. For δ ∈ (0,1) and 1 ≤ n ≤ m, draw S of size n uniformly without replacement from
+                 s op                       P                                t
+                                     ˆ    m               ˆ          ˆ
+               {1,...,m} and deﬁne V = n      s∈St Ys and Ct = λI+V. Write L := log(2d/δ).
+              (i) Deviation bound. With probability ≥ 1−δ,
+                                                    ˆ                r2L       4mBL
+                                                   kV −Vk      ≤ mB         +         .                               (117)
+                                                           op            n       3n
+                 1Implementations based on double-backward Hessian–vector products cost closer to two gradient-equivalents per CVP;
+               the constant does not aﬀect the O(·) accounting.

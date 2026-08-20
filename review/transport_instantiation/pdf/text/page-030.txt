@@ -1,0 +1,79 @@
+                Proof. The trust region gives Qt ≤ 4R2(t − 1); substitution in Lemma 25 proves all displayed path bounds.
+                Corollary 33 gives the two-sided operator relation. The CG sandwich and u ≤ (1+x )2 = ρ                imply that every
+                                                                                                  t         T        +
+                                                          −2 2
+                logarithm in γˆ  is at most log(1+A      σ s¯ (a )). For A ≥ 1, log(1+Ax) ≤ Alog(1+x), proving the information
+                               T                      inf     t   t
+                comparison. Substitution into Corollary 51 gives the regret display.
+                Corollary 27 (Corrected-center near-linear rate). Fix T and suppose, for every t ≤ T,
+                                                        ∗                       √                   √
+                                               kθtk,kθ k ≤ R,         Lµ ≤cµ/ W,           Lg ≤ cg/ W,
+                where W is an abstract near-linearity scale. Use the corrected center, exact current curvature, and a uniform CG
+                tolerance ε¯ ≤ ε¯< 1. Fix r ∈ {0,...,d} and suppose a predictable preﬁx information envelope G          ≥γ issupplied
+                           t                                                                                        n,r     n
+                for n = 0,...,T. Valid choices are the rank envelope Γ        under a known rank bound, or the spectral-tail envelope
+                                                                          n,r
+                                                            ¯                                                 ↑
+                in Corollary 15 with supplied preﬁx tails ∆     . Deﬁne its predictable monotone closure G        := max        G    and
+                set                                          n,r                                              n,r        0≤j≤n j,r
+                                                √                                                             r
+                                           2cgR T −1                                                             1+ε¯
+                                    x :=       √         ,                                              α :=           ,
+                                     T        σ λW                                                       I       1−ε¯
+                                           q                      √             2√
+                                   corr        ↑                           2cµR     T
+                                 B     :=    G    +2log(1/δ)+ λR+             √       .
+                                   T,r         T,r                           σ W
+                If x  <1, the predictable radius
+                    T
+                                                 corr    q ↑                      √        2cµR2√t−1
+                                                ¯                                               √
+                                                β     :=   G      +2log(1/δ)+ λR+                                                   (85)
+                                                 t           t−1,r                             σ W
+                is valid and the corrected-center policy satisﬁes
+                                                                 1+xT corrq 2           2        ↑
+                                                      R ≤2α             B       (σ +G /λ)TG
+                                                       T       I 1 − x    T,r                   T,r
+                                                                      T                                                             (86)
+                                                                4cµR2T
+                                                             + √        .
+                                                                    W
+                In particular, bounded transfer is ensured by W > 4c2R2(T − 1)/(λσ2) = Ω(T) up to problem constants, and
+                                √                                          g
+                            2              ↑                                             ¯
+                ET ≤2cµR T/ W. If G            =O(rlogT)—for example, if maxn≤T ∆n,r = O(rlogT) at ﬁxed λ—and W = Ω(T)
+                                           T,r
+                with a suﬃciently large constant to keep xT bounded away from one, then
+                                                                       √                √
+                                                            RT =O(r TlogT)+O( T)
+                up to conﬁdence and CG constants.
+                This corollary assumes neither an optimizer-residual rate nor an envelope on Rcol. Its cost is frozen-feature
+                                                                                                         t
+                access: exact corrected centers require an explicit d×d frozen Gram, stored frozen gradients, replay with historical
+                checkpoints, a supplied low-dimensional representation, or a separately certiﬁed sketch. The result therefore does
+                not have O(d) total memory merely because current-curvature products are matrix-free.
+                Proof. The running maximum G↑         is predictable and dominates both Gn,r and every earlier preﬁx envelope. The
+                                                   n,r                                    √          √                              √
+                                              2                                                                       lin        2
+                trust region gives Q ≤ 4R (t − 1), so Lemma 25 yields χ¯ ≤ 2c R t−1/(σ λW) ≤ x , ǫ¯                      ≤2c R / W,
+                                      t                       √                  t     g                          T   t       µ
+                 ¯      2  4                  ¯           2
+                F ≤4c R (t−1)/W, and E ≤2c R T/ W. Hence (85) dominates (139). Apply the corrected-center form of
+                  t     µ                       T      µ
+                                                                                               corr     corr                          ↑
+                                                                                              ¯
+                Corollary 14, bound α ≤ α , (1+χ¯ )/(1−χ¯ ) ≤ (1+x )/(1−x ), and β                 ≤B ,thenuseγ ≤G                ≤G .
+                                        t    I        t         t          T         T         t        T,r             T     T,r     T,r
+                                      ¯           2   √
+                Finally substitute 2ET ≤ 4cµR T/ W. The stated orders follow directly.
+                Remark (Why W is an abstract near-linearity scale). The all-weights MLP used in the nonlinear diagnostics
+                has action-a mean v⊤tanh(Ux+b)+ca and no W−1/2 forward normalization. With x¯ = (x,1), hidden vector
+                                      a
+                q =(U ,b ), and z = q⊤x¯, the Hessian block on (q ,v         ) is
+                 i      i  i        i     i                             i  a,i
+                                                                    ′′      ⊤        ′     
+                                                            v   tanh (z )x¯x¯    tanh (z )x¯
+                                                             a,i        i                i    .
+                                                                    ′     ⊤
+                                                               tanh (z )x¯            0
+                                                                       i

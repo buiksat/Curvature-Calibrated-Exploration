@@ -1,0 +1,70 @@
+                        ˆ                                                  ˆ−1      −1   −1       2         −1 2
+                Proof. C  κ       C with both sides SPD inverts to C            κ    C , so sˆ (a) ≥ κ       s (a); and (104) gives
+                          t     +,t  t                                      t       +,t  t        t         +,t t
+                 2               2 2                  2               2     2
+                s¯ (a) ≤ (1 + χ¯ ) s (a). Chaining, s¯ (a) ≤ (1 + χ¯ ) κ   sˆ (a), which is (142) with s    =sˆ . Theorem 13 applies
+                 t         ˆ   t   t           p t                  t   +,t t                            C,t    t
+                with C = C . The two-sided        ρ /ρ inﬂation—which instead assumes a lower spectral factor—is retained for
+                       t     t                     + −
+                comparison in Appendix J; the two results trade diﬀerent assumptions (a lower spectral bound versus dynamic
+                width complexity), and neither numerically dominates the other in general.
+                Proposition 47 (Roundwise scalar-width invariance). If two width functions satisfy sˆ (a) = c s (a) for every
+                                                                                                              t       t t
+                candidate action, where c > 0 is action independent, then replacing a scalar bonus coeﬃcient b by b /c gives
+                                           t                                                                           t     t  t
+                identical UCB scores and therefore the same selected action under the same tie rule.
+                Proof. µb (a) + (b /c )sˆ (a) = µb (a) + b s (a) for every a.
+                         t        t  t  t        t       t t
+                This is a roundwise statement. If two policies also have identical centers, histories, optimization, and coupled
+                exogenous randomness, if ct is predictable, and if proportionality holds at every subsequent common history,
+                induction gives identical actions and rewards after the coeﬃcient adjustment. Absent those conditions the
+                proposition makes no regret claim. Accordingly, regret diﬀerences can reﬂect anisotropic width distortion or a
+                diﬀerence in damping, center, adaptive path, optimization, calibration, or solve accuracy.
+                                                                                                  √                 √
+                Proposition 48 (Oﬀ-diagonal linear-Gram witness). Let σ = 1, u = (1,1)/ 2, v = (1,−1)/ 2, the action set
+                be {u,v}, and θ∗ = ǫu+∆v with ∆ > ǫ > 0. Rewards are noiseless, the ridge is λI, all policies use the same
+                full-ridge mean center, and ties select u. If
+                                          (                           r        !)                     
+                                            p 2         2   √              λ                       ǫ     √
+                                      max      λ(ǫ +∆ ),ǫ λ 1+           λ+1       <b≤ ∆−λ+1               λ+1,                  (143)
+                then full-Gram UCB plays u once and v thereafter, so Rfull = ∆ − ǫ. The raw diagonal policy and the policy
+                                                                              T
+                inﬂated by the uniform analytic factor κ = (λ+n/2)/λ play u forever and have Rdiag = T(∆−ǫ).
+                                                           n                                             T
+                Proof. After n pulls of u and no pull of v,
+                                                                         ⊤      ˆ       nǫ
+                                                        Cn =λI+nuu ,            θn = λ+nu.
+                                                          √               √
+                Thus the full scores are nǫ/(λ + n) + b/ λ +n and b/ λ. The strict lower inequality in (143) makes the second
+                                                                                           √
+                score larger at n = 1. The conﬁdence lower bound also implies b > ∆ λ; after any number of v pulls its score
+                is strictly larger than ∆, whereas the upper inequality makes the ﬁxed u score at most ∆. Hence there is no
+                return. In contrast, D = diag(C ) = (λ+n/2)I, so both diagonal widths are equal and the center gives u a
+                                        n           n
+                strict advantage after round one. Moreover D  κ C analytically, but multiplying both diagonal widths by
+                √                                                 n     n n
+                  κn leaves them equal; uniform certiﬁed inﬂation therefore does not change the diagonal action. For example,
+                (λ,ǫ,∆,b) = (1,0.1,1,1.1) satisﬁes the interval.
+                This is a two-dimensional linear-Gram existence witness. For a linear predictor with Gaussian squared loss, this
+                Gram is exactly the GGN/Fisher operator, so the construction isolates a GGN-relevant geometric mechanism. It
+                is neither a nonlinear-network result nor a uniform dominance result. A dense action-dependent factor recovers
+                the full widths, but it uses the reference geometry that the diagonal approximation was meant to avoid.
+                Composing subsampling with feature drift. Lemma 34 guarantees a sandwich for the relinearized Ct:
+                            ˆ                                                       ˆ
+                (1−ε)C C (1+ε)C . Only the upper half is needed here: C  (1+ε)C gives κ                    =1+ε,andcomposing
+                        t     t           t                                          t           t        +,t
+                                                                      2 ¯                                            2
+                with the one-sided whitened bound C  (1+χ¯ ) C (Lemma 31) yields u = (1+ε)(1+χ¯ ) in Theorem 46.
+                                                         t          t    t                       t                 t
+                Aunion bound over t ≤ T (replacing δ′ by δ′/T in Lemma 34) makes the subsampling event time-uniform and
+                contributes to δ    .
+                                 cert
+                For an unrescaled current-parameter window (or any current-parameter downweighted subset with weights in [0,1]),
+                Proposition 45 gives the deterministic upper factor κ        =1with no distributional assumption, so Theorem 46
+                                                                         +,t
+                applies directly with u = (1 +χ¯ )2. Only the stale periodic-refresh operator (§F.3(iii)), which reuses Jacobians
+                                        t          t
+                from an older parameter, lacks a deterministic κ+,t; there Theorem 46 provides a guarantee only when a one-sided
+                        ˆ
+                bound C κ C is separately certiﬁed.
+                         t     +,t  t

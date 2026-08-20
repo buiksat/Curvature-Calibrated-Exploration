@@ -1,0 +1,56 @@
+              Wewrite θ for the parameter returned by the warm-started optimizer on L . Let D    := {(x ,a ,r ) : s < t}
+                        t                                                             t      t−1       s  s  s
+              and N := |D    | = t − 1. Equation (43) is a full-history objective. The curvature replay set S ⊆ {1,...,t − 1}
+                    t     t−1                                                                         t
+              and its size m := |S | aﬀect C , but do not replace D in (43). Thus a generic full-batch evaluation of ∇L
+                           t      t        t                     t−1                                                 t
+              replays N observations even when m ≪ N . In convex settings (e.g. a frozen backbone with a linear head), under
+                       t                        t     t
+              exact optimization this coincides with the global minimizer; in nonconvex settings θt may be a local minimizer
+              or approximate stationary point. The gap between θt and an idealized global minimizer is absorbed by the
+              action-scaled centering certiﬁcate (Assumption 5).
+              Gradient features and curvature matrices. Deﬁne the gradient feature (Jacobian of the mean reward) at
+              the current parameter estimate:
+                                                   g (x,a) := ∇ µ (x,a) ∈ Rd.                                     (44)
+                                                    t           θ θt
+              The algorithm uses the relinearized curvature matrix
+                                                               t−1
+                                                            1 X                     ⊤
+                                              C = λI +            g (x ,a )g (x ,a ) ,                            (45)
+                                                t           σ2     t  s  s  t  s  s
+                                                              s=1
+              the damped GGN curvature for the Gaussian/squared-loss model at the current parameter θt. (For the Gaussian
+              working model underlying this squared-loss quasi-likelihood, the GGN coincides with the model Fisher information;
+              see the remark below.) While C is the natural object for computing predictive variances at θ , it re-evaluates all
+                                           t                                                        t
+              past Jacobians at θt and therefore does not admit a sequential rank-one update—all summands change when θt
+              changes.
+              For the regret analysis we introduce the frozen-feature Gram matrix:
+                                                               t−1
+                                              ¯             1 X                     ⊤
+                                              C := λI +           g (x ,a )g (x ,a ) ,                            (46)
+                                                t           σ2     s  s  s   s  s  s
+                                                               s=1
+              where each g (x ,a ) = ∇ µ (x ,a ) is evaluated at the parameter θ that was current when the sample was
+                          s  s  s      θ θs  s  s                               s
+              collected. This matrix satisﬁes the recursive update
+                                                 ¯      ¯     −2                  ⊤
+                                                C =C +σ g(x,a)g(x,a) ,                                            (47)
+                                                  t+1     t       t  t  t t  t  t
+              and, critically, each realized design vector g (x ,a ) is measurable with respect to the pre-reward sigma-algebra
+                                                       s  s  s
+              G =H ∨σ(a )of (145), which is the ﬁltration used in the self-normalized bound. Both the additive update (47)
+               s     s     s
+              and this measurability are structural requirements of the self-normalized martingale bound and the elliptic
+              potential lemma invoked in Appendix D. The algorithm computes UCB widths using the algorithmic curvature Ct
+                                                                                                      ¯
+              (via CG; the exact case is C = C ), but the conﬁdence analysis is conducted in terms of C ; the one-sided
+                                         t     t                                                       t
+              optimism-transfer factor of Assumption 6, certiﬁed by Lemma 31, provides the bridge.
+              C Original-center CC-UCB specialization
+              C.1 CC-UCB Algorithm
+                                                                     ¯    ¯
+              For a pre-reward measurable SPD oracle C  λI, set ω = β +ψ for the original nonlinear center. Algorithm 2
+                                                     t           t    t    t
+              is the analyzed full-enumeration policy. The same ﬁxed curvature operator is reused across separate per-action
+              CGsolves; a solution for one action is not reused as the solution for another action.

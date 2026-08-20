@@ -1,0 +1,15 @@
+# PDF metadata
+#
+# Canonical command : pdfinfo paper/main.pdf
+# Substitute used   : gs page count plus a standard-library object scan
+#   poppler is not installed. Page count is cross-checked against
+#   gs -dNODISPLAY pdfpagecount; both report the same value.
+
+File:           paper/main.pdf
+SHA-256:        2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1
+File size:      933908 bytes
+Pages:          63
+PDF version:    PDF-1.5
+Encrypted:      no
+Linearized:     no
+MediaBoxes:     0.0 0.0 612.0 792.0

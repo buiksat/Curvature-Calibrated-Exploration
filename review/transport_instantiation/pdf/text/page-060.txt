@@ -1,0 +1,42 @@
+                                               D       =0.25                                          D       =0.5
+                                                 target                                                 target
+                                                                                    0
+                                                                                  10
+                            −3
+                       y  10                                                 y
+                                                                                  −4
+                       tit                                                   tit10
+                            −6
+                       quan10                                                quan
+                                                                                  −8
+                       ath  −9                                               ath10
+                       P  10                                                 P
+                           −12                                                    −12
+                         10    −12     −10      −8       −6      −4      −2     10   −12     −10     −8      −6      −4     −2       0
+                             10      10       10      10       10      10          10      10      10      10      10     10       10
+                                                 D       =1                                            D       =2
+                                                   target                                                target
+                             0                                                      0
+                           10                                                     10
+                       y                                                     y
+                            −4                                                    −4
+                       tit10                                                 tit10
+                       quan                                                  quan
+                            −8                                                    −8
+                       ath10                                                 ath10
+                       P                                                     P
+                           −12                                                    −12
+                         10    −12    −10      −8     −6      −4      −2      010    −12     −10     −8      −6      −4     −2       0
+                             10     10       10     10      10      10      10     10      10      10      10      10     10       10
+                                                     d                                                     d
+                                                      Th                                                    Th
+                Figure 2: Path-certiﬁcate conservatism on log–log axes. Blue circles bin the per-round Hessian/Q certiﬁcate
+                                                                                                                               t
+                 ¯Q
+                D against endpoint Thompson distance. Orange triangles bin the numerical selected factor-path length at
+                   t
+                preregistered checkpoints. Marker size encodes bin count for both series, and the dashed line is equality. Values
+                                                   −12
+                at or below the preregistered 10        ratio tolerance, including round-one zeros, are omitted from the log axes and
+                counted in Table 7. Quadrature and generalized-eigenvalue calculations are dense ﬂoat64 diagnostics, not veriﬁed
+                certiﬁcates.

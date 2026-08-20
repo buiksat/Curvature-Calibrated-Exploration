@@ -1,0 +1,86 @@
+                     Pre-reward algorithmic curvature under certiﬁed transfer. The analysis is conducted for a generic
+                     pre-reward measurable SPD algorithmic curvature sequence {C }                                     satisfying
+                                                                                                              t t≥1
+                                                           Ct is symmetric,              Ct  λI ≻ 0,             Ct is Ht-measurable.                                         (98)
+                     This is the operator whose inverse the algorithm actually applies (via CG) to form widths. The exact full-history
+                     result is the special case Ct = Ct (relinearized curvature (45)); approximate, subsampled, windowed, refreshed,
+                                                      ˆ
+                     or sketched operators C are also represented by C , but are covered only when the required transfer certiﬁcate
+                                                        t                                     t
+                     below is available. Write the algorithmic width
+                                                                                 s2 (a) := g (a)⊤C−1g (a).                                                                     (99)
+                                                                                   C,t             t         t    t
+                     Assumption 6 (One-sided optimism transfer). For every round t ≤ T there is an H -measurable factor u (a) ≥ 1
+                                                                                                                                            t                             t
+                     such that, for every candidate action a ∈ A ,
+                                                                                   t
+                                                                                       2                    2
+                                                                                     s¯ (a) ≤ u (a)s            (a).                                                         (100)
+                                                                                       t             t      C,t
+                     This is the only spectral relation the one-sided fallback theorem needs, and it is one-sided: it dominates
+                     the predictable frozen-feature width s¯ (a) (the object of the self-normalized conﬁdence bound) by an inﬂated
+                                                                            t
+                     algorithmic width. No lower Loewner factor on Ct is required for optimism. The factor may be action-dependent;
+                     when a uniform per-round u satisﬁes (100) for every action we write u and state the action-dependent theorem
+                                                             t                                                            t
+                     with u (a). For the exact-curvature instantiation C = C , the whitened relative-drift lemma below certiﬁes (100)
+                              t                                                              t       t
+                     with the uniform factor u = (1 + χ¯ )2; for an approximate operator, the composition of Lemma 31 with a
+                                                           t               t
+                                                          ˆ                                                   2
+                     one-sided spectral bound C  κ                     C gives u = κ             (1+χ¯ ) (Theorem 46).
+                                                             t      +,t    t           t      +,t          t
+                     The following lemma supplies the exact-curvature transfer factor through a whitened, relative feature-drift bound:
+                                                                ¯−1
+                     the drift is measured in the C                    metric and accumulated in ℓ2, and the resulting one-sided bound needs no
+                                                                  t
+                     smallness condition.
+                     Lemma 31 (Whitened relative feature-drift bound). Let g := ∇ µ (x ,a ), g                                                   := ∇ µ (x ,a ), δ               :=
+                                                                                                             s         θ θs      s   s      s,t         θ θt      s   s      s,t
+                                                                                                                                   ¯1/2
+                     g     −g , and ∆           := kθ −θ k. Using the symmetric (principal) square root C                                 , deﬁne the d×(t−1) whitened
+                       s,t      s           s,t         t      s                                                                     t
+                     column matrices
+                                                          h ¯−1/2            i                     h ¯−1/2             i
+                                                  G := C             g /σ          ,       D := C             δ    /σ        ,       χ :=kD k .                              (101)
+                                                    t          t       s                     t          t       s,t                    t          t op
+                                                                              s<t                                        s<t
+                     Writing nt = t−1, also deﬁne the (d+nt)×d stacked matrices
+                                                                             "√ ¯−1/2#                           "√ ¯−1/2#
+                                                                    A :=          λCt           ,       B :=          λCt            .                                       (102)
+                                                                       t            G⊤                     t       (G +D )⊤
+                                                                                      t                               t       t
+                     At t = 1 the lower blocks have zero rows. All square roots and inverse square roots in this statement are principal.
+                     Then:
+                                ⊤              ¯−1
+                     (a) G G =I−λC                    I, hence kG k            ≤1.
+                             t  t                t                        t op                       
+                                 
+
+                           ¯−1/2             ¯    ¯−1/2              ⊤           ⊤           ⊤       
+¯−1/2               ¯    ¯−1/2
+                      2
+                     (b) C         (C −C)C                 =GD +DG +DD ,so C                                    (C −C)C                      ≤2χ +χ .
+                             t         t       t    t            t   t       t   t       t   t            t         t       t    t       op         t      t
+                     (c) The stacked designs obey
+                                                            ⊤                       ⊤          ¯−1/2        ¯−1/2
+                                                         A A =I ,                B B =C                CC ,                 kB −Ak =χ.                                       (103)
+                                                            t    t      d           t    t       t        t   t                 t       t op         t
+                     (d) (One-sided, no smallness condition.) For every χt ≥ 0,
+                                                                                2 ¯                           2                      2 2
+                                                          C  (1+χ) C,                        hence         s¯ (a) ≤ (1+χ ) s (a) ∀a.                                        (104)
+                                                             t               t      t                         t                    t     t
+                          Apredictable certiﬁcate χ¯t ≥ χt therefore satisﬁes Assumption 6 in the exact case Ct = Ct with the uniform
+                                                       2
+                           factor u = (1+χ¯ ) .
+                                      t             t
+                     (e) (Whitened ℓ2 primitive bound.)
+                                                                            "                           #                  "                       #
+                                                                                     X                    1/2                 X                      1/2
+                                                                                 −2               2                   Lg                         2
+                                                      χ ≤ kD k = σ                        kδ    k −1            ≤ √                kθ −θ k               ,                   (105)
+                                                        t          t F                       s,t  ¯                                    t      s
+                                                                                                  Ct                σ λ
+                                                                                     s<t                                      s<t
+                          the last step under the L -Lipschitz-Jacobian assumption kδ                              k ≤ L ∆ .
+                                                              g                                                 s,t        g    s,t

@@ -1,0 +1,53 @@
+                  References                                                              David Gross and Vincent Nesme. Note on sampling
+                  Yasin Abbasi-Yadkori,            D´avid    P´al,   and Csaba              without replacing from a ﬁnite collection of matrices.
+                     Szepesv´ari. Improved algorithms for linear stochastic                 arXiv preprint arXiv:1001.2738, 2010.
+                     bandits. Advances in Neural Information Processing                   Wassily Hoeﬀding. Probability inequalities for sums of
+                     Systems, 24, 2011.                                                     bounded random variables. Journal of the American
+                  Shipra Agrawal and Navin Goyal. Thompson sampling                         Statistical Association, 58(301):13–30, 1963.
+                     for contextual bandits with linear payoﬀs. In Inter-                 Parnian Kassraie and Andreas Krause. Neural con-
+                     national Conference on Machine Learning (ICML),                        textual bandits without regret.            In International
+                     pages 127–135, 2013.                                                   Conference on Artiﬁcial Intelligence and Statistics
+                  Ha Manh Bui, Enrique Mallada, and Anqi Liu.                               (AISTATS), pages 240–278, 2022.
+                     Variance-aware linear UCB with deep representa-                      Pang Wei Koh and Percy Liang. Understanding black-
+                     tion for neural contextual bandits. In Proceedings                     box predictions via inﬂuence functions. In Inter-
+                     of the 28th International Conference on Artiﬁcial                      national Conference on Machine Learning (ICML),
+                     Intelligence and Statistics, volume 258 of Proceed-                    pages 1885–1894, 2017.
+                     ings of Machine Learning Research, pages 4213–                       Agustinus Kristiadi, Matthias Hein, and Philipp Hen-
+                     4221. PMLR, 2025. URL https://proceedings.                             nig. Being Bayesian, even just a bit, ﬁxes overconﬁ-
+                     mlr.press/v258/bui25a.html.                                            dence in ReLU networks. In International Confer-
+                  Peter G. Chang, Gerardo Dur´an-Mart´ın, Alexander Y.                      ence on Machine Learning (ICML), pages 5436–5446,
+                     Shestopaloﬀ, Matt Jones, and Kevin Murphy. Low-                        2020.
+                     rank extended Kalman ﬁltering for online learning                    Ilja Kuzborskij, Leonardo Cella, and Nicol`o Cesa-
+                     of neural networks from streaming data. In Pro-                        Bianchi.     Eﬃcient linear bandits through matrix
+                     ceedings of the 2nd Conference on Lifelong Learning                    sketching. In International Conference on Artiﬁ-
+                     Agents, volume 232 of Proceedings of Machine Learn-                    cial Intelligence and Statistics (AISTATS), pages
+                     ing Research, 2023. URL https://proceedings.                           177–185, 2019.
+                     mlr.press/v232/chang23a.html.
+                  Varsha Dani, Thomas P. Hayes, and Sham M. Kakade.                       Tor Lattimore, Csaba Szepesv´ari, and Gell´ert Weisz.
+                     Stochastic linear optimization under bandit feedback.                  Learning with good feature representations in ban-
+                     In Proceedings of the 21st Annual Conference on                        dits and in RL with a generative model. In Inter-
+                     Learning Theory (COLT), pages 355–366, 2008.                           national Conference on Machine Learning (ICML),
+                                                                                            pages 5662–5670, 2020.
+                  Erik Daxberger, Agustinus Kristiadi, Alexander Immer,                   David J. C. MacKay. A practical Bayesian framework
+                     Runa Eschenhagen, Matthias Bauer, and Philipp                          for backpropagation networks. Neural Computation,
+                     Hennig. Laplace Redux—eﬀortless Bayesian deep                          4(3):448–472, 1992.
+                     learning. In Advances in Neural Information Process-
+                     ing Systems, volume 34, pages 20089–20103, 2021.                     Wesley Maddox, Shuai Tang, Pablo Moreno, An-
+                  Rohan Deb, Yikun Ban, Shiliang Zuo, Jingrui He,                           drew Gordon Wilson, and Andreas Damianou. Fast
+                     and Arindam Banerjee. Contextual bandits with on-                      adaptation with linearized neural networks. In In-
+                     line neural regression. In The Twelfth International                   ternational Conference on Artiﬁcial Intelligence and
+                     Conference on Learning Representations. OpenRe-                        Statistics (AISTATS), pages 2737–2745, 2021.
+                     view.net, 2024.       URL https://openreview.net/                    James Martens. New insights and perspectives on
+                     forum?id=5ep85sakT3.                                                   the natural gradient method. Journal of Machine
+                  Gerardo Dur´an-Mart´ın, Aleyna Kara, and Kevin Mur-                       Learning Research, 21(146):1–76, 2020.
+                     phy. Eﬃcient online Bayesian inference for neural                    James Martens and Roger Grosse. Optimizing neu-
+                     bandits. In International Conference on Artiﬁcial                      ral networks with Kronecker-factored approximate
+                     Intelligence and Statistics (AISTATS), pages 6002–                     curvature. In International Conference on Machine
+                     6021, 2022.                                                            Learning (ICML), pages 2408–2417, 2015.
+                  Avishek Ghosh, Sayak Ray Chowdhury, and Aditya                          Roger D. Nussbaum. Finsler structures for the part
+                     Gopalan. Misspeciﬁed linear bandits. In AAAI Con-                      metric and Hilbert’s projective metric and applica-
+                     ference on Artiﬁcial Intelligence, pages 3761–3767,                    tions to ordinary diﬀerential equations. Diﬀerential
+                     2017.                                                                  and Integral Equations, 7(5–6):1649–1707, 1994.
+                  Diego Granziol and Khurshid Juarev. Hessian spectral                    Razvan Pascanu and Yoshua Bengio. Revisiting nat-
+                     analysis at foundation model scale. arXiv preprint                     ural gradient for deep networks.             arXiv preprint
+                     arXiv:2602.00816, 2026.                                                arXiv:1301.3584, 2013.

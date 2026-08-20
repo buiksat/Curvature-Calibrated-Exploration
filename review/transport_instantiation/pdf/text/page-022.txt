@@ -1,0 +1,89 @@
+                 E Additional conditional rates
+                 E.1     Online nonlinear certiﬁcates
+                                                                     ¯                 P            ¯     2
+                 At the start of round t, let n = t−1, and let θ          and J     =        kθ −θ k bemaintained by a vector Welford
+                                                 t                     <t       <t       s<t    s     <t
+                 update. With collection residuals c = µ (x ,a )−r , deﬁne
+                                                          s     θs   s   s      s
+                                                                               ¯     2         col   X2
+                                                        Q =J +nkθ −θ k ,                    R = c.                                            (62)
+                                                          t     <t     t   t     <t            t          s
+                                                                                                     s<t
+                                                                P                 2
+                 Both are pre-action quantities and Q =                kθ −θ k exactly. If prediction gradients are L -Lipschitz on the
+                                                            t      s<t    t     s                                             g
+                 certiﬁed region, set                                 √
+                                                                   L Q
+                                                            χ¯  = g√ t,           u =κ (1+χ¯ )2,                                              (63)
+                                                              t     σ λ            t     +,t        t
+                 where κ      =1forexact full curvature and for an unrescaled current-parameter subset, and otherwise is a supplied
+                          +,t
+                 one-sided operator certiﬁcate. If k∇Lt(θt)k ≤ ζt, an observable centering schedule is
+                                                                    ¯
+                                                              ζ +M
+                                                        ¯      t √    t
+                                                       ψ =             ,
+                                                         t        λ
+                                                                  h   q                                     i                                 (64)
+                                                       ¯       −2          col      3             1 2 3/2
+                                                      M =σ L R Q + GL Q + L Q                                .
+                                                         t           g     t    t   2     g  t    2 g t
+                 For a known radius-R trust region, the ﬁnal numerator term improves to L2RQ . Finally, for an L -Lipschitz
+                                                                                P                         g    t                      µ
+                                                       L
+                                                 lin     µ             2  ¯             lin 2
+                 prediction gradient deﬁne ǫ¯       = (S+kθk) ,F =                    (ǫ¯  ) , and
+                                                 t      2          t       t      s<t s
+                                                          ¯     p                        √          −1p¯
+                                                          β = γˆ        +2log(1/δ)+ λS+σ                 F ,
+                                                           t        t−1                                    t
+                                                                X                                     2                                       (65)
+                                                                                             u (a )s˜ (a )
+                                                       γˆ    =      log(1 +q ),        q = s s s s .
+                                                         t−1                  s         s      σ2(1−ε¯ )
+                                                                s<t                                     s
+                 Corollary 17 (Operational CC-UCB). Under the structural hypotheses of Theorem 13, with its certiﬁcate inputs
+                 instantiated by valid smoothness constants, the optimizer residual bound ζt, uniform CG certiﬁcates, and a valid
+                                                                                                                       ¯
+                 κ    , (62)–(65) give valid pre-reward schedules. Preﬁx-derived quantities are predictable; ψ is predictable when ζ
+                   +,t                                                                                                  t                         t
+                 is H−-measurable, while u and any current randomized operator factor are pre-reward measurable. Together they
+                      t                        t                                                                                  P
+                                                                                                                            ¯              lin
+                 satisfy every nonlinear input of the theorem. Thus Theorem 13 holds with ET replaced by ET =                             ǫ¯  and
+                                                                                                                                     t≤T t
+                                                            C
+                 the observable CG upper bound on Λ           from Corollary 37.
+                                                            T
+                                                            ¯           ¯                ¯
+                 Proof. Lemma 25 proves χ¯ ≥ χ , ψ ≥ ψ , F ≥ F , and E                       ≥ E . The one-sided operator relation and
+                                                  t      t   t      t    t      t          T       T
+                                                                       ¯
+                 Corollary 43 give u and γˆ          ≥γ ,hence β ≥ β . All quantities are available before selection; when ζ is
+                                        t     ¯ t−1       t−1           t      t                                                               t
+                 preﬁx measurable, so is ψ . Uniform candidate-action CG accuracy is checked before selection. Substitution in
+                                               t
+                 Theorem 13 and Corollary 37 proves the claim.
+                                                                                                                                          2   √
+                 The proof, ﬁltration-order pseudocode, and a scalar-tanh specialization with G ≤ Bφ and Lµ = Lg ≤ 4B /(3 3)
+                                                                                                                                         φ
+                 are in Lemma 25 and Corollary 29.
+                                                                                  ∗                    √                √               √
+                 For an abstract near-linearity scale W, suppose kθ k,kθ k ≤ R, L ≤ c / W, L ≤ c / W, ζ ≤ ζ / W, and
+                                                                            t                 µ     µ          g     g          t    0
+                 Rcol ≤ C tP for a supplied P ≥ 1. Then
+                   t       R T                       T
+                                                                   2c R2T                     4c2R4T
+                                                            ¯         µ              ¯           µ
+                                                            E ≤ √           ,       F      ≤            ,
+                                                              T        W              T+1        W
+                                                                         √                                                                    (66)
+                                                                   2c R t−1
+                                                             χ¯ ≤ g√             .
+                                                              t       σ λW
+                                                                                   ¯
+                 and Corollary 26 gives an explicit trust-region bound on ψt. If a supplied ﬁxed active subspace gives rank bound
+                 r ≥ 1, deﬁne                                                   2 
+                                                      Γ    =r log 1+ TG               ,     r   =min{r,T}.                                    (67)
+                                                       T,r     T            r λσ2            T
+                                                                             T

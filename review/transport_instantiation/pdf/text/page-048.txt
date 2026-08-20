@@ -1,0 +1,51 @@
+                What remains open. The path schedules close the computability gap, but their constants can be extremely
+                loose. The approximate-rank result replaces exact rank by a realized or predictably bounded spectral tail, but
+                does not show that this tail or feature drift remains small during unrestricted training. Useful control of these
+                two quantities for a genuinely adapting backbone, tighter smoothness/residual certiﬁcates, and veriﬁed numerical
+                enclosures for ﬂoating-point solver and spectral calculations remain open.
+                G Related Work
+                Positive-cone metric geometry. Thompson (1963) introduced the part metric now commonly called the
+                Thompson metric on ordered cones. Nussbaum (1994) developed its Finsler structure and applications. On
+                                                                                  −1/2 ˙   −1/2
+                the positive-deﬁnite cone, the normalized operator norm kV             VV       k   is the corresponding tangent norm.
+                                                                                                 op
+                Our contribution is not this geometry or its path-to-endpoint comparison. We instantiate it as an operational
+                conﬁdence-transport device linking frozen bandit conﬁdence, current replayed GGN/Fisher curvature, approximate
+                operators, and certiﬁed solver widths.
+                Neural and linear contextual bandits. LinUCB (Abbasi-Yadkori et al., 2011) and Thompson sampling
+                (Thompson, 1933; Agrawal and Goyal, 2013) provide the analytical backbone for contextual bandit exploration.
+                Neural extensions—NeuralUCB (Zhou et al., 2020), NeuralTS (Zhang et al., 2021), neural-linear models (Riquelme
+                et al., 2018)—use diﬀerent neural feature covariances. NeuralUCB and NeuralTS accumulate full neural-gradient
+                Grams in their stated algorithms, while NeuralLinear maintains Bayesian linear uncertainty over learned last-layer
+                features. CC-UCB instead re-evaluates every replayed Jacobian at the current parameter and accesses the
+                resulting full operator implicitly. Neural-linear designs that train a deep representation but explore only in the
+                last layer (Xu et al., 2022a) occupy the opposite design point. Recent alternatives sharpen diﬀerent parts of
+                this landscape. Salgia (2023) analyze overparameterized smooth-activation networks through non-asymptotic
+                network–NTK approximation and give an eﬃcient sublinear-regret algorithm. Deb et al. (2024) instead reduce
+                contextual bandits to online neural regression, using perturbed predictions to obtain their regression guarantees.
+                Bui et al. (2025) combine a learned deep representation with a variance-aware linear-UCB exploration layer. These
+                are, respectively, an NTK analysis, a regression-oracle route, and a learned last-layer geometry; none analyzes the
+                dynamically relinearized full GGN and its CG error. Our low-rank/excitation result is correspondingly narrower
+                than generic neural regression, but controls that current-parameter operator.
+                Online Bayesian and EKF-style neural bandits. Dur´an-Mart´ın et al. (2022) apply extended Kalman ﬁlter
+                (EKF) updates in a learned or random low-dimensional aﬃne parameter subspace. They maintain a dense or
+                diagonal covariance in that subspace, inducing a low-rank covariance over parameters spanning all network layers,
+                with memory independent of the number of rounds. This diﬀers from applying exact curvature–vector products in
+                the full parameter space. More directly, Chang et al. (2023) maintain a diagonal-plus-low-rank approximation to
+                the full-parameter posterior precision through recursive EKF and online-SVD updates, and use it for Thompson
+                sampling in an MNIST contextual bandit. Their LO-FI method is a one-pass compressed-posterior approach with
+                ﬁxed-rank cost linear in parameter count and no replay of past data. CC-UCB instead relinearizes the full replay
+                history at the current parameter and accesses the uncompressed GGN through residual-checked CG. Their bandit
+                study is empirical; our conditional UCB analysis explicitly accounts for CG truncation, but does not establish a
+                practical advantage over LO-FI.
+                Last-layer and structured Laplace approximations. Last-layer Laplace ﬁxes the backbone and restricts
+                the approximate posterior to the ﬁnal layer (Kristiadi et al., 2020), omitting backbone-weight uncertainty by
+                construction. This is only one scalable option: all-layer block-diagonal Kronecker curvature has also been used
+                (Ritter et al., 2018), and Daxberger et al. (2021) systematize all-weight, subnetwork, and last-layer variants with
+                full, low-rank, KFAC, or diagonal curvature. CC-UCB uses the uncompressed current-parameter GGN as its
+                reference operator without materializing the covariance matrix.
+                Sampling-based full-parameter exploration. Langevin Monte Carlo Thompson sampling (LMC-TS) (Xu
+                et al., 2022b) explores with approximate samples of a loss-deﬁned parameter posterior, obtained by noisy gradient
+                steps on the regularized loss; like CC-UCB it never materializes a covariance matrix. Its regret guarantee is for
+                linear contextual bandits; its neural-bandit evidence is empirical. The two routes pay for exploration diﬀerently:
+                LMC-TS through the mixing of a per-round sampling chain, CC-UCB through CG truncation and spectral

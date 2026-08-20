@@ -1,0 +1,1051 @@
+{
+  "contact_sheet_dpi": 24,
+  "contact_sheets": [
+    {
+      "columns": 4,
+      "dpi": 24,
+      "first_page": 1,
+      "height": 1086,
+      "last_page": 16,
+      "page_count": 16,
+      "path": "contact_sheet_p001-p016.png",
+      "width": 846
+    },
+    {
+      "columns": 4,
+      "dpi": 24,
+      "first_page": 17,
+      "height": 1086,
+      "last_page": 32,
+      "page_count": 16,
+      "path": "contact_sheet_p017-p032.png",
+      "width": 846
+    },
+    {
+      "columns": 4,
+      "dpi": 24,
+      "first_page": 33,
+      "height": 1086,
+      "last_page": 48,
+      "page_count": 16,
+      "path": "contact_sheet_p033-p048.png",
+      "width": 846
+    },
+    {
+      "columns": 4,
+      "dpi": 24,
+      "first_page": 49,
+      "height": 1086,
+      "last_page": 63,
+      "page_count": 15,
+      "path": "contact_sheet_p049-p063.png",
+      "width": 846
+    }
+  ],
+  "encrypted": false,
+  "file_count": 84,
+  "files": [
+    {
+      "bytes": 158863,
+      "dpi": 24,
+      "first_page": 1,
+      "height": 1086,
+      "kind": "contact_sheet",
+      "last_page": 16,
+      "path": "contact_sheet_p001-p016.png",
+      "sha256": "fdf9ac4526fd9bdfe63490aeb71dc83d76d779025a8ba60d253d6afb5ab46bbe",
+      "width": 846
+    },
+    {
+      "bytes": 142628,
+      "dpi": 24,
+      "first_page": 17,
+      "height": 1086,
+      "kind": "contact_sheet",
+      "last_page": 32,
+      "path": "contact_sheet_p017-p032.png",
+      "sha256": "04e08273db89366a3644e05e456fb620148790f05bd3bd98c44a383f58f86e6e",
+      "width": 846
+    },
+    {
+      "bytes": 159471,
+      "dpi": 24,
+      "first_page": 33,
+      "height": 1086,
+      "kind": "contact_sheet",
+      "last_page": 48,
+      "path": "contact_sheet_p033-p048.png",
+      "sha256": "34ff49a17b6e5b0e4b78719fc763a73b644c2d6b6963a43346bd8d10e249e243",
+      "width": 846
+    },
+    {
+      "bytes": 139296,
+      "dpi": 24,
+      "first_page": 49,
+      "height": 1086,
+      "kind": "contact_sheet",
+      "last_page": 63,
+      "path": "contact_sheet_p049-p063.png",
+      "sha256": "e1ac7b667bbab6fab7ae477d9f6992d203aa85ce8b2bcf25967836e1ca6691af",
+      "width": 846
+    },
+    {
+      "bytes": 520364,
+      "kind": "text",
+      "path": "extracted_text.txt",
+      "sha256": "7c667631eef464f807611a95175b731f601ece71eec743333bba5c0e8ea334f0"
+    },
+    {
+      "bytes": 24472,
+      "kind": "index",
+      "path": "page_index.json",
+      "sha256": "fbc9456afbdccc1954b04a7ca86d2514b4d80a84f5eaece0bc2e064942891394"
+    },
+    {
+      "bytes": 206193,
+      "carries": [
+        "headline confidence-transport theorem (Theorem 1)"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 3,
+      "path": "pages/page-003.png",
+      "sha256": "41c1c09e412d0483ee9b7dac7bfac2b708016f182614e07607d76dc5d1f1b4fa",
+      "width": 1275
+    },
+    {
+      "bytes": 193686,
+      "carries": [
+        "corrected-center transported UCB algorithm"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 4,
+      "path": "pages/page-004.png",
+      "sha256": "3f56aa13371d90560f67a8f3b395b69aadddb1d16a67f2c702641ccb74c807a1",
+      "width": 1275
+    },
+    {
+      "bytes": 187682,
+      "carries": [
+        "corrected-center theorem (Corollary 7)",
+        "finite-dimensional corrected-center rate (Corollary 8)",
+        "global near-linearity corollary (Corollary 9)"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 6,
+      "path": "pages/page-006.png",
+      "sha256": "268d6037a62263e4d99de7406bb4dd7e34e5011798edcdada6c52918fc5cf727",
+      "width": 1275
+    },
+    {
+      "bytes": 205936,
+      "carries": [
+        "transport experiment section 6"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 7,
+      "path": "pages/page-007.png",
+      "sha256": "774460f348e188623113854e25304167fee78f577bafa9e636c2dc536e00ffe1",
+      "width": 1275
+    },
+    {
+      "bytes": 248287,
+      "carries": [
+        "transport experiment environment diagnostics"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 8,
+      "path": "pages/page-008.png",
+      "sha256": "6a63df3bf010fd6afd767cecf040d03eefbca00c47087c2b082f81d03b05b351",
+      "width": 1275
+    },
+    {
+      "bytes": 146514,
+      "carries": [
+        "performance table",
+        "validity table"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 9,
+      "path": "pages/page-009.png",
+      "sha256": "6d6909e1e75df27dfcd79b4e2c634de5ea50a9d5d609ac499cc9c12c9ed5b33e",
+      "width": 1275
+    },
+    {
+      "bytes": 130252,
+      "carries": [
+        "proof of Theorem 1"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 12,
+      "path": "pages/page-012.png",
+      "sha256": "c362c16dcd5f579a7cd6a6df3c8cccc042440215fc45b2a809fae8dadf3a22f7",
+      "width": 1275
+    },
+    {
+      "bytes": 141131,
+      "carries": [
+        "appendix transport diagnostics"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 57,
+      "path": "pages/page-057.png",
+      "sha256": "e5e92988336f8a1699af97105a7a484bc18003b46e0a1fbc8b6e0b77d54c2669",
+      "width": 1275
+    },
+    {
+      "bytes": 57296,
+      "carries": [
+        "tightness table"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 58,
+      "path": "pages/page-058.png",
+      "sha256": "e91edacc2380914db27db2435876109373798b02d09434d17f127194c56003a9",
+      "width": 1275
+    },
+    {
+      "bytes": 79697,
+      "carries": [
+        "regret figure"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 59,
+      "path": "pages/page-059.png",
+      "sha256": "d5fd7a92d5d51b1f140b0e1ca43c1087c5b827f505ec652ab4e2ad5d0f9210bc",
+      "width": 1275
+    },
+    {
+      "bytes": 98723,
+      "carries": [
+        "tightness figure"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 60,
+      "path": "pages/page-060.png",
+      "sha256": "f219fdd2e04ceb10f7891f9a855bd7e18708d3b3ef4d3baf31c375ff723beb3c",
+      "width": 1275
+    },
+    {
+      "bytes": 65976,
+      "carries": [
+        "bound figure"
+      ],
+      "dpi": 150,
+      "height": 1650,
+      "kind": "page_render",
+      "page": 61,
+      "path": "pages/page-061.png",
+      "sha256": "79da0650eafe3c2d1fa6d1a94c8b628be800a2bf801835ce1e7d8514312b8189",
+      "width": 1275
+    },
+    {
+      "bytes": 2806,
+      "kind": "metadata",
+      "path": "pdffonts.txt",
+      "sha256": "d07a8244f5717d7045c204dd8e42c96e55bc6252b1646d2c30ed3f90790978b5"
+    },
+    {
+      "bytes": 520,
+      "kind": "metadata",
+      "path": "pdfinfo.txt",
+      "sha256": "4d6d883f7d87767405d3dd620af64f6df3439ae328f7418b4dce4bd52e766d97"
+    },
+    {
+      "bytes": 486,
+      "kind": "structural",
+      "path": "structural_check.txt",
+      "sha256": "fdf70d7f11dafcc42dba871774ec37c3b010da54393445847341b55ad13f4f5e"
+    },
+    {
+      "bytes": 5540,
+      "kind": "text",
+      "page": 1,
+      "path": "text/page-001.txt",
+      "sha256": "e98fe8c3152a6c07ac1339b22ba0084bfacf8ee84ec32346ccfa8e204fe433ce"
+    },
+    {
+      "bytes": 7568,
+      "kind": "text",
+      "page": 2,
+      "path": "text/page-002.txt",
+      "sha256": "69339a5cf4b4e8d2e41a4cd4a662234b7482edcb82a9ed08ba88ddb05a709486"
+    },
+    {
+      "bytes": 11095,
+      "kind": "text",
+      "page": 3,
+      "path": "text/page-003.txt",
+      "sha256": "c4ee66282b083033c58a1e4515799c8e962bc7c6e2585a039920ddeeb48ba89c"
+    },
+    {
+      "bytes": 9187,
+      "kind": "text",
+      "page": 4,
+      "path": "text/page-004.txt",
+      "sha256": "faf153b8ac726e5c85801497609ad3289b455e93cdf733d60636f7da96573deb"
+    },
+    {
+      "bytes": 10190,
+      "kind": "text",
+      "page": 5,
+      "path": "text/page-005.txt",
+      "sha256": "1847ffb2aba4fad7aeb92fef1d8c7650d72cb1880eb2fa8db3e4a3c7b0b883eb"
+    },
+    {
+      "bytes": 10371,
+      "kind": "text",
+      "page": 6,
+      "path": "text/page-006.txt",
+      "sha256": "da22c4a1c6ef28193380e904e078a72eb86d9e858dcd72740da09bdbb412a774"
+    },
+    {
+      "bytes": 9762,
+      "kind": "text",
+      "page": 7,
+      "path": "text/page-007.txt",
+      "sha256": "039ea62040501c7fc4375c707590cef41ef963e988d517f56c26f5eab87ed376"
+    },
+    {
+      "bytes": 7376,
+      "kind": "text",
+      "page": 8,
+      "path": "text/page-008.txt",
+      "sha256": "38119f61918cb7ef51d5cda2fc218c57b5673f550b5fef215c6113f491048681"
+    },
+    {
+      "bytes": 7622,
+      "kind": "text",
+      "page": 9,
+      "path": "text/page-009.txt",
+      "sha256": "03376f4af9c8d7b9ffbd911fdb45e3102baf95e0463726250468262983dd48cc"
+    },
+    {
+      "bytes": 7213,
+      "kind": "text",
+      "page": 10,
+      "path": "text/page-010.txt",
+      "sha256": "41caac290b9908c856ef9936ad7e7e56389163363f48372c3eb0aeb2d54c5abd"
+    },
+    {
+      "bytes": 3815,
+      "kind": "text",
+      "page": 11,
+      "path": "text/page-011.txt",
+      "sha256": "125ebf867682b7b8917a75b9b6346e0070a6611d3d04aa24c71f9a1ac46100e4"
+    },
+    {
+      "bytes": 6919,
+      "kind": "text",
+      "page": 12,
+      "path": "text/page-012.txt",
+      "sha256": "69d9aaf8a69550c2b94a54978fbda0075506de7c7534adb2cb845820d9abdc62"
+    },
+    {
+      "bytes": 5957,
+      "kind": "text",
+      "page": 13,
+      "path": "text/page-013.txt",
+      "sha256": "0923eb8ab33926f57551511b5f0017d4362229dbbfe2c38a28cb568f4d0092e3"
+    },
+    {
+      "bytes": 7468,
+      "kind": "text",
+      "page": 14,
+      "path": "text/page-014.txt",
+      "sha256": "4f9d9cabf8d3d967c2a206b5992b067d818755ba4a78e14367a74f343674c9b1"
+    },
+    {
+      "bytes": 6056,
+      "kind": "text",
+      "page": 15,
+      "path": "text/page-015.txt",
+      "sha256": "e0a7ab308839a4b30312f662d5a861cc886528614a5a91d6fc07b9c80e87628d"
+    },
+    {
+      "bytes": 7625,
+      "kind": "text",
+      "page": 16,
+      "path": "text/page-016.txt",
+      "sha256": "3cb8a3827bf2990c779fdb0492e87ecd071cc9887ce849fce848bb37422b07a3"
+    },
+    {
+      "bytes": 5401,
+      "kind": "text",
+      "page": 17,
+      "path": "text/page-017.txt",
+      "sha256": "d08ee09aa36b527629a9a3085db25ebe402bdb56b8daee74e52a0583db3796fb"
+    },
+    {
+      "bytes": 11005,
+      "kind": "text",
+      "page": 18,
+      "path": "text/page-018.txt",
+      "sha256": "5ef10619aae543b1e71e82603af0d422af8631b35687ca12259d2c90dfb2fc5a"
+    },
+    {
+      "bytes": 10513,
+      "kind": "text",
+      "page": 19,
+      "path": "text/page-019.txt",
+      "sha256": "ad2f186fecfbcbbfb635456a037f74f6785588833cc94c13b88490a17dae5ef2"
+    },
+    {
+      "bytes": 9263,
+      "kind": "text",
+      "page": 20,
+      "path": "text/page-020.txt",
+      "sha256": "b7cf7ea1a952bf7816eccf6e26f1ee18c4038bade66472d4590d52d51a8a61b1"
+    },
+    {
+      "bytes": 8711,
+      "kind": "text",
+      "page": 21,
+      "path": "text/page-021.txt",
+      "sha256": "aea3e8255866e10d003dbad9ef9fffcb6b971464b525becc0af2428b13b6339a"
+    },
+    {
+      "bytes": 9430,
+      "kind": "text",
+      "page": 22,
+      "path": "text/page-022.txt",
+      "sha256": "4174b0c021a7a234361757146991282fd1eb09c0fa1fcec36bb57d7bd4aa59d3"
+    },
+    {
+      "bytes": 9726,
+      "kind": "text",
+      "page": 23,
+      "path": "text/page-023.txt",
+      "sha256": "e9e79aced047be25554eef175f37ef7006b82a9c83e82539696af352c22e333c"
+    },
+    {
+      "bytes": 6896,
+      "kind": "text",
+      "page": 24,
+      "path": "text/page-024.txt",
+      "sha256": "0ed4a84aab38ad5bc00013d4cf6e85a8125a5620736f128bf84e53cd284a2214"
+    },
+    {
+      "bytes": 6638,
+      "kind": "text",
+      "page": 25,
+      "path": "text/page-025.txt",
+      "sha256": "bfc7726ec5394a8554b51d0c03a397685ca93c60b42c945b24f1b869e29fd55b"
+    },
+    {
+      "bytes": 9495,
+      "kind": "text",
+      "page": 26,
+      "path": "text/page-026.txt",
+      "sha256": "082fac6c24651774c82a7d670002ceaad297f4e931869374ef77588cc835cee3"
+    },
+    {
+      "bytes": 8410,
+      "kind": "text",
+      "page": 27,
+      "path": "text/page-027.txt",
+      "sha256": "26097dc0f144da7d6420564caa4c5cd1625adb44ef4d902109a8a196f7bee2dd"
+    },
+    {
+      "bytes": 8679,
+      "kind": "text",
+      "page": 28,
+      "path": "text/page-028.txt",
+      "sha256": "25075f54ae75c96bd59a941d300c08fd05facd9f769d0dee19b2be9690b85afd"
+    },
+    {
+      "bytes": 11784,
+      "kind": "text",
+      "page": 29,
+      "path": "text/page-029.txt",
+      "sha256": "9df9705e3373a11e559c87a0e7281480762b0086db669594bc1319a8e2a7c032"
+    },
+    {
+      "bytes": 8143,
+      "kind": "text",
+      "page": 30,
+      "path": "text/page-030.txt",
+      "sha256": "3e71dfbf5be3b637e635199add7cb4b13eb8bd0bd38d2658bb4e7f4513e75f03"
+    },
+    {
+      "bytes": 7956,
+      "kind": "text",
+      "page": 31,
+      "path": "text/page-031.txt",
+      "sha256": "e82b2394fd4f6988dd5ec6fc1a9d8734151c4c4e284e88be5db72dc88bc88abe"
+    },
+    {
+      "bytes": 7878,
+      "kind": "text",
+      "page": 32,
+      "path": "text/page-032.txt",
+      "sha256": "db7c53d6505b524ff505462100a3aacf39e0e025830c356dd0c2154e05908b14"
+    },
+    {
+      "bytes": 7625,
+      "kind": "text",
+      "page": 33,
+      "path": "text/page-033.txt",
+      "sha256": "68494a8ad98cba215c0ae18beb084d5cb63a65162b8baa904eb18ce2eed4c023"
+    },
+    {
+      "bytes": 10078,
+      "kind": "text",
+      "page": 34,
+      "path": "text/page-034.txt",
+      "sha256": "9b8465844248de7f018fc7c3307759062132346ccb098e08fa0e4b9158350f5b"
+    },
+    {
+      "bytes": 11855,
+      "kind": "text",
+      "page": 35,
+      "path": "text/page-035.txt",
+      "sha256": "2ed6fb3661c206f6a6771d84b6f472df40db5db485654acfd7de172a7d91be1b"
+    },
+    {
+      "bytes": 10531,
+      "kind": "text",
+      "page": 36,
+      "path": "text/page-036.txt",
+      "sha256": "80d2dd6eaac5e00c2ed4dc06f811b1ac98f07fc31f8c0130c21222afbf1880a7"
+    },
+    {
+      "bytes": 6465,
+      "kind": "text",
+      "page": 37,
+      "path": "text/page-037.txt",
+      "sha256": "ff6232a634fff3271a5e82b060aaba7ff95ad7e0add347f9e1f7f569a03f3e24"
+    },
+    {
+      "bytes": 8187,
+      "kind": "text",
+      "page": 38,
+      "path": "text/page-038.txt",
+      "sha256": "9ffea758ffadb4d0724ed4453967103b9dc21a20417bebccf6091df9e82e513a"
+    },
+    {
+      "bytes": 8058,
+      "kind": "text",
+      "page": 39,
+      "path": "text/page-039.txt",
+      "sha256": "6fa0a327e5baaec383fcf1844fa74fba12bcf34f1b63ea4e03a10175867853c1"
+    },
+    {
+      "bytes": 7925,
+      "kind": "text",
+      "page": 40,
+      "path": "text/page-040.txt",
+      "sha256": "0b4200ce765316b9ebdc54eec6cac4a5a2e868ffdbc6ffe108146d71b38c292f"
+    },
+    {
+      "bytes": 8107,
+      "kind": "text",
+      "page": 41,
+      "path": "text/page-041.txt",
+      "sha256": "0cfe805f8853da171810392c0debeefe7087f772c466b77e247d7122dc863bd5"
+    },
+    {
+      "bytes": 12904,
+      "kind": "text",
+      "page": 42,
+      "path": "text/page-042.txt",
+      "sha256": "dedad6e50cad58796a84e58ddffbff36defb46f8914bb6c0a8dfb4dff905c4bb"
+    },
+    {
+      "bytes": 11171,
+      "kind": "text",
+      "page": 43,
+      "path": "text/page-043.txt",
+      "sha256": "d1897a5fddd5e6dbd701fb0bb160d3d698a7694a748345de4b3c9172d98597c0"
+    },
+    {
+      "bytes": 9546,
+      "kind": "text",
+      "page": 44,
+      "path": "text/page-044.txt",
+      "sha256": "2e63a6b6db117ceb3a7137859e8a2da32c5eb536fe7e661753c864afb00313aa"
+    },
+    {
+      "bytes": 9833,
+      "kind": "text",
+      "page": 45,
+      "path": "text/page-045.txt",
+      "sha256": "ed89fe08af5025c24881c451ffec9126de330f261d7a9d4c493ddc97e19de9d7"
+    },
+    {
+      "bytes": 13061,
+      "kind": "text",
+      "page": 46,
+      "path": "text/page-046.txt",
+      "sha256": "b676820f5eb00031554692f665d668fd6e0ca3e76154eb44bb3eefa4f409a630"
+    },
+    {
+      "bytes": 7409,
+      "kind": "text",
+      "page": 47,
+      "path": "text/page-047.txt",
+      "sha256": "f421f4df6aa2da13f2156c71851de94409b19b5f4003b7f0f82923cfd60a1875"
+    },
+    {
+      "bytes": 6031,
+      "kind": "text",
+      "page": 48,
+      "path": "text/page-048.txt",
+      "sha256": "76603e461867abdd81f6ae6a087f13d27df15af1cf3a07ca965f15f260ada08d"
+    },
+    {
+      "bytes": 6226,
+      "kind": "text",
+      "page": 49,
+      "path": "text/page-049.txt",
+      "sha256": "bd61eee2d7af2dce5350ee0cb74881d9967e8709d0f832a511e0e0185df664ea"
+    },
+    {
+      "bytes": 9915,
+      "kind": "text",
+      "page": 50,
+      "path": "text/page-050.txt",
+      "sha256": "193a75806315e364f01dc111f34defbea3fafdf616da69d7b5bc6e5db9df4c53"
+    },
+    {
+      "bytes": 9593,
+      "kind": "text",
+      "page": 51,
+      "path": "text/page-051.txt",
+      "sha256": "9603df579775cf78a154b7de4a160dee52c4463915f5a0933c6b62746e02ffd8"
+    },
+    {
+      "bytes": 13165,
+      "kind": "text",
+      "page": 52,
+      "path": "text/page-052.txt",
+      "sha256": "2bb03204e1b884cbb9cdf5f91d77158962eaae7ecfdf848da2048e85d7a76a49"
+    },
+    {
+      "bytes": 9068,
+      "kind": "text",
+      "page": 53,
+      "path": "text/page-053.txt",
+      "sha256": "ed43edeb55b9f4d4c4da0189a4f20c7d3f2d6aa66d9a5f9d47e8213fd02e091c"
+    },
+    {
+      "bytes": 9533,
+      "kind": "text",
+      "page": 54,
+      "path": "text/page-054.txt",
+      "sha256": "1db58870b3bd68df8a73835a53e3b43c01c4f5d7e8226cb8843b321bede6a20f"
+    },
+    {
+      "bytes": 9518,
+      "kind": "text",
+      "page": 55,
+      "path": "text/page-055.txt",
+      "sha256": "22f5e9ba3732142991fcca08a7042fcea14a3156745d379bbfd8718030b4e5db"
+    },
+    {
+      "bytes": 11160,
+      "kind": "text",
+      "page": 56,
+      "path": "text/page-056.txt",
+      "sha256": "a27a511c18cdb42845e73990de8c78660283d8b01d60c338556fdcf22e560f99"
+    },
+    {
+      "bytes": 6625,
+      "kind": "text",
+      "page": 57,
+      "path": "text/page-057.txt",
+      "sha256": "c333eed3745f9bd7239a6f9f9bb7f0b0da208082e1394d46109672ae34e96440"
+    },
+    {
+      "bytes": 3062,
+      "kind": "text",
+      "page": 58,
+      "path": "text/page-058.txt",
+      "sha256": "5d8bfd243c5ca25a212e43f5efd97b6191329701efe50572c34cad208ddd22de"
+    },
+    {
+      "bytes": 2312,
+      "kind": "text",
+      "page": 59,
+      "path": "text/page-059.txt",
+      "sha256": "1356b2928ae24eb9b6d5fbf770fd0f63a542c80aabce8ba3731a699d30a79ad2"
+    },
+    {
+      "bytes": 3918,
+      "kind": "text",
+      "page": 60,
+      "path": "text/page-060.txt",
+      "sha256": "d60e04d35628c2a9a4eded3311ca09030486013bc6e8a5c99ce7171f45ff628c"
+    },
+    {
+      "bytes": 2956,
+      "kind": "text",
+      "page": 61,
+      "path": "text/page-061.txt",
+      "sha256": "42852dec566823e28c4bdcf4fbb6c6802180819a74627c111c6531ab2ddd664a"
+    },
+    {
+      "bytes": 5632,
+      "kind": "text",
+      "page": 62,
+      "path": "text/page-062.txt",
+      "sha256": "c0b5deb8ca5f7f096020a2ad6386832538d349bef7af1aab464880c5437c744d"
+    },
+    {
+      "bytes": 3817,
+      "kind": "text",
+      "page": 63,
+      "path": "text/page-063.txt",
+      "sha256": "ded971f3d34113bde560464da47d13b3b6282f67a1ac8bf7493222e5fb1c28bc"
+    }
+  ],
+  "font_count": 37,
+  "fonts": [
+    {
+      "embedded": true,
+      "name": "ACAOPC+CMTI10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "AVBEUA+CMMI10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "CBBGPZ+SFTI1000",
+      "subtype": "unknown"
+    },
+    {
+      "embedded": true,
+      "name": "CJEHEJ+CMSY9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "DBNPPO+CMMI9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "DBTRRO+CMMIB7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "DISBXX+CMMIB9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "FADEHG+CMR7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "FKQCIH+CMBX10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "FQEDDE+CMSY7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "GQSYIT+CMTT10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "HDUGRP+CMSY5",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "HKVDQL+CMSY10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "IQCHEH+CMBX7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "KOSCSC+CMSS8",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "LLGEHA+CMMI5",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "MKIGAD+CMBX9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "NCQNJI+CMEX10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "OWTMNY+CMBXTI10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "PMTYFH+CMEX7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "PRKWXM+CMMI7",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "QPRKDF+CMR6",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "RTBDHW+CMTI9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "SABUGL+CMMI6",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "SMEBDE+SFRM1000",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "THPNLT+CMEX9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "TREUGI+CMR9",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "UDRITT+CMR10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "UFDGAY+MSAM10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "UFSQQF+CMMIB10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "VJDWCJ+CMR5",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "WCPWRT+CMBX6",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "YBSSNB+CMSY6",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "YVQHSC+CMMIB6",
+      "subtype": "unknown"
+    },
+    {
+      "embedded": true,
+      "name": "ZDQBOW+MSBM10",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "ZFKPGX+CMBX12",
+      "subtype": "Type1"
+    },
+    {
+      "embedded": true,
+      "name": "ZJSTSH+CMSS10",
+      "subtype": "Type1"
+    }
+  ],
+  "full_resolution_pages": [
+    {
+      "page": 3,
+      "path": "pages/page-003.png"
+    },
+    {
+      "page": 4,
+      "path": "pages/page-004.png"
+    },
+    {
+      "page": 6,
+      "path": "pages/page-006.png"
+    },
+    {
+      "page": 7,
+      "path": "pages/page-007.png"
+    },
+    {
+      "page": 8,
+      "path": "pages/page-008.png"
+    },
+    {
+      "page": 9,
+      "path": "pages/page-009.png"
+    },
+    {
+      "page": 12,
+      "path": "pages/page-012.png"
+    },
+    {
+      "page": 57,
+      "path": "pages/page-057.png"
+    },
+    {
+      "page": 58,
+      "path": "pages/page-058.png"
+    },
+    {
+      "page": 59,
+      "path": "pages/page-059.png"
+    },
+    {
+      "page": 60,
+      "path": "pages/page-060.png"
+    },
+    {
+      "page": 61,
+      "path": "pages/page-061.png"
+    }
+  ],
+  "full_resolution_targets": {
+    "appendix transport diagnostics": [
+      57
+    ],
+    "bound figure": [
+      61
+    ],
+    "corrected-center theorem (Corollary 7)": [
+      6
+    ],
+    "corrected-center transported UCB algorithm": [
+      4
+    ],
+    "finite-dimensional corrected-center rate (Corollary 8)": [
+      6
+    ],
+    "global near-linearity corollary (Corollary 9)": [
+      6
+    ],
+    "headline confidence-transport theorem (Theorem 1)": [
+      3
+    ],
+    "performance table": [
+      9
+    ],
+    "proof of Theorem 1": [
+      12
+    ],
+    "regret figure": [
+      59
+    ],
+    "tightness figure": [
+      60
+    ],
+    "tightness table": [
+      58
+    ],
+    "transport experiment environment diagnostics": [
+      8
+    ],
+    "transport experiment section 6": [
+      7
+    ],
+    "validity table": [
+      9
+    ]
+  },
+  "linearized": false,
+  "media_boxes": [
+    [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  ],
+  "non_claims": [
+    "Contact sheets and page renders show typesetting, not mathematical correctness.",
+    "Extracted text is a rendering artifact and preserves neither ligature spelling nor two-column reading order.",
+    "This package does not verify that results/raw/ inputs exist or match."
+  ],
+  "pdf_bytes": 933908,
+  "pdf_pages": 63,
+  "pdf_path": "paper/main.pdf",
+  "pdf_sha256": "2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1",
+  "pdf_version": "PDF-1.5",
+  "rebuild": {
+    "classification": "semantically identical but byte-different rebuild",
+    "detail": "page_count_match=True extracted_text_match=True raster_mismatch_pages=[]",
+    "raster_mismatch_page_count": 0,
+    "rebuilt_pages": 63,
+    "rebuilt_sha256": "a433dfe53d3dba077215beab71d6a21b25dc82c8e14c35ebba4c916390a222c1",
+    "source_date_epoch": "1787041524"
+  },
+  "render_dpi": 150,
+  "schema_version": 1,
+  "tooling": {
+    "ghostscript_version": "9.54.0",
+    "renderer": "ghostscript",
+    "substitution_reason": "poppler-utils and qpdf are not installed in this environment; ghostscript is.",
+    "substitutions": {
+      "pdffonts": "standard-library /BaseFont scan over inflated objects",
+      "pdfinfo": "gs page count plus standard-library trailer scan",
+      "pdftoppm": "gs -sDEVICE=png16m and -sDEVICE=ppmraw",
+      "pdftotext -layout": "gs -sDEVICE=txtwrite",
+      "qpdf --check": "gs -sDEVICE=nullpage (full page interpretation)"
+    }
+  },
+  "total_bytes": 3429257,
+  "unresolved_targets": []
+}

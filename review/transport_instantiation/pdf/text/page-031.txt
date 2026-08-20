@@ -1,0 +1,75 @@
+                 At z = 0 and v        =0its operator norm is kx¯k, independent of hidden width. Thus the executed all-weights
+                      i             a,i
+                 parameterization does not imply L ,L = O(W−1/2). Such a conclusion would require a diﬀerent explicitly
+                                                          µ   g
+                 normalized parameterization and coordinate constraints, which would also change the ridge penalty and GGN
+                 geometry. We therefore do not identify W with generic neural-network width or derive optimizer-residual scaling
+                 from it.
+                 Corollary 28 (Conditional projected-Gram rate for a supplied subspace). Under Corollary 26, additionally
+                 suppose a subspace U ⊆ Rd with dimU ≤ r is ﬁxed and supplied before interaction, and every candidate or
+                                                                                         ¯
+                 replayed tangent feature through round T lies in U. Hence rank(C −λI) ≤ r for every t ≤ T +1. Let r                   =dimU,
+                                                                                           t                                        U
+                 let QU ∈ Rd×rU have orthonormal columns spanning U, and deﬁne
+                                                                 ⊤                             ⊤
+                                                       z    =Q g(x ,a ),            z (a) = Q g (x ,a).
+                                                        t,s      U t   s   s         t         U t    t
+                 Then the current-GGN width reduces exactly to
+                                                                                                        !
+                                                                                            X             −1
+                                                     ⊤ −1                  ⊤             −2          ⊤
+                                               gt(a) C      gt(a) = zt(a)     λIr +σ            zt,sz        zt(a),                         (87)
+                                                         t                        U                  t,s
+                                                                                            s<t
+                                                    ¯           ⊤
+                 with the analogous identity for C using Q g (x ,a ). Thus a supplied basis permits an exact dense r ×r                    Gram
+                                                      t         U s s s                                                           U     U
+                 with O(r2 ) curvature state. Given tangent coordinates, forming the current Gram costs O((t−1)r2 ), factorization
+                           U                                                                                                  U
+                 O(r3), and each width query O(r2 ); current-parameter replay, model training, and gradient generation can still
+                     U                                 U
+                 be d-dimensional. Full-dimensional CG is not needed in this corollary’s covered regime.
+                 Deﬁne Γ       by (67). Then (68) holds with
+                           T,r
+                                                  q                            √              2√
+                                                                                         2c R     T      A         B
+                                        Ω     :=    A Γ +2log(1/δ)+ λR+ µ√                           +√T +√T ,
+                                          T,r         inf  T,r                             σ W            λW        λW
+                                                         −2h       p                             2         i
+                                           A =ζ +σ           2c R C T(T −1)P +6Gc R (T −1) ,
+                                             T     0           g       R             T        g
+                                           B =4c2R3(T −1)/σ2,
+                                             T      g
+                 and A ,ρ areexactly those in Corollary 26. In particular, for ﬁxed r and ﬁxed problem constants, if W ≥ CT2P
+                        inf  ±                                                                                                                 T
+                 for a constant C satisfying the explicit thresholds in (88), then
+                                                                         √                    √
+                                                              R =O(r TlogT)+O(T/ W).
+                                                                T
+                 This rate is conditional on the ex ante subspace U and every bounded-path, near-linearity, residual, optimizer,
+                 transfer, and solver premise of Corollary 26. It neither learns U nor covers unrestricted representation learning or
+                 end-to-end neural-network training; it is an eﬀective projected-feature closure, not a full-dimensional computational
+                 advantage for CC-UCB.
+                 Proof. Extend Q       to an orthogonal basis of Rd. In that basis C is block diagonal with the r               ×r matrix in
+                                     U                                                      t                                U     U
+                 (87) and λId−rU; the query has zero coordinates in the second block. This proves (87), and the same argument
+                 proves the frozen-Gram identity. Lemma 19 gives γ           ≤Γ . Every occurrence of γ in Corollary 26 is monotone,
+                                                                           T     T,r                           T
+                 so direct substitution gives the display. Under the stated near-linearity scaling, xT, the centering terms, and the
+                                                                                                      √
+                 linearization terms are bounded, while Γ          =O(rlogT). Hence Ω           =O( rlogT +1) and the leading product
+                        √                                      T,r                          T,r
+                 is O(r T logT).
+                 Remark (Linear-subclass lower bound). The exact-rank class contains a standard r-dimensional stochastic linear
+                                                                                                                                   √ r
+                 bandit. Take a constant context, a known orthonormal basis Q , the ﬁnite action set z(a) ∈ {±1/ r} , linear
+                                                                                          U
+                 mean µϑ(a) = z(a)⊤ϑ, and Gaussian noise. Choosing the usual hypercube parameter family with coordinates of
+                        p                                                           2                                      ¯
+                 order    r/T keeps the parameter norm bounded when T & r . Here L = L = E = 0, C = C , and all features
+                                                                                               µ      g     T          t     t
+                 lie in U. The stochastic linear-bandit minimax expected-regret lower bound is Ω(r√T) in this regime (Dani et al.,
+                                               √
+                 2008). Hence the leading r T dependence of the exact-rank upper bound is sharp up to logarithms on this linear
+                 subclass. This does not prove a lower bound for the nonlinear or spectral-tail classes, nor a computational lower
+                 bound.

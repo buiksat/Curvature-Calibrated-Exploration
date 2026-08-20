@@ -1,0 +1,514 @@
+{
+  "page_count": 63,
+  "pages": [
+    {
+      "characters": 3580,
+      "first_line": "Confidence Transport for Relinearized Curvature in Contextual Bandits Anonymous Author Anonymous Institution Abstract runs, but also finds a highly conservative Hes- sian path cert",
+      "page": 1,
+      "statements": []
+    },
+    {
+      "characters": 5122,
+      "first_line": "require a smallness condition. A rectangular factor- GGN or Fisher metric; factor-path and Hessian cer- path bound covers relinearized scalar GGN factors tificates tailored to repl",
+      "page": 2,
+      "statements": []
+    },
+    {
+      "characters": 4079,
+      "first_line": "metrics are Certificate Status \u0304 Reference confidence event Statistical or model-specific premise V1 =\u03bbI, Path-length envelope Analytic or separately certified \u0304 \u0304 \u22122 \u22a4 Two-sided o",
+      "page": 3,
+      "statements": []
+    },
+    {
+      "characters": 3364,
+      "first_line": "Consequently, Algorithm 1 Corrected-center specialization of trans- v ported UCB u \u0012 \u0013 T \u0014 r \u0015 u 2 X 2 1: Observe the context and graph-measurable action G \u03ba t 2 \u0304 +,t 2 D R \u2264 \u03c3 + ",
+      "page": 4,
+      "statements": [
+        "Corollary 2 (Measurably enumerated finite domains)",
+        "Lemma 3 (Logarithmic comparison along an SPD 2 \u2212D 0 e d \u0012 \u0013 path)"
+      ]
+    },
+    {
+      "characters": 4257,
+      "first_line": "D/2 D/2 q =e , s(q ) = e and s \u0304(q ) = 1, so s = e s \u0304 is Therelative condition in Lemma 4 can be much sharper 2 2 2 2 attained. Thus each one-way factor is sharp, and a uni- than ",
+      "page": 5,
+      "statements": [
+        "Proposition 6 (Width transport and approximate Lemma 4 (Rectangular factor-path certificate)",
+        "Corollary 5 (Hessian path certificate)"
+      ]
+    },
+    {
+      "characters": 3164,
+      "first_line": "pseudo-responses and the frozen ridge estimator by Corollary 8 (Finite-dimensional corrected-center \u0304 rate). Suppose D \u2264 D, \u03b1 \u2264 \u03b1, and \u03ba /\u03ba \u2264K y =r \u2212\u03bc (x ,a )+q (a )\u22a4\u03b8 , (25) for a",
+      "page": 6,
+      "statements": [
+        "Corollary 8 (Finite-dimensional corrected-center \u0304 rate)",
+        "Corollary 7 (Corrected-center confidence without op- displayed constants. timizer assumptions)",
+        "Corollary 9 (Global near-linearity under exponential simultaneously over rounds and actions, transport)"
+      ]
+    },
+    {
+      "characters": 3916,
+      "first_line": "Consequently, W = \u03a9(T) with a sufficiently large Route Assumption two-way smallness rotation problem-dependent constant keeps D =O(1). For factor T,W \u0304 D fixed d and fixed problem ",
+      "page": 7,
+      "statements": [
+        "Corollary 10 (Local small-drift transport)"
+      ]
+    },
+    {
+      "characters": 5474,
+      "first_line": "entered that selection. The environment was not fil- 7 Conclusion tered after generation. At T = 1000, all five actions were optimal somewhere in every evaluation stream, Relineari",
+      "page": 8,
+      "statements": []
+    },
+    {
+      "characters": 4293,
+      "first_line": "Dtarget T n Ref. coverage (95% CI) Optimism (95% CI) Det. fail. Event viol. med. maxDQ med. maxd med. sharp RHS med. regret Th 0.25 250 50 100.0% [92.9, 100.0] 100.0% [92.9, 100.0]",
+      "page": 9,
+      "statements": []
+    },
+    {
+      "characters": 4635,
+      "first_line": "References David Gross and Vincent Nesme. Note on sampling Yasin Abbasi-Yadkori, D \u0301avid P \u0301al, and Csaba without replacing from a finite collection of matrices. Szepesv \u0301ari. Impr",
+      "page": 10,
+      "statements": []
+    },
+    {
+      "characters": 2822,
+      "first_line": "Barak A. Pearlmutter. Fast exact multiplication by the Monte Carlo for contextual bandits. In Interna- Hessian. Neural Computation, 6(1):147\u2013160, 1994. tional Conference on Machine",
+      "page": 11,
+      "statements": []
+    },
+    {
+      "characters": 2582,
+      "first_line": "A Proofs for confidence transport Proof of Theorem 1. Lemma 3 and (7) imply \u0304 \u0304 Dt/2 Dt/2 s \u0304 (a) \u2264 e s (a), s (a) \u2264 e s \u0304 (a). (36) t t t t Inverting (8) gives s (a) \u2264 \u221a\u03ba s (a), s",
+      "page": 12,
+      "statements": []
+    },
+    {
+      "characters": 1889,
+      "first_line": "1/2 \u22121/2 \u0307 \u22121/2 With w = V(\u03c4) v, the absolute value of this derivative is at most kV(\u03c4) V(\u03c4)V(\u03c4) kop. Integrating gives \u2212D(V) \u22a4 \u22a4 D(V) \u22a4 e v V(0)v \u2264 v V(1)v \u2264 e v V(0)v. The inequa",
+      "page": 13,
+      "statements": []
+    },
+    {
+      "characters": 2058,
+      "first_line": "where \u03a6 =[q (a )/\u03c3,...,q (a )/\u03c3]. The self-normalized martingale inequality bounds the middle term in t 1 1 t\u22121 t\u22121 \u0304\u22121 p \u221a \u0304 \u22a4 V normby \u03b3 +2log(1/\u03b4) simultaneously over t. The rid",
+      "page": 14,
+      "statements": []
+    },
+    {
+      "characters": 3283,
+      "first_line": "A.1 A concrete solver certificate Lemma 11 (Inverse-quadratic interval from the original residual). Let C = C\u22a4 \u0017 \u03bb I with \u03bb > 0. For an \u0303 \u0303 C C approximate solution u to Cu = q, re",
+      "page": 15,
+      "statements": [
+        "Lemma 11 (Inverse-quadratic interval from the original residual)",
+        "Corollary 12 (Pointwise CG and PCG solver certificates)"
+      ]
+    },
+    {
+      "characters": 3856,
+      "first_line": "may equal H\u2212 for a round-start draw or include the selected action and earlier randomness for a post-selection t check. It is sufficient that T Pr(Ec | P ) \u2264 \u03b4 , XX\u03b4 \u2264\u03b4 almost sure",
+      "page": 16,
+      "statements": []
+    },
+    {
+      "characters": 2887,
+      "first_line": "Wewrite \u03b8 for the parameter returned by the warm-started optimizer on L . Let D := {(x ,a ,r ) : s < t} t t t\u22121 s s s and N := |D | = t \u2212 1. Equation (43) is a full-history objecti",
+      "page": 17,
+      "statements": []
+    },
+    {
+      "characters": 3767,
+      "first_line": "Algorithm 2 Curvature-Calibrated UCB (CC-UCB) 1: Observe x , K , and candidates a , . . . , a ; set A = {a : k \u2264 K }. t t t,1 t,Kt t t,k t 2: Construct a fixed pre-reward SPD oracl",
+      "page": 18,
+      "statements": []
+    },
+    {
+      "characters": 3723,
+      "first_line": "Core conditions and links. Assume conditionally \u03c3-sub-Gaussian noise, kg (x ,a)k \u2264 G, realizability by t s k\u03b8\u2217k \u2264 S, and a local expansion with round-t remainder at most \u03b5 (t). For",
+      "page": 19,
+      "statements": [
+        "Theorem 13 (Dynamic transfer regret bound for CC-UCB (Gaussian/squared-loss)"
+      ]
+    },
+    {
+      "characters": 2340,
+      "first_line": "Corollary 14 (Exact-current regret through the frozen potential). Adopt Theorem 13 with exact current curvature C = C . Suppose a predictable certificate satisfies \u03c7 \u2264 \u03c7 \u0304 < 1 for ",
+      "page": 20,
+      "statements": [
+        "Corollary 14 (Exact-current regret through the frozen potential)",
+        "Corollary 15 (Approximate-rank exact-current GGN)"
+      ]
+    },
+    {
+      "characters": 3379,
+      "first_line": "\u2212 \u0304 Operationally, if before round t a supplied deterministic or H -measurable envelope \u2206 upper-bounds the \u0304 t t\u22121,r spectral tail of C \u2212 \u03bbI, the old predictable envelope below rem",
+      "page": 21,
+      "statements": [
+        "Corollary 16 (Gap-dependent exact-current regret)"
+      ]
+    },
+    {
+      "characters": 2771,
+      "first_line": "E Additional conditional rates E.1 Online nonlinear certificates \u0304 P \u0304 2 At the start of round t, let n = t\u22121, and let \u03b8 and J = k\u03b8 \u2212\u03b8 k bemaintained by a vector Welford t <t <t s<",
+      "page": 22,
+      "statements": [
+        "Corollary 17 (Operational CC-UCB)"
+      ]
+    },
+    {
+      "characters": 3825,
+      "first_line": "and set \u03930,r := 0 for the round-one confidence schedule. The bound r must be known before selection; a terminal realized rank is only post-hoc. Then \u03b3 \u2264\u0393 andCorollary28givesthefull",
+      "page": 23,
+      "statements": [
+        "Theorem 18 (Conditional growing-window bound under fixed-subspace excitation)"
+      ]
+    },
+    {
+      "characters": 2417,
+      "first_line": "F Deferred main-text derivations This appendix collects the formal statements, proofs, and derivations deferred from the compact main text; all cross-referenced results are stated ",
+      "page": 24,
+      "statements": [
+        "Lemma 19 (Rank and statistical-dimension information closure)",
+        "Lemma 20 (Spectral-tail information closure)"
+      ]
+    },
+    {
+      "characters": 3387,
+      "first_line": "The equality uses zero eigenvalues when r > T. For the tail, at most q eigenvalues can be nonzero: there are at T,r most d\u2212r tail coordinates and at most T \u2212r nonzero eigenvalues a",
+      "page": 25,
+      "statements": [
+        "Proposition 21 (Tightness of the split spectral-tail expression)",
+        "Corollary 22 (Corrected-center variant, no centering certificate)"
+      ]
+    },
+    {
+      "characters": 4015,
+      "first_line": "\u0304 Remark (Cost of the corrected center). Exact evaluation requires a solve against Ct. A constant number of O(d) CG vectors is insufficient by itself: one additionally needs stored",
+      "page": 26,
+      "statements": []
+    },
+    {
+      "characters": 2733,
+      "first_line": "Assumption Status Use Operational check Conditional sub-Gaussian Standard Self-normalized confidence Distributional premise noise Realizability, k\u03b8\u2217k \u2264 S Restrictive Bias and Taylo",
+      "page": 27,
+      "statements": [
+        "Lemma 23 (Primitive upper bound for prediction discrepancy)"
+      ]
+    },
+    {
+      "characters": 2638,
+      "first_line": "\u0304 Therefore, by Cauchy\u2013Schwarz in the C -norm, t \u22a4 \u02c6lin \u0304 \u22121 \u0010 \u22121 \u22121\u0011 |g (a) (\u03b8 \u2212\u03b8 )| \u2264 s \u0304 (a)k\u2207L (\u03b8 )k \u0304 \u2264s \u0304 (a) k\u2207L (\u03b8 )k \u0304 +kMk \u0304 . t t t t t t Ct t t t Ct t Ct \u0304 \u22121 \u221a \u22a4 \u02c6lin ",
+      "page": 28,
+      "statements": [
+        "Lemma 24 (Bounded-output residual energy)",
+        "Lemma 25 (O(d)"
+      ]
+    },
+    {
+      "characters": 2445,
+      "first_line": "\u0304 \u0304 Proof. The parallel-axis identity follows after writing \u03b8t \u2212 \u03b8s = (\u03b8t \u2212 \u03b8<t) + (\u03b8<t \u2212 \u03b8s); the cross term sums to zero. Lemma 31 and k\u2207\u03bc (z )\u2212\u2207\u03bc (z )k \u2264 L k\u03b8 \u2212\u03b8 k give (82). Le",
+      "page": 29,
+      "statements": [
+        "Corollary 26 (Bounded-path near-linear rate)"
+      ]
+    },
+    {
+      "characters": 3048,
+      "first_line": "Proof. The trust region gives Qt \u2264 4R2(t \u2212 1); substitution in Lemma 25 proves all displayed path bounds. Corollary 33 gives the two-sided operator relation. The CG sandwich and u ",
+      "page": 30,
+      "statements": [
+        "Corollary 27 (Corrected-center near-linear rate)"
+      ]
+    },
+    {
+      "characters": 3626,
+      "first_line": "At z = 0 and v =0its operator norm is kx \u0304k, independent of hidden width. Thus the executed all-weights i a,i parameterization does not imply L ,L = O(W\u22121/2). Such a conclusion wou",
+      "page": 31,
+      "statements": [
+        "Corollary 28 (Conditional projected-Gram rate for a supplied subspace)"
+      ]
+    },
+    {
+      "characters": 2497,
+      "first_line": "For explicit targets x \u0304 \u2208(0,1) and \u03a8,b ,\u03b7 > 0, the sufficient conditions drift F E 4c2R2(T \u22121) 4c2R4T 4c2R4 W\u2265 g , W\u2265 \u03bc , W\u2265 \u03bc , \u03bb\u03c32x \u03042 \u03c32b2 \u03b72 \u001a drift \u001b F E (88) 4A2 2BT W\u2265max T",
+      "page": 32,
+      "statements": [
+        "Corollary 29 (Nonlinear tanh-link Gaussian bandit)",
+        "Corollary 30 (Scaled-tanh relative-link rate)"
+      ]
+    },
+    {
+      "characters": 2252,
+      "first_line": "If \u03c1W < 1, exact current curvature with the original nonlinear center and the relative certificate of Lemma 32 satisfies v ! u 2 2 1+\u03c1 u B 4c R T W rel t 2 \u03c6 \u2191 h (94) RT \u22642\u03b1I B \u03c3 +",
+      "page": 33,
+      "statements": []
+    },
+    {
+      "characters": 3254,
+      "first_line": "Pre-reward algorithmic curvature under certified transfer. The analysis is conducted for a generic pre-reward measurable SPD algorithmic curvature sequence {C } satisfying t t\u22651 Ct",
+      "page": 34,
+      "statements": [
+        "Lemma 31 (Whitened relative feature-drift bound)"
+      ]
+    },
+    {
+      "characters": 3236,
+      "first_line": "\u22a4 \u22122P \u0304\u22121/2 \u22a4 \u0304\u22121/2 \u0304\u22121/2\u0000 \u22122P \u22a4\u0001 \u0304\u22121/2 \u0304\u22121/2 \u0304 \u0304\u22121/2 Proof. (a) G G = \u03c3 C g g C = C \u03c3 g g C = C (C \u2212\u03bbI)C = t t s<t t s s t t s<t s s t t t t \u0304\u22121 \u0304\u22121 \u22a4 2 \u22a4 I \u2212\u03bbC . Since \u03bbC \u00170, G G",
+      "page": 35,
+      "statements": []
+    },
+    {
+      "characters": 3114,
+      "first_line": "(d) If k\u03b8sk,k\u03b8tk \u2264 R, the gradients are bounded by G and are Lg-Lipschitz on the radius-R region, then \u0304 q col p \u0304 \u22a4 kr k \u2264 R +G Q, r =(r \u0304 ,...,r \u0304 ) , (112) t 2 t t t 1,t t\u22121,t p",
+      "page": 36,
+      "statements": [
+        "Corollary 33 (Sharp two-sided feature-drift sandwich)"
+      ]
+    },
+    {
+      "characters": 4262,
+      "first_line": "The one-sided fallback theorem uses only the bound (104), which holds for any \u03c7t \u2265 0; the smallness condition \u03c7t < 1 is needed only for the lower half of the two-sided sandwich (11",
+      "page": 37,
+      "statements": [
+        "Lemma 34 (Worst-case uniform spectral guarantee for subsampled GGN)"
+      ]
+    },
+    {
+      "characters": 4783,
+      "first_line": "(ii) Sufficient sample size. For any \u03b5 \u2208 (0,1), if \u0014 \u0015 2 2 n \u2265 8L m B + mB , (118) 2 2 \u03b5 \u03bb 3\u03b5\u03bb \u02c6 \u02c6 then Pr[kV \u2212Vk >\u03b5\u03bb]\u2264\u03b4 and consequently (1\u2212\u03b5)C \u0016 C \u0016 (1+\u03b5)C . op t t t m Proof. Th",
+      "page": 38,
+      "statements": []
+    },
+    {
+      "characters": 4179,
+      "first_line": "Theorem 46 then applies with the deterministic approximate-to-full factor \u03ba+,t=1 and the full-to-frozen factor u =(1+\u03c7 \u0304 )2\u2014no two-sided sandwich is required, though the overall gu",
+      "page": 39,
+      "statements": []
+    },
+    {
+      "characters": 3998,
+      "first_line": "application. Both numbers exclude candidate gradients, full-history model training, and optimizer certification. Backtracking adds full-history objective passes, and second-order o",
+      "page": 40,
+      "statements": [
+        "Lemma 35 (Dynamic log-determinant potential)"
+      ]
+    },
+    {
+      "characters": 2749,
+      "first_line": "C dyn bound \u039b \u2264\u0393 holds for every such valid choice. Then T T T C det(CT+1) X \u039b = log \u2212 logdet(I+\u039e ). (121) T det(\u03bbI) t t=1 With the determinant-destroying variation charge and the ",
+      "page": 41,
+      "statements": [
+        "Lemma 36 (Rank-sensitive refresh bound)"
+      ]
+    },
+    {
+      "characters": 3474,
+      "first_line": "Proof. Let \u03be be the eigenvalues of \u039e . At most r are negative, each is at least \u2212\u03bd , and every nonnegative t,i t Pt t eigenvalue makes a nonpositive contribution to \u2212 log(1+\u03be ). He",
+      "page": 42,
+      "statements": [
+        "Corollary 37 (Observable CG upper bound on the width complexity)",
+        "Lemma 38 (CG multiplicative accuracy)"
+      ]
+    },
+    {
+      "characters": 3395,
+      "first_line": "Assume \u03b5 <1(see Appendix I for the minimum I ensuring this as a function of \u03ba \u0304 ; Algorithm 2 enforces a t,a t,a t known per-round tolerance \u03b5 \u0304 uniformly over the scored actions, ",
+      "page": 43,
+      "statements": [
+        "Lemma 39 (Fixed-preconditioner CG accuracy)"
+      ]
+    },
+    {
+      "characters": 2919,
+      "first_line": "The algorithmic bonus. With the per-round certified tolerance \u03b5 \u0304 \u2265 max \u03b5 and the one-sided transfer t a t,a factor u (a) \u2265 1 of Assumption 6, Algorithm 2 plays the bonus t su(a) q",
+      "page": 44,
+      "statements": [
+        "Lemma 40 (Bonus sandwiching)",
+        "Lemma 41 (Confidence for the linearized ridge estimator)"
+      ]
+    },
+    {
+      "characters": 3461,
+      "first_line": "(iii) Noise. Xg \u03b7 p s s \u2264 \u03b3 +2log(1/\u03b4) t\u22121 s<t \u03c3 \u03c3 \u0304\u22121 Ct holds for all t \u2265 1 with probability at least 1 \u2212 \u03b4 by the time-uniform vector self-normalized martingale bound (Abbasi-Ya",
+      "page": 45,
+      "statements": [
+        "Corollary 42 (Predictable confidence schedule)",
+        "Corollary 43 (Observable information-gain surrogate via the one-sided transfer factor)"
+      ]
+    },
+    {
+      "characters": 3423,
+      "first_line": "be order t when d \u226b t, rendering the resulting bonus and theorem bound vacuous. Corollary 43 addresses both issues with an observable surrogate built from quantities the algorithm ",
+      "page": 46,
+      "statements": [
+        "Lemma 44 (Action-scaled centering discrepancy)",
+        "Proposition 45 (Unrescaled current-parameter subset)",
+        "Theorem 46 (Approximate curvature via one-sided transfer)"
+      ]
+    },
+    {
+      "characters": 4250,
+      "first_line": "\u02c6 \u02c6\u22121 \u22121 \u22121 2 \u22121 2 Proof. C \u0016 \u03ba C with both sides SPD inverts to C \u0017 \u03ba C , so s\u02c6 (a) \u2265 \u03ba s (a); and (104) gives t +,t t t +,t t t +,t t 2 2 2 2 2 2 s \u0304 (a) \u2264 (1 + \u03c7 \u0304 ) s (a). Chai",
+      "page": 47,
+      "statements": [
+        "Proposition 47 (Roundwise scalar-width invariance)",
+        "Proposition 48 (Off-diagonal linear-Gram witness)"
+      ]
+    },
+    {
+      "characters": 5015,
+      "first_line": "What remains open. The path schedules close the computability gap, but their constants can be extremely loose. The approximate-rank result replaces exact rank by a realized or pred",
+      "page": 48,
+      "statements": []
+    },
+    {
+      "characters": 4649,
+      "first_line": "distortion of an explicit curvature metric, which yields deterministic widths, an optimism-style analysis, and a fixed curvature operator reused across separate per-action CG solve",
+      "page": 49,
+      "statements": []
+    },
+    {
+      "characters": 4343,
+      "first_line": "so that \u03b8 \u2014computed from the data through round t together with the post-reward randomness U \u2014is t+1 t+1 Ft-measurable. Define the pre-action history \u03c3-algebra and the pre-reward \u03c3",
+      "page": 50,
+      "statements": []
+    },
+    {
+      "characters": 5168,
+      "first_line": "GGNversus Hessian (context only). The regret theorem uses the GGN/Fisher curvature as the exploration metric. It does not require the GGN to be an accurate Hessian approximation. F",
+      "page": 51,
+      "statements": []
+    },
+    {
+      "characters": 3584,
+      "first_line": "In the regret bound (Theorem 13), the CG inflation enters through the per-round factor \u03b1 = p(1+\u03b5 \u0304 )/(1\u2212\u03b5 \u0304 ), P t t t inside the sum of squares \u03b12u (a )\u03c92; no horizon maximum over",
+      "page": 52,
+      "statements": []
+    },
+    {
+      "characters": 4780,
+      "first_line": "optimism; no lower spectral factor is required (the cost of the operator is charged through the realized dynamic C \u0304 \u0304 complexity \u039b ). Algorithm 3 computes u , \u03c8 , and \u03b2 from pre-a",
+      "page": 53,
+      "statements": []
+    },
+    {
+      "characters": 3571,
+      "first_line": "\u2022 Scope. The bound is proved for Gaussian/squared-loss rewards. Extending it to exponential-family likelihoods (Bernoulli, categorical) would require a weighted frozen-feature anal",
+      "page": 54,
+      "statements": [
+        "Corollary 49 (Legacy one-sided sanity check: frozen features recover linear UCB)",
+        "Corollary 50 (Looser worst-case reduction)",
+        "Lemma 44 (Assumption 5)"
+      ]
+    },
+    {
+      "characters": 2859,
+      "first_line": "Step 2: Bonus sandwiching. By Lemma 40 (which uses Lemma 38 with max \u03b5 \u2264\u03b5 \u0304 and the one-sided a\u2208A t,a t t transfer (100)), for all a, p \u03c9 s \u0304 (a) \u2264 w (a) \u2264 \u03b1 \u03c9 u (a)s (a). (150) t ",
+      "page": 55,
+      "statements": [
+        "Lemma 40 (which uses Lemma 38 with max \u03b5 \u2264\u03b5 \u0304 and the one-sided a\u2208A t,a t t transfer (100)"
+      ]
+    },
+    {
+      "characters": 4512,
+      "first_line": "\u22121 \u0303 i.e. the extra factor is the initial relative energy error ke k /kC gk (equal to one at u = 0, recovering the 0 C t C 0 t t zero-start bound). Under the same certified conditi",
+      "page": 56,
+      "statements": [
+        "Corollary 51 (Two-sided spectral-distortion inflation)"
+      ]
+    },
+    {
+      "characters": 2743,
+      "first_line": "\u02c6\u22121 \u22121 \u0304\u22121 \u22121/2 \u22121/2 C \u0016\u03c1 C ,so,evaluating the quadratic form at g (a), \u03c1 s \u0304 (a) \u2264 s\u02c6 (a) \u2264 \u03c1 s \u0304 (a). The lower half t \u2212,t t t +,t t t \u2212,t t 2 2 2 gives s \u0304 (a) \u2264 \u03c1 s\u02c6 (a) \u2264 u s\u02c6",
+      "page": 57,
+      "statements": []
+    },
+    {
+      "characters": 1586,
+      "first_line": "D /2 D T D /d D /D D /d e Q Hist. radius Current bias Width/potential Sharp/simple target Q Th Q quad quad Th 0.25 250 3.93e+05 (n0 = 51) 3.21e+05 (n0 = 0) 1.21 (n0 = 0) 1.03 0.12 ",
+      "page": 58,
+      "statements": []
+    },
+    {
+      "characters": 663,
+      "first_line": "Dtarget = 0.25 Dtarget = 0.5 80 transport Hessian 80 transport endpoint (dense oracle) 60 frozen reference 60 naive current (uncertified) pseudo-regret40 pseudo-regret40 e e ulativ",
+      "page": 59,
+      "statements": []
+    },
+    {
+      "characters": 965,
+      "first_line": "D =0.25 D =0.5 target target 0 10 \u22123 y 10 y \u22124 tit tit10 \u22126 quan10 quan \u22128 ath \u22129 ath10 P 10 P \u221212 \u221212 10 \u221212 \u221210 \u22128 \u22126 \u22124 \u22122 10 \u221212 \u221210 \u22128 \u22126 \u22124 \u22122 0 10 10 10 10 10 10 10 10 10 10",
+      "page": 60,
+      "statements": []
+    },
+    {
+      "characters": 724,
+      "first_line": "D =0.25 D =0.5 target target 4 4 \u00b710 \u00b710 1 statistical 1 historical linearization alue path inflation alue v current bias v e e realized regret 0.5 sharp RHS 0.5 ulativ ulativ Cum ",
+      "page": 61,
+      "statements": []
+    },
+    {
+      "characters": 4177,
+      "first_line": "Method T =250 T =500 T =1000 full CG 375.7 438.1 479.3 full dense 361.5 422.4 461.7 diagonal 4120.8 7710.5 13456.0 Lanczos\u2013Ritz 495.7 496.4 509.3 subsample 64 339.7 373.1 396.6 ref",
+      "page": 62,
+      "statements": []
+    },
+    {
+      "characters": 2205,
+      "first_line": "Table 9: Legacy real-autodiff resource audit at history size 512, ten actions, and iterative-solver target original- \u22123 system residual 10 . Values summarize the isolated primitive",
+      "page": 63,
+      "statements": []
+    }
+  ],
+  "pdf_sha256": "2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1",
+  "schema_version": 1,
+  "targets": {
+    "appendix transport diagnostics": [
+      57
+    ],
+    "bound figure": [
+      61
+    ],
+    "corrected-center theorem (Corollary 7)": [
+      6
+    ],
+    "corrected-center transported UCB algorithm": [
+      4
+    ],
+    "finite-dimensional corrected-center rate (Corollary 8)": [
+      6
+    ],
+    "global near-linearity corollary (Corollary 9)": [
+      6
+    ],
+    "headline confidence-transport theorem (Theorem 1)": [
+      3
+    ],
+    "performance table": [
+      9
+    ],
+    "proof of Theorem 1": [
+      12
+    ],
+    "regret figure": [
+      59
+    ],
+    "tightness figure": [
+      60
+    ],
+    "tightness table": [
+      58
+    ],
+    "transport experiment environment diagnostics": [
+      8
+    ],
+    "transport experiment section 6": [
+      7
+    ],
+    "validity table": [
+      9
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+                                                                                   −                         ¯
+                Operationally, if before round t a supplied deterministic or H -measurable envelope ∆                upper-bounds the
+                                ¯                                                  t                           t−1,r
+                spectral tail of C − λI, the old predictable envelope below remains valid:
+                                  t
+                                                     rt−1 := min{r,t−1},
+                                                                                    2     ¯
+                                                    ¯tail                   (t − 1)G        ∆t−1,r
+                                                    Γ      := r    log 1+                +         .
+                                                     t−1,r     t−1           rt−1λσ2          λ
+                again taking the ﬁrst term as zero when r        =0. Replacing γ        in the constructive conﬁdence radius by this
+                                                             t−1                   t−1
+                predictable upper bound is valid. In that version, (59) holds with Γtail replaced by any supplied terminal envelope
+                                                                                      T,r
+                ¯tail
+                Γ    and with ωt formed from the resulting radius.
+                 T,r
+                                                                                                  ¯             −2P           2
+                A reﬁned predictable alternative uses the observable frozen trace τ         =tr(C −λI) = σ                kg k . With
+                q      =min{d−r,max{t−1−r,0}}, set                                      t−1         t                 s<t   s
+                 t−1,r                                                               
+                                                                                 τ
+                                                        ¯split                    t−1
+                                                        Γ      := rt−1log 1+
+                                                         t−1,r                  r    λ
+                                                                                t−1 ¯                                            (60)
+                                                                                     ∆
+                                                                   +q      log 1+      t−1,r   ,
+                                                                      t−1,r          qt−1,rλ
+                again omitting zero-multiplier terms. The head term deliberately uses the full trace: subtracting an upper tail
+                                                                                                 ¯split
+                envelope could reduce the head term and invalidate an upper bound. Thus Γ               ≥γ      is a valid action-time
+                schedule, although it can be looser than the realized split expression.           t−1,r     t−1
+                No exact tangent subspace is assumed. A small spectral tail can contain decision-relevant directions and does
+                not supply their basis, so full-dimensional CG may still be necessary. Exact rank is recovered when ∆              =0;
+                                                                                                                               T,r
+                the supplied-subspace result Corollary 28 is then an additional computational special case. The corrected-center
+                                               ¯
+                version again replaces ω by β .
+                                          t     t
+                Proof. Apply Lemma 20 to substitute either γ ≤ Γsplit ≤ Γtail in (56). The preﬁx version of the same lemma
+                                                                  T      T,r     T,r
+                               ¯tail     ¯split
+                makes either Γ        or Γ       a predictable upper bound on γt−1, so Lemma 41 and Corollary 42 justify the
+                                t−1,r      t−1,r
+                operational radius. No eigenspace is used by either argument.
+                Corollary 16 (Gap-dependent exact-current regret). Adopt Corollary 14. Deﬁne the realized gap ∆t :=
+                 ∗      ∗     ∗
+                µ (x ,a )−µ (x ,a ) and suppose every suboptimal candidate action at every round has gap at least a deterministic
+                     t  t        t   t
+                (or almost-sure) ∆min > 0. This gap is an analysis condition and is not used to tune the policy; if it holds only on
+                a high-probability event, that event must be added to the certiﬁcate failure allocation. Suppose also ε  (t) ≤ ∆     /4
+                                                                                                                       lin       min
+                for all t, and set
+                                                   Hgap := α ω 1+χ¯t,          Hgap := maxHgap.
+                                                     t        t  t 1 − χ¯        max     t≤T    t
+                                                                        t
+                Then, on the event of Theorem 13,
+                                                                      gap 2          2
+                                                                 16(H     )         G
+                                                          R ≤         max     σ2 +        γ .                                      (61)
+                                                            T       ∆                λ     T
+                                                                      min
+                                                                                                                                    tail
+                Consequently γ    in this display may be replaced by the exact-rank bound Γ       of (67), the simple tail bound Γ
+                                T                                                              T,r                                  T,r
+                                          split
+                of (57), or the reﬁned Γ      of (58), under the corresponding premises. The corrected-center version replaces ω
+                                          T,r                                                                                         t
+                   ¯
+                by βt as usual. This result is not a minimax-optimality claim: unlike the gap-free result, it requires a uniform
+                positive gap and a per-round linearization error smaller than one quarter of that gap.
+                Proof. The per-round argument in Corollary 14 gives
+                                                             ∆ ≤2Hgaps¯(a )+2ε (t).
+                                                               t      t   t   t      lin
+                On a suboptimal round, ∆ ≥ ∆             and hence 2ε (t) ≤ ∆ /2. Rearranging and using Hgap ≤ Hgap gives
+                                              t     min                lin        t                                 t        max
+                ∆ ≤4Hgaps¯(a ). Squaring this inequality and using ∆ ≥ ∆               yields
+                  t      max t   t                                          t     min
+                                                                    2           gap 2
+                                                                  ∆       16(H     )
+                                                                    t           max    2
+                                                          ∆ ≤          ≤              s¯ (a ).
+                                                            t    ∆           ∆         t  t
+                                                                   min    P min
+                                                                               2          2    2
+                Optimal rounds contribute zero. Sum over t and apply          s¯ (a ) ≤ (σ +G /λ)γ to prove the display; the three
+                                                                            t  t  t                  T
+                substitutions follow from Lemmas 19 and 20.

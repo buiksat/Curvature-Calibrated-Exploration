@@ -1,0 +1,48 @@
+# Embedded fonts
+#
+# Canonical command : pdffonts paper/main.pdf
+# Substitute used   : standard-library /BaseFont scan over inflated objects
+#   poppler is not installed. A subset-embedded font carries a six-letter
+#   tag and a '+' in its BaseFont name; that is what 'embedded' reports.
+
+name                                         subtype        embedded
+-------------------------------------------- -------------- --------
+ACAOPC+CMTI10                                Type1          yes
+AVBEUA+CMMI10                                Type1          yes
+CBBGPZ+SFTI1000                              unknown        yes
+CJEHEJ+CMSY9                                 Type1          yes
+DBNPPO+CMMI9                                 Type1          yes
+DBTRRO+CMMIB7                                Type1          yes
+DISBXX+CMMIB9                                Type1          yes
+FADEHG+CMR7                                  Type1          yes
+FKQCIH+CMBX10                                Type1          yes
+FQEDDE+CMSY7                                 Type1          yes
+GQSYIT+CMTT10                                Type1          yes
+HDUGRP+CMSY5                                 Type1          yes
+HKVDQL+CMSY10                                Type1          yes
+IQCHEH+CMBX7                                 Type1          yes
+KOSCSC+CMSS8                                 Type1          yes
+LLGEHA+CMMI5                                 Type1          yes
+MKIGAD+CMBX9                                 Type1          yes
+NCQNJI+CMEX10                                Type1          yes
+OWTMNY+CMBXTI10                              Type1          yes
+PMTYFH+CMEX7                                 Type1          yes
+PRKWXM+CMMI7                                 Type1          yes
+QPRKDF+CMR6                                  Type1          yes
+RTBDHW+CMTI9                                 Type1          yes
+SABUGL+CMMI6                                 Type1          yes
+SMEBDE+SFRM1000                              Type1          yes
+THPNLT+CMEX9                                 Type1          yes
+TREUGI+CMR9                                  Type1          yes
+UDRITT+CMR10                                 Type1          yes
+UFDGAY+MSAM10                                Type1          yes
+UFSQQF+CMMIB10                               Type1          yes
+VJDWCJ+CMR5                                  Type1          yes
+WCPWRT+CMBX6                                 Type1          yes
+YBSSNB+CMSY6                                 Type1          yes
+YVQHSC+CMMIB6                                unknown        yes
+ZDQBOW+MSBM10                                Type1          yes
+ZFKPGX+CMBX12                                Type1          yes
+ZJSTSH+CMSS10                                Type1          yes
+
+total: 37

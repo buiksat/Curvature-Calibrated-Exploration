@@ -1,0 +1,82 @@
+                          Algorithm 2 Curvature-Calibrated UCB (CC-UCB)
+                            1: Observe x , K , and candidates a                                , . . . , a       ; set A = {a                : k ≤ K }.
+                                                  t       t                                t,1            t,Kt               t         t,k                t
+                            2: Construct a ﬁxed pre-reward SPD oracle v 7→ C v with C  λI.
+                                                                                                                    t                t
+                            3: for k = 1,...,Kt do
+                            4:       Set a = a           .
+                                                     t,k
+                            5:       Compute µb (a) = µ (x ,a) and g (a) = ∇ µ (x ,a).
+                                                        t              θt     t                 t               θ θt        t
+                                                                                                                                                                                                               ˜
+                            6:       If gt(a) 6= 0, solve Ctu = gt(a) separately by CG until the certiﬁed tolerance holds; otherwise set u = 0.
+                                             2                     ⊤˜
+                            7:       Set s˜ (a) = g (a) u.
+                                             t              t
+                            8: end for                                                                                        p                               p
+                                                                                                                                                                    2
+                            9: Set k to the smallest index maximizing µb (a                                        ) +ω           u (a       )/(1−ε¯) s˜ (a                   ); play a = a                .
+                                          t                                                               t    t,k          t       t    t,k               t        t    t,k                t        t,kt
+                          10: Observe r , append (x ,a ,r ), and update θ                                            .
+                                                  t                     t    t    t                            t+1
+                          The oracle is accessed only through matrix–vector products. At each round the agent computes, for every
+                          candidate action a, the gradient feature g (a) = ∇ µ (x ,a) and the curvature-calibrated variance proxy, the
+                                                                                                    t               θ θt        t
+                          generic algorithmic width,
+                                                                                                     2                         ⊤ −1
+                                                                                                    s     (a) = g (a) C                  g (a).                                                                       (48)
+                                                                                                     C,t                 t          t       t
+                          Under the GGN/Fisher-linearized Gaussian approximation with covariance C−1, the quantity s2 (a) is the
+                                                                                                                                                                      t                                 C,t
+                          metric-dependent predictive variance of the linearized reward at (xt,a). The exact full-history instantiation of
+                          CC-UCB takes C = C , the relinearized curvature (45); weighted replay, subsampling, sliding windows, periodic
+                                                       t         t
+                          refreshes, and randomized sketches are special implementations of Ct (§F.3), covered by the theory only when the
+                          corresponding one-sided transfer factor is certiﬁed.
+                          Because C ≻ 0 by construction, conjugate gradients (CG) is guaranteed to converge on the system C u = g (a),
+                                           t                                                                                                                                                              t           t
+                          provided the operator is held ﬁxed across all iterations of the solve (the randomized sketch/subsample is drawn into
+                          Ωt before action selection; §B). For each action with gt(a) 6= 0 we run CG to the per-action relative energy-norm
+                          error
+                                                                                                                ˜
+                                                                                                  ku        −u k
+                                                                                                       t,a        t,a C                              −1
+                                                                                   ε       :=                             t ,         u       := C        g (a),                                                      (49)
+                                                                                     t,a                ku k                             t,a         t      t
+                                                                                                             t,a C
+                                                                                                                    t
+                                                                                    2                     ⊤˜                                                2
+                          yielding the computable proxy s˜ (a) = g (a) u                                            ; if g (a) = 0 we set s˜ (a) = 0 and skip the solve (leaving
+                                                                                    t               t           t,a          t                              t
+                          the residual ratio kr k/kgk undeﬁned), and by convention put ε                                                         := 0 in this case, so that ε                         is deﬁned for
+                                                              I                                                                             t,a                                                  t,a
+                                                                                                                                         2                                 2
+                          every a ∈ At and (130) holds trivially there. Lemma 38 shows s˜ (a) approximates s                                                                    (a) within a multiplicative
+                                                                                                                                         t                                 C,t
+                         (1±ε )factor. To ensure the UCB bonus upper-bounds the conﬁdence width ω s¯ (a) despite the approximation,
+                                   t,a                                                    p                                                                         t   t
+                          the algorithm inﬂates the width by                                  u (a)/(1−ε¯ ) (line 9), where ε¯ ∈ (0,1) is a per-round known tolerance
+                                                                                                t                  t                                 t
+                          enforced uniformly over all actions,
+                                                                                                          maxε             ≤ ε¯ < 1,                                                                                  (50)
+                                                                                                          a∈A t,a                 t
+                                                                                                                t
+                          and u (a) ≥ 1 is the one-sided transfer factor (Assumption 6).
+                                    t
+                          D One-sided dynamic analysis
+                          The motivating scalar-link structure is formalized in Lemma 32, but the proof dependencies run in the opposite
+                          direction: we ﬁrst state a master transfer theorem, then its exact-current, spectral-tail, and gap-dependent
+                          closures, and ﬁnally the operational and scalar-link specializations. The one-sided fallback theorem analyzes
+                          CC-UCB(Algorithm 2, with full enumeration of the K active candidate indices) under the Gaussian/squared-loss
+                                                                                                                       t
+                          setup and Assumptions 2 to 6. It is not a full exponential-family or generalized-linear-bandit proof; the extension
+                          in Appendix L deﬁnes curvature only.
+                                                                                                                                                                                     ¯
+                          For a general pre-reward SPD sequence C , conﬁdence is proved in the frozen Gram C , whose update and
+                                                                                                      t                                                                                 t
+                          measurability support self-normalized concentration. A one-sided factor u (a) transfers optimism to C , CG
+                                                                                                                                                                t                                                  t
+                          contributes α , and nonmonotonicity remains in the realized width complexity. Appendix F.5 gives exact
+                                                  t
+                          determinant bookkeeping, not a primitive sublinear bound. Later specializations make the nonlinear inputs
+                          observable, but their smallness still requires a restricted parameter path.

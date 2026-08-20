@@ -1,0 +1,69 @@
+                      where Φ =[q (a )/σ,...,q                        (a      )/σ]. The self-normalized martingale inequality bounds the middle term in
+                                   t        1    1               t−1     t−1
+                       ¯−1                 p                                                                                                      √                     ¯                    ⊤
+                      V normby γ                      +2log(1/δ) simultaneously over t. The ridge term is at most                                   λS. Finally, V = λI+Φ Φ
+                         t           ⊤¯−1 t−1                                                                                                                             t               t  t
+                      implies Φ V             Φt  I, so
+                                     t    t                           
+         
+                           s
+                                                                      
+1        
+            kek         1     X
+                                                                      
+         
+                 2                                          2
+                                                                           Φe            ≤           ≤              [ǫ    (s) +ǫ        (s)] .
+                                                                      
+      t 
+                                       lin          mis
+                                                                        σ          ¯−1         σ         σ
+                                                                                  Vt                           s<t
+                                                            ¯                                   ⊤ ◦ ˆlin                   corr
+                      Cauchy–Schwarz in the V metric bounds |q (a) (θ −θ )| by β                                                s¯ (a).
+                                                              t                           t                   t            t      t
+                      For the prediction itself, direct algebra gives the exact identity
+                                                                  ∗            corr                  ⊤ ◦ ˆlin                ◦             ◦
+                                                                µ (a)−m             (a) = qt(a) (θ −θ )+ρ (a)+m (xt,a).
+                                                                  t            t                                   t         t
+                      Applying the current actionwise envelopes proves (30). No optimality property of θt appears in the argument.
+                                                                              P
+                      Proof of Corollary 8. Let A                   =σ−2 T q(a)q(a)⊤. Its rank is at most r =min{d,T} and its trace is at
+                                                                 T                t=1 t t t t                                                T
+                                    2     2
+                      most TG /σ . Concavity of x 7→ log(1+x) over the nonzero eigenvalues gives
+                                                                                                                                      2 
+                                                                       γ =logdet(I+A /λ)≤r log 1+ TG                                          .
+                                                                         T                         T             T               r λσ2
+                                                                                                                                   T
+                      The radius in (29) is bounded by the bracketed term in (32). Substitute this bound, the uniform transport factors,
+                      and (31) into (14). The current bias envelope is exactly b (a ) = ǫ                                       (a ) + ǫ         (a ).
+                                                                                                              t   t        lin,t   t       mis,t     t
+                      Proof of Corollary 9. The radius bound gives
+                                                                                     X                            2          2
+                                                                             Q ≤          (kθ k +kθ k ) ≤4R (t−1).
+                                                                                t               t 2         s 2
+                                                                                      s<t
+                                                            ¯                                                        ◦
+                      Hence Corollary 5 gives Dt ≤ DT,W. Taylor’s theorem and kθ −θsk2 ≤ 2R give
+                                                                                                                    2cµR2
+                                                                                        ǫ   (s), ǫ        (a) ≤ √            .
+                                                                                         lin         lin,t              W
+                      Exact realizability removes every misspeciﬁcation envelope, so
+                                                                                         4c2R4T                           2c R2T
+                                                                                            µ                    cur         µ
+                                                                               BT ≤                  ,        E       ≤ √             .
+                                                                                             W                  T              W
+                      Substitute these inequalities, S = R, α = 1, K = 1, and ξt = 0 into Corollary 8. The asymptotic statement
+                      follows from Γ             =O(dlogT) for ﬁxed problem constants.
+                                            T,d
+                      Proof of Corollary 10. Inverting (34) gives
+                                                                     s¯ (a) ≤ (1 + χ )s (a),                 s (a) ≤ (1 −χ )−1s¯ (a).
+                                                                       t                  t    t               t                  t       t
+                      The ﬁrst inequality, the upper operator comparison, and solver upper validity make the local score optimistic. At
+                      the played action, solver sharpness, the lower operator comparison, and the second inequality bound its width
+                      term by                                                                          r
+                                                                                          α 1+χt           κ+,t s¯ (a ).
+                                                                                            t 1 − χ        κ        t    t
+                                                                                                      t      −,t
+                      Repeat the proof of Theorem 1 and apply (38).

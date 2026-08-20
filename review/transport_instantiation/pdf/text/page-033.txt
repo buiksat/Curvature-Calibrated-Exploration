@@ -1,0 +1,76 @@
+                 If ρW < 1, exact current curvature with the original nonlinear center and the relative certiﬁcate of Lemma 32
+                 satisﬁes                                                 v
+                                                                                        !
+                                                                          u            2                   2
+                                                            1+ρ           u          B               4c R T
+                                                                  W rel t       2      φ      ↑        h                                    (94)
+                                                RT ≤2αI              B        σ +          TG     + √         .
+                                                            1−ρ       T,r             λ       T,r        W
+                                                                  W
+                 More explicitly, choose a ﬁxed target ρ ∈ (0,1) and suppose
+                                                             0
+                                                                                                      
+                                                                                             4B R        2
+                                                      W≥CTP ,             C≥C :=                 φ         .                                (95)
+                                                                  T               ρ
+                                                                                   0       log(1 +ρ )
+                                                                                                     0
+                 Then ρ     ≤ρ , and the mean-value theorem gives the displayed uniform certiﬁcate
+                         W      0
+                                                        rel       ζ0      1"                 rCR
+                                                      Ψ      ≤ √       +      4(1+ρ )B R
+                                                        T,W       λW      σ           0   φ      C
+                                                                      8(1+ρ )B2R2+2(1+ρ )c R2#                                              (96)
+                                                                   +          0   φ √             0  h      .
+                                                                                      CP
+                                                                                          T
+                                 ¯            2  4             ¯             2   √                     ↑
+                 Furthermore F          ≤ 4c R T/W and E ≤ 2c R T/ W. Hence, if G                          = O(rlogT) with ﬁxed problem,
+                                  T+1         h                  T       h                            T,r
+                 conﬁdence, and CG constants,                            √                    √
+                                                              R =O(r TlogT)+O(T/ W).
+                                                                T
+                                                 √             p                               √            √
+                 At W =Θ(TP ) this is O(r T logT +               T/P ), and therefore O(r T logT +            T) up to the displayed residual
+                                 T                                    T
+                 factor.
+                 Under realizability, Lemma 24 supplies the premise with probability at least 1 − δR by taking
+                                                                                   2  2       2             	
+                                                  CR =1,         PT =max 1,8BφR +4σ log(2T/δR) .                                            (97)
+                 Thus this fully analytic residual choice makes the suﬃcient width W = Ω(T log(T/δR)) at ﬁxed problem constants.
+                 Its event is added to the certiﬁcate failure allocation. No claim is made that the residual or width constants are
+                 tight.
+                                         √             √        ′             2    √
+                 Proof. For hW(q) =        Wtanh(q/ W), h (q)=sech (q/ W) and
+                                                                W
+                                                         ′′            2           √           2   √
+                                                        hW(q) = −√         tanh(q/ W)sech (q/ W).
+                                                                       W
+                                                2                          √
+                 The maximum of 2y(1−y ) on y ∈ [0,1] is 4/(3 3), proving the gradient and Hessian bounds in (90); also
+                 √              √
+                   W|tanh(q/ W)|≤|q|≤B R. Moreover
+                                                   φ
+                                                                                        √
+                                                        d       ′          2                         2
+                                                                         √                         √
+                                                           logh (q) =           | tanh(q/ W)| ≤           .
+                                                       dq       W          W                         W
+                                                                                      √                             4B R/√W
+                 Since |q    −q | ≤ B kθ −θ k ≤ 2B R, |logc | ≤ 4B R/ W. Hence |c                         −1| ≤ e φ            −1=ρ ,and
+                          s,t    s       φ   t     s        φ          s,t        φ                    s,t                               W
+                           4B R/√W
+                 solving e    φ       −1<1gives (91) for this exponential certiﬁcate.
+                                                       2                                               rel     rel
+                                                                                                     ¯
+                 The trust region gives Qt ≤ 4R (t − 1). Substitution in (115) proves ψt                  ≤ ΨT,W. Taylor’s theorem gives
+                  lin         2 √                                           ¯      ¯
+                 ǫ¯  ≤2c R / W,andhence the stated bounds on F                    , E  and the conﬁdence radius (93). Apply Corollary 14,
+                  t        h                                                 T+1     T
+                 bound the time-varying factors by α , ρ         , and Brel , and use γ     ≤G↑ toobtain (94).
+                                                           I   W          T,r             T     T,r
+                 Under (95), the exponential mean-value bound ex − 1 ≤ (1 + ρ )x for 0 ≤ x ≤ log(1 + ρ ) gives ρ                               ≤
+                                  √                                                            0                               0           W
+                 4(1+ρ0)BφR/ W. Substitute this and W ≥ CTPT in (92) to prove (96); the rate follows. Finally Lemma 24
+                 with B =B R proves (97).
+                         µ      φ

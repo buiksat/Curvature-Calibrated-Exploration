@@ -1,0 +1,61 @@
+                                    1/2                                                                   −1/2 ˙           −1/2
+                 With w = V(τ)         v, the absolute value of this derivative is at most kV(τ)               V(τ)V(τ)         kop. Integrating
+                 gives
+                                                        −D(V) ⊤                ⊤            D(V) ⊤
+                                                       e       v V(0)v ≤ v V(1)v ≤ e              v V(0)v.
+                 The inequality holds for every v, which is exactly (16). Inverting the sandwich gives the corresponding inverse-
+                 quadratic-form comparison. The proof never diﬀerentiates a matrix square root.
+                                                                 ˙     ˙ ⊤        ⊤ ˙              ˙   −1/2                 −1/2
+                 Proof of Lemma 4. Almost everywhere, V = B B+B B. Put E = BV                                and H =BV           . Then
+                                                                  −1/2 ˙   −1/2       ⊤         ⊤
+                                                               V       VV        =E H+H E.
+                 Moreover,
+                                                        H⊤H=V−1/2B⊤BV−1/2=I−λV−1I,
+                 so kHk      ≤1. Therefore the normalized SPD speed is at most 2kEk , which proves (17) after integration. For
+                          op                                                                     op
+                 the PSD form, congruence by V−1/2 gives
+                                                        ˙   −1/2 2          −1/2 ˙ ⊤ ˙    −1/2              2
+                                                      kBV        k    =kV        B BV          k   ≤ν(τ) .
+                                                                   op                           op     t
+                                                                     ˙   −1/2                                                      1
+                 Becauseν (τ) ≥ 0, taking square roots gives kBV              k   ≤ν(τ)almosteverywhere. TheassumedL integrability
+                            t                                                  op     t
+                 permits integration in (17).
+                 Proof of Corollary 5. The sth factor-row derivative is
+                                                            −1 2µ                (x ,a )(θ −θ )⊤.
+                                                           σ     ∇ θ +τ(θ −θ ) s s           t     s
+                                                                   θ   s     t  s
+                           ˙      2       2      2
+                 Hence kB (τ)k ≤ L Q /σ . Since V (τ)  λI,
+                             t    F       g  t               t
+                                                                                     L2Q
+                                                                  ˙     ⊤ ˙           g   t
+                                                                  Bt(τ) Bt(τ)  σ2λ Vt(τ).
+                                                                   √        √
+                 Apply Lemma 4 with the constant ν = L               Q/(σ λ).
+                                                           t      g    t
+                 Proof of Proposition 6. The logarithmic sandwich and inversion give
+                                                                      ¯                         ¯
+                                                            2         D 2             2         D 2
+                                                           s¯ (a) ≤ e ts (a),        s (a) ≤ e ts¯ (a).
+                                                            t             t           t             t
+                 Inverting the operator sandwich gives
+                                                          2             2             2          −1 2
+                                                         s (a) ≤ κ+,ts     (a),      s   (a) ≤ κ     s (a).
+                                                          t             C,t           C,t        −,t t
+                 Composition proves (21). For (22), congruence gives −ε I  V−1/2(C −V )V−1/2  ε I; undoing the congruence
+                                                                                 t       t      t     t   t         t
+                 gives the claimed factors.
+                 Proof of Corollary 7. Taylor expansion around θs gives
+                                                     µ ◦(x ,a ) = µ (x ,a )+q (a )⊤(θ◦ −θ )+ρ◦.
+                                                      θ     s  s       θs  s   s      s   s           s      s
+                 Combining this with (24) and the reward model turns (25) into
+                                                                 ⊤ ◦                           ◦      ◦
+                                                    y =q (a ) θ +η +e ,                 e =ρ +m (x ,a ).
+                                                     s      s  s          s     s        s     s         s   s
+                 The ridge normal equations therefore give
+                                                             lin                   Xq(a)η              1
+                                                       ¯ ˆ          ◦          ◦          s  s   s
+                                                       V(θ −θ )=−λθ +                              + Φe,                                      (39)
+                                                         t   t                             σ    σ     σ t
+                                                                                    s<t

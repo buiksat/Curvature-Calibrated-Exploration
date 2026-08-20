@@ -1,0 +1,64 @@
+                The equality uses zero eigenvalues when r > T. For the tail, at most q          eigenvalues can be nonzero: there are at
+                                                                                            T,r
+                most d−r tail coordinates and at most T −r nonzero eigenvalues after the ﬁrst r. Concavity, with zero padding
+                when necessary, therefore gives
+                                                       X                                  ∆ 
+                                                           log(1 +ν /λ) ≤ q      log 1+      T,r   .
+                                                                     i        T,r          q   λ
+                                                       i>r                                  T,r
+                If q    =0, the rank bound forces ∆        =0andthe tail sum is empty. This proves (73); the r = 0 case similarly
+                    T,r                                T,r                                                           T
+                uses only the tail term.
+                                                                               2   2
+                For the second inequality, use τ       −∆ ≤τ ≤TG/σ in the head term and qlog(1+x/q) ≤ x with
+                                                     T      T,r      T
+                x = ∆T,r/λ in the tail term. This proves (74) without evaluating a zero denominator. The stated edge cases
+                follow immediately.
+                Proposition 21 (Tightness of the split spectral-tail expression). Fix integers r,q ≥ 1, masses H,∆ ≥ 0, ambient
+                dimension d = r+q, and T ≥ d. Let a PSD d×d matrix have r head eigenvalues equal to H/r, q tail eigenvalues
+                equal to ∆/q, and all remaining eigenvalues zero, with the head values ordered no smaller than the tail values.
+                Splitting after r makes (73) an equality:
+                                                                                 H                ∆
+                                                logdet(I +A/λ) = rlog 1+               +qlog 1+           .
+                                                         d                        rλ                 qλ
+                If ∆/(qλ) ≤ 1, then the tail contribution obeys                
+                                                                  qlog 1+ ∆        ≥ ∆.
+                                                                             qλ       2λ
+                Thus dependence linear in the tail mass cannot in general be removed without additional information about the
+                tail rank or spectrum. This is a tightness statement for the information inequality, not a regret lower bound for
+                the nonlinear class. The example is algebraic; to embed it in the bounded-feature bandit class one additionally
+                                                           2   2
+                chooses factors satisfying H + ∆ ≤ TG /σ .
+                Proof. The equality follows by substituting the two constant spectral blocks. For x ∈ [0,1], log(1 + x) ≥ x/2;
+                apply this with x = ∆/(qλ) and multiply by q.
+                A deterministic preﬁx envelope, or one measurable with respect to the pre-randomization history before the
+                                           ¯
+                round where it is used, ∆      ≥∆ ,mayenter an online conﬁdence schedule through the preﬁx form of (74). A
+                                            t,r     t,r
+                second valid schedule is (60), which uses the observable full trace for the head and the tail envelope only for the
+                tail. It does not subtract an upper tail envelope from the trace. In contrast, a realized terminal ∆T,r is an a
+                posteriori path-complexity bound only. Since the inequality is pathwise and simultaneous over the ﬁnite set of
+                ranks, the terminal report may minimize over r. Neither the terminal tail nor that post-hoc rank may choose an
+                eigenspace, a radius, an action, or any other action-time quantity. If valid predictable envelopes are available for
+                several ranks, their pointwise minimum is itself a valid predictable information bound. The existing observable γˆ
+                                                                                                                                          t
+                schedule remains valid when only realized terminal tails are reported.
+                The dynamic-potential and CG-observable consequences of Theorem 13 are
+                                                                 q 2        2      dyn
+                                                         R ≤2 (σ +G /λ)Γ S +2E ,
+                                                           T                       T    T       T
+                                                                 q                                                                    (75)
+                                                                                  c
+                                                         R ≤2 (σ2+G2/λ)ΛC S +2E .
+                                                           T                        T T        T
+                Corollary 22 (Corrected-center variant, no centering certiﬁcate). Replace the predictive center in Algorithm 2 by
+                                                         corr                          ⊤ ˆlin
+                                                       µb   (a) := µ (x ,a)+g (a) (θ          −θ)                                     (76)
+                                                         t           θt   t        t       t      t
+                                ¯
+                and use ωt = βt. Under the hypotheses of Theorem 13 except Assumption 5, the bounds (55)–(75) hold.
+                                                    ∗            corr           ⊤ ∗ ˆlin
+                Proof. Local linearization gives µ (xt,a)−µb        (a) = gt(a) (θ −θ )+ρt. Lemma 41 bounds the ﬁrst term by
+                                                                 t                        t         ¯
+                β s¯ (a) and |ρ | ≤ ε   (t), which is the ﬁrst step of the regret proof with ω = β ; all later steps are unchanged.
+                  t t          t     lin                                                       t     t

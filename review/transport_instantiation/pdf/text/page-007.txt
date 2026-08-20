@@ -1,0 +1,84 @@
+                 Consequently, W = Ω(T) with a suﬃciently large                      Route         Assumption        two-way        smallness rotation
+                 problem-dependent constant keeps D              =O(1). For                                          factor
+                                                            T,W
+                                                                                                                       ¯
+                                                                                                                      D
+                 ﬁxed d and ﬁxed problem constants,                                  Logarithmic   normalized SPD    e t              no       yes
+                                                                                                               ¯
+                                                                                     path          path length D
+                                           √                 √                                                  t
+                                                                                     Additive      whitened design   (1 +             yes      yes
+                               R =O(d TlogT)+O( T).                                  endpoint      error χ           χ )/(1−χ )
+                                 T                                                                       t             t       t
+                                                                                     Scalar link   ﬁxed features,    ratio bound     lower    scalar
+                 This conclusion requires no D < 1 condition. Here W                               derivative ratios                 ratio    only
+                                                    t                                Exact         C =V              1                no       yes
+                                                                                                    t    t
+                 is an abstract near-linearity scale, not generic network            current                         p
+                                                                                     Approximate two-sided κ           κ /κ         κ >        yes
+                 width or parameter count, and the result is not an                                           ±          + −          −
+                                                                                     current       certiﬁcate                         0
+                 unrestricted neural-training theorem. No optimizer-
+                 residual rate is required because the corrected center is           Table 2: Transport certiﬁcates. “Rotation” records
+                 used.                                                               whether replay gradients may change direction.
+                 Remark (Scaled-tanh specialization). For
+                               √                 ⊤                                 specialization would additionally require a likelihood-
+                                             φ(z) θ                                  score conﬁdence event, prediction conversion, pre-
+                  µ     (z) =     Wtanh       √         ,     kφ(z)k ≤ B ,
+                    θ,W                         W                     2      φ
+                                                                                     reward collection-time Fisher weights, control of weight
+                                  ⊤ √                                                and Jacobian transport, and an information-potential
+                 write u = φ(z) θ/ W. Then                                           bound. The factor geometry above does not establish
+                     ∇ µ      (z) = sech2(u)φ(z),                                    those statistical steps, so no such theorem is claimed
+                       θ θ,W                                                         here.
+                       2                 2        2                       ⊤
+                     ∇ µ      (z) = −√       sech (u)tanh(u)φ(z)φ(z) .
+                       θ θ,W              W
+                                                             √                       6    Acontrolled instantiation of
+                 Since sup |2sech2(u)tanh(u)| = 4/(3 3), Corollary 9                      transported conﬁdence
+                            u
+                 applies with
+                                                                                     We execute the corrected-center score in the ﬁnite-
+                                                               4B2                   dimensional scaled-tanh Gaussian specialization of
+                                                                   φ
+                            G=Bφ,           cµ = cg = ch := √ .                      Corollary 9. Contexts have dimension 4, there are
+                                                               3 3
+                                                                                     ﬁve actions, and the normalized context–action feature
+                 The symbol W is a smoothness scale here; it is not                  maphasdimension 29. We form the frozen and current
+                 identiﬁed with hidden width or parameter count.                     matrices densely and use ﬂoat64 Cholesky solves. Fi-
+                                                                                     nite enumeration uses the smallest-index tie rule. Thus
+                 The previous additive stacked-design result remains a               the intended theorem interface has
+                 useful local corollary. If χt < 1 and
+                                                                                             α =1,         κ     =κ =1,             ξ =0.
+                                       2 ¯                     2 ¯                             t             −,t     +,t             t
+                             (1 −χ ) V V (1+χ ) V ,                      (34)
+                                     t    t      t           t    t
+                                                                                     These equalities describe the exact operator, solve, and
+                 use the local score obtained from (10) by replacing                 oracle abstractions. The recorded ﬂoating-point checks
+                   ¯
+                   D /2
+                 e t    with 1+χ .                                                   are diagnostics, not veriﬁed numerical certiﬁcates.
+                                     t
+                 Corollary 10 (Local small-drift transport). Under                   The locked grid contains horizons T ∈ {250,500,1000},
+                 the remaining hypotheses of Theorem 1, the local score              50 evaluation seeds, and target labels D                     ∈
+                                                                                                                                          target
+                 satisﬁes                                                            {0.25,0.5,1,2}.      Each label sets the abstract near-
+                         v                                                           linearity scale W through the worst-case trust-region
+                         u
+                                             T                    r        
+                         u          G2       X                1+χ       κ      2     formula in Corollary 9; it is not the realized path
+                 R ≤t σ2+                 γ       β2 1+α            t     +,t
+                   T                 λ     T       t         t 1 − χ    κ            length and is not network width. Four policies share
+                                              t=1                   t     −,t        contexts and potential-noise tables. The primary trans-
+                              T             T                                                                      ¯Q
+                             X             X                                         port Hessian policy uses Dt in the score. The trans-
+                        +2       b (a ) +      ξ .                         (35)
+                                  t   t         t                                    port endpoint policy replaces it by the dense endpoint
+                             t=1           t=1                                       Thompsondistanceandisonlyadiagnosticoracle. The
+                                                                                     frozen reference policy uses the frozen width directly.
+                 Neither the local factor nor the exponential factor uni-            The naive current policy omits transport and is inten-
+                 formly dominates the other because they summarize                   tionally uncertiﬁed. Each policy has its own selected
+                 diﬀerent paths.                                                     history and representation path. Ten disjoint tuning
+                                                                                     seeds selected learning rate 3 × 10−4 and 20 full-batch
+                 Scope. The abstract theorem applies to any estima-                  steps followed by projection each round by preregis-
+                 tor that supplies (6). A complete exponential-family                tered all-action prediction MSE; evaluation seeds never

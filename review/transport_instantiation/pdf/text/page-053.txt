@@ -1,0 +1,86 @@
+                optimism; no lower spectral factor is required (the cost of the operator is charged through the realized dynamic
+                              C                                ¯        ¯
+                complexity Λ ). Algorithm 3 computes u , ψ , and β from pre-action state. The operator-speciﬁc inputs are
+                              T                             t   t        t
+                the proved factor κ     and condition upper bound κ¯ ; exact full and unrescaled-subset operators use κ          =1.
+                                    +,t                                 t                                                     +,t
+                Windowed/refresh curvature and action screening are practical heuristics unless the corresponding one-sided
+                transfer factor or optimal-arm-survival condition is separately veriﬁed.
+                                                                                                          corr                 ¯
+                Corrected-center remark. Replacing the center µb (a) by the corrected center µb              (a) of (76) sets ψ = 0
+                                                                          t                               t                     t
+                         ¯
+               (so ωt = βt) and removes the centering-stability assumption exactly (Corollary 22), at the cost of frozen-feature
+                           ˆlin
+                access for θt ; this departs from the O(d) additional curvature-state-memory, no-stored-feature design unless a
+                frozen-feature oracle, replay mechanism, or certiﬁed sketch is supplied (see the remark after Corollary 22).
+                The remainder of this legacy appendix analyzes the optimizer-centered CC-UCB specialization.
+                How to read the legacy one-sided theorem. The theorem is a transfer result for a general pre-reward
+                SPD curvature sequence. Lemma 25 and Corollary 17 instantiate its nonlinear conﬁdence, centering, and feature-
+                transfer inputs from O(d) path state, observed collection residuals, analytic smoothness constants, and a certiﬁed
+                optimizer residual. These schedules are executable but can be very loose. A sublinear guarantee from this bound
+                still requires control of the realized dynamic width complexity and a restricted parameter path; unrestricted
+                end-to-end ﬁne-tuning is not covered. No horizon-uniform lower transfer is required by Theorem 13; the lower
+                sandwich appears only in the explicit near-linear corollary.
+                Discussion of terms.
+                                                       P
+                 • Exploration term. Write S       :=     T  α2u (a )ω2 for the sum of squares of the per-round factors. The
+                                         q       T        t=1 t t t     t
+                                              2     2      C
+                   exploration term is 2    (σ +G /λ)Λ ST. A suﬃcient condition for sublinear regret is
+                                                           T
+                                                             C           2
+                                                            Λ ST =o(T ),         ET =o(T).
+                                                             T
+                   Concretely this holds whenever the per-round factors are polylogarithmically bounded (sup α2u (a )ω2 =
+                                                                                                                      t  t t  t  t
+                                                                                                                  C
+                   O(polylogT), so ST = O(T polylogT)) and the realized dynamic complexity is small (Λ               =O(polylogT),
+                                                                                                                  T
+                   e.g. via ΛC ≤ Γdyn with both the variation charge V C and the endpoint logdet(C          /λI) polylogarithmically
+                             T      T                                     T                             T+1
+                                      2                                                                 ¯
+                   bounded). Note ω contains the cumulative squared linearization error through F (via β ) and the centering
+                                      t                                                                  t      t
+                               ¯               C
+                   certiﬁcate ψ , so a small Λ   alone is insuﬃcient. α is bounded whenever the CG tolerance ε¯ is bounded away
+                                t              T                        t                                          t
+                   from 1; in the exact-curvature case u = (1+χ¯ )2 is bounded whenever the whitened-drift certiﬁcate χ¯ is
+                                                           t          t                                                           t
+                   bounded (Lemma 31); the whitened ℓ accumulation χ ≤ kD k             makes this a near-stationarity condition on
+                                                           2                 t      t F
+                                                                                           C             C
+                   replayed-Jacobian drift. The unstable-curvature cost is isolated in Λ     (through V ), not hidden in a spectral
+                                          p                                                T            T
+                                             2     2
+                   constant. The factor     σ +G /λ arises from the width-sum bound of the dynamic width-complexity lemma
+                                                     2      2                √
+                   (Lemma 35, Eq. (123)); when G ≤ λσ it is at most σ 2.
+                 • Linearization remainder. The bound involves E = P ε (t), not Tε . Near-linear regimes also require
+                                                   P                   T       t lin           lin
+                                                             2            ¯                                   ∗
+                   the squared-error sum F      =      ε  (t)  (through F , hence ω ) to be controlled. kθ −θ k = O(1/t) gives
+                                              T      t  lin             √ t           t                           t
+                   E =O(1); kθ∗−θ k = O(t−1/4) gives E = O( T). The additive role of E mirrors misspeciﬁed linear
+                     T                  t                       T                                     T
+                   bandits, where a uniformly bounded per-round model error commonly contributes an additive regret term
+                   that scales linearly in the cumulative approximation error (Ghosh et al., 2017; Lattimore et al., 2020). The
+                   displayed bound requires E /T → 0; a nonvanishing uniform per-round error bound alone yields an O(T)
+                                                 T
+                   additive term.
+                                                                                                  ¯     ¯
+                 • Centering. The centering certiﬁcate enters multiplicatively, through ω = β +ψ inside the sum of squares
+                                                                                              t    t     t
+                                                                                  ¯                   ˆlin
+                   ST, rather than as a separate additive term. It vanishes (ψt = 0) when θt = θt         (convex last-layer models
+                   with exact optimization), and the corrected-center variant (Corollary 22) removes it in general at the cost of a
+                   frozen-feature solve.
+                 • Regret improvement over diagonal/last-layer surrogates. The bound itself does not prove that full curvature
+                   yields strictly lower regret than diagonal or last-layer methods in any speciﬁc regime; it provides an upper
+                   bound with explicit per-round factors. Demonstrating regret improvement requires a separate empirical study.
+                   No such conﬁrmatory study is reported here. The theorem exposes the transfer factor u and realized width
+                                                                                                                t
+                                 C
+                   complexity Λ    as operator-dependent terms along the realized trajectory; it does not identify a causal regret
+                                 T
+                   cost because the adaptive path and other factors may also change.

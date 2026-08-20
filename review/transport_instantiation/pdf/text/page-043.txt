@@ -1,0 +1,107 @@
+                Assume ε       <1(see Appendix I for the minimum I            ensuring this as a function of κ¯ ; Algorithm 2 enforces a
+                            t,a                                            t,a                                  t
+                known per-round tolerance ε¯ uniformly over the scored actions, max ε            ≤ε¯ <1, via adaptive residual stopping
+                                               t                                           a t,a     t
+                or a ﬁxed budget under a certiﬁed condition-number bound; see §C). Then
+                                                                2           2                    2
+                                                    (1 −ε )s (a) ≤ s˜ (a) ≤ (1+ε )s (a).                                              (130)
+                                                           t,a  C,t         t               t,a  C,t
+                                                      2             2
+                For g (a) = 0 the algorithm sets s˜ (a) = 0 = s       (a) and (130) holds trivially.
+                      t                               t             C,t
+                Proof. The CG minimax property gives ke k /ke k               ≤min                max               |p(x)|. Choosing the
+                                                                 I C     0 C          p∈P ,p(0)=1      x∈[λ   ,λ   ]
+                                                                    t        t     √     I     √           min  max
+                                                                                                         I
+                scaled Chebyshev polynomial bounds this maximum by 2[( κ −1)/( κ +1)] ; this ratio is increasing in κ ,
+                                                                                      t           t                                       t
+                                             2        2          ⊤ ˜                ⊤ ˜             ⊤    ˜
+                so κ¯ ≥ κ proves (129). s˜ (a) − s       (a) = g (u−u) = (C u) (u−u) = u C (u−u). By Cauchy–Schwarz in
+                     t     t                 t        C,t                        t                     t
+                                  ⊤    ˜                  ˜                   2          2
+                the C -norm, |u C (u−u)| ≤ kuk ku−uk                ≤ε kuk =ε s (a). For the outer-product special case the
+                      t              t                C          C      t,a          t,a
+                                                       t          t           C          C,t
+                                                                               t P
+                                                                              −2                        2              2   2
+                condition-number bound follows from λ           (C ) ≤ λ+σ              w kg (x ,a )k ≤ λ+W G /σ .
+                                                            max t                  s∈St   s   t  s   s              t
+                Lemma 39 (Fixed-preconditioner CG accuracy). Fix round t and let P ∈ Rd×d be an H -measurable SPD
+                                                                                                   t                   t
+                preconditioner, held ﬁxed and applied as the same exact linear map throughout every iteration of a solve. For
+                g = g (a) 6= 0, deﬁne the symmetric transformed system
+                       t
+                                                  b      b       b       −1/2     −1/2       b      −1/2
+                                                 Cy=g,           C =P         C P      ,     g = P      g,                            (131)
+                                                   t               t    t      t t                 t
+                                                                                                    ˜
+                using principal square roots. If CG starts from zero on this system and yI is its Ith iterate for I ≥ 1, set
+                       −1           1/2        ˜       −1/2˜
+                u=C g,y=P u,andu =P                         y . Then
+                       t           t             I     t     I
+                                                                                        p          !
+                                                                           ˜                 P       I
+                                                           ˜         ky−yIk
+                                                     ku−u k                    b           κ¯  −1
+                                                            I C                C             t
+                                                                t =             t ≤ 2    p             ,                              (132)
+                                                        kukC            kykb               κ¯P +1
+                                                             t              C                t
+                                                                             t
+                         P       b
+                where κ¯   ≥κ(C ) is a certiﬁed pre-reward bound. In particular, positive H -measurable certiﬁed quantities ℓ ,L
+                         t        t                                                               t                                    t   t
+                                                                                                   P
+                satisfying the spectral equivalence ℓ P  C  L P with 0 < ℓ ≤ L give κ¯             =L/ℓ.
+                                                       t t     t     t t            t     t        t      t  t
+                                                      P                             2          ⊤˜                          P
+                Writing the left side of (132) as ε     , the approximate width s˜     (a) = g u satisﬁes, whenever ε         <1,
+                                                      t,a                           P,t            I                       t,a
+                                                            P    2         2               P    2
+                                                     (1 −ε )s (a)≤s˜ (a)≤(1+ε )s (a).                                                 (133)
+                                                            t,a  C,t       P,t             t,a  C,t
+                                                                                                ˜
+                There is also a directly recomputable residual certiﬁcate. For r = g − C u ,
+                                                                                     I         t  I
+                                                                                       
+                                                                     q       r⊤P−1r       1/2
+                                                               P         P     I  t   I
+                                                              ε    ≤ κ¯                      .                                        (134)
+                                                               t,a       t    g⊤P−1g
+                                                                                   t
+                                                                                               p P               P
+                Thus stopping only after the preconditioned residual ratio is at most ε¯ /        κ¯  certiﬁes ε    ≤ε¯. For g = 0, both
+                                                                                             t     t             t,a    t
+                widths are deﬁned as zero. Taking Pt = I recovers ordinary CG. The lemma makes no claim that a particular
+                preconditioner improves the condition number; that requires a proved or measured spectral-equivalence bound.
+                Iteration-varying or inexact nonlinear preconditioners are outside this ﬁxed transformed-CG argument.
+                                                    −1/2        ˜       −1/2˜
+                Proof. The substitutions u = P          y and u =P          y give
+                                                   t             I     t      I
+                                                           ˜   2          ˜   2            2        2
+                                                     ku−u k =ky−y k ,                  kuk   =kyk .
+                                                            I C             I b            C         b
+                                                                t             C             t       C
+                                                                               t                      t
+                                                                                       b
+                Thestandardzero-start CGChebyshevboundontheSPDmatrixC proves(132). Congruenceofℓ P  C  L P
+                                                                                         t                                t  t    t     t  t
+                      −1/2                          b
+                by P        puts the spectrum of C in [ℓ ,L ].
+                      t                              t      t  t
+                       ⊤ ˜             ⊤    ˜
+                Also g (u −u) = u C (u −u), so Cauchy–Schwarz in the C energy norm proves (133), exactly as in Lemma 38.
+                            I             t  I                                     t
+                                                       b       −1/2                    b           P           b
+                Finally the transformed residual is r = P           r . If m = λ      (C ) and M      =λ (C),then
+                                                         I     t     I       t     min   t         t      max   t
+                                                                        b                       b
+                                                                       kr k                   kgk
+                                                             ˜           I 2                 p 2
+                                                       ky−y k ≤ √            ,     kyk    ≥          .
+                                                              I  b                      b
+                                                                 Ct      m             Ct          P
+                                                                           t                    Mt
+                                         q b b            b
+                Their ratio is at most      κ(C )kr k /kgk , which yields (134) after using the certiﬁed upper bound.
+                                                t   I 2      2

@@ -1,0 +1,61 @@
+               A.1 A concrete solver certiﬁcate
+               Lemma 11 (Inverse-quadratic interval from the original residual). Let C = C⊤  λ I with λ > 0. For an
+                                    ˜                                                     ˜         C         C
+               approximate solution u to Cu = q, recompute the original residual r = q−Cu. In exact arithmetic,
+                                                      ⊤ −1       ⊤˜    ˜⊤      ⊤ −1
+                                                     q C q=q u+u r+r C r.                                               (40)
+              Consequently,
+                                                                                     2
+                                                                                  krk
+                                                     ⊤˜    ˜⊤       ⊤ −1             2
+                                                L=q u+u r≤q C q≤L+ λC =U.                                               (41)
+                                             −1     ˜     −1                                        ˜
+               Proof. The exact solution is C  q = u+C r. Substitute this expression and q = Cu+r into the quadratic
+                                       ⊤ −1                                    2
+               form. The remainder is r C    r, which lies between zero and krk /λC.
+                                                                               2
+               Set sˆ = √U. If L > 0, the observable factor α = pU/L veriﬁes played-action sharpness. If L ≤ 0 < U, the
+               interval supplies no ﬁnite positive multiplicative sharpness factor; the solve must continue or an additive-width
+               theorem must be used. If U = 0, the exact inverse quadratic form is zero and the solver returns sˆ= 0. For q = 0,
+               skip the solve and return zero.
+               These certiﬁcates and the approximate-score oracle must use the same realized map sˆ (·). A selected-action
+                                                                                                      t
+               reﬁnement may keep the original score width as the theorem object, or it must update U (a ) and recheck
+                                                                                                           t  t
+               the oracle inequality. Fresh randomized reﬁnement or veriﬁcation must be conditioned on the sigma-algebra
+               immediately before that draw and assigned failure probability before the draw.
+               Corollary 12 (Pointwise CG and PCG solver certiﬁcates). Suppose CG or PCG supplies, in exact arithmetic,
+                                                        ˜
+               an original-system energy certiﬁcate ku −uk ≤ εkuk with ε < 1. Then
+                                                           C       C
+                                                               2    ⊤˜            2
+                                                       (1 −ε)sC ≤ q u ≤ (1+ε)sC.
+              Thus                                         s                 r
+                                                               ⊤˜
+                                                       sˆ =   q u,      α= 1+ε
+                                                             1−ε               1−ε
+               give a pointwise upper-valid width and sharpness factor for this query. A jointly measurable action-indexed
+               family of such solves, together with a simultaneous energy-certiﬁcate event for every scored action, supplies
+               the all-domain upper condition in (9); the sharpness conclusion is needed only at the played action. For a
+               general standard-Borel domain, measurability of the family and simultaneous functional validity remain additional
+               premises. A preconditioner may change the recurrence, but certiﬁcate checks must use the original operator.
+                                −1          2    ⊤         2
+               Proof. Let u = C   q. Since s = q u = kuk ,
+                                            C              C
+                                              ⊤     2                                      2
+                                               ˜            ˜                 ˜
+                                             q u−s =|hu,u−ui |≤kuk ku−uk ≤εs .
+                                                     C               C       C        C      C
+               This proves the pointwise two-sided quadratic-form comparison. Dividing its lower side by 1 − ε gives upper
+               validity for this query, while combining both sides gives the displayed sharpness factor. Applying the lower
+               inequality actionwise on the simultaneous family event gives the all-domain upper condition; only the played query
+               uses the upper inequality for sharpness. For PCG the argument is unchanged once the certiﬁcate is expressed in
+               the original C-energy norm.
+               Neither Lemma 11 nor Corollary 12 turns an ordinary ﬂoating-point residual into a veriﬁed enclosure. Literal
+               numerical certiﬁcation requires interval arithmetic, directed rounding with derived norm bounds, or another
+               veriﬁed residual enclosure. Float64 point checks remain engineering diagnostics.
+               A.2 Measurability, randomized certiﬁcates, and edge cases
+               Let J be a ﬁnite or countable certiﬁcate-source index set. For j ∈ J, choose an H−-measurable failure budget
+                                                                                                t
+               δ   before drawing its random object. Let P   be the pre-reward sigma-algebra immediately before that draw. It
+                j,t                                       j,t

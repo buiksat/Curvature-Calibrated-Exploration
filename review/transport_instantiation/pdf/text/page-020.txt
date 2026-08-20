@@ -1,0 +1,80 @@
+                     Corollary 14 (Exact-current regret through the frozen potential). Adopt Theorem 13 with exact current curvature
+                     C = C . Suppose a predictable certiﬁcate satisﬁes χ ≤ χ¯ < 1 for every t, and use the valid transfer factor
+                       t        t                                                                   t       t
+                                         2
+                     u =(1+χ¯ ) . Then, on the event of Theorem 13,
+                       t              t
+                                                                                ( 2           2
+                                                                     R ≤2 (σ +G /λ)γ
+                                                                        T                              T
+                                                                                          T                       )1/2                                                          (56)
+                                                                                        X               1+χ¯        2
+                                                                                     ×        α2ω2              t            +2E .
+                                                                                                t  t    1−χ¯                         T
+                                                                                        t=1                     t
+                                                                                                                                                                                    ¯
+                     For the corrected center of Corollary 22, the same statement holds without Assumption 5 after replacing ωt by βt.
+                     This removes the nonmonotone dynamic-width term only in the small-drift, exact-current regime.
+                     Proof. The sharpened sandwich in Corollary 33 and Loewner inversion give
+                                                                                                        s¯ (a)
+                                                                                           s (a) ≤        t      .
+                                                                                             t         1−χ¯
+                                                                                                               t
+                                                                                                √
+                     The per-round proof of Theorem 13, together with                              u =1+χ¯ , therefore gives
+                                                                                                     t            t
+                                                                           regret ≤ 2α ω 1+χ¯ts¯ (a )+2ε (t).
+                                                                                   t         t  t 1 − χ¯    t    t        lin
+                                                                                                         t
+                     Sumandapply Cauchy–Schwarz once. The frozen rank-one update and the usual elliptic-potential inequality give
+                     P 2                   2       2
+                           s¯ (a ) ≤ (σ +G /λ)γ , proving the display. The corrected-center claim follows from the prediction identity
+                         t  t    t                         T
+                     in Corollary 22.
+                     For an integer 0 ≤ r ≤ d, deﬁne                                    X
+                                                                            ∆ :=             ν ,        r    := min{r,T},
+                                                                              T,r              i          T
+                                                                                        i>r                                                                                     (57)
+                                                                                                               2
+                                                                                                          TG             ∆
+                                                                              tail                                          T,r
+                                                                            Γ      := r log 1+                       +          ,
+                                                                              T,r        T               r λσ2              λ
+                                                                                                          T
+                                                                                           ¯
+                     where ν ≥ ··· ≥ ν ≥ 0 are the eigenvalues of C                                −λIand the ﬁrst term is deﬁned to be zero when r = 0.
+                                 1               d                                   P T+1                                                                                     T
+                                                          tail
+                     Lemma 20 proves γ ≤ Γ                    . Writing τ        =        ν and q         =min{d−r,max{T −r,0}}, the same lemma proves
+                                                  T       T,r                 T         i  i         T,r
+                     the sharper realized split bound                                                                     
+                                                                                                            τ −∆
+                                                                                 split                        T        T,r
+                                                                               Γ       := r log 1+
+                                                                                 T,r         T                   r λ
+                                                                                                                 T                                                              (58)
+                                                                                                                   ∆
+                                                                                            +q log 1+ T,r ,
+                                                                                                 T,r              q     λ
+                                                                                                                    T,r
+                     where a term with zero multiplier is deﬁned as zero.
+                     Corollary 15 (Approximate-rank exact-current GGN). Under Corollary 14, on the same conﬁdence event the
+                     following holds simultaneously for every r ∈ {0,...,d}:
+                                                                                ( 2           2        tail
+                                                                     R ≤2 (σ +G /λ)Γ
+                                                                        T                              T,r
+                                                                                          T                       )1/2                                                          (59)
+                                                                                        X               1+χ¯        2
+                                                                                     ×        α2ω2              t            +2E .
+                                                                                                t  t    1−χ¯                         T
+                                                                                        t=1                     t
+                                                                tail                                     split
+                     The same display holds with Γ                   replaced by the smaller Γ                 from (58). This is a realized-complexity statement:
+                                                                T,r                                      T,r
+                     the policy may retain the existing observable γˆ                            schedule, but a terminal realized ∆                        is not used in any
+                                                                                           t−1                                                        T,r
+                     action-time radius. Because the deterministic spectral inequality holds for every r, the terminal report may
+                                     tail
+                     minimize Γ            over r a posteriori, provided that choice does not alter any past action, radius, or other action-time
+                                     T,r
+                     quantity.

@@ -1,0 +1,91 @@
+                   • Scope. The bound is proved for Gaussian/squared-loss rewards. Extending it to exponential-family likelihoods
+                     (Bernoulli, categorical) would require a weighted frozen-feature analysis accounting for the data-dependent
+                                         2
+                     Fisher weights ∇ A(z) and is left as future work (Appendix L).
+                 Corollary 49 (Legacy one-sided sanity check: frozen features recover linear UCB). Suppose the backbone is
+                 frozen and the reward head is linear in its parameters, the ridge objective is optimized exactly, and take the
+                                                                                                   ¯
+                 algorithmic curvature to be the sequential frozen Gram matrix, C = C . Then: ε                     (t) = 0 for all t (L = 0 in
+                                                                                              t      t           lin
+                                                         ¯
+                 Assumption 4), so E = F = 0; ψ = 0 (under exact optimization the MAP and linearized estimators coincide,
+                                         T      T         t
+                                                                           ¯                                  2         2
+                 so Assumption 5 holds with equality), giving ω = β ; u (a) = 1 for all a (indeed s¯ (a) = s               (a), so Assumption 6
+                                                                      t     t   t                             t         C,t
+                                                      ¯         ¯      −2                      ⊤
+                 holds with equality); and, since C         =C +σ g(x,a)g(x,a) by (47), the update is exactly the rank-one
+                                                        t+1      t         t   t   t  t   t  t
+                                      +                  C              C
+                 step, i.e. C     =C , so Ξ =0, V =0, and Λ =γ . Then Theorem 13 gives
+                             t+1      t        t        T               T     T
+                                                                       v
+                                                                       u                     T
+                                                                       u                    X
+                                                                       t 2         2              2  2
+                                                                                                    ¯
+                                                             R ≤ 2 (σ +G /λ)γ                   α β .
+                                                               T                          T       t  t
+                                                                                            t=1
+                                                                p
+                 If in addition ε¯ ≤ ε¯ so that α ≤ α :=          (1+ε¯)/(1−ε¯), the looser Corollary 50 recovers the familiar LinUCB
+                                   t        p       t     I
+                                    ¯            2      2                   ¯                     ¯
+                 form R ≤2α β                 (σ +G /λ)Tγ , where β                 := max       β .
+                          T       I   max,T                      T           max,T           t≤T t
+                                                     ¯                           C           C
+                 Proof. Substitute ε      (t) = 0, ψ = 0, u (a) = 1, and Λ         =γ , V =0into (55); the frozen Gram is monotone,
+                                        lin           t        t                 T     T    T
+                 so Ξ = 0 and the dynamic potential collapses to the information gain γ . The LinUCB form is Corollary 50
+                      t                                                                                T
+                                                 ¯     ¯
+                 with α ≤ α , u = 1, ω = β ≤ β                 .
+                         t     I   t         t    t     max,T
+                 Corollary 50 (Looser worst-case reduction). If α ≤ α                  , u (a ) ≤ u      , and ω ≤ ω         for all t ≤ T, then
+                                                                             t     max     t  t      max          t     max
+                 S ≤α2 u           ω2    T and
+                   T      max max max
+                                                                         √       q 2         2        C
+                                                    R ≤ 2α          ω      u        (σ +G /λ)TΛ +2E .
+                                                      T        max max       max                      T       T
+                       q C
+                 This     TΛ form is weakly looser than (55), with equality when the per-round factors are constant. It is recorded
+                             T
+                 only as a legacy reduction, not as the main result.
+                 H Proof of the one-sided dynamic theorem
+                                                                                                  ¯             −2P                              ⊤
+                 Werecall the key objects: g (x,a) = ∇ µ (x,a) (frozen features), C = λI+σ                                g (x ,a )g (x ,a )
+                                                   s            θ θs                                t                 s<t s     s  s   s   s   s
+                                                                q       ⊤¯−1
+                 (frozen-feature Gram matrix), s¯ (a) =           g (a) C      g (a), the algorithmic curvature C with width s              (a) =
+                 q                                     t            t       t    t                                      t                C,t
+                          ⊤ −1                                              ˆlin                                                     ¯     ¯
+                    g (a) C     g (a), the linearized ridge estimator θ          (Eq. 147), the combined width factor ω = β + ψ , the
+                     t       t    t                  p                       t                                                  t     t     t
+                                                                                                                            C
+                 per-round CG inﬂation α =              (1+ε¯)/(1−ε¯), and the realized dynamic complexity Λ                  (Eq. 119). Write
+                                                t             t         t                                                   T
+                 µb (a) = µ    (x ,a).
+                   t        θt   t
+                 Step 1: Conﬁdence, centering, and prediction-error bound. By Lemma 41, with probability ≥ 1−δ,
+                                                                ⊤ ˆlin     ∗ 
+                                                                              
+                                                           g (a) (θ     −θ ) ≤ s¯(a)β ,             ∀t, a,                                   (148)
+                                                            t        t                t     t
+                 where β is as in (139). The self-normalized martingale inequality (Abbasi-Yadkori et al., 2011) is applied to the
+                          t
+                 1-sub-Gaussian sequence ξ = η /σ with the design g /σ, which is G -measurable before ξ is revealed, and Gram
+                                               s     s                        s                s                        s
+                           ¯
+                 matrix C . Each realized design vector g (x ,a ) is G -measurable (where G = H ∨σ(a ) is the pre-reward
+                            t                                     s   s   s      s                          s      s       s
+                 sigma-algebra of (145)), and the sequential update (47) ensures the hypotheses of the self-normalized bound are
+                                                                        ⊤      ˆlin      ¯                                                ¯
+                 satisﬁed. By Lemma 44 (Assumption 5), |g (a) (θ −θ                )| ≤ ψ s¯ (a). Combined with |ρ | ≤ ε         (t) and β ≥ β ,
+                                                                   t        t    t        t  t                          t     lin          t     t
+                 the triangle inequality gives the prediction-error bound (140)
+                                          ∗                             ¯
+                                      |µ   (x ,a)−µb (a)| ≤ (β +ψ )s¯ (a)+ε (t) ≤ ω s¯ (a)+ε (t),                         ∀a.                (149)
+                                        θ     t        t            t     t  t        lin         t  t        lin
+                                                                                                   ¯
+                 (The corrected-center variant of Corollary 22 reaches (149) with ωt = βt and without Assumption 5.)

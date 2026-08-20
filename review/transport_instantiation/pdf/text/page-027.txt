@@ -1,0 +1,77 @@
+                      Assumption                     Status            Use                                   Operational check
+                      Conditional sub-Gaussian       Standard          Self-normalized conﬁdence             Distributional premise
+                      noise
+                      Realizability, kθ∗k ≤ S        Restrictive       Bias and Taylor schedules             Not generally testable
+                      Bounded gradients              Standard    on    Width and condition bounds            Analytic bound or pre-reward
+                                                     compact sets                                            monitor
+                      L ,L on convex Θ               Restrictive       Linearization, transfer, centering    Analytic for a speciﬁed model
+                        µ   g
+                                                                                                             class
+                      Optimizer residual ζt          Algorithmic       Centering certiﬁcate                  Pre-action full-objective gradi-
+                                                                                                             ent norm
+                      Operator and CG certiﬁ-        Algorithmic       Optimism and solve error              Analytic Loewner and residual
+                      cates                                                                                  proof
+                      Residual-energy envelope       Rate-only         Near-linear scaling                   Observable after collection, not
+                                                                                                             policy input
+                      Fixed active rank r            Restrictive       Closes γT                             Supplied subspace, not a ter-
+                                                                                                             minal audit
+                                                                                 C
+                      Window excitation κ            Restrictive       Closes Λ                              Analytic construction or ex-
+                                             w                                   T
+                                                                                                             plicit premise
+                 Table 5: Assumption ledger for the legacy one-sided theorem. Analytic and pre-action quantities are policy
+                 available; post-reward quantities are used only in the theorem statement or its audit.
+                 The next lemma gives the primitive geometric bound underlying Assumption 5, expressed through the certiﬁable
+                 quantity ψ .
+                              t
+                 Lemma 23 (Primitive upper bound for prediction discrepancy). Let z = (x ,a ), g = ∇ µ (z ), g                                   =
+                                                                                                       s       s  s     s       θ θs   s     s,t
+                 ∇ µ (z ), and δ         =g −g. Deﬁne
+                   θ θt    s         s,t     s,t    s
+                                     µ¯   := µ (z )+g⊤(θ −θ ),                e   := µ (z )−µ¯ ,            r¯   := µ¯   −r .
+                                       s,t     θs   s      s   t     s         s,t      θt  s      s,t       s,t      s,t    s
+                      ¯                                                                               ˆlin
+                 Let L be the frozen-feature linearized ridge objective whose minimizer is θ              , and deﬁne
+                        t                                                                               t
+                                                           M := 1 X[r¯ δ +e g +e δ ].
+                                                             t     σ2        s,t s,t   s,t s     s,t s,t
+                                                                       s<t
+                 If the nonlinear optimizer satisﬁes k∇L (θ )k ≤ ζ , then for every candidate action a ∈ A ,
+                                                               t   t  2     t                                              t
+                                                   lin             ζ                                   q
+                                         ⊤        ˆ                   t                                          ⊤¯−1
+                                    g (a) (θ −θ ) ≤ s¯(a) √ +kM k −1 ,                           s¯ (a) :=   g (a) C      g (a).
+                                    t        t     t         t                 t  ¯             t            t       t    t
+                                                                        λ          Ct
+                                                                                    ⊤        ˆlin
+                 The left-hand side is exactly the geometric bound |g (a) (θ − θ                 )| ≤ s¯ (a)ψ of Assumption 5 with ψ =
+                     √                                                          t        t     t         t√    t                              t
+                 ζ / λ+kM k¯−1 (Equation (79)). Consequently, since kM k¯−1 ≤ kM k / λ, a valid centering certiﬁcate is
+                  t             t C                                                    t C           t 2
+                                    t                                                      t
+                                                                            ζ +kM k
+                                                                   ¯         t  √ t 2
+                                                                   ψ :=                   ≥ ψ .
+                                                                     t            λ            t
+                 If, in addition, on a ﬁxed event, θ 7→ ∇ µ (z) is L -Lipschitz, |r¯           | ≤ B     for all s < t, and ∆       := kθ −θ k,
+                                                               θ θ           g               s,t      t,δ                       s,t       t     s
+                 then                                                  "                                       #
+                                                                   X                                    2
+                                                                1                        GL           L
+                                                                                             g  2       g   3
+                                                   kMk ≤                 B L ∆ +              ∆ + ∆ .
+                                                       t 2     σ2          t,δ g   s,t     2    s,t    2    s,t
+                                                                   s<t
+                                                                          ¯ ˆlin
+                 Proof. The linearized ridge objective satisﬁes ∇L (θ            ) = 0 and, by its quadratic form,
+                                                                           t  t
+                                                                      ¯          ¯         ˆlin
+                                                                    ∇L(θ )=C(θ −θ ).
+                                                                        t  t       t  t     t
+                              ˆlin   ¯−1 ¯
+                 Thus θ −θ        =C ∇L(θ). Using µ (z )−r =r¯ +e                        and g     =g +δ ,thegradients of the nonlinear
+                         t     t       t      t   t           θt   s     s     s,t    s,t       s,t     s    s,t
+                 loss and the frozen-feature linearized loss satisfy
+                                                             ¯                              ¯
+                                             ∇L(θ )=∇L(θ )+M,                    so      ∇L(θ )=∇L(θ )−M.
+                                                 t   t        t   t       t                  t  t         t  t       t

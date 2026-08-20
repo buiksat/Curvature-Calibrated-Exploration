@@ -1,0 +1,50 @@
+               Barak A. Pearlmutter. Fast exact multiplication by the       Monte Carlo for contextual bandits. In Interna-
+                 Hessian. Neural Computation, 6(1):147–160, 1994.           tional Conference on Machine Learning (ICML),
+               Carlos Riquelme, George Tucker, and Jasper Snoek.            pages 24830–24850, 2022b.
+                 Deep Bayesian bandits showdown: An empirical             Weitong Zhang, Dongruo Zhou, Lihong Li, and Quan-
+                 comparison of Bayesian deep networks for Thompson          quan Gu. Neural Thompson sampling. In Inter-
+                 sampling. In International Conference on Learning          national Conference on Learning Representations
+                 Representations (ICLR), 2018.                              (ICLR), 2021.
+               Hippolyt Ritter, Aleksandar Botev, and David Bar-          Dongruo Zhou, Lihong Li, and Quanquan Gu. Neu-
+                 ber. A scalable Laplace approximation for neural           ral contextual bandits with UCB-based exploration.
+                 networks. In International Conference on Learning          In International Conference on Machine Learning
+                 Representations (ICLR), 2018.                              (ICML), pages 11492–11502, 2020.
+               Sudeep Salgia. Provably and practically eﬃcient neural
+                 contextual bandits. In Proceedings of the 40th Inter-
+                 national Conference on Machine Learning, volume
+                 202 of Proceedings of Machine Learning Research,
+                 pages 29800–29844. PMLR, 2023. URL https://
+                 proceedings.mlr.press/v202/salgia23a.html.
+               Nicol N. Schraudolph. Fast curvature matrix-vector
+                 products for second-order gradient descent. Neural
+                 Computation, 14(7):1723–1738, 2002.
+               A. C. Thompson. On certain contraction mappings
+                 in a partially ordered vector space. Proceedings of
+                 the American Mathematical Society, 14(3):438–443,
+                 1963. doi: 10.1090/S0002-9939-1963-0149237-7.
+               William R. Thompson. On the likelihood that one
+                 unknown probability exceeds another in view of the
+                 evidence of two samples. Biometrika, 25(3–4):285–
+                 294, 1933.
+               Joel A. Tropp. An introduction to matrix concentration
+                 inequalities. Foundations and Trends in Machine
+                 Learning, 8(1–2):1–230, 2015.
+               Shashanka Ubaru, Jie Chen, and Yousef Saad. Fast esti-
+                 mation of tr(f(a)) via stochastic Lanczos quadrature.
+                 SIAM Journal on Matrix Analysis and Applications,
+                 38(4):1075–1099, 2017.
+               Michal Valko, Nathan Korda, R´emi Munos, Ilias
+                 Flaounas, and Nello Cristianini. Finite-time analysis
+                 of kernelised contextual bandits. In Uncertainty in
+                 Artiﬁcial Intelligence (UAI), pages 654–663, 2013.
+               Dongxie Wen, Hanyan Yin, Xiao Zhang, Peng Zhao, Li-
+                 jun Zhang, and Zhewei Wei. Revisiting matrix sketch-
+                 ing in linear bandits: Achieving sublinear regret via
+                 dyadic block sketching. In International Conference
+                 on Learning Representations (ICLR), 2026.
+               Pan Xu, Zheng Wen, Handong Zhao, and Quanquan
+                 Gu. Neural contextual bandits with deep representa-
+                 tion and shallow exploration. In International Con-
+                 ference on Learning Representations (ICLR), 2022a.
+               Pan Xu, Hongkai Zheng, Eric Mazumdar, Kamyar Az-
+                 izzadenesheli, and Anima Anandkumar. Langevin

@@ -1,0 +1,73 @@
+                 Theorem 46 then applies with the deterministic approximate-to-full factor κ+,t=1 and the full-to-frozen factor
+                 u =(1+χ¯ )2—no two-sided sandwich is required, though the overall guarantee remains conditional on that
+                   t           t
+                 transfer certiﬁcate. The cost of the smaller operator is not hidden: it surfaces as larger realized widths s2 (a )
+                                                                                                                                            C,t  t
+                                                                           C
+                 and hence a larger dynamic width complexity Λ . The same holds for any current-parameter downweighted
+                                                                           T
+                 subset with ws ∈ [0,1] (including an unrescaled subsample). A stale window that reuses Jacobians from an older
+                 parameter is not covered; see (iii).
+                 (iii) Periodic refresh (heuristic; stale operator).              Recompute the curvature operator every M rounds on a
+                 cached buﬀer and reuse it for M consecutive actions. Because the reused operator evaluates Jacobians at an
+                                                                                                                          ˆ
+                 older parameter, it is no longer a subset of the current-parameter outer products, so the C  C argument of
+                                                                                                                            t      t
+                 Proposition 45 does not apply and the stale operator can both over- and under-estimate Ct. This remains a
+                                                                                                                    ˆ
+                 heuristic: Theorem 46 covers it only when a one-sided factor κ               (an explicit bound C  κ         C)is separately
+                                                                                          +,t                         t     +,t   t
+                 certiﬁed. The rescaled subsample of (i), with weights ws = (t−1)/n > 1, is likewise not covered by Proposition 45;
+                 it instead uses the two-sided matrix Bernstein bound of Lemma 34.
+                 F.4     Computational Cost Model
+                 Primitive assumptions. CC-UCB requires a single computational primitive: the curvature–vector product
+                                                                                                                     ⊤ 
+                 (CVP)v7→C v,whichdecomposesintoper-sampleoperationsv 7→ g (x ,a ) g (x ,a ) v . Each such operation
+                                 t                                                              t   s  s    t   s  s
+                 consists of:
+                  1. a Jacobian–vector product (JVP) v 7→ g⊤v (forward-mode AD, cost ≈ 1× forward pass);
+                                                                    t
+                  2. a vector–Jacobian product (VJP) α 7→ αgt (reverse-mode AD, cost ≈ 1× backward pass).
+                 Sharded autodiﬀ can distribute JVP/VJP evaluation, but its communication pattern and sample parallelism are
+                 implementation-dependent and are not benchmarked here. For m := |S |, one matrix-free oracle application
+                                                                                               t       t
+                 consists of m sample-CVPs plus O(d) damping and accumulation work. Thus I                        CGrecurrences for action a
+                                t                                                                              t,a
+                                                                                                                        ˜
+                 use I    m sample-CVPs; an explicit ﬁnal check of the original-system residual g (a)−C u uses another m . The
+                       t,a  t                                                                                t        t                    t
+                 sequential Krylov state is O(d) (O(Kd) if right-hand sides are batched), excluding model and optimizer state,
+                 activations, and raw replay. Caching an explicit m ×d Jacobian matrix instead uses O(m d) additional state
+                                                                             t                                              t
+                 and is not the on-the-ﬂy JVP/VJP implementation analyzed by this operation count.
+                 Krylov methods for Hessian spectral analysis have been run on networks with > 108 parameters under distributed
+                 training (Granziol and Juarev, 2026), which shows that related curvature–vector primitives can be implemented
+                 at that scale. This does not establish feasibility for the exact per-example GGN JVP/VJP path analyzed here,
+                 nor does it measure end-to-end bandit training. Warm-starting CG from the previous round’s solution can reduce
+                 the iteration count in practice.
+                 Cost accounting. Let C (W              ), C (W      ), C (W     ), and C (W       ) denote the one-example forward, reverse,
+                                                F    net     B    net    J    net          V    net
+                 JVP, and VJP costs for model-compute scale W               , and deﬁne
+                                                                         net
+                                                         C     := m [C (W        ) +C (W )]+O(d).
+                                                           op,t      t   J    net      V     net
+                 Parameter count d alone does not determine these costs when architecture, input length, or weight sharing
+                 changes. Let Jopt be the number of full-batch ﬁrst-order steps after round t; qopt ∈ {0,1} records a separate
+                                   t+1                                                                         t+1
+                 full-gradient optimizer certiﬁcate, and qCG ∈ {0,1} records an explicit ﬁnal CG residual application. Table 6
+                                                                 t,a
+                 separates the training history N from the curvature buﬀer m .
+                                                      t                                  t
+                 Table 6: Per-round arithmetic cost. N = t−1 is the training-history size; m = |S | is the curvature-buﬀer size.
+                                                             t                                            t      t
+                                               Component                     Cost
+                                               Candidate means/features      O(K[CF +CB])
+                                                                                   P
+                                               CGrecurrences/checks          C       K (I    +qCG)
+                                                                               op,t  a=1 t,a    t,a
+                                               Parameter update/certiﬁcate   (Jopt +qopt){(N +1)[C +C ]+O(d)}
+                                                                               t+1    t+1     t      F     B
+                                               Path statistics/scoring       O(d+K)
+                 This is an operation count, not a wall-clock benchmark. For illustration, K = 10, I = 25, and m = 256
+                                                                                                                                         t
+                 give 64,000 sample-CVPs for the recurrences and 66,560 when every solve receives one explicit ﬁnal residual

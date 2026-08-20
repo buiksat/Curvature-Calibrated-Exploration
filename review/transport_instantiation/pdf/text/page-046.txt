@@ -1,0 +1,79 @@
+                             be order t when d ≫ t, rendering the resulting bonus and theorem bound vacuous. Corollary 43 addresses both
+                             issues with an observable surrogate built from quantities the algorithm already computes; the resulting guarantee is
+                             data-dependent, and its tightness still depends on the realized surrogate together with the other theorem factors.
+                                                                                                                                                                                                ⊤              ˆlin             ¯
+                             Lemma 44 (Action-scaled centering discrepancy). Under Assumption 5, |g (a) (θ −θ )| ≤ ψ s¯ (a) for all
+                                                                                                                                                                                         t              t         t               t    t
+                             a ∈ At.
+                             Proof. Immediate from (80).
+                                                                                                                    ¯                                                                                 ¯
+                                       Remark (status of the centering certiﬁcate ψ ). Lemma 25 computes a valid pre-reward ψ ≥ ψ from the certiﬁed
+                                                                                                                      t                                                                                 t        t
+                                       optimizer residual, Welford path moments, observed collection residuals, and analytic smoothness constants. It
+                                       is predictable when ζ is H−-measurable. The schedule is operational but can be loose; the corrected-center
+                                                                               t          t
+                                      variant (Corollary 22) removes it at the cost of frozen-feature access.
+                                                                                                                                                                  ˆlin              ¯
+                             In the convex last-layer regime, under exact optimization, θ = θ                                                                             and ψ = 0. The full prediction error at
+                                                                                                                                                         t          t                 t
+                             (x ,a) is bounded by the triangle inequality, with the centering discrepancy action-scaled:
+                                 t
+                                                                          ∗                                                             ¯
+                                                                    |µ       (x ,a)−µ (x ,a)| ≤ (β +ψ )s¯ (a) + ε (t) ≤ ω s¯ (a)+ε (t),                                                                                                           (140)
+                                                                        θ        t               θt       t                     t         t     t                 lin                  t    t              lin
+                                                                                                                                                                                                ¯
+                             using (138), Lemma 44, the per-round linearization remainder |ρ | ≤ ε                                                                            (t), and β ≥ β .
+                                                                                                                                                               t          lin                     t         t
+                             F.8          Cost of Approximate Curvature
+                             Proposition 45 (Unrescaled current-parameter subset). Let S ⊆ {1,...,t−1} and 0 ≤ w ≤ 1, and deﬁne the
+                                                                                                                                                             t                                                     s
+                             current-parameter operator                                                                          X
+                                                                                                 ˆ                          −2                                                       ⊤
+                                                                                                 C = λI+σ                                w g (x ,a )g (x ,a ) ,
+                                                                                                    t                                        s    t     s     s      t     s     s
+                                                                                                                                 s∈St
+                                                                                                                                                                                                                                  ˆ
+                             using the same relinearized Jacobians g (x ,a ) = ∇ µ (x ,a ) that deﬁne C (45). Then C  C , so
+                                                                                                                 t     s     s               θ θt          s     s                                 t                                 t             t
+                             Theorem 46 applies with κ                                   =1and, in the exact-transfer case, u = (1+χ¯ )2 (Lemma 31).
+                                                                                  +,t                                                                               t                   t
+                                                        ˆ            −2P                                        ⊤          −2P                        ⊤
+                             Proof. C −C =σ                                             (1−w )g g +σ                                           g g , a sum of PSD outer products (each 1−w ≥ 0),
+                                                t          t                    s∈St                 s     t    t                     s∈S/  t    t   t                                                                                          s
+                                                      ˆ                            ˆ                                                                       ˆ
+                             hence C −C 0. With C C (so κ                                                          =1in(141)) and C λI, the hypotheses of Theorem 46 hold.
+                                              t          t                            t          t            +,t                                             t
+                             This covers an unrescaled current-parameter sliding window, an unrescaled current-parameter subsample, and any
+                             current-parameter downweighted subset with weights in [0,1]. It does not cover rescaled subsampling with weights
+                             (t−1)/n > 1 (Lemma 34), a stale periodic-refresh operator evaluated at an older parameter, or an arbitrary
+                             randomized sketch (e.g. an eigenspace Lanczos surrogate), for which a factor κ+,t must be certiﬁed separately.
+                             Theorem 46 (Approximate curvature via one-sided transfer). Adopt the hypotheses of Theorem 13 with the
+                                                                                    ˆ                                                                                                                                                       ˆ
+                             algorithmic curvature C = C , an approximate operator that is symmetric, H -measurable, and satisﬁes C  λI.
+                                                                           t           t                                                                                              t                                                         t
+                             Suppose the two one-sided bounds
+                                                                                                       ˆ                                                                    2 ¯
+                                                                                                      C  κ C,                                C  (1+χ¯ ) C                                                                                       (141)
+                                                                                                          t            +,t       t                t                     t         t
+                             hold for every t ≤ T, where κ+,t ≥ 1 is Ht-measurable and χ¯t ≥ χt is the whitened-drift certiﬁcate of Lemma 31.
+                             Then, for every action a,
+                                                                                                                  2                                         2 2
+                                                                                                                s¯ (a) ≤ κ                  (1+χ¯ ) sˆ (a),                                                                                       (142)
+                                                                                                                  t                   +,t               t        t
+                                                                                                                                                             2                                                                                          ˆ
+                             so Assumption 6 holds with the uniform factor u = κ                                                             (1 +χ¯ ) and Theorem 13 applies verbatim with C = C
+                                                                                                                             t         +,t               t                                                                                      t          t
+                             and s            =sˆ :
+                                        C,t          t                                                     v
+                                                                                                           u                                      T
+                                                                                                           u                                    X
+                                                                                                           t 2                 2            C             2                 2
+                                                                                          R ≤ 2 (σ +G /λ)Λ                                             α u (a )ω + 2E .
+                                                                                             T                                              T             t     t    t      t               T
+                                                                                                                                                t=1
+                                                                                      ˆ
+                             No lower spectral factor on Ct is required for optimism; the cost of an excessively small, stale, or nonmonotone
+                                                                                                                                                                          C                                            C                   dyn
+                             approximate operator is charged through its realized width complexity ΛT (and its variation VT inside Γ                                                                                                             ), not
+                                                                                                                                                                                                                                           T
+                             through a lower Loewner bound.
