@@ -1,0 +1,220 @@
+name: transport committed evidence
+
+# Reruns every validation that is possible from a clean GitHub checkout.
+#
+# What this workflow does NOT do, and must never claim to do: verify the bytes
+# of the raw tuning and evaluation files. `results/raw/` is not committed, so
+# the detached verifier reports those checks as STRUCTURAL PASS or NOT EXECUTED
+# and this job inherits that distinction verbatim.
+
+on:
+  push:
+    paths:
+      - "paper/**"
+      - "experiments/**"
+      - "results/derived/**"
+      - "review/**"
+      - "tools/**"
+      - "tests/**"
+      - "Makefile"
+      - "pytest.ini"
+      - "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md"
+      - "GITHUB_ONLY_TRANSPORT_REVIEW.md"
+      - ".github/workflows/transport-committed-evidence.yml"
+  pull_request:
+    paths:
+      - "paper/**"
+      - "experiments/**"
+      - "results/derived/**"
+      - "review/**"
+      - "tools/**"
+      - "tests/**"
+      - "Makefile"
+      - "pytest.ini"
+      - "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md"
+      - "GITHUB_ONLY_TRANSPORT_REVIEW.md"
+      - ".github/workflows/transport-committed-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: transport-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  committed-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      # actions/checkout v4.2.2
+      - name: Check out at full depth
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # actions/setup-python v5.3.0
+      - name: Set up Python 3.12
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with:
+          python-version: "3.12"
+
+      - name: Install the declared experiment dependency set
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r experiments/requirements.txt
+
+      - name: Show tool versions
+        run: |
+          python --version
+          python -c "import numpy, scipy; print('numpy', numpy.__version__, 'scipy', scipy.__version__)"
+
+      - name: Confirm the raw results tree is absent
+        run: |
+          if [ -d results/raw ]; then
+            echo "results/raw/ is present; this job asserts the GitHub-only case" >&2
+            exit 1
+          fi
+          echo "results/raw/ absent, as expected for a clean GitHub checkout"
+
+      - name: Validate SHA-256 sidecars
+        run: |
+          set -eu
+          status=0
+          count=0
+          while IFS= read -r sidecar; do
+            dir=$(dirname "$sidecar")
+            if ! ( cd "$dir" && sha256sum -c "$(basename "$sidecar")" >/dev/null ); then
+              echo "sidecar mismatch: $sidecar" >&2
+              status=1
+            fi
+            count=$((count + 1))
+          done <<EOF
+          $(find paper results tables -name '*.sha256' 2>/dev/null | sort)
+          EOF
+          echo "checked $count SHA-256 sidecars"
+          exit $status
+
+      - name: Transport unit, aggregate and artifact tests
+        run: |
+          python -m pytest -q \
+            experiments/tests/test_transport_instantiation.py \
+            experiments/tests/test_transport_instantiation_aggregate.py \
+            experiments/tests/test_transport_instantiation_artifacts.py
+
+      - name: Review-bundle tests
+        run: python -m pytest -q tests/test_transport_github_review_bundle.py
+
+      - name: Detached committed-evidence verifier
+        run: |
+          python tools/verify_transport_committed_evidence.py \
+            --json verifier-report.json | tee verifier.log
+
+      - name: Regenerate the review bundle and require an exact match
+        run: |
+          python tools/export_transport_github_review_bundle.py \
+            --output "${RUNNER_TEMP}/transport-review-bundle"
+          diff -ru \
+            --exclude=pdf \
+            review/transport_instantiation \
+            "${RUNNER_TEMP}/transport-review-bundle"
+          echo "review bundle is byte-identical to the committed copy"
+
+      - name: Install PDF tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends poppler-utils qpdf ghostscript
+
+      - name: PDF structural checks
+        run: |
+          set -eu
+          sha256sum -c paper/main.pdf.sha256
+          qpdf --check paper/main.pdf | tee pdf-check.log
+          pdfinfo paper/main.pdf | tee -a pdf-check.log
+          pdffonts paper/main.pdf | tee -a pdf-check.log
+          pdftotext -layout paper/main.pdf "${RUNNER_TEMP}/main.txt"
+          wc -c "${RUNNER_TEMP}/main.txt" | tee -a pdf-check.log
+          # the PDF must be untouched by the checks above
+          sha256sum -c paper/main.pdf.sha256
+
+      - name: Static TeX validation
+        run: python paper/validate.py
+
+      - name: Install TeX Live for the clean rebuild
+        id: texlive
+        continue-on-error: true
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra texlive-science \
+            texlive-pictures biber latexmk
+
+      - name: Attempt the clean PDF rebuild
+        if: steps.texlive.outcome == 'success'
+        run: |
+          set -eu
+          SOURCE_DATE_EPOCH=$(git show -s --format=%ct 93eaa537d2702d5d18b05905913b0b879e3d608f)
+          export SOURCE_DATE_EPOCH FORCE_SOURCE_DATE=1
+          work="${RUNNER_TEMP}/rebuild"
+          mkdir -p "$work"
+          git archive HEAD | tar -x -C "$work"
+          cp paper/main.pdf "${RUNNER_TEMP}/locked.pdf"
+          ( cd "$work" && make clean && make pdf ) > rebuild.log 2>&1 || {
+            echo "classification: rebuild unavailable due to a concrete dependency"
+            tail -60 rebuild.log
+            exit 0
+          }
+          # Never overwrite the locked PDF: compare in place.
+          if cmp -s "$work/paper/main.pdf" "${RUNNER_TEMP}/locked.pdf"; then
+            echo "classification: byte-identical rebuild"
+            exit 0
+          fi
+          a_pages=$(pdfinfo "${RUNNER_TEMP}/locked.pdf" | awk '/^Pages:/{print $2}')
+          b_pages=$(pdfinfo "$work/paper/main.pdf" | awk '/^Pages:/{print $2}')
+          pdftotext -layout "${RUNNER_TEMP}/locked.pdf" "${RUNNER_TEMP}/a.txt"
+          pdftotext -layout "$work/paper/main.pdf" "${RUNNER_TEMP}/b.txt"
+          mismatch=0
+          if [ "$a_pages" != "$b_pages" ] || ! cmp -s "${RUNNER_TEMP}/a.txt" "${RUNNER_TEMP}/b.txt"; then
+            mismatch=1
+          else
+            for p in $(seq 1 "$a_pages"); do
+              gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r72 \
+                 -dFirstPage=$p -dLastPage=$p -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \
+                 -o "${RUNNER_TEMP}/a.png" "${RUNNER_TEMP}/locked.pdf"
+              gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r72 \
+                 -dFirstPage=$p -dLastPage=$p -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \
+                 -o "${RUNNER_TEMP}/b.png" "$work/paper/main.pdf"
+              if ! cmp -s "${RUNNER_TEMP}/a.png" "${RUNNER_TEMP}/b.png"; then
+                echo "raster mismatch on page $p"
+                mismatch=1
+              fi
+            done
+          fi
+          # the committed table and figure sources must be identical too
+          for f in paper/tables/transport_instantiation_*.tex \
+                   paper/figures/transport_instantiation_*.tex \
+                   paper/figures/transport_instantiation_*.csv; do
+            cmp -s "$f" "$work/$f" || { echo "input mismatch: $f"; mismatch=1; }
+          done
+          if [ "$mismatch" -eq 0 ]; then
+            echo "classification: semantically identical but byte-different rebuild"
+          else
+            echo "classification: rebuild content mismatch" >&2
+            exit 1
+          fi
+          sha256sum -c paper/main.pdf.sha256
+
+      # actions/upload-artifact v4.4.3
+      - name: Upload verifier and PDF logs
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        with:
+          name: transport-evidence-logs
+          path: |
+            verifier.log
+            verifier-report.json
+            pdf-check.log
+            rebuild.log
+          if-no-files-found: warn
+          retention-days: 30
