@@ -12,12 +12,12 @@ two locked inputs whose SHA-256 values are checked before they are read.
 | Field | Value |
 | --- | --- |
 | Repository | `https://github.com/buiksat/Curvature-Calibrated-Exploration` |
-| Source branch | `codex/cc-ucb-theory-experiments` |
+| Source branch | `cce-experiments` |
 | Review base commit | `47037a2df6b81befd4a0cb3c5974e3565d8f61b6` |
 | Implementation commit | `93eaa537d2702d5d18b05905913b0b879e3d608f` |
 | Source HEAD | `7a83c5f2c7f710be1e8178682cbfcd8566244a48` |
 | Generator | `tools/export_transport_github_review_bundle.py` |
-| Generator SHA-256 | `702cae39adc9ec23adf9b0e7aed12d1b8e4cb085032012ad084bfeb54d1fa308` |
+| Generator SHA-256 | `e7763bdee7eea368aa9dc348a798c43268948bcb188e7323afca52f69ce256eb` |
 | Bundle format | `transport-github-review-bundle/1` |
 
 ## Locked files this bundle is derived from

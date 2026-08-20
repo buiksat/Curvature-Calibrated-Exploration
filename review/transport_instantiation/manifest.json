@@ -1,5 +1,5 @@
 {
-  "bundle_inventory_digest": "e89393e0de99bb969468c664e9148f8d6503413a5e7a79e841f51bf430927f01",
+  "bundle_inventory_digest": "604d6fce00cc6e614fbff02ebb499100cdee327844c6a534f7338713450f5faf",
   "generated_artifacts": [
     {
       "path": "paper/tables/transport_instantiation_validity.tex",
@@ -89,7 +89,7 @@
   "generation_format": "transport-github-review-bundle/1",
   "generator": {
     "path": "tools/export_transport_github_review_bundle.py",
-    "sha256": "702cae39adc9ec23adf9b0e7aed12d1b8e4cb085032012ad084bfeb54d1fa308"
+    "sha256": "e7763bdee7eea368aa9dc348a798c43268948bcb188e7323afca52f69ce256eb"
   },
   "implementation_commit": "93eaa537d2702d5d18b05905913b0b879e3d608f",
   "indexes": {
@@ -163,14 +163,14 @@
   "max_output_bytes": 749990,
   "max_part_bytes_ceiling": 750000,
   "output_count": 42,
-  "output_total_bytes": 17346340,
+  "output_total_bytes": 17346324,
   "outputs": [
     {
-      "bytes": 6450,
+      "bytes": 6434,
       "path": "README.md",
       "record_count": 1,
       "semantic_source": "generator template",
-      "sha256": "f93cd0c89cf6c10ceac057a5ef05bcafa44418b74d729157431c670127bd95fb"
+      "sha256": "d5d16b6a79e4ad1f4475a1dcf345f8f2a67ed11a71d984c908091f4cd5f947b2"
     },
     {
       "bytes": 1132,
@@ -463,6 +463,6 @@
   "repository": "https://github.com/buiksat/Curvature-Calibrated-Exploration",
   "review_base_commit": "47037a2df6b81befd4a0cb3c5974e3565d8f61b6",
   "schema_version": 1,
-  "source_branch": "codex/cc-ucb-theory-experiments",
+  "source_branch": "cce-experiments",
   "source_head": "7a83c5f2c7f710be1e8178682cbfcd8566244a48"
 }

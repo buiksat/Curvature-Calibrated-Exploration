@@ -40,7 +40,7 @@ GENERATION_FORMAT = "transport-github-review-bundle/1"
 MAX_PART_BYTES = 750_000
 
 REPOSITORY = "https://github.com/buiksat/Curvature-Calibrated-Exploration"
-SOURCE_BRANCH = "codex/cc-ucb-theory-experiments"
+SOURCE_BRANCH = "cce-experiments"
 REVIEW_BASE_COMMIT = "47037a2df6b81befd4a0cb3c5974e3565d8f61b6"
 IMPLEMENTATION_COMMIT = "93eaa537d2702d5d18b05905913b0b879e3d608f"
 SOURCE_HEAD = "7a83c5f2c7f710be1e8178682cbfcd8566244a48"
