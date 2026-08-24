@@ -560,6 +560,7 @@ def aggregate_profile(
             raise AggregateError(f"wrong horizon in {directory}")
         for field in (
             "source_inventory_sha256",
+            "source_inventory",
             "source_branch",
             "source_revision",
             "source_dirty",

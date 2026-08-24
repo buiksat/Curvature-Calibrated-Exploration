@@ -134,6 +134,10 @@ def source_inventory() -> list[dict[str, str]]:
         REPOSITORY_ROOT / "experiments/configs/realistic_transport_covtype.yaml",
         REPOSITORY_ROOT / "experiments/artifact_utils.py",
         REPOSITORY_ROOT / "experiments/logging_utils.py",
+        REPOSITORY_ROOT / "experiments/tests/BUCK",
+        REPOSITORY_ROOT / "tests/BUCK",
+        REPOSITORY_ROOT / "tests/test_experiment_pipeline.py",
+        REPOSITORY_ROOT / "tools/BUCK",
     ]
     package_root = REPOSITORY_ROOT / "experiments/realistic_transport"
     if package_root.exists():
@@ -142,7 +146,7 @@ def source_inventory() -> list[dict[str, str]]:
             for path in package_root.rglob("*")
             if path.is_file()
             and "__pycache__" not in path.parts
-            and path.suffix in {".py", ".md", ".json", ".yaml"}
+            and path.suffix in {".py", ".md", ".json", ".yaml", ".sh"}
         )
         buck_file = package_root / "BUCK"
         if buck_file.is_file():
