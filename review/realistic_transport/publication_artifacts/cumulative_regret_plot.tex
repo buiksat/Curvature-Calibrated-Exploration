@@ -1,0 +1,11 @@
+% Deterministic standalone PGFPlots input.
+% Raw aggregate inventory SHA-256: 2de4bcb43bb10aec4cc9d7d4a16966696e5cb028dd954eddcb3f9a5c96705e81
+\begin{tikzpicture}
+\begin{axis}[
+  xlabel={Round}, ylabel={Mean cumulative pseudo-regret},
+  legend style={font=\scriptsize},
+]
+% Choose a task/method by filtering cumulative_regret_curves.csv before inclusion.
+\addplot table [x=prefix,y=regret_mean,col sep=comma] {cumulative_regret_curves.csv};
+\end{axis}
+\end{tikzpicture}

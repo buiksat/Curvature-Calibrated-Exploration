@@ -1,0 +1,14 @@
+task,method,seed,prefix,cumulative_regret,action_accuracy,algorithm_seconds,peak_rss_bytes
+covtype_label_bandit,frozen_reference_corrected_cholesky,0,32,24.80000000000001,0.03125,1.2799101629061624,475742208
+covtype_label_bandit,greedy_corrected,0,32,22.40000000000001,0.125,0.7851298056775704,426119168
+covtype_label_bandit,linucb_fixed_features,0,32,20.800000000000008,0.1875,0.933628985832911,432160768
+covtype_label_bandit,naive_current_corrected_cholesky,0,32,23.20000000000001,0.09375,1.7555995238944888,469786624
+covtype_label_bandit,transport_endpoint_corrected_cholesky,0,32,23.20000000000001,0.09375,2.074066035449505,478961664
+covtype_label_bandit,transport_exact_corrected_cg_1e-4,0,32,23.20000000000001,0.09375,1.63423218234675,457363456
+covtype_label_bandit,transport_exact_corrected_cholesky,0,32,23.20000000000001,0.09375,1.747277173853945,442015744
+covtype_label_bandit,transport_exact_uncorrected_tangent_cholesky,0,32,23.20000000000001,0.09375,1.7743963659740984,428572672
+covtype_label_bandit,transport_nystrom_r16_cg_1e-2,0,32,22.40000000000001,0.125,1.1279000602080487,426672128
+covtype_label_bandit,transport_nystrom_r16_cg_1e-6,0,32,22.40000000000001,0.125,1.300882818934042,437243904
+covtype_label_bandit,transport_nystrom_r32_cg_1e-4,0,32,24.80000000000001,0.03125,1.2308053479646333,452575232
+covtype_label_bandit,transport_nystrom_r64_cg_1e-2,0,32,24.00000000000001,0.0625,1.1501332381158136,463245312
+covtype_label_bandit,transport_nystrom_r64_cg_1e-6,0,32,24.00000000000001,0.0625,1.2761630978784524,458690560

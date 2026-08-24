@@ -1,0 +1,10 @@
+{
+  "covertype_prepared_data_digest": null,
+  "freeze_revision": "40c39fa3e7b0d7562f308c25a02b7059391614c4",
+  "linucb_alpha": null,
+  "optimizer": null,
+  "practical_nystrom": null,
+  "reason": "Covertype acquisition failed before the pilot and tuning gates because the upstream host could not be resolved. Digits smoke output is not eligible for tuning or selection.",
+  "selection_lock_revision": null,
+  "status": "not_run"
+}
