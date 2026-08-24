@@ -12,6 +12,7 @@ sh_test(
     ],
     deps = [
         "//:repository_resources",
+        "//experiments/realistic_transport:lib",
         ":test_sources",
         "//tools:pytest_runner",
     ],

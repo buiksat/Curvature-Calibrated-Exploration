@@ -1,0 +1,13 @@
+{
+  "command": "$CCE_PYTHON tools/prepare_covtype_benchmark.py --dataset covtype --data-root $CCE_DATA_ROOT --output $CCE_DATA_ROOT/prepared/covtype_realistic_v1.npz",
+  "error": "urllib.error.URLError: <urlopen error [Errno -2] Name or service not known>",
+  "exit_status": 1,
+  "full_evaluation_status": "not_run",
+  "git_branch": "codex/realistic-transport-benchmark",
+  "git_revision": "d00594a80517cdca84f97a95056669f48c6a1be4",
+  "peak_rss_kib": 913684,
+  "reason": "The official sklearn.datasets.fetch_covtype loader attempted https://ndownloader.figshare.com/files/5976039, but this host could not resolve the upstream hostname. No Covertype artifact was created.",
+  "recorded_at": "2026-08-24T23:21:47Z",
+  "status": "not_run",
+  "wall_seconds": 4.94
+}

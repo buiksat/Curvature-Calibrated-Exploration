@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-24T15:46:56-07:00",
+  "source": {
+    "repository": "https://github.com/buiksat/Curvature-Calibrated-Exploration.git",
+    "requested_branch": "cce-experiments",
+    "expected_revision": "d00594a80517cdca84f97a95056669f48c6a1be4",
+    "local_remote_tracking_revision": "d00594a80517cdca84f97a95056669f48c6a1be4",
+    "initial_revision": "d00594a80517cdca84f97a95056669f48c6a1be4",
+    "working_branch": "codex/realistic-transport-benchmark",
+    "initial_worktree_clean": true,
+    "remote_query_status": "not_run",
+    "remote_query_detail": "git ls-remote failed because github.com DNS resolution was unavailable"
+  },
+  "environment": {
+    "operating_system": "Linux 6.16.1 x86_64",
+    "cpu": "Intel Xeon Platinum 8339HC",
+    "logical_cpu_count": 44,
+    "physical_memory_gib": 353,
+    "buck2_version": "4b1af7328ff43271e1a3f23d7587680dbbb23c77",
+    "fallback_python_version": "3.14.7+meta",
+    "fallback_packages": {
+      "numpy": "2.2.1",
+      "psutil": "7.2.2",
+      "pytest": "7.2.2",
+      "scikit-learn": "1.6.1",
+      "scipy": "1.16.1"
+    }
+  },
+  "commands": [
+    {
+      "command": "git status --short; git branch --show-current; git rev-parse HEAD; git rev-parse origin/cce-experiments; git remote get-url origin",
+      "exit_status": 0,
+      "result": "Clean checkout. Local HEAD and origin/cce-experiments both matched the expected revision before the working branch was created."
+    },
+    {
+      "command": "git ls-remote origin refs/heads/cce-experiments",
+      "exit_status": 128,
+      "result": "Not run against the remote because github.com DNS resolution failed. The local remote-tracking ref was used and recorded separately."
+    },
+    {
+      "command": "python tools/verify_transport_committed_evidence.py",
+      "exit_status": 126,
+      "wall_time_seconds": 0.0,
+      "peak_rss_kib": 776,
+      "result": "The `python` executable was unavailable to this shell."
+    },
+    {
+      "command": "python3 tools/verify_transport_committed_evidence.py",
+      "exit_status": 0,
+      "wall_time_seconds": 13.53,
+      "cpu_user_seconds": 12.57,
+      "cpu_system_seconds": 0.71,
+      "peak_rss_kib": 436136,
+      "result": "80 direct PASS checks, 18 recomputed PASS checks, 2 structural passes, 1 pinned known divergence, 5 declared not-executed checks, and 0 failures."
+    },
+    {
+      "command": "buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200",
+      "exit_status": 3,
+      "wall_time_seconds": 13.32,
+      "cpu_user_seconds": 2.92,
+      "cpu_system_seconds": 2.59,
+      "peak_rss_kib": 317324,
+      "result": "No tests ran. Buck failed while loading prelude//cxx/groups.bzl because BuckRegex.any_match was unavailable."
+    },
+    {
+      "command": "buck2 run //paper:validate",
+      "exit_status": 3,
+      "wall_time_seconds": 0.1,
+      "cpu_user_seconds": 0.03,
+      "cpu_system_seconds": 0.05,
+      "peak_rss_kib": 87720,
+      "result": "Build failed on the same BuckRegex.any_match host Prelude/API mismatch."
+    },
+    {
+      "command": "python3 paper/validate.py",
+      "exit_status": 0,
+      "wall_time_seconds": 0.22,
+      "cpu_user_seconds": 0.16,
+      "cpu_system_seconds": 0.04,
+      "peak_rss_kib": 54656,
+      "classification": "non-Buck fallback, same validation source",
+      "result": "Static manuscript validation passed with no blocking issues."
+    },
+    {
+      "command": "make pdf",
+      "exit_status": 2,
+      "wall_time_seconds": 0.38,
+      "cpu_user_seconds": 0.32,
+      "cpu_system_seconds": 0.04,
+      "peak_rss_kib": 29024,
+      "result": "pdflatex stopped because cleveref.sty is missing. The existing paper/main.pdf remained byte-identical to paper/main.pdf.sha256."
+    },
+    {
+      "command": "$CCE_PYTHON_BOOTSTRAP -m pytest -q tests experiments/tests",
+      "exit_status": 1,
+      "wall_time_seconds": 95.81,
+      "cpu_user_seconds": 368.5,
+      "cpu_system_seconds": 6.85,
+      "peak_rss_kib": 1629432,
+      "classification": "non-Buck fallback using the same test source with NumPy 2.2.1 rather than the Buck-pinned 2.2.3",
+      "result": "113 passed and 2 failed. Both failures were deterministic byte-regeneration differences in five transport tightness CSV artifacts; their committed files and sidecars still matched, and the standard-library detached verifier passed."
+    }
+  ]
+}

@@ -8,3 +8,12 @@ python_binary(
     ],
     visibility = ["PUBLIC"],
 )
+
+python_binary(
+    name = "prepare_covtype_benchmark",
+    main = "prepare_covtype_benchmark.py",
+    deps = [
+        "//experiments/realistic_transport:lib",
+        "fbsource//third-party/pypi/scikit-learn/1.5.1:py",
+    ],
+)

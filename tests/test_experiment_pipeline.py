@@ -9,6 +9,10 @@ import pytest
 
 from experiments.config import ConfigError, config_digest, get_seed_set, load_config
 from experiments.logging_utils import ExperimentLogger, derive_seed, seed_everything
+from experiments.realistic_transport.configuration import (
+    load_config as load_realistic_config,
+    seed_set as realistic_seed_set,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +20,7 @@ CONFIG_DIR = ROOT / "experiments" / "configs"
 CONFIG_NAMES = {
     "autodiff_ggn_benchmark",
     "linear_audit",
+    "realistic_transport_covtype",
     "transport_instantiation",
 }
 
@@ -27,7 +32,11 @@ def _metadata() -> dict[str, object]:
         "git_root": "/repo",
         "package_versions": {"numpy": "1.0"},
         "hardware": {"machine": "test-machine", "logical_cpu_count": 1},
-        "python": {"version": "3.test", "implementation": "CPython", "executable": "python"},
+        "python": {
+            "version": "3.test",
+            "implementation": "CPython",
+            "executable": "python",
+        },
     }
 
 
@@ -41,7 +50,21 @@ def test_all_configs_resolve_with_disjoint_seed_sets() -> None:
 
     for path in paths:
         raw_text = path.read_text(encoding="utf-8")
-        assert isinstance(json.loads(raw_text), dict), f"{path} must remain JSON-compatible YAML"
+        assert isinstance(
+            json.loads(raw_text), dict
+        ), f"{path} must remain JSON-compatible YAML"
+        if path.stem == "realistic_transport_covtype":
+            for profile in ("smoke", "full"):
+                resolved = load_realistic_config(path, profile=profile)
+                assert set(realistic_seed_set(resolved, "tuning")).isdisjoint(
+                    realistic_seed_set(resolved, "evaluation")
+                )
+                assert set(realistic_seed_set(resolved, "pilot")).isdisjoint(
+                    realistic_seed_set(resolved, "evaluation")
+                )
+                assert resolved["profile"] == profile
+                assert resolved["rounds"] > 0
+            continue
         for profile in ("smoke", "full"):
             resolved = load_config(path, profile=profile)
             tuning = get_seed_set(resolved, "tuning")
@@ -78,7 +101,9 @@ def test_invalid_overlapping_seed_sets_are_rejected(tmp_path: Path) -> None:
         load_config(path)
 
 
-def test_optional_development_seed_set_is_disjoint_and_accessible(tmp_path: Path) -> None:
+def test_optional_development_seed_set_is_disjoint_and_accessible(
+    tmp_path: Path,
+) -> None:
     document = {
         "schema_version": 1,
         "name": "three-way-split",
@@ -135,7 +160,10 @@ def test_logger_writes_deterministic_manifest_and_round_jsonl(tmp_path: Path) ->
             logger.log_round(0, {"regret": 0.0, "cg_iterations": 3})
             logger.log_round(1, regret=0.25, cg_iterations=4)
         run_bytes.append(
-            ((output / "manifest.jsonl").read_bytes(), (output / "raw.jsonl").read_bytes())
+            (
+                (output / "manifest.jsonl").read_bytes(),
+                (output / "raw.jsonl").read_bytes(),
+            )
         )
 
     assert run_bytes[0] == run_bytes[1]
