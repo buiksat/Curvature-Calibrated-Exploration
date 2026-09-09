@@ -1,0 +1,129 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper,margin=0.95in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{amsmath}
+\usepackage{booktabs,tabularx,array}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3.5pt}
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\belowdisplayskip}{5pt}
+\setlength{\textfloatsep}{7pt}
+\setlength{\floatsep}{6pt}
+\setlength{\intextsep}{6pt}
+\renewcommand{\arraystretch}{1.08}
+\newcommand{\Vbar}{\bar V}
+\newcommand{\Dbar}{\bar D}
+\newcommand{\shat}{\widehat s}
+\newcommand{\R}{\mathbb R}
+\newcommand{\T}{\mathsf T}
+
+\title{\vspace{-1.4em}\bfseries Confidence Transport for Adaptive Experimentation:\\Theory and a Controlled Audit\vspace{-0.35em}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.1em}
+
+\begin{abstract}
+Adaptive allocation policies may update a nonlinear prediction model before choosing the next action. Confidence is then naturally built from model sensitivities frozen when past rewards were collected, while current scores may use sensitivities recomputed under the updated model. We give conditions under which reward confidence transfers between these geometries and through approximate numerical components, yielding an optimistic score and a conditional regret bound. For squared-loss models, a corrected center supports any predictable parameter path inside a certified smoothness region without requiring nonlinear optimizer convergence. A controlled 29-parameter scaled-tanh audit records all declared float64 confidence and optimism diagnostics, yet its operational transport envelope is highly conservative, the numerically evaluated regret bound is vacuous, and comparison policies have lower mean pseudo-regret at the primary horizon. The result concerns reward confidence for action selection; it does not establish treatment-effect inference after adaptive assignment.
+\end{abstract}
+\vspace{-0.4em}
+
+\section{Adaptive model updates and confidence transport}
+Contextual-bandit and adaptive-experimentation policies often score actions using a model that changes with incoming data \cite{abbasi2011improved,zhou2020neural,riquelme2018deep}. Let $q_t(a)$ denote the current model sensitivity for action $a$. The statistical reference geometry retains each historical sensitivity at its collection-time value:
+\begin{equation}
+\Vbar_1=\lambda I,\qquad
+\Vbar_{t+1}=\Vbar_t+\sigma^{-2}q_t(a_t)q_t(a_t)^\top,
+\qquad
+\bar s_t(a)^2=q_t(a)^\top\Vbar_t^{-1}q_t(a).
+\label{eq:reference}
+\end{equation}
+The issue is that action selection may instead use a recomputed uncertainty geometry after the prediction model has moved. We assume a simultaneous reference-confidence event
+\begin{equation}
+|\mu_t^*(a)-m_t(a)|\le \beta_t\bar s_t(a)+b_t(a),
+\label{eq:refconf}
+\end{equation}
+where $b_t(a)$ covers current approximation or misspecification error. This is a premise; it does not follow automatically from arbitrary adaptive neural training.
+
+The operational chain is
+\[
+\begin{aligned}
+\text{collection-time confidence}&\longrightarrow\text{current relinearized geometry}\\[-1mm]
+&\longrightarrow\text{approximate operator / solve}\longrightarrow\text{optimistic action score}.
+\end{aligned}
+\]
+Let $\Dbar_t$ upper-bound the frozen-to-current metric transport, let $\kappa_{-,t},\kappa_{+,t}$ give a two-sided distortion certificate for the operator used by the policy, and let $\shat_t(a)$ be an all-action upper-valid numerical width. The transported score is
+\begin{equation}
+U_t(a)=m_t(a)+\beta_t e^{\Dbar_t/2}\sqrt{\kappa_{+,t}}\,\shat_t(a)+b_t(a).
+\label{eq:score}
+\end{equation}
+At the played action, $\alpha_t\ge1$ controls how much the reported upper width may inflate the ideal algorithmic width; scoring and certification use the same realized width map. If score maximization is approximate, its error is $\xi_t$.
+
+For a fixed finite action set, bounded $\|q_t(a)\|_2\le G$, and valid pre-reward certificates, the paper's transported-UCB theorem gives
+\begin{equation}
+\begin{aligned}
+R_T \le {}&\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+\sum_{t=1}^T\beta_t^2\left[1+\alpha_t e^{\Dbar_t}
+\sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]^2} \\
+&\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.
+\end{aligned}
+\label{eq:regret}
+\end{equation}
+where $\gamma_T=\log(\det\Vbar_{T+1}/\det\Vbar_1)$. \textbf{The bound holds on the joint reference-confidence and certificate event.} It is therefore a conditional transfer result, not an unconditional guarantee for unrestricted model updating. The novelty is the operational composition of the confidence, transport, numerical, and decision layers rather than the standard ingredients in isolation.
+
+\section{A corrected center without optimizer convergence}
+For squared-loss models, fix before data collection a norm-bounded reference parameter $\theta^\circ$ in a certified smoothness region. Assume conditional sub-Gaussian reward noise and valid pre-reward envelopes for linearization and misspecification. For observation $s$, retain the collection-time sensitivity $q_s$ and define
+\begin{align}
+y_s&=r_s-\mu_{\theta_s}(z_s)+q_s^\top\theta_s, &
+\widehat\theta_t^{\rm lin}&=\Vbar_t^{-1}\sigma^{-2}\sum_{s<t}q_sy_s, \\
+m_t^{\rm corr}(a)&=\mu_{\theta_t}(x_t,a)+q_t(a)^\top(\widehat\theta_t^{\rm lin}-\theta_t).&&
+\label{eq:center}
+\end{align}
+With $\|\theta^\circ\|_2\le S$, the reference radius is
+\begin{equation}
+\beta_t^{\rm corr}=\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt{\lambda}S
++\frac1\sigma\sqrt{\sum_{s<t}[\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2},
+\label{eq:beta}
+\end{equation}
+and the current bias is $b_t(a)=\epsilon_{{\rm lin},t}(a)+\epsilon_{{\rm mis},t}(a)$. The historical deterministic term scales as $1/\sigma$, not $1/\sigma^2$.
+
+Under a fixed norm-bounded reference model, conditional sub-Gaussian noise, a certified smoothness region, and valid pre-reward approximation-error envelopes, the corrected-center construction permits any predictable model-parameter path in that region without requiring nonlinear optimizer convergence. This does not license arbitrary coordinate or dimension changes, and nonvanishing misspecification can still make the bound uninformative.
+
+\section{Controlled audit}
+The committed aggregate reports completion of the declared 2,400-trajectory evaluation grid with zero deterministic audit failures. Four policies were evaluated over 50 base seeds, three horizons, and four near-linearity conditions; tuning used disjoint seeds. The primary policy used the analytic transport envelope in its score, while comparison policies used a dense endpoint diagnostic, frozen reference widths, or uncertified current widths.
+
+\textbf{Limitation before results.} Our evidence comes from a synthetic 29-parameter scaled-tanh bandit that is nearly linear under the chosen scaling, using dense float64 solves; it does not establish performance in strongly nonlinear models or deployed digital experiments.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}X@{}}
+\toprule
+Diagnostic & Locked full-evaluation result \\
+\midrule
+Recorded confidence and optimism & Primary policy: 50/50 trajectories in each of 12 horizon--condition cells; cellwise exact 95\% Clopper--Pearson interval $[92.9\%,100\%]$. These are all-action, all-round tolerance-based float64 diagnostics. \\
+Transport-envelope conservatism & At $T=1000$, $D_Q/\mathcal D_{\rm quad}=2.51\times10^5$--$1.88\times10^6$. Conditionwise medians of run-maximum endpoint distance are $1.31\times10^{-7}$--$8.74\times10^{-6}$. \\
+Bound informativeness & Across the 12 primary cells, median per-trajectory sharp RHS / pseudo-regret is $126.7$--$155.7\times$. At every declared terminal horizon, the numerically evaluated theorem RHS exceeded the deterministic $2T$ pseudo-regret cap for every primary-policy trajectory. \\
+Policy comparison & At $T=1000$, comparison-minus-Hessian mean pseudo-regret differences range from about $-12.3$ to $-1.96$. All 12 comparisonwise, unadjusted 95\% paired-bootstrap intervals exclude zero below. \\
+\bottomrule
+\end{tabularx}
+\caption{Controlled audit. Float64 diagnostics and the numerical path diagnostic $\mathcal D_{\rm quad}$ are not verified enclosures. The same 50 base evaluation seeds are reused across cells rather than forming 600 independent trials; bootstrap resampling is paired by seed within each condition. Checkpoint path ratios are descriptive summaries, not direct confidence-bonus inflation factors.}
+\label{tab:audit}
+\end{table}
+
+The controlled experiment records the specified algebraic, confidence, and optimism diagnostics; it does not prove or empirically validate the theorem. The diagnostic event held throughout evaluation, but the operational path envelope was highly conservative, the numerically evaluated regret bound was vacuous, and the comparison policies had lower mean pseudo-regret at the primary horizon. The paired comparisons are descriptive for the evaluated conditions: they do not establish per-seed dominance, a uniform method ordering, or a causal effect of certificate looseness.
+
+\section{Implications for adaptive experimentation}
+Under the stated confidence and certificate assumptions, transport yields an optimistic score and a conditional regret bound. In our controlled study, the float64 confidence and optimism diagnostics passed, while the numerically evaluated regret bound was vacuous and the comparison policies had lower mean pseudo-regret at the primary horizon. These observations do not verify exact membership in the mathematical events or establish that certificate looseness caused the regret differences. For adaptive experimentation, maintaining coherent uncertainty under model updates and obtaining a practically useful allocation rule are separate design problems.
+
+\vspace{-0.25em}
+\begin{thebibliography}{9}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\small
+\bibitem{abbasi2011improved} Y. Abbasi-Yadkori, D. P\'al, and C. Szepesv\'ari. Improved algorithms for linear stochastic bandits. \emph{NeurIPS}, 2011.
+\bibitem{zhou2020neural} D. Zhou, L. Li, and Q. Gu. Neural contextual bandits with UCB-based exploration. \emph{ICML}, 2020.
+\bibitem{riquelme2018deep} C. Riquelme, G. Tucker, and J. Snoek. Deep Bayesian bandits showdown. \emph{ICLR}, 2018.
+\end{thebibliography}
+\end{document}
