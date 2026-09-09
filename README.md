@@ -1,55 +1,35 @@
-# Confidence Transport for Relinearized Curvature in Contextual Bandits
+# Curvature-Calibrated Exploration — paper mirror
 
-This repository contains a theory-first contextual-bandit manuscript about
-transporting confidence from predictable collection-time tangent features to a
-current, relinearized GGN or Fisher metric.  The main result uses logarithmic
-metric-path transport, two-sided approximate-operator certificates, a generic
-certified solver width, a corrected prediction center, and an approximate
-score-maximization oracle.
+This `main` branch is intentionally lightweight for coauthor review and Overleaf synchronization.
 
-## Manuscript
+The canonical live research branch is **`cce-experiments`**. It contains the complete research repository: manuscript source, experiments, configs, results, review/provenance material, tests, and tooling. Do not treat `main` as the source of truth for ongoing research work.
 
-The canonical source is [`paper/main.tex`](paper/main.tex).  Its main supporting
-files are:
+## Papers
 
-- `paper/macros.tex` for notation;
-- `paper/transport_theory.tex` for the headline theorem stack;
-- `paper/transport_proofs.tex` for complete proofs;
-- `paper/legacy_dynamic.tex` for the older one-sided result;
-- `paper/legacy_experiments.tex` for the limited scope of retained diagnostics;
-- `paper/references.bib` for bibliography data.
+### AISTATS manuscript
 
-The independent derivation and assumption audit live in
-`THEORY_TRANSPORT_DERIVATIONS.md` and `THEORY_GENERALIZATION_AUDIT.md`.
+- Main source: [`paper/main.tex`](paper/main.tex)
+- Compiled snapshot: [`paper/main.pdf`](paper/main.pdf)
+- Supporting theorem/proof/experiment source, bibliography, tables, figures, and style files are retained under [`paper/`](paper/).
 
-## Retained implementation
+For Overleaf, set the project **Main document** to:
 
-The implementation is intentionally narrow.  It retains the bounded linear
-audit, matrix-free autodiff GGN checks, the shared curvature and theory
-utilities needed by those paths, and their artifact generators.  See
-[`experiments/README.md`](experiments/README.md) for exact commands and output
-semantics.
-
-The checked-in empirical artifacts predate the current confidence-transport
-theorem.  They are legacy diagnostics and reproducibility records, not
-validation of the headline result.
-
-## Validation
-
-The verified build path uses Buck2 and a Meta host checkout.  Required host
-paths and toolchain details are in [`BUCK2_SETUP.md`](BUCK2_SETUP.md).
-
-```bash
-buck2 test //tests:tests //experiments/tests:tests -- --timeout=1200
-buck2 run //paper:validate
+```text
+paper/main.tex
 ```
 
-To build the PDF with a local TeX installation:
+### CODE@MIT 2026 extended abstract
 
-```bash
-make pdf
-```
+- Source: [`submissions/code_mit_2026/main.tex`](submissions/code_mit_2026/main.tex)
+- Provenance/readme: [`submissions/code_mit_2026/README.md`](submissions/code_mit_2026/README.md)
 
-Generated Buck output is written under `buck-out/` and ignored by Git. The
-compiled manuscript is committed as `paper/main.pdf`; refresh it with
-`make pdf` after changing the paper sources.
+The CODE source is kept separate from the AISTATS manuscript.
+
+## Branch policy
+
+- `cce-experiments`: canonical research branch; continue scientific and experimental work there.
+- `main`: paper-only coauthor/Overleaf mirror at selected checkpoints.
+
+Heavy experiment code, result aggregates, review bundles, test infrastructure, Buck configuration, and other research-engineering files are intentionally omitted from the current `main` tree. They remain available on `cce-experiments` and are not deleted from the canonical research branch.
+
+Future paper updates should be selectively synchronized from `cce-experiments` into `main`; do not wholesale mirror the full research tree back into `main`.
