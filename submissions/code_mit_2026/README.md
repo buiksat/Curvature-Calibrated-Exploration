@@ -1,17 +1,11 @@
 # CODE@MIT 2026 extended abstract
 
-> **Current status: commit-authorized post-review author-review candidate.** The current
-> `main.tex` is based on `cce-experiments@5718995cae80f34b5b98b464f3d9090758be4871`.
+> **Current status: four-page CODE@MIT candidate.** The current `main.tex` is based on
+> `cce-experiments@5718995cae80f34b5b98b464f3d9090758be4871`.
 > It builds successfully but occupies four pages against the three-page limit, so it is
 > **PAGE-BUDGET BLOCKED**. AUTH01 is resolved as Bahram Behzadian, Meta. AUTH02,
 > ledger:C01, ledger:C02, and the optional analysis decisions remain unresolved. The
 > author-review banner remains, and no push, publication, or submission is authorized.
->
-> Start with the [2026-09-10 post-review record](author_review/postreview_20260910/README.md),
-> [author-review index](author_review/README.md), and existing
-> [approval ledger](author_review/records/AUTHOR_APPROVAL.md). The revision published at
-> `5718995` and the original drafting provenance below remain historical facts; their SHAs
-> have not been relabelled as this candidate's revision or publication SHA.
 
 - Submission: CODE@MIT 2026, Conference on Digital Experimentation at MIT.
 - Deliverable: standalone extended abstract, maximum 3 pages.
