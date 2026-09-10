@@ -1,0 +1,170 @@
+% Round 3 cut archive for the later five-page version.
+% Source: submissions/code_mit_2026/main.tex
+% Branch: cce-experiments; starting commit: 3a51ddced09a7b13f34b7d309ea00a0c3856aadb
+% Starting main.tex SHA-256: 84496d92cb1a9312c3b7be7d3e29a95c50fb3e6ab55a6a261c19961bb91e54cd
+% Each block preserves the verbatim starting-source lines containing the
+% deleted or replaced passage, including unchanged line context.
+% Remove only the '% ' prefix to recover the original line bytes.
+% Every archived line is a comment. Do not input this file.
+
+% Block 1A | Title/front matter | original main.tex lines 38-39
+% \begin{center}\small Proposed revision for author review.\\
+% \end{center}
+
+% Block 1B | Section 1 | original main.tex lines 58-58
+% An allocation policy might retrain an outcome model in batches, then use predicted rewards and uncertainty to choose an ad or ranking action. This illustration differs from our synthetic study. Learned reward models also appear in neural contextual bandits \cite{zhou2020neural,riquelme2018deep}. Recomputing past sensitivities changes the Gram matrix. Collection-time confidence alone gives no upper bound using the recomputed matrix: an inverse-metric comparison for the current query is missing.
+
+% Block 1C | Section 1, theorem | original main.tex lines 123-124
+% Changing a scored width after selection requires rechecking the
+% selector inequality. On $E_{\rm conf}\cap E_{\rm cert}$,
+
+% Block 1D | Section 1, theorem | original main.tex lines 139-140
+% with probability at least $1-\delta-\delta_{\rm cert}$;
+% independence is unnecessary.
+
+% Block 1E | Section 3, results | original main.tex lines 251-251
+% changes $W$. In each of the 12 horizon-target cells, 50/50 primary trajectories passed both all-action, all-round reference-confidence and optimism diagnostics, with cellwise exact 95\% Clopper-Pearson interval $[92.9\%,100\%]$. Base seeds are reused across cells; no deterministic audit failed. These tolerance-based float64 checks and quadrature values are diagnostics, not verified enclosures. Across the 12 primary cells, medians of per-trajectory ratios of the numerical right-hand side (RHS) of \eqref{eq:regret} to pseudo-regret range from $126.7$ to $155.7$. Every primary trajectory's terminal RHS exceeds $2T$, the pseudo-regret cap from $|\mu^*(z)|\le1$, despite unbounded Gaussian observations.
+
+% Block 1F | Section 3, results | original main.tex lines 251-251
+% changes $W$. In each of the 12 horizon-target cells, 50/50 primary trajectories passed both all-action, all-round reference-confidence and optimism diagnostics, with cellwise exact 95\% Clopper-Pearson interval $[92.9\%,100\%]$. Base seeds are reused across cells; no deterministic audit failed. These tolerance-based float64 checks and quadrature values are diagnostics, not verified enclosures. Across the 12 primary cells, medians of per-trajectory ratios of the numerical right-hand side (RHS) of \eqref{eq:regret} to pseudo-regret range from $126.7$ to $155.7$. Every primary trajectory's terminal RHS exceeds $2T$, the pseudo-regret cap from $|\mu^*(z)|\le1$, despite unbounded Gaussian observations.
+
+% Block 1G | Section 3, path terminology | original main.tex lines 215-215
+% Thompson--Finsler length of the SPD path obtained by interpolating
+
+% Block 1G | Section 3, quadrature terminology | original main.tex lines 219-219
+% Gauss--Legendre quadrature at the declared checkpoints; unenclosed
+
+% Block 2 | Section 1, protocol | original main.tex lines 60-73
+% At round $t\le T$, observe $x_t$, choose $a_t$ from a fixed finite
+% nonempty set $\mathcal A$, then observe $r_t$. Our confidence target
+% is the conditional mean reward $\mu_t^*(a)$ used for allocation,
+% not a treatment-effect estimand. Let
+% $\mathcal H_t^-$ precede fresh round-$t$ randomization $\Omega_t$ and
+% $\mathcal H_t=\mathcal H_t^-\vee\sigma(\Omega_t)$ contain all
+% pre-reward information. Queries $q_t(a)\in\R^d$ use fixed coordinates
+% and dimension. The reference and exact current metrics,
+% $\beta_t\ge0$, and $\theta_t$ when used are
+% $\mathcal H_t^-$-measurable (predictable). All remaining score inputs
+% and the selected action are finite and $\mathcal H_t$-measurable,
+% actionwise; each selected query is fixed before its reward.
+% All validity events are measurable, and any claimed certificate
+% probability is a supplied simultaneous bound.
+
+% Block 3 | Section 1, after theorem | original main.tex lines 142-146
+% Theorem~\ref{thm:transfer} states the certificate composition directly.
+% Classical Thompson geometry supplies endpoint and path-length
+% constructions of its first metric comparison
+% \cite{nussbaum1994finsler}. The corrected-center construction below
+% supplies reference confidence without nonlinear optimizer convergence.
+
+% Block 4A | Section 2 | original main.tex lines 151-151
+% Supply nonnegative pre-reward bounds $\epsilon_{\rm lin}(s)$ on the absolute Taylor remainder of $\mu_{\theta^\circ}(z_s)$ about $\theta_s$, and $\epsilon_{\rm mis}(s)$ for $|m^\circ(z_s)|$. Define the current actionwise envelopes $\epsilon_{{\rm lin},t}(a),\epsilon_{{\rm mis},t}(a)$ analogously about $\theta_t$; the past sum below is known before selection. Containment alone does not make these errors small. With access to the exact auxiliary frozen ridge estimator, set
+
+% Block 4B | Section 2 | original main.tex lines 151-151
+% Supply nonnegative pre-reward bounds $\epsilon_{\rm lin}(s)$ on the absolute Taylor remainder of $\mu_{\theta^\circ}(z_s)$ about $\theta_s$, and $\epsilon_{\rm mis}(s)$ for $|m^\circ(z_s)|$. Define the current actionwise envelopes $\epsilon_{{\rm lin},t}(a),\epsilon_{{\rm mis},t}(a)$ analogously about $\theta_t$; the past sum below is known before selection. Containment alone does not make these errors small. With access to the exact auxiliary frozen ridge estimator, set
+
+% Block 4C | Section 2 | original main.tex lines 165-165
+% No nonlinear optimizer-convergence assumption is used. The exact current squared-loss generalized Gauss-Newton (GGN) metric is $V_t=\lambda I+\sigma^{-2}\sum_{s<t}q_{\theta_t}(z_s)q_{\theta_t}(z_s)^\top$.
+
+% Block 5 | Section 3, near-linearity after eq:experiment-scale | original main.tex lines 175-187
+% At $T=1000$, the chosen scales make the model uniformly close to
+% its linear counterpart on the stated domain. For
+% $u=\phi(z)^\top\theta$, $|u|\le1$, and
+% $f_W(u)=\sqrt W\tanh(u/\sqrt W)$,
+% \[
+% 0\le1-\frac{f_W(u)}u
+% \le\frac{u^2}{3W}\le\frac1{3W},
+% \]
+% with $f_W(u)/u=1$ by continuity at zero. The four conditionwise
+% uniform upper bounds range from $1.375\times10^{-7}$ to
+% $8.798\times10^{-6}$. This quantifies the study's near-linearity;
+% it is not floating-point exactness or a restriction on what
+% other transport certificates can achieve.
+
+% Block 6 | Section 3, experiment description | original main.tex lines 188-188
+% Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. The target is a worst-case trust-region label, not realized path length or parameter displacement; $W$ is a smoothness scale. Separate runs at each horizon and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share context and potential-noise streams but have their own histories, parameters, centers, radii, and metrics. All use dense float64 Cholesky solves and finite score maximization, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
+
+% Block 6 | Section 3, experiment description | original main.tex lines 188-188
+% Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. The target is a worst-case trust-region label, not realized path length or parameter displacement; $W$ is a smoothness scale. Separate runs at each horizon and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share context and potential-noise streams but have their own histories, parameters, centers, radii, and metrics. All use dense float64 Cholesky solves and finite score maximization, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
+
+% Block 6 | Section 3, experiment description | original main.tex lines 188-188
+% Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. The target is a worst-case trust-region label, not realized path length or parameter displacement; $W$ is a smoothness scale. Separate runs at each horizon and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share context and potential-noise streams but have their own histories, parameters, centers, radii, and metrics. All use dense float64 Cholesky solves and finite score maximization, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
+
+% Block 6 | Section 3, experiment description | original main.tex lines 188-188
+% Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. The target is a worst-case trust-region label, not realized path length or parameter displacement; $W$ is a smoothness scale. Separate runs at each horizon and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share context and potential-noise streams but have their own histories, parameters, centers, radii, and metrics. All use dense float64 Cholesky solves and finite score maximization, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
+
+% Block 7 | Section 3, endpoint paragraph | original main.tex lines 190-201
+% The transport-endpoint policy is a dense endpoint-certificate
+% comparator. It substitutes
+% $d_{{\rm Th},t}=\max_i|\log\lambda_i(V_t,\Vbar_t)|$, where
+% $V_tv_i=\lambda_i\Vbar_tv_i$. This is the smallest nonnegative
+% common exponent for the symmetric all-direction sandwich in
+% \eqref{eq:certificates} \cite{nussbaum1994finsler}, not an optimum
+% over action-specific or statistical certificates. Both matrices
+% are learner-known before reward observation. The certificate is
+% valid in exact arithmetic; its float64 evaluation is not a verified
+% enclosure. Every method's runner computes these eigenvalues, so
+% reported runtime does not isolate the endpoint policy's incremental
+% cost. Each policy scores
+
+% Block 8 | Section 3, after four-policy display | original main.tex lines 211-220
+% The primary policy uses $\Dbar_t=D_{Q,t}$; ``Hessian'' refers to
+% the envelope argument, not its GGN width. Frozen reference applies
+% the current query to the collection-time Gram; naive current omits
+% transport. Let $\mathcal D_{{\rm selected},t}$ be the exact
+% Thompson--Finsler length of the SPD path obtained by interpolating
+% each replay parameter from $\theta_s$ to $\theta_t$. Analytically,
+% $d_{{\rm Th},t}\le\mathcal D_{{\rm selected},t}\le D_{Q,t}$.
+% $\mathcal D_{{\rm quad},t}$ estimates this integral using 32-point
+% Gauss--Legendre quadrature at the declared checkpoints; unenclosed
+% quadrature cannot replace the exact integral in that inequality.
+
+% Block 9 | Section 3, results opening | original main.tex lines 242-251
+% Within each fixed $T=1000$ condition, enabling the analytic
+% transport multiplier in the otherwise matched current-width
+% policy increased sample mean cumulative pseudo-regret relative
+% to omitting it (Table~\ref{tab:audit}). The policies use the same
+% state-to-score and update rules apart from this multiplier, with
+% common context and potential-noise streams; their subsequent
+% histories may diverge. This descriptive total-policy contrast
+% does not identify a fixed-history mechanism, per-seed dominance,
+% or a cross-condition dose response, since $D_{\rm target}$ also
+% changes $W$. In each of the 12 horizon-target cells, 50/50 primary trajectories passed both all-action, all-round reference-confidence and optimism diagnostics, with cellwise exact 95\% Clopper-Pearson interval $[92.9\%,100\%]$. Base seeds are reused across cells; no deterministic audit failed. These tolerance-based float64 checks and quadrature values are diagnostics, not verified enclosures. Across the 12 primary cells, medians of per-trajectory ratios of the numerical right-hand side (RHS) of \eqref{eq:regret} to pseudo-regret range from $126.7$ to $155.7$. Every primary trajectory's terminal RHS exceeds $2T$, the pseudo-regret cap from $|\mu^*(z)|\le1$, despite unbounded Gaussian observations.
+
+% Block 10 | Section 4 | original main.tex lines 254-260
+% The theorem supplies reward optimism and a regret bound on the joint
+% confidence and certificate event; certificate validity alone does
+% not ensure useful allocation. In this nearly linear simulation,
+% the analytic multiplier increased sample mean pseudo-regret relative
+% to its omission within each fixed condition. This does not establish
+% a uniform policy ordering, a cross-condition dose response, or
+% treatment-effect inference after adaptive assignment.
+
+% Block 11.1 | Abstract | original main.tex lines 49-51
+% convergence. A controlled nearly linear, 29-parameter simulation
+% records simultaneous float64 confidence and optimism diagnostics,
+% yet the evaluated regret bound is vacuous. Within each primary-horizon
+
+% Block 11.2 | Section 3, four-policy widths | original main.tex lines 203-210
+% \[
+% \begin{array}{ll@{\qquad}ll}
+% \text{transport Hessian:}&w_t=e^{D_{Q,t}/2}s_t,&
+% \text{transport endpoint:}&w_t=e^{d_{{\rm Th},t}/2}s_t,\\
+% \text{frozen reference:}&w_t=\bar s_t,&
+% \text{naive current:}&w_t=s_t.
+% \end{array}
+% \]
+
+% Block 11.3 | Preamble | original main.tex lines 12-12
+% \setlength{\parskip}{3.5pt}
+
+% Block 11.4 | Preamble | original main.tex lines 2-2
+% \usepackage[letterpaper,margin=0.95in]{geometry}
+
+% README status cleanup | original README.md lines 3-8
+% > **Current status: four-page CODE@MIT candidate.** The current `main.tex` is based on
+% > `cce-experiments@5718995cae80f34b5b98b464f3d9090758be4871`.
+% > It builds successfully but occupies four pages against the three-page limit, so it is
+% > **PAGE-BUDGET BLOCKED**. AUTH01 is resolved as Bahram Behzadian, Meta. AUTH02,
+% > ledger:C01, ledger:C02, and the optional analysis decisions remain unresolved. The
+% > author-review banner remains, and no push, publication, or submission is authorized.
