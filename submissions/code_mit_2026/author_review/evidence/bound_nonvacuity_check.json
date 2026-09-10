@@ -1,0 +1,142 @@
+{
+  "status": "comparison of existing per-cell minimum with stated 2T cap; no new bound decomposition",
+  "source": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/bound_nonvacuity.jsonl",
+  "records": [
+    {
+      "source_line": 1,
+      "horizon": 250,
+      "target_D": 0.25,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 132.1934801748009,
+      "minimum_terminal_rhs": 3962.2866325677214,
+      "deterministic_mean_reward_cap": 500,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 2,
+      "horizon": 250,
+      "target_D": 0.5,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 132.4746762982814,
+      "minimum_terminal_rhs": 4096.916690476757,
+      "deterministic_mean_reward_cap": 500,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 3,
+      "horizon": 250,
+      "target_D": 1.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 140.53295191290658,
+      "minimum_terminal_rhs": 4358.8864331751065,
+      "deterministic_mean_reward_cap": 500,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 4,
+      "horizon": 250,
+      "target_D": 2.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 155.74616875902126,
+      "minimum_terminal_rhs": 5008.418531264842,
+      "deterministic_mean_reward_cap": 500,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 5,
+      "horizon": 500,
+      "target_D": 0.25,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 129.1857955269956,
+      "minimum_terminal_rhs": 6394.901741230992,
+      "deterministic_mean_reward_cap": 1000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 6,
+      "horizon": 500,
+      "target_D": 0.5,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 129.94912194669087,
+      "minimum_terminal_rhs": 6604.816886474426,
+      "deterministic_mean_reward_cap": 1000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 7,
+      "horizon": 500,
+      "target_D": 1.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 132.1926444649114,
+      "minimum_terminal_rhs": 7020.347488342221,
+      "deterministic_mean_reward_cap": 1000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 8,
+      "horizon": 500,
+      "target_D": 2.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 142.84685942494474,
+      "minimum_terminal_rhs": 7936.377620846313,
+      "deterministic_mean_reward_cap": 1000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 9,
+      "horizon": 1000,
+      "target_D": 0.25,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 126.73484147028874,
+      "minimum_terminal_rhs": 10125.176254734868,
+      "deterministic_mean_reward_cap": 2000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 10,
+      "horizon": 1000,
+      "target_D": 0.5,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 127.67814681280706,
+      "minimum_terminal_rhs": 10420.261862806687,
+      "deterministic_mean_reward_cap": 2000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 11,
+      "horizon": 1000,
+      "target_D": 1.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 128.3679075910522,
+      "minimum_terminal_rhs": 10941.39861444742,
+      "deterministic_mean_reward_cap": 2000,
+      "minimum_exceeds_cap": true
+    },
+    {
+      "source_line": 12,
+      "horizon": 1000,
+      "target_D": 2.0,
+      "run_count": 50,
+      "positive_regret_run_count": 50,
+      "median_rhs_over_regret": 135.04084872749058,
+      "minimum_terminal_rhs": 12282.664800864719,
+      "deterministic_mean_reward_cap": 2000,
+      "minimum_exceeds_cap": true
+    }
+  ],
+  "displayed_range": [
+    "126.7",
+    "155.7"
+  ]
+}
