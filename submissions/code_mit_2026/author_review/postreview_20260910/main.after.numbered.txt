@@ -1,0 +1,263 @@
+     1	\documentclass[10pt]{article}
+     2	\usepackage[letterpaper,margin=0.95in]{geometry}
+     3	\usepackage{amsmath,amsthm}
+     4	\usepackage{newtxtext,newtxmath}
+     5	\theoremstyle{definition}
+     6	\newtheorem{theorem}{Theorem}
+     7	\usepackage{booktabs,tabularx,array}
+     8	\usepackage{float}
+     9	\usepackage{microtype}
+    10	\usepackage[hidelinks]{hyperref}
+    11	\setlength{\parindent}{0pt}
+    12	\setlength{\parskip}{3.5pt}
+    13	\setlength{\abovedisplayskip}{5pt}
+    14	\setlength{\belowdisplayskip}{5pt}
+    15	\setlength{\textfloatsep}{7pt}
+    16	\setlength{\floatsep}{6pt}
+    17	\setlength{\intextsep}{6pt}
+    18	\renewcommand{\arraystretch}{1.08}
+    19	\newcommand{\Vbar}{\bar V}
+    20	\newcommand{\Dbar}{\bar D}
+    21	\newcommand{\shat}{\widehat s}
+    22	\newcommand{\R}{\mathbb R}
+    23	\newcommand{\T}{\mathsf T}
+    24	
+    25	\title{\vspace{-1.4em}\bfseries Confidence Transport for Adaptive Experimentation:\\Theory and a Controlled Audit\vspace{-0.35em}}
+    26	\author{Bahram Behzadian\\Meta}
+    27	\date{}
+    28	
+    29	\begin{document}
+    30	\maketitle
+    31	\vspace{-2.1em}
+    32	\begin{center}\small Proposed revision for author review.\\
+    33	\end{center}
+    34	
+    35	\begin{abstract}
+    36	Model updates change the sensitivities used for allocation, while
+    37	reward confidence may rely on sensitivities fixed when observations
+    38	were collected. We give a finite-action confidence-transfer result
+    39	under explicit pre-reward metric and solver certificates, yielding
+    40	reward optimism and a regret bound on their joint validity event.
+    41	Under fixed-reference and approximation-envelope assumptions, a
+    42	corrected center supplies confidence without nonlinear optimizer
+    43	convergence. A controlled nearly linear, 29-parameter simulation
+    44	records simultaneous float64 confidence and optimism diagnostics,
+    45	yet the evaluated regret bound is vacuous. Within each primary-horizon
+    46	condition, enabling the analytic transport multiplier increases sample
+    47	mean pseudo-regret relative to omitting it in an otherwise matched policy.
+    48	\end{abstract}
+    49	\vspace{-0.4em}
+    50	
+    51	\section{Adaptive model updates and confidence transport}
+    52	An allocation policy might retrain an outcome model in batches, then use predicted rewards and uncertainty to choose an ad or ranking action. This illustration differs from our synthetic study. Learned reward models also appear in neural contextual bandits \cite{zhou2020neural,riquelme2018deep}. Recomputing past sensitivities changes the Gram matrix. Collection-time confidence alone gives no upper bound using the recomputed matrix: an inverse-metric comparison for the current query is missing.
+    53	
+    54	At round $t\le T$, observe $x_t$, choose $a_t$ from a fixed finite
+    55	nonempty set $\mathcal A$, then observe $r_t$. Our confidence target
+    56	is the conditional mean reward $\mu_t^*(a)$ used for allocation,
+    57	not a treatment-effect estimand. Let
+    58	$\mathcal H_t^-$ precede fresh round-$t$ randomization $\Omega_t$ and
+    59	$\mathcal H_t=\mathcal H_t^-\vee\sigma(\Omega_t)$ contain all
+    60	pre-reward information. Queries $q_t(a)\in\R^d$ use fixed coordinates
+    61	and dimension. The reference and exact current metrics,
+    62	$\beta_t\ge0$, and $\theta_t$ when used are
+    63	$\mathcal H_t^-$-measurable (predictable). All remaining score inputs
+    64	and the selected action are finite and $\mathcal H_t$-measurable,
+    65	actionwise; each selected query is fixed before its reward.
+    66	All validity events are measurable, and any claimed certificate
+    67	probability is a supplied simultaneous bound.
+    68	
+    69	For $\lambda,\sigma>0$, with $I$ the $d$-dimensional identity, define reference geometry and widths by
+    70	\begin{equation}
+    71	\Vbar_1=\lambda I,\qquad
+    72	\Vbar_{t+1}=\Vbar_t+\sigma^{-2}q_t(a_t)q_t(a_t)^\top,
+    73	\qquad
+    74	\bar s_t(a)^2=q_t(a)^\top\Vbar_t^{-1}q_t(a).
+    75	\label{eq:reference}
+    76	\end{equation}
+    77	Define cumulative pseudo-regret and frozen information gain, with $\gamma_0=0$, as
+    78	\begin{equation}
+    79	R_T=\sum_{t=1}^T\left[\max_{a\in\mathcal A}\mu_t^*(a)-\mu_t^*(a_t)\right],\qquad
+    80	\gamma_T=\log\frac{\det\Vbar_{T+1}}{\det\Vbar_1}.
+    81	\label{eq:regret-gain}
+    82	\end{equation}
+    83	Let $V_t$ be the exact current metric and $C_t$ the algorithmic operator, both $d\times d$ symmetric positive-definite (SPD). Set $s_t(a)^2=q_t(a)^\top V_t^{-1}q_t(a)$ and $s_{C,t}(a)^2=q_t(a)^\top C_t^{-1}q_t(a)$.
+    84	
+    85	\begin{theorem}[Finite-action confidence transfer]\label{thm:transfer}
+    86	Under this protocol, suppose $\|q_t(a)\|_2\le G<\infty$.
+    87	Define $E_{\rm conf}$ as the event that, simultaneously for
+    88	$t\le T$ and $a\in\mathcal A$,
+    89	\begin{equation}
+    90	|\mu_t^*(a)-m_t(a)|
+    91	\le\beta_t\bar s_t(a)+b_t(a),\qquad b_t(a)\ge0.
+    92	\label{eq:refconf}
+    93	\end{equation}
+    94	Let $\Dbar_t\ge0$,
+    95	$0<\kappa_{-,t}\le\kappa_{+,t}<\infty$, and
+    96	$1\le\alpha_t<\infty$ be finite pre-reward factors.
+    97	Define $E_{\rm cert}$ as simultaneous validity, for every $t\le T$,
+    98	of the Loewner comparisons
+    99	\begin{equation}
+   100	e^{-\Dbar_t}\Vbar_t\preceq V_t\preceq e^{\Dbar_t}\Vbar_t,\qquad
+   101	\kappa_{-,t}V_t\preceq C_t\preceq\kappa_{+,t}V_t,
+   102	\label{eq:certificates}
+   103	\end{equation}
+   104	and, for a nonnegative pre-reward width map,
+   105	\begin{equation}
+   106	s_{C,t}(a)\le\shat_t(a)\quad(a\in\mathcal A),\qquad
+   107	\shat_t(a_t)\le\alpha_t s_{C,t}(a_t).
+   108	\label{eq:solver}
+   109	\end{equation}
+   110	Use this same realized width map in the score and selector:
+   111	\begin{equation}
+   112	U_t(a)=m_t(a)+\beta_t e^{\Dbar_t/2}
+   113	\sqrt{\kappa_{+,t}}\,\shat_t(a)+b_t(a),\qquad
+   114	U_t(a_t)\ge\max_{a\in\mathcal A}U_t(a)-\xi_t,\quad\xi_t\ge0.
+   115	\label{eq:score}
+   116	\end{equation}
+   117	Changing a scored width after selection requires rechecking the
+   118	selector inequality. On $E_{\rm conf}\cap E_{\rm cert}$,
+   119	$U_t(a)\ge\mu_t^*(a)$ for every action and round, and pathwise
+   120	\begin{equation}
+   121	\begin{aligned}
+   122	R_T\le{}&
+   123	\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+   124	\sum_{t=1}^T\beta_t^2
+   125	\left[1+\alpha_t e^{\Dbar_t}
+   126	\sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]^2}\\
+   127	&+2\sum_{t=1}^T b_t(a_t)+\sum_{t=1}^T\xi_t.
+   128	\end{aligned}
+   129	\label{eq:regret}
+   130	\end{equation}
+   131	If $\Pr(E_{\rm conf})\ge1-\delta$ and
+   132	$\Pr(E_{\rm cert})\ge1-\delta_{\rm cert}$, these conclusions hold
+   133	with probability at least $1-\delta-\delta_{\rm cert}$;
+   134	independence is unnecessary.
+   135	\end{theorem}
+   136	Theorem~\ref{thm:transfer} states the certificate composition directly.
+   137	Classical Thompson geometry supplies endpoint and path-length
+   138	constructions of its first metric comparison
+   139	\cite{nussbaum1994finsler}. The corrected-center construction below
+   140	supplies reference confidence without nonlinear optimizer convergence.
+   141	
+   142	\section{A corrected center without optimizer convergence}
+   143	Use a differentiable model mean $\mu_\theta(x,a)$ in fixed parameter coordinates $\theta\in\Theta\subseteq\R^d$, with $\Theta$ a convex smoothness region. For $z=(x,a)$, define $q_\theta(z)=\nabla_\theta\mu_\theta(z)$, $q_t(a)=q_{\theta_t}(x_t,a)$, $z_s=(x_s,a_s)$, and $q_s:=q_{\theta_s}(x_s,a_s)$. The representation path $\theta_t\in\Theta$ is predictable. Fix before data collection $\theta^\circ\in\Theta$, $\|\theta^\circ\|_2\le S$, with $\mu_t^*(a)=\mu^*(x_t,a)$ and $\mu^*(z)=\mu_{\theta^\circ}(z)+m^\circ(z)$. Observed rewards obey $r_t=\mu_t^*(a_t)+\eta_t$ and $\mathbb E[e^{u\eta_t}\mid\mathcal H_t]\le e^{u^2\sigma^2/2}$ for every real $u$.
+   144	
+   145	Supply nonnegative pre-reward bounds $\epsilon_{\rm lin}(s)$ on the absolute Taylor remainder of $\mu_{\theta^\circ}(z_s)$ about $\theta_s$, and $\epsilon_{\rm mis}(s)$ for $|m^\circ(z_s)|$. Define the current actionwise envelopes $\epsilon_{{\rm lin},t}(a),\epsilon_{{\rm mis},t}(a)$ analogously about $\theta_t$; the past sum below is known before selection. Containment alone does not make these errors small. With access to the exact auxiliary frozen ridge estimator, set
+   146	\begin{align}
+   147	y_s&=r_s-\mu_{\theta_s}(z_s)+q_s^\top\theta_s, &
+   148	\widehat\theta_t^{\rm lin}&=\Vbar_t^{-1}\sigma^{-2}\sum_{s<t}q_sy_s, \\
+   149	m_t^{\rm corr}(a)&=\mu_{\theta_t}(x_t,a)+q_t(a)^\top(\widehat\theta_t^{\rm lin}-\theta_t).&&
+   150	\label{eq:center}
+   151	\end{align}
+   152	For $\delta\in(0,1)$, self-normalization \cite{abbasi2011improved} and the Taylor envelopes give \eqref{eq:refconf} with probability at least $1-\delta$, simultaneously over rounds and actions, using $m_t=m_t^{\rm corr}$,
+   153	\begin{equation}
+   154	\beta_t^{\rm corr}=\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt{\lambda}S
+   155	+\frac1\sigma\sqrt{\sum_{s<t}[\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2},
+   156	\quad b_t(a)=\epsilon_{{\rm lin},t}(a)+\epsilon_{{\rm mis},t}(a).
+   157	\label{eq:beta}
+   158	\end{equation}
+   159	No nonlinear optimizer-convergence assumption is used. The exact current squared-loss generalized Gauss-Newton (GGN) metric is $V_t=\lambda I+\sigma^{-2}\sum_{s<t}q_{\theta_t}(z_s)q_{\theta_t}(z_s)^\top$.
+   160	
+   161	\section{Controlled audit}
+   162	We ran four policies in a nearly linear scaled-tanh bandit with five actions and 29 parameters. For normalized features $\|\phi(z)\|_2\le1$, the mean is $\mu_{\theta,W}(z)=\sqrt W\tanh(\phi(z)^\top\theta/\sqrt W)$. Exact realizability holds with $\|\theta^\circ\|_2\le R=1$; parameters are projected to radius $R$, $\lambda=1$, and Gaussian noise has $\sigma=0.25$. For each horizon $T\in\{250,500,1000\}$ and target $D_{\rm target}\in\{0.25,0.5,1,2\}$, the predeclared rule sets
+   163	\begin{equation}
+   164	W=\left[\frac{4c_hR\sqrt{T-1}}{\sigma\sqrt\lambda D_{\rm target}}\right]^2,
+   165	\qquad c_h=\frac4{3\sqrt3},\qquad L_g=\frac{c_h}{\sqrt W},\qquad
+   166	Q_t=\sum_{s<t}\|\theta_t-\theta_s\|_2^2,\quad D_{Q,t}=\frac{2L_g\sqrt{Q_t}}{\sigma\sqrt\lambda}.
+   167	\label{eq:experiment-scale}
+   168	\end{equation}
+   169	At $T=1000$, the chosen scales make the model uniformly close to
+   170	its linear counterpart on the stated domain. For
+   171	$u=\phi(z)^\top\theta$, $|u|\le1$, and
+   172	$f_W(u)=\sqrt W\tanh(u/\sqrt W)$,
+   173	\[
+   174	0\le1-\frac{f_W(u)}u
+   175	\le\frac{u^2}{3W}\le\frac1{3W},
+   176	\]
+   177	with $f_W(u)/u=1$ by continuity at zero. The four conditionwise
+   178	uniform upper bounds range from $1.375\times10^{-7}$ to
+   179	$8.798\times10^{-6}$. This quantifies the study's near-linearity;
+   180	it is not floating-point exactness or a restriction on what
+   181	other transport certificates can achieve.
+   182	Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. The target is a worst-case trust-region label, not realized path length or parameter displacement; $W$ is a smoothness scale. Separate runs at each horizon and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share context and potential-noise streams but have their own histories, parameters, centers, radii, and metrics. All use dense float64 Cholesky solves and finite score maximization, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
+   183	
+   184	The transport-endpoint policy is a dense endpoint-certificate
+   185	comparator. It substitutes
+   186	$d_{{\rm Th},t}=\max_i|\log\lambda_i(V_t,\Vbar_t)|$, where
+   187	$V_tv_i=\lambda_i\Vbar_tv_i$. This is the smallest nonnegative
+   188	common exponent for the symmetric all-direction sandwich in
+   189	\eqref{eq:certificates} \cite{nussbaum1994finsler}, not an optimum
+   190	over action-specific or statistical certificates. Both matrices
+   191	are learner-known before reward observation. The certificate is
+   192	valid in exact arithmetic; its float64 evaluation is not a verified
+   193	enclosure. Every method's runner computes these eigenvalues, so
+   194	reported runtime does not isolate the endpoint policy's incremental
+   195	cost. Each policy scores
+   196	$m_t^{\rm corr}(a)+\beta_t^{\rm corr}w_t(a)+b_t(a)$ on its own history:
+   197	\[
+   198	\begin{array}{ll@{\qquad}ll}
+   199	\text{transport Hessian:}&w_t=e^{D_{Q,t}/2}s_t,&
+   200	\text{transport endpoint:}&w_t=e^{d_{{\rm Th},t}/2}s_t,\\
+   201	\text{frozen reference:}&w_t=\bar s_t,&
+   202	\text{naive current:}&w_t=s_t.
+   203	\end{array}
+   204	\]
+   205	The primary policy uses $\Dbar_t=D_{Q,t}$; ``Hessian'' refers to
+   206	the envelope argument, not its GGN width. Frozen reference applies
+   207	the current query to the collection-time Gram; naive current omits
+   208	transport. Let $\mathcal D_{{\rm selected},t}$ be the exact
+   209	Thompson--Finsler length of the SPD path obtained by interpolating
+   210	each replay parameter from $\theta_s$ to $\theta_t$. Analytically,
+   211	$d_{{\rm Th},t}\le\mathcal D_{{\rm selected},t}\le D_{Q,t}$.
+   212	$\mathcal D_{{\rm quad},t}$ estimates this integral using 32-point
+   213	Gauss--Legendre quadrature at the declared checkpoints; unenclosed
+   214	quadrature cannot replace the exact integral in that inequality.
+   215	
+   216	\begin{table}[H]
+   217	\centering\footnotesize
+   218	\begin{tabular}{@{}lrrrr@{}}
+   219	\toprule
+   220	$D_{\rm target}$ & $0.25$ & $0.5$ & $1$ & $2$ \\
+   221	\midrule
+   222	Transport Hessian mean $R_{1000}$ & 81.05 & 82.44 & 87.04 & 93.99 \\
+   223	Transport endpoint mean $R_{1000}$ & 79.05 & 79.49 & 80.06 & 81.89 \\
+   224	Frozen reference mean $R_{1000}$ & 79.09 & 80.13 & 80.25 & 81.67 \\
+   225	Naive current mean $R_{1000}$ & 79.00 & 79.49 & 80.10 & 81.88 \\
+   226	\midrule
+   227	Median $D_Q/\mathcal D_{\rm quad}$ & $1.88\times10^6$ & $9.77\times10^5$ & $4.82\times10^5$ & $2.51\times10^5$ \\
+   228	Median trajectory-maximum $d_{\rm Th}$ & $1.31\times10^{-7}$ & $5.23\times10^{-7}$ & $2.10\times10^{-6}$ & $8.74\times10^{-6}$ \\
+   229	Median $e^{D_Q/2}$ & 1.02 & 1.04 & 1.09 & 1.18 \\
+   230	\bottomrule
+   231	\end{tabular}
+   232	\caption{Primary horizon $T=1000$. Regret means average 50 trajectories. The last three rows concern the primary policy: path ratios pool eligible seed-checkpoint pairs with $\mathcal D_{\rm quad}>10^{-12}$; endpoint distances are maximized within each trajectory before taking the median; inflation medians pool seeds and all rounds, not terminal rounds or run maxima.}
+   233	\label{tab:audit}
+   234	\end{table}
+   235	
+   236	Within each fixed $T=1000$ condition, enabling the analytic
+   237	transport multiplier in the otherwise matched current-width
+   238	policy increased sample mean cumulative pseudo-regret relative
+   239	to omitting it (Table~\ref{tab:audit}). The policies use the same
+   240	state-to-score and update rules apart from this multiplier, with
+   241	common context and potential-noise streams; their subsequent
+   242	histories may diverge. This descriptive total-policy contrast
+   243	does not identify a fixed-history mechanism, per-seed dominance,
+   244	or a cross-condition dose response, since $D_{\rm target}$ also
+   245	changes $W$. In each of the 12 horizon-target cells, 50/50 primary trajectories passed both all-action, all-round reference-confidence and optimism diagnostics, with cellwise exact 95\% Clopper-Pearson interval $[92.9\%,100\%]$. Base seeds are reused across cells; no deterministic audit failed. These tolerance-based float64 checks and quadrature values are diagnostics, not verified enclosures. Across the 12 primary cells, medians of per-trajectory ratios of the numerical right-hand side (RHS) of \eqref{eq:regret} to pseudo-regret range from $126.7$ to $155.7$. Every primary trajectory's terminal RHS exceeds $2T$, the pseudo-regret cap from $|\mu^*(z)|\le1$, despite unbounded Gaussian observations.
+   246	
+   247	\section{Implications for adaptive experimentation}
+   248	The theorem supplies reward optimism and a regret bound on the joint
+   249	confidence and certificate event; certificate validity alone does
+   250	not ensure useful allocation. In this nearly linear simulation,
+   251	the analytic multiplier increased sample mean pseudo-regret relative
+   252	to its omission within each fixed condition. This does not establish
+   253	a uniform policy ordering, a cross-condition dose response, or
+   254	treatment-effect inference after adaptive assignment.
+   255	
+   256	\vspace{-0.25em}
+   257	\begin{thebibliography}{9}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\small
+   258	\bibitem{abbasi2011improved} Y. Abbasi-Yadkori, D. P\'al, and C. Szepesv\'ari. Improved Algorithms for Linear Stochastic Bandits. \emph{NeurIPS}, 2011.
+   259	\bibitem{zhou2020neural} D. Zhou, L. Li, and Q. Gu. Neural Contextual Bandits with UCB-based Exploration. \emph{ICML}, 2020.
+   260	\bibitem{riquelme2018deep} C. Riquelme, G. Tucker, and J. Snoek. Deep Bayesian Bandits Showdown: An Empirical Comparison of Bayesian Deep Networks for Thompson Sampling. \emph{ICLR}, 2018.
+   261	\bibitem{nussbaum1994finsler} R. D. Nussbaum. Finsler structures for the part metric and Hilbert's projective metric and applications to ordinary differential equations. \emph{Differential and Integral Equations}, 7:1649--1707, 1994.
+   262	\end{thebibliography}
+   263	\end{document}

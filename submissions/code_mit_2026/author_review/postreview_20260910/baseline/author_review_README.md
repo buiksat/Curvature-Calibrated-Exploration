@@ -1,12 +1,6 @@
 # CODE@MIT proposed revision: author review
 
-> **2026-09-10 post-review candidate:** See
-> [postreview_20260910/README.md](postreview_20260910/README.md). The candidate is
-> authorized for commit with AUTH01 resolved. AUTH02, ledger:C01, ledger:C02, optional
-> analysis inclusion, and the page budget remain unresolved. The candidate is
-> **PAGE-BUDGET BLOCKED** at four pages against the three-page limit.
-
-The revised source is [../main.tex](../main.tex). It is based on the exact candidate previously prepared in isolation and published as readable repository files at the author's request. It remains a **review draft**, not an approved submission. Direct author instruction on 2026-09-10 resolved AUTH01 as Bahram Behzadian, Meta; the other approval items remain open.
+The revised source is [../main.tex](../main.tex). It is the exact candidate previously prepared in isolation, now published as readable repository files at the author's request. It is a **review draft**, not an approved submission. The author-information marker and all four unresolved approval items remain.
 
 ## Read the revision
 
