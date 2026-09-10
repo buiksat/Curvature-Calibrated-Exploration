@@ -1,0 +1,158 @@
+{
+  "source_head": "1eb91932d89bb5df428052767884e199f2abfe3b",
+  "access": "read-only GitHub connector; pinned commit",
+  "native_checkout_available": false,
+  "files": [
+    {
+      "path": "submissions/code_mit_2026/main.tex",
+      "git_blob_sha": "9837cd16e04fbb803ebe77d3d76b766b8631a43e",
+      "inspected": "complete; exact local bytes match Git blob",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/submissions/code_mit_2026/main.tex"
+    },
+    {
+      "path": "submissions/code_mit_2026/README.md",
+      "git_blob_sha": "d5f1c580ee3fb2570782c23923830fbe8e7fa9f8",
+      "inspected": "complete; exact local bytes match Git blob",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/submissions/code_mit_2026/README.md"
+    },
+    {
+      "path": "paper/transport_theory.tex",
+      "git_blob_sha": "83b4346bce229445861214a6ce25233ddb5284d7",
+      "inspected": "lines 1 to 230 and 234 to 484",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/transport_theory.tex"
+    },
+    {
+      "path": "paper/transport_proofs.tex",
+      "git_blob_sha": "fe4d72b1c58bd7a780d171d339e56569b905d588",
+      "inspected": "lines 1 to 245",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/transport_proofs.tex"
+    },
+    {
+      "path": "paper/transport_experiment.tex",
+      "git_blob_sha": "72fa6d21d1342bb2551fdda7c57b5a50f3da9061",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/transport_experiment.tex"
+    },
+    {
+      "path": "paper/transport_experiment_appendix.tex",
+      "git_blob_sha": "9ac670192236ac35611cb4aba983c48e9ff9f1fa",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/transport_experiment_appendix.tex"
+    },
+    {
+      "path": "paper/references.bib",
+      "git_blob_sha": "d35e47253e3f3726a3f884b6660f55013ed3d474",
+      "inspected": "returned bibliography; relevant existing and geometry entries inspected",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/references.bib"
+    },
+    {
+      "path": "experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md",
+      "git_blob_sha": "ca3ac59158d415dbb2ea770b2315246454c8acc8",
+      "inspected": "lines 1 to 250; later tuning and score semantics checked in config and implementation",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md"
+    },
+    {
+      "path": "experiments/configs/transport_instantiation.yaml",
+      "git_blob_sha": "2fcfa77fa5b69ba3e9111cc65c2f1d19a1078955",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/experiments/configs/transport_instantiation.yaml"
+    },
+    {
+      "path": "experiments/transport_instantiation.py",
+      "git_blob_sha": "3fab2a8aace7fb2f33cac157478ed5b5bdd8df5e",
+      "inspected": "lines 1 to 410, 880 to 1125, 1290 to 1345, 1350 to 1650, 1740 to 2225",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/experiments/transport_instantiation.py"
+    },
+    {
+      "path": "experiments/aggregate_transport_instantiation.py",
+      "git_blob_sha": "0c4b347cc09f627e8c55ff1aedb42609afecbe13",
+      "inspected": "lines 700 to 1260",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/experiments/aggregate_transport_instantiation.py"
+    },
+    {
+      "path": "experiments/make_transport_instantiation_artifacts.py",
+      "git_blob_sha": "f69bf909af9cdec4f227f3fc344bbe9ef0657d40",
+      "inspected": "lines 1 to 265, 550 to 745",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/experiments/make_transport_instantiation_artifacts.py"
+    },
+    {
+      "path": "paper/tables/transport_instantiation_validity.tex",
+      "git_blob_sha": "1dd503331f8d5a86593847c85755d61feac38af1",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/tables/transport_instantiation_validity.tex"
+    },
+    {
+      "path": "paper/tables/transport_instantiation_tightness.tex",
+      "git_blob_sha": "b569b1e48918befaa9dbda1ecba0d344c7cc9fd3",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/tables/transport_instantiation_tightness.tex"
+    },
+    {
+      "path": "paper/tables/transport_instantiation_performance.tex",
+      "git_blob_sha": "ee54a43680fee91cd7b73309550ee2e2bd72024f",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/paper/tables/transport_instantiation_performance.tex"
+    },
+    {
+      "path": "review/transport_instantiation/locked_claims.json",
+      "git_blob_sha": "670444b9b23f41125b0a1dfab1a92929c9dad758",
+      "inspected": "lines 1 to 100; audit and recomputed-coverage flags",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/locked_claims.json"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/index.json",
+      "git_blob_sha": "a703ff71a968d7faa7f75edb51d2df509b4d4e97",
+      "inspected": "full index returned and inspected",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/index.json"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/top_level.json",
+      "git_blob_sha": "63dcbf9bded8edce9064fc9d27d95a20e06e684e",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/top_level.json"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "git_blob_sha": "2c08594fad86209c78fd5a37a37a86e8d3511e05",
+      "inspected": "all 16 mean fields inspected via ranges 1 to 8 and 9 to 16; trailing unrelated fields truncated in displayed responses",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/policy_outcomes.jsonl"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/bound_nonvacuity.jsonl",
+      "git_blob_sha": "5944a3f704f49c7e293f684783a573c612db69e0",
+      "inspected": "all 12 records, in two six-record reads",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/bound_nonvacuity.jsonl"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/bound_decomposition.part-000.jsonl",
+      "git_blob_sha": "1b751f12f3b62356885e4a09e1b6516463a1f5fb",
+      "inspected": "terminal records at lines 1000 and 2000",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/bound_decomposition.part-000.jsonl"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/bound_decomposition.part-001.jsonl",
+      "git_blob_sha": "e7747120c18adece7e16f9fe3f1776dadcb66a78",
+      "inspected": "terminal records at lines 608 and 1608",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/bound_decomposition.part-001.jsonl"
+    },
+    {
+      "path": "review/transport_instantiation/aggregate/path_checkpoints.part-012.jsonl",
+      "git_blob_sha": "5d683ddd0f565a512b35dae07ef5c801f9f13041",
+      "inspected": "line 1013; terminal example only, not a population summary",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/review/transport_instantiation/aggregate/path_checkpoints.part-012.jsonl"
+    },
+    {
+      "path": "GITHUB_ONLY_TRANSPORT_REVIEW.md",
+      "git_blob_sha": "fca026d228286ac925a3f14cbee507f0c5a88c99",
+      "inspected": "complete",
+      "url": "https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/1eb91932d89bb5df428052767884e199f2abfe3b/GITHUB_ONLY_TRANSPORT_REVIEW.md"
+    }
+  ],
+  "not_read": [
+    "full 77 MB aggregate bytes",
+    "raw evaluation tree",
+    "raw tuning tree",
+    "all 350000 path records",
+    "full branch Git history"
+  ]
+}

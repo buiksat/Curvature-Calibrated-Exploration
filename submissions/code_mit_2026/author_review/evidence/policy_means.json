@@ -1,0 +1,182 @@
+{
+  "status": "transcribed existing summary fields; no new statistic",
+  "source_head": "1eb91932d89bb5df428052767884e199f2abfe3b",
+  "records": [
+    {
+      "target_D": 0.25,
+      "horizon": 1000,
+      "method": "transport_hessian",
+      "n": 50,
+      "mean": 81.04956086155346,
+      "displayed_mean": "81.05",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 1,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.25,
+      "horizon": 1000,
+      "method": "transport_endpoint",
+      "n": 50,
+      "mean": 79.05014331769655,
+      "displayed_mean": "79.05",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 2,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.25,
+      "horizon": 1000,
+      "method": "frozen_reference",
+      "n": 50,
+      "mean": 79.09451495804345,
+      "displayed_mean": "79.09",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 3,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.25,
+      "horizon": 1000,
+      "method": "naive_current",
+      "n": 50,
+      "mean": 79.00345244889643,
+      "displayed_mean": "79.00",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 4,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.5,
+      "horizon": 1000,
+      "method": "transport_hessian",
+      "n": 50,
+      "mean": 82.43554707309166,
+      "displayed_mean": "82.44",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 5,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.5,
+      "horizon": 1000,
+      "method": "transport_endpoint",
+      "n": 50,
+      "mean": 79.48956224206864,
+      "displayed_mean": "79.49",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 6,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.5,
+      "horizon": 1000,
+      "method": "frozen_reference",
+      "n": 50,
+      "mean": 80.12874630744086,
+      "displayed_mean": "80.13",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 7,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 0.5,
+      "horizon": 1000,
+      "method": "naive_current",
+      "n": 50,
+      "mean": 79.48956224206864,
+      "displayed_mean": "79.49",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 8,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 1.0,
+      "horizon": 1000,
+      "method": "transport_hessian",
+      "n": 50,
+      "mean": 87.03849658563784,
+      "displayed_mean": "87.04",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 9,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 1.0,
+      "horizon": 1000,
+      "method": "transport_endpoint",
+      "n": 50,
+      "mean": 80.05844072436543,
+      "displayed_mean": "80.06",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 10,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 1.0,
+      "horizon": 1000,
+      "method": "frozen_reference",
+      "n": 50,
+      "mean": 80.24924933522,
+      "displayed_mean": "80.25",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 11,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 1.0,
+      "horizon": 1000,
+      "method": "naive_current",
+      "n": 50,
+      "mean": 80.09746167479669,
+      "displayed_mean": "80.10",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 12,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 2.0,
+      "horizon": 1000,
+      "method": "transport_hessian",
+      "n": 50,
+      "mean": 93.98889075534275,
+      "displayed_mean": "93.99",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 13,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 2.0,
+      "horizon": 1000,
+      "method": "transport_endpoint",
+      "n": 50,
+      "mean": 81.89305037555769,
+      "displayed_mean": "81.89",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 14,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 2.0,
+      "horizon": 1000,
+      "method": "frozen_reference",
+      "n": 50,
+      "mean": 81.67068627569212,
+      "displayed_mean": "81.67",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 15,
+      "field": "cumulative_pseudo_regret.mean"
+    },
+    {
+      "target_D": 2.0,
+      "horizon": 1000,
+      "method": "naive_current",
+      "n": 50,
+      "mean": 81.88290235298888,
+      "displayed_mean": "81.88",
+      "source": "review/transport_instantiation/aggregate/policy_outcomes.jsonl",
+      "source_line": 16,
+      "field": "cumulative_pseudo_regret.mean"
+    }
+  ]
+}

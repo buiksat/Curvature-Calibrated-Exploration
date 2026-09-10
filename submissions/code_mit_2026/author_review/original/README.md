@@ -1,9 +1,5 @@
 # CODE@MIT 2026 extended abstract
 
-> **Current status: revised draft for author review.** The current `main.tex` is the proposed revision prepared from `cce-experiments@1eb91932d89bb5df428052767884e199f2abfe3b`, now published to GitHub at the author's request. It still contains the author-information marker and is not submission-ready.
->
-> Start with the [author-review index](author_review/README.md), [change log](author_review/records/CHANGELOG.md), and [approval ledger](author_review/records/AUTHOR_APPROVAL.md). The original drafting provenance below is preserved; its historical SHAs have not been relabelled as revision or publication SHAs.
-
 - Submission: CODE@MIT 2026, Conference on Digital Experimentation at MIT.
 - Deliverable: standalone extended abstract, maximum 3 pages.
 - Relationship to the full manuscript: this is a short, audience-specific derivative of the canonical AISTATS manuscript under `paper/`; no file under `paper/` was edited.
