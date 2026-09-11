@@ -1,12 +1,21 @@
 \section{A controlled instantiation of transported confidence}
 \label{sec:transport-instantiation}
 
-We execute the corrected-center score in the finite-dimensional scaled-tanh
-Gaussian specialization of \Cref{cor:global-near-linear-new}.  Contexts have dimension
-$4$, there are five actions, and the normalized context--action feature map has
-dimension $29$.  We form the frozen and current matrices densely and use
-float64 Cholesky solves.  Finite enumeration uses the smallest-index tie rule.
-Thus the intended theorem interface has
+The experiment asks four questions about one controlled instantiation.  Do the
+declared algebra and confidence diagnostics pass?  How conservative is the
+analytic path certificate relative to endpoint and quadrature diagnostics?  Is
+the resulting regret bound informative relative to realized regret and the
+deterministic cap?  How do the four policy rules behave under shared exogenous
+streams?  The experiment does not test approximate operators, CG, real data, or
+large-model scalability.
+
+\paragraph{Protocol.}
+We use the finite-dimensional scaled-tanh Gaussian specialization of
+\Cref{cor:global-near-linear-new}.  Contexts have dimension $4$, there are five
+actions, and the normalized context--action feature map has dimension $29$.
+The frozen and current matrices are formed densely, all widths use float64
+Cholesky solves, and finite enumeration uses the smallest-index tie rule.  Thus
+the intended theorem interface has
 \[
   \alpha_t=1,\qquad
   \kappa_{-,t}=\kappa_{+,t}=1,\qquad
@@ -17,10 +26,11 @@ The recorded floating-point checks are diagnostics, not verified numerical
 certificates.
 
 The locked grid contains horizons $T\in\{250,500,1000\}$, 50 evaluation seeds,
-and target labels $D_{\rm target}\in\{0.25,0.5,1,2\}$.  Each label sets the
-abstract near-linearity scale $W$ through the worst-case trust-region formula
-in \Cref{cor:global-near-linear-new}; it is not the realized path length and is
-not network width.  Four policies share contexts and potential-noise tables.
+and target labels $D_{\rm target}\in\{0.25,0.5,1,2\}$.  Each $(T,D_{\rm
+target})$ cell is a separately executed model condition because both quantities
+enter the rule for $W$.  The target label is neither realized transport distance
+nor generic network width, so trends across targets are not a dose response to
+certificate inflation.  The four policies share contexts and potential-noise tables.
 The primary \emph{transport Hessian} policy uses $\bar D_t^Q$ in the score.  The
 \emph{transport endpoint} policy replaces it by the dense endpoint Thompson
 distance and is only a diagnostic oracle.  The \emph{frozen reference} policy
@@ -30,17 +40,19 @@ representation path.  Ten disjoint tuning seeds selected learning rate
 $3\times10^{-4}$ and 20 full-batch steps followed by projection each round by
 preregistered all-action prediction MSE; evaluation seeds never entered that
 selection.
-The environment was not filtered after generation.  At $T=1000$, all five
-actions were optimal somewhere in every evaluation stream, mean optimal-action
-entropy was $1.579$, and the mean optimality gap was $0.123$.  Mean regret was
-$180.4$ for the best fixed action and $185.4$ for the online context-free
-mean-only baseline.  These diagnostics were reported, not used to select seeds.
+The environment was not filtered after generation.  Within each $T=1000$
+target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality
+gap $0.123$, best-fixed-action regret $180.4$, and online context-free
+mean-only regret $185.4$.  All five actions are optimal somewhere in every
+evaluation stream.  These diagnostics were reported after the grid was fixed;
+they were not used to select seeds.
 
 \paragraph{Validity audit.}
-For the primary policy, every one of the 50 runs in each of the 12
+For the primary policy, every one of the same 50 base seeds in each of the 12
 horizon--target cells retained simultaneous reference confidence and
-transported optimism.  The exact 95\% Clopper--Pearson interval is
-$[92.9\%,100\%]$ in every cell.  The strict aggregate accepted all 2400 policy
+transported optimism.  The cellwise exact 95\% Clopper--Pearson interval is
+$[92.9\%,100\%]$.  Reusing base seeds across cells supports paired comparisons
+within a condition, not a pooled sample of 600 independent runs.  The strict aggregate accepted all 2400 policy
 trajectories with no deterministic algebra or certificate-check failure, and
 the primary policy had no bound violation on the joint confidence event
 (\Cref{tab:transport-instantiation-validity}).  This finite-sample observation
@@ -60,17 +72,24 @@ enclosures.
   \label{tab:transport-instantiation-validity}
 \end{table*}
 
-\paragraph{Certificate tightness and bound nonvacuity.}
-At $T=1000$, the median maximum realized $\bar D_t^Q$ ranges from $0.0486$ to
-$0.384$, while the median maximum endpoint distance ranges from
-$1.31\times10^{-7}$ to $8.74\times10^{-6}$.  At quadrature checkpoints, the
-median selected factor-path length is only $1.20$--$1.22$ times the endpoint
-distance, whereas $\bar D_t^Q$ is $2.51\times10^5$--$1.88\times10^6$ times the
-selected-path diagnostic.  The large ratios arise because the realized metric
-motion is extremely small; the corresponding median $e^{\bar D_t^Q/2}$ is
-$1.02$--$1.18$.  The cumulative guarantee is nevertheless vacuous here.  The
-median sharp right-hand side is $126.7$--$155.7$ times realized regret over all
-reported cells and $126.7$--$135.0$ times at $T=1000$.  No run has zero regret.
+\paragraph{Certificate tightness.}
+At $T=1000$, the median of each trajectory's maximum realized $\bar D_t^Q$
+ranges from $0.0486$ to $0.384$ across target cells.  The corresponding median
+of trajectory-maximum endpoint distances ranges from $1.31\times10^{-7}$ to
+$8.74\times10^{-6}$; both summaries have 50 trajectory-level observations per
+cell.  At the 100 declared checkpoints per trajectory, pooling the 5,000
+eligible seed--checkpoint ratios gives a median selected factor-path length only
+$1.20$--$1.22$ times the endpoint distance, while $\bar D_t^Q$ is
+$2.51\times10^5$--$1.88\times10^6$ times the selected-path diagnostic.  The
+large ratio accompanies extremely small realized metric motion.  The reported
+median $e^{\bar D_t^Q/2}$, by contrast, pools all 50,000 seed--round values in a
+cell and ranges from $1.02$ to $1.18$; it is not a terminal or run-maximum
+summary.
+
+\paragraph{Bound nonvacuity.}
+The cumulative guarantee is vacuous in every reported cell.  The median of the
+per-trajectory terminal sharp-RHS/regret ratios is $126.7$--$155.7$ over the
+full grid and $126.7$--$135.0$ at $T=1000$.  No run has zero regret.
 Since $|\mu^*(z)|\le\|\phi(z)\|\|\btheta^\circ\|\le1$, cumulative
 pseudo-regret has the deterministic cap $2T$.  In every cell the theorem bound
 also exceeds this cap: the median right-hand sides are
@@ -81,21 +100,25 @@ the complete tightness table and bound decomposition.
 At $T=1000$, mean regret for the operational Hessian-certificate policy rises
 from $81.0$ to $94.0$ across the four target conditions
 (\Cref{tab:transport-instantiation-performance}).  The dense endpoint, frozen
-reference, and naive-current policies have lower descriptive regret in every
-condition.  The endpoint result isolates conservatism in the analytic path
-envelope but does not provide a scalable policy certificate.  The naive score's
-observed optimism does not make it theoretically valid.  These comparisons do
-not show a causal or uniform advantage for full curvature; they show that the
-operational certificate can change actions and increase regret here.
+reference, and naive-current policies have lower sample means in every
+condition.  These are matched-stream total-policy comparisons: the policies
+share contexts and potential outcomes, but their actions, fitted parameters,
+centers, radii, and widths may diverge after the first disagreement.  The
+endpoint comparison is consistent with conservatism in the analytic envelope,
+but it does not isolate a fixed-history mechanism and does not provide a
+scalable policy certificate.  The naive score's observed optimism does not make
+it theoretically valid.  Since $D_{\rm target}$ also changes $W$, the
+cross-condition pattern is not a causal dose response.
 
 \begin{table*}[t]
   \centering\scriptsize
   \resizebox{\textwidth}{!}{%
     \input{tables/transport_instantiation_performance.tex}}
   \caption{Policy outcomes at the primary horizon $T=1000$.  Mean-regret and
-  paired-difference intervals are deterministic paired-bootstrap 95\%
-  intervals over 50 evaluation seeds.  Negative paired differences favor the
-  row method over transport Hessian.  Transport endpoint is a dense diagnostic
-  oracle; naive current is an uncertified negative control.}
+  paired-difference intervals are comparisonwise deterministic paired-bootstrap
+  95\% intervals over the same 50 evaluation seeds.  Each difference is the row
+  method minus transport Hessian, so negative values favor the row method.
+  Transport endpoint is a dense diagnostic comparator; naive current is an
+  uncertified negative control.}
   \label{tab:transport-instantiation-performance}
 \end{table*}

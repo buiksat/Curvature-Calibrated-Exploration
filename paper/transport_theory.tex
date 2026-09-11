@@ -1,9 +1,12 @@
 \section{Abstract confidence transport}\label{sec:abstract-transport}
 
-The analysis separates the statistical confidence metric from the current
-relinearized metric and from the operator used by the algorithm.  This
-separation is the main object of the paper; the squared-loss construction in
-\Cref{sec:corrected-center} is one way to instantiate it.
+The argument is easiest to read as a sequence of interfaces.  A statistical
+model supplies confidence in a frozen, predictable metric.  Geometry transports
+that confidence to the current relinearized metric.  An operator certificate
+then relates the current metric to the SPD operator used for scoring, and a
+solver certificate relates exact operator widths to the numerical widths seen
+by the action selector.  This section states that composition abstractly;
+\Cref{sec:corrected-center} supplies the primary squared-loss confidence model.
 
 \paragraph{Protocol and timing.}
 Let $(\mathsf A,\mathcal B)$ be a standard Borel action space.  At round $t$,
@@ -71,6 +74,16 @@ depend on $\Omega_t$ and are required only to be $\cHist_t$-measurable.  Thus
 ``predictable'' below is reserved for $\cHist_t^-$-measurable quantities;
 quantities that may use $\Omega_t$ are called pre-reward measurable.  The
 reward is observed only after $a_t$ is selected.
+
+\paragraph{How one round uses the interfaces.}
+The prefix history determines $\bVbar_t$, $\bV_t$, and the representation used
+to form the current queries.  Before observing the reward, the learner
+constructs $\Calg_t$, obtains its path, operator, and solver certificates,
+forms one upper-valid width map over the score domain, and selects an action.
+After the reward arrives, it updates the frozen rank-one statistics.  This
+order is why confidence can use collection-time queries even though the score
+uses current queries.  It also prevents a selected-action solver refinement
+from changing the theorem's score without rechecking the selection guarantee.
 
 \begin{assumption}[Reference confidence and operational certificates]
 \label{asm:abstract-transport}
@@ -213,11 +226,15 @@ finite maxima and intersections.  A fixed finite action set is the immediate
 special case.
 \end{corollary}
 
-The headline theorem contains no optimizer residual, CG-specific quantity, or
-dynamic-width complexity.  Its price is explicit: closing through the frozen
-potential requires the lower operator factor $\kappa_{-,t}$.  The previous
-one-sided theorem remains useful when that factor is unavailable and is retained
-in \Cref{app:one-sided-fallback}.
+The theorem separates validity from usefulness.  Reference confidence and the
+all-domain upper width make the score optimistic.  The reverse metric and
+operator comparisons, together with played-action sharpness, return the
+selected width to the frozen potential and produce the closed regret bound.
+Large $\bar D_t$, a small $\kappa_{-,t}$, loose solver sharpness, persistent
+bias, or oracle error can still make that bound uninformative.  No optimizer
+residual, CG-specific formula, or dynamic-width complexity appears in the
+headline result.  When a lower operator factor is unavailable, the one-sided
+dynamic theorem in \Cref{app:one-sided-fallback} remains the applicable fallback.
 
 \begin{algorithm}[t]
 \caption{Corrected-center specialization of transported UCB}\label{alg:transported-ucb}
@@ -231,6 +248,16 @@ in \Cref{app:one-sided-fallback}.
 \STATE Observe the reward; update the frozen ridge estimator and \eqref{eq:reference-update-new}.
 \end{algorithmic}
 \end{algorithm}
+
+Algorithm~\ref{alg:transported-ucb} specifies interfaces rather than a single
+linear algebra implementation.  Exact Cholesky solves satisfy the solver
+interface directly.  Matrix-free CG instead holds one SPD operator fixed and
+uses curvature--vector products to solve each action system; a residual or
+energy argument must certify the returned widths.  Replacing the operator by a
+window, subsample, or sketch is a separate approximation and requires its own
+operator comparison.  The controlled experiment in
+\Cref{sec:transport-instantiation} uses dense exact-current matrices and
+Cholesky solves, so it does not evaluate these approximate or matrix-free paths.
 
 \section{Logarithmic transport for relinearized curvature}
 \label{sec:logarithmic-transport}
@@ -393,8 +420,11 @@ a likelihood confidence sequence or an exponential-family regret theorem.
 \section{Corrected-center squared-loss specialization}
 \label{sec:corrected-center}
 
-We now construct \eqref{eq:abstract-confidence-new} without assuming that the
-representation parameter minimizes a nonlinear loss.  Let $\sigma>0$ and let
+We next instantiate the reference-confidence interface.  The corrected center
+keeps statistical estimation in the predictable collection-time features while
+using the current nonlinear prediction as its anchor.  The resulting identity
+does not assume that the representation parameter minimizes a nonlinear loss.
+Let $\sigma>0$ and let
 the reward obey $r_t=\mu_t^*(a_t)+\eta_t$, where, for every $u\in\R$,
 \begin{equation}\label{eq:new-noise-condition}
  \mathbb E[\exp(u\eta_t)\mid\cHist_t]

@@ -1,6 +1,14 @@
 \section{Proofs for confidence transport}
 \label{app:transport-proofs}
 
+The proofs follow the same interfaces as the main theorem.  We first transport
+quadratic forms across the metric path and the algorithmic operator, then close
+the selected width through the frozen determinant potential.  The
+corrected-center proof is separate: it establishes the reference-confidence
+event that the abstract theorem takes as input.  The final subsections show how
+residual or energy bounds instantiate the solver interface and how randomized
+certificates fit the pre-reward filtration.
+
 \begin{proof}[Proof of \Cref{thm:transported-ucb}]
 \Cref{lem:log-spd-path} and \eqref{eq:path-length-new} imply
 \begin{equation}\label{eq:path-width-proof}
@@ -274,6 +282,11 @@ Repeat the proof of \Cref{thm:transported-ucb} and apply
 \eqref{eq:frozen-potential-proof}.
 \end{proof}
 
+The preceding arguments are exact statements about confidence and SPD metrics.
+We now turn to the numerical interface.  Its role is narrower: certify that the
+width used in the score upper-bounds the exact inverse quadratic form for every
+scored action, while controlling overestimation at the action actually played.
+
 \subsection{A concrete solver certificate}
 
 \begin{lemma}[Inverse-quadratic interval from the original residual]
@@ -365,6 +378,11 @@ Neither \Cref{lem:inverse-quadratic-certificate-new} nor
 verified enclosure.  Literal numerical certification requires interval
 arithmetic, directed rounding with derived norm bounds, or another verified
 residual enclosure.  Float64 point checks remain engineering diagnostics.
+
+Pointwise algebra alone is insufficient when a certificate uses fresh
+randomness or is checked after a provisional action is chosen.  The following
+accounting states when those events are measurable and how their failure
+probabilities combine.
 
 \subsection{Measurability, randomized certificates, and edge cases}
 
