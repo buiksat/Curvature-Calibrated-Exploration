@@ -3055,13 +3055,14 @@ truncation, but does not establish a practical advantage over LO-FI.
 \citet{maddox2021fast} linearize once around a trained network and use implicit
 Jacobian/Fisher products with CG for predictive inference.  Their construction
 is a computational antecedent for matrix-free widths, but the reference
-linearization is fixed rather than replayed online.  Last-layer Laplace fixes
-the backbone \citep{kristiadi2020being}; structured all-layer variants use
-block-diagonal Kronecker, low-rank, or diagonal curvature
-\citep{ritter2018scalable,daxberger2021laplace}.  Those methods organize
-posterior approximation around a MAP solution.  Our concern is instead the
-sequential validity of a UCB score when the current relinearized operator differs
-from the predictable confidence Gram.
+linearization is fixed rather than replayed online.  The Laplace approximation
+places a local Gaussian posterior around a MAP solution with covariance defined
+by inverse curvature \citep{mackay1992practical}.  Last-layer Laplace fixes the
+backbone \citep{kristiadi2020being}; structured all-layer variants use
+Kronecker-factored curvature \citep{ritter2018scalable,martens2015optimizing}
+or low-rank and diagonal approximations \citep{daxberger2021laplace}.  Our
+concern is instead the sequential validity of a UCB score when the current
+relinearized operator differs from the predictable confidence Gram.
 
 \paragraph{Sampling-based full-parameter exploration.}
 Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin}
