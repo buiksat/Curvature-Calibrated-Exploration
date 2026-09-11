@@ -119,3 +119,38 @@ is the missing backslash. This pass leaves the formal algorithm unchanged, as re
 
 The build is provisional because the AISTATS 2027 style and official target-year checklist
 are absent. This is an environment/venue-package limitation, not a compilation failure.
+
+## Third-review bounded corrections, 2026-09-11
+
+Starting commit: `8cbf3b4bf5f0943be84798ef98bbdcea10f9fea4`.
+
+- F1 corrects newly written solver prose to identify the certified width as the square root
+  of the inverse quadratic form. The relevant interface and construction are
+  `eq:solver-interface-new` and `lem:inverse-quadratic-certificate-new`.
+- F2 restores the median declaration in the caption for
+  `tab:transport-instantiation-tightness` without changing its populations or counts.
+- F3a--c add the three missing backslashes in `eq:approx-realizability-new` and
+  `eq:scaled-tanh-constants`. These typesetting defects were already present at `daec199`;
+  they were not introduced by the exposition rewrite.
+
+The earlier byte-identical formal-block statement remains the historical record through
+`8cbf3b4`. This patch is an explicit formal-freeze exception only for the three inherited
+missing-backslash repairs. The changed files are `paper/transport_proofs.tex`,
+`paper/transport_experiment_appendix.tex`, `paper/transport_theory.tex`, `paper/main.tex`,
+and this revision record.
+
+Baseline and candidate builds both ran
+`latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex` with latexmk 4.70b and
+TeX Live 2020. Both exited 0 at 64 pages, with the same five overfull boxes and no undefined
+references, undefined citations, or multiply defined labels. `python3 paper/validate.py`
+passed with 261 labels, 184 resolved reference targets, and 37 cited keys. The required
+`grep -rn '[^\\]qquad' paper/*.tex` check returned no matches. All 64 candidate pages were
+viewed in contact sheets; the four changed locations and their neighboring page breaks were
+also viewed at full-page resolution.
+
+The separately built candidate PDF is
+`/tmp/cce-f3-artifacts.ix1q69/candidate/paper/main.pdf`; build and verification logs are
+under `/tmp/cce-f3-artifacts.ix1q69/`. The tracked `paper/main.pdf` remains unchanged at blob
+`4e977c49213c031111cdddcee03db90afcd17d48`, with SHA-256
+`2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1`.
+No experiment or evidence was regenerated, and nothing was published.
