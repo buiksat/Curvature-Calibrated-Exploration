@@ -21,7 +21,7 @@ the intended theorem interface has
   \kappa_{-,t}=\kappa_{+,t}=1,\qquad
   \xi_t=0.
 \]
-These equalities describe the exact operator, solve, and oracle abstractions.
+These equalities describe the exact operator, solve, and selection abstractions.
 The recorded floating-point checks are diagnostics, not verified numerical
 certificates.
 
@@ -33,13 +33,14 @@ nor generic network width, so trends across targets are not a dose response to
 certificate inflation.  The four policies share contexts and potential-noise tables.
 The primary \emph{transport Hessian} policy uses $\bar D_t^Q$ in the score.  The
 \emph{transport endpoint} policy replaces it by the dense endpoint Thompson
-distance and is only a diagnostic oracle.  The \emph{frozen reference} policy
-uses the frozen width directly.  The \emph{naive current} policy omits transport
-and is intentionally uncertified.  Each policy has its own selected history and
-representation path.  Ten disjoint tuning seeds selected learning rate
-$3\times10^{-4}$ and 20 full-batch steps followed by projection each round by
-preregistered all-action prediction MSE; evaluation seeds never entered that
-selection.
+distance computed from the learner-known matrices $\bVbar_t$ and $\bV_t$ before
+the reward is observed; it is a dense diagnostic comparator.  The \emph{frozen
+reference} policy uses the frozen width directly.  The \emph{naive current}
+policy omits transport and is intentionally uncertified.  Each policy has its
+own selected history and representation path.  Ten disjoint tuning seeds
+selected learning rate $3\times10^{-4}$ and 20 full-batch steps followed by
+projection each round by preregistered all-action prediction MSE; evaluation
+seeds never entered that selection.
 The environment was not filtered after generation.  Within each $T=1000$
 target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality
 gap $0.123$, best-fixed-action regret $180.4$, and online context-free
@@ -66,9 +67,10 @@ enclosures.
     \input{tables/transport_instantiation_validity.tex}}
   \caption{Locked theorem-instantiation audit for the transport-Hessian policy.
   Coverage is run-level simultaneous coverage with exact Clopper--Pearson
-  intervals.  ``Event viol.'' counts theorem-bound violations only when the
-  joint confidence premise holds.  All values come from the full evaluation;
-  smoke and tuning runs are excluded.}
+  intervals.  The two median-maximum columns first maximize within each
+  trajectory, then take the median over 50 runs per cell.  ``Event viol.'' counts
+  theorem-bound violations only when the joint confidence premise holds.  All
+  values come from the full evaluation; smoke and tuning runs are excluded.}
   \label{tab:transport-instantiation-validity}
 \end{table*}
 

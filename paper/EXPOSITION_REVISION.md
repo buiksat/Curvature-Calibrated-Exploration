@@ -14,6 +14,10 @@ This note records the prose-only AISTATS manuscript rewrite based on
   are stated next to the relevant numbers.
 - Reworked related work around where each method fixes its uncertainty features and what
   statistical question it answers.
+- Standardized the editable prose on "diagnostic comparator" for the dense endpoint policy
+  and stated that its endpoint calculation uses learner-known matrices before reward
+  observation. The protected generated tables and figures retain their historical "dense
+  oracle" labels; this note records that legacy wording rather than rewriting those artifacts.
 - Rewrote the abstract and conclusion to state the conditional guarantee and the negative
   empirical findings at their supported strength.
 - Added proof and appendix roadmaps. Generated tables, figures, numerical entries, and
@@ -31,6 +35,9 @@ The title, anonymous author metadata, conference-style fallback, theorem stateme
 assumptions, proofs, algorithms, equations, constants, labels, and bibliography entries are
 unchanged.
 
+The protected tracked `paper/main.pdf` remains the baseline snapshot with SHA-256
+`2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1`.
+
 ## Build record
 
 All builds used TeX Live 2020 and latexmk 4.70b in disposable copies under
@@ -46,7 +53,7 @@ All builds used TeX Live 2020 and latexmk 4.70b in disposable copies under
 
 The appendix begins on page 13 in the revised build versus page 12 in the baseline. The
 total manuscript grows from 63 to 64 pages. Static validation passes with 261 labels, zero
-duplicates, 184 reference targets, zero unresolved references, 35 cited keys, and zero
+duplicates, 184 reference targets, zero unresolved references, 37 cited keys, and zero
 missing bibliography entries.
 
 Every final page was rendered at 150 dpi with Ghostscript and inspected in 16 four-page
@@ -84,7 +91,14 @@ read; no wording was copied.
   setup; quadratic-growth results; SquareCB/FastCB reductions; related work; experiments;
   conclusion.
 
-All eight bibliography keys already existed. No reference was added or modified.
+All eight bibliography entries already existed, and `paper/references.bib` was not modified.
+
+## Citation correction
+
+The related-work reorganization in `360e07f` accidentally dropped
+`mackay1992practical` and `martens2015optimizing`. Commit `43418e1` restored both citations at
+the claims they support. `paper/validate.py` could not detect the loss because it checks that
+present citation keys resolve, not whether citations present in an earlier revision were removed.
 
 ## Deliberately unchanged
 

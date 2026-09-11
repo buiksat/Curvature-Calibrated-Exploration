@@ -251,11 +251,11 @@ dynamic theorem in \Cref{app:one-sided-fallback} remains the applicable fallback
 
 Algorithm~\ref{alg:transported-ucb} specifies interfaces rather than a single
 linear algebra implementation.  Exact Cholesky solves satisfy the solver
-interface directly.  Matrix-free CG instead holds one SPD operator fixed and
-uses curvature--vector products to solve each action system; a residual or
-energy argument must certify the returned widths.  Replacing the operator by a
-window, subsample, or sketch is a separate approximation and requires its own
-operator comparison.  The controlled experiment in
+interface directly in exact arithmetic.  Matrix-free CG instead holds one SPD
+operator fixed and uses curvature--vector products to solve each action system;
+a residual or energy argument must certify the returned widths.  Replacing the
+operator by a window, subsample, or sketch is a separate approximation and
+requires its own operator comparison.  The controlled experiment in
 \Cref{sec:transport-instantiation} uses dense exact-current matrices and
 Cholesky solves, so it does not evaluate these approximate or matrix-free paths.
 

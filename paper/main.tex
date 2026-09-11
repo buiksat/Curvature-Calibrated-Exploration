@@ -401,9 +401,11 @@ predictable path inside the certified region, while historical error, current
 bias, transport, operator distortion, solver accuracy, and approximate score
 maximization remain explicit charges.  The construction reduces to the usual
 LinUCB determinant-potential argument for frozen linear features and exact
-solves.  The near-linear corollary gives a controlled nonlinear rate when the
-abstract smoothness scale grows with the horizon; that scale is not generic
-network width.
+solves.  Under the assumptions of \Cref{cor:global-near-linear-new}, for fixed
+$d$ and fixed problem constants, taking $W=\Omega(T)$ with a sufficiently large
+problem-dependent constant yields
+$R_T=O(d\sqrt T\log T)+O(\sqrt T)$ without requiring $D_t<1$.  Here $W$ is an
+abstract smoothness scale, not generic network width.
 
 The controlled scaled-tanh audit separates formal validity from practical
 usefulness.  All 600 transport-Hessian trajectories retained simultaneous
@@ -433,7 +435,7 @@ low-rank, stale, or sketched operators, empirical validation of the transported
 theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
 residual checks are diagnostics rather than verified numerical certificates.
 The new experiment is a controlled execution and audit, not empirical proof or
-validation of the theorem.  Its endpoint method is a dense diagnostic oracle,
+validation of the theorem.  Its endpoint method is a dense diagnostic comparator,
 and its intentionally naive current-width control is uncertified even where its
 observed optimism rate is high.  Legacy audits are summarized in
 \Cref{app:legacy-evidence}; none instantiates the revised theorem event.
@@ -474,8 +476,9 @@ would obscure the main confidence-transport argument.  It first closes frozen
 information gain by rank or spectral tail, then instantiates observable path
 and centering schedules.  Subsequent sections separate operator approximation,
 solver error, and dynamic-width bookkeeping before returning to the legacy
-one-sided theorem.  Every result remains conditional on the protocol and
-certificate events stated where it is used.
+one-sided theorem.  All results cross-referenced from the main text and deferred
+to the appendix are stated there in full, and remain conditional on the protocol
+and certificate events stated where they are used.
 
 For the sequential frozen-feature Gram, the usual information gain is
 \begin{equation}\label{eq:infogain}
@@ -3016,8 +3019,10 @@ backbone for many neural extensions.  In their stated algorithms, NeuralUCB
 \citep{zhou2020neural} and NeuralTS \citep{zhang2021neural} add a gradient
 feature to the covariance when its observation arrives; they do not replay the
 entire history at each new parameter.  \citet{kassraie2022neural} separate a
-kernelized NTK reference analysis from a trained-network approximation whose
-uncertainty features remain at initialization.  \citet{salgia2023provably}
+kernelized NTK reference from a trained-network mean with initialization-time
+uncertainty features, and prove sublinear regret for the SupNN-UCB variant under
+NTK-RKHS, sufficient-exploration, and network-width assumptions.
+\citet{salgia2023provably}
 control adaptivity through grouped histories and a finite-network-to-NTK
 confidence argument.  \citet{deb2024contextual} take a different route through
 online neural regression and contextual-bandit reductions.  These results do
@@ -3026,13 +3031,14 @@ different questions.  We analyze the additional case in which every historical
 Jacobian is replayed at the current parameter and the resulting operator is
 solved approximately.
 
-Neural-linear methods periodically train a representation and maintain
-Bayesian linear uncertainty in its final-layer features
-\citep{riquelme2018deep,xu2022shallow,bui2025variance}.  Recomputing those
-last-layer representations is not the same as transporting confidence to a
-full-parameter GGN.  Our supplied-subspace result recovers a projected linear
-geometry when such a subspace is fixed in advance, but it does not turn the
-general theorem into a neural-linear analysis.
+The NeuralLinear method maintains Bayesian linear uncertainty in learned
+final-layer features \citep{riquelme2018deep}; the methods of
+\citet{xu2022shallow} and \citet{bui2025variance} instead use UCB-style linear
+exploration over learned deep representations.  Recomputing those last-layer
+representations is not the same as transporting confidence to a full-parameter
+GGN.  Our supplied-subspace result recovers a projected linear geometry when
+such a subspace is fixed in advance, but it does not turn the general theorem
+into a neural-linear analysis.
 
 \paragraph{Online Bayesian and EKF-style neural bandits.}
 \citet{duranmartin2022efficient} apply extended Kalman filter (EKF)
@@ -3058,11 +3064,13 @@ is a computational antecedent for matrix-free widths, but the reference
 linearization is fixed rather than replayed online.  The Laplace approximation
 places a local Gaussian posterior around a MAP solution with covariance defined
 by inverse curvature \citep{mackay1992practical}.  Last-layer Laplace fixes the
-backbone \citep{kristiadi2020being}; structured all-layer variants use
-Kronecker-factored curvature \citep{ritter2018scalable,martens2015optimizing}
-or low-rank and diagonal approximations \citep{daxberger2021laplace}.  Our
-concern is instead the sequential validity of a UCB score when the current
-relinearized operator differs from the predictable confidence Gram.
+backbone, omitting backbone-weight uncertainty by construction
+\citep{kristiadi2020being}.  \citet{daxberger2021laplace} systematize all-weight,
+subnetwork, and last-layer variants with full, low-rank, Kronecker-factored, or
+diagonal curvature; structured all-layer variants use Kronecker-factored
+curvature \citep{ritter2018scalable,martens2015optimizing}.  Our concern is
+instead the sequential validity of a UCB score when the current relinearized
+operator differs from the predictable confidence Gram.
 
 \paragraph{Sampling-based full-parameter exploration.}
 Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin}
