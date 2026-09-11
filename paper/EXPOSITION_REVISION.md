@@ -154,3 +154,41 @@ under `/tmp/cce-f3-artifacts.ix1q69/`. The tracked `paper/main.pdf` remains unch
 `4e977c49213c031111cdddcee03db90afcd17d48`, with SHA-256
 `2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1`.
 No experiment or evidence was regenerated, and nothing was published.
+
+## Fourth-review bounded corrections
+
+Reviewed SHA and execution START: `44aab62d7370c874a1ae485bb63ba811cb3fc658`.
+
+- R4-F1 corrects the legacy centering description: `asm:optim` compares the current
+  parameter with the auxiliary frozen-feature ridge estimator through an action-projected
+  discrepancy. It is not a global nonlinear optimization certificate.
+- R4-F2 states that restricted fine-tuning or a trust region can limit Taylor error but does
+  not by itself establish $E_T=o(T)$. An exactly linear head on a frozen backbone has zero
+  Taylor remainder; other cases need an explicit cumulative-error bound.
+- R4-F3 removes the unmatched parenthesis from the categorical-curvature expression in
+  `app:expfam`.
+
+All three defects were already present at `daec199`; none was introduced by the exposition
+rewrite or by `44aab62`. The R4-F2 prose replacement inside `asm:linear` and the one-character
+R4-F3 inline-math repair are explicit exceptions to source-byte preservation. Earlier
+preservation reports remain historical records for their stated revisions.
+
+The changed files are `paper/legacy_dynamic.tex`, `paper/main.tex`, and this revision record.
+Baseline and candidate builds both ran
+`latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex` with latexmk 4.70b and
+TeX Live 2020. Both exited 0 at 64 pages, with the same five overfull boxes and no undefined
+references, undefined citations, or multiply defined labels. Baseline and candidate
+`python3 paper/validate.py` runs passed with 261 labels, 184 resolved reference targets, and
+37 cited keys. The whole-file expected-transform check passed for both edited TeX files;
+labels and citations are unchanged, and the only changed formal block is `asm:linear`.
+
+Ghostscript rendered all 64 candidate pages. All 16 contact sheets were viewed, followed by
+full-page inspection of the edits on pages 18, 27, and 58 and their neighboring pages. No
+clipping, overlap, malformed math, or new page-break problem was found. The separately built
+candidate PDF is `/tmp/cce-r4-artifacts.kONmej/candidate/paper/main.pdf`; logs and verification
+artifacts are under `/tmp/cce-r4-artifacts.kONmej/`.
+
+The tracked `paper/main.pdf` and `paper/main.pdf.sha256` remain unchanged, as do the
+bibliography, generated tables and figures, evidence, results, review bundles, and CODE
+submission. The final remote check was deferred after the required fetch attempt returned
+403. No experiment, unrelated CI, push, PR, synchronization to `main`, or publication ran.

@@ -77,8 +77,10 @@ $\nabla\cL_t$ replays $N_t$ observations even when $m_t\ll N_t$.
 In convex settings (e.g.\ a frozen backbone with a linear head), under exact
 optimization this coincides with the global minimizer; in nonconvex settings $\btheta_t$
 may be a local minimizer or approximate stationary point.
-The gap between $\btheta_t$ and an idealized global minimizer is absorbed
-by the action-scaled centering certificate (\Cref{asm:optim}).
+The action-scaled centering certificate (\Cref{asm:optim}) controls the
+action-projected discrepancy between $\btheta_t$ and the auxiliary
+frozen-feature ridge estimator $\hat\btheta_t^{\mathrm{lin}}$.  It does
+not certify convergence to a global minimizer of the nonlinear objective.
 
 \paragraph{Gradient features and curvature matrices.}
 Define the \emph{gradient feature} (Jacobian of the mean reward) at the

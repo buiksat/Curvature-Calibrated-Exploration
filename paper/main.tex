@@ -722,9 +722,10 @@ $\epslin(t)=O(1/t^2)$ and $\sum t^{-2}<\infty$;
 achievable in convex or strongly convex regimes),
 and $E_T=O(\sqrt{T})$ when
 $\|\btheta^*{-}\btheta_t\|=O(t^{-1/4})$.
-In practice this is enforced by restricting fine-tuning depth,
-	using trust-region updates, or freezing the backbone (which renders the
-	last-layer model convex or near-linear with small~$L_\mu$).
+Restricting fine-tuning or using a trust region can limit Taylor error,
+but does not by itself establish $E_T=o(T)$.  A frozen backbone with an
+exactly linear head has zero Taylor remainder; other cases require an
+explicit cumulative-error bound.
 These rate examples are illustrative only.  The present paper does not
 prove convergence of the nonconvex optimization path
 $\{\btheta_t\}$ to~$\btheta^*$; a sublinear guarantee from this bound therefore
@@ -4020,7 +4021,7 @@ $\nabla^2 A(z)$ is the output-space Hessian of the log-partition
 function.
 For Bernoulli rewards $\nabla^2 A(z)=p(1{-}p)$ (scalar);
 for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
--\mathbf{p}\mathbf{p}^\top)$.
+-\mathbf{p}\mathbf{p}^\top$.
 Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
 Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 
