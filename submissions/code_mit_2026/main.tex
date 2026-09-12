@@ -43,17 +43,16 @@ were collected. We give a finite-action confidence-transfer result
 under explicit pre-reward metric and solver certificates, yielding
 reward optimism and a regret bound on their joint validity event.
 Under fixed-reference and approximation-envelope assumptions, a
-corrected center supplies confidence without nonlinear optimizer
-convergence. A nearly linear 29-parameter simulation passes the primary-policy
-float64 confidence and optimism diagnostics, yet the evaluated bound
-is vacuous. Within each primary-horizon
-condition, enabling the analytic transport multiplier increases sample
-mean pseudo-regret relative to omitting it in an otherwise matched policy.
+corrected center supplies confidence without nonlinear optimizer convergence.
+In a nearly linear 29-parameter audit, all primary-policy float64 confidence
+and optimism diagnostics pass, yet the evaluated bound is vacuous and the
+multiplier policy has higher sample-mean pseudo-regret than its omission
+within each primary-horizon condition.
 \end{abstract}
 \vspace{-0.4em}
 
 \section{Adaptive model updates and confidence transport}
-An allocation policy might retrain an outcome model in batches, then use predicted rewards and uncertainty to choose an ad or ranking action. Learned reward models also appear in neural contextual bandits \cite{zhou2020neural,riquelme2018deep}. Recomputing past sensitivities changes the Gram matrix. Collection-time confidence alone gives no upper bound using the recomputed matrix: an inverse-metric comparison for the current query is missing.
+Adaptive allocation may retrain a reward model, then select an ad or ranking action from predicted rewards and uncertainty; related neural-bandit methods use learned representations \cite{zhou2020neural,riquelme2018deep}. Retraining changes replayed sensitivities and the Gram matrix. Collection-time confidence does not directly bound scores in the recomputed metric.
 
 At round $t\le T$, observe $x_t$, choose $a_t$ from a fixed finite
 nonempty set $\mathcal A$, then observe $r_t$; the confidence target is
@@ -131,10 +130,16 @@ If $\Pr(E_{\rm conf})\ge1-\delta$ and
 $\Pr(E_{\rm cert})\ge1-\delta_{\rm cert}$, these conclusions hold
 with probability at least $1-\delta-\delta_{\rm cert}$.
 \end{theorem}
-Thompson geometry supplies endpoint and path-length constructions for
-the first comparison in \eqref{eq:certificates}
-\cite{nussbaum1994finsler}; Section~2 supplies
-\eqref{eq:refconf} without optimizer convergence.
+\emph{Proof sketch.} On the joint event, reference confidence, the inverse
+forms of \eqref{eq:certificates}, and all-action solver upper validity make
+the score optimistic. Approximate maximization, lower confidence at the played
+action, the reverse comparisons, and played-action sharpness give the
+roundwise coefficient in \eqref{eq:regret}. Summation, Cauchy--Schwarz,
+and the frozen rank-one potential bound
+$\sum_t\bar s_t(a_t)^2\le(\sigma^2+G^2/\lambda)\gamma_T$
+yield the result. Thompson geometry supplies endpoint and path-length
+constructions for the first sandwich \cite{nussbaum1994finsler}; Section~2
+supplies \eqref{eq:refconf} without optimizer convergence.
 
 \section{A corrected center without optimizer convergence}
 Use a differentiable model mean $\mu_\theta(x,a)$ in fixed parameter coordinates $\theta\in\Theta\subseteq\R^d$, with $\Theta$ a convex smoothness region. For $z=(x,a)$, define $q_\theta(z)=\nabla_\theta\mu_\theta(z)$, $q_t(a)=q_{\theta_t}(x_t,a)$, $z_s=(x_s,a_s)$, and $q_s:=q_{\theta_s}(x_s,a_s)$. The representation path $\theta_t\in\Theta$ is predictable. Fix before data collection $\theta^\circ\in\Theta$, $\|\theta^\circ\|_2\le S$, with $\mu_t^*(a)=\mu^*(x_t,a)$ and $\mu^*(z)=\mu_{\theta^\circ}(z)+m^\circ(z)$. Observed rewards obey $r_t=\mu_t^*(a_t)+\eta_t$ and $\mathbb E[e^{u\eta_t}\mid\mathcal H_t]\le e^{u^2\sigma^2/2}$ for every real $u$.
@@ -170,7 +175,7 @@ at zero; at $T=1000$, the bound $1/(3W)$ ranges from
 $1.375\times10^{-7}$ to $8.798\times10^{-6}$ across the four conditions.
 Here $L_g$ bounds the operator norm of the mean Hessian along replay segments. $D_{\rm target}$ equals $D_{Q,T}$ when every replay displacement is maximal ($2R$). Four policies, three separately run horizons, four targets, and 50 evaluation seeds give 2,400 trajectories. Ten disjoint tuning seeds selected shared optimizer settings by mean squared prediction error. Policies share contexts and per-action noise draws; their histories diverge. All use dense float64 Cholesky solves and exact argmax over the five actions, with failure level $\delta=0.05$. The exact-arithmetic primary instantiation has $C_t=V_t$, $\kappa_{-,t}=\kappa_{+,t}=\alpha_t=1$, and $\xi_t=0$.
 
-The transport-endpoint policy uses
+The transport-endpoint policy is a dense endpoint-certificate comparator. It uses
 $d_{{\rm Th},t}=\max_i|\log\lambda_i(V_t,\Vbar_t)|$, with
 $\lambda_i$ the generalized eigenvalues of $(V_t,\Vbar_t)$:
 the smallest common exponent for the first symmetric sandwich in
@@ -217,10 +222,10 @@ differing action, and the contrast is descriptive:
 $D_{\rm target}$ also changes $W$, so it is not a dose response. In each of the 12 horizon-target cells, 50/50 primary trajectories passed both all-action, all-round reference-confidence and optimism diagnostics, with cellwise exact 95\% Clopper-Pearson interval $[92.9\%,100\%]$. Base seeds are reused across cells. These tolerance-based float64 checks and quadrature values are diagnostics, not verified enclosures. Across the 12 primary cells, medians of per-trajectory ratios of the numerical right-hand side (RHS) of \eqref{eq:regret} to pseudo-regret range from $126.7$ to $155.7$. Every primary trajectory's terminal RHS exceeds the $2T$ pseudo-regret cap from $|\mu^*(z)|\le1$.
 
 \section{Implications for adaptive experimentation}
-The theorem gives optimism and a regret bound on the joint confidence
-and certificate event; certificate validity alone does not ensure useful
-allocation. In this nearly linear simulation the analytic multiplier
-raised sample mean pseudo-regret within each primary-horizon condition.
+On the joint confidence-and-certificate event, the theorem gives optimism and
+a regret bound, but valid certificates need not improve allocation: in this
+nearly linear simulation, the analytic multiplier accompanies higher sample-mean
+pseudo-regret than its omission within each primary-horizon condition.
 The audit does not establish a uniform policy ordering or treatment-effect
 inference after adaptive assignment.
 
