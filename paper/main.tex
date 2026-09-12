@@ -227,8 +227,8 @@ centering schedule is
  +\frac{3}{2}GL_gQ_t+\frac{1}{2}L_g^2Q_t^{3/2}\Bigr].
 \end{aligned}
 \end{equation}
-For a known radius-$R$ trust region, the final numerator term improves to
-$L_g^2RQ_t$.  Finally, for an $L_\mu$-Lipschitz prediction gradient define
+For a known radius-$R$ trust region, the final numerator term may instead
+be bounded by $L_g^2RQ_t$.  Finally, for an $L_\mu$-Lipschitz prediction gradient define
 $\bar\epsilon_t^{\rm lin}=\frac{L_\mu}{2}(S+\|\btheta_t\|)^2$,
 $\bar F_t=\sum_{s<t}(\bar\epsilon_s^{\rm lin})^2$, and
 \begin{equation}\label{eq:operational-beta-main}
@@ -2660,7 +2660,7 @@ Since $\bCbar_t \succeq \Phi\Phi^\top$, we have
 $\Phi^\top\bCbar_t^{-1}\Phi \preceq \bI$, so
 $\|\Phi\hat\rho\|_{\bCbar_t^{-1}}
 = \|\hat\rho\|_{\Phi^\top\bCbar_t^{-1}\Phi}
-\le \|\hat\rho\| = \sqrt{F_t}$.
+\le \|\hat\rho\| \le \sqrt{F_t}$.
 Therefore
 $|\bg_t(a)^\top\bCbar_t^{-1}\sigma^{-1}\Phi\hat\rho|
 \le \bar s_t(a)\sigma^{-1}\sqrt{F_t}$.
@@ -3410,7 +3410,8 @@ When the action set $\cA_t$ is large, computing the CG solve for every
 action is prohibitive ($|\cA_t|\times I$ CG steps per round).
 A practical heuristic is to screen the top-$K$ actions by mean prediction
 $\widehat\mu_t(a)$ (forward passes only), then compute UCB widths for the $K$
-candidates.  This reduces cost to $K\times I$ CG solves.
+candidates.  This reduces the width computation to $K$ CG solves, or $KI$
+iterations under a common iteration budget $I$.
 \emph{The regret guarantee in \Cref{thm:regret} analyzes full enumeration of
 all $K_t$ active candidate indices; screening can drop the optimal arm
 and is not covered by the theory unless one adds an assumption that
@@ -3864,8 +3865,9 @@ $\bar\varepsilon_t$) gives the per-solve budget
 which, applied to every scored action, ensures
 $\max_a\varepsilon_{t,a}\le\epsCGbar=\bar\varepsilon_t$.
 For $W_t=n$ (unrescaled fixed buffer size),
-$\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$,
-so $I_{\min}$ is constant.
+$\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$.
+For a fixed target tolerance $\bar\varepsilon_t\equiv\bar\varepsilon\in(0,1)$,
+the displayed sufficient budget is therefore bounded independently of~$T$.
 For full history, and for rescaled uniform subsampling with
 $w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so the condition-number \emph{bound}
 $\bar\kappa_t=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and the worst-case

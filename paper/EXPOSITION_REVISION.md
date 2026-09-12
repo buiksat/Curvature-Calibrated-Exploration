@@ -192,3 +192,48 @@ The tracked `paper/main.pdf` and `paper/main.pdf.sha256` remain unchanged, as do
 bibliography, generated tables and figures, evidence, results, review bundles, and CODE
 submission. The final remote check was deferred after the required fetch attempt returned
 403. No experiment, unrelated CI, push, PR, synchronization to `main`, or publication ran.
+
+## Fifth-review bounded corrections
+
+Reviewed SHA and execution START: `6e0d4c62d9959960c7a927607cf7d724dcb6cff9`.
+
+- R5-F1 changes the final linearization-bias relation in the proof of `lem:confidence` from
+  equality to an upper bound: the realized remainder norm is at most the actionwise envelope
+  sum $\sqrt{F_t}$.
+- R5-F2 limits the constant CG-budget statement to a fixed target tolerance as well as a
+  fixed unrescaled buffer size.
+- R5-F3 describes $L_g^2RQ_t$ as an alternative trust-region bound, not a uniform
+  improvement over the cubic expression.
+- R5-F4 distinguishes $K$ CG solves from $KI$ iterations under a common per-solve budget.
+
+All four defects were already present at `daec199`; none was introduced by the exposition
+rewrite or later correction rounds. R5-F1 is an explicit one-relation exception to the proof
+byte freeze. No theorem statement, confidence radius, constant, equation, algorithm, label,
+citation, or empirical result changed. This bounded task did not audit the full legacy proof
+or complexity analysis.
+
+The authoritative `check_r5_source.py` passed in both `--apply` and `--verify` modes against
+START. It produced candidate `main.tex` SHA-256
+`e9d69e1cf4c89bc1a7edff71de8f40a09adbede21153d4ba202b515cf6e9758a`.
+The supplemental preservation check found 178 formal blocks with one intentional difference,
+the proof of `lem:confidence`; all 155 equation/align environments, three algorithms, 261
+labels, and 63 citation occurrences remain unchanged.
+
+Baseline and candidate builds both ran
+`latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex` with latexmk 4.70b and
+TeX Live 2020. Both exited 0 at 64 pages. Each final log has five overfull hboxes, ten
+underfull hboxes, four underfull vboxes, and no undefined references, undefined citations, or
+multiply defined labels. Baseline and candidate `python3 paper/validate.py` runs passed with
+261 labels, 184 resolved reference targets, and 37 cited keys.
+
+Ghostscript rendered all 64 candidate pages. All 16 contact sheets were viewed, followed by
+full-page inspection of the edits on pages 23, 45, 53, and 57 and their neighboring pages. No
+clipping, overlap, malformed math, or new page-break problem was found. The separately built
+candidate PDF is `/tmp/cce-r5-artifacts.h7Sbrl/candidate/paper/main.pdf`; logs and verification
+artifacts are under `/tmp/cce-r5-artifacts.h7Sbrl/`.
+
+Only `paper/main.tex` and this revision record change. The tracked `paper/main.pdf`, its
+sidecar, bibliography, generated tables and figures, evidence, results, review bundles, and
+CODE submission remain unchanged. The closing remote fetch was deferred after the required
+initial fetch returned 403. No experiment, evidence regeneration, push, PR, Overleaf update,
+release, or publication ran.
