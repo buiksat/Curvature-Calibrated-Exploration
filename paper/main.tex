@@ -86,50 +86,59 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-Relinearized generalized Gauss--Newton and Fisher metrics use current model
-Jacobians, while bandit confidence sequences are naturally built from
-features fixed before their corresponding rewards.  We study when confidence can be
-transported between these geometries.  We instantiate the classical Thompson
-Finsler path length on positive-definite metrics as an operational bandit
-certificate, obtaining a two-sided exponential comparison without a small-drift
-assumption or fixed tangent subspace.  Combining this comparison with a
-two-sided approximate-operator certificate yields an estimator-agnostic,
-solver-agnostic UCB theorem for general standard-Borel action spaces under
-explicit measurable-supremum and measurable-selector assumptions.  Its regret
-closes through the sequential frozen information gain rather than an
-uncontrolled dynamic-width term.  For differentiable squared-loss models, a
-corrected center permits any prefix-measurable representation path: no nonlinear
-optimizer certificate is needed.
-The construction also permits explicit historical and current
-misspecification envelopes and recovers the standard finite-dimensional LinUCB
-rate in the frozen linear exact-solve limit.  The result is conditional on
-valid supplied pre-reward path, operator, confidence, and solver certificates;
-it is not a guarantee for unrestricted neural training, a complete
-exponential-family theorem, or verified floating-point certification.
-A locked finite-dimensional scaled-tanh audit records no deterministic failure
-and simultaneous confidence and optimism in all 600 primary-policy runs, but
-also finds a highly conservative Hessian path certificate and a cumulative
-bound more than 126 times realized regret in every reported median.
+Contextual-bandit confidence is naturally built from gradient features fixed
+when rewards are collected, whereas a retrained model may score actions with a
+current relinearized generalized Gauss--Newton or Fisher metric.  We study when
+the former can justify the latter.  A Thompson--Finsler path certificate
+transports frozen confidence to current curvature; two-sided operator bounds and
+a certified solver width then connect that metric to the numerical score used
+for action selection.  The resulting conditional UCB theorem closes regret
+through frozen sequential information gain and allows measurable approximate
+selection on standard-Borel action spaces.  For differentiable squared-loss
+models, a corrected center establishes the reference-confidence event for any
+predictable parameter path in a certified region, without a nonlinear optimizer
+convergence assumption.  Historical and current approximation errors remain
+explicit in the bound.  A locked 29-parameter scaled-tanh audit records
+simultaneous float64 confidence and optimism in all 600 transport-Hessian runs
+and no deterministic audit failure.  It also finds that the analytic path
+certificate is highly conservative, every reported numerical regret bound is
+vacuous relative to the deterministic cap, and all three comparison policies
+have lower sample mean regret at the primary horizon.  The theory is conditional
+on valid pre-reward confidence, path, operator, and solver certificates; the
+experiment is a controlled audit rather than evidence of a general curvature
+advantage.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
-A differentiable contextual-bandit model supplies a current prediction query,
-typically a Jacobian
-$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$.  The corresponding current
-GGN or Fisher width is geometrically natural for action selection.  Statistical
-confidence, however, is built from the queries fixed before the corresponding
-past rewards were observed.  Relinearizing every replay item at $\btheta_t$ changes
-all summands at once and destroys the sequential rank-one update behind the
-usual self-normalized argument.  This mismatch appears in neural UCB,
-neural-linear, and Laplace-style exploration
-\citep{zhou2020neural,riquelme2018deep,ritter2018scalable,daxberger2021laplace}.
+At each round, a contextual-bandit policy predicts the reward of every available
+action, adds an uncertainty bonus, and chooses from the resulting scores.  For a
+fixed linear representation, the same feature vectors support both the
+statistical confidence argument and the widths used for action selection.  A
+retrained nonlinear model breaks this identification.  The query used at round
+$s$ was $\bq_s(a_s)=\nabla_\theta\mu_{\btheta_s}(x_s,a_s)$, fixed before
+observing $r_s$, whereas a policy that replays the same sample at round $t$ uses
+$\nabla_\theta\mu_{\btheta_t}(x_s,a_s)$.  Updating $\btheta_t$ changes every
+replayed Jacobian at once, so the current relinearized Gram no longer has the
+predictable rank-one recursion required by the usual self-normalized argument.
 
-The central question is not whether one curvature approximation is uniformly
-better.  It is when a confidence statement in the predictable frozen metric can
-be transported to a current relinearized metric, and then to the operator and
-linear solver used by the policy.  The required chain is
+Existing neural-bandit methods avoid or absorb this mismatch in different ways.
+NeuralUCB and NeuralTS accumulate gradient features when observations arrive
+\citep{zhou2020neural,zhang2021neural}; NTK methods can keep the uncertainty
+features at initialization \citep{kassraie2022neural}; and neural-linear methods
+place exact linear uncertainty on a learned last-layer representation
+\citep{riquelme2018deep}.  Fixed-reference network linearizations and post-hoc
+Laplace approximations provide related predictive-uncertainty tools
+\citep{maddox2021fast,daxberger2021laplace}, but they do not answer the online
+question studied here: when can confidence built from collection-time features
+justify scores computed with current replayed curvature?
+
+Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
+sequential statistical confidence.  The exact current metric $\bV_t$ replays
+past observations at the current parameter.  The algorithm applies an SPD
+operator $\Calg_t$, which may approximate $\bV_t$.  Finally, an inexact solver
+returns a numerical upper width $\hat s_t(a)$.  The analysis certifies the chain
 \[
  \begin{aligned}
   \text{reference confidence}&\ \longrightarrow\ \text{current metric},\\
@@ -137,74 +146,57 @@ linear solver used by the policy.  The required chain is
   \text{algorithmic operator}&\ \longrightarrow\ \text{certified score}.
  \end{aligned}
 \]
-Each arrow needs its own operational certificate.
+Each arrow has a separate obligation.  A Thompson--Finsler path length controls
+the first arrow through a two-sided exponential Loewner sandwich
+\citep{thompson1963certain,nussbaum1994finsler}.  A second two-sided comparison
+accounts for replacing $\bV_t$ by $\Calg_t$.  Solver certification then provides
+an upper-valid width for every scored action and a sharpness factor only for the
+action actually played.  The lower operator comparison is needed to return the
+played width to the frozen sequential potential.  If only a one-sided comparison
+is available, the retained dynamic-width theorem still applies, but the headline
+closed bound does not.
 
-Our primary transport quantity is the integrated normalized speed of an SPD
-path.  For a path $V(\tau)$ it is
-$\int_0^1\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}d\tau$, the Finsler path length
-associated with the classical Thompson metric on the positive-definite cone
-\citep{thompson1963certain,nussbaum1994finsler}.  Differentiating
-$\log(v^\top V(\tau)v)$ for a fixed vector gives the corresponding exponential
-Loewner sandwich for every finite selected-path length.  Unlike the previous
-additive endpoint argument, this use does not require a smallness condition.  A
-rectangular factor-path bound covers relinearized scalar GGN factors and,
-conditionally on an absolutely continuous output-weight factor, vector-output
-Fisher geometry.  We do not claim the underlying Thompson geometry or the
-path-to-Loewner inequality as new.
+For squared loss, the main statistical construction is a corrected prediction
+center.  It combines the current nonlinear prediction with a ridge correction
+computed from collection-time features.  This identity holds for any predictable
+parameter path inside the certified region, so the confidence proof does not
+require the nonlinear optimizer to converge.  Historical Taylor and
+misspecification errors enter the radius through an explicit energy, while
+current errors enter additively.  These terms remain genuine costs: persistent
+misspecification can make the guarantee linear or vacuous.
 
-The transported-UCB theorem is abstract at the confidence and solver
-interfaces.  It permits a standard-Borel action space with a graph-measurable
-random action correspondence, finite measurable reward and score suprema, and a
-pre-reward measurable approximate selector.  It also permits a generic
-pre-reward center, action-dependent model bias, a certified upper width over the
-score domain, and solver sharpness only at the played action.  A two-sided
-algorithmic-operator comparison then transports the selected width back to the
-sequential frozen potential.  This lower comparison is essential.  When only a
-one-sided operator certificate is available, the previous dynamic-width theorem
-remains valid but does not give the new closed guarantee.
+One decision round now has a concrete order.  Before the reward is observed, the
+learner forms the current query and corrected center, constructs or receives
+$\Calg_t$, certifies transport and operator distortion, computes one upper-valid
+width map over the score domain, and selects an action.  Only then does it observe
+the reward and update the frozen statistics and model.  Matrix-free CG can apply
+a fixed SPD operator through curvature--vector products instead of forming its
+inverse.  This separates solve approximation from operator approximation.  It
+does not make total policy memory $O(d)$, because the corrected center still
+needs frozen-feature access or a separately certified representation.
 
-For differentiable squared-loss models, we make the corrected center primary.
-It combines the current nonlinear prediction with a frozen-feature ridge
-correction.  The resulting identity holds for any predictable representation
-sequence in the certified region, not only an ERM or approximate stationary
-point.  Historical linearization and misspecification enter the confidence
-radius through an explicit energy; current errors enter additively.  Constant
-nonvanishing misspecification can still make regret linear.
-
-\paragraph{Contributions.}
-\textbf{(1)} An operational instantiation of classical Thompson Finsler geometry
-for moving, relinearized curvature, together with factor-path and Hessian
-certificates that allow arbitrary gradient rotation and require no small-drift premise
-(\Cref{lem:log-spd-path,lem:factor-spd-path,cor:hessian-path-new}).
-\textbf{(2)} A transported-UCB regret theorem with generic pre-reward centers,
-measurable approximate score maximization, generic certified solver widths,
-two-sided approximate operators, and a closed frozen-potential bound
-(\Cref{thm:transported-ucb}).
-\textbf{(3)} A corrected-center squared-loss specialization with approximate
-realizability, a primitive finite-dimensional rate, and a global near-linearity
-corollary that retains exponential transport without a small-drift assumption.
-The result reduces to LinUCB in the frozen linear exact-solve case
+\paragraph{What we establish.}
+The transported-UCB theorem composes reference confidence, metric transport,
+operator distortion, solver error, and approximate score maximization, then
+closes regret through frozen information gain
+(\Cref{thm:transported-ucb}).  Factor-path and prediction-Hessian certificates
+make the metric comparison operational without a small-drift premise
+(\Cref{lem:factor-spd-path,cor:hessian-path-new}), and the corrected-center
+specialization yields finite-dimensional and near-linear rates without an
+optimizer certificate
 (\Cref{cor:corrected-center-new,cor:finite-d-rate-new,%
-cor:global-near-linear-new}).
-\textbf{(4)} A locked controlled experiment that executes the corrected-center
-score with dense current and frozen metrics, audits every theorem input in
-float64, and measures confidence coverage, path-certificate conservatism, and
-bound nonvacuity (\Cref{sec:transport-instantiation}).
+cor:global-near-linear-new}).  The novelty lies in this composition for current
+replayed curvature, not in Thompson geometry, CG, or the generic UCB reduction.
 
-The new contribution is the composition of predictable frozen statistical
-confidence; a current relinearized GGN or Fisher metric; factor-path and Hessian
-certificates tailored to replayed curvature; a two-sided approximate operator;
-generic certified solver widths; approximate score maximization; closure through
-the frozen sequential information gain; and a corrected-center squared-loss
-specialization.  Each component has antecedents.  Their operational composition
-for relinearized contextual-bandit curvature is the result claimed here.
-
-The contribution is the confidence transport and its contextual-bandit
-instantiation, not generic conjugate gradients, a generic UCB-to-regret
-reduction, or uniform superiority of full curvature.  The new controlled audit
-is reported in \Cref{sec:transport-instantiation}.  Earlier numerical work is
-scoped separately in \Cref{app:legacy-evidence}; it does not instantiate the new
-path and two-sided-operator premises.
+The locked experiment tests the resulting interfaces in a 29-parameter
+scaled-tanh model with dense current and frozen matrices and exact Cholesky
+solves.  It is a controlled transport-policy audit, not an approximate-operator
+or CG benchmark.  All declared float64 confidence and optimism diagnostics
+pass, but the analytic path envelope is highly conservative, the numerical
+regret bound is vacuous, and all three comparison policies have lower sample
+mean regret in the reported primary-horizon conditions
+(\Cref{sec:transport-instantiation}).  Earlier diagnostics are retained only at
+their historical scope in \Cref{app:legacy-evidence}.
 \input{transport_theory}
 \input{transport_experiment}
 \newcommand{\deferredConditionalRates}{%
@@ -235,8 +227,8 @@ centering schedule is
  +\frac{3}{2}GL_gQ_t+\frac{1}{2}L_g^2Q_t^{3/2}\Bigr].
 \end{aligned}
 \end{equation}
-For a known radius-$R$ trust region, the final numerator term improves to
-$L_g^2RQ_t$.  Finally, for an $L_\mu$-Lipschitz prediction gradient define
+For a known radius-$R$ trust region, the final numerator term may instead
+be bounded by $L_g^2RQ_t$.  Finally, for an $L_\mu$-Lipschitz prediction gradient define
 $\bar\epsilon_t^{\rm lin}=\frac{L_\mu}{2}(S+\|\btheta_t\|)^2$,
 $\bar F_t=\sum_{s<t}(\bar\epsilon_s^{\rm lin})^2$, and
 \begin{equation}\label{eq:operational-beta-main}
@@ -394,36 +386,36 @@ or a lower bound.  When $U$ is supplied, the projected Gram in
 % [standalone Related Work relocated to \Cref{app:deferred}]
 \section{Conclusion}\label{sec:conclusion}
 
-Relinearized exploration can be analyzed without identifying the current metric
-with the predictable confidence metric.  Classical Thompson Finsler geometry
-gives a two-sided transport certificate for every finite selected-path length,
-and the transported-UCB theorem composes it with approximate operators, generic
-solver upper widths, and approximate score maximization.  A lower operator certificate
-is what closes the selected width through the sequential frozen potential; the
-one-sided dynamic theorem remains the appropriate fallback when that premise is
-unavailable.
+Confidence built from collection-time features can justify a score based on
+current relinearized curvature, but only through an explicit chain of
+certificates.  The metric path controls frozen-to-current drift, the two-sided
+operator comparison controls the curvature actually applied, and the solver
+interface controls the numerical width used for selection.  The lower operator
+factor is what returns the played width to the frozen sequential potential.  If
+that factor is unavailable, the one-sided dynamic result remains valid but does
+not supply the same closed rate.
 
-The corrected center removes nonlinear optimizer convergence from the concrete
-squared-loss confidence proof.  Representation learning may follow any
-predictable path inside the certified region.  The remaining obligations are
-visible rather than implicit: historical and current approximation error,
-metric path length, two-sided operator distortion, solver validity, and score
-oracle accuracy.  In the frozen linear exact-solve limit these terms reduce to
-the usual LinUCB determinant-potential guarantee.
-Under the explicit global near-linearity scale of
-\Cref{cor:global-near-linear-new}, taking $W=\Omega(T)$ keeps the exponential
-path factor bounded and yields the displayed controlled nonlinear rate without
-a $D_t<1$ premise.  Here $W$ is an abstract smoothness scale, not generic
-network width.
-The controlled scaled-tanh execution in \Cref{sec:transport-instantiation}
-found simultaneous reference confidence and transported optimism in all 600
-primary-policy runs and no deterministic audit failure across the locked grid.
-It also exposed the practical gap between validity and usefulness: the
-Hessian/$Q_t$ path envelope was orders of magnitude longer than the selected
-path diagnostic, and the median sharp bound was between $126.7$ and $155.7$
-times realized regret.  The denser endpoint and frozen-reference policies had
-lower descriptive regret than the operational Hessian-certificate policy in
-this environment.  This is not evidence of a uniform curvature advantage.
+For squared loss, the corrected center makes this chain independent of
+nonlinear optimizer convergence.  The representation may follow any
+predictable path inside the certified region, while historical error, current
+bias, transport, operator distortion, solver accuracy, and approximate score
+maximization remain explicit charges.  The construction reduces to the usual
+LinUCB determinant-potential argument for frozen linear features and exact
+solves.  Under the assumptions of \Cref{cor:global-near-linear-new}, for fixed
+$d$ and fixed problem constants, taking $W=\Omega(T)$ with a sufficiently large
+problem-dependent constant yields
+$R_T=O(d\sqrt T\log T)+O(\sqrt T)$ without requiring $D_t<1$.  Here $W$ is an
+abstract smoothness scale, not generic network width.
+
+The controlled scaled-tanh audit separates formal validity from practical
+usefulness.  All 600 transport-Hessian trajectories retained simultaneous
+reference confidence and transported optimism, and the locked grid recorded no
+deterministic audit failure.  Yet the analytic path envelope was orders of
+magnitude longer than the selected-path diagnostic, every reported theorem
+bound was vacuous relative to the deterministic cap, and the three comparison
+policies had lower sample mean regret at the primary horizon.  The result is a
+negative practical finding about this certificate and environment, not evidence
+for a uniform ordering of curvature methods.
 
 \paragraph{Limitations.}
 The abstract theorem assumes a standard-Borel action space, a graph-measurable
@@ -443,7 +435,7 @@ low-rank, stale, or sketched operators, empirical validation of the transported
 theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
 residual checks are diagnostics rather than verified numerical certificates.
 The new experiment is a controlled execution and audit, not empirical proof or
-validation of the theorem.  Its endpoint method is a dense diagnostic oracle,
+validation of the theorem.  Its endpoint method is a dense diagnostic comparator,
 and its intentionally naive current-width control is uncertified even where its
 observed optimism rate is high.  Legacy audits are summarized in
 \Cref{app:legacy-evidence}; none instantiates the revised theorem event.
@@ -479,8 +471,14 @@ observed optimism rate is high.  Legacy audits are summarized in
 \deferredConditionalRates
 
 \section{Deferred main-text derivations}\label{app:deferred}
-This appendix collects the formal statements, proofs, and derivations deferred
-from the compact main text; all cross-referenced results are stated here.
+This appendix develops the conditional rates and implementation details that
+would obscure the main confidence-transport argument.  It first closes frozen
+information gain by rank or spectral tail, then instantiates observable path
+and centering schedules.  Subsequent sections separate operator approximation,
+solver error, and dynamic-width bookkeeping before returning to the legacy
+one-sided theorem.  All results cross-referenced from the main text and deferred
+to the appendix are stated there in full, and remain conditional on the protocol
+and certificate events stated where they are used.
 
 For the sequential frozen-feature Gram, the usual information gain is
 \begin{equation}\label{eq:infogain}
@@ -724,9 +722,10 @@ $\epslin(t)=O(1/t^2)$ and $\sum t^{-2}<\infty$;
 achievable in convex or strongly convex regimes),
 and $E_T=O(\sqrt{T})$ when
 $\|\btheta^*{-}\btheta_t\|=O(t^{-1/4})$.
-In practice this is enforced by restricting fine-tuning depth,
-	using trust-region updates, or freezing the backbone (which renders the
-	last-layer model convex or near-linear with small~$L_\mu$).
+Restricting fine-tuning or using a trust region can limit Taylor error,
+but does not by itself establish $E_T=o(T)$.  A frozen backbone with an
+exactly linear head has zero Taylor remainder; other cases require an
+explicit cumulative-error bound.
 These rate examples are illustrative only.  The present paper does not
 prove convergence of the nonconvex optimization path
 $\{\btheta_t\}$ to~$\btheta^*$; a sublinear guarantee from this bound therefore
@@ -1362,8 +1361,8 @@ Let
 \]
 Then valid global constants on the certified region are
 \begin{equation}\label{eq:scaled-tanh-constants}
- G=B_\phi,\qquad L_\mu=L_g=\frac{c_h}{\sqrt W},qquad
- |\mu_{\btheta,W}(z)|\le B_\phi R,qquad \rho_t\le\rho_W.
+ G=B_\phi,\qquad L_\mu=L_g=\frac{c_h}{\sqrt W},\qquad
+ |\mu_{\btheta,W}(z)|\le B_\phi R,\qquad \rho_t\le\rho_W.
 \end{equation}
 The stated exponential relative-drift certificate obeys $\rho_W<1$ exactly
 when
@@ -2661,7 +2660,7 @@ Since $\bCbar_t \succeq \Phi\Phi^\top$, we have
 $\Phi^\top\bCbar_t^{-1}\Phi \preceq \bI$, so
 $\|\Phi\hat\rho\|_{\bCbar_t^{-1}}
 = \|\hat\rho\|_{\Phi^\top\bCbar_t^{-1}\Phi}
-\le \|\hat\rho\| = \sqrt{F_t}$.
+\le \|\hat\rho\| \le \sqrt{F_t}$.
 Therefore
 $|\bg_t(a)^\top\bCbar_t^{-1}\sigma^{-1}\Phi\hat\rho|
 \le \bar s_t(a)\sigma^{-1}\sqrt{F_t}$.
@@ -2998,6 +2997,11 @@ spectral calculations remain open.
 
 \section{Related Work}\label{sec:related}
 
+The closest methods differ primarily in where they freeze features and how they
+represent uncertainty.  That distinction matters here because a covariance
+built from stored features answers a different question from one that replays
+every observation at the current parameter.
+
 \paragraph{Positive-cone metric geometry.}
 \citet{thompson1963certain} introduced the part metric now commonly called the
 Thompson metric on ordered cones.  \citet{nussbaum1994finsler} developed its
@@ -3009,30 +3013,33 @@ instantiate it as an operational confidence-transport device linking frozen
 bandit confidence, current replayed GGN/Fisher curvature, approximate operators,
 and certified solver widths.
 
-\paragraph{Neural and linear contextual bandits.}
+\paragraph{Neural contextual bandits.}
 LinUCB \citep{abbasi2011improved} and Thompson sampling
-\citep{thompson1933likelihood,agrawal2013thompson} provide the analytical
-backbone for contextual bandit exploration.  Neural extensions---NeuralUCB
-\citep{zhou2020neural}, NeuralTS \citep{zhang2021neural}, neural-linear
-models \citep{riquelme2018deep}---use different neural feature covariances.
-NeuralUCB and NeuralTS accumulate full neural-gradient Grams in their stated
-algorithms, while NeuralLinear maintains
-Bayesian linear uncertainty over learned last-layer features.  CC-UCB instead
-re-evaluates every replayed Jacobian at the current parameter and accesses the
-resulting full operator implicitly.
-Neural-linear designs that train a deep representation but explore only
-in the last layer \citep{xu2022shallow} occupy the opposite design point.
-Recent alternatives sharpen different parts of this landscape.
-\citet{salgia2023provably} analyze overparameterized smooth-activation networks
-through non-asymptotic network--NTK approximation and give an efficient
-sublinear-regret algorithm.  \citet{deb2024contextual} instead reduce contextual
-bandits to online neural regression, using perturbed predictions to obtain their
-regression guarantees.  \citet{bui2025variance} combine a learned deep
-representation with a variance-aware linear-UCB exploration layer.  These are,
-respectively, an NTK analysis, a regression-oracle route, and a learned
-last-layer geometry; none analyzes the dynamically relinearized full GGN and its
-CG error.  Our low-rank/excitation result is correspondingly narrower than
-generic neural regression, but controls that current-parameter operator.
+\citep{thompson1933likelihood,agrawal2013thompson} provide the statistical
+backbone for many neural extensions.  In their stated algorithms, NeuralUCB
+\citep{zhou2020neural} and NeuralTS \citep{zhang2021neural} add a gradient
+feature to the covariance when its observation arrives; they do not replay the
+entire history at each new parameter.  \citet{kassraie2022neural} separate a
+kernelized NTK reference from a trained-network mean with initialization-time
+uncertainty features, and prove sublinear regret for the SupNN-UCB variant under
+NTK-RKHS, sufficient-exploration, and network-width assumptions.
+\citet{salgia2023provably}
+control adaptivity through grouped histories and a finite-network-to-NTK
+confidence argument.  \citet{deb2024contextual} take a different route through
+online neural regression and contextual-bandit reductions.  These results do
+not lack proofs because their covariance differs from ours; they answer
+different questions.  We analyze the additional case in which every historical
+Jacobian is replayed at the current parameter and the resulting operator is
+solved approximately.
+
+The NeuralLinear method maintains Bayesian linear uncertainty in learned
+final-layer features \citep{riquelme2018deep}; the methods of
+\citet{xu2022shallow} and \citet{bui2025variance} instead use UCB-style linear
+exploration over learned deep representations.  Recomputing those last-layer
+representations is not the same as transporting confidence to a full-parameter
+GGN.  Our supplied-subspace result recovers a projected linear geometry when
+such a subspace is fixed in advance, but it does not turn the general theorem
+into a neural-linear analysis.
 
 \paragraph{Online Bayesian and EKF-style neural bandits.}
 \citet{duranmartin2022efficient} apply extended Kalman filter (EKF)
@@ -3051,15 +3058,20 @@ accesses the uncompressed GGN through residual-checked CG.  Their bandit study
 is empirical; our conditional UCB analysis explicitly accounts for CG
 truncation, but does not establish a practical advantage over LO-FI.
 
-\paragraph{Last-layer and structured Laplace approximations.}
-Last-layer Laplace fixes the backbone and restricts the approximate posterior
-to the final layer \citep{kristiadi2020being}, omitting backbone-weight
-uncertainty by construction.  This is only one scalable option: all-layer
-block-diagonal Kronecker curvature has also been used
-\citep{ritter2018scalable}, and \citet{daxberger2021laplace} systematize
-all-weight, subnetwork, and last-layer variants with full, low-rank, KFAC, or
-diagonal curvature.  CC-UCB uses the uncompressed current-parameter GGN as its
-reference operator without materializing the covariance matrix.
+\paragraph{Linearized networks and Laplace approximations.}
+\citet{maddox2021fast} linearize once around a trained network and use implicit
+Jacobian/Fisher products with CG for predictive inference.  Their construction
+is a computational antecedent for matrix-free widths, but the reference
+linearization is fixed rather than replayed online.  The Laplace approximation
+places a local Gaussian posterior around a MAP solution with covariance defined
+by inverse curvature \citep{mackay1992practical}.  Last-layer Laplace fixes the
+backbone, omitting backbone-weight uncertainty by construction
+\citep{kristiadi2020being}.  \citet{daxberger2021laplace} systematize all-weight,
+subnetwork, and last-layer variants with full, low-rank, Kronecker-factored, or
+diagonal curvature; structured all-layer variants use Kronecker-factored
+curvature \citep{ritter2018scalable,martens2015optimizing}.  Our concern is
+instead the sequential validity of a UCB score when the current relinearized
+operator differs from the predictable confidence Gram.
 
 \paragraph{Sampling-based full-parameter exploration.}
 Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin}
@@ -3072,17 +3084,14 @@ mixing of a per-round sampling chain, CC-UCB through CG truncation and
 spectral distortion of an explicit curvature metric, which yields
 deterministic widths, an optimism-style analysis, and a fixed curvature operator
 reused across separate per-action CG solves.
-\paragraph{Efficient nonlinear UCB.}
-\citet{kassraie2022neural} analyze NTK-UCB and propose NN-UCB and its
-convolutional variant CNN-UCB.  NN-UCB combines a trained-network mean with
-confidence widths from the empirical NTK feature map at initialization.
-They prove sublinear regret for the SupNN-UCB variant under NTK-RKHS,
-sufficient-exploration, and network-width assumptions.  Their fixed-feature
-uncertainty differs from CC-UCB's replayed GGN/Fisher curvature at the current
-parameter~$\btheta_t$, accessed matrix-free via CG.
-CC-UCB thus targets the regime where the practitioner has a specific
-pretrained model and wants to use its curvature as-is, rather than
-constructing a surrogate NTK-based estimator.
+\paragraph{Scope of efficient nonlinear exploration.}
+The methods above obtain efficiency through different statistical objects:
+fixed NTK features, grouped data, regression reductions, or learned last-layer
+representations.  CC-UCB targets a practitioner who chooses to score with a
+specific current full-parameter GGN/Fisher operator.  Its conditional theorem
+exposes what that choice requires: transport from collection-time confidence,
+operator distortion, and solver error.  It does not imply that this route is
+computationally preferable to the alternatives.
 
 \paragraph{Spectral sketching for linear bandits.}
 \citet{kuzborskij2019efficient} analyze linear bandits where the Gram
@@ -3097,17 +3106,6 @@ and realized-width terms along the realized trajectory.
 We do not claim novelty for the sandwich-to-regret reduction itself;
 the contribution is adapting it to the CG/GGN context with explicit
 CG truncation and feature-drift factors.
-
-\paragraph{Laplace approximation in deep learning.}
-The Laplace approximation \citep{mackay1992practical,ritter2018scalable}
-provides a Gaussian posterior centered at a MAP estimate with covariance
-given by the inverse curvature.  Scalable variants use diagonal, KFAC
-\citep{martens2015optimizing}, or subnetwork approximations
-\citep{daxberger2021laplace}.  Matrix-free full-Jacobian/Fisher predictive
-variance using implicit products and CG predates this work
-\citep{maddox2021fast}; CC-UCB adapts that computational route to an online,
-current-relinearized GGN operator and supplies bandit-specific transfer and
-solver-error accounting.
 
 \paragraph{GGN--vector products, Hessian spectral analysis, and influence
 functions.}
@@ -3412,7 +3410,8 @@ When the action set $\cA_t$ is large, computing the CG solve for every
 action is prohibitive ($|\cA_t|\times I$ CG steps per round).
 A practical heuristic is to screen the top-$K$ actions by mean prediction
 $\widehat\mu_t(a)$ (forward passes only), then compute UCB widths for the $K$
-candidates.  This reduces cost to $K\times I$ CG solves.
+candidates.  This reduces the width computation to $K$ CG solves, or $KI$
+iterations under a common iteration budget $I$.
 \emph{The regret guarantee in \Cref{thm:regret} analyzes full enumeration of
 all $K_t$ active candidate indices; screening can drop the optimal arm
 and is not covered by the theory unless one adds an assumption that
@@ -3866,8 +3865,9 @@ $\bar\varepsilon_t$) gives the per-solve budget
 which, applied to every scored action, ensures
 $\max_a\varepsilon_{t,a}\le\epsCGbar=\bar\varepsilon_t$.
 For $W_t=n$ (unrescaled fixed buffer size),
-$\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$,
-so $I_{\min}$ is constant.
+$\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$.
+For a fixed target tolerance $\bar\varepsilon_t\equiv\bar\varepsilon\in(0,1)$,
+the displayed sufficient budget is therefore bounded independently of~$T$.
 For full history, and for rescaled uniform subsampling with
 $w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so the condition-number \emph{bound}
 $\bar\kappa_t=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and the worst-case
@@ -4023,7 +4023,7 @@ $\nabla^2 A(z)$ is the output-space Hessian of the log-partition
 function.
 For Bernoulli rewards $\nabla^2 A(z)=p(1{-}p)$ (scalar);
 for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
--\mathbf{p}\mathbf{p}^\top)$.
+-\mathbf{p}\mathbf{p}^\top$.
 Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
 Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.
 

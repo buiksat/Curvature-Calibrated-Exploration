@@ -1,13 +1,11 @@
 # CODE@MIT 2026 extended abstract
 
-> **Current status: three-page CODE@MIT paper.** Round 3 prose cuts were applied
-> locally to `cce-experiments@3a51ddced09a7b13f34b7d309ea00a0c3856aadb`. The
-> preceding scientific revision was based on
-> `cce-experiments@5718995cae80f34b5b98b464f3d9090758be4871`.
-> The final author names, order, and affiliations are unchanged; the author-review
-> banner has been removed. The PDF builds to three pages including references.
-> The editing/build operation was local. This subsequent source-only GitHub
-> publication was separately authorized; it is not a conference submission.
+> **Current status: technical three-page CODE@MIT candidate, not submitted.**
+> Finalization started from
+> `cce-experiments@84f6916e7000be942cd32527290e600718874aa0` and remains
+> uncommitted. The named author block is unchanged. The public 2026 call was
+> checked on 2026-09-12; the linked portal remained authentication-gated, so
+> portal-only requirements and the upload itself are still outstanding.
 
 - Submission: CODE@MIT 2026, Conference on Digital Experimentation at MIT.
 - Deliverable: standalone extended abstract, maximum 3 pages.
@@ -42,7 +40,7 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 A plain professional `article` format is used; no venue-specific LaTeX template is invented.
 
 Final PDF page count: **3**, including references. All three pages were rendered
-and visually inspected. The last page has approximately 53.3 PDF points of unused
+and visually inspected. The last page has approximately 53.8 PDF points of unused
 space below its final reference inside the text area, about 4.5 ordinary body-line
 heights. The final LaTeX log has no unresolved references or citations and no
 overfull or underfull box warnings.
@@ -57,6 +55,27 @@ match the starting source exactly.
 starting-source lines for the later five-page version. It is not an input to the
 submission build. `SHA256SUMS` covers `main.tex`, `cut_for_5page.tex`, and
 `README.md`; it does not cover generated build outputs or historical records.
+
+## Finalization on 2026-09-12
+
+The official event page and 2026 call were accessed on 2026-09-12. The call sets a
+three-page extended-abstract deadline of September 13, 2026, but states no cutoff
+time, timezone, initial-stage template, anonymization rule, or appendix permission.
+This candidate conservatively uses three total pages and the project's existing
+10pt article format. The event's "All Day EST" label describes the November
+conference, not the submission deadline.
+
+The linked Google Forms portal returned HTTP 401 with a browser user-agent and was
+not accessed through authentication. Portal-only file type/size limits, form
+declarations, and any portal-specific author or dual-submission questions remain
+unverified. Nothing has been uploaded or submitted.
+
+The theorem source and corrected-center statement are in
+`paper/transport_theory.tex` (`thm:transported-ucb` and
+`cor:corrected-center-new`); the proof is in `paper/transport_proofs.tex`. The
+regret table reports descriptive means without variability intervals. Optional
+paired uncertainty was left out under the prior reporting decision, and no
+population or significance claim is made.
 
 ## Historical Round 3 editing environment
 

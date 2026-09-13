@@ -1,14 +1,17 @@
 \section{One-sided dynamic fallback: original setup}
 \label{app:one-sided-fallback}\label{sec:problem}
-This appendix preserves the earlier Gaussian/squared-loss, finite-action route.
-It remains applicable when only one-sided operator transfer is available, but
-its dynamic realized-width term is not the paper's headline closed guarantee.
-The optimizer-centered policy is retained as a secondary specialization.
+The headline theorem closes regret through the frozen potential by using both
+sides of the operator comparison.  This appendix preserves the earlier route
+for cases where only an upper comparison is available.  That route transfers
+optimism, but it leaves a realized dynamic-width complexity in the bound.  It
+is a conditional fallback rather than a second headline guarantee.
 
-We present the problem setup for the \emph{Gaussian/squared-loss}
-instantiation, which is the setting analyzed in \Cref{thm:regret}.
-An extension to exponential-family likelihoods is discussed in
-\Cref{app:expfam}.
+The fallback uses a finite action enumeration and a Gaussian squared-loss
+model.  Its original-center policy needs an optimizer-centered discrepancy
+certificate; the corrected-center variant removes that requirement at the cost
+of frozen-feature access.  The curvature definitions extend algorithmically to
+exponential-family likelihoods, but \Cref{app:expfam} does not claim the
+corresponding statistical confidence or regret theorem.
 
 \paragraph{Protocol.}
 Let $(\mathcal X,\mathcal B_{\mathcal X})$ be a measurable context space, let
@@ -74,8 +77,10 @@ $\nabla\cL_t$ replays $N_t$ observations even when $m_t\ll N_t$.
 In convex settings (e.g.\ a frozen backbone with a linear head), under exact
 optimization this coincides with the global minimizer; in nonconvex settings $\btheta_t$
 may be a local minimizer or approximate stationary point.
-The gap between $\btheta_t$ and an idealized global minimizer is absorbed
-by the action-scaled centering certificate (\Cref{asm:optim}).
+The action-scaled centering certificate (\Cref{asm:optim}) controls the
+action-projected discrepancy between $\btheta_t$ and the auxiliary
+frozen-feature ridge estimator $\hat\btheta_t^{\mathrm{lin}}$.  It does
+not certify convergence to a global minimizer of the nonlinear objective.
 
 \paragraph{Gradient features and curvature matrices.}
 Define the \emph{gradient feature} (Jacobian of the mean reward) at the
