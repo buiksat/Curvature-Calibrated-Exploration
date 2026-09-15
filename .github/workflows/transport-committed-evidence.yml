@@ -10,12 +10,35 @@ name: transport committed evidence
 on:
   push:
     paths:
+      - "**"
+      - "!buck-out/**"
+      - "!results/logs/**"
+      - "!results/raw/**"
       - "paper/**"
       - "experiments/**"
       - "results/derived/**"
       - "review/**"
+      - "submissions/**"
       - "tools/**"
       - "tests/**"
+      - "third_party/**"
+      - ".buck2"
+      - ".buckconfig"
+      - "BUCK"
+      - "BUCK2_SETUP.md"
+      - "PACKAGE"
+      - "*.bzl"
+      - "*.py"
+      - "*.pyc"
+      - "*.pyi"
+      - "*.pyo"
+      - "*.so"
+      - "**/*.bzl"
+      - "**/*.py"
+      - "**/*.pyc"
+      - "**/*.pyi"
+      - "**/*.pyo"
+      - "**/*.so"
       - "Makefile"
       - "pytest.ini"
       - "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md"
@@ -23,12 +46,35 @@ on:
       - ".github/workflows/transport-committed-evidence.yml"
   pull_request:
     paths:
+      - "**"
+      - "!buck-out/**"
+      - "!results/logs/**"
+      - "!results/raw/**"
       - "paper/**"
       - "experiments/**"
       - "results/derived/**"
       - "review/**"
+      - "submissions/**"
       - "tools/**"
       - "tests/**"
+      - "third_party/**"
+      - ".buck2"
+      - ".buckconfig"
+      - "BUCK"
+      - "BUCK2_SETUP.md"
+      - "PACKAGE"
+      - "*.bzl"
+      - "*.py"
+      - "*.pyc"
+      - "*.pyi"
+      - "*.pyo"
+      - "*.so"
+      - "**/*.bzl"
+      - "**/*.py"
+      - "**/*.pyc"
+      - "**/*.pyi"
+      - "**/*.pyo"
+      - "**/*.so"
       - "Makefile"
       - "pytest.ini"
       - "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md"
@@ -80,21 +126,45 @@ jobs:
 
       - name: Validate SHA-256 sidecars
         run: |
-          set -eu
+          set -euo pipefail
           status=0
-          count=0
-          while IFS= read -r sidecar; do
+          mapfile -t sidecars < <(
+            find paper results review submissions -name '*.sha256' -type f 2>/dev/null | sort
+          )
+          if [ "${#sidecars[@]}" -eq 0 ]; then
+            echo "no SHA-256 sidecars were discovered" >&2
+            exit 1
+          fi
+          mapfile -t review_sidecars < <(
+            find review -name '*.sha256' -type f 2>/dev/null | sort
+          )
+          if [ "${#review_sidecars[@]}" -eq 0 ]; then
+            echo "no review SHA-256 sidecars were discovered" >&2
+            exit 1
+          fi
+          for sidecar in "${sidecars[@]}"; do
             dir=$(dirname "$sidecar")
             if ! ( cd "$dir" && sha256sum -c "$(basename "$sidecar")" >/dev/null ); then
               echo "sidecar mismatch: $sidecar" >&2
               status=1
             fi
-            count=$((count + 1))
-          done <<EOF
-          $(find paper results tables -name '*.sha256' 2>/dev/null | sort)
-          EOF
-          echo "checked $count SHA-256 sidecars"
+          done
+          echo "checked ${#sidecars[@]} SHA-256 sidecars"
+          echo "checked ${#review_sidecars[@]} review SHA-256 sidecars"
+          ( cd submissions/code_mit_2026 && sha256sum -c SHA256SUMS )
           exit $status
+
+      - name: Collect realistic trust-boundary tests
+        run: |
+          set -euo pipefail
+          python -m pytest --collect-only -q experiments/realistic_transport \
+            | tee realistic-transport-collection.log
+
+      - name: Run realistic trust-boundary tests
+        run: |
+          set -euo pipefail
+          python -m pytest -q experiments/realistic_transport \
+            | tee realistic-transport-tests.log
 
       - name: Transport unit, aggregate and artifact tests
         run: |
@@ -108,6 +178,7 @@ jobs:
 
       - name: Detached committed-evidence verifier
         run: |
+          set -euo pipefail
           python tools/verify_transport_committed_evidence.py \
             --json verifier-report.json | tee verifier.log
 
@@ -128,7 +199,7 @@ jobs:
 
       - name: PDF structural checks
         run: |
-          set -eu
+          set -euo pipefail
           sha256sum -c paper/main.pdf.sha256
           qpdf --check paper/main.pdf | tee pdf-check.log
           pdfinfo paper/main.pdf | tee -a pdf-check.log
@@ -143,7 +214,6 @@ jobs:
 
       - name: Install TeX Live for the clean rebuild
         id: texlive
-        continue-on-error: true
         run: |
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-base texlive-latex-recommended texlive-latex-extra \
@@ -151,9 +221,8 @@ jobs:
             texlive-pictures biber latexmk
 
       - name: Attempt the clean PDF rebuild
-        if: steps.texlive.outcome == 'success'
         run: |
-          set -eu
+          set -euo pipefail
           SOURCE_DATE_EPOCH=$(git show -s --format=%ct 93eaa537d2702d5d18b05905913b0b879e3d608f)
           export SOURCE_DATE_EPOCH FORCE_SOURCE_DATE=1
           work="${RUNNER_TEMP}/rebuild"
@@ -163,7 +232,7 @@ jobs:
           ( cd "$work" && make clean && make pdf ) > rebuild.log 2>&1 || {
             echo "classification: rebuild unavailable due to a concrete dependency"
             tail -60 rebuild.log
-            exit 0
+            exit 1
           }
           # Never overwrite the locked PDF: compare in place.
           if cmp -s "$work/paper/main.pdf" "${RUNNER_TEMP}/locked.pdf"; then
@@ -216,5 +285,7 @@ jobs:
             verifier-report.json
             pdf-check.log
             rebuild.log
+            realistic-transport-collection.log
+            realistic-transport-tests.log
           if-no-files-found: warn
           retention-days: 30

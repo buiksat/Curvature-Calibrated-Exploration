@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import tempfile
 import traceback
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -14,12 +15,14 @@ from .provenance import (
     atomic_write_text,
     canonical_json,
     reject_absolute_paths,
+    REPOSITORY_ROOT,
     sha256_file,
     write_json,
 )
 
 
 RUN_FILES = ("manifest.json", "rounds.jsonl", "summary.json")
+EVIDENCE_FILES = (*RUN_FILES, "failure.json")
 
 
 def utc_timestamp() -> str:
@@ -41,25 +44,45 @@ def run_directory(
     return Path(root) / str(phase) / str(task) / str(method) / f"seed-{int(seed)}"
 
 
+def existing_run_outputs(directory: str | Path) -> tuple[Path, ...]:
+    root = Path(directory)
+    candidates = tuple(
+        path
+        for name in EVIDENCE_FILES
+        for path in (root / name, root / f"{name}.sha256")
+    )
+    return tuple(path for path in candidates if path.exists() or path.is_symlink())
+
+
+def refuse_existing_run_outputs(directory: str | Path) -> None:
+    present = existing_run_outputs(directory)
+    if present:
+        raise FileExistsError(
+            f"refusing to overwrite run files: {[str(path) for path in present]}"
+        )
+
+
 def _prepare(directory: Path, *, overwrite: bool) -> None:
-    directory.mkdir(parents=True, exist_ok=True)
-    existing = [directory / name for name in (*RUN_FILES, "failure.json")]
-    present = [str(path) for path in existing if path.exists()]
+    present = existing_run_outputs(directory)
     if present and not overwrite:
-        raise FileExistsError(f"refusing to overwrite run files: {present}")
+        raise FileExistsError(
+            f"refusing to overwrite run files: {[str(path) for path in present]}"
+        )
     if overwrite:
-        for path in existing:
+        for name in EVIDENCE_FILES:
+            path = directory / name
             path.unlink(missing_ok=True)
             path.with_name(path.name + ".sha256").unlink(missing_ok=True)
+    directory.mkdir(parents=True, exist_ok=True)
 
 
-def write_run(
+def _write_run(
     directory: str | Path,
     *,
     manifest: Mapping[str, Any],
     rounds: Sequence[Mapping[str, Any]],
     summary: Mapping[str, Any],
-    overwrite: bool = False,
+    overwrite: bool,
 ) -> dict[str, str]:
     destination = Path(directory)
     _prepare(destination, overwrite=overwrite)
@@ -83,15 +106,64 @@ def write_run(
     }
 
 
+def write_run(
+    directory: str | Path,
+    *,
+    manifest: Mapping[str, Any],
+    rounds: Sequence[Mapping[str, Any]],
+    summary: Mapping[str, Any],
+) -> dict[str, str]:
+    """Write a new production cell, refusing every existing evidence file."""
+
+    return _write_run(
+        directory,
+        manifest=manifest,
+        rounds=rounds,
+        summary=summary,
+        overwrite=False,
+    )
+
+
+def _rewrite_run_fixture(
+    directory: str | Path,
+    *,
+    manifest: Mapping[str, Any],
+    rounds: Sequence[Mapping[str, Any]],
+    summary: Mapping[str, Any],
+) -> dict[str, str]:
+    """Rewrite a disposable test fixture located under the host temp root."""
+
+    destination = Path(directory).resolve()
+    temporary_root = Path(tempfile.gettempdir()).resolve()
+    try:
+        destination.relative_to(REPOSITORY_ROOT.resolve())
+    except ValueError:
+        pass
+    else:
+        raise ValueError("fixture rewrites cannot target the repository")
+    try:
+        destination.relative_to(temporary_root)
+    except ValueError as error:
+        raise ValueError(
+            "fixture rewrites are restricted to the host temp root"
+        ) from error
+    return _write_run(
+        destination,
+        manifest=manifest,
+        rounds=rounds,
+        summary=summary,
+        overwrite=True,
+    )
+
+
 def write_failure(
     directory: str | Path,
     *,
     context: Mapping[str, Any],
     error: BaseException,
-    overwrite: bool = False,
 ) -> Path:
     destination = Path(directory)
-    _prepare(destination, overwrite=overwrite)
+    _prepare(destination, overwrite=False)
     record = {
         "schema_version": 1,
         "event": "realistic_transport_failure",
@@ -150,8 +222,11 @@ def validate_run_directory(directory: str | Path) -> dict[str, Any]:
 
 
 __all__ = [
+    "EVIDENCE_FILES",
     "RUN_FILES",
+    "existing_run_outputs",
     "read_json",
+    "refuse_existing_run_outputs",
     "run_directory",
     "utc_timestamp",
     "validate_run_directory",

@@ -39,6 +39,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from export_transport_github_review_bundle import (  # noqa: E402
     AGGREGATE_PATH,
     AGGREGATE_PROVENANCE_PATH,
+    canonical_json,
+    clopper_pearson,
+    describe,
     EXPECTED_CANDIDATE_CELLS,
     EXPECTED_CANDIDATE_COUNT,
     EXPECTED_EVALUATION_SEEDS,
@@ -47,26 +50,23 @@ from export_transport_github_review_bundle import (  # noqa: E402
     EXPECTED_RUN_COUNT,
     EXPECTED_TARGETS,
     EXPECTED_TUNING_SEEDS,
+    export_bundle,
     GENERATED_ARTIFACT_PATHS,
+    input_set_sha256,
     KNOWN_STUDY_SOURCE_DIVERGENCES,
+    load_json_strict,
     LOCKED_AGGREGATE_INPUT_SET_SHA256,
     LOCKED_AGGREGATE_SHA256,
     LOCKED_COVERAGE_CI,
     LOCKED_PDF_SHA256,
     LOCKED_SELECTION_SHA256,
+    pdf_page_count,
     PDF_PATH,
     RATIO_DENOMINATOR_TOLERANCE,
+    ReviewBundleError,
     SELECTION_FLAT_PATH,
     SELECTION_PATH,
     SELECTION_PROVENANCE_PATH,
-    ReviewBundleError,
-    canonical_json,
-    clopper_pearson,
-    describe,
-    export_bundle,
-    input_set_sha256,
-    load_json_strict,
-    pdf_page_count,
     sha256_file,
 )
 
@@ -217,9 +217,7 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
     sidecar_inputs = [
         {"path": i["path"], "sha256": i["sha256"]} for i in sidecar.get("inputs", [])
     ]
-    embedded = [
-        {"path": i["path"], "sha256": i["sha256"]} for i in selection["inputs"]
-    ]
+    embedded = [{"path": i["path"], "sha256": i["sha256"]} for i in selection["inputs"]]
     report.expect(
         section,
         "sidecar inventory equals the selection's embedded inventory",
@@ -345,9 +343,7 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
         "every candidate has exactly 120 unique cells",
         all(
             len(c["runs"]) == EXPECTED_CANDIDATE_CELLS
-            and len(
-                {(r["seed"], r["horizon"], r["target_D"]) for r in c["runs"]}
-            )
+            and len({(r["seed"], r["horizon"], r["target_D"]) for r in c["runs"]})
             == EXPECTED_CANDIDATE_CELLS
             for c in candidates
         ),
@@ -396,7 +392,8 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
     report.expect(
         section,
         "tie rule is the recorded deterministic rule",
-        list(selected["tie_break"]) == ["fewer_steps_per_round", "smaller_learning_rate"],
+        list(selected["tie_break"])
+        == ["fewer_steps_per_round", "smaller_learning_rate"],
         status=STATUS_PASS,
     )
     ordered = sorted(means.values())
@@ -536,7 +533,9 @@ def check_aggregate(report: Report, root: Path, aggregate: Mapping[str, Any]) ->
         status=STATUS_RECOMPUTED,
     )
 
-    zero_regret = sum(int(r["zero_regret_run_count"]) for r in aggregate["bound_nonvacuity"])
+    zero_regret = sum(
+        int(r["zero_regret_run_count"]) for r in aggregate["bound_nonvacuity"]
+    )
     positive = sum(
         int(r["positive_regret_run_count"]) for r in aggregate["bound_nonvacuity"]
     )
@@ -569,10 +568,9 @@ def check_statistics(report: Report, aggregate: Mapping[str, Any]) -> None:
             cell = record[field]
             cells += 1
             recomputed = clopper_pearson(cell["successes"], cell["n"], cell["level"])
-            if (
-                abs(recomputed["ci_low"] - float(cell["ci_low"])) > 1e-15
-                or recomputed["ci_high"] != float(cell["ci_high"])
-            ):
+            if abs(recomputed["ci_low"] - float(cell["ci_low"])) > 1e-15 or recomputed[
+                "ci_high"
+            ] != float(cell["ci_high"]):
                 mismatched.append(f"{field}@T{record['horizon']}D{record['target_D']}")
     report.expect(
         section,
@@ -584,7 +582,10 @@ def check_statistics(report: Report, aggregate: Mapping[str, Any]) -> None:
     report.expect(
         section,
         "50/50 coverage yields the locked interval",
-        [clopper_pearson(50, 50, 0.95)["ci_low"], clopper_pearson(50, 50, 0.95)["ci_high"]]
+        [
+            clopper_pearson(50, 50, 0.95)["ci_low"],
+            clopper_pearson(50, 50, 0.95)["ci_high"],
+        ]
         == list(LOCKED_COVERAGE_CI),
         f"recomputed {clopper_pearson(50, 50, 0.95)['ci_low']!r}",
         status=STATUS_RECOMPUTED,
@@ -595,7 +596,10 @@ def check_statistics(report: Report, aggregate: Mapping[str, Any]) -> None:
         all(
             record[field]["successes"] == 50 and record[field]["n"] == 50
             for record in aggregate["validity"]
-            for field in ("transport_optimism_coverage", "reference_confidence_coverage")
+            for field in (
+                "transport_optimism_coverage",
+                "reference_confidence_coverage",
+            )
         )
         and all(
             r["simultaneous_optimism_coverage"]["successes"] == 50
@@ -713,8 +717,9 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
         report.add(
             section,
             "regenerate table and figure bytes from the committed aggregate",
-            STATUS_NOT_EXECUTED,
-            f"the repository rendering stack is unavailable here ({error.__class__.__name__}: {error})",
+            STATUS_FAIL,
+            "the declared repository rendering stack is unavailable "
+            f"({error.__class__.__name__}: {error})",
         )
         return
 
@@ -727,9 +732,15 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
     targets = sorted(float(v) for v in aggregate["target_D"])
     token = maker._target_file_token
 
-    regret_panel = {t: f"transport_instantiation_regret_D-{token(t)}.csv" for t in targets}
-    path_panel = {t: f"transport_instantiation_tightness_D-{token(t)}.csv" for t in targets}
-    bound_panel = {t: f"transport_instantiation_bound_D-{token(t)}.csv" for t in targets}
+    regret_panel = {
+        t: f"transport_instantiation_regret_D-{token(t)}.csv" for t in targets
+    }
+    path_panel = {
+        t: f"transport_instantiation_tightness_D-{token(t)}.csv" for t in targets
+    }
+    bound_panel = {
+        t: f"transport_instantiation_bound_D-{token(t)}.csv" for t in targets
+    }
 
     regret_rows = sorted(
         maker._downsample_curve_records(aggregate["regret_curves"]),
@@ -744,25 +755,49 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
         key=lambda i: (float(i["target_D"]), int(i["round"])),
     )
     regret_csv_rows = [
-        {**r, "method_index": METHODS.index(str(r["method"])), "aggregate_sha256": aggregate_sha}
+        {
+            **r,
+            "method_index": METHODS.index(str(r["method"])),
+            "aggregate_sha256": aggregate_sha,
+        }
         for r in regret_rows
     ]
     path_csv_rows = [
-        {**r, "aggregate_sha256": aggregate_sha} for r in maker._path_plot_records(aggregate)
+        {**r, "aggregate_sha256": aggregate_sha}
+        for r in maker._path_plot_records(aggregate)
     ]
     bound_csv_rows = [{**r, "aggregate_sha256": aggregate_sha} for r in bound_rows]
 
     regret_fields = (
-        "target_D", "horizon", "method", "method_index", "round", "mean",
-        "ci_low", "ci_high", "aggregate_sha256",
+        "target_D",
+        "horizon",
+        "method",
+        "method_index",
+        "round",
+        "mean",
+        "ci_low",
+        "ci_high",
+        "aggregate_sha256",
     )
     path_fields = (
-        "target_D", "series_code", "x", "y", "count", "marker_size", "aggregate_sha256",
+        "target_D",
+        "series_code",
+        "x",
+        "y",
+        "count",
+        "marker_size",
+        "aggregate_sha256",
     )
     bound_fields = (
-        "target_D", "horizon", "round", "statistical_bound_component",
-        "historical_bound_component", "path_inflation_component",
-        "current_bias_cumulative", "cumulative_pseudo_regret", "sharp_theorem_rhs",
+        "target_D",
+        "horizon",
+        "round",
+        "statistical_bound_component",
+        "historical_bound_component",
+        "path_inflation_component",
+        "current_bias_cumulative",
+        "cumulative_pseudo_regret",
+        "sharp_theorem_rhs",
         "aggregate_sha256",
     )
 
@@ -773,13 +808,16 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
         + maker.make_performance_table(aggregate),
         tables / "transport_instantiation_tightness.tex": source_comment
         + maker.make_tightness_table(aggregate),
-        figures / "transport_instantiation_regret.csv": maker._csv_text(
+        figures
+        / "transport_instantiation_regret.csv": maker._csv_text(
             regret_fields, regret_csv_rows
         ),
-        figures / "transport_instantiation_tightness.csv": maker._csv_text(
+        figures
+        / "transport_instantiation_tightness.csv": maker._csv_text(
             path_fields, path_csv_rows
         ),
-        figures / "transport_instantiation_bound.csv": maker._csv_text(
+        figures
+        / "transport_instantiation_bound.csv": maker._csv_text(
             bound_fields, bound_csv_rows
         ),
         figures / "transport_instantiation_regret.tex": source_comment
@@ -825,13 +863,10 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
         bound_ok = False
         if provenance.is_file():
             record = json.loads(provenance.read_text(encoding="utf-8"))
-            bound_ok = (
-                record.get("artifact_sha256") == got
-                and any(
-                    i.get("sha256") == aggregate_sha
-                    and i.get("path") == str(AGGREGATE_PATH)
-                    for i in record.get("inputs", [])
-                )
+            bound_ok = record.get("artifact_sha256") == got and any(
+                i.get("sha256") == aggregate_sha
+                and i.get("path") == str(AGGREGATE_PATH)
+                for i in record.get("inputs", [])
             )
         report.expect(
             section,
@@ -1010,19 +1045,23 @@ def check_review_bundle(report: Report, root: Path, bundle: Path) -> None:
         inventory_ok,
         status=STATUS_PASS,
     )
-    digest = __import__("hashlib").sha256(
-        canonical_json(
-            [
-                {
-                    "path": i["path"],
-                    "sha256": i["sha256"],
-                    "bytes": i["bytes"],
-                    "record_count": i["record_count"],
-                }
-                for i in sorted(manifest["outputs"], key=lambda x: x["path"])
-            ]
-        ).encode("ascii")
-    ).hexdigest()
+    digest = (
+        __import__("hashlib")
+        .sha256(
+            canonical_json(
+                [
+                    {
+                        "path": i["path"],
+                        "sha256": i["sha256"],
+                        "bytes": i["bytes"],
+                        "record_count": i["record_count"],
+                    }
+                    for i in sorted(manifest["outputs"], key=lambda x: x["path"])
+                ]
+            ).encode("ascii")
+        )
+        .hexdigest()
+    )
     report.expect(
         section,
         "bundle inventory digest recomputes",
@@ -1043,9 +1082,7 @@ def check_review_bundle(report: Report, root: Path, bundle: Path) -> None:
         "manifest records that raw inputs were not content-verified",
         manifest["limitations"]["raw_input_bytes_verified"] is False
         and manifest["limitations"]["structural_pass_is_not_full_provenance"] is True
-        and manifest["limitations"][
-            "float64_diagnostics_are_verified_certificates"
-        ]
+        and manifest["limitations"]["float64_diagnostics_are_verified_certificates"]
         is False,
         status=STATUS_PASS,
     )
@@ -1154,7 +1191,9 @@ def run(root: Path, bundle: Path, *, skip_bundle: bool) -> Report:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
+    parser.add_argument(
+        "--repo-root", type=Path, default=Path(__file__).resolve().parent.parent
+    )
     parser.add_argument("--bundle", type=Path, default=None)
     parser.add_argument("--skip-bundle", action="store_true")
     parser.add_argument("--json", type=Path, default=None, help="write the full report")
@@ -1168,7 +1207,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     for check in report.checks:
         print(f"{check['status']:<18} {check['section']:<14} {check['check']}")
-        if check["status"] in (STATUS_FAIL, STATUS_NOT_EXECUTED, STATUS_KNOWN_DIVERGENCE) and check["detail"]:
+        if (
+            check["status"]
+            in (STATUS_FAIL, STATUS_NOT_EXECUTED, STATUS_KNOWN_DIVERGENCE)
+            and check["detail"]
+        ):
             print(f"{'':<18} {'':<14}   -> {check['detail']}")
 
     print()

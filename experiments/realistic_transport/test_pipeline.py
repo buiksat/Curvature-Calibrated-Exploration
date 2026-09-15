@@ -5,17 +5,26 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-
-from experiments.realistic_transport.aggregate import AggregateError, aggregate_profile
-from experiments.realistic_transport.artifacts import generate_artifacts
+from experiments.realistic_transport.aggregate import (
+    aggregate_profile,
+    AggregateError,
+    write_statistics_csv,
+)
+from experiments.realistic_transport.artifacts import _render_validated_artifacts
 from experiments.realistic_transport.configuration import (
+    config_digest,
     EXPECTED_METHODS,
     EXPECTED_TASKS,
     load_config,
     seed_set,
 )
 from experiments.realistic_transport.data import prepare_loaded_dataset
-from experiments.realistic_transport.io import validate_run_directory
+from experiments.realistic_transport.io import (
+    _rewrite_run_fixture,
+    validate_run_directory,
+    write_failure,
+    write_run,
+)
 from experiments.realistic_transport.study import run_profile
 
 
@@ -32,6 +41,7 @@ def _smoke_artifact(path: Path) -> Path:
         dataset_name="test_smoke",
         destination=path,
         smoke_only=True,
+        fixture_only=True,
     )
     return path
 
@@ -47,6 +57,9 @@ def test_realistic_configuration_freezes_all_grids() -> None:
         for name in ("development", "tuning", "evaluation", "pilot")
     ]
     assert sum(len(values) for values in all_seeds) == len(set().union(*all_seeds))
+    assert config_digest(config) == (
+        "4249a22156de864b7a15833f734a0cae6520ad95bacc8a4b4a30eca38118ed7d"
+    )
 
 
 def test_single_cell_study_writes_a_strict_self_describing_run(tmp_path) -> None:
@@ -62,15 +75,37 @@ def test_single_cell_study_writes_a_strict_self_describing_run(tmp_path) -> None
     )
     assert result["completed_cells"] == 3
     assert result["failed_cells"] == 0
+    worker_pids = set()
     for task in EXPECTED_TASKS:
         validated = validate_run_directory(
             raw_root / "smoke" / task / "greedy_corrected" / "seed-0"
         )
         assert validated["round_count"] == 32
         assert validated["manifest"]["prepared_data"]["smoke_only"]
+        assert validated["manifest"]["prepared_data"]["fixture_only"]
+        assert validated["manifest"]["evidence_role"] == "smoke_only"
+        assert validated["manifest"]["data_authentication"]["status"] == (
+            "smoke_only_not_approved"
+        )
+        execution = validated["manifest"]["runtime"]["execution"]
+        worker_pids.add(execution["worker_pid"])
+        assert execution["execution_model"] == (
+            "sequential_parent_with_fresh_spawned_process_per_cell"
+        )
+        assert execution["thread_control"]["verified"]
+        assert execution["thread_control"]["active_pools_before"]
+        assert all(
+            pool["num_threads"] == 1
+            for pool in execution["thread_control"]["active_pools_before"]
+            if pool["user_api"] in {"blas", "openmp"}
+        )
+        assert validated["summary"]["policy_memory_measurement"]["isolation"] == (
+            "one_fresh_spawned_process_per_cell"
+        )
         assert not validated["summary"][
             "floating_point_checks_are_verified_certificates"
         ]
+    assert len(worker_pids) == len(EXPECTED_TASKS)
 
 
 def test_strict_aggregate_rejects_an_incomplete_cartesian_product(tmp_path) -> None:
@@ -83,7 +118,47 @@ def test_strict_aggregate_rejects_an_incomplete_cartesian_product(tmp_path) -> N
         )
 
 
-def test_artifact_generation_is_byte_deterministic(tmp_path) -> None:
+def test_run_validation_rejects_failure_sidecar_and_round_count_corruption(
+    tmp_path: Path,
+) -> None:
+    failure_directory = (
+        tmp_path / "raw/smoke/covtype_label_bandit/greedy_corrected/seed-0"
+    )
+    write_failure(
+        failure_directory,
+        context={"profile": "smoke"},
+        error=RuntimeError("fixture failure"),
+    )
+    with pytest.raises(AggregateError, match="failures=1"):
+        aggregate_profile(
+            config_path=CONFIG,
+            profile="smoke",
+            raw_root=tmp_path / "raw",
+            output_path=tmp_path / "aggregate.json",
+        )
+
+    run = tmp_path / "run"
+    write_run(
+        run,
+        manifest={"status": "completed"},
+        rounds=({"round": 1},),
+        summary={"status": "completed", "rounds": 1},
+    )
+    (run / "summary.json").write_text('{"rounds":1,"status":"changed"}\n')
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        validate_run_directory(run)
+
+    _rewrite_run_fixture(
+        run,
+        manifest={"status": "completed"},
+        rounds=({"round": 1},),
+        summary={"status": "completed", "rounds": 2},
+    )
+    with pytest.raises(ValueError, match="summary round count mismatch"):
+        validate_run_directory(run)
+
+
+def test_validated_artifact_rendering_is_byte_deterministic(tmp_path) -> None:
     aggregate = {
         "schema_version": 1,
         "profile": "smoke",
@@ -124,20 +199,39 @@ def test_artifact_generation_is_byte_deterministic(tmp_path) -> None:
             }
         ],
     }
-    aggregate_path = tmp_path / "aggregate.json"
-    aggregate_path.write_text(json.dumps(aggregate), encoding="utf-8")
-    review = tmp_path / "review"
-    first = generate_artifacts(aggregate_path=aggregate_path, review_root=review)
+    first_root = tmp_path / "review-first"
+    first = _render_validated_artifacts(
+        aggregate,
+        first_root,
+        accepted_aggregate_sha256="2" * 64,
+    )
     first_bytes = {
-        path.relative_to(review): path.read_bytes()
-        for path in review.rglob("*")
+        path.relative_to(first_root): path.read_bytes()
+        for path in first_root.rglob("*")
         if path.is_file()
     }
-    second = generate_artifacts(aggregate_path=aggregate_path, review_root=review)
+    second_root = tmp_path / "review-second"
+    second = _render_validated_artifacts(
+        aggregate,
+        second_root,
+        accepted_aggregate_sha256="2" * 64,
+    )
     second_bytes = {
-        path.relative_to(review): path.read_bytes()
-        for path in review.rglob("*")
+        path.relative_to(second_root): path.read_bytes()
+        for path in second_root.rglob("*")
         if path.is_file()
     }
     assert first == second
     assert first_bytes == second_bytes
+
+
+def test_statistics_writer_refuses_to_overwrite_existing_evidence(
+    tmp_path: Path,
+) -> None:
+    destination = tmp_path / "STATISTICAL_RESULTS.csv"
+    sentinel = b"historical evidence\n"
+    destination.write_bytes(sentinel)
+    with pytest.raises(FileExistsError, match="refusing to overwrite"):
+        write_statistics_csv({"method_statistics": []}, destination)
+    assert destination.read_bytes() == sentinel
+    assert not destination.with_name(destination.name + ".sha256").exists()

@@ -1,4 +1,26 @@
 filegroup(
+    name = "realistic_transport_experiment_tests_inventory_resources",
+    srcs = [
+        "BUCK",
+        "run_buck_pytest.sh",
+    ] + glob([
+        "*.bzl",
+        "*.py",
+        "*.pyc",
+        "*.pyi",
+        "*.pyo",
+        "*.so",
+        "**/*.bzl",
+        "**/*.py",
+        "**/*.pyc",
+        "**/*.pyi",
+        "**/*.pyo",
+        "**/*.so",
+    ]),
+    visibility = ["PUBLIC"],
+)
+
+filegroup(
     name = "test_sources",
     srcs = [
         "test_aggregate_linear_audit.py",

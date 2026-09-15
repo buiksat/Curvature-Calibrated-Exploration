@@ -199,6 +199,19 @@ class PotentialOutcomeStream:
             }
         )
 
+    @property
+    def component_digests(self) -> dict[str, str]:
+        """Bind every exogenous array used by a policy trajectory."""
+
+        return {
+            "context_order": canonical_array_digest({"row_indices": self.row_indices}),
+            "contexts": canonical_array_digest({"contexts": self.contexts}),
+            "labels": canonical_array_digest({"labels": self._labels}),
+            "potential_means": canonical_array_digest({"means": self.means}),
+            "noise": canonical_array_digest({"noises": self.noises}),
+            "potential_rewards": canonical_array_digest({"rewards": self.rewards}),
+        }
+
     def policy_round(self, round_index: int) -> PolicyRound:
         index = int(round_index)
         if not 0 <= index < self.rounds:

@@ -1,5 +1,29 @@
 load("@fbcode_macros//build_defs:native_rules.bzl", "buck_sh_binary")
 
+filegroup(
+    name = "realistic_transport_experiments_inventory_resources",
+    srcs = [
+        "BUCK",
+        "REALISTIC_TRANSPORT_PROTOCOL.md",
+        "configs/realistic_transport_covtype.yaml",
+        "requirements.txt",
+    ] + glob([
+        "*.bzl",
+        "*.py",
+        "*.pyc",
+        "*.pyi",
+        "*.pyo",
+        "*.so",
+        "**/*.bzl",
+        "**/*.py",
+        "**/*.pyc",
+        "**/*.pyi",
+        "**/*.pyo",
+        "**/*.so",
+    ]),
+    visibility = ["PUBLIC"],
+)
+
 python_library(
     name = "config_lib",
     srcs = ["__init__.py", "config.py"],

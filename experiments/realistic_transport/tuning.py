@@ -11,45 +11,53 @@ from typing import Any
 
 import numpy as np
 
-from .benchmark import (
-    BenchmarkSettings,
-    OptimizerSpec,
-    run_policy_trajectory,
-    run_tuning_trajectory,
-)
+from .benchmark import BenchmarkSettings, OptimizerSpec
 from .configuration import (
     APPROXIMATE_METHODS,
-    EXPECTED_TASKS,
     config_digest,
+    EXPECTED_TASKS,
     load_config,
     method_spec,
-    seed_set,
+    profile_policy,
+    scientific_config_digest,
 )
-from .data import load_prepared_dataset
 from .environment import build_stream, build_task_environment
-from .preprocessing import deterministic_split, fit_preprocessing
-from .provenance import (
-    git_state,
-    input_set_sha256,
-    sha256_file,
-    source_inventory,
-    write_json,
+from .integrity import (
+    authenticate_prepared_data,
+    IntegrityError,
+    selection_payload_sha256,
+    SELECTION_SCHEMA,
+    verify_clean_freeze,
+    verify_derived_data_identities,
 )
-from .study import PeakRSSSampler
+from .preprocessing import deterministic_split, fit_preprocessing
+from .provenance import input_set_sha256, sha256_file, write_json
+from .study import run_isolated_policy_trajectory, run_isolated_tuning_trajectory
 
 
 class TuningError(RuntimeError):
     """Raised when a frozen tuning cell is incomplete or invalid."""
 
 
+def _refuse_existing_output(path: str | Path) -> None:
+    destination = Path(path)
+    existing = [
+        candidate
+        for candidate in (
+            destination,
+            destination.with_name(destination.name + ".sha256"),
+        )
+        if candidate.exists() or candidate.is_symlink()
+    ]
+    if existing:
+        raise TuningError(
+            f"refusing to overwrite evidence output: {[str(path) for path in existing]}"
+        )
+
+
 def _prepare(
-    config: Mapping[str, Any], artifact: str | Path
-) -> tuple[Any, Any, Any, dict[str, Any]]:
-    prepared = load_prepared_dataset(
-        artifact, required_digest=config["dataset"].get("required_semantic_digest")
-    )
-    if prepared.manifest.get("smoke_only"):
-        raise TuningError("smoke-only data cannot be used for locked tuning")
+    config: Mapping[str, Any], prepared: Any
+) -> tuple[Any, Any, dict[str, Any]]:
     split = deterministic_split(
         prepared.row_count,
         prepared.content_digest,
@@ -67,7 +75,22 @@ def _prepare(
         )
         for task in EXPECTED_TASKS
     }
-    return prepared, split, transform, environments
+    return split, transform, environments
+
+
+def _execution_metadata(execution: Mapping[str, Any]) -> dict[str, Any]:
+    runtime = dict(execution["runtime"])
+    runtime_execution = dict(runtime["execution"])
+    runtime_execution.update(
+        {
+            "actual_concurrent_workers": 1,
+            "execution_model": "fresh_spawned_process_per_tuning_cell",
+            "worker_pid": int(execution["process_id"]),
+            "memory_measurement": dict(execution["memory"]),
+        }
+    )
+    runtime["execution"] = runtime_execution
+    return runtime
 
 
 def _optimizer_grid(config: Mapping[str, Any]) -> tuple[OptimizerSpec, ...]:
@@ -90,26 +113,50 @@ def run_tuning_suite(
     prepared_artifact: str | Path,
     output_path: str | Path,
     freeze_revision: str,
+    data_lock_path: str | Path,
+    repository_root: str | Path = Path(__file__).resolve().parents[2],
 ) -> dict[str, Any]:
     """Execute the complete preregistered tuning grid and choose settings."""
 
-    config = load_config(config_path, "full")
-    state = git_state()
-    if state["revision"] != freeze_revision:
-        raise TuningError(
-            f"HEAD {state['revision']} differs from freeze revision {freeze_revision}"
+    _refuse_existing_output(output_path)
+    config = load_config(config_path, "tuning")
+    policy = profile_policy(config, "tuning")
+    try:
+        frozen_inventory = verify_clean_freeze(
+            freeze_revision,
+            repo_root=repository_root,
+            require_head=True,
         )
-    prepared, split, transform, environments = _prepare(config, prepared_artifact)
-    seeds = seed_set(config, "tuning")
-    rounds = int(config["horizons"]["maximum"])
+        prepared, data_lock = authenticate_prepared_data(
+            config=config,
+            config_path=config_path,
+            prepared_artifact=prepared_artifact,
+            data_lock_path=data_lock_path,
+            freeze_revision=freeze_revision,
+            repo_root=repository_root,
+        )
+    except IntegrityError as error:
+        raise TuningError(f"freeze/data-lock verification failed: {error}") from error
+    split, transform, environments = _prepare(config, prepared)
+    try:
+        verify_derived_data_identities(
+            data_lock,
+            split_digest=split.digest,
+            preprocessing_digest=transform.digest,
+        )
+    except IntegrityError as error:
+        raise TuningError(f"data-lock verification failed: {error}") from error
+    seeds = policy.seeds
+    rounds = policy.rounds
     burn_in = int(config["representation_update"]["burn_in_rounds"])
+    blas_threads = int(config["execution"]["blas_threads_per_worker"])
     optimizer_records: list[dict[str, Any]] = []
     for task, optimizer, seed in itertools.product(
         EXPECTED_TASKS, _optimizer_grid(config), seeds
     ):
         environment = environments[task]
         stream = build_stream(environment, "tuning", seed, rounds)
-        result = run_tuning_trajectory(
+        execution = run_isolated_tuning_trajectory(
             environment,
             stream,
             optimizer,
@@ -117,8 +164,18 @@ def run_tuning_suite(
             training_ridge=float(config["model"]["training_ridge"]),
             theta_radius=float(config["model"]["theta_radius"]),
             burn_in=burn_in,
+            blas_threads=blas_threads,
         )
-        optimizer_records.append(dict(result.summary))
+        result = execution["result"]
+        optimizer_records.append(
+            {
+                **dict(result.summary),
+                "memory_measurement": execution["memory"],
+                "thread_control": execution["thread_control"],
+                "worker_pid": int(execution["process_id"]),
+                "runtime": _execution_metadata(execution),
+            }
+        )
 
     def optimizer_mean(tasks: set[str], candidate: OptimizerSpec) -> float:
         values = [
@@ -168,15 +225,16 @@ def run_tuning_suite(
         )
         for alpha in config["linucb"]["alpha_grid"]:
             for seed in seeds:
-                with PeakRSSSampler() as memory:
-                    result = run_policy_trajectory(
-                        environment,
-                        build_stream(environment, "tuning", seed, rounds),
-                        "linucb_fixed_features",
-                        BenchmarkSettings.from_config(
-                            config, optimizer=optimizer, linucb_alpha=float(alpha)
-                        ),
-                    )
+                execution = run_isolated_policy_trajectory(
+                    environment,
+                    build_stream(environment, "tuning", seed, rounds),
+                    "linucb_fixed_features",
+                    BenchmarkSettings.from_config(
+                        config, optimizer=optimizer, linucb_alpha=float(alpha)
+                    ),
+                    blas_threads=blas_threads,
+                )
+                result = execution["result"]
                 linucb_records.append(
                     {
                         "task": task,
@@ -185,7 +243,16 @@ def run_tuning_suite(
                         "cumulative_regret": float(
                             result.summary["cumulative_pseudo_regret"]
                         ),
-                        "peak_rss_bytes": int(memory.peak_bytes),
+                        "deterministic_failure": bool(
+                            result.summary["deterministic_failure"]
+                        ),
+                        "peak_rss_bytes": int(execution["memory"]["peak_rss_bytes"]),
+                        "memory_measurement": execution["memory"],
+                        "thread_control": execution["runtime"]["execution"][
+                            "thread_control"
+                        ],
+                        "worker_pid": int(execution["process_id"]),
+                        "runtime": _execution_metadata(execution),
                     }
                 )
         selected_alphas[task] = min(
@@ -213,17 +280,18 @@ def run_tuning_suite(
         )
         for method in APPROXIMATE_METHODS:
             for seed in seeds:
-                with PeakRSSSampler() as memory:
-                    result = run_policy_trajectory(
-                        environment,
-                        build_stream(environment, "tuning", seed, rounds),
-                        method,
-                        BenchmarkSettings.from_config(
-                            config,
-                            optimizer=optimizer,
-                            linucb_alpha=selected_alphas[task],
-                        ),
-                    )
+                execution = run_isolated_policy_trajectory(
+                    environment,
+                    build_stream(environment, "tuning", seed, rounds),
+                    method,
+                    BenchmarkSettings.from_config(
+                        config,
+                        optimizer=optimizer,
+                        linucb_alpha=selected_alphas[task],
+                    ),
+                    blas_threads=blas_threads,
+                )
+                result = execution["result"]
                 approximate_records.append(
                     {
                         "task": task,
@@ -232,13 +300,22 @@ def run_tuning_suite(
                         "cumulative_regret": float(
                             result.summary["cumulative_pseudo_regret"]
                         ),
+                        "deterministic_failure": bool(
+                            result.summary["deterministic_failure"]
+                        ),
                         "algorithm_seconds": float(
                             result.summary["total_algorithm_seconds"]
                         ),
                         "logical_operator_bytes": int(
                             result.summary["maximum_logical_operator_bytes"]
                         ),
-                        "peak_rss_bytes": int(memory.peak_bytes),
+                        "peak_rss_bytes": int(execution["memory"]["peak_rss_bytes"]),
+                        "memory_measurement": execution["memory"],
+                        "thread_control": execution["runtime"]["execution"][
+                            "thread_control"
+                        ],
+                        "worker_pid": int(execution["process_id"]),
+                        "runtime": _execution_metadata(execution),
                     }
                 )
         method_summaries: list[tuple[str, float, float, float]] = []
@@ -250,6 +327,8 @@ def run_tuning_suite(
             ]
             if len(cells) != len(seeds):
                 raise TuningError("approximate-method tuning grid is incomplete")
+            if any(bool(row["deterministic_failure"]) for row in cells):
+                continue
             method_summaries.append(
                 (
                     method,
@@ -257,6 +336,10 @@ def run_tuning_suite(
                     float(np.median([row["algorithm_seconds"] for row in cells])),
                     float(np.median([row["peak_rss_bytes"] for row in cells])),
                 )
+            )
+        if not method_summaries:
+            raise TuningError(
+                f"every approximate-method candidate failed deterministically for {task}"
             )
         best_regret = min(row[1] for row in method_summaries)
         eligible = [row for row in method_summaries if row[1] <= 1.05 * best_regret]
@@ -270,13 +353,29 @@ def run_tuning_suite(
             ),
         )[0]
 
-    inventory = source_inventory()
+    try:
+        post_tuning_inventory = verify_clean_freeze(
+            freeze_revision,
+            repo_root=repository_root,
+            require_head=True,
+        )
+    except IntegrityError as error:
+        raise TuningError(f"post-tuning freeze verification failed: {error}") from error
+    if post_tuning_inventory != frozen_inventory:
+        raise TuningError("scientific source inventory changed during tuning")
+    inventory = frozen_inventory
     document = {
         "schema_version": 1,
         "status": "complete",
+        "profile": policy.name,
+        "phase": policy.phase,
+        "evidence_role": policy.evidence_role,
+        "seed_set_identity": policy.seed_set_identity,
         "freeze_revision": freeze_revision,
         "config_digest": config_digest(config),
+        "scientific_config_digest": scientific_config_digest(config),
         "prepared_data_digest": prepared.content_digest,
+        "approved_data_lock_sha256": sha256_file(data_lock_path),
         "split_digest": split.digest,
         "preprocessing_digest": transform.digest,
         "source_inventory": inventory,
@@ -295,8 +394,12 @@ def run_tuning_suite(
 
 
 def lock_selection(
-    *, tuning_path: str | Path, output_path: str | Path
+    *,
+    tuning_path: str | Path,
+    output_path: str | Path,
+    repository_root: str | Path = Path(__file__).resolve().parents[2],
 ) -> dict[str, Any]:
+    _refuse_existing_output(output_path)
     tuning_file = Path(tuning_path)
     tuning = json.loads(tuning_file.read_text(encoding="utf-8"))
     if tuning.get("status") != "complete":
@@ -304,26 +407,46 @@ def lock_selection(
     selected = tuning.get("selection")
     if not isinstance(selected, Mapping):
         raise TuningError("tuning artifact lacks selections")
-    document = {
-        "schema_version": 1,
+    tuning_sha = sha256_file(tuning_file)
+    sidecar = tuning_file.with_name(tuning_file.name + ".sha256")
+    try:
+        sidecar_fields = sidecar.read_text(encoding="ascii").split()
+    except OSError as error:
+        raise TuningError(f"cannot read tuning sidecar: {error}") from error
+    if sidecar_fields != [tuning_sha, tuning_file.name]:
+        raise TuningError("tuning artifact SHA-256 sidecar is invalid")
+    try:
+        inventory = verify_clean_freeze(
+            str(tuning["freeze_revision"]),
+            repo_root=repository_root,
+            require_head=True,
+        )
+    except (IntegrityError, KeyError) as error:
+        raise TuningError(
+            f"pre-selection freeze verification failed: {error}"
+        ) from error
+    if tuning.get("source_inventory") != inventory:
+        raise TuningError("tuning source inventory does not match F")
+    document: dict[str, Any] = {
+        "schema_version": 2,
+        "schema": SELECTION_SCHEMA,
         "status": "selected",
         "freeze_revision": tuning["freeze_revision"],
         "config_digest": tuning["config_digest"],
+        "scientific_config_digest": tuning["scientific_config_digest"],
         "prepared_data_digest": tuning["prepared_data_digest"],
         "preprocessing_digest": tuning["preprocessing_digest"],
         "source_inventory": tuning["source_inventory"],
         "source_inventory_sha256": tuning["source_inventory_sha256"],
-        "tuning_input_inventory": [
-            {"path": tuning_file.name, "sha256": sha256_file(tuning_file)}
-        ],
+        "tuning_input_inventory": [{"path": tuning_file.name, "sha256": tuning_sha}],
         "tuning_input_inventory_sha256": input_set_sha256(
-            [{"path": tuning_file.name, "sha256": sha256_file(tuning_file)}]
+            [{"path": tuning_file.name, "sha256": tuning_sha}]
         ),
         "optimizer": selected["optimizer"],
         "linucb_alpha": selected["linucb_alpha"],
         "practical_nystrom": selected["practical_nystrom"],
-        "selection_lock_revision": None,
     }
+    document["selection_payload_sha256"] = selection_payload_sha256(document)
     write_json(output_path, document)
     return document
 
@@ -338,6 +461,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         default=Path("experiments/configs/realistic_transport_covtype.yaml"),
     )
     tune.add_argument("--prepared-artifact", type=Path, required=True)
+    tune.add_argument("--data-lock", type=Path, required=True)
     tune.add_argument("--freeze-revision", required=True)
     tune.add_argument(
         "--output",
@@ -358,6 +482,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             prepared_artifact=args.prepared_artifact,
             output_path=args.output,
             freeze_revision=args.freeze_revision,
+            data_lock_path=args.data_lock,
         )
     else:
         result = lock_selection(tuning_path=args.tuning, output_path=args.output)

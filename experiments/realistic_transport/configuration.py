@@ -45,6 +45,85 @@ APPROXIMATE_METHODS = tuple(
 
 
 @dataclass(frozen=True)
+class ProfilePolicy:
+    """Immutable data, split, seed, horizon, and evidence-role contract."""
+
+    name: str
+    dataset_mode: str
+    phase: str
+    evidence_role: str
+    seeds: tuple[int, ...]
+    rounds: int
+    requires_data_lock: bool
+    requires_selection_lock: bool
+    publication_candidate: bool
+
+    @property
+    def seed_set_identity(self) -> str:
+        payload = canonical_json({"name": self.name, "seeds": list(self.seeds)})
+        return hashlib.sha256(payload.encode("ascii")).hexdigest()
+
+
+PROFILE_POLICIES = {
+    "smoke": ProfilePolicy(
+        "smoke",
+        "digits_smoke",
+        "development",
+        "smoke_only",
+        (0,),
+        32,
+        False,
+        False,
+        False,
+    ),
+    "covtype_pilot": ProfilePolicy(
+        "covtype_pilot",
+        "covtype",
+        "development",
+        "pilot_only",
+        (0, 1),
+        100,
+        True,
+        False,
+        False,
+    ),
+    "tuning": ProfilePolicy(
+        "tuning",
+        "covtype",
+        "tuning",
+        "tuning_only",
+        tuple(range(10, 20)),
+        500,
+        True,
+        False,
+        False,
+    ),
+    "resource_fallback": ProfilePolicy(
+        "resource_fallback",
+        "covtype",
+        "evaluation",
+        "pilot_only_non_publication",
+        tuple(range(200, 210)),
+        250,
+        True,
+        True,
+        False,
+    ),
+    "full": ProfilePolicy(
+        "full",
+        "covtype",
+        "evaluation",
+        "publication_candidate",
+        tuple(range(100, 130)),
+        500,
+        True,
+        True,
+        True,
+    ),
+}
+
+
+@dataclass(frozen=True)
 class MethodSpec:
     name: str
     center: str
@@ -162,6 +241,23 @@ def config_digest(config: Mapping[str, Any]) -> str:
     return hashlib.sha256(canonical_json(config).encode("ascii")).hexdigest()
 
 
+def scientific_config_digest(config: Mapping[str, Any]) -> str:
+    """Hash profile-independent scientific choices used across tuning and evaluation."""
+
+    value = copy.deepcopy(dict(config))
+    for key in (
+        "dataset_mode",
+        "evidence_role",
+        "phase",
+        "profile",
+        "rounds",
+        "seeds",
+        "workers",
+    ):
+        value.pop(key, None)
+    return config_digest(value)
+
+
 def _integer_sequence(value: Any, *, name: str) -> tuple[int, ...]:
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
         raise RealisticConfigError(f"{name} must be a list")
@@ -214,7 +310,7 @@ def validate_config(document: Mapping[str, Any]) -> None:
         raise RealisticConfigError("evaluation seeds are not frozen")
     if parsed["pilot"] != set(range(200, 210)):
         raise RealisticConfigError("pilot seeds are not frozen")
-    required_profiles = {"smoke", "covtype_pilot", "resource_fallback", "full"}
+    required_profiles = set(PROFILE_POLICIES)
     if set(profiles) != required_profiles:
         raise RealisticConfigError("profile set differs from the preregistration")
     for name, profile in profiles.items():
@@ -233,6 +329,45 @@ def validate_config(document: Mapping[str, Any]) -> None:
     prefixes = base.get("horizons", {}).get("prefixes")
     if tuple(prefixes or ()) != (100, 250, 500):
         raise RealisticConfigError("reported prefixes must be [100, 250, 500]")
+    execution = base.get("execution")
+    if not isinstance(execution, Mapping):
+        raise RealisticConfigError("execution must be an object")
+    blas_threads = execution.get("blas_threads_per_worker")
+    if (
+        isinstance(blas_threads, bool)
+        or not isinstance(blas_threads, int)
+        or blas_threads != 1
+    ):
+        raise RealisticConfigError("execution.blas_threads_per_worker must be 1")
+
+    # These values form the profile policy. Development profiles may select a
+    # subset of cells, but full and resource_fallback are complete-grid entry
+    # points. No caller may change the data, split, seed partition, horizon, or
+    # evidence role attached to a profile.
+    for name, expected in PROFILE_POLICIES.items():
+        profile = profiles[name]
+        if "phase" in profile or "evidence_role" in profile:
+            raise RealisticConfigError(
+                f"profiles.{name} duplicates the central phase/evidence policy"
+            )
+        if (
+            profile.get("dataset_mode") != expected.dataset_mode
+            or int(profile.get("rounds", -1)) != expected.rounds
+        ):
+            raise RealisticConfigError(
+                f"profiles.{name} differs from the frozen profile policy"
+            )
+        raw_seeds = profile.get("seeds")
+        if raw_seeds is None:
+            if name != "full":
+                raise RealisticConfigError(f"profiles.{name}.seeds is required")
+        elif (
+            _integer_sequence(raw_seeds, name=f"profiles.{name}.seeds")
+            != expected.seeds
+        ):
+            raise RealisticConfigError(
+                f"profiles.{name}.seeds differs from the frozen profile policy"
+            )
 
 
 def load_config(path: str | Path, profile: str) -> dict[str, Any]:
@@ -261,16 +396,93 @@ def seed_set(config: Mapping[str, Any], name: str) -> tuple[int, ...]:
     return _integer_sequence(sets[name], name=f"seed_sets.{name}")
 
 
+def profile_policy(config: Mapping[str, Any], profile: str) -> ProfilePolicy:
+    """Resolve and revalidate the policy for one already-resolved profile."""
+
+    if config.get("profile") != profile:
+        raise RealisticConfigError("resolved configuration profile mismatch")
+    try:
+        policy = PROFILE_POLICIES[profile]
+    except KeyError as error:
+        raise RealisticConfigError(f"unknown profile policy {profile!r}") from error
+    if (
+        config.get("dataset_mode") != policy.dataset_mode
+        or int(config.get("rounds", -1)) != policy.rounds
+    ):
+        raise RealisticConfigError(
+            f"resolved profile {profile!r} contradicts the central policy"
+        )
+    if (
+        config.get("seeds") is not None
+        and _integer_sequence(config["seeds"], name=f"profiles.{profile}.seeds")
+        != policy.seeds
+    ):
+        raise RealisticConfigError(
+            f"resolved profile {profile!r} has contradictory seeds"
+        )
+    return policy
+
+
+def validate_profile_request(
+    config: Mapping[str, Any],
+    profile: str,
+    *,
+    phase: str | None = None,
+    methods: Sequence[str] | None = None,
+    tasks: Sequence[str] | None = None,
+    seeds: Sequence[int] | None = None,
+) -> ProfilePolicy:
+    """Reject caller overrides that contradict the frozen profile policy."""
+
+    policy = profile_policy(config, profile)
+    requested_phase = policy.phase if phase is None else str(phase)
+    if requested_phase != policy.phase:
+        raise RealisticConfigError(
+            f"profile {profile!r} requires phase {policy.phase!r}, "
+            f"not {requested_phase!r}"
+        )
+    if seeds is not None:
+        requested = _integer_sequence(seeds, name="requested seeds")
+        invalid = sorted(set(requested) - set(policy.seeds))
+        if invalid:
+            raise RealisticConfigError(
+                f"profile {profile!r} does not permit seeds {invalid}"
+            )
+    else:
+        requested = policy.seeds
+    if profile in {"full", "resource_fallback"}:
+        requested_methods = EXPECTED_METHODS if methods is None else tuple(methods)
+        requested_tasks = EXPECTED_TASKS if tasks is None else tuple(tasks)
+        if requested_methods != EXPECTED_METHODS:
+            raise RealisticConfigError(
+                f"profile {profile!r} requires the complete ordered method grid"
+            )
+        if requested_tasks != EXPECTED_TASKS:
+            raise RealisticConfigError(
+                f"profile {profile!r} requires the complete ordered task grid"
+            )
+        if requested != policy.seeds:
+            raise RealisticConfigError(
+                f"profile {profile!r} requires its exact seed partition"
+            )
+    return policy
+
+
 __all__ = [
     "APPROXIMATE_METHODS",
     "EXPECTED_METHODS",
     "EXPECTED_TASKS",
     "MethodSpec",
+    "PROFILE_POLICIES",
+    "ProfilePolicy",
     "RealisticConfigError",
     "canonical_json",
     "config_digest",
     "load_config",
     "method_spec",
+    "profile_policy",
+    "scientific_config_digest",
     "seed_set",
     "validate_config",
+    "validate_profile_request",
 ]

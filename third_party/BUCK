@@ -1,3 +1,18 @@
+filegroup(
+    name = "realistic_transport_wheel_resources",
+    srcs = glob(["wheels/**"]),
+    visibility = ["PUBLIC"],
+)
+
+filegroup(
+    name = "realistic_transport_third_party_inventory_resources",
+    srcs = [
+        "BUCK",
+        ":realistic_transport_wheel_resources",
+    ],
+    visibility = ["PUBLIC"],
+)
+
 prebuilt_python_library(
     name = "numpy",
     binary_src = "wheels/numpy-2.2.3-cp312-cp312-manylinux_x86_64.whl",

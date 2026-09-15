@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import os
+import platform
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -15,12 +17,30 @@ from .data import (
 )
 
 
+def _runtime_info() -> dict[str, object]:
+    modules: dict[str, object] = {}
+    for name in ("numpy", "scipy", "sklearn", "threadpoolctl"):
+        module = importlib.import_module(name)
+        modules[name] = {
+            "version": str(getattr(module, "__version__", "unknown")),
+            "origin": str(getattr(module, "__file__", "unknown")),
+        }
+    return {
+        "python": {
+            "version": platform.python_version(),
+            "implementation": platform.python_implementation(),
+        },
+        "modules": modules,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Prepare deterministic data for the realistic transport benchmark"
     )
-    parser.add_argument("--dataset", choices=("covtype", "digits"), required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--runtime-info", action="store_true")
+    parser.add_argument("--dataset", choices=("covtype", "digits"), default=None)
+    parser.add_argument("--output", type=Path, default=None)
     parser.add_argument(
         "--data-root",
         type=Path,
@@ -28,8 +48,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="external scikit-learn cache root; defaults to CCE_DATA_ROOT",
     )
     parser.add_argument("--no-download", action="store_true")
-    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
+
+    if args.runtime_info:
+        print(canonical_json(_runtime_info()))
+        return 0
+    if args.dataset is None or args.output is None:
+        parser.error(
+            "--dataset and --output are required unless --runtime-info is used"
+        )
 
     try:
         if args.dataset == "covtype":
@@ -45,12 +72,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 cache_root=data_root,
                 destination=args.output,
                 download_if_missing=not args.no_download,
-                overwrite=args.overwrite,
             )
         else:
-            manifest = prepare_digits_artifact(
-                destination=args.output, overwrite=args.overwrite
-            )
+            manifest = prepare_digits_artifact(destination=args.output)
     except DataPreparationError as exc:
         parser.exit(2, f"data preparation failed: {exc}\n")
     print(canonical_json(manifest))

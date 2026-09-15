@@ -1,3 +1,32 @@
+filegroup(
+    name = "realistic_transport_buck2_version_resources",
+    srcs = glob(["buck2-versions/**"]),
+    visibility = ["PUBLIC"],
+)
+
+filegroup(
+    name = "realistic_transport_tools_inventory_resources",
+    srcs = [
+        "BUCK",
+        "build_defs",
+        ":realistic_transport_buck2_version_resources",
+    ] + glob([
+        "*.bzl",
+        "*.py",
+        "*.pyc",
+        "*.pyi",
+        "*.pyo",
+        "*.so",
+        "**/*.bzl",
+        "**/*.py",
+        "**/*.pyc",
+        "**/*.pyi",
+        "**/*.pyo",
+        "**/*.so",
+    ]),
+    visibility = ["PUBLIC"],
+)
+
 python_binary(
     name = "pytest_runner",
     main = "pytest_main.py",
@@ -15,5 +44,19 @@ python_binary(
     deps = [
         "//experiments/realistic_transport:lib",
         "fbsource//third-party/pypi/scikit-learn/1.5.1:py",
+    ],
+)
+
+python_library(
+    name = "transport_review_tools",
+    srcs = ["export_transport_github_review_bundle.py"],
+)
+
+python_binary(
+    name = "verify_transport_committed_evidence",
+    main = "verify_transport_committed_evidence.py",
+    deps = [
+        ":transport_review_tools",
+        "//experiments:lib",
     ],
 )

@@ -8,6 +8,83 @@ real Covertype context geometry, low-rank current curvature, and iterative
 width solves. Smoke and pilot results are engineering evidence. Only a complete
 locked evaluation grid may be used as publication evidence.
 
+## Prospective repair amendment
+
+This amendment applies to future authentic Covertype work. It was introduced
+before any authentic Covertype pilot, tuning, or evaluation. Historical Digits
+smoke output remains smoke evidence and is not retroactively covered by these
+gates.
+
+The required order is:
+
+```text
+repair R -> independent 03 clearance -> candidate Covertype preparation
+-> clean data-bound freeze F -> pilot -> tuning -> selection-only lock L
+-> confirmatory evaluation state E
+```
+
+Preparation emits a candidate artifact and manifest. It cannot approve either
+one. After an independent authenticity check, the approved data lock records
+the exact artifact, manifest, semantic-array, loader, runtime, split, and
+preprocessing identities. The configuration records the repository-relative
+lock path, the exact lock-file SHA-256, and the same non-null semantic digest in
+each Covertype profile override. Keeping those bindings out of the smoke
+profile preserves the historical smoke configuration identity.
+The lock and configuration must then be committed with the scientific sources
+in F. A run accepts the lock only when its current bytes equal the blob at F.
+Hashes bind approved bytes; they do not establish dataset authenticity.
+
+Python must not write bytecode into the repository during freeze preparation.
+Set `PYTHONPYCACHEPREFIX` to a project-external directory or set
+`PYTHONDONTWRITEBYTECODE=1`. Immediately before F, audit ignored and untracked
+paths and remove only generated `__pycache__`, `.pyc`, and `.pyo` files. The
+scientific inventory recursively includes Python, Python stub, shared-library,
+Starlark, and bytecode paths. It also includes every repository-local `BUCK`,
+`BUCK_TREE`, `PACKAGE`, `.buckconfig`, `.buckconfig.local`, and `.buckroot`;
+every entry below a `.buckconfig.d` directory; the root Buck binary selectors;
+the `tools/buck2-versions` selectors; all bundled wheels; and both Buck test
+drivers. This class rule rejects a relevant path that was absent at F if it
+later appears untracked, staged, or committed. Each present entry binds its
+Git-compatible mode as well as its bytes. Every symlink outside `buck-out/`,
+`results/logs/`, and `results/raw/` is rejected unless its exact path is one of
+the build/dependency links already required at START. Allowed links bind the
+stored link text and mode without following the target. This rejects startup
+hooks, dependency-shadow packages, and nested package-member links even when
+they are already present at F.
+
+F authenticates repository-local inputs only. It does not bind system or user
+configuration such as `/etc/buckconfig*` or `~/.buckconfig*`, and it does not
+authenticate bytes reached through the allowed links into the external
+fbsource checkout. A future production run must attest that machine and
+external build environment separately.
+
+The central profile policy is fixed as follows:
+
+| Profile | Dataset | Phase | Seeds | Horizon | Evidence role |
+| --- | --- | --- | --- | --- | --- |
+| `smoke` | Digits | development | 0 | 32 | smoke only |
+| `covtype_pilot` | approved Covertype | development | 0, 1 | 100 | pilot only |
+| `tuning` | approved Covertype | tuning | 10 through 19 | 500 | tuning only |
+| `resource_fallback` | approved Covertype | evaluation | 200 through 209 | 250 | pilot-only, non-publication |
+| `full` | approved Covertype | evaluation | 100 through 129 | 500 | publication candidate |
+
+All Covertype profiles require F and the approved data lock. The resource
+fallback and full profiles also require L. The runtime and aggregator both
+validate the profile, phase, seed-set identity, horizon, evidence role, data
+identity, and relevant lineage from repository objects. The full profile is
+publication-eligible only after these checks, a complete grid, clean sources,
+valid per-method exogenous-stream pairing, and zero deterministic failures.
+The `full` and `resource_fallback` study entry points require the complete
+ordered task and method grids and the exact profile seed partition. The
+single-cell entry point rejects those profiles; it cannot emit a profile-looking
+partial evaluation.
+
+Selection records F and its payload hash. L must be a direct, single-parent
+child of F whose only changes are the selection JSON and its SHA-256 sidecar.
+Selection does not contain its future L SHA. Evaluation records E separately,
+and aggregation verifies that E descends from L while scientific source bytes
+remain identical to F.
+
 ## Scientific question
 
 The benchmark asks whether corrected-center operational confidence transport
@@ -59,10 +136,23 @@ file hash is recorded separately and is not used as the split salt.
 The locked runtime reads a prepared artifact below `CCE_DATA_ROOT`, verifies
 the semantic digest and manifest, and records only logical paths and digests.
 Absolute machine paths are excluded from committed artifacts.
+Preparation is write-once. Before loading or fetching data, it rejects an
+existing artifact, manifest, sidecar, directory, or dangling symlink, and its
+write boundary never replaces an existing path.
+All raw, aggregate, statistics, tuning, selection, and sidecar writers use a
+unique same-directory temporary file, fsync it, and install it with a
+non-replacing final operation. Artifact directories are staged next to their
+destination and published with Linux `renameat2(RENAME_NOREPLACE)`.
 
 If Covertype acquisition is unavailable, Digits may be prepared for smoke tests
 only. Digits results are never publication evidence and never substitute for
 the Covertype pilot, tuning, or evaluation.
+
+Prepared manifests record `smoke_only` and `fixture_only` as independent
+booleans. Synthetic test data sets `fixture_only=true` even when a test needs a
+Covertype-like identity. A fixture can exercise aggregation and report rendering,
+but it can never satisfy the committed data-lock authorization or publication
+eligibility checks.
 
 ## Deterministic split
 
@@ -179,6 +269,12 @@ score or radius.
 - Update: projected full-batch gradient descent after the selected reward.
 - Each method has an independent history and representation path.
 - The current reward never enters the current score.
+- Each cell runs in one fresh spawned process. The configured and enforced
+  BLAS/OpenMP thread count is exactly one, with actual pools checked before and
+  after numerical work.
+- Peak memory combines sampled process RSS with process-lifetime `ru_maxrss`.
+  It includes interpreter startup and deserialization, model, optimizer, replay,
+  operational work, and checkpoint diagnostics.
 
 Optimizer candidates are the Cartesian product:
 
@@ -239,6 +335,31 @@ Maintain `Q_t` by Welford scatter. Endpoint Thompson distance is an oracle
 diagnostic and enters only the endpoint-oracle method. Ratios with a zero
 denominator are omitted and counted; no epsilon replacement is allowed.
 
+At each declared dense checkpoint, approximate methods record three distinct
+selected-action width ratios: the solver upper width over the exact width for
+the same approximate operator A, the exact A width over the exact current
+operator V width, and the operational upper width over the exact V width. The
+corresponding all-action values are retained in the round record. Aggregation
+forms each eligible atomic ratio first and then takes the frozen arithmetic
+mean across checkpoint records. It records denominator omissions. These fields
+are diagnostics, not selection criteria.
+
+Current-exact Cholesky methods retain both `current_exact_widths` and its
+legacy `current_widths` alias on every round. These operational exact-V widths
+must equal the all-action `score_widths` used to choose the action. For CG
+methods, exact-V primitives remain dense-checkpoint diagnostics and are absent
+off checkpoint. Other methods do not acquire a current-exact width map merely
+for reporting.
+
+Aggregation validates every ratio before using it. A finite ratio must carry
+`denominator_omitted=false`; a null ratio must not carry that value. The legacy
+solver-ratio alias must equal `solver_upper_over_exact_A`, each selected-action
+value must equal its all-action entry, and the operational ratio must equal the
+solver and operator factors under the existing scale-aware float64 audit
+convention. V-referenced values are forbidden outside the declared dense
+checkpoints. Denominator omission continues to use exact `denominator == 0.0`;
+this validation adds no scientific threshold.
+
 ## Nyström operator
 
 For replay-gradient matrix `J` with rows divided by `sigma`, use a deterministic
@@ -292,6 +413,14 @@ The method records three separate statuses:
 - `analytic_certificate_valid_in_exact_arithmetic`;
 - `float64_diagnostic_pass`;
 - `verified_numerical_certificate=false`.
+
+Each round also records the exact float64 theorem comparison rule and its
+scale-aware comparison tolerance. Aggregation recomputes theorem-event status
+from applicability, the recorded confidence event, regret, right-hand side,
+and that tolerance. It independently derives deterministic-failure reasons and
+the float64 diagnostic result from solver convergence and the two envelope
+checks. A valid negative scientific outcome remains evidence; disagreement
+between a status and its primitives is an integrity error.
 
 ## Methods
 
@@ -409,20 +538,20 @@ leaves the relevant claim unchanged.
 
 ## Execution gates
 
-1. Reproduce the unchanged baseline and record blockers.
-2. Implement protocol, config, code, tests, and new Buck subpackage without
-   changing the old locked experiment source inventory.
-3. Run Digits smoke: one development seed, 32 rounds, all three task mechanics,
-   and all 13 methods. Smoke is never publication evidence.
-4. If Covertype is available, run two development seeds, 100 rounds, all tasks
-   and methods. Use outcomes only for correctness; use runtime and memory for
-   extrapolation.
-5. Commit a clean freeze revision before full tuning.
-6. Run complete tuning and create a selection artifact.
-7. Commit only selection artifacts and record the selection-lock revision.
-8. Run 30 evaluation seeds, 500 rounds, three tasks, and 13 methods.
-9. Reject incomplete or mixed-revision aggregates.
-10. Generate reports only from an accepted aggregate.
+1. Commit the repair R without preparing or running authentic Covertype.
+2. Obtain independent 03 clearance of R.
+3. Prepare the candidate Covertype artifact outside Git by the approved loader.
+4. Independently approve its identity, create the data lock, update the null
+   config bindings, and commit clean scientific sources plus those bindings as F.
+5. Run the two-seed development pilot from F.
+6. Run complete tuning from the unchanged clean F and emit a tuning artifact.
+7. Derive selection from the complete tuning artifact. Commit only the selection
+   JSON and its SHA-256 sidecar as L, a direct child of F.
+8. Run either the non-publication resource fallback or the 30-seed, 500-round
+   confirmatory evaluation from an E state that descends from L.
+9. Reject incomplete, mixed-stream, mixed-identity, or invalid-lineage aggregates.
+10. Generate reports only from an accepted aggregate. A full aggregate with a
+    deterministic execution failure remains non-publication evidence.
 
 If Covertype acquisition is externally blocked, write a `not_run` record, run
 Digits smoke, provide exact Covertype commands and estimates, and do not call

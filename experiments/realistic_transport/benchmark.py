@@ -32,11 +32,11 @@ from .operators import (
     certified_cg_widths,
     CertifiedWidthMap,
     DenseSPDOperator,
-    diagnose_operational_nystrom,
     diagnose_exact_width,
+    diagnose_operational_nystrom,
     exact_widths,
-    FLOAT64_CERTIFICATE_DIAGNOSTIC,
     FixedSPDOperator,
+    FLOAT64_CERTIFICATE_DIAGNOSTIC,
     LowRankRidgeOperator,
     OperationalNystromApproximation,
     thompson_distance,
@@ -58,10 +58,76 @@ THEOREM_METHODS: Final = frozenset(
         ),
     }
 )
+THEOREM_BOUND_COMPARISON_RULE: Final = (
+    "regret_less_than_or_equal_to_rhs_plus_recorded_float64_tolerance"
+)
+DETERMINISTIC_FAILURE_REASONS: Final = frozenset(
+    {
+        "solver_nonconvergence",
+        "current_taylor_envelope_violation",
+        "current_misspecification_envelope_violation",
+    }
+)
 
 
 class BenchmarkError(RuntimeError):
     """Raised when a trajectory violates a deterministic benchmark invariant."""
+
+
+def derive_float64_diagnostic_status(
+    *,
+    solver_all_actions_converged: bool | None,
+    current_taylor_envelope_valid: bool | None,
+    current_misspecification_envelope_valid: bool | None,
+) -> tuple[list[str], bool]:
+    """Derive the diagnostic result from the three recorded primitive checks."""
+
+    primitives = {
+        "solver_all_actions_converged": solver_all_actions_converged,
+        "current_taylor_envelope_valid": current_taylor_envelope_valid,
+        "current_misspecification_envelope_valid": (
+            current_misspecification_envelope_valid
+        ),
+    }
+    for name, value in primitives.items():
+        if value is not None and not isinstance(value, (bool, np.bool_)):
+            raise ValueError(f"{name} must be a boolean or null")
+    reasons: list[str] = []
+    if solver_all_actions_converged is False:
+        reasons.append("solver_nonconvergence")
+    if current_taylor_envelope_valid is False:
+        reasons.append("current_taylor_envelope_violation")
+    if current_misspecification_envelope_valid is False:
+        reasons.append("current_misspecification_envelope_violation")
+    return reasons, not reasons
+
+
+def derive_theorem_bound_status(
+    *,
+    theorem_applicable: bool,
+    confidence_event: bool,
+    regret: float,
+    rhs: float | None,
+    comparison_tolerance: float,
+) -> str:
+    """Apply the frozen theorem-event comparison used by the producer."""
+
+    if not isinstance(theorem_applicable, (bool, np.bool_)):
+        raise ValueError("theorem_applicable must be a boolean")
+    if not isinstance(confidence_event, (bool, np.bool_)):
+        raise ValueError("confidence_event must be a boolean")
+    checked_regret = _finite(regret, name="regret")
+    checked_tolerance = _finite(comparison_tolerance, name="comparison_tolerance")
+    if checked_tolerance < 0.0:
+        raise ValueError("comparison_tolerance must be nonnegative")
+    checked_rhs = None if rhs is None else _finite(rhs, name="rhs")
+    if not theorem_applicable:
+        return "not_applicable"
+    if not confidence_event:
+        return "premise_false"
+    if checked_rhs is not None and checked_regret <= checked_rhs + checked_tolerance:
+        return "satisfied"
+    return "bound_violation_on_event"
 
 
 def _finite(value: Any, *, name: str) -> float:
@@ -752,6 +818,7 @@ def _cg_metrics(
     selected_action: int,
     *,
     exact_diagnostic: bool,
+    exact_reference_widths: FloatArray | None = None,
 ) -> dict[str, Any]:
     selected = width_map.selected(selected_action)
     exact_diagnostics = (
@@ -765,6 +832,34 @@ def _cg_metrics(
     exact = (
         exact_diagnostics[selected_action] if exact_diagnostics is not None else None
     )
+    if exact_reference_widths is not None and not exact_diagnostic:
+        raise ValueError("exact reference widths require an exact diagnostic")
+    exact_a_widths = (
+        np.asarray([item.exact_width for item in exact_diagnostics], dtype=np.float64)
+        if exact_diagnostics is not None
+        else None
+    )
+
+    def ratios(
+        numerators: FloatArray | None, denominators: FloatArray | None
+    ) -> tuple[list[float | None] | None, list[bool] | None]:
+        if numerators is None or denominators is None:
+            return None, None
+        values: list[float | None] = []
+        omitted: list[bool] = []
+        for numerator, denominator in zip(numerators, denominators, strict=True):
+            is_zero = float(denominator) == 0.0
+            omitted.append(is_zero)
+            values.append(None if is_zero else float(numerator / denominator))
+        return values, omitted
+
+    exact_a_over_v, exact_a_over_v_omitted = ratios(
+        exact_a_widths, exact_reference_widths
+    )
+    operational_over_v, operational_over_v_omitted = ratios(
+        width_map.upper_widths, exact_reference_widths
+    )
+    solver_denominator_omitted = exact is not None and exact.exact_width == 0.0
     return {
         "solver_width_upper": selected.upper_width,
         "solver_width_lower": selected.lower_width,
@@ -772,6 +867,30 @@ def _cg_metrics(
         "solver_exact_width": exact.exact_width if exact is not None else None,
         "solver_upper_over_exact": (
             exact.upper_over_exact if exact is not None else None
+        ),
+        "solver_upper_over_exact_A": (
+            exact.upper_over_exact if exact is not None else None
+        ),
+        "solver_upper_over_exact_A_denominator_omitted": (
+            solver_denominator_omitted if exact is not None else None
+        ),
+        "exact_A_width_over_exact_V_width": (
+            exact_a_over_v[selected_action] if exact_a_over_v is not None else None
+        ),
+        "operational_upper_width_over_exact_V_width": (
+            operational_over_v[selected_action]
+            if operational_over_v is not None
+            else None
+        ),
+        "exact_A_width_over_exact_V_width_denominator_omitted": (
+            exact_a_over_v_omitted[selected_action]
+            if exact_a_over_v_omitted is not None
+            else None
+        ),
+        "operational_upper_width_over_exact_V_width_denominator_omitted": (
+            operational_over_v_omitted[selected_action]
+            if operational_over_v_omitted is not None
+            else None
         ),
         "solver_exact_over_lower": (
             exact.exact_over_lower if exact is not None else None
@@ -814,6 +933,24 @@ def _cg_metrics(
             if exact_diagnostics is not None
             else None
         ),
+        "solver_upper_over_exact_A_all_actions": (
+            [item.upper_over_exact for item in exact_diagnostics]
+            if exact_diagnostics is not None
+            else None
+        ),
+        "solver_upper_over_exact_A_denominator_omitted_all_actions": (
+            [item.exact_width == 0.0 for item in exact_diagnostics]
+            if exact_diagnostics is not None
+            else None
+        ),
+        "exact_A_width_over_exact_V_width_all_actions": exact_a_over_v,
+        "exact_A_width_over_exact_V_width_denominator_omitted_all_actions": (
+            exact_a_over_v_omitted
+        ),
+        "operational_upper_width_over_exact_V_width_all_actions": (operational_over_v),
+        "operational_upper_width_over_exact_V_width_denominator_omitted_all_actions": (
+            operational_over_v_omitted
+        ),
         "solver_seconds_all_actions": float(
             sum(
                 certificate.cg.elapsed_seconds for certificate in width_map.certificates
@@ -824,7 +961,9 @@ def _cg_metrics(
 
 
 def _exact_solver_metrics(
-    width: float, *, elapsed_seconds: float = 0.0
+    width: float,
+    *,
+    elapsed_seconds: float = 0.0,
 ) -> dict[str, Any]:
     positive_ratio = 1.0 if width > 0.0 else None
     return {
@@ -833,6 +972,12 @@ def _exact_solver_metrics(
         "solver_alpha": 1.0,
         "solver_exact_width": width,
         "solver_upper_over_exact": positive_ratio,
+        "solver_upper_over_exact_A": positive_ratio,
+        "solver_upper_over_exact_A_denominator_omitted": width == 0.0,
+        "exact_A_width_over_exact_V_width": None,
+        "operational_upper_width_over_exact_V_width": None,
+        "exact_A_width_over_exact_V_width_denominator_omitted": None,
+        "operational_upper_width_over_exact_V_width_denominator_omitted": None,
         "solver_exact_over_lower": positive_ratio,
         "solver_true_residual_norm": 0.0,
         "solver_recursive_residual_norm": 0.0,
@@ -853,6 +998,14 @@ def _exact_solver_metrics(
         "solver_recursive_residuals_by_action": None,
         "solver_exact_widths_all_actions": None,
         "solver_upper_over_exact_all_actions": None,
+        "solver_upper_over_exact_A_all_actions": None,
+        "solver_upper_over_exact_A_denominator_omitted_all_actions": None,
+        "exact_A_width_over_exact_V_width_all_actions": None,
+        "exact_A_width_over_exact_V_width_denominator_omitted_all_actions": None,
+        "operational_upper_width_over_exact_V_width_all_actions": None,
+        "operational_upper_width_over_exact_V_width_denominator_omitted_all_actions": (
+            None
+        ),
         "solver_seconds_all_actions": float(elapsed_seconds),
         "solver_post_selection_refinement": False,
     }
@@ -865,6 +1018,12 @@ def _no_solver_metrics() -> dict[str, Any]:
         "solver_alpha": None,
         "solver_exact_width": None,
         "solver_upper_over_exact": None,
+        "solver_upper_over_exact_A": None,
+        "solver_upper_over_exact_A_denominator_omitted": None,
+        "exact_A_width_over_exact_V_width": None,
+        "operational_upper_width_over_exact_V_width": None,
+        "exact_A_width_over_exact_V_width_denominator_omitted": None,
+        "operational_upper_width_over_exact_V_width_denominator_omitted": None,
         "solver_exact_over_lower": None,
         "solver_true_residual_norm": None,
         "solver_recursive_residual_norm": None,
@@ -885,6 +1044,14 @@ def _no_solver_metrics() -> dict[str, Any]:
         "solver_recursive_residuals_by_action": None,
         "solver_exact_widths_all_actions": None,
         "solver_upper_over_exact_all_actions": None,
+        "solver_upper_over_exact_A_all_actions": None,
+        "solver_upper_over_exact_A_denominator_omitted_all_actions": None,
+        "exact_A_width_over_exact_V_width_all_actions": None,
+        "exact_A_width_over_exact_V_width_denominator_omitted_all_actions": None,
+        "operational_upper_width_over_exact_V_width_all_actions": None,
+        "operational_upper_width_over_exact_V_width_denominator_omitted_all_actions": (
+            None
+        ),
         "solver_seconds_all_actions": 0.0,
         "solver_post_selection_refinement": False,
     }
@@ -1011,8 +1178,24 @@ def _prefix_summary(
         "analytic_certificate_valid_in_exact_arithmetic": bool(
             records[-1]["analytic_certificate_valid_in_exact_arithmetic"]
         ),
-        "float64_diagnostic_pass": True,
-        "verified_numerical_certificate": False,
+        "deterministic_failure": any(
+            bool(record.get("deterministic_failure")) for record in records
+        ),
+        "float64_diagnostic_pass": all(
+            bool(record.get("float64_diagnostic_pass")) for record in records
+        ),
+        "verified_numerical_certificate": all(
+            bool(record.get("verified_numerical_certificate")) for record in records
+        ),
+        "instantaneous_theorem_event_violation_count": sum(
+            record.get("instantaneous_theorem_bound_status")
+            == "bound_violation_on_event"
+            for record in records
+        ),
+        "cumulative_theorem_event_violation_count": sum(
+            record.get("cumulative_theorem_bound_status") == "bound_violation_on_event"
+            for record in records
+        ),
         "certificate_class": FLOAT64_CERTIFICATE_DIAGNOSTIC,
     }
 
@@ -1112,6 +1295,7 @@ def run_policy_trajectory(
         algorithm_operator: FixedSPDOperator | None = None
         current_operator: DenseSPDOperator | None = None
         operator_metrics = _empty_nystrom_diagnostics()
+        replay_gradient_construction_seconds = 0.0
 
         if method == "linucb_fixed_features":
             operator_started = time.perf_counter()
@@ -1207,8 +1391,13 @@ def run_policy_trajectory(
                 score_widths = frozen_widths
             elif spec.metric == "nystrom":
                 assert spec.rank is not None and sketch_seed is not None
+                construction_started = time.perf_counter()
+                replay_started = time.perf_counter()
                 replay_gradients = history.current_replay_gradients(
                     theta, environment.width
+                )
+                replay_gradient_construction_seconds = (
+                    time.perf_counter() - replay_started
                 )
                 nystrom = build_operational_nystrom(
                     replay_gradients,
@@ -1221,14 +1410,20 @@ def run_policy_trajectory(
                     ),
                 )
                 algorithm_operator = nystrom.operator
-                operator_construction_seconds = nystrom.construction_seconds
+                operator_construction_seconds = (
+                    time.perf_counter() - construction_started
+                )
                 kappa_minus = nystrom.operational_kappa_minus
                 kappa_plus = nystrom.operational_kappa_plus
                 operator_metrics.update(_nystrom_diagnostics(nystrom))
             elif spec.metric == "current_exact":
                 construction_started = time.perf_counter()
+                replay_started = time.perf_counter()
                 replay_gradients = history.current_replay_gradients(
                     theta, environment.width
+                )
+                replay_gradient_construction_seconds = (
+                    time.perf_counter() - replay_started
                 )
                 current_matrix = np.asarray(
                     settings.ridge * np.eye(dimension)
@@ -1339,6 +1534,9 @@ def run_policy_trajectory(
                 )
                 current_operator = DenseSPDOperator(current_matrix)
                 endpoint = thompson_distance(frozen_operator, current_operator)
+            if diagnostic_checkpoint and current_operator is not None:
+                if current_widths is None:
+                    current_widths = exact_widths(current_operator, queries)
             if diagnostic_checkpoint and nystrom is not None:
                 assert replay_gradients is not None
                 _add_nystrom_checkpoint_diagnostics(
@@ -1451,12 +1649,6 @@ def run_policy_trajectory(
                     np.max(np.abs(actual_misspecification))
                     <= current_misspecification + numerical_tolerance
                 )
-                if not current_taylor_envelope_valid:
-                    raise BenchmarkError("current Taylor envelope was violated")
-                if not current_misspecification_envelope_valid:
-                    raise BenchmarkError(
-                        "current misspecification envelope was violated"
-                    )
             reference_radii = beta * frozen_widths + current_bias
             coverage = bool(
                 np.all(np.abs(true_means - corrected_centers) <= reference_radii)
@@ -1586,37 +1778,43 @@ def run_policy_trajectory(
                     width_map,
                     action,
                     exact_diagnostic=diagnostic_checkpoint,
+                    exact_reference_widths=current_widths,
                 )
                 diagnostic_seconds += time.perf_counter() - diagnostic_started
             elif spec.solver == "cholesky":
                 cg_metrics = _exact_solver_metrics(
-                    selected_width, elapsed_seconds=width_solve_seconds
+                    selected_width,
+                    elapsed_seconds=width_solve_seconds,
                 )
             else:
                 cg_metrics = _no_solver_metrics()
 
+        deterministic_failure_reasons, float64_diagnostic_pass = (
+            derive_float64_diagnostic_status(
+                solver_all_actions_converged=cg_metrics["solver_all_actions_converged"],
+                current_taylor_envelope_valid=current_taylor_envelope_valid,
+                current_misspecification_envelope_valid=(
+                    current_misspecification_envelope_valid
+                ),
+            )
+        )
+
         prefix_reference_coverage = prefix_reference_coverage and coverage
         prefix_method_optimism = prefix_method_optimism and optimism
-        if not theorem_applicable:
-            instantaneous_bound_status = "not_applicable"
-            cumulative_bound_status = "not_applicable"
-        else:
-            instantaneous_bound_status = "premise_false"
-            if coverage:
-                instantaneous_bound_status = (
-                    "satisfied"
-                    if instantaneous_rhs is not None
-                    and instantaneous_regret <= instantaneous_rhs + numerical_tolerance
-                    else "bound_violation_on_event"
-                )
-            cumulative_bound_status = "premise_false"
-            if prefix_reference_coverage:
-                cumulative_bound_status = (
-                    "satisfied"
-                    if sharp_rhs is not None
-                    and cumulative_regret <= sharp_rhs + numerical_tolerance
-                    else "bound_violation_on_event"
-                )
+        instantaneous_bound_status = derive_theorem_bound_status(
+            theorem_applicable=theorem_applicable,
+            confidence_event=coverage,
+            regret=instantaneous_regret,
+            rhs=instantaneous_rhs,
+            comparison_tolerance=numerical_tolerance,
+        )
+        cumulative_bound_status = derive_theorem_bound_status(
+            theorem_applicable=theorem_applicable,
+            confidence_event=prefix_reference_coverage,
+            regret=cumulative_regret,
+            rhs=sharp_rhs,
+            comparison_tolerance=numerical_tolerance,
+        )
         algorithm_seconds = (
             common_seconds + operator_seconds + scoring_seconds + update_seconds
         )
@@ -1629,6 +1827,7 @@ def run_policy_trajectory(
             "selected_action": action,
             "optimal_action": optimal_action,
             "selected_reward": reward,
+            "true_means": true_means.tolist(),
             "selected_mean": selected_mean,
             "optimal_mean": optimal_mean,
             "instantaneous_pseudo_regret": instantaneous_regret,
@@ -1648,7 +1847,13 @@ def run_policy_trajectory(
                 frozen_widths.tolist() if frozen_widths is not None else None
             ),
             "current_exact_widths": (
-                current_widths.tolist() if current_widths is not None else None
+                current_widths.tolist()
+                if current_widths is not None
+                and (
+                    (spec.metric == "current_exact" and spec.solver == "cholesky")
+                    or (spec.solver == "cg" and diagnostic_checkpoint)
+                )
+                else None
             ),
             "selected_score": selected_score,
             "score_tie_count": tie_count,
@@ -1677,7 +1882,9 @@ def run_policy_trajectory(
             "theorem_applicable": theorem_applicable,
             "method_certified_under_exact_arithmetic": theorem_applicable,
             "analytic_certificate_valid_in_exact_arithmetic": theorem_applicable,
-            "float64_diagnostic_pass": True,
+            "deterministic_failure": bool(deterministic_failure_reasons),
+            "deterministic_failure_reasons": deterministic_failure_reasons,
+            "float64_diagnostic_pass": float64_diagnostic_pass,
             "verified_numerical_certificate": False,
             "floating_point_checks_are_verified_certificates": False,
             "certificate_class": FLOAT64_CERTIFICATE_DIAGNOSTIC,
@@ -1754,7 +1961,13 @@ def run_policy_trajectory(
                 frozen_widths.tolist() if frozen_widths is not None else None
             ),
             "current_widths": (
-                current_widths.tolist() if current_widths is not None else None
+                current_widths.tolist()
+                if current_widths is not None
+                and (
+                    (spec.metric == "current_exact" and spec.solver == "cholesky")
+                    or (spec.solver == "cg" and diagnostic_checkpoint)
+                )
+                else None
             ),
             "Q_t": q_value,
             "Q_t_direct": direct_q_value,
@@ -1775,9 +1988,14 @@ def run_policy_trajectory(
             "sharp_theorem_rhs": sharp_rhs,
             "simple_theorem_rhs": simple_rhs,
             "cumulative_theorem_bound_status": cumulative_bound_status,
+            "theorem_bound_comparison_rule": THEOREM_BOUND_COMPARISON_RULE,
+            "theorem_bound_comparison_tolerance": float(numerical_tolerance),
             "cumulative_trivial_regret_bound": cumulative_trivial_bound,
             "frozen_width_square_sum": cumulative_width_square,
             "operator_construction_seconds": float(operator_construction_seconds),
+            "replay_gradient_construction_seconds": float(
+                replay_gradient_construction_seconds
+            ),
             "transport_certificate_seconds": float(transport_certificate_seconds),
             "action_scoring_seconds": float(scoring_seconds),
             "representation_update_seconds": float(update_seconds),

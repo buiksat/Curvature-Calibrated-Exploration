@@ -13,6 +13,7 @@ import importlib.metadata
 import io
 import json
 import os
+import platform
 import tempfile
 import zipfile
 from collections.abc import Mapping
@@ -115,9 +116,36 @@ def deterministic_npz_bytes(arrays: Mapping[str, ArrayLike]) -> bytes:
     return output.getvalue()
 
 
-def _atomic_write(path: Path, payload: bytes, *, overwrite: bool) -> None:
+def _is_occupied(path: Path) -> bool:
+    return path.exists() or path.is_symlink()
+
+
+def _prepared_output_paths(artifact_path: Path) -> tuple[Path, Path, Path]:
+    return (
+        artifact_path,
+        _manifest_path(artifact_path),
+        _sidecar_path(artifact_path),
+    )
+
+
+def _refuse_existing_prepared_outputs(artifact_path: Path) -> None:
+    existing = [
+        str(path)
+        for path in _prepared_output_paths(artifact_path)
+        if _is_occupied(path)
+    ]
+    if existing:
+        raise FileExistsError(f"refusing to overwrite existing files: {existing}")
+
+
+def _reject_overwrite_request(overwrite: bool) -> None:
+    if overwrite is not False:
+        raise ValueError("prepared-data overwrite is not supported")
+
+
+def _write_once(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists() and not overwrite:
+    if _is_occupied(path):
         raise FileExistsError(f"refusing to overwrite {path}")
     descriptor, temporary_name = tempfile.mkstemp(
         prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
@@ -128,9 +156,15 @@ def _atomic_write(path: Path, payload: bytes, *, overwrite: bool) -> None:
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
-        if path.exists() and not overwrite:
+        if _is_occupied(path):
             raise FileExistsError(f"refusing to overwrite {path}")
-        os.replace(temporary, path)
+        try:
+            # A hard link installs the completed temporary inode only when the
+            # destination is still absent. Unlike os.replace, this cannot
+            # overwrite a file or a dangling symlink created after preflight.
+            os.link(temporary, path, follow_symlinks=False)
+        except FileExistsError as error:
+            raise FileExistsError(f"refusing to overwrite {path}") from error
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -240,12 +274,18 @@ def prepare_loaded_dataset(
     loader_metadata: Mapping[str, Any] | None = None,
     cache_inventory: list[dict[str, Any]] | None = None,
     smoke_only: bool = False,
+    fixture_only: bool = False,
     overwrite: bool = False,
 ) -> dict[str, Any]:
     """Validate loaded arrays and write the locked runtime artifact."""
 
+    _reject_overwrite_request(overwrite)
+    artifact_path = Path(destination)
+    _refuse_existing_prepared_outputs(artifact_path)
     if not dataset_name.strip():
         raise ValueError("dataset_name must be nonempty")
+    if not isinstance(smoke_only, bool) or not isinstance(fixture_only, bool):
+        raise TypeError("smoke_only and fixture_only must be booleans")
     loaded_features = np.asarray(features)
     loaded_labels = np.asarray(labels)
     loaded_digests = {
@@ -260,11 +300,12 @@ def prepare_loaded_dataset(
     content_digest = canonical_array_digest(arrays)
     artifact_bytes = deterministic_npz_bytes(arrays)
     artifact_digest = sha256_bytes(artifact_bytes)
-    artifact_path = Path(destination)
     manifest = {
         "schema": PREPARED_DATA_SCHEMA,
         "dataset_name": dataset_name,
-        "smoke_only": bool(smoke_only),
+        "smoke_only": smoke_only,
+        "fixture_only": fixture_only,
+        "publication_evidence": False,
         "row_count": int(matrix.shape[0]),
         "source_feature_dimension": int(matrix.shape[1]),
         "class_count": len(original_classes),
@@ -283,23 +324,16 @@ def prepare_loaded_dataset(
         "artifact_sha256": artifact_digest,
         "artifact_size_bytes": len(artifact_bytes),
         "loader": dict(loader_metadata or {}),
+        "runtime_provenance": _preparation_runtime_provenance(),
         "source_cache_files": list(cache_inventory or []),
     }
     manifest_bytes = (canonical_json(manifest) + "\n").encode("ascii")
     sidecar_bytes = f"{artifact_digest}  {artifact_path.name}\n".encode("ascii")
 
-    destinations = (
-        artifact_path,
-        _manifest_path(artifact_path),
-        _sidecar_path(artifact_path),
-    )
-    if not overwrite:
-        existing = [str(path) for path in destinations if path.exists()]
-        if existing:
-            raise FileExistsError(f"refusing to overwrite existing files: {existing}")
-    _atomic_write(artifact_path, artifact_bytes, overwrite=overwrite)
-    _atomic_write(_manifest_path(artifact_path), manifest_bytes, overwrite=overwrite)
-    _atomic_write(_sidecar_path(artifact_path), sidecar_bytes, overwrite=overwrite)
+    _refuse_existing_prepared_outputs(artifact_path)
+    _write_once(artifact_path, artifact_bytes)
+    _write_once(_manifest_path(artifact_path), manifest_bytes)
+    _write_once(_sidecar_path(artifact_path), sidecar_bytes)
     return manifest
 
 
@@ -325,6 +359,35 @@ def _package_version(distribution: str) -> str:
         return version
 
 
+def _preparation_runtime_provenance() -> dict[str, Any]:
+    modules: dict[str, Any] = {}
+    for distribution, module_name in (
+        ("numpy", "numpy"),
+        ("scipy", "scipy"),
+        ("scikit-learn", "sklearn"),
+        ("threadpoolctl", "threadpoolctl"),
+    ):
+        try:
+            module = __import__(module_name)
+        except ImportError:
+            modules[distribution] = {"version": None, "origin": None}
+            continue
+        raw_origin = getattr(module, "__file__", None)
+        origin = Path(raw_origin) if isinstance(raw_origin, str) else None
+        modules[distribution] = {
+            "version": _package_version(distribution),
+            "origin": origin.name if origin is not None else "built_in_or_namespace",
+            "origin_sha256": (
+                sha256_file(origin) if origin is not None and origin.is_file() else None
+            ),
+        }
+    return {
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+        "modules": modules,
+    }
+
+
 def prepare_covtype_artifact(
     *,
     cache_root: str | Path,
@@ -334,6 +397,9 @@ def prepare_covtype_artifact(
 ) -> dict[str, Any]:
     """Fetch Covertype with the official loader and create a locked artifact."""
 
+    _reject_overwrite_request(overwrite)
+    artifact_path = Path(destination)
+    _refuse_existing_prepared_outputs(artifact_path)
     try:
         from sklearn.datasets import fetch_covtype
     except ImportError as exc:
@@ -369,7 +435,7 @@ def prepare_covtype_artifact(
         loader_metadata=loader_metadata,
         cache_inventory=cache_file_inventory(cache),
         smoke_only=False,
-        overwrite=overwrite,
+        fixture_only=False,
     )
 
 
@@ -378,6 +444,9 @@ def prepare_digits_artifact(
 ) -> dict[str, Any]:
     """Create the deterministic Digits artifact used only for smoke tests."""
 
+    _reject_overwrite_request(overwrite)
+    artifact_path = Path(destination)
+    _refuse_existing_prepared_outputs(artifact_path)
     try:
         from sklearn.datasets import load_digits
     except ImportError as exc:
@@ -399,7 +468,7 @@ def prepare_digits_artifact(
         destination=destination,
         loader_metadata=loader_metadata,
         smoke_only=True,
-        overwrite=overwrite,
+        fixture_only=False,
     )
 
 
@@ -425,6 +494,12 @@ def load_prepared_dataset(
         ) from exc
     if manifest.get("schema") != PREPARED_DATA_SCHEMA:
         raise DataPreparationError("prepared-data manifest has an unknown schema")
+    if not isinstance(manifest.get("smoke_only"), bool):
+        raise DataPreparationError("prepared-data smoke_only must be a boolean")
+    if not isinstance(manifest.get("fixture_only"), bool):
+        raise DataPreparationError("prepared-data fixture_only must be a boolean")
+    if manifest.get("publication_evidence") is not False:
+        raise DataPreparationError("prepared data cannot be publication evidence")
     actual_artifact_digest = sha256_file(path)
     recorded_artifact_digest = str(manifest.get("artifact_sha256", ""))
     if actual_artifact_digest != recorded_artifact_digest:
@@ -505,9 +580,11 @@ def prepare_dataset(
     """Prepare the named official dataset through a compact caller API."""
 
     normalized = str(dataset_name).strip().lower()
+    _reject_overwrite_request(overwrite)
     destination = Path(output_prefix)
     if destination.suffix != ".npz":
         destination = destination.with_suffix(".npz")
+    _refuse_existing_prepared_outputs(destination)
     if normalized in {"covtype", "covertype", "sklearn_covtype"}:
         if data_root is None:
             raise DataPreparationError("Covertype preparation requires data_root")
@@ -515,10 +592,9 @@ def prepare_dataset(
             cache_root=data_root,
             destination=destination,
             download_if_missing=download_if_missing,
-            overwrite=overwrite,
         )
     if normalized in {"digits", "sklearn_digits"}:
-        return prepare_digits_artifact(destination=destination, overwrite=overwrite)
+        return prepare_digits_artifact(destination=destination)
     raise ValueError(f"unknown dataset_name {dataset_name!r}")
 
 

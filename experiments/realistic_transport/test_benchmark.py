@@ -1,34 +1,39 @@
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 
 import numpy as np
 import pytest
-
+from experiments.realistic_transport.aggregate import (
+    _validate_ratio_records,
+    _validate_round_semantics,
+)
 from experiments.realistic_transport.benchmark import (
     BenchmarkSettings,
-    OptimizerSpec,
-    SelectedHistory,
     corrected_center,
     corrected_confidence_radius,
+    OptimizerSpec,
     run_method_grid,
     run_policy_trajectory,
     run_tuning_trajectory,
+    SelectedHistory,
     tangent_center,
 )
-from experiments.realistic_transport.configuration import EXPECTED_METHODS
+from experiments.realistic_transport.configuration import (
+    EXPECTED_METHODS,
+    load_config,
+    method_spec,
+)
 from experiments.realistic_transport.environment import (
     CONTROLLED_MISSPECIFIED_TASK,
     LABEL_TASK,
-    REALIZABLE_TASK,
     PolicyRound,
     PotentialOutcomeStream,
+    REALIZABLE_TASK,
 )
 from experiments.realistic_transport.features import FeatureMapSpec
-from experiments.realistic_transport.model import (
-    scaled_tanh_gradient,
-    scaled_tanh_mean,
-)
+from experiments.realistic_transport.model import scaled_tanh_gradient, scaled_tanh_mean
 
 
 @dataclass(frozen=True)
@@ -206,16 +211,47 @@ def test_all_thirteen_methods_run_with_fixed_ties_and_separate_histories() -> No
     environment = _toy_environment(REALIZABLE_TASK)
     stream = _toy_stream(environment, rounds=2)
     results = run_method_grid(environment, stream, _settings(prefixes=(1, 2)))
+    config = load_config(
+        "experiments/configs/realistic_transport_covtype.yaml", "smoke"
+    )
 
     assert tuple(result.method for result in results) == EXPECTED_METHODS
     assert all(len(result.rounds) == 2 for result in results)
     for result in results:
+        specification = method_spec(result.method)
+        _validate_round_semantics(
+            result.rounds,
+            task=environment.task_name,
+            method=result.method,
+            feature_dimension=environment.feature_dimension,
+            action_count=environment.action_count,
+        )
+        _validate_ratio_records(
+            result.rounds,
+            method=result.method,
+            rounds=2,
+            config=config,
+            action_count=environment.action_count,
+        )
         scores = np.asarray(result.rounds[0]["scores"])
         expected_action = int(np.flatnonzero(scores == np.max(scores))[0])
         assert result.rounds[0]["selected_action"] == expected_action
         assert result.rounds[0]["score_tie_count"] == int(
             np.count_nonzero(scores == np.max(scores))
         )
+        for record in result.rounds:
+            current = record["current_exact_widths"]
+            assert current == record["current_widths"]
+            if (
+                specification.metric == "current_exact"
+                and specification.solver == "cholesky"
+            ):
+                assert current is not None
+                np.testing.assert_allclose(current, record["score_widths"])
+            elif specification.solver == "cg":
+                assert (current is not None) is record["diagnostic_checkpoint"]
+            else:
+                assert current is None
     for result in results:
         assert set(result.prefix_summaries) == {1, 2}
         assert not result.summary["floating_point_checks_are_verified_certificates"]
@@ -381,6 +417,60 @@ def test_nystrom_dense_diagnostics_run_only_at_frozen_checkpoints() -> None:
     assert result.rounds[2]["d_Th"] is not None
     assert result.rounds[1]["nystrom_operator_tail"] is None
     assert result.rounds[1]["solver_exact_width"] is None
+    assert result.rounds[1]["exact_A_width_over_exact_V_width"] is None
+    assert result.rounds[1]["operational_upper_width_over_exact_V_width"] is None
     assert result.rounds[1]["nystrom_operator_storage_bytes"] < (
         environment.feature_dimension**2 * 8
     )
+    for record in (result.rounds[0], result.rounds[2]):
+        assert record["solver_upper_over_exact"] == record["solver_upper_over_exact_A"]
+        assert (
+            record["solver_upper_over_exact_all_actions"]
+            == record["solver_upper_over_exact_A_all_actions"]
+        )
+        if record["operational_upper_width_over_exact_V_width"] is not None:
+            assert record[
+                "operational_upper_width_over_exact_V_width"
+            ] == pytest.approx(
+                record["solver_upper_over_exact_A"]
+                * record["exact_A_width_over_exact_V_width"]
+            )
+    assert all(
+        record["operator_construction_seconds"]
+        >= record["replay_gradient_construction_seconds"]
+        for record in result.rounds
+    )
+    assert result.summary["analytic_certificate_valid_in_exact_arithmetic"]
+    assert result.summary["float64_diagnostic_pass"]
+    assert not result.summary["verified_numerical_certificate"]
+
+
+def test_nystrom_replay_construction_is_charged_to_algorithm_time(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    original = SelectedHistory.current_replay_gradients
+
+    def delayed_replay(
+        self: SelectedHistory, theta: np.ndarray, width: float
+    ) -> np.ndarray:
+        time.sleep(0.01)
+        return original(self, theta, width)
+
+    monkeypatch.setattr(SelectedHistory, "current_replay_gradients", delayed_replay)
+    environment = _toy_environment(REALIZABLE_TASK)
+    result = run_policy_trajectory(
+        environment,
+        _toy_stream(environment, rounds=3),
+        "transport_nystrom_r16_cg_1e-2",
+        _settings(),
+    )
+    replay_seconds = sum(
+        record["replay_gradient_construction_seconds"] for record in result.rounds
+    )
+    operator_seconds = sum(
+        record["operator_construction_seconds"] for record in result.rounds
+    )
+    algorithm_seconds = sum(record["algorithm_seconds"] for record in result.rounds)
+    assert replay_seconds >= 0.025
+    assert operator_seconds >= replay_seconds
+    assert algorithm_seconds >= operator_seconds

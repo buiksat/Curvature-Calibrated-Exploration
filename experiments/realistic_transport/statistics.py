@@ -312,6 +312,57 @@ def paired_seed_bootstrap(
     }
 
 
+def controlled_task_average_bootstrap(
+    first_by_task: Mapping[str, SeededValues],
+    second_by_task: Mapping[str, SeededValues],
+    *,
+    tasks: Sequence[str],
+    bootstrap_seed: int,
+    resamples: int = DEFAULT_BOOTSTRAP_RESAMPLES,
+    level: float = DEFAULT_CONFIDENCE_LEVEL,
+) -> dict[str, Any]:
+    """Average controlled tasks within seed, then bootstrap whole seeds."""
+
+    selected_tasks = tuple(tasks)
+    if len(selected_tasks) != 2 or len(set(selected_tasks)) != 2:
+        raise StatisticsError("controlled statistic requires exactly two tasks")
+    first_tables: list[dict[int, float]] = []
+    second_tables: list[dict[int, float]] = []
+    for task in selected_tasks:
+        if task not in first_by_task or task not in second_by_task:
+            raise StatisticsError(f"missing controlled-task values for {task}")
+        first_tables.append(_seeded_values(first_by_task[task], name=f"first[{task}]"))
+        second_tables.append(
+            _seeded_values(second_by_task[task], name=f"second[{task}]")
+        )
+    reference = set(first_tables[0])
+    for table in (*first_tables[1:], *second_tables):
+        if set(table) != reference:
+            raise StatisticsError("controlled-task seed keys are misaligned")
+    seeds = sorted(reference)
+    first_average = {
+        seed: float(np.mean([table[seed] for table in first_tables])) for seed in seeds
+    }
+    second_average = {
+        seed: float(np.mean([table[seed] for table in second_tables])) for seed in seeds
+    }
+    result = paired_seed_bootstrap(
+        first_average,
+        second_average,
+        bootstrap_seed=bootstrap_seed,
+        resamples=resamples,
+        level=level,
+    )
+    return {
+        **result,
+        "method": "controlled_task_within_seed_average_then_paired_bootstrap",
+        "tasks": list(selected_tasks),
+        "aggregation_order": "average_tasks_within_seed_then_bootstrap_seeds",
+        "first_within_seed": first_average,
+        "second_within_seed": second_average,
+    }
+
+
 def zero_denominator_ratio_summary(
     numerators: Sequence[float] | ArrayLike,
     denominators: Sequence[float] | ArrayLike,
@@ -483,6 +534,7 @@ __all__ = [
     "StatisticsError",
     "clopper_pearson_interval",
     "clopper_pearson_upper_bound",
+    "controlled_task_average_bootstrap",
     "describe",
     "four_corner_rank_tolerance_contrasts",
     "paired_seed_bootstrap",
