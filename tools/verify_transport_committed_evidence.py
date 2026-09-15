@@ -70,6 +70,8 @@ from export_transport_github_review_bundle import (  # noqa: E402
     sha256_file,
 )
 
+import transport_artifact_expectations as expectations  # noqa: E402
+
 LOCKED_ARTIFACT_HASHES: Mapping[str, str] = {
     "results/derived/transport_instantiation/selection.json": LOCKED_SELECTION_SHA256,
     "results/derived/transport_instantiation_selection.json": LOCKED_SELECTION_SHA256,
@@ -93,6 +95,42 @@ LOCKED_ARTIFACT_HASHES: Mapping[str, str] = {
     "paper/figures/transport_instantiation_bound.tex": (
         "9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c"
     ),
+}
+
+# A study-source divergence that this verifier acknowledges, kept separate from
+# the exporter's KNOWN_STUDY_SOURCE_DIVERGENCES on purpose.  That map is
+# serialized into review/transport_instantiation/manifest.json; adding to it
+# would change the historical review bundle's bytes, and the bundle is frozen
+# evidence.  A pin here changes only the current verifier's verdict.
+#
+# Both hashes are exact, so this acknowledges exactly one known pair of bytes.
+# Any further edit to experiments/BUCK, and any divergence in any other study
+# source, still fails closed as an unpinned divergence.
+CURRENT_STUDY_SOURCE_COMPATIBILITY: Mapping[str, Mapping[str, str]] = {
+    "experiments/BUCK": {
+        "selection_inventory_sha256": (
+            "d3e89bac738668666ac031508cafd0bf1a9c45d5fb3646a88a79b17de3f87c59"
+        ),
+        "expected_head_sha256": (
+            "08375551ccf5bedc6751864ad40a29a731f161d9ca9c74b40a0be964364f21f9"
+        ),
+        "diverged_in_commit": "b99b682ecc8f69552a3f57b1b85333378ed12ac1",
+        "selection_revision": "0cd6264c1f8b8751728f3c4a198207e8289aed74",
+        "reason": (
+            "Additive, resource-only build change. Commit b99b682 prepends a "
+            "filegroup named realistic_transport_experiments_inventory_resources "
+            "that lists source files for the deferred realistic-transport "
+            "extension; the diff against the selection snapshot is 24 inserted "
+            "lines and zero deleted lines. It adds no dependency to any target "
+            "the transport-instantiation study builds or runs, changes no "
+            "existing rule, and touches no scientific source. Build files are "
+            "not inputs to tuning or aggregation: this path appears in neither "
+            "selection.inputs nor aggregate.inputs. All 21 generated table, "
+            "figure and CSV artifacts still regenerate byte-identically from the "
+            "committed aggregate, which is the check that would actually notice "
+            "a behavioural change."
+        ),
+    }
 }
 
 STATUS_PASS = "PASS"
@@ -244,7 +282,8 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
     )
 
     # study-source inventory against the current checkout
-    diverged: list[str] = []
+    diverged: list[str] = []          # pinned in the frozen review bundle
+    acknowledged: list[str] = []      # pinned only in this verifier
     for item in selection["study_source_inputs"]:
         path = root / item["path"]
         if not path.is_file():
@@ -259,12 +298,18 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
             )
             continue
         pinned = KNOWN_STUDY_SOURCE_DIVERGENCES.get(item["path"])
+        bundle_pinned = pinned is not None
+        if pinned is None:
+            pinned = CURRENT_STUDY_SOURCE_COMPATIBILITY.get(item["path"])
         if (
             pinned is not None
             and pinned["selection_inventory_sha256"] == item["sha256"]
             and pinned["expected_head_sha256"] == actual
         ):
-            diverged.append(item["path"])
+            if bundle_pinned:
+                diverged.append(item["path"])
+            else:
+                acknowledged.append(item["path"])
             report.add(
                 section,
                 f"study source {item['path']}",
@@ -281,9 +326,17 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
             )
     report.expect(
         section,
-        "study-source divergences are exactly the pinned set",
+        "study-source divergences are exactly the bundle-pinned set",
         sorted(diverged) == sorted(KNOWN_STUDY_SOURCE_DIVERGENCES),
         f"observed {sorted(diverged)}",
+        status=STATUS_PASS,
+    )
+    report.expect(
+        section,
+        "verifier-acknowledged divergences are exactly the declared set",
+        sorted(acknowledged) == sorted(CURRENT_STUDY_SOURCE_COMPATIBILITY),
+        f"observed {sorted(acknowledged)}, "
+        f"declared {sorted(CURRENT_STUDY_SOURCE_COMPATIBILITY)}",
         status=STATUS_PASS,
     )
     report.expect(
@@ -708,140 +761,26 @@ def check_statistics(report: Report, aggregate: Mapping[str, Any]) -> None:
 
 
 def check_generated_artifacts(report: Report, root: Path) -> None:
+    """Regenerate every published artifact in memory and compare it with disk.
+
+    The expectation logic lives in tools/transport_artifact_expectations.py so
+    that this verifier and the anonymous submission supplement run one copy of
+    it rather than two.  Nothing is written to the tree.
+    """
+
     section = "artifacts"
     try:
-        sys.path.insert(0, str(root))
-        import experiments.make_transport_instantiation_artifacts as maker
-        from experiments.aggregate_transport_instantiation import METHODS
-    except Exception as error:  # pragma: no cover - environment dependent
+        results = expectations.check(root)
+    except expectations.ArtifactExpectationError as error:
         report.add(
             section,
             "regenerate table and figure bytes from the committed aggregate",
             STATUS_FAIL,
-            "the declared repository rendering stack is unavailable "
-            f"({error.__class__.__name__}: {error})",
+            str(error),
         )
         return
 
-    aggregate_path = root / AGGREGATE_PATH
-    aggregate = json.loads(aggregate_path.read_text(encoding="utf-8"))
-    aggregate_sha = sha256_file(aggregate_path)
-    source_comment = f"% Source aggregate SHA-256: {aggregate_sha}\n"
-    figures = root / "paper/figures"
-    tables = root / "paper/tables"
-    targets = sorted(float(v) for v in aggregate["target_D"])
-    token = maker._target_file_token
-
-    regret_panel = {
-        t: f"transport_instantiation_regret_D-{token(t)}.csv" for t in targets
-    }
-    path_panel = {
-        t: f"transport_instantiation_tightness_D-{token(t)}.csv" for t in targets
-    }
-    bound_panel = {
-        t: f"transport_instantiation_bound_D-{token(t)}.csv" for t in targets
-    }
-
-    regret_rows = sorted(
-        maker._downsample_curve_records(aggregate["regret_curves"]),
-        key=lambda i: (
-            float(i["target_D"]),
-            METHODS.index(str(i["method"])),
-            int(i["round"]),
-        ),
-    )
-    bound_rows = sorted(
-        maker._downsample_curve_records(aggregate["bound_decomposition"]),
-        key=lambda i: (float(i["target_D"]), int(i["round"])),
-    )
-    regret_csv_rows = [
-        {
-            **r,
-            "method_index": METHODS.index(str(r["method"])),
-            "aggregate_sha256": aggregate_sha,
-        }
-        for r in regret_rows
-    ]
-    path_csv_rows = [
-        {**r, "aggregate_sha256": aggregate_sha}
-        for r in maker._path_plot_records(aggregate)
-    ]
-    bound_csv_rows = [{**r, "aggregate_sha256": aggregate_sha} for r in bound_rows]
-
-    regret_fields = (
-        "target_D",
-        "horizon",
-        "method",
-        "method_index",
-        "round",
-        "mean",
-        "ci_low",
-        "ci_high",
-        "aggregate_sha256",
-    )
-    path_fields = (
-        "target_D",
-        "series_code",
-        "x",
-        "y",
-        "count",
-        "marker_size",
-        "aggregate_sha256",
-    )
-    bound_fields = (
-        "target_D",
-        "horizon",
-        "round",
-        "statistical_bound_component",
-        "historical_bound_component",
-        "path_inflation_component",
-        "current_bias_cumulative",
-        "cumulative_pseudo_regret",
-        "sharp_theorem_rhs",
-        "aggregate_sha256",
-    )
-
-    expected: dict[Path, str] = {
-        tables / "transport_instantiation_validity.tex": source_comment
-        + maker.make_validity_table(aggregate),
-        tables / "transport_instantiation_performance.tex": source_comment
-        + maker.make_performance_table(aggregate),
-        tables / "transport_instantiation_tightness.tex": source_comment
-        + maker.make_tightness_table(aggregate),
-        figures
-        / "transport_instantiation_regret.csv": maker._csv_text(
-            regret_fields, regret_csv_rows
-        ),
-        figures
-        / "transport_instantiation_tightness.csv": maker._csv_text(
-            path_fields, path_csv_rows
-        ),
-        figures
-        / "transport_instantiation_bound.csv": maker._csv_text(
-            bound_fields, bound_csv_rows
-        ),
-        figures / "transport_instantiation_regret.tex": source_comment
-        + maker.make_regret_figure_tex(aggregate, regret_panel),
-        figures / "transport_instantiation_tightness.tex": source_comment
-        + maker.make_path_figure_tex(aggregate, path_panel),
-        figures / "transport_instantiation_bound.tex": source_comment
-        + maker.make_bound_figure_tex(aggregate, bound_panel),
-    }
-    for target in targets:
-        expected[figures / regret_panel[target]] = maker._csv_text(
-            regret_fields,
-            [r for r in regret_csv_rows if float(r["target_D"]) == target],
-        )
-        expected[figures / path_panel[target]] = maker._csv_text(
-            path_fields, [r for r in path_csv_rows if float(r["target_D"]) == target]
-        )
-        expected[figures / bound_panel[target]] = maker._csv_text(
-            bound_fields, [r for r in bound_csv_rows if float(r["target_D"]) == target]
-        )
-
-    import hashlib
-
-    covered = {str(p.relative_to(root)) for p in expected}
+    covered = {relative for relative, _, _ in results}
     missing_from_check = set(GENERATED_ARTIFACT_PATHS) - covered
     report.expect(
         section,
@@ -850,32 +789,8 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
         f"unchecked: {sorted(missing_from_check)}",
         status=STATUS_PASS,
     )
-
-    for path, text in sorted(expected.items()):
-        relative = str(path.relative_to(root))
-        want = hashlib.sha256(text.encode("ascii")).hexdigest()
-        got = sha256_file(path)
-        sidecar = Path(str(path) + ".sha256")
-        provenance = Path(str(path) + ".provenance.json")
-        sidecar_value = (
-            sidecar.read_text(encoding="ascii").split()[0] if sidecar.is_file() else ""
-        )
-        bound_ok = False
-        if provenance.is_file():
-            record = json.loads(provenance.read_text(encoding="utf-8"))
-            bound_ok = record.get("artifact_sha256") == got and any(
-                i.get("sha256") == aggregate_sha
-                and i.get("path") == str(AGGREGATE_PATH)
-                for i in record.get("inputs", [])
-            )
-        report.expect(
-            section,
-            relative,
-            want == got == sidecar_value and bound_ok,
-            f"regen={want[:16]} disk={got[:16]} sidecar={sidecar_value[:16]} "
-            f"bound_to_aggregate={bound_ok}",
-            status=STATUS_RECOMPUTED,
-        )
+    for relative, ok, detail in results:
+        report.expect(section, relative, ok, detail, status=STATUS_RECOMPUTED)
 
 
 # --------------------------------------------------------------------------
@@ -906,9 +821,12 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "does not provide a scalable policy certificate",
             "endpoint is not scalable",
         ),
+        # Updated for the current wording of the same required qualifiers.  Each
+        # replacement carries the identical scientific meaning as the literal it
+        # supersedes; none of them weakens a check.
         (
-            "only a diagnostic oracle",
-            "endpoint is a dense diagnostic oracle",
+            "it is a dense\ndiagnostic comparator rather than a deployable policy",
+            "endpoint is a dense diagnostic comparator, not a deployable policy",
         ),
         ("intentionally uncertified", "naive current is uncertified"),
         (
@@ -919,11 +837,19 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "do not show a causal or uniform advantage for full curvature",
             "no uniform curvature advantage",
         ),
-        ("The cumulative guarantee is nevertheless vacuous here", "empirical vacuity"),
-        ("is not network width", "no generic network-width claim"),
         (
-            "lower descriptive regret in every condition",
-            "endpoint, frozen and naive descriptive regret direction",
+            "The cumulative guarantee is vacuous in every reported cell",
+            "empirical vacuity",
+        ),
+        ("nor generic network width", "no generic network-width claim"),
+        (
+            "lower sample-mean pseudo-regret than transport Hessian in every\n"
+            "reported condition",
+            "endpoint, frozen and naive sample-mean regret direction",
+        ),
+        (
+            "the cross-condition pattern is not a causal dose response",
+            "no cross-condition causal dose response",
         ),
     ),
     "paper/transport_experiment_appendix.tex": (
@@ -945,7 +871,73 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
         ),
         ("63 pages, 933,908 bytes", "PDF page count and size"),
     ),
+    # The TMLR submission entry point.  These are submission-compliance
+    # invariants, not restatements of the study's numbers.
+    "submissions/tmlr_2026/main.tex": (
+        ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
+        ("600 transport-Hessian runs", "abstract states the run count"),
+        (
+            "the analytic path certificate is\nconservative",
+            "abstract keeps the conservative-certificate finding",
+        ),
+        (
+            "every reported numerical regret bound is vacuous relative to the\n"
+            "deterministic\ncap",
+            "abstract keeps the vacuous-bound finding",
+        ),
+        (
+            "all three comparison policies attain lower sample-mean pseudo-regret",
+            "abstract keeps the adverse regret comparison",
+        ),
+        (
+            "does not by itself deliver a useful bound or better regret",
+            "abstract separates certificate validity from usefulness",
+        ),
+    ),
+    "paper/body_conclusion.tex": (
+        (
+            "every reported theorem\nbound was vacuous relative to the deterministic cap",
+            "conclusion keeps the vacuous-bound finding",
+        ),
+        (
+            "the three comparison\npolicies had lower sample mean regret at the primary horizon",
+            "conclusion keeps the adverse regret comparison",
+        ),
+        (
+            "not evidence\nfor a uniform ordering of curvature methods",
+            "conclusion refuses a uniform curvature ordering",
+        ),
+    ),
 }
+
+# Literals that must NOT appear anywhere in the submitted manuscript sources.
+# These are the overclaims the evidence does not support, and the two tmlr.sty
+# options that would de-anonymize the submission.  A negative check is the only
+# thing that catches a qualifier being deleted and replaced by a stronger claim,
+# which a positive check cannot see.
+MANUSCRIPT_PROHIBITED: Sequence[tuple[str, str]] = (
+    ("\\usepackage[accepted]{tmlr}", "camera-ready option would de-anonymize"),
+    ("\\usepackage[preprint]{tmlr}", "preprint option would de-anonymize"),
+    ("are verified numerical certificates", "float64 checks claimed as certificates"),
+    ("validates the theorem", "experiment claimed to validate the theorem"),
+    ("proves the theorem", "experiment claimed to prove the theorem"),
+    ("empirically validates", "experiment claimed as empirical validation"),
+    ("uniformly better", "uniform superiority claim"),
+    ("outperforms", "benchmark-style superiority claim"),
+    ("state-of-the-art", "benchmark-style superiority claim"),
+    ("a causal dose response across", "cross-condition causal claim"),
+    ("Acknowledgments", "acknowledgments would de-anonymize"),
+)
+
+PROHIBITED_SCOPE: Sequence[str] = (
+    "submissions/tmlr_2026/main.tex",
+    "paper/body_intro.tex",
+    "paper/body_conclusion.tex",
+    "paper/transport_experiment.tex",
+    "paper/transport_experiment_appendix.tex",
+    "paper/transport_theory.tex",
+    "paper/availability.tex",
+)
 
 
 def _normalize_prose(text: str) -> str:
@@ -975,6 +967,25 @@ def check_manuscript(report: Report, root: Path) -> None:
                 f"expected literal {needle!r}",
                 status=STATUS_PASS,
             )
+
+    for relative in PROHIBITED_SCOPE:
+        path = root / relative
+        if not path.is_file():
+            report.add(section, f"{relative}: present", STATUS_FAIL, "file is missing")
+            continue
+        text = _normalize_prose(path.read_text(encoding="utf-8"))
+        hits = [
+            f"{needle!r} ({why})"
+            for needle, why in MANUSCRIPT_PROHIBITED
+            if _normalize_prose(needle) in text
+        ]
+        report.expect(
+            section,
+            f"{relative}: no prohibited overclaim or de-anonymizing option",
+            not hits,
+            "; ".join(hits),
+            status=STATUS_PASS,
+        )
 
 
 # --------------------------------------------------------------------------

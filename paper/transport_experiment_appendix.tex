@@ -7,9 +7,18 @@ selection record, aggregate, and every generated artifact carry provenance and
 SHA-256 hashes.  The figures use only the 50 evaluation seeds.  Smoke and tuning
 results are absent.
 
-\begin{table}[H]
-  \centering\scriptsize
-  \resizebox{\textwidth}{!}{%
+\begin{ccewidefloatappendix}
+  \evidencetabular{@{}%
+    >{\raggedleft\arraybackslash}p{32pt}%
+    >{\raggedleft\arraybackslash}p{22pt}%
+    >{\raggedleft\arraybackslash}p{86pt}%
+    >{\raggedleft\arraybackslash}p{82pt}%
+    >{\raggedleft\arraybackslash}p{60pt}%
+    >{\raggedleft\arraybackslash}p{27pt}%
+    >{\raggedleft\arraybackslash}p{30pt}%
+    >{\raggedleft\arraybackslash}p{34pt}%
+    >{\raggedleft\arraybackslash}p{74pt}%
+    >{\raggedleft\arraybackslash}p{60pt}@{}}{%
     \input{tables/transport_instantiation_tightness.tex}}
   \caption{Certificate and bound tightness for the transport-Hessian policy.
   The reported summary statistics are medians over the following populations.
@@ -22,7 +31,7 @@ results are absent.
   sum divided by its elliptic-potential upper bound; ``Sharp/simple'' is the
   sharp cumulative right-hand side divided by the simpler right-hand side.}
   \label{tab:transport-instantiation-tightness}
-\end{table}
+\end{ccewidefloatappendix}
 \clearpage
 
 \begin{figure}[p]

@@ -3,3 +3,78 @@
 *.pdf binary
 *.png binary
 *.zip binary
+
+# Official TMLR stylefile bundle, redistributed byte-for-byte from
+# https://github.com/JmlrOrg/tmlr-style-file at 7bf90ef.  Upstream ships
+# trailing whitespace on comment lines.  TMLR states that changes to the
+# stylefile "may result in rejection without review", so these bytes must not be
+# touched; disabling the whitespace check for exactly these three paths lets
+# `git diff --check` report real defects in our own sources without flagging
+# upstream's.  Only the `whitespace` attribute is unset: no `text` or `eol`
+# attribute is set here, so Git never rewrites these files.
+paper/tmlr_style/tmlr.sty      -whitespace
+paper/tmlr_style/tmlr.bst      -whitespace
+paper/tmlr_style/fancyhdr.sty  -whitespace
+
+# Vendored third-party LaTeX packages and their licence texts, redistributed
+# byte-for-byte under GPL v3 and LPPL; see paper/texmf_vendor/VENDORED-PACKAGES.md.
+# Upstream ships trailing whitespace, and these bytes are held to pinned
+# SHA-256 digests that the build enforces, so they must not be rewritten to
+# satisfy a lint.  As above, only the `whitespace` attribute is unset: no `text`
+# or `eol` attribute is set, so Git never rewrites them.
+#
+# The exemption is listed file by file rather than as a directory glob.  A glob
+# also covered VENDORED-PACKAGES.md, which is prose this project wrote and which
+# should be held to the same whitespace rule as every other authored file.
+paper/texmf_vendor/LICENSE-gpl-3-0 -whitespace
+paper/texmf_vendor/LICENSE-lppl-1-2 -whitespace
+paper/texmf_vendor/LICENSE-lppl-1-3c -whitespace
+paper/texmf_vendor/cleveref.sty -whitespace
+paper/texmf_vendor/mathtools.sty -whitespace
+paper/texmf_vendor/mhsetup.sty -whitespace
+paper/texmf_vendor/microtype-pdftex.def -whitespace
+paper/texmf_vendor/microtype.cfg -whitespace
+paper/texmf_vendor/microtype.sty -whitespace
+paper/texmf_vendor/mt-cmr.cfg -whitespace
+paper/texmf_vendor/mt-msa.cfg -whitespace
+paper/texmf_vendor/mt-msb.cfg -whitespace
+paper/texmf_vendor/pgflibraryfillbetween.code.tex -whitespace
+paper/texmf_vendor/pgflibrarypgfplots.surfshading.code.tex -whitespace
+paper/texmf_vendor/pgflibrarypgfplots.surfshading.pgfsys-pdftex.def -whitespace
+paper/texmf_vendor/pgfplots.code.tex -whitespace
+paper/texmf_vendor/pgfplots.errorbars.code.tex -whitespace
+paper/texmf_vendor/pgfplots.markers.code.tex -whitespace
+paper/texmf_vendor/pgfplots.paths.code.tex -whitespace
+paper/texmf_vendor/pgfplots.revision.tex -whitespace
+paper/texmf_vendor/pgfplots.scaling.code.tex -whitespace
+paper/texmf_vendor/pgfplots.sty -whitespace
+paper/texmf_vendor/pgfplotsarray.code.tex -whitespace
+paper/texmf_vendor/pgfplotsbinary.code.tex -whitespace
+paper/texmf_vendor/pgfplotsbinary.data.code.tex -whitespace
+paper/texmf_vendor/pgfplotscolor.code.tex -whitespace
+paper/texmf_vendor/pgfplotscolormap.code.tex -whitespace
+paper/texmf_vendor/pgfplotscoordprocessing.code.tex -whitespace
+paper/texmf_vendor/pgfplotscore.code.tex -whitespace
+paper/texmf_vendor/pgfplotsdeque.code.tex -whitespace
+paper/texmf_vendor/pgfplotslibrary.code.tex -whitespace
+paper/texmf_vendor/pgfplotsliststructure.code.tex -whitespace
+paper/texmf_vendor/pgfplotsliststructureext.code.tex -whitespace
+paper/texmf_vendor/pgfplotsmatrix.code.tex -whitespace
+paper/texmf_vendor/pgfplotsmeshplothandler.code.tex -whitespace
+paper/texmf_vendor/pgfplotsmeshplotimage.code.tex -whitespace
+paper/texmf_vendor/pgfplotsoldpgfsupp_loader.code.tex -whitespace
+paper/texmf_vendor/pgfplotsplothandlers.code.tex -whitespace
+paper/texmf_vendor/pgfplotsstackedplots.code.tex -whitespace
+paper/texmf_vendor/pgfplotssysgeneric.code.tex -whitespace
+paper/texmf_vendor/pgfplotstableshared.code.tex -whitespace
+paper/texmf_vendor/pgfplotsticks.code.tex -whitespace
+paper/texmf_vendor/pgfplotsutil.code.tex -whitespace
+paper/texmf_vendor/pgfplotsutil.verb.code.tex -whitespace
+paper/texmf_vendor/tikzlibrarydecorations.softclip.code.tex -whitespace
+paper/texmf_vendor/tikzlibraryfillbetween.code.tex -whitespace
+paper/texmf_vendor/tikzlibrarypgfplots.decorations.softclip.code.tex -whitespace
+paper/texmf_vendor/tikzlibrarypgfplots.fillbetween.code.tex -whitespace
+paper/texmf_vendor/tikzlibrarypgfplots.groupplots.code.tex -whitespace
+
+# Authored, not vendored: normal whitespace checking applies.
+paper/texmf_vendor/VENDORED-PACKAGES.md whitespace

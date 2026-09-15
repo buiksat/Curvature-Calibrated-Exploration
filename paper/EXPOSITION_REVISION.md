@@ -237,3 +237,127 @@ sidecar, bibliography, generated tables and figures, evidence, results, review b
 CODE submission remain unchanged. The closing remote fetch was deferred after the required
 initial fetch returned 403. No experiment, evidence regeneration, push, PR, Overleaf update,
 release, or publication ran.
+
+# TMLR finalization, 2026-09-15
+
+Records the bounded TMLR submission-candidate finalization based on
+`b99b682ecc8f69552a3f57b1b85333378ed12ac1`. Nothing was submitted, uploaded or
+pushed, no experiment ran, and no locked evidence was regenerated.
+
+## Source layout
+
+`paper/main.tex` was a 4,052-line file that was simultaneously the AISTATS shell
+and the home of most of the appendix mathematics. A second venue entry point
+could only reuse that material by copying it, which is exactly the failure mode
+earlier review rounds kept finding: prose that drifts away from unchanged
+formal blocks. It is now a 167-line shell, and the material it used to hold
+lives in files both entry points `\input`:
+
+| New file | Was `paper/main.tex` lines |
+|---|---|
+| `notation.tex` | 55-64 |
+| `body_intro.tex` | 113-199 |
+| `appendix_rates.tex` | 203-381 |
+| `body_conclusion.tex` | 387-441 |
+| `appendix_deferred.tex` | 473-2994 |
+| `body_related.tex` | 2998-3133 |
+| `appendix_protocol.tex` | 3135-3663 |
+| `appendix_onesided_proof.tex` | 3667-3794 |
+| `appendix_cg.tex` | 3796-3881 |
+| `appendix_twosided.tex` | 3883-3969 |
+| `appendix_ggn.tex` | 3973-3995 |
+| `appendix_expfam.tex` | 3997-4028 |
+| `broader_impact.tex` | 4035-4037 |
+| `availability.tex` | 4040-4050 |
+
+The extraction was mechanical and byte-preserving. Verified by rebuilding the
+AISTATS entry point before applying any correction: 64 pages, five overfull
+hboxes, and `pdftotext -layout` output byte-identical to the pre-extraction
+build. `python3 paper/validate.py` reported the same 261 labels, 184 resolved
+reference targets and 37 cited keys before and after.
+
+`appendix_deferred.tex` wraps two blocks in `\iflegacyextras`: the
+fixed-preconditioner CG lemma and the off-diagonal linear-Gram witness. The
+AISTATS shell sets the switch true and keeps them; the TMLR shell sets it false
+and omits them. `availability.tex`, `body_intro.tex` and `body_conclusion.tex`
+use the same switch where they refer to the legacy-evidence appendix, which the
+TMLR submission also omits.
+
+## Content changes
+
+Four inherited corrections, applied without touching any equation:
+
+1. `lem:cg`. A fixed unrescaled buffer bounds the condition number only. The
+   text now says that `alpha_t` is horizon-independent only under a fixed target
+   tolerance, or a tolerance sequence uniformly bounded below one.
+2. "Cost of the analyzed configuration". The simplified `O(K t^{3/2})` per-round
+   and `O(K T^{5/2})` cumulative counts are now qualified by a fixed target
+   tolerance and fixed problem constants, the `log(1/eps_t)` factor is required
+   for a varying schedule, and the counts are stated as sufficient budgets
+   rather than lower bounds on the work CG performs.
+3. "Computable Curvature Operator". `O(I t)` is one action's solve; a round with
+   `K_t` separate common-budget solves costs `O(K_t I t)`, and residual checks
+   are charged separately.
+4. Detailed pseudocode: `+log[` is now `+\log[`. Only the backslash was added.
+   Verified in the rendered PDF: the operator is upright, not italic.
+
+`transport_experiment.tex` gained three accuracy edits. The `e^{D_Q/2}` range is
+now explicitly scoped to `T = 1000`; the adverse regret comparison names
+sample-mean pseudo-regret against transport Hessian rather than "sample means";
+and the endpoint ratio `D_Q/d_Th` is now reported, so the abstract's
+five-to-six-orders-of-magnitude statement is checkable from the body. A sentence
+was added recording that the outcomes show no causal or uniform advantage for
+full curvature. In `body_related.tex`, a single-author citation's verb was
+corrected.
+
+One statement text changed, and only one: `lem:cg`, correction 1 above, which
+now scopes the horizon-independence of `alpha_t` to a fixed target tolerance or
+a tolerance sequence uniformly bounded below one. That is the sole
+theorem/lemma/corollary/proposition statement-text exception in this revision,
+and it is a scoping qualification: `lem:cg`'s equations and its conclusion are
+unchanged, and so is its proof.
+
+Nothing else moved. No other theorem, lemma, corollary, proposition or
+assumption statement was touched, and no equation, constant, quantifier,
+filtration or empirical number changed anywhere.
+
+## Numerical provenance
+
+`tools/verify_tmlr_submission_numbers.py` is a new executable ledger. It lists
+every number the submission states about the controlled study once, with its
+source and SHA-256, selector, unit, aggregation rule, population, unrounded
+value and display rounding; it re-derives each from the locked aggregate,
+requires it to round to the printed literal, and requires the literal to occur
+in the file it is attributed to. It reports 103 PASS and two explicit
+NOT EXECUTED, both raw-data dependent.
+
+## Evidence tooling
+
+`tools/transport_artifact_expectations.py` now holds the single copy of the
+artifact-regeneration logic, extracted from the detached verifier so the
+verifier and the anonymous supplement share it. It builds all 21 published
+tables, figures and CSVs in memory and writes nothing; all 21 regenerate
+byte-identically from the locked aggregate.
+
+Five stale manuscript-literal checks in the detached verifier were replaced with
+literals of the same scientific meaning against the current wording, and
+negative checks were added: a prohibited-literal list catches an overclaim being
+introduced or a de-anonymizing `tmlr.sty` option being set, and new tests prove
+both directions fire. The additive, resource-only `experiments/BUCK` divergence
+is acknowledged by a hash-exact pin held in the verifier, deliberately not in
+the exporter's map, so the frozen review bundle's bytes do not change and any
+other drift still fails closed.
+
+## Build and inspection
+
+The TMLR entry point builds through `submissions/tmlr_2026/build.sh` outside the
+repository. 66 pages, zero unresolved references or citations, zero overfull
+boxes, deterministic across rebuilds. All 66 pages were rendered and inspected
+in eleven contact sheets, with full-resolution checks on the corrected
+pseudocode line. `source.zip` is the staged project-local compile closure plus
+the permitted style and licence inputs, and rebuilds the submitted PDF
+byte-identically from a clean unpacked directory.
+
+`paper/main.pdf` and its sidecar are unchanged and were not rebuilt. The
+generated tables, figures, CSVs, sidecars, provenance records, locked aggregate,
+selection record, review bundle and CODE submission are all unchanged.

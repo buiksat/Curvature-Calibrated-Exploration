@@ -1,0 +1,43 @@
+%% availability.tex
+%% Shared manuscript source, extracted from the historical entry point
+%% paper/main.tex (lines 4040-4050) so that it and the TMLR entry point
+%% submissions/tmlr_2026/main.tex read one copy of this material instead
+%% of two.  The venue-conditional branches differ only in what the reader
+%% is actually handed; the factual content is the same.  The revision the
+%% lines refer to is recorded in paper/EXPOSITION_REVISION.md, which is
+%% not part of any submission upload.
+\iflegacyextras
+The repository contains the manuscript, theory derivations, implementation,
+tests, frozen transport-instantiation protocol and configuration, optimizer
+selection record, strict full aggregate, provenance records, and generated
+tables and figures used in \Cref{sec:transport-instantiation}.  The aggregate is
+bound to the complete raw-input inventory by SHA-256 provenance.  Raw run files
+remain outside the committed source tree; no public raw-bundle URL is claimed.
+The manuscript does not use the legacy experiments as evidence for
+\Cref{thm:transported-ucb}; their scope is summarized in
+\Cref{app:legacy-evidence}.  Detailed legacy figures, raw-bundle inventories,
+and derived benchmark outputs are not part of the compact checkout; Git history
+preserves them.
+\else
+The anonymous supplement accompanying this submission contains the frozen
+transport-instantiation protocol and configuration, the experiment
+implementation, the aggregation and artifact-rendering code, the optimizer
+selection record, the strict full aggregate, the SHA-256 provenance sidecars,
+the generated tables and figures used in \Cref{sec:transport-instantiation},
+and a detached verifier that recomputes the reported statistics and regenerates
+every published table, figure and CSV byte from the aggregate.  The aggregate is
+bound to its complete raw-input inventory by SHA-256 provenance.
+
+Two limits are stated rather than worked around.  First, the raw per-run
+trajectory files are not distributed: they are large and were never committed,
+so the supplement verifies the aggregate's inventory structure and digests but
+cannot verify the raw bytes those digests name, and the verifier labels those
+checks accordingly instead of reporting them as passes.  Consequently the
+deterministic paired bootstrap, which resamples per-seed values, is not
+recomputable from the supplement; its algorithm, level, resample count and
+derived child seeds are recorded, and no per-seed values are synthesized in
+their place.  Second, earlier studies in the same line of work were designed for
+the one-sided dynamic theorem, do not execute the transported score, and record
+none of its certificates; they are excluded from this submission and are not
+evidence for any claim in it.
+\fi

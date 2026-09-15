@@ -6,8 +6,20 @@ import re
 import sys
 
 PAPER_DIR = Path(__file__).resolve().parent
-MAIN = PAPER_DIR / "main.tex"
+
+# The entry point to validate.  Defaults to the historical AISTATS one, which is
+# what `python paper/validate.py` has always meant.  Passing a path validates
+# that entry point and its transitive \input closure instead, which is how the
+# packaging step checks the staged TMLR tree: validating one entry point says
+# nothing about a sibling that \inputs a different set of files, and an
+# independent reviewer used exactly that gap to ship an unresolved \ref.
+if len(sys.argv) > 1:
+    MAIN = Path(sys.argv[1]).resolve()
+    PAPER_DIR = MAIN.parent
+else:
+    MAIN = PAPER_DIR / "main.tex"
 MACROS = PAPER_DIR / "macros.tex"
+print(f"[entry] {MAIN}")
 
 def read(p):
     with open(p) as f:
@@ -51,6 +63,23 @@ def strip_comments(s):
     return '\n'.join(out)
 
 main_raw = read_with_inputs(MAIN)
+
+# Resolve the one venue switch the way this entry point sets it, so a label or
+# reference that lives only in the branch this entry point does not typeset is
+# neither counted nor reported.  Every other conditional is kept in full; see
+# tools/tex_conditionals.py for why guessing is not an option.
+sys.path.insert(0, str(PAPER_DIR.parent / "tools"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+import tex_conditionals  # noqa: E402
+
+LEGACY = tex_conditionals.switch_value(main_raw, default=True)
+print(f"[switch] \\if{tex_conditionals.SWITCH} = {LEGACY}")
+try:
+    main_raw = tex_conditionals.resolve(main_raw, legacy=LEGACY)
+except tex_conditionals.UnbalancedConditional as error:
+    print(f"[switch] PROBLEM: {error}")
+    sys.exit(1)
+
 main = strip_comments(main_raw)
 macros = strip_comments(read(MACROS))
 
@@ -111,7 +140,10 @@ if unresolved: problems.append(f"unresolved refs: {unresolved}")
 # 7. citations in .bib
 bib = read(PAPER_DIR / "references.bib")
 bibkeys = set(re.findall(r'@\w+\{([^,]+),', bib))
-cites = re.findall(r'\\cite[a-z]*\{([^}]+)\}', main)
+# natbib citations may carry one or two optional arguments, as in
+# `\citet[Thm.~6.1.1]{tropp2015introduction}`.  A pattern without them skipped
+# those citations entirely, so a missing key inside one reached the compiler.
+cites = re.findall(r'\\[Cc]ite[a-zA-Z]*(?:\[[^\]]*\])*\{([^}]+)\}', main)
 citekeys = set()
 for c in cites:
     for k in c.split(','):

@@ -1,0 +1,157 @@
+%% TMLR 2026 submission entry point.
+%%
+%% This file is a thin shell.  Every section it \inputs is a shared canonical
+%% source under paper/; this submission keeps no second copy of the
+%% mathematics.  Build it with submissions/tmlr_2026/build.sh, which puts
+%% paper/ and paper/tmlr_style/ on TEXINPUTS/BSTINPUTS, or compile it from an
+%% unpacked source.zip where all of those files sit flat beside this one.
+%%
+%% Anonymous double-blind submission: tmlr.sty is loaded without [accepted] and
+%% without [preprint], which is what suppresses the author block.
+\documentclass[10pt]{article}
+
+%% Official TMLR stylefile and template, used unmodified.  See
+%% paper/tmlr_style/PROVENANCE.md for the upstream revision and file hashes.
+\usepackage{tmlr}
+
+%% Nothing in this submission reduces a font size, reduces \tabcolsep or scales
+%% a box to make content fit.  The three generated evidence tables are wider
+%% than the 6.5in measure; paper/notation.tex sets them on landscape floats at
+%% the body font size and lets their long column headers wrap.  Document
+%% margins, body font size, caption size, \tabcolsep and paragraph spacing are
+%% the template's throughout.
+
+% --- standard packages ----------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{algorithm}
+%% tmlr.sty defines a global \AND as its multi-author separator and
+%% algorithmic.sty then refuses to define its own.  Park tmlr's meaning under
+%% \tmlrAND and hand \AND to algorithmic; a de-anonymized camera-ready with
+%% several authors should separate them with \tmlrAND.  Neither style file is
+%% edited.
+\makeatletter
+\let\tmlrAND\AND
+\let\AND\relax
+\makeatother
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{rotating} % landscape floats for the three wide evidence tables
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepgfplotslibrary{groupplots,fillbetween}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{float}    % [H] fixed-placement algorithm
+\usepackage{placeins} % \FloatBarrier
+
+% --- anonymity and reproducibility of the PDF itself -----------------------
+% No author, title, subject or keyword metadata; no creation date, no file ID
+% and no pdfTeX banner, so the submitted bytes carry nothing about who or
+% where they were produced and two builds of the same source agree.
+\hypersetup{hidelinks,
+  pdfauthor={},pdftitle={},pdfsubject={},pdfkeywords={},
+  pdfcreator={},pdfproducer={}}
+\pdfinfoomitdate=1
+\pdftrailerid{}
+\pdfsuppressptexinfo=-1
+
+% --- shared notation -------------------------------------------------------
+\input{macros}
+% This submission omits the venue-optional legacy blocks; the switch is read by
+% the shared appendix sources.  FINALIZATION_REPORT.md records the cut list.
+\newif\iflegacyextras \legacyextrasfalse
+\input{notation}
+
+\title{Confidence Transport for Relinearized Curvature\\in Contextual Bandits}
+
+% Authors must not appear in the submitted version.  tmlr.sty hides this block
+% as long as the package is loaded without [accepted] or [preprint].
+\author{\name Anonymous Author(s) \email anonymous@example.com \\
+      \addr Anonymous Institution}
+
+\def\month{MM}
+\def\year{YYYY}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A contextual-bandit policy built on a retrained model faces a mismatch: its
+statistical confidence is naturally built from the gradient features that were
+fixed when each reward was collected, while its scores are computed with the
+current relinearized generalized Gauss--Newton or Fisher metric, which changes
+every replayed Jacobian at once.  We ask when the first can justify the second,
+and we keep four objects distinct throughout: the frozen confidence metric, the
+exact current metric, the symmetric positive definite operator the algorithm
+actually applies, and the numerical width a solver returns.  A
+Thompson--Finsler path certificate transports frozen confidence to current
+curvature, a two-sided operator comparison relates that metric to the applied
+operator, and a solver certificate relates exact operator widths to the widths
+the action selector sees.  The resulting conditional upper-confidence-bound
+theorem closes regret through frozen sequential information gain and permits
+measurable approximate selection on standard-Borel action spaces.  For
+differentiable squared-loss models a corrected prediction center establishes
+the reference-confidence event for any predictable parameter path inside the
+certified region, with no nonlinear optimizer-convergence assumption;
+historical and current approximation errors stay explicit in the radius.  A
+locked 29-parameter scaled-tanh audit, run as a dense controlled study rather
+than a benchmark, records simultaneous float64 confidence and optimism in all
+600 transport-Hessian runs with no deterministic audit failure.  The same audit
+shows the negative half of the result: the analytic path certificate is
+conservative by five to six orders of magnitude against the endpoint distance,
+every reported numerical regret bound is vacuous relative to the deterministic
+cap, and all three comparison policies attain lower sample-mean pseudo-regret at
+the primary horizon.  Validity of an analytic transport certificate therefore
+does not by itself deliver a useful bound or better regret, and we report the
+conditions under which the theorem holds rather than a curvature advantage.
+\end{abstract}
+
+% --- body -----------------------------------------------------------------
+\input{body_intro}
+\input{transport_theory}
+\input{transport_experiment}
+\input{body_related}
+\input{body_conclusion}
+
+\subsubsection*{Broader Impact Statement}
+\input{broader_impact}
+
+\subsubsection*{Reproducibility Statement}
+\input{availability}
+
+\bibliographystyle{tmlr}
+\bibliography{references}
+
+% --- appendix -------------------------------------------------------------
+\appendix
+\input{transport_proofs}
+\input{legacy_dynamic}
+
+\section{Additional conditional rates}\label{app:additional-rates}
+\input{appendix_rates}
+
+\input{appendix_deferred}
+
+\input{appendix_protocol}
+
+\input{appendix_onesided_proof}
+
+\input{appendix_cg}
+
+\input{appendix_twosided}
+
+\input{appendix_ggn}
+
+\input{appendix_expfam}
+
+\input{transport_experiment_appendix}
+
+\end{document}

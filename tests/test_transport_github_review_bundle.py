@@ -569,10 +569,170 @@ def test_verifier_pins_the_known_study_source_divergence():
     diverged = [
         c for c in report.checks if c["status"] == verifier.STATUS_KNOWN_DIVERGENCE
     ]
-    assert len(diverged) == len(exporter.KNOWN_STUDY_SOURCE_DIVERGENCES)
-    assert "make_transport_instantiation_artifacts.py" in diverged[0]["check"]
-    # the pin must carry both hashes and the causing commit
-    assert exporter.IMPLEMENTATION_COMMIT in diverged[0]["detail"]
+    expected = (
+        len(exporter.KNOWN_STUDY_SOURCE_DIVERGENCES)
+        + len(verifier.CURRENT_STUDY_SOURCE_COMPATIBILITY)
+    )
+    assert len(diverged) == expected
+    names = " ".join(c["check"] for c in diverged)
+    assert "make_transport_instantiation_artifacts.py" in names
+    assert "experiments/BUCK" in names
+    # every pin must carry both hashes and the causing commit
+    details = " ".join(c["detail"] for c in diverged)
+    assert exporter.IMPLEMENTATION_COMMIT in details
+    for record in verifier.CURRENT_STUDY_SOURCE_COMPATIBILITY.values():
+        assert record["diverged_in_commit"] in details
+        assert record["selection_inventory_sha256"] in details
+        assert record["expected_head_sha256"] in details
+
+
+def test_verifier_side_pin_does_not_change_the_frozen_review_bundle():
+    """The bundle manifest must not learn about the verifier-only pin.
+
+    review/transport_instantiation/manifest.json is frozen evidence.  If the
+    experiments/BUCK acknowledgment ever migrates into the exporter's map, the
+    bundle bytes change and this catches it.
+    """
+
+    assert "experiments/BUCK" not in exporter.KNOWN_STUDY_SOURCE_DIVERGENCES
+    manifest = json.loads(
+        (REPO_ROOT / "review/transport_instantiation/manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    pinned = manifest["limitations"]["known_study_source_divergences"]
+    assert set(pinned) == set(exporter.KNOWN_STUDY_SOURCE_DIVERGENCES)
+    assert "experiments/BUCK" not in pinned
+
+
+def test_an_unpinned_study_source_change_still_fails(tmp_path, monkeypatch):
+    """The acknowledgment is hash-exact: any other bytes must fail closed."""
+
+    pinned = dict(verifier.CURRENT_STUDY_SOURCE_COMPATIBILITY["experiments/BUCK"])
+    pinned["expected_head_sha256"] = "0" * 64
+    monkeypatch.setattr(
+        verifier, "CURRENT_STUDY_SOURCE_COMPATIBILITY", {"experiments/BUCK": pinned}
+    )
+    report = verifier.run(
+        REPO_ROOT, REPO_ROOT / "review/transport_instantiation", skip_bundle=True
+    )
+    failed = [c["check"] for c in report.failures]
+    assert "study source experiments/BUCK" in failed
+    unpinned = [
+        c for c in report.failures if c["check"] == "study source experiments/BUCK"
+    ][0]
+    assert "unpinned divergence" in unpinned["detail"]
+
+
+def _manuscript_scratch(tmp_path):
+    """Copy every file check_manuscript reads into a writable scratch tree."""
+
+    scratch = tmp_path / "tree"
+    relatives = set(verifier.MANUSCRIPT_INVARIANTS) | set(verifier.PROHIBITED_SCOPE)
+    for relative in sorted(relatives):
+        target = scratch / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            (REPO_ROOT / relative).read_text(encoding="utf-8"), encoding="utf-8"
+        )
+    return scratch
+
+
+def test_removing_a_required_qualifier_is_detected(tmp_path):
+    """A manuscript edit that drops a required negative finding must FAIL.
+
+    This is the check a positive-literal suite cannot make about itself: it
+    proves the literal list is load-bearing rather than decorative.
+    """
+
+    scratch = _manuscript_scratch(tmp_path)
+
+    baseline = verifier.Report()
+    verifier.check_manuscript(baseline, scratch)
+    assert baseline.failures == [], [c["check"] for c in baseline.failures]
+
+    experiment = scratch / "paper/transport_experiment.tex"
+    text = experiment.read_text(encoding="utf-8")
+    assert "The cumulative guarantee is vacuous in every reported cell" in text
+    experiment.write_text(
+        text.replace(
+            "The cumulative guarantee is vacuous in every reported cell",
+            "The cumulative guarantee is informative in every reported cell",
+        ),
+        encoding="utf-8",
+    )
+    damaged = verifier.Report()
+    verifier.check_manuscript(damaged, scratch)
+    assert any("empirical vacuity" in c["check"] for c in damaged.failures)
+
+
+def test_introducing_an_overclaim_is_detected(tmp_path):
+    """Adding an unsupported claim must FAIL even though every literal survives."""
+
+    scratch = _manuscript_scratch(tmp_path)
+
+    clean = verifier.Report()
+    verifier.check_manuscript(clean, scratch)
+    assert clean.failures == [], [c["check"] for c in clean.failures]
+
+    experiment = scratch / "paper/transport_experiment.tex"
+    experiment.write_text(
+        experiment.read_text(encoding="utf-8")
+        + "\nThe transport policy outperforms every comparison policy.\n",
+        encoding="utf-8",
+    )
+    damaged = verifier.Report()
+    verifier.check_manuscript(damaged, scratch)
+    assert any("prohibited overclaim" in c["check"] for c in damaged.failures)
+
+
+def test_deanonymizing_style_option_is_detected(tmp_path):
+    """Switching tmlr.sty to accepted or preprint mode must FAIL."""
+
+    scratch = _manuscript_scratch(tmp_path)
+
+    entry = scratch / "submissions/tmlr_2026/main.tex"
+    entry.write_text(
+        entry.read_text(encoding="utf-8").replace(
+            "\\usepackage{tmlr}", "\\usepackage[accepted]{tmlr}"
+        ),
+        encoding="utf-8",
+    )
+    damaged = verifier.Report()
+    verifier.check_manuscript(damaged, scratch)
+    checks = [c["check"] for c in damaged.failures]
+    assert any("prohibited overclaim" in c for c in checks)
+    assert any("official TMLR stylefile is loaded" in c for c in checks)
+
+
+def test_artifact_expectations_are_a_single_shared_copy():
+    """The verifier and the supplement ledger must share one expectation module."""
+
+    pytest.importorskip("numpy")
+    pytest.importorskip("scipy")
+    import transport_artifact_expectations as expectations
+
+    assert verifier.expectations is expectations
+    results = expectations.check(REPO_ROOT)
+    assert len(results) == len(exporter.GENERATED_ARTIFACT_PATHS)
+    bad = [relative for relative, ok, _ in results if not ok]
+    assert bad == []
+
+
+def test_artifact_expectations_write_nothing(tmp_path):
+    """Regeneration is in memory; a protected tree must be untouched by it."""
+
+    pytest.importorskip("numpy")
+    pytest.importorskip("scipy")
+    import transport_artifact_expectations as expectations
+
+    watched = sorted(
+        (REPO_ROOT / "paper/tables").iterdir()
+    ) + sorted((REPO_ROOT / "paper/figures").iterdir())
+    before = {p: (p.stat().st_mtime_ns, p.stat().st_size) for p in watched if p.is_file()}
+    expectations.check(REPO_ROOT)
+    after = {p: (p.stat().st_mtime_ns, p.stat().st_size) for p in watched if p.is_file()}
+    assert before == after
 
 
 def test_pdf_sidecar_validates_against_the_locked_pdf():

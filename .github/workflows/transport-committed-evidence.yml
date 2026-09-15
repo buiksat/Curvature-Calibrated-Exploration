@@ -90,7 +90,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  committed-evidence:
+  # Everything the TMLR submission candidate depends on.  It must be able to
+  # run, and to be read, without the deferred realistic-transport extension:
+  # that extension is a separate job below so that its real status neither
+  # blocks nor is hidden by this one.
+  submission-evidence:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -110,6 +114,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r experiments/requirements.txt
+          # CI-only: PyYAML is not a scientific dependency and is deliberately
+          # not added to experiments/requirements.txt.  It is installed here so
+          # the workflow-structure regression test can parse this file rather
+          # than pattern-match it.
+          python -m pip install "pyyaml==6.0.2"
 
       - name: Show tool versions
         run: |
@@ -154,18 +163,6 @@ jobs:
           ( cd submissions/code_mit_2026 && sha256sum -c SHA256SUMS )
           exit $status
 
-      - name: Collect realistic trust-boundary tests
-        run: |
-          set -euo pipefail
-          python -m pytest --collect-only -q experiments/realistic_transport \
-            | tee realistic-transport-collection.log
-
-      - name: Run realistic trust-boundary tests
-        run: |
-          set -euo pipefail
-          python -m pytest -q experiments/realistic_transport \
-            | tee realistic-transport-tests.log
-
       - name: Transport unit, aggregate and artifact tests
         run: |
           python -m pytest -q \
@@ -200,79 +197,191 @@ jobs:
       - name: PDF structural checks
         run: |
           set -euo pipefail
-          sha256sum -c paper/main.pdf.sha256
+          # The sidecar names the file as bare `main.pdf`, so sha256sum -c has to
+          # run from paper/.  Called from the repository root it reports
+          # "main.pdf: FAILED open or read" and exits 1, which used to abort this
+          # job before any submission check ran.
+          ( cd paper && sha256sum -c main.pdf.sha256 )
           qpdf --check paper/main.pdf | tee pdf-check.log
           pdfinfo paper/main.pdf | tee -a pdf-check.log
           pdffonts paper/main.pdf | tee -a pdf-check.log
           pdftotext -layout paper/main.pdf "${RUNNER_TEMP}/main.txt"
           wc -c "${RUNNER_TEMP}/main.txt" | tee -a pdf-check.log
           # the PDF must be untouched by the checks above
-          sha256sum -c paper/main.pdf.sha256
+          ( cd paper && sha256sum -c main.pdf.sha256 )
 
       - name: Static TeX validation
         run: python paper/validate.py
 
-      - name: Install TeX Live for the clean rebuild
-        id: texlive
+      - name: Install TeX Live for the manuscript builds
         run: |
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-base texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended texlive-fonts-extra texlive-science \
-            texlive-pictures biber latexmk
+            texlive-pictures texlive-plain-generic cm-super biber latexmk unzip
+
+      - name: Numerical-provenance ledger
+        run: |
+          set -euo pipefail
+          python tools/verify_tmlr_submission_numbers.py \
+            --ledger ledger.json | tee ledger.log
+
+      - name: Regenerate every published artifact from the locked aggregate
+        run: |
+          set -euo pipefail
+          python tools/transport_artifact_expectations.py --root . \
+            | tee artifact-regeneration.log
+          # the check runs in memory; prove it wrote nothing
+          git diff --quiet --exit-code -- paper/tables paper/figures
 
       - name: Attempt the clean PDF rebuild
         run: |
           set -euo pipefail
-          SOURCE_DATE_EPOCH=$(git show -s --format=%ct 93eaa537d2702d5d18b05905913b0b879e3d608f)
+          # Two different questions, kept apart.
+          #
+          # (1) Does the current source compile cleanly?  That must pass, and a
+          #     build failure or an unresolved reference fails this step.
+          # (2) Do the resulting bytes equal paper/main.pdf?  They are not
+          #     expected to: that file is a deliberately frozen pre-rewrite
+          #     snapshot, and its hash and provenance are verified separately by
+          #     "PDF structural checks" above.  A difference is therefore
+          #     reported as a classification, not as a failure.  Treating (2) as
+          #     a hard gate is what previously stopped this job before the
+          #     submission checks below ever ran.
+          SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)
           export SOURCE_DATE_EPOCH FORCE_SOURCE_DATE=1
-          work="${RUNNER_TEMP}/rebuild"
+          work="${RUNNER_TEMP}/aistats"
           mkdir -p "$work"
           git archive HEAD | tar -x -C "$work"
           cp paper/main.pdf "${RUNNER_TEMP}/locked.pdf"
-          ( cd "$work" && make clean && make pdf ) > rebuild.log 2>&1 || {
-            echo "classification: rebuild unavailable due to a concrete dependency"
-            tail -60 rebuild.log
+          ( cd "$work/paper" && latexmk -pdf -interaction=nonstopmode \
+              -halt-on-error main.tex ) > aistats-build.log 2>&1 || {
+            echo "classification: current sources do not compile" >&2
+            tail -80 aistats-build.log >&2
             exit 1
           }
-          # Never overwrite the locked PDF: compare in place.
-          if cmp -s "$work/paper/main.pdf" "${RUNNER_TEMP}/locked.pdf"; then
-            echo "classification: byte-identical rebuild"
-            exit 0
-          fi
-          a_pages=$(pdfinfo "${RUNNER_TEMP}/locked.pdf" | awk '/^Pages:/{print $2}')
-          b_pages=$(pdfinfo "$work/paper/main.pdf" | awk '/^Pages:/{print $2}')
-          pdftotext -layout "${RUNNER_TEMP}/locked.pdf" "${RUNNER_TEMP}/a.txt"
-          pdftotext -layout "$work/paper/main.pdf" "${RUNNER_TEMP}/b.txt"
-          mismatch=0
-          if [ "$a_pages" != "$b_pages" ] || ! cmp -s "${RUNNER_TEMP}/a.txt" "${RUNNER_TEMP}/b.txt"; then
-            mismatch=1
-          else
-            for p in $(seq 1 "$a_pages"); do
-              gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r72 \
-                 -dFirstPage=$p -dLastPage=$p -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \
-                 -o "${RUNNER_TEMP}/a.png" "${RUNNER_TEMP}/locked.pdf"
-              gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -r72 \
-                 -dFirstPage=$p -dLastPage=$p -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \
-                 -o "${RUNNER_TEMP}/b.png" "$work/paper/main.pdf"
-              if ! cmp -s "${RUNNER_TEMP}/a.png" "${RUNNER_TEMP}/b.png"; then
-                echo "raster mismatch on page $p"
-                mismatch=1
-              fi
-            done
-          fi
-          # the committed table and figure sources must be identical too
-          for f in paper/tables/transport_instantiation_*.tex \
-                   paper/figures/transport_instantiation_*.tex \
-                   paper/figures/transport_instantiation_*.csv; do
-            cmp -s "$f" "$work/$f" || { echo "input mismatch: $f"; mismatch=1; }
-          done
-          if [ "$mismatch" -eq 0 ]; then
-            echo "classification: semantically identical but byte-different rebuild"
-          else
-            echo "classification: rebuild content mismatch" >&2
+          log="$work/paper/main.log"
+          if grep -qE 'LaTeX Warning: (Reference|Citation|Label)' "$log"; then
+            echo "unresolved references, citations or labels in the build" >&2
+            grep -E 'LaTeX Warning: (Reference|Citation|Label)' "$log" >&2
             exit 1
           fi
-          sha256sum -c paper/main.pdf.sha256
+          pages=$(pdfinfo "$work/paper/main.pdf" | awk '/^Pages:/{print $2}')
+          echo "current AISTATS entry point compiles: ${pages} pages"
+          if cmp -s "$work/paper/main.pdf" "${RUNNER_TEMP}/locked.pdf"; then
+            echo "classification: byte-identical to the frozen snapshot"
+          else
+            locked_pages=$(pdfinfo "${RUNNER_TEMP}/locked.pdf" \
+              | awk '/^Pages:/{print $2}')
+            echo "classification: current sources differ from the frozen" \
+                 "pre-rewrite snapshot (${pages} pages now, ${locked_pages}" \
+                 "pages frozen); expected, not a failure"
+          fi
+          # the frozen snapshot must still be untouched by any of the above
+          ( cd paper && sha256sum -c main.pdf.sha256 )
+
+      - name: Build the anonymous TMLR submission
+        run: |
+          set -euo pipefail
+          TMLR_OUT="${RUNNER_TEMP}/tmlr" bash submissions/tmlr_2026/build.sh \
+            > tmlr-build.log 2>&1 || { tail -80 tmlr-build.log; exit 1; }
+          tail -20 tmlr-build.log
+          test -f "${RUNNER_TEMP}/tmlr/main.pdf"
+          test -f "${RUNNER_TEMP}/tmlr/source.zip"
+          test -f "${RUNNER_TEMP}/tmlr/supplement.zip"
+          # the supplement must stay inside the 100 MB venue limit.  Strictly
+          # under, matching package.check_archive_size: the archive stores its
+          # members rather than deflating them, so this has real headroom to
+          # spend and the gate has to be the one that notices.
+          limit=$((100 * 1000 * 1000))
+          size=$(stat -c%s "${RUNNER_TEMP}/tmlr/supplement.zip")
+          echo "supplement.zip: ${size} bytes (limit ${limit})"
+          [ "$size" -lt "$limit" ]
+          # every member STORED, so the archive hash cannot move with zlib,
+          # and every external compiled input from a trusted system tree
+          python - "${RUNNER_TEMP}/tmlr" <<'PY'
+          import json, pathlib, sys, zipfile
+          out = pathlib.Path(sys.argv[1])
+          for name in ("source.zip", "supplement.zip"):
+              with zipfile.ZipFile(out / name) as archive:
+                  bad = [i.filename for i in archive.infolist()
+                         if i.compress_type != zipfile.ZIP_STORED]
+              print(f"{name}: {len(bad)} deflated members")
+              if bad:
+                  raise SystemExit(f"{name} carries deflated members: {bad[:5]}")
+          manifest = json.loads(
+              (out / "release_manifest.json").read_text(encoding="utf-8"))
+          external = manifest["external_tex_inputs"]
+          untrusted = [i["name"] for i in external if not i["trusted"]]
+          print(f"external compiled inputs: {len(external)}, "
+                f"{len(untrusted)} not from a trusted system tree")
+          if untrusted or not external:
+              raise SystemExit(f"external inputs not trusted: {untrusted[:5]}")
+          PY
+          # the build writes only outside the repository: no tracked file may
+          # have changed, and no new file may have appeared under a protected path
+          git diff --quiet --exit-code
+          git status --porcelain --untracked-files=all -- \
+            paper results review submissions experiments tools \
+            | tee tmlr-tree-state.log
+          [ ! -s tmlr-tree-state.log ]
+
+      - name: Release manifest still describes the rebuilt deliverables
+        run: |
+          set -euo pipefail
+          python submissions/tmlr_2026/package.py --compare-manifest \
+            "${RUNNER_TEMP}/tmlr/release_manifest.json"
+
+      - name: Rebuild the submission from a clean unpacked source.zip
+        run: |
+          set -euo pipefail
+          clean="${RUNNER_TEMP}/source-zip-check"
+          rm -rf "$clean"; mkdir -p "$clean"
+          ( cd "$clean" && unzip -q "${RUNNER_TEMP}/tmlr/source.zip" )
+          export SOURCE_DATE_EPOCH=1609459200 FORCE_SOURCE_DATE=1
+          ( cd "$clean" && latexmk -pdf -interaction=nonstopmode -halt-on-error \
+              main.tex ) > source-zip-build.log 2>&1
+          cmp "$clean/main.pdf" "${RUNNER_TEMP}/tmlr/main.pdf"
+          echo "source.zip rebuilds the submitted PDF byte-identically"
+
+      - name: Release-package suite against the built output
+        run: |
+          set -euo pipefail
+          # TMLR_OUT points the suite at the archives this job actually built,
+          # so the integration tests grade the real deliverables instead of
+          # skipping for want of one.  The log goes to RUNNER_TEMP: nothing this
+          # job writes may land in the worktree.
+          log="${RUNNER_TEMP}/release-package-suite.log"
+          TMLR_OUT="${RUNNER_TEMP}/tmlr" \
+            python -m pytest -q -rs tests/test_tmlr_release_package.py \
+            | tee "$log"
+          if grep -q "no built release directory" "$log"; then
+            echo "the suite skipped its archive tests: TMLR_OUT was not honoured" >&2
+            exit 1
+          fi
+          git diff --quiet --exit-code
+          git status --porcelain --untracked-files=all -- \
+            paper results review submissions experiments tools tests \
+            | tee "${RUNNER_TEMP}/package-suite-tree-state.log"
+          [ ! -s "${RUNNER_TEMP}/package-suite-tree-state.log" ]
+
+      - name: Verify the generated supplement from a clean unpack
+        run: |
+          set -euo pipefail
+          # The reviewer's entry point, run exactly as shipped: unpack the
+          # supplement this job produced and execute its own verify.sh with no
+          # edits and no environment help from the repository.
+          clean="${RUNNER_TEMP}/supplement-check"
+          rm -rf "$clean"; mkdir -p "$clean"
+          ( cd "$clean" && unzip -q "${RUNNER_TEMP}/tmlr/supplement.zip" )
+          log="${RUNNER_TEMP}/supplement-verify.log"
+          ( cd "$clean" && bash verify.sh ) | tee "$log"
+          grep -q "all supplement checks passed" "$log"
+          git diff --quiet --exit-code
+          git status --porcelain --untracked-files=all -- \
+            paper results review submissions experiments tools tests \
+            | tee "${RUNNER_TEMP}/supplement-tree-state.log"
+          [ ! -s "${RUNNER_TEMP}/supplement-tree-state.log" ]
 
       # actions/upload-artifact v4.4.3
       - name: Upload verifier and PDF logs
@@ -284,7 +393,64 @@ jobs:
             verifier.log
             verifier-report.json
             pdf-check.log
-            rebuild.log
+            ledger.json
+            ledger.log
+            artifact-regeneration.log
+            aistats-build.log
+            tmlr-build.log
+            source-zip-build.log
+            ${{ runner.temp }}/release-package-suite.log
+            ${{ runner.temp }}/supplement-verify.log
+          if-no-files-found: warn
+          retention-days: 30
+
+  # The deferred realistic Covertype/Nystrom extension.  It is NOT part of the
+  # submission and is NOT cleared: an independent review of this revision left
+  # its evidence-integrity blockers open, and raw-grid discovery still collapses
+  # the physical seed-100 and seed-0100 directories into one integer-keyed cell.
+  # This job runs it anyway and reports its true status; it is deliberately not
+  # a dependency of submission-evidence, and a failure here must never be read
+  # as clearance or as a submission blocker.
+  realistic-transport-deferred:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      # actions/checkout v4.2.2
+      - name: Check out at full depth
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # actions/setup-python v5.3.0
+      - name: Set up Python 3.12
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with:
+          python-version: "3.12"
+
+      - name: Install the declared experiment dependency set
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r experiments/requirements.txt
+
+      - name: Collect realistic trust-boundary tests
+        run: |
+          set -euo pipefail
+          python -m pytest --collect-only -q experiments/realistic_transport \
+            | tee realistic-transport-collection.log
+
+      - name: Run realistic trust-boundary tests
+        run: |
+          set -euo pipefail
+          python -m pytest -q experiments/realistic_transport \
+            | tee realistic-transport-tests.log
+
+      # actions/upload-artifact v4.4.3
+      - name: Upload realistic-transport logs
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        with:
+          name: realistic-transport-logs
+          path: |
             realistic-transport-collection.log
             realistic-transport-tests.log
           if-no-files-found: warn

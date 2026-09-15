@@ -1,0 +1,40 @@
+%% appendix_expfam.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3997-4028) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Exponential-Family Curvature Definitions}\label{app:expfam}
+
+For a regular exponential-family negative log-likelihood with natural parameter
+$z_{\btheta}(\bx,a)\in\R^{k}$ (scalar for Bernoulli, $k$-dimensional for
+categorical) and log-partition function $A$, the GGN/Fisher curvature matrices are
+\begin{align}
+  \bC_t^{\mathrm{exp}}
+  &\;=\;
+  \lambda\,\bI
+  \;+\;
+  \sum_{s=1}^{t-1}
+    J_t(\bx_s,a_s)^\top\,\nabla^2 A\bigl(z_t(\bx_s,a_s)\bigr)\,
+    J_t(\bx_s,a_s),
+  \label{eq:curvature-exp}\\[4pt]
+  \bCbar_t^{\mathrm{exp}}
+  &\;=\;
+  \lambda\,\bI
+  \;+\;
+  \sum_{s=1}^{t-1}
+    J_s(\bx_s,a_s)^\top\,\nabla^2 A\bigl(z_s(\bx_s,a_s)\bigr)\,
+    J_s(\bx_s,a_s),
+  \label{eq:curvature-bar-exp}
+\end{align}
+where $J_t(\bx,a)=\nabla_{\btheta}z_{\btheta_t}(\bx,a)\in\R^{k\times d}$
+is the Jacobian of the natural parameter and
+$\nabla^2 A(z)$ is the output-space Hessian of the log-partition
+function.
+For Bernoulli rewards $\nabla^2 A(z)=p(1{-}p)$ (scalar);
+for categorical rewards $\nabla^2 A(z)=\mathrm{Diag}(\mathbf{p})
+-\mathbf{p}\mathbf{p}^\top$.
+Setting $k=1$ and $\nabla^2 A=\sigma^{-2}$ recovers the
+Gaussian curvature~\eqref{eq:curvature}--\eqref{eq:curvature-bar}.

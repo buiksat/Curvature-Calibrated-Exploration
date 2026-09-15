@@ -61,9 +61,19 @@ does not prove or empirically validate the theorem.  In particular, ordinary
 float64 Cholesky, eigenvalue, and quadrature checks are not verified
 enclosures.
 
-\begin{table*}[t]
-  \centering\scriptsize
-  \resizebox{\textwidth}{!}{%
+\begin{ccewidefloat}
+  \evidencetabular{@{}%
+    >{\raggedleft\arraybackslash}p{32pt}%
+    >{\raggedleft\arraybackslash}p{22pt}%
+    >{\raggedleft\arraybackslash}p{12pt}%
+    >{\raggedleft\arraybackslash}p{104pt}%
+    >{\raggedleft\arraybackslash}p{88pt}%
+    >{\raggedleft\arraybackslash}p{24pt}%
+    >{\raggedleft\arraybackslash}p{28pt}%
+    >{\raggedleft\arraybackslash}p{40pt}%
+    >{\raggedleft\arraybackslash}p{42pt}%
+    >{\raggedleft\arraybackslash}p{52pt}%
+    >{\raggedleft\arraybackslash}p{32pt}@{}}{%
     \input{tables/transport_instantiation_validity.tex}}
   \caption{Locked theorem-instantiation audit for the transport-Hessian policy.
   Coverage is run-level simultaneous coverage with exact Clopper--Pearson
@@ -72,7 +82,7 @@ enclosures.
   theorem-bound violations only when the joint confidence premise holds.  All
   values come from the full evaluation; smoke and tuning runs are excluded.}
   \label{tab:transport-instantiation-validity}
-\end{table*}
+\end{ccewidefloat}
 
 \paragraph{Certificate tightness.}
 At $T=1000$, the median of each trajectory's maximum realized $\bar D_t^Q$
@@ -83,10 +93,14 @@ cell.  At the 100 declared checkpoints per trajectory, pooling the 5,000
 eligible seed--checkpoint ratios gives a median selected factor-path length only
 $1.20$--$1.22$ times the endpoint distance, while $\bar D_t^Q$ is
 $2.51\times10^5$--$1.88\times10^6$ times the selected-path diagnostic.  The
-large ratio accompanies extremely small realized metric motion.  The reported
+large ratio accompanies extremely small realized metric motion.  Measured
+directly against the endpoint distance rather than against the selected path,
+the median $\bar D_t^Q/d_{\rm Th}$ ratio is $3.07\times10^5$--$2.24\times10^6$
+at $T=1000$, so the analytic certificate is conservative by five to six orders
+of magnitude on this grid.  The reported
 median $e^{\bar D_t^Q/2}$, by contrast, pools all 50,000 seed--round values in a
-cell and ranges from $1.02$ to $1.18$; it is not a terminal or run-maximum
-summary.
+$T=1000$ cell and ranges from $1.02$ to $1.18$ across the four target cells at
+that horizon; it is not a terminal or run-maximum summary.
 
 \paragraph{Bound nonvacuity.}
 The cumulative guarantee is vacuous in every reported cell.  The median of the
@@ -101,20 +115,30 @@ the complete tightness table and bound decomposition.
 \paragraph{Policy outcomes.}
 At $T=1000$, mean regret for the operational Hessian-certificate policy rises
 from $81.0$ to $94.0$ across the four target conditions
-(\Cref{tab:transport-instantiation-performance}).  The dense endpoint, frozen
-reference, and naive-current policies have lower sample means in every
-condition.  These are matched-stream total-policy comparisons: the policies
-share contexts and potential outcomes, but their actions, fitted parameters,
-centers, radii, and widths may diverge after the first disagreement.  The
-endpoint comparison is consistent with conservatism in the analytic envelope,
-but it does not isolate a fixed-history mechanism and does not provide a
-scalable policy certificate.  The naive score's observed optimism does not make
-it theoretically valid.  Since $D_{\rm target}$ also changes $W$, the
-cross-condition pattern is not a causal dose response.
+(\Cref{tab:transport-instantiation-performance}).  All three comparison
+policies have lower sample-mean pseudo-regret than transport Hessian in every
+reported condition at this horizon.  These are matched-stream
+total-policy comparisons: the policies share contexts and potential outcomes,
+but their actions, fitted parameters, centers, radii, and widths may diverge
+after the first disagreement.  The endpoint comparison is consistent with
+conservatism in the analytic envelope, but it does not isolate a fixed-history
+mechanism and does not provide a scalable policy certificate; it is a dense
+diagnostic comparator rather than a deployable policy.  The naive score's
+observed optimism does not make it theoretically valid.  Since $D_{\rm target}$
+also changes $W$, the cross-condition pattern is not a causal dose response.
+Read in the intended direction, these outcomes do not show a causal or uniform
+advantage for full curvature, and the reverse ordering they record is specific
+to this environment, this certificate, and this horizon.
 
-\begin{table*}[t]
-  \centering\scriptsize
-  \resizebox{\textwidth}{!}{%
+\begin{ccewidefloat}
+  \evidencetabular{@{}%
+    >{\raggedleft\arraybackslash}p{32pt}%
+    >{\raggedright\arraybackslash}p{150pt}%
+    >{\raggedright\arraybackslash}p{110pt}%
+    >{\raggedleft\arraybackslash}p{34pt}%
+    >{\raggedleft\arraybackslash}p{22pt}%
+    >{\raggedleft\arraybackslash}p{105pt}%
+    >{\raggedleft\arraybackslash}p{88pt}@{}}{%
     \input{tables/transport_instantiation_performance.tex}}
   \caption{Policy outcomes at the primary horizon $T=1000$.  Mean-regret and
   paired-difference intervals are comparisonwise deterministic paired-bootstrap
@@ -123,4 +147,4 @@ cross-condition pattern is not a causal dose response.
   Transport endpoint is a dense diagnostic comparator; naive current is an
   uncertified negative control.}
   \label{tab:transport-instantiation-performance}
-\end{table*}
+\end{ccewidefloat}

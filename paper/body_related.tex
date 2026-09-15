@@ -1,0 +1,142 @@
+%% body_related.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 2998-3133) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Related Work}\label{sec:related}
+
+The closest methods differ primarily in where they freeze features and how they
+represent uncertainty.  That distinction matters here because a covariance
+built from stored features answers a different question from one that replays
+every observation at the current parameter.
+
+\paragraph{Positive-cone metric geometry.}
+\citet{thompson1963certain} introduced the part metric now commonly called the
+Thompson metric on ordered cones.  \citet{nussbaum1994finsler} developed its
+Finsler structure and applications.  On the positive-definite cone, the
+normalized operator norm
+$\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}$ is the corresponding tangent norm.
+Our contribution is not this geometry or its path-to-endpoint comparison.  We
+instantiate it as an operational confidence-transport device linking frozen
+bandit confidence, current replayed GGN/Fisher curvature, approximate operators,
+and certified solver widths.
+
+\paragraph{Neural contextual bandits.}
+LinUCB \citep{abbasi2011improved} and Thompson sampling
+\citep{thompson1933likelihood,agrawal2013thompson} provide the statistical
+backbone for many neural extensions.  In their stated algorithms, NeuralUCB
+\citep{zhou2020neural} and NeuralTS \citep{zhang2021neural} add a gradient
+feature to the covariance when its observation arrives; they do not replay the
+entire history at each new parameter.  \citet{kassraie2022neural} separate a
+kernelized NTK reference from a trained-network mean with initialization-time
+uncertainty features, and prove sublinear regret for the SupNN-UCB variant under
+NTK-RKHS, sufficient-exploration, and network-width assumptions.
+\citet{salgia2023provably}
+controls adaptivity through grouped histories and a finite-network-to-NTK
+confidence argument.  \citet{deb2024contextual} take a different route through
+online neural regression and contextual-bandit reductions.  These results do
+not lack proofs because their covariance differs from ours; they answer
+different questions.  We analyze the additional case in which every historical
+Jacobian is replayed at the current parameter and the resulting operator is
+solved approximately.
+
+The NeuralLinear method maintains Bayesian linear uncertainty in learned
+final-layer features \citep{riquelme2018deep}; the methods of
+\citet{xu2022shallow} and \citet{bui2025variance} instead use UCB-style linear
+exploration over learned deep representations.  Recomputing those last-layer
+representations is not the same as transporting confidence to a full-parameter
+GGN.  Our supplied-subspace result recovers a projected linear geometry when
+such a subspace is fixed in advance, but it does not turn the general theorem
+into a neural-linear analysis.
+
+\paragraph{Online Bayesian and EKF-style neural bandits.}
+\citet{duranmartin2022efficient} apply extended Kalman filter (EKF)
+updates in a learned or random low-dimensional affine parameter subspace.
+They maintain a dense or diagonal covariance in that subspace, inducing a
+low-rank covariance over parameters spanning all network layers, with memory
+independent of the number of rounds.  This differs from applying exact
+curvature--vector products in the full parameter space.
+More directly, \citet{chang2023lowrank} maintain a diagonal-plus-low-rank
+approximation to the full-parameter posterior precision through recursive EKF
+and online-SVD updates, and use it for Thompson sampling in an MNIST contextual
+bandit.  Their LO-FI method is a one-pass compressed-posterior approach with
+fixed-rank cost linear in parameter count and no replay of past data.  CC-UCB
+instead relinearizes the full replay history at the current parameter and
+accesses the uncompressed GGN through residual-checked CG.  Their bandit study
+is empirical; our conditional UCB analysis explicitly accounts for CG
+truncation, but does not establish a practical advantage over LO-FI.
+
+\paragraph{Linearized networks and Laplace approximations.}
+\citet{maddox2021fast} linearize once around a trained network and use implicit
+Jacobian/Fisher products with CG for predictive inference.  Their construction
+is a computational antecedent for matrix-free widths, but the reference
+linearization is fixed rather than replayed online.  The Laplace approximation
+places a local Gaussian posterior around a MAP solution with covariance defined
+by inverse curvature \citep{mackay1992practical}.  Last-layer Laplace fixes the
+backbone, omitting backbone-weight uncertainty by construction
+\citep{kristiadi2020being}.  \citet{daxberger2021laplace} systematize all-weight,
+subnetwork, and last-layer variants with full, low-rank, Kronecker-factored, or
+diagonal curvature; structured all-layer variants use Kronecker-factored
+curvature \citep{ritter2018scalable,martens2015optimizing}.  Our concern is
+instead the sequential validity of a UCB score when the current relinearized
+operator differs from the predictable confidence Gram.
+
+\paragraph{Sampling-based full-parameter exploration.}
+Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin}
+explores with approximate samples of a loss-defined parameter posterior,
+obtained by noisy gradient steps on the regularized loss; like CC-UCB it never
+materializes a covariance matrix.  Its regret guarantee is for linear
+contextual bandits; its neural-bandit evidence is empirical.
+The two routes pay for exploration differently: LMC-TS through the
+mixing of a per-round sampling chain, CC-UCB through CG truncation and
+spectral distortion of an explicit curvature metric, which yields
+deterministic widths, an optimism-style analysis, and a fixed curvature operator
+reused across separate per-action CG solves.
+\paragraph{Scope of efficient nonlinear exploration.}
+The methods above obtain efficiency through different statistical objects:
+fixed NTK features, grouped data, regression reductions, or learned last-layer
+representations.  CC-UCB targets a practitioner who chooses to score with a
+specific current full-parameter GGN/Fisher operator.  Its conditional theorem
+exposes what that choice requires: transport from collection-time confidence,
+operator distortion, and solver error.  It does not imply that this route is
+computationally preferable to the alternatives.
+
+\paragraph{Spectral sketching for linear bandits.}
+\citet{kuzborskij2019efficient} analyze linear bandits where the Gram
+matrix is replaced by a Frequent Directions sketch, deriving regret
+bounds that depend on the spectral approximation quality.
+\citet{wen2026revisiting} show that fixed-size sketch regret bounds can
+degenerate to the trivial linear rate under heavy spectral tails, and propose
+an adaptive dyadic block sketch.
+Our spectral-distortion theorem (\Cref{thm:spectral-distortion}) instantiates the
+same conceptual lever in the matrix-free GGN/CVP setting by exposing transfer
+and realized-width terms along the realized trajectory.
+We do not claim novelty for the sandwich-to-regret reduction itself;
+the contribution is adapting it to the CG/GGN context with explicit
+CG truncation and feature-drift factors.
+
+\paragraph{GGN--vector products, Hessian spectral analysis, and influence
+functions.}
+Pearlmutter's algorithm \citep{pearlmutter1994fast} computes exact
+Hessian--vector products; the analogous GGN--vector product has the same
+Jacobian-transpose-times-Jacobian-times-vector structure
+\citep{schraudolph2002fast}.
+Recent work on Krylov methods for Hessian spectral analysis
+\citep{granziol2026hessian} demonstrates related distributed HVP/Krylov
+infrastructure at $>10^8$-parameter scale, but does not benchmark the exact
+per-example GGN operator or end-to-end CC-UCB latency.
+Influence functions
+\citep{koh2017understanding} use inverse-curvature--vector products to
+attribute predictions to training points; the CG-based implicit solve
+we employ is the same computational primitive.
+
+\paragraph{Optimal experimental design.}
+Information-theoretic exploration objectives---such as maximizing
+$\log\det(\bCbar_t)$ or minimizing the trace of~$\bCbar_t^{-1}$---connect
+bandit exploration to the classical D-optimal and A-optimal design
+criteria \citep{valko2013finite}.  CC-UCB's use of the full GGN/Fisher curvature
+enables stochastic estimates of these quantities via Hutchinson-type trace
+estimators \citep{ubaru2017fast}, without forming the matrix.

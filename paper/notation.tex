@@ -1,0 +1,57 @@
+%% notation.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 55-64) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\newcommand{\epsCGbar}{\bar\varepsilon_{\mathrm{CG}}}
+% --- notation introduced by the dynamic-transfer revision ------------------
+\newcommand{\bh}{\mathbf{h}}                     % played gradient feature h_t
+\newcommand{\Calg}{\mathcal{C}}                 % generic pre-reward SPD algorithmic curvature
+\newcommand{\Lamalg}{\Lambda^{\Calg}}           % realized width complexity
+\newcommand{\Valg}{V^{\Calg}}                   % determinant-destroying variation charge
+\newcommand{\Gamdyn}{\Gamma^{\mathrm{dyn}}}     % dynamic potential bound
+\newcommand{\Gmat}{\mathsf{G}}                  % whitened frozen-feature columns
+\newcommand{\Dmat}{\mathsf{D}}                  % whitened replayed-drift columns
+\newcommand{\cHist}{\mathcal{H}}                % pre-reward history sigma-algebra H_t
+
+% --- venue-dependent rendering of the generated evidence tables ------------
+% The three evidence tables are generated from the locked aggregate and carry
+% one fixed `tabular` preamble (all r/l columns), so every column header is set
+% on a single line and the widest table overruns a one-column text block.
+%
+% The historical two-column AISTATS entry point scaled them to the text width.
+% The TMLR submission must not: that venue forbids reducing font size or
+% spacing to fit content, and scaling a \scriptsize table had put the rendered
+% text near 6pt against 9.96pt body copy.  It instead sets each table on a
+% landscape float at the body font size, with the template's \tabcolsep, and
+% supplies its own column widths so that the long headers wrap.  Every cell,
+% value, unit, qualifier and rule still comes from the generated file exactly
+% as generated; only the column widths and the float type belong to the
+% manuscript.
+%
+% \evidencetabular{<column preamble>}{<\input of the generated table>}
+%   discards the generated `tabular` preamble and substitutes the one given
+%   here.  Nothing else about the table is touched.
+% \ccetablesize is the size command for the hand-written (non-generated)
+%   tables; empty in the submission, \scriptsize in the legacy layout.
+\iflegacyextras
+  \newenvironment{ccewidefloat}{\begin{table*}[t]\centering}{\end{table*}}
+  \newenvironment{ccewidefloatappendix}{\begin{table}[H]\centering}{\end{table}}
+  \newcommand{\ccetablesize}{\scriptsize}
+  \newcommand{\evidencetabular}[2]{\scriptsize\resizebox{\textwidth}{!}{#2}}
+\else
+  \newenvironment{ccewidefloat}%
+    {\begin{sidewaystable}[p]\centering}{\end{sidewaystable}}
+  \newenvironment{ccewidefloatappendix}%
+    {\begin{sidewaystable}[p]\centering}{\end{sidewaystable}}
+  \newcommand{\ccetablesize}{}
+  \newcommand{\evidencetabular}[2]{%
+    \begingroup
+      \let\ccerealtabular\tabular
+      \renewcommand{\tabular}[2][c]{\ccerealtabular[##1]{#1}}%
+      #2%
+    \endgroup}
+\fi

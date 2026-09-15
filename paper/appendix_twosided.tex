@@ -1,0 +1,95 @@
+%% appendix_twosided.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3883-3969) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Two-Sided Spectral-Distortion Corollary}\label{app:cor}
+
+The main-text \Cref{thm:spectral-distortion} uses only a one-sided upper
+transfer factor.  For comparison we record the earlier two-sided result,
+which instead assumes both an upper \emph{and} a lower spectral factor and
+yields the familiar $\sqrt{\rho_+/\rho_-}$ inflation.  The two results trade
+different assumptions---the corollary below needs a lower spectral bound;
+the dynamic \Cref{thm:regret} needs the dynamic width complexity
+$\Lamalg_T$ instead---and neither numerically dominates the other in
+general.
+
+\begin{corollary}[Two-sided spectral-distortion inflation]\label{cor:twosided}
+Adopt the hypotheses of \Cref{thm:regret} with $\Calg_t=\hat\bC_t$, retaining the
+\emph{original nonlinear center} (so $\omega_t=\bar\beta_t+\bar\psi_t$; in the
+convex last-layer regime under exact optimization, $\bar\psi_t=0$ and
+$\omega_t=\bar\beta_t$), and a uniform
+CG tolerance $\bar\varepsilon_t\le\bar\varepsilon$ so that
+$\alpha_t\le\alpha_I:=\sqrt{(1+\bar\varepsilon)/(1-\bar\varepsilon)}$.
+Suppose pre-reward factors $\rho_{-,t},\rho_{+,t}$ are certified before
+action selection and the \emph{two-sided} sandwich
+$\rho_{-,t}\bCbar_t\preceq\hat\bC_t\preceq\rho_{+,t}\bCbar_t$ holds for all
+$t\le T$ with $0<\rho_{-,t}\le\rho_{+,t}<\infty$; set
+$\rho_-=\min_t\rho_{-,t}$, $\rho_+=\max_t\rho_{+,t}$, and (to satisfy the
+convention $u_t\ge1$ of \Cref{asm:transfer}) take the transfer factor
+$u_t:=\max\{1,\rho_{+,t}\}\le\max\{1,\rho_+\}$.  Write
+$\omega_{\max,T}:=\max_{t\le T}(\bar\beta_t+\bar\psi_t)$ and
+$\rho_+^{\star}:=\max\{1,\rho_+\}$.  Then, on the
+intersection of the confidence event $\cE_{\mathrm{conf}}$ ($\ge1-\delta$) and the
+certificate event $\cE_{\mathrm{cert}}$ (which now also contains the two-sided
+sandwich event; $\ge1-\delta_{\mathrm{cert}}$),
+\[
+  R_T
+  \;\le\;
+  2\,\alpha_I\,\sqrt{\rho_+^{\star}/\rho_-}\;\omega_{\max,T}
+  \sqrt{(\sigma^2+G^2/\lambda)\,T\,\gamma_T} \;+\; 2E_T
+\]
+with probability at least $1-\delta-\delta_{\mathrm{cert}}$, where $\gamma_T$ is
+the frozen-feature information gain~\eqref{eq:infogain}.  Under the standard
+normalization $\rho_+\ge1$ (achievable by rescaling the sandwich so its upper
+factor is at least one), $\rho_+^{\star}=\rho_+$ and the inflation is the familiar
+$\sqrt{\rho_+/\rho_-}$.
+\end{corollary}
+\begin{proof}
+This is a \emph{direct} argument through the monotone frozen Gram $\bCbar_t$; it
+does \emph{not} substitute $\hat s_t$ for the dynamic width in
+\Cref{cor:worstcase}.
+\emph{Step 1 (variance sandwich).}  Inverting the two-sided sandwich gives
+$\rho_{+,t}^{-1}\bCbar_t^{-1}\preceq\hat\bC_t^{-1}\preceq\rho_{-,t}^{-1}\bCbar_t^{-1}$,
+so, evaluating the quadratic form at $\bg_t(a)$,
+$\rho_{+,t}^{-1/2}\,\bar s_t(a)\le\hat s_t(a)\le\rho_{-,t}^{-1/2}\,\bar s_t(a)$.
+The lower half gives $\bar s_t^2(a)\le\rho_{+,t}\hat s_t^2(a)\le u_t\hat s_t^2(a)$,
+so \Cref{asm:transfer} holds with $u_t=\max\{1,\rho_{+,t}\}$.
+\emph{Step 2 (per-round regret).}  With $s_{\Calg,t}=\hat s_t$,
+\Cref{thm:regret} Steps~1--4 give
+$\mathrm{regret}_t\le
+2\,\alpha_t\,\omega_t\,\sqrt{u_t}\,\hat s_t(a_t)+2\epslin(t)$; using
+$\hat s_t(a_t)\le\rho_{-,t}^{-1/2}\bar s_t(a_t)$,
+$u_t=\max\{1,\rho_{+,t}\}\le\rho_+^{\star}$,
+$\alpha_t\le\alpha_I$, and $\omega_t\le\omega_{\max,T}$,
+\[
+  \mathrm{regret}_t
+  \;\le\;
+  2\,\alpha_I\,\omega_{\max,T}\,\sqrt{\rho_+^{\star}/\rho_{-,t}}\;\bar s_t(a_t)
+  +2\epslin(t)
+  \;\le\;
+  2\,\alpha_I\,\omega_{\max,T}\,\sqrt{\rho_+^{\star}/\rho_-}\;\bar s_t(a_t)
+  +2\epslin(t).
+\]
+\emph{Step 3 (frozen-feature elliptic potential).}  Sum over $t$ and apply
+Cauchy--Schwarz, then the classical elliptic-potential identity for the
+\emph{monotone} Gram $\bCbar_t$ (\eqref{eq:bar-update}),
+$\sum_{t}\bar s_t^2(a_t)\le(\sigma^2+G^2/\lambda)\sum_t\log(1+\sigma^{-2}
+\bar s_t^2(a_t))=(\sigma^2+G^2/\lambda)\,\gamma_T$:
+\[
+  R_T\le 2\,\alpha_I\,\omega_{\max,T}\,\sqrt{\rho_+^{\star}/\rho_-}
+  \sqrt{T\sum_t\bar s_t^2(a_t)}+2E_T
+  \le 2\,\alpha_I\,\omega_{\max,T}\,\sqrt{\rho_+^{\star}/\rho_-}
+  \sqrt{(\sigma^2+G^2/\lambda)\,T\,\gamma_T}+2E_T.
+\]
+The probability statement is the union bound over $\cE_{\mathrm{conf}}$ and
+$\cE_{\mathrm{cert}}$.
+\end{proof}
+
+\noindent
+For \Cref{lem:subsample}, allocate $\delta_{\mathrm{cert}}/T$ per round and use
+the worst-case $m=T{-}1$ in \eqref{eq:subsample-n} to obtain the required
+time-uniform sandwich.
