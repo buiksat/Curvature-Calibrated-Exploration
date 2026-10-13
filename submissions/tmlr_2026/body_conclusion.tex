@@ -1,0 +1,69 @@
+%% body_conclusion.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 387-441) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Conclusion}\label{sec:conclusion}
+
+Confidence built from collection-time features can justify a score based on
+current relinearized curvature, but only through an explicit chain of
+certificates.  The metric path controls frozen-to-current drift, the two-sided
+operator comparison controls the curvature actually applied, and the solver
+interface controls the numerical width used for selection.  The lower operator
+factor is what returns the played width to the frozen sequential potential.  If
+that factor is unavailable, the one-sided dynamic result remains valid but does
+not supply the same closed rate.
+
+For squared loss, the corrected center makes this chain independent of
+nonlinear optimizer convergence.  The representation may follow any
+predictable path inside the certified region, while historical error, current
+bias, transport, operator distortion, solver accuracy, and approximate score
+maximization remain explicit charges.  The construction reduces to the usual
+LinUCB determinant-potential argument for frozen linear features and exact
+solves.  Under the assumptions of \Cref{cor:global-near-linear-new}, for fixed
+$d$ and fixed problem constants, taking $W=\Omega(T)$ with a sufficiently large
+problem-dependent constant yields
+$R_T=O(d\sqrt T\log T)+O(\sqrt T)$ without requiring $D_t<1$.  Here $W$ is an
+abstract smoothness scale, not generic network width.
+
+The controlled scaled-tanh audit separates formal validity from practical
+usefulness.  All 600 transport-Hessian trajectories retained simultaneous
+reference confidence and transported optimism, and the locked grid recorded no
+deterministic audit failure.  Yet the analytic path envelope was orders of
+magnitude longer than the selected-path diagnostic, every reported theorem
+bound was vacuous relative to the deterministic cap, and the three comparison
+policies had lower sample mean regret at the primary horizon.  The result is a
+negative practical finding about this certificate and environment, not evidence
+for a uniform ordering of curvature methods.
+
+\paragraph{Limitations.}
+The abstract theorem assumes a standard-Borel action space, a graph-measurable
+random action correspondence, finite measurable mean-reward and score suprema,
+a measurable approximate selector and universal events, a finite pre-reward
+path envelope, and a two-sided operator comparison.  The squared-loss
+specialization requires a fixed ex-ante reference model, a prefix-measurable
+representation path, and supplied pre-reward linearization and misspecification
+envelopes.  Constant misspecification can yield linear regret.
+The corrected center also needs access to the frozen-feature ridge estimator.
+The factor-path geometry does not by itself prove an exponential-family
+confidence theorem.  We do not claim unrestricted neural-network training or
+generic fine-tuning guarantees, verified floating-point certification, uniform
+regret improvement from full curvature, sublinear regret under fixed
+nonvanishing misspecification, two-sided guarantees for arbitrary diagonal,
+low-rank, stale, or sketched operators, empirical validation of the transported
+theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
+residual checks are diagnostics rather than verified numerical certificates.
+The new experiment is a controlled execution and audit, not empirical proof or
+validation of the theorem.  Its endpoint method is a dense diagnostic comparator,
+and its intentionally naive current-width control is uncertified even where its
+observed optimism rate is high.
+\iflegacyextras
+Legacy audits are summarized in
+\Cref{app:legacy-evidence}; none instantiates the revised theorem event.
+\else
+Earlier repository audits are excluded from this paper: none of them
+instantiates the transported theorem event, and none is used here as evidence.
+\fi

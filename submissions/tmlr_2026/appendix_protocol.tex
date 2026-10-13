@@ -1,0 +1,537 @@
+%% appendix_protocol.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3135-3663) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\paragraph{Filtration.}
+We separate \emph{pre-reward} randomness, revealed before the reward, from
+\emph{post-reward} randomness, drawn only after $r_t$ is observed.  Let
+$\Omega_t$ collect all pre-reward algorithmic randomness used at round~$t$,
+revealed in stages.  Curvature subsampling indices, randomized sketches, and
+stochastic solver seeds used to construct the score are revealed before action
+selection.  The randomized sketch or subsample that defines the curvature
+operator is then \emph{fixed before action selection}; it is not re-randomized
+during any conjugate-gradient (CG) solve at round~$t$.  (Standard CG requires a
+fixed symmetric positive definite matrix--vector oracle across its iterations and
+does not apply to a stochastic oracle that changes between iterations.)  Optional
+selected-action verification randomness may be revealed after a provisional
+selection but before the reward, subject to the same-width and oracle-recheck
+requirements in \Cref{asm:abstract-transport}.
+Let $U_{t+1}$ collect the \emph{post-reward} randomness used to form the next
+parameter estimate $\btheta_{t+1}$ (minibatch order, dropout, perturbed warm
+starts).
+Define $\cF_0 = \sigma(\btheta_1)$ and, for $t\ge 1$, the recursively built
+$\sigma$-algebra
+\begin{equation}\label{eq:filtration-F}
+  \cF_t \;:=\;
+  \cF_{t-1}\vee
+  \sigma\!\bigl(\bx_t,K_t,a_{t,1},\ldots,a_{t,A_{\max}},
+                  \Omega_t,a_t,r_t,U_{t+1}\bigr),
+\end{equation}
+so that $\btheta_{t+1}$---computed from the data through round~$t$ together with
+the post-reward randomness $U_{t+1}$---is $\cF_t$-measurable.
+Define the \emph{pre-action history} $\sigma$-algebra and the pre-reward
+$\sigma$-algebra
+\begin{equation}\label{eq:filtration}
+  \cH_t^-\;:=\;\cF_{t-1}\vee
+  \sigma\!\bigl(\bx_t,K_t,a_{t,1},\ldots,a_{t,A_{\max}}\bigr),
+  \qquad
+  \cHist_t\;:=\;\cH_t^-\vee\sigma(\Omega_t),
+  \qquad
+  \cG_t \;:=\; \cHist_t\vee\sigma(a_t).
+\end{equation}
+At round~$t$ the context $\bx_t$, finite size $K_t$, and padded measurable
+enumeration $a_{t,1},\ldots,a_{t,A_{\max}}$ are revealed, with
+$\cA_t=\{a_{t,k}:k\le K_t\}$;
+the score-building part of $\Omega_t$ is drawn; the agent selects $a_t$; any
+optional selected-action verification is completed and the oracle inequality is
+rechecked when required; then the reward
+$r_t=\mu^*(\bx_t,a_t)+\eta_t$ is observed.  Finally $U_{t+1}$ is drawn and
+$\btheta_{t+1}$ is computed.  $\cH_t^-$ is the history immediately before the
+first randomized certificate draw; after all pre-reward draws, the realized
+operator, schedules, verification outputs, and action are
+$\cHist_t$-measurable.
+Assume, as part of the legacy solver/oracle premise, that for every active
+index the realized score
+$S_{t,k}:=\widehat\mu_t(a_{t,k})+w_t(a_{t,k})$ in \Cref{alg:ccucb} is
+$\cHist_t$-measurable.  Its finite maximum and smallest maximizing index $k_t$
+are measurable, so $a_t=a_{t,k_t}$ is $\cHist_t$-measurable and hence
+$\cG_t=\cHist_t$; we retain the symbol $\cG_t$ where the played action is used.
+The enumeration also makes $\cA_t$ a graph-measurable finite correspondence.
+The following are all $\cHist_t$-measurable (i.e.\ determined before the reward
+$r_t$): $K_t$, the candidate enumeration and derived set $\cA_t$, and every candidate feature
+$\bg_t(\bx_t,a)$, $a\in\cA_t$; the chosen action $a_t$; the algorithmic
+curvature operator~$\Calg_t$ (\Cref{sec:method}); the confidence schedule
+$\bar\beta_t$; the centering certificate~$\bar\psi_t$
+(\Cref{asm:optim}); the per-round CG tolerance~$\bar\varepsilon_t$ together with
+any condition-number certificate used by the CG stopping rule; and the one-sided
+optimism-transfer factor~$u_t(a)$ (\Cref{asm:transfer}).
+Since $\btheta_t$ is $\cF_{t-1}\subseteq\cHist_t$-measurable, each candidate design
+vector $\bg_t(\bx_t,a)$ is $\cHist_t$-measurable and the realized design vector
+$\bg_t(\bx_t,a_t)$ is $\cG_t$-measurable.
+We assume $\{U_s\}_{s\ge1}$ is independent of the reward noise
+$\{\eta_s\}_{s\ge1}$, so that revealing $U_{t+1}$ and forming $\btheta_{t+1}$
+after $r_t$ preserves the conditional sub-Gaussian property of \Cref{asm:noise}
+for the future noise $\{\eta_s\}_{s>t}$.
+Index every randomized certificate source (operator sketch, transfer bound,
+condition bound, or other randomized oracle) by $j$ in a finite or countable
+set $\mathcal J$.  For its
+round-$t$ validity event $\cE_{j,t}$ choose an $\cH_t^-$-measurable budget
+$\delta_{j,t}\ge0$ before the corresponding draw.  Let $\mathcal P_{j,t}$ be
+the sigma-algebra immediately before that draw: it equals $\cH_t^-$ for the
+first round-start draw and includes earlier randomization, and possibly $a_t$,
+for later draws.  Require
+\[
+ \Pr(\cE_{j,t}^c\mid\mathcal P_{j,t})\le\delta_{j,t}.
+\]
+Also require
+\[
+ \sum_{j\in\mathcal J}\sum_{t=1}^T\delta_{j,t}
+ \le\delta_{\rm cert},\qquad
+ \cE_{\rm cert}:=\bigcap_{j\in\mathcal J}\bigcap_{t=1}^T\cE_{j,t}.
+\]
+The tower property and union bound yield
+$\Pr(\cE_{\rm cert})\ge1-\delta_{\rm cert}$.  Deterministic or almost-sure
+certificates use $\delta_{j,t}=0$.  The self-normalized confidence event is
+separate and receives probability $\delta$.
+Countability makes the joint event measurable, makes the nonnegative double
+sum well-defined, and permits the stated union bound.
+When \Cref{lem:bounded-output-residual} supplies the residual-energy envelope,
+include its time-uniform event $\cE_R$ as one certificate source and reserve
+$\delta_R$ inside $\delta_{\rm cert}$ (equivalently, require
+$\delta_R+\sum_{j\in\mathcal J}\sum_{t=1}^T\delta_{j,t}
+\le\delta_{\rm cert}$ for the remaining
+sources).  The residual event is never counted again in the self-normalized
+failure probability $\delta$.
+
+
+
+\paragraph{Auxiliary linearized ridge estimator.}
+For the analysis we define a \emph{linearized ridge estimator} based on
+frozen features.  Set the pre-reward, $\cG_s$-measurable intercept
+$b_s := \mu_{\btheta_s}(\bx_s,a_s) - \bg_s(\bx_s,a_s)^\top\btheta_s$
+and the pseudo-response $y_s := r_s - b_s$.
+Under \Cref{asm:linear} and realizability ($\mu^*=\mu_{\btheta^*}$),
+\begin{equation}\label{eq:pseudo-response}
+  y_s
+  \;=\;
+  \bg_s(\bx_s,a_s)^\top\btheta^*
+  \;+\;
+  \rho_s(\bx_s,a_s,\btheta^*)
+  \;+\;
+  \eta_s,
+\end{equation}
+where $|\rho_s|\le\epslin(s)$.
+The linearized estimator is
+\begin{equation}\label{eq:thetahat-lin}
+  \hat\btheta_t^{\mathrm{lin}}
+  \;:=\;
+  \argmin_{\btheta}\,\Biggl[\,
+    \frac{1}{2\sigma^2}\sum_{s=1}^{t-1}
+      \bigl(y_s - \bg_s(\bx_s,a_s)^\top\btheta\bigr)^2
+    \;+\;\frac{\lambda}{2}\|\btheta\|^2
+  \Biggr]
+  \;=\;
+  \bCbar_t^{-1}\,\frac{1}{\sigma^2}
+    \sum_{s=1}^{t-1}\bg_s(\bx_s,a_s)\,y_s.
+\end{equation}
+This is a standard linear ridge regression with design vectors
+$\bg_s/\sigma$ that are $\cG_s$-measurable before the corresponding noise,
+and Gram matrix~$\bCbar_t$.  The interleaved filtration
+$\widetilde{\cF}_{2s-1}=\cG_s$, $\widetilde{\cF}_{2s}=\cF_s$ supplies the
+pre-increment measurability required by the self-normalized martingale bound
+\citep{abbasi2011improved}, which applies directly
+(\Cref{lem:confidence}).
+
+
+
+\paragraph{GGN versus Hessian (context only).}
+The regret theorem uses the GGN/Fisher curvature as the exploration
+metric.  It does not require the GGN to be an accurate Hessian
+approximation.
+For squared loss~\eqref{eq:erm} the full Hessian of the data-fit term is
+\[
+  \bH_t \;=\; \frac{1}{\sigma^2}\sum_{s=1}^{t-1}
+  \Bigl[\bg_t(\bx_s,a_s)\bg_t(\bx_s,a_s)^\top
+  \;-\; \bigl(r_s - \mu_{\btheta_t}(\bx_s,a_s)\bigr)
+        \nabla^2\mu_{\btheta_t}(\bx_s,a_s)\Bigr]
+  \;+\;\lambda\bI.
+\]
+The curvature matrix $\bC_t$ drops the residual-times-second-derivative
+term, retaining only the outer-product part that is guaranteed PSD.
+The dropped residual-times-second-derivative term
+$D_t=\sigma^{-2}\sum_{s<t}(r_s{-}\mu_{\btheta_t})\nabla^2\mu_{\btheta_t}$
+has operator norm at most
+$(t{-}1)\epsilon_r H/\sigma^2$, where $\epsilon_r$ bounds the residuals and
+$H$ the Hessian norms.
+When this quantity is small relative to~$\lambda$, $\bC_t$ approximates
+the full Hessian in the Loewner sense (a formal statement with proof is
+given in \Cref{app:ggn-approx}).
+This comparison is \emph{not} invoked in the regret analysis
+(\Cref{thm:regret} uses $\bC_t$ directly as the exploration metric);
+it serves only to contextualize $\bC_t$ as a proxy for the full
+Hessian.  Outside the small-residual regime, the GGN is not an exact
+Hessian approximation; it is the PSD Fisher/GGN metric used by the
+algorithm.
+
+\begin{quote}
+\emph{Remark (Fisher, empirical Fisher, and GGN).}
+Three curvature objects appear in the literature and must be
+distinguished.
+The \emph{empirical Fisher} is the realized score outer product
+$\sum_s\nabla_{\btheta}\log p(r_s\!\mid\!\bx_s,a_s;\btheta)\,
+ \nabla_{\btheta}\log p(r_s\!\mid\!\bx_s,a_s;\btheta)^\top$;
+it depends on observed rewards and is \emph{not} the operator used by
+CC-UCB.
+The \emph{true (model) Fisher} is the model expectation of the score
+outer product,
+$F(\btheta)=\mathbb{E}_{r\sim p(\cdot\mid\bx,a;\btheta)}
+ [\nabla_{\btheta}\log p\;\nabla_{\btheta}\log p^\top]$.
+The \emph{generalized Gauss--Newton} (GGN) drops the
+residual-times-Hessian term from the full Hessian, retaining only the
+outer-product Jacobian part that is guaranteed PSD
+\citep{martens2020new,schraudolph2002fast}.
+For the fixed-variance Gaussian working model underlying the squared-loss
+quasi-likelihood used here, the model Fisher and GGN are identical, and both
+reduce to the outer-product curvature $\sigma^{-2}\sum_s\bg_s\bg_s^\top$
+used in~\eqref{eq:curvature}.
+More generally, for exponential-family negative log-likelihoods
+parameterized by natural parameters $z_{\btheta}(\bx,a)$, the true
+Fisher equals the GGN:
+$J_{\btheta}^\top\nabla^2 A(z)\,J_{\btheta}$,
+where $J_{\btheta}=\nabla_{\btheta}z_{\btheta}$ and
+$\nabla^2 A$ is the Hessian of the log-partition function
+\citep{martens2020new,pascanu2014revisiting}.
+Bernoulli rewards yield scalar weight~$p(1{-}p)$;
+categorical rewards yield $\mathrm{Diag}(\mathbf{p})-\mathbf{p}\mathbf{p}^\top$.
+See \Cref{app:expfam} for the extension.
+\end{quote}
+
+We access $\bC_t$ only through curvature--vector products
+$\bv\mapsto\bC_t\,\bv$, computed via forward-mode Jacobian--vector
+products composed with reverse-mode vector--Jacobian products
+\citep{pearlmutter1994fast,schraudolph2002fast}.
+
+
+
+\paragraph{Extension to exponential-family likelihoods.}%
+The same matrix-free CG/CVP machinery extends algorithmically to
+exponential-family likelihoods (e.g.\ Bernoulli or categorical rewards)
+via the Fisher/GGN curvature $J_t^\top(\nabla^2 A)\,J_t$, but no regret
+guarantee beyond Gaussian squared loss is claimed in this draft.
+Details of the curvature definitions are in \Cref{app:expfam}.
+
+
+
+\paragraph{Per-round CG tolerance~$\bar\varepsilon_t$.}
+The algorithm uses a \emph{known} per-round tolerance
+$\bar\varepsilon_t\in(0,1)$ in the UCB bonus (line~\ref{line:ucb}), not the
+true per-action energy-norm errors $\varepsilon_{t,a}$ (which are unobservable
+without the exact solves).  It suffices that
+$\max_{a\in\cA_t}\varepsilon_{t,a}\le\bar\varepsilon_t$ at every round
+(\eqref{eq:cg-tol-uniform}; zero-gradient actions have $\varepsilon_{t,a}=0$ by
+convention and are trivially within tolerance); the bonus is then conservative.
+Two strategies ensure this:
+\begin{enumerate}[nosep,leftmargin=1.5em]
+\item \emph{Adaptive residual stopping (recommended).}
+  In exact arithmetic, for each action monitor the computable Euclidean relative residual
+  $\|r_I\|/\|\bg_t(a)\|$ at each CG step (skipping actions with
+  $\bg_t(a)=\mathbf0$).  Since
+  $\varepsilon_{t,a} \le \sqrt{\bar\kappa_t}\cdot\|r_I\|/\|\bg_t(a)\|$
+  (standard CG bound, with $\bar\kappa_t$ a certified upper bound on the
+  condition number of $\Calg_t$), stopping that solve when
+  $\|r_I\|/\|\bg_t(a)\| \le \bar\varepsilon_t/\sqrt{\bar\kappa_t}$
+  guarantees $\varepsilon_{t,a} \le \bar\varepsilon_t$, hence
+  \eqref{eq:cg-tol-uniform}.
+  This is conservative by the factor~$\sqrt{\bar\kappa_t}$ but requires
+  no access to $\Calg_t^{-1}$ and adapts automatically to the
+  per-round condition number.  A floating-point implementation needs a
+  verified residual enclosure to inherit this certification literally.
+\item \emph{Fixed budget (requires a uniform condition-number bound).}
+  If an a~priori bound
+  $\bar\kappa_t \le \kappa_{\max}$ holds for \emph{all rounds}~$t\le T$,
+  choose $I$ via Eq.~\eqref{eq:cg-budget} at $\kappa_{\max}$ and a fixed
+  target~$\bar\varepsilon_t\equiv\bar\varepsilon$.
+  For a \emph{nonnegative weighted outer-product} operator
+  $\Calg_t=\lambda\bI+\sigma^{-2}\sum_{s\in\mathcal{S}_t}w_s\,
+  \bg_t(\bx_s,a_s)\bg_t(\bx_s,a_s)^\top$ the condition number is bounded in
+  closed form, $\bar\kappa_t\le 1+W_tG^2/(\lambda\sigma^2)$ with
+  $W_t=\sum_{s\in\mathcal{S}_t}w_s$; a fixed buffer of size~$n$ ($W_t=n$,
+  unrescaled) makes this independent of~$T$.
+  For the full-history operator ($W_t=t{-}1$), and for rescaled uniform
+  subsampling with $w_s=(t{-}1)/n$ (so $W_t=\sum_{s\in\mathcal{S}_t}w_s=t{-}1$),
+  the bound grows with~$t$.  For a known finite horizon, a fixed budget at
+  $\kappa_{\max}=1+(T-1)G^2/(\lambda\sigma^2)$ is valid but scales as
+  $O(\sqrt T\log(1/\bar\varepsilon))$; a horizon-independent fixed budget is
+  not uniform, so adaptive stopping or an increasing $I_t$ is preferable
+  (see \Cref{app:cg}).
+  For a \emph{general} SPD operator that is not a nonnegative weighted outer
+  product (e.g.\ a randomized sketch), the closed-form bound
+  $1+W_tG^2/(\lambda\sigma^2)$ does not apply, and a separately certified
+  $\cHist_t$-measurable condition-number upper bound $\bar\kappa_t$ must be
+  supplied.
+\end{enumerate}
+In the regret bound (\Cref{thm:regret}), the CG inflation enters through the
+per-round factor $\alpha_t = \sqrt{(1{+}\bar\varepsilon_t)/(1{-}\bar\varepsilon_t)}$,
+inside the sum of squares $\sum_t\alpha_t^2 u_t(a_t)\omega_t^2$; no horizon
+maximum over $\bar\varepsilon_t$ is taken.
+
+\paragraph{Action screening (practical heuristic).}
+When the action set $\cA_t$ is large, computing the CG solve for every
+action is prohibitive ($|\cA_t|\times I$ CG steps per round).
+A practical heuristic is to screen the top-$K$ actions by mean prediction
+$\widehat\mu_t(a)$ (forward passes only), then compute UCB widths for the $K$
+candidates.  This reduces the width computation to $K$ CG solves, or $KI$
+iterations under a common iteration budget $I$.
+\emph{The regret guarantee in \Cref{thm:regret} analyzes full enumeration of
+all $K_t$ active candidate indices; screening can drop the optimal arm
+and is not covered by the theory unless one adds an assumption that
+$a_t^*\in\cA_t^K$ for all~$t$.}
+\begin{algorithm}[H]
+\caption{Operational CC-UCB with path certificates}\label{alg:ccucb-detailed}
+\begin{algorithmic}[1]
+\REQUIRE Reward predictor $\mu_{\btheta}$, damping $\lambda>0$,
+         noise proxy $\sigma$, confidence level $\delta$, radius $S$,
+         analytic constants $G,L_g,L_\mu$;
+         algorithmic curvature mode $\Calg_t$ (exact full-history $\bC_t$
+         or approximate $\hat\bC_t$) with certified one-sided factor
+         $\kappa_{+,t}$ and condition upper bound $\bar\kappa_t$;
+         per-round CG tolerance $\bar\varepsilon_t<1$
+\STATE Initialize $\btheta_1$, certified $\zeta_1\ge\|\nabla\cL_1(\btheta_1)\|$,
+       $n\gets0$, $\bar\btheta\gets\mathbf0$, $J\gets0$,
+       $R^{\rm col}\gets0$, $\bar F\gets0$, $\hat\gamma\gets0$, and
+       $\mathcal D_0\gets\emptyset$
+\FOR{$t = 1, 2, \ldots, T$}
+  \STATE Observe $\bx_t$, $K_t$, and candidates
+         $a_{t,1},\ldots,a_{t,K_t}$; set
+         $\cA_t=\{a_{t,k}:k\le K_t\}$; draw pre-action randomness $\Omega_t$
+         \hfill\COMMENT{$\cHist_t$ of~\eqref{eq:filtration}}
+  \STATE $Q_t\gets J+n\|\btheta_t-\bar\btheta\|^2$;
+         $\bar\chi_t\gets L_g\sqrt{Q_t}/(\sigma\sqrt\lambda)$;
+         $u_t\gets\kappa_{+,t}(1+\bar\chi_t)^2$
+  \STATE $\bar M_t\gets\sigma^{-2}[L_g\sqrt{R^{\rm col}Q_t}
+         +(3GL_g/2)Q_t+(L_g^2/2)Q_t^{3/2}]$;
+         $\bar\psi_t\gets(\zeta_t+\bar M_t)/\sqrt\lambda$
+         \hfill\COMMENT{in a radius-$R$ region use $L_g^2RQ_t$ for the last term}
+  \STATE $\bar\epsilon_t^{\rm lin}\gets(L_\mu/2)(S+\|\btheta_t\|)^2$;
+         $\bar\beta_t\gets\sqrt{\hat\gamma+2\log(1/\delta)}
+         +\sqrt\lambda S+\sigma^{-1}\sqrt{\bar F}$;
+         $\omega_t\gets\bar\beta_t+\bar\psi_t$
+         \hfill\COMMENT{corrected center uses $\omega_t=\bar\beta_t$}
+  \STATE Form or receive a fixed $\cHist_t$-measurable SPD matrix--vector
+         oracle $\bv\mapsto\Calg_t\bv$, $\Calg_t\succeq\lambda\bI$, held fixed
+         across all CG solves this round \label{line:oracle-detailed}
+         \hfill\COMMENT{exact/buffered special case
+         $\Calg_t\bv=\lambda\bv
+         +\sigma^{-2}\!\sum_{s\in\mathcal{S}_t}\!w_s\,
+         \bg_t(\bx_s,a_s)[\bg_t(\bx_s,a_s)^\top\bv]$, weights $w_s$ per
+         \S\ref{sec:curvop}}
+  \FOR{$k=1,\ldots,K_t$}
+    \STATE $a\gets a_{t,k}$
+    \STATE $\widehat\mu_t(a) \gets \mu_{\btheta_t}(\bx_t, a)$
+        \hfill\COMMENT{mean prediction (or corrected center~\eqref{eq:corrected-center})}
+    \STATE $\bg_t(a) \gets \nabla_{\btheta}\,\mu_{\btheta_t}(\bx_t, a)$
+        \hfill\COMMENT{gradient feature}
+    \IF{$\bg_t(a)=\mathbf 0$}
+      \STATE $\tilde{s}_t^2(a) \gets 0$ \hfill\COMMENT{skip CG; no residual ratio}
+    \ELSE
+      \STATE $\tilde\bu \gets \mathrm{CG}(\Calg_t,\;\bg_t(a))$; stop only once
+           $\|r_I\|/\|\bg_t(a)\| \le \bar\varepsilon_t/\sqrt{\bar\kappa_t}$,
+           or use a certified budget $I_t$ from \eqref{eq:cg-budget}
+        \hfill\COMMENT{recompute the original residual in floating point;
+        a point check is not an enclosure} \label{line:cg-detailed}
+      \STATE $\tilde{s}_t^2(a) \gets \bg_t(a)^\top \tilde\bu$
+        \hfill\COMMENT{approx.\ predictive variance}
+    \ENDIF
+  \ENDFOR
+  \STATE $k_t\gets\min\operatorname*{arg\,max}_{1\le k\le K_t}
+    \Bigl[\,\widehat\mu_t(a_{t,k})
+    + \omega_t\,\sqrt{\dfrac{u_t(a_{t,k})}{1-\bar\varepsilon_t}}\,
+      \sqrt{\tilde{s}_t^2(a_{t,k})}\,\Bigr]$;
+      $a_t\gets a_{t,k_t}$
+      \hfill\COMMENT{measurable smallest-index tie rule} \label{line:ucb-detailed}
+  \STATE Play $a_t$, observe $r_t$
+  \STATE $\mathcal{D}_t \gets \mathcal{D}_{t-1} \cup \{(\bx_t, a_t, r_t)\}$
+  \STATE $c_t\gets\mu_{\btheta_t}(\bx_t,a_t)-r_t$;
+         $R^{\rm col}\gets R^{\rm col}+c_t^2$;
+         $\bar F\gets\bar F+(\bar\epsilon_t^{\rm lin})^2$;
+         $\hat\gamma\gets\hat\gamma+\log[1+\sigma^{-2}
+         u_t\tilde s_t^2(a_t)/(1-\bar\varepsilon_t)]$
+  \STATE $n\gets n+1$; $d\gets\btheta_t-\bar\btheta$;
+         $\bar\btheta\gets\bar\btheta+d/n$;
+         $J\gets J+d^\top(\btheta_t-\bar\btheta)$
+         \hfill\COMMENT{vector Welford update}
+  \STATE Run $J^{\rm opt}_{t+1}$ warm-started optimizer steps on the
+         \emph{full} data set $\mathcal D_t$ to obtain $\btheta_{t+1}$,
+         projecting to the certified region if required
+  \STATE Certify
+         $\zeta_{t+1}\ge\|\nabla\cL_{t+1}(\btheta_{t+1})\|$; unless the
+         terminal optimizer evaluation supplies this quantity, this requires
+         one additional full-data gradient evaluation
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+For the exact-curvature theorem, Algorithm~\ref{alg:ccucb} is run with
+$\mathcal{S}_t=\{1,\ldots,t{-}1\}$, $w_s=1$, full action enumeration,
+$\Calg_t=\bC_t$, and the transfer factor $u_t=(1+\bar\chi_t)^2$ from
+\Cref{lem:whitened}.  For an approximate operator $\Calg_t=\hat\bC_t$, use
+$u_t=\kappa_{+,t}(1+\bar\chi_t)^2$ from \Cref{thm:spectral-distortion}.
+The selection rule needs only the \emph{one-sided} upper transfer
+factor~$u_t(a)$ for optimism; no lower spectral factor is required (the cost
+of the operator is charged through the realized dynamic complexity
+$\Lamalg_T$).  Algorithm~\ref{alg:ccucb-detailed} computes $u_t$,
+$\bar\psi_t$, and $\bar\beta_t$ from pre-action state.  The
+operator-specific inputs are the proved factor $\kappa_{+,t}$ and condition
+upper bound $\bar\kappa_t$; exact full and unrescaled-subset operators use
+$\kappa_{+,t}=1$.
+Windowed/refresh curvature and action screening are practical heuristics
+unless the corresponding one-sided transfer factor or optimal-arm-survival
+condition is separately verified.
+
+\paragraph{Corrected-center remark.}
+Replacing the center $\widehat\mu_t(a)$ by the corrected center
+$\widehat\mu_t^{\mathrm{corr}}(a)$ of~\eqref{eq:corrected-center} sets $\bar\psi_t=0$
+(so $\omega_t=\bar\beta_t$) and removes the centering-stability assumption
+exactly (\Cref{cor:corrected-center}), at the cost of frozen-feature access for
+$\hat\btheta_t^{\mathrm{lin}}$; this departs from the $O(d)$ additional
+curvature-state-memory,
+no-stored-feature design unless a frozen-feature oracle, replay mechanism, or
+certified sketch is supplied (see the remark after
+\Cref{cor:corrected-center}).
+
+The remainder of this legacy appendix analyzes the optimizer-centered CC-UCB
+specialization.
+
+
+
+\paragraph{How to read the legacy one-sided theorem.}
+The theorem is a transfer result for a general pre-reward SPD curvature
+sequence.  \Cref{lem:path-certificates,cor:operational} instantiate its
+nonlinear confidence, centering, and feature-transfer inputs from $O(d)$ path
+state, observed collection residuals, analytic smoothness constants, and a
+certified optimizer residual.  These schedules are executable but can be very
+loose.  A sublinear guarantee from this bound still requires control of the realized dynamic width
+complexity and a restricted parameter path; unrestricted end-to-end fine-tuning
+is not covered.  No horizon-uniform lower transfer is required by
+\Cref{thm:regret}; the lower sandwich appears only in the explicit near-linear
+corollary.
+
+\paragraph{Discussion of terms.}
+\begin{itemize}[nosep,leftmargin=1.5em]
+\item \emph{Exploration term.}
+Write $S_T:=\sum_{t=1}^T\alpha_t^2\,u_t(a_t)\,\omega_t^2$ for the sum of
+squares of the per-round factors.  The exploration term is
+$2\sqrt{(\sigma^2+G^2/\lambda)\,\Lamalg_T\,S_T}$.  A sufficient condition
+for sublinear regret is
+\[
+  \Lamalg_T\,S_T = o(T^2),
+  \qquad
+  E_T=o(T).
+\]
+Concretely this holds whenever the per-round factors are polylogarithmically
+bounded ($\sup_t\alpha_t^2 u_t(a_t)\omega_t^2 = O(\mathrm{polylog}\,T)$, so
+$S_T=O(T\,\mathrm{polylog}\,T)$) and the realized dynamic complexity is
+small ($\Lamalg_T=O(\mathrm{polylog}\,T)$, e.g.\ via $\Lamalg_T\le\Gamdyn_T$
+with both the variation charge $\Valg_T$ and the endpoint
+$\log\det(\Calg_{T+1}/\lambda\bI)$ polylogarithmically bounded).
+Note $\omega_t^2$ contains the cumulative squared linearization error
+through $\bar F_t$ (via $\beta_t$) and the centering certificate
+$\bar\psi_t$, so a small $\Lamalg_T$ alone is insufficient.
+$\alpha_t$ is bounded whenever the CG tolerance $\bar\varepsilon_t$ is
+bounded away from~$1$; in the exact-curvature case $u_t=(1+\bar\chi_t)^2$
+is bounded whenever the whitened-drift certificate $\bar\chi_t$ is bounded
+(\Cref{lem:whitened}); the whitened $\ell_2$ accumulation
+$\chi_t\le\|\Dmat_t\|_F$ makes this a near-stationarity condition on
+replayed-Jacobian drift.  The unstable-curvature cost is isolated in
+$\Lamalg_T$ (through $\Valg_T$), not hidden in a spectral constant.
+The factor $\sqrt{\sigma^2+G^2/\lambda}$ arises from the width-sum bound of the
+dynamic width-complexity lemma (\Cref{lem:dynamic-potential},
+Eq.~\eqref{eq:width-sum-dyn}); when $G^2\le\lambda\sigma^2$ it is at most
+$\sigma\sqrt2$.
+\item \emph{Linearization remainder.}
+The bound involves $E_T=\sum_t\epslin(t)$, not $T\epslin$.
+Near-linear regimes also require the squared-error sum
+$F_T=\sum_t\epslin(t)^2$ (through $\bar F_t$, hence $\omega_t$) to be
+controlled.  $\|\btheta^*{-}\btheta_t\|=O(1/t)$ gives $E_T=O(1)$;
+$\|\btheta^*{-}\btheta_t\|=O(t^{-1/4})$ gives $E_T=O(\sqrt{T})$.
+The additive role of $E_T$ mirrors misspecified linear bandits, where a
+uniformly bounded per-round model error commonly contributes an additive regret
+term that scales linearly in the cumulative approximation error
+\citep{ghosh2017misspecified,lattimore2020learning}.  The displayed bound
+requires $E_T/T\to0$; a nonvanishing uniform per-round error bound alone yields
+an $O(T)$ additive term.
+\item \emph{Centering.}
+The centering certificate enters \emph{multiplicatively}, through
+$\omega_t=\bar\beta_t+\bar\psi_t$ inside the sum of squares $S_T$, rather than as
+a separate additive term.  It vanishes
+($\bar\psi_t=0$) when $\btheta_t=\hat\btheta_t^{\mathrm{lin}}$ (convex
+last-layer models with exact optimization), and the corrected-center
+variant (\Cref{cor:corrected-center}) removes it in general at the cost of
+a frozen-feature solve.
+\item \emph{Regret improvement over diagonal/last-layer surrogates.}
+The bound itself does not prove that full curvature yields strictly lower
+regret than diagonal or last-layer methods in any specific regime; it
+provides an upper bound with explicit per-round factors.
+\emph{Demonstrating regret improvement requires a separate empirical study.}
+No such confirmatory study is reported here.
+The theorem exposes the transfer factor $u_t$ and
+realized width complexity $\Lamalg_T$ as operator-dependent terms along the
+realized trajectory; it does not identify a causal regret cost because the
+adaptive path and other factors may also change.
+\item \emph{Scope.}
+The bound is proved for Gaussian/squared-loss rewards.
+Extending it to exponential-family likelihoods (Bernoulli, categorical)
+would require a weighted frozen-feature analysis accounting for the
+data-dependent Fisher weights~$\nabla^2 A(z)$ and is left as future work
+(\Cref{app:expfam}).
+\end{itemize}
+
+\begin{corollary}[Legacy one-sided sanity check: frozen features recover linear UCB]\label{cor:frozen}
+Suppose the backbone is frozen and the reward head is linear in its
+parameters, the ridge objective is optimized exactly, and take the algorithmic curvature to be the sequential frozen
+Gram matrix, $\Calg_t=\bCbar_t$.  Then:
+$\epslin(t)=0$ for all~$t$ ($L=0$ in \Cref{asm:linear}), so $E_T=F_T=0$;
+$\bar\psi_t=0$ (under exact optimization the MAP and linearized estimators coincide, so
+\Cref{asm:optim} holds with equality), giving $\omega_t=\bar\beta_t$;
+$u_t(a)=1$ for all $a$ (indeed $\bar s_t^2(a)=s_{\Calg,t}^2(a)$, so
+\Cref{asm:transfer} holds with equality); and, since
+$\bCbar_{t+1}=\bCbar_t+\sigma^{-2}\bg_t(\bx_t,a_t)\bg_t(\bx_t,a_t)^\top$
+by~\eqref{eq:bar-update}, the update is exactly the rank-one step, i.e.\
+$\Calg_{t+1}=\Calg_t^{+}$, so $\Xi_t=0$, $\Valg_T=0$, and
+$\Lamalg_T=\gamma_T$.  Then \Cref{thm:regret} gives
+\[
+  R_T
+  \;\le\;
+  2\sqrt{(\sigma^2+G^2/\lambda)\,\gamma_T\,
+    \sum_{t=1}^T \alpha_t^2\,\bar\beta_t^2}.
+\]
+If in addition $\bar\varepsilon_t\le\bar\varepsilon$ so that
+$\alpha_t\le\alpha_I:=\sqrt{(1+\bar\varepsilon)/(1-\bar\varepsilon)}$, the
+looser \Cref{cor:worstcase} recovers the familiar LinUCB form
+$R_T\le 2\,\alpha_I\,\bar\beta_{\max,T}\sqrt{(\sigma^2+G^2/\lambda)\,T\,\gamma_T}$,
+where $\bar\beta_{\max,T}:=\max_{t\le T}\bar\beta_t$.
+\end{corollary}
+\begin{proof}
+Substitute $\epslin(t)=0$, $\bar\psi_t=0$, $u_t(a)=1$, and
+$\Lamalg_T=\gamma_T$, $\Valg_T=0$ into~\eqref{eq:regret-bound}; the frozen
+Gram is monotone, so $\Xi_t=0$ and the dynamic potential collapses to the
+information gain $\gamma_T$.  The LinUCB form is \Cref{cor:worstcase} with
+$\alpha_t\le\alpha_I$, $u_t=1$, $\omega_t=\bar\beta_t\le\bar\beta_{\max,T}$.
+\end{proof}
+
+\begin{corollary}[Looser worst-case reduction]\label{cor:worstcase}
+If $\alpha_t\le\alpha_{\max}$, $u_t(a_t)\le u_{\max}$, and
+$\omega_t\le\omega_{\max}$ for all $t\le T$, then
+$S_T\le\alpha_{\max}^2 u_{\max}\omega_{\max}^2T$ and
+\[
+  R_T \;\le\; 2\alpha_{\max}\omega_{\max}\sqrt{u_{\max}}
+  \sqrt{(\sigma^2+G^2/\lambda)T\Lamalg_T}+2E_T .
+\]
+This $\sqrt{T\Lamalg_T}$ form is weakly looser than
+\eqref{eq:regret-bound}, with equality when the per-round factors are constant.
+It is recorded only as a legacy reduction, not as the main result.
+\end{corollary}

@@ -1,0 +1,94 @@
+%% appendix_cg.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3796-3881) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{CG Convergence Analysis}\label{app:cg}
+
+Fix a round~$t$ and an action~$a$ with $\bg:=\bg_t(a)\ne\mathbf0$.  After
+$I_{t,a}$~iterations of CG on the SPD system $\Calg_t\bu=\bg$ (starting
+from $\tilde\bu_0=\mathbf{0}$), the standard energy-norm bound gives
+\[
+  \varepsilon_{t,a}
+  \;=\;
+  \frac{\|\tilde\bu_{I_{t,a}} - \Calg_t^{-1}\bg\|_{\Calg_t}}
+       {\|\Calg_t^{-1}\bg\|_{\Calg_t}}
+  \;\le\;
+  2\!\left(\frac{\sqrt{\kappa_t}-1}{\sqrt{\kappa_t}+1}\right)^{\!I_{t,a}},
+\]
+where $\kappa_t=\lambda_{\max}(\Calg_t)/\lambda_{\min}(\Calg_t)$
+is the true condition number.  The bound is right-hand-side independent, so a
+common iteration budget bounds $\max_a\varepsilon_{t,a}$.  This zero-start form is
+what the fixed-budget certificate~\eqref{eq:cg-budget} uses.
+For a \emph{warm start} $\tilde\bu_0\ne\mathbf0$, energy-norm minimization over the
+shifted Krylov space instead gives
+\[
+  \frac{\|\tilde\bu_{I_{t,a}}-\Calg_t^{-1}\bg\|_{\Calg_t}}{\|\Calg_t^{-1}\bg\|_{\Calg_t}}
+  \;\le\;
+  2\,q^{\,I_{t,a}}\,
+  \frac{\|\tilde\bu_0-\Calg_t^{-1}\bg\|_{\Calg_t}}{\|\Calg_t^{-1}\bg\|_{\Calg_t}},
+  \qquad q=\frac{\sqrt{\kappa_t}-1}{\sqrt{\kappa_t}+1},
+\]
+i.e.\ the extra factor is the initial relative energy error $\|e_0\|_{\Calg_t}/
+\|\Calg_t^{-1}\bg\|_{\Calg_t}$ (equal to one at $\tilde\bu_0=\mathbf0$, recovering the
+  zero-start bound).  Under the same certified condition-number bound, adaptive
+residual stopping (line~\ref{line:cg}) remains valid with a warm start because it
+certifies the realized residual directly; but the fixed-budget
+count~\eqref{eq:cg-budget} is valid \emph{as written} only for zero initialization,
+and a fixed-budget warm-start certificate additionally requires a bound on that
+initial relative energy error (the zero-start iteration count does not by itself
+certify a warm-started solve).
+Any certified upper bound $\bar\kappa_t\ge\kappa_t$ may replace $\kappa_t$; for a
+nonnegative weighted outer-product operator,
+$\lambda_{\min}(\Calg_t)\ge\lambda$ and
+$\lambda_{\max}(\Calg_t)\le\lambda+W_tG^2/\sigma^2$
+(where $W_t=\sum_{s\in\mathcal{S}_t}w_s$) give
+\[
+\kappa_t\le\frac{\lambda_{\max}(\Calg_t)}{\lambda}
+\le1+\frac{W_tG^2}{\lambda\sigma^2}=: \bar\kappa_t,
+\]
+whereas a general SPD operator
+requires a separately certified $\bar\kappa_t$.
+
+Two cases at value one must be distinguished.  The true condition number
+$\kappa_t=1$ forces all eigenvalues equal, i.e.\ $\Calg_t=c_t\bI$ for some
+scalar $c_t>0$, and one CG iteration from $\tilde\bu_0=\mathbf0$ is \emph{exact}
+($\varepsilon_{t,a}=0$) for every $\bg\ne\mathbf0$; this does \emph{not} by itself
+imply $c_t=\lambda$.  With the specific certificate used here,
+$\bar\kappa_t=1$
+additionally forces $\lambda_{\max}(\Calg_t)=\lambda$, which together with
+$\Calg_t\succeq\lambda\bI$ gives $\Calg_t=\lambda\bI$ exactly.  In either reading
+the single-step solve is exact, so we keep $\bar\kappa_t=1$ as a separate branch and
+never evaluate the logarithmic budget below at its zero denominator.  For
+$\bar\kappa_t>1$, setting the
+right-hand side of the rate equal to $\epsCGbar$ and requiring
+$\epsCGbar < 1$ (where $\epsCGbar$ denotes the round-$t$ target tolerance
+$\bar\varepsilon_t$) gives the per-solve budget
+\begin{equation}\label{eq:cg-budget}
+  I_{\min}(\bar\kappa_t,\epsCGbar)
+  \;=\;
+  \left\lceil\frac{\log(2/\epsCGbar)}
+  {\log\!\bigl((\sqrt{\bar\kappa_t}+1)/(\sqrt{\bar\kappa_t}-1)\bigr)}
+  \right\rceil
+  \;=\; O\!\bigl(\sqrt{\bar\kappa_t}\,\log(1/\epsCGbar)\bigr),
+\end{equation}
+which, applied to every scored action, ensures
+$\max_a\varepsilon_{t,a}\le\epsCGbar=\bar\varepsilon_t$.
+For $W_t=n$ (unrescaled fixed buffer size),
+$\bar\kappa_t\le 1+nG^2/(\lambda\sigma^2)$ is bounded independently of~$T$.
+For a fixed target tolerance $\bar\varepsilon_t\equiv\bar\varepsilon\in(0,1)$,
+the displayed sufficient budget is therefore bounded independently of~$T$.
+For full history, and for rescaled uniform subsampling with
+$w_s=(t{-}1)/n$, we have $W_t=t{-}1$, so the condition-number \emph{bound}
+$\bar\kappa_t=O(tG^2/(\lambda\sigma^2))$ grows with~$t$, and the worst-case
+certificate is then obtained with
+$I_{\min}=\Theta\!\bigl(G\sqrt{t/(\lambda\sigma^2)}\,\log(1/\epsCGbar)\bigr)$
+iterations per solve---i.e.\ $I=O(\sqrt{t}\,\log(1/\epsCGbar))$ suffices under this
+bound (this is an upper-bound certificate, not a lower bound on the number of
+iterations CG actually needs).
+CG may converge faster than this worst-case certificate suggests under favorable
+spectral clustering of~$\Calg_t$; the theorem does not predict realized iteration
+counts.

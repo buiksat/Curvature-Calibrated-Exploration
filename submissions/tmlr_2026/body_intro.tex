@@ -1,0 +1,102 @@
+%% body_intro.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 113-199) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Introduction}\label{sec:intro}
+
+At each round, a contextual-bandit policy predicts the reward of every available
+action, adds an uncertainty bonus, and chooses from the resulting scores.  For a
+fixed linear representation, the same feature vectors support both the
+statistical confidence argument and the widths used for action selection.  A
+retrained nonlinear model breaks this identification.  The query used at round
+$s$ was $\bq_s(a_s)=\nabla_\theta\mu_{\btheta_s}(x_s,a_s)$, fixed before
+observing $r_s$, whereas a policy that replays the same sample at round $t$ uses
+$\nabla_\theta\mu_{\btheta_t}(x_s,a_s)$.  Updating $\btheta_t$ changes every
+replayed Jacobian at once, so the current relinearized Gram no longer has the
+predictable rank-one recursion required by the usual self-normalized argument.
+
+Existing neural-bandit methods avoid or absorb this mismatch in different ways.
+NeuralUCB and NeuralTS accumulate gradient features when observations arrive
+\citep{zhou2020neural,zhang2021neural}; NTK methods can keep the uncertainty
+features at initialization \citep{kassraie2022neural}; and neural-linear methods
+place exact linear uncertainty on a learned last-layer representation
+\citep{riquelme2018deep}.  Fixed-reference network linearizations and post-hoc
+Laplace approximations provide related predictive-uncertainty tools
+\citep{maddox2021fast,daxberger2021laplace}, but they do not answer the online
+question studied here: when can confidence built from collection-time features
+justify scores computed with current replayed curvature?
+
+Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
+sequential statistical confidence.  The exact current metric $\bV_t$ replays
+past observations at the current parameter.  The algorithm applies an SPD
+operator $\Calg_t$, which may approximate $\bV_t$.  Finally, an inexact solver
+returns a numerical upper width $\hat s_t(a)$.  The analysis certifies the chain
+\[
+ \begin{aligned}
+  \text{reference confidence}&\ \longrightarrow\ \text{current metric},\\
+  \text{current metric}&\ \longrightarrow\ \text{algorithmic operator},\\
+  \text{algorithmic operator}&\ \longrightarrow\ \text{certified score}.
+ \end{aligned}
+\]
+Each arrow has a separate obligation.  A Thompson--Finsler path length controls
+the first arrow through a two-sided exponential Loewner sandwich
+\citep{thompson1963certain,nussbaum1994finsler}.  A second two-sided comparison
+accounts for replacing $\bV_t$ by $\Calg_t$.  Solver certification then provides
+an upper-valid width for every scored action and a sharpness factor only for the
+action actually played.  The lower operator comparison is needed to return the
+played width to the frozen sequential potential.  If only a one-sided comparison
+is available, the retained dynamic-width theorem still applies, but the headline
+closed bound does not.
+
+For squared loss, the main statistical construction is a corrected prediction
+center.  It combines the current nonlinear prediction with a ridge correction
+computed from collection-time features.  This identity holds for any predictable
+parameter path inside the certified region, so the confidence proof does not
+require the nonlinear optimizer to converge.  Historical Taylor and
+misspecification errors enter the radius through an explicit energy, while
+current errors enter additively.  These terms remain genuine costs: persistent
+misspecification can make the guarantee linear or vacuous.
+
+One decision round now has a concrete order.  Before the reward is observed, the
+learner forms the current query and corrected center, constructs or receives
+$\Calg_t$, certifies transport and operator distortion, computes one upper-valid
+width map over the score domain, and selects an action.  Only then does it observe
+the reward and update the frozen statistics and model.  Matrix-free CG can apply
+a fixed SPD operator through curvature--vector products instead of forming its
+inverse.  This separates solve approximation from operator approximation.  It
+does not make total policy memory $O(d)$, because the corrected center still
+needs frozen-feature access or a separately certified representation.
+
+\paragraph{What we establish.}
+The transported-UCB theorem composes reference confidence, metric transport,
+operator distortion, solver error, and approximate score maximization, then
+closes regret through frozen information gain
+(\Cref{thm:transported-ucb}).  Factor-path and prediction-Hessian certificates
+make the metric comparison operational without a small-drift premise
+(\Cref{lem:factor-spd-path,cor:hessian-path-new}), and the corrected-center
+specialization yields finite-dimensional and near-linear rates without an
+optimizer certificate
+(\Cref{cor:corrected-center-new,cor:finite-d-rate-new,%
+cor:global-near-linear-new}).  The novelty lies in this composition for current
+replayed curvature, not in Thompson geometry, CG, or the generic UCB reduction.
+
+The locked experiment tests the resulting interfaces in a 29-parameter
+scaled-tanh model with dense current and frozen matrices and exact Cholesky
+solves.  It is a controlled transport-policy audit, not an approximate-operator
+or CG benchmark.  All declared float64 confidence and optimism diagnostics
+pass, but the analytic path envelope is highly conservative, the numerical
+regret bound is vacuous, and all three comparison policies have lower sample
+mean regret in the reported primary-horizon conditions
+(\Cref{sec:transport-instantiation}).
+\iflegacyextras
+Earlier diagnostics are retained only at their historical scope in
+\Cref{app:legacy-evidence}.
+\else
+Earlier repository studies were designed for the one-sided dynamic theorem, do
+not execute the transported score or record its certificates, and are therefore
+not reported here as evidence for any claim in this paper.
+\fi

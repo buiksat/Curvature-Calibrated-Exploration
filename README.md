@@ -6,6 +6,16 @@ The canonical live research branch is **`cce-experiments`**. It contains the com
 
 ## Papers
 
+### TMLR submission draft
+
+- Main source: [`submissions/tmlr_2026/main.tex`](submissions/tmlr_2026/main.tex)
+- Build, official-template provenance, and submission status: [`submissions/tmlr_2026/README.md`](submissions/tmlr_2026/README.md)
+- Initial implementation-branch review: [`submissions/tmlr_2026/IMPLEMENTATION_REVIEW.md`](submissions/tmlr_2026/IMPLEMENTATION_REVIEW.md)
+
+This anonymous draft snapshots the newer TMLR manuscript from `cce-experiments`.
+It is prepared for review and has not been submitted. The build produces a PDF
+and a standalone LaTeX source archive outside the checkout.
+
 ### AISTATS manuscript
 
 - Main source: [`paper/main.tex`](paper/main.tex)

@@ -1,0 +1,136 @@
+%% appendix_onesided_proof.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3667-3794) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{Proof of the one-sided dynamic theorem}\label{app:proof}
+
+We recall the key objects:
+$\bg_s(\bx,a)=\nabla_{\btheta}\mu_{\btheta_s}(\bx,a)$ (frozen features),
+$\bCbar_t=\lambda\bI+\sigma^{-2}\sum_{s<t}\bg_s(\bx_s,a_s)\bg_s(\bx_s,a_s)^\top$
+(frozen-feature Gram matrix),
+$\bar s_t(a)=\sqrt{\bg_t(a)^\top\bCbar_t^{-1}\bg_t(a)}$,
+the algorithmic curvature $\Calg_t$ with width
+$s_{\Calg,t}(a)=\sqrt{\bg_t(a)^\top\Calg_t^{-1}\bg_t(a)}$,
+the linearized ridge estimator $\hat\btheta_t^{\mathrm{lin}}$
+(Eq.~\ref{eq:thetahat-lin}), the combined width factor
+$\omega_t=\bar\beta_t+\bar\psi_t$, the per-round CG inflation
+$\alpha_t=\sqrt{(1+\bar\varepsilon_t)/(1-\bar\varepsilon_t)}$, and the
+realized dynamic complexity $\Lamalg_T$ (Eq.~\ref{eq:lam-alg}).
+Write $\widehat\mu_t(a)=\mu_{\btheta_t}(\bx_t,a)$.
+
+\paragraph{Step 1: Confidence, centering, and prediction-error bound.}
+By \Cref{lem:confidence}, with probability $\ge 1-\delta$,
+\begin{equation}\label{eq:conf-app}
+  \bigl|\bg_t(a)^\top(\hat\btheta_t^{\mathrm{lin}}-\btheta^*)\bigr|
+  \;\le\; \bar s_t(a)\,\beta_t,
+  \qquad\forall\,t,\,a,
+\end{equation}
+where $\beta_t$ is as in~\eqref{eq:beta}.
+The self-normalized martingale inequality
+\citep{abbasi2011improved} is applied to the $1$-sub-Gaussian sequence
+$\xi_s=\eta_s/\sigma$ with the design $\bg_s/\sigma$, which is
+$\cG_s$-measurable before $\xi_s$ is revealed, and Gram matrix~$\bCbar_t$.
+Each realized design vector~$\bg_s(\bx_s,a_s)$ is
+$\cG_s$-measurable (where $\cG_s=\cHist_s\vee\sigma(a_s)$ is
+the pre-reward sigma-algebra of~\eqref{eq:filtration}), and the sequential
+update~\eqref{eq:bar-update} ensures the hypotheses
+of the self-normalized bound are satisfied.
+By \Cref{lem:discrepancy} (\Cref{asm:optim}),
+$|\bg_t(a)^\top(\btheta_t{-}\hat\btheta_t^{\mathrm{lin}})|\le
+\bar\psi_t\,\bar s_t(a)$.
+Combined with $|\rho_t|\le\epslin(t)$ and $\bar\beta_t\ge\beta_t$, the
+triangle inequality gives the prediction-error
+bound~\eqref{eq:pred-error}
+\begin{equation}\label{eq:pred-app}
+  |\mu_{\btheta^*}(\bx_t,a)-\widehat\mu_t(a)|
+  \;\le\;
+  (\beta_t+\bar\psi_t)\,\bar s_t(a) + \epslin(t)
+  \;\le\;
+  \omega_t\,\bar s_t(a) + \epslin(t),
+  \qquad\forall\,a .
+\end{equation}
+(The corrected-center variant of \Cref{cor:corrected-center} reaches
+\eqref{eq:pred-app} with $\omega_t=\bar\beta_t$ and without
+\Cref{asm:optim}.)
+
+\paragraph{Step 2: Bonus sandwiching.}
+By \Cref{lem:bonus} (which uses \Cref{lem:cg} with
+$\max_{a\in\cA_t}\varepsilon_{t,a}\le\bar\varepsilon_t$ and the one-sided
+transfer~\eqref{eq:transfer}), for all $a$,
+\begin{equation}\label{eq:bonus-app}
+  \omega_t\,\bar s_t(a)
+  \;\le\;
+  w_t(a)
+  \;\le\;
+  \alpha_t\,\omega_t\,\sqrt{u_t(a)}\,s_{\Calg,t}(a).
+\end{equation}
+The lower bound and~\eqref{eq:pred-app} give
+$\mu^*(\bx_t,a)\le \widehat\mu_t(a)+w_t(a)+\epslin(t)$ for all~$a$: the UCB covers
+$\mu^*$ up to the additive $\epslin(t)$ model-mismatch term.
+
+\paragraph{Step 3: Instantaneous regret.}
+Let $a_t^*=a_{t,k_t^*}$ be the measurable finite comparator from the legacy
+protocol.  The smallest-index score rule implies
+$\widehat\mu_t(a_t)+w_t(a_t)\ge \widehat\mu_t(a_t^*)+w_t(a_t^*)$, and using
+$\mu^*(a_t^*)\le \widehat\mu_t(a_t^*)+w_t(a_t^*)+\epslin(t)$ (Step~2 at $a_t^*$, valid
+since $a_t^*\in\cA_t$),
+\begin{align*}
+  \mu^*(a_t^*)-\mu^*(a_t)
+  &\;\le\; [\widehat\mu_t(a_t^*)+w_t(a_t^*)+\epslin(t)] - \mu^*(a_t) \\
+  &\;\le\; [\widehat\mu_t(a_t)+w_t(a_t)+\epslin(t)] - \mu^*(a_t)
+    \quad\text{(UCB selection)} \\
+  &\;=\; w_t(a_t) + [\widehat\mu_t(a_t)-\mu^*(a_t)] + \epslin(t) \\
+  &\;\le\; w_t(a_t) + \omega_t\,\bar s_t(a_t) + 2\epslin(t)
+    \quad\text{(\eqref{eq:pred-app} at $a_t$)} \\
+  &\;\le\; 2\,w_t(a_t) + 2\epslin(t)
+    \quad\text{(lower bound in~\eqref{eq:bonus-app})}.
+\end{align*}
+
+\paragraph{Step 4: Upper bonus bound.}
+The upper bound in~\eqref{eq:bonus-app} gives
+\begin{equation}\label{eq:regret-round}
+  \mu^*(a_t^*)-\mu^*(a_t)
+  \;\le\;
+  2\,\alpha_t\,\omega_t\,\sqrt{u_t(a_t)}\,s_{\Calg,t}(a_t)
+  \;+\; 2\epslin(t).
+\end{equation}
+
+\paragraph{Step 5: Cauchy--Schwarz after summing.}
+Summing~\eqref{eq:regret-round} over $t=1,\dots,T$ and applying
+Cauchy--Schwarz to the sum (\emph{not} per round),
+\[
+  R_T
+  \;\le\;
+  2\sum_{t=1}^T \alpha_t\omega_t\sqrt{u_t(a_t)}\,s_{\Calg,t}(a_t) + 2E_T
+  \;\le\;
+  2\sqrt{\sum_{t=1}^T \alpha_t^2\omega_t^2 u_t(a_t)}\,
+  \sqrt{\sum_{t=1}^T s_{\Calg,t}^2(a_t)} + 2E_T .
+\]
+
+\paragraph{Step 6: Dynamic potential and collection.}
+\Cref{lem:dynamic-potential} gives
+$\sum_{t=1}^T s_{\Calg,t}^2(a_t)\le(\sigma^2+G^2/\lambda)\,\Lamalg_T$.
+Substituting,
+\[
+  R_T
+  \;\le\;
+  2\sqrt{(\sigma^2+G^2/\lambda)\,\Lamalg_T\,
+    \sum_{t=1}^T \alpha_t^2\,u_t(a_t)\,\omega_t^2} \;+\; 2E_T,
+\]
+which is~\eqref{eq:regret-bound}.  The interpretable and observable
+versions~\eqref{eq:regret-bound-dyn} follow from $\Lamalg_T\le\Gamdyn_T$
+(\Cref{lem:dynamic-potential}) and $\Lamalg_T\le\widehat{\Lamalg}_T$
+(\Cref{cor:lam-observable}).  The Cauchy--Schwarz step is applied only after
+summing, so the time-varying factors $\alpha_t,u_t(a_t),\omega_t$ enter
+through a sum of squares; no horizon maximum is taken before Cauchy--Schwarz, and
+the usual $\sqrt{T}$ scaling is recovered when the per-round factors are
+uniformly bounded (\Cref{cor:worstcase}).  The stated probability follows from a
+union bound over the self-normalized confidence event
+$\cE_{\mathrm{conf}}$ ($\ge 1-\delta$) and the certificate event
+$\cE_{\mathrm{cert}}$ ($\ge 1-\delta_{\mathrm{cert}}$), giving
+$\ge 1-\delta-\delta_{\mathrm{cert}}$.
+\qed

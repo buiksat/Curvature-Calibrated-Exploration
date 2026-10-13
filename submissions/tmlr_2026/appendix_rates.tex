@@ -1,0 +1,187 @@
+%% appendix_rates.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 203-381) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\subsection{Online nonlinear certificates}\label{sec:operational-certificates}
+At the start of round $t$, let $n_t=t-1$, and let $\bar\btheta_{<t}$ and
+$J_{<t}=\sum_{s<t}\|\btheta_s-\bar\btheta_{<t}\|^2$ be maintained by a
+vector Welford update.  With collection residuals
+$c_s=\mu_{\btheta_s}(x_s,a_s)-r_s$, define
+\begin{equation}\label{eq:path-stats-main}
+ Q_t=J_{<t}+n_t\|\btheta_t-\bar\btheta_{<t}\|^2,
+ \qquad R_t^{\rm col}=\sum_{s<t}c_s^2.
+\end{equation}
+Both are pre-action quantities and
+$Q_t=\sum_{s<t}\|\btheta_t-\btheta_s\|^2$ exactly.  If prediction gradients
+are $L_g$-Lipschitz on the certified region, set
+\begin{equation}\label{eq:operational-transfer-main}
+ \bar\chi_t=\frac{L_g\sqrt{Q_t}}{\sigma\sqrt\lambda},\qquad
+ u_t=\kappa_{+,t}(1+\bar\chi_t)^2,
+\end{equation}
+where $\kappa_{+,t}=1$ for exact full curvature and for an unrescaled
+current-parameter subset, and otherwise is a supplied one-sided operator
+certificate.  If $\|\nabla\cL_t(\btheta_t)\|\le\zeta_t$, an observable
+centering schedule is
+\begin{equation}\label{eq:operational-centering-main}
+\begin{aligned}
+ \bar\psi_t&=\frac{\zeta_t+\bar M_t}{\sqrt\lambda},\\
+ \bar M_t&=\sigma^{-2}\Bigl[L_g\sqrt{R_t^{\rm col}Q_t}
+ +\frac{3}{2}GL_gQ_t+\frac{1}{2}L_g^2Q_t^{3/2}\Bigr].
+\end{aligned}
+\end{equation}
+For a known radius-$R$ trust region, the final numerator term may instead
+be bounded by $L_g^2RQ_t$.  Finally, for an $L_\mu$-Lipschitz prediction gradient define
+$\bar\epsilon_t^{\rm lin}=\frac{L_\mu}{2}(S+\|\btheta_t\|)^2$,
+$\bar F_t=\sum_{s<t}(\bar\epsilon_s^{\rm lin})^2$, and
+\begin{equation}\label{eq:operational-beta-main}
+\begin{aligned}
+ \bar\beta_t&=\sqrt{\hat\gamma_{t-1}+2\log(1/\delta)}+\sqrt\lambda S
+ +\sigma^{-1}\sqrt{\bar F_t},\\
+ \hat\gamma_{t-1}&=\sum_{s<t}\log(1+q_s),\qquad
+ q_s=\frac{u_s(a_s)\tilde s_s^2(a_s)}{\sigma^2(1-\bar\varepsilon_s)}.
+\end{aligned}
+\end{equation}
+
+\begin{corollary}[Operational CC-UCB]\label{cor:operational}
+Under the structural hypotheses of \Cref{thm:regret}, with its certificate
+inputs instantiated by valid smoothness constants, the
+optimizer residual bound $\zeta_t$, uniform CG certificates, and a valid
+$\kappa_{+,t}$, \eqref{eq:path-stats-main}--\eqref{eq:operational-beta-main}
+give valid pre-reward schedules.  Prefix-derived quantities are predictable;
+$\bar\psi_t$ is predictable when $\zeta_t$ is $\cHist_t^-$-measurable, while
+$u_t$ and any current randomized operator factor are pre-reward measurable.
+Together they satisfy every nonlinear input of the theorem.  Thus
+\Cref{thm:regret} holds with $E_T$ replaced by
+$\bar E_T=\sum_{t\le T}\bar\epsilon_t^{\rm lin}$ and the observable CG upper
+bound on $\Lamalg_T$ from \Cref{cor:lam-observable}.
+\end{corollary}
+\begin{proof}
+\Cref{lem:path-certificates} proves
+$\bar\chi_t\ge\chi_t$, $\bar\psi_t\ge\psi_t$,
+$\bar F_t\ge F_t$, and $\bar E_T\ge E_T$.  The one-sided operator relation
+and \Cref{cor:gammahat} give $u_t$ and
+$\hat\gamma_{t-1}\ge\gamma_{t-1}$, hence
+$\bar\beta_t\ge\beta_t$.  All quantities are available before selection; when
+$\zeta_t$ is prefix measurable, so is $\bar\psi_t$.  Uniform candidate-action
+CG accuracy is checked before selection.  Substitution in \Cref{thm:regret} and
+\Cref{cor:lam-observable} proves the claim.
+\end{proof}
+The proof, filtration-order pseudocode, and a scalar-tanh specialization with
+$G\le B_\phi$ and $L_\mu=L_g\le4B_\phi^2/(3\sqrt3)$ are in
+\Cref{lem:path-certificates,cor:tanh-link}.
+
+For an abstract near-linearity scale $W$, suppose
+$\|\btheta_t\|,\|\btheta^*\|\le R$,
+$L_\mu\le c_\mu/\sqrt W$, $L_g\le c_g/\sqrt W$,
+$\zeta_t\le\zeta_0/\sqrt W$, and
+$R_t^{\rm col}\le C_RtP_T$ for a supplied $P_T\ge1$.  Then
+\begin{equation}\label{eq:near-linear-rates-main}
+\begin{aligned}
+ \bar E_T&\le\frac{2c_\mu R^2T}{\sqrt W},&
+ \bar F_{T+1}&\le\frac{4c_\mu^2R^4T}{W},\\
+ \bar\chi_t&\le\frac{2c_gR\sqrt{t-1}}{\sigma\sqrt{\lambda W}}.&&
+\end{aligned}
+\end{equation}
+and \Cref{cor:near-linear} gives an explicit trust-region bound on
+$\bar\psi_t$.  If a supplied fixed active subspace gives rank bound $r\ge1$,
+define
+\begin{equation}\label{eq:rank-gamma-main}
+ \Gamma_{T,r}=r_T\log\!\left(1+\frac{TG^2}
+ {r_T\lambda\sigma^2}\right),\qquad r_T=\min\{r,T\}.
+\end{equation}
+and set $\Gamma_{0,r}:=0$ for the round-one confidence schedule.  The bound
+$r$ must be known before selection; a terminal realized rank is only post-hoc.
+Then $\gamma_T\le\Gamma_{T,r}$ and \Cref{cor:rank-near-linear} gives the
+fully explicit conditional projected-Gram bound
+\begin{equation}\label{eq:near-linear-regret-main}
+R_T\le2\alpha_I\sqrt{\rho_+/\rho_-}\,\Omega_{T,r}
+ \sqrt{(\sigma^2+G^2/\lambda)T\Gamma_{T,r}}+2\bar E_T,
+\end{equation}
+where $x_T=2c_gR\sqrt{T-1}/(\sigma\sqrt{\lambda W})$,
+$\rho_-=(1-x_T)^2$, $\rho_+=(1+x_T)^2$, and $\Omega_{T,r}$ is displayed with every
+$T,W,r,P_T,\lambda,\sigma$ dependence in the appendix.  At fixed $r$ and
+problem constants, $W=\Omega(T^2P_T)$ makes the path inflation bounded and
+gives $R_T=O(r\sqrt T\log T)+O(T/\sqrt W)$.  This is a low-rank tangent-space
+or parameter-efficient adaptation regime, not generic full-network training.
+
+\begin{theorem}[Conditional growing-window bound under fixed-subspace excitation]\label{thm:growing-window}
+Adopt the hypotheses, events, and valid predictable schedules of
+\Cref{thm:regret}, let $m_t=\min\{t-1,\lceil t^q\rceil\}$ for $q\in(0,1]$,
+and let $\Calg_t$ be the unrescaled current-parameter Gram over the last $m_t$
+observations.  Thus \Cref{prop:window} gives $\kappa_{+,t}=1$ and
+$u_t=(1+\bar\chi_t)^2$.  Suppose candidate gradients lie in a fixed subspace
+$U$, and let $P_U$ be its orthogonal projector.  For a supplied burn-in index
+$\tau_w\in\{1,\ldots,T+1\}$, assume the
+predictable window-excitation condition
+\[
+ \Calg_t\succeq\lambda\bI+\kappa_wm_tP_U
+\]
+holds for a known $\kappa_w>0$ and every $t\ge\tau_w$.  Then, on the same
+event of probability at least $1-\delta-\delta_{\rm cert}$ as
+\Cref{thm:regret},
+\begin{equation}\label{eq:growing-window-lambda-main}
+\begin{aligned}
+ \Lamalg_T&\le L_q(T;\tau_w),\\
+ L_q(T;\tau_w)&:=(\tau_w-1)\log\!\left(1+
+ \frac{G^2}{\lambda\sigma^2}\right)\\
+ &\quad+\frac{G^2}{\sigma^2}\sum_{t=\tau_w}^T
+ \frac1{\lambda+\kappa_wm_t},\\
+ L_q(T;\tau_w)&=\begin{cases}O(\tau_w+T^{1-q}),&q<1,\\
+ O(\tau_w+\log T),&q=1.
+ \end{cases}
+\end{aligned}
+\end{equation}
+For $\tau_w=1$, more explicitly,
+$L_q(T;1)\le(G^2/\sigma^2)[\lambda^{-1}+\kappa_w^{-1}h_q(T)]$,
+where, for $T\ge2$, $h_q(T)=1+((T-1)^{1-q}-1)/(1-q)$ for $q<1$ and
+$h_1(T)=1+\log(T-1)$, while $h_q(1):=0$ in both cases.
+Writing $r_U=\dim U$, the excitation premise can first hold nontrivially only
+once $m_t\ge r_U$, because $\operatorname{rank}(\Calg_t-\lambda I)\le m_t$;
+thus $\tau_w$ includes the required rank-$r_U$ burn-in.
+If $H_T=\max_{t\le T}\alpha_t\sqrt{u_t(a_t)}\,\omega_t$, then
+\begin{equation}\label{eq:growing-window-regret-main}
+ R_T\le2H_T\sqrt{(\sigma^2+G^2/\lambda)T L_q(T;\tau_w)}+2E_T.
+\end{equation}
+If $H_T=\widetilde O(1)$, $E_T=\widetilde O(T^{1-q/2})$, and the burn-in
+obeys $\tau_w=\widetilde O(T^{1-q})$ for $q<1$ (or
+$\tau_w=\widetilde O(1)$ for $q=1$), then
+\eqref{eq:growing-window-regret-main} simplifies to
+$R_T=\widetilde O(T^{1-q/2})$; otherwise its displayed $L_q$ and $E_T$ terms
+remain.  This is conditional on the fixed subspace, excitation, and all
+confidence, transfer, optimizer, and CG certificates above.
+Certified worst-case \emph{width-solve} work is
+$O(KT^{1+3q/2}\log(1/\bar\varepsilon))$ sample-CVPs when a fixed uniform
+target $\bar\varepsilon\in(0,1)$ is enforced; this count excludes model
+optimization, candidate-gradient computation, and certificate construction.
+\end{theorem}
+\begin{proof}
+Before $\tau_w$, $\Calg_t\succeq\lambda\bI$ bounds each logarithm in
+$\Lamalg_T$ by $\log(1+G^2/(\lambda\sigma^2))$.  Thereafter, for
+$g_t(a)\in U$, inversion of the excitation inequality gives
+$s_{\Calg,t}^2(a)\le G^2/(\lambda+\kappa_wm_t)$; summing
+$\log(1+x)\le x$ proves \eqref{eq:growing-window-lambda-main}.  Since
+$S_T\le TH_T^2$, substitution in \Cref{thm:regret} proves
+\eqref{eq:growing-window-regret-main}.  The condition-number bound
+$\kappa(\Calg_t)\le1+m_tG^2/(\lambda\sigma^2)$ makes CG use
+$O(\sqrt{m_t}\log(1/\bar\varepsilon))$ iterations, each replaying $m_t$
+samples; summing $Km_t^{3/2}$ proves the cost claim.
+\end{proof}
+Under the hypotheses of \Cref{cor:rank-near-linear}, if the window policy uses
+the predictable rank envelope $\Gamma_{t-1,r}$ instead of the realized
+$\hat\gamma_{t-1}$ in its confidence radius, then
+$H_T\le\alpha_I(1+x_T)\Omega^{\rm win}_{T,r}$, where
+$\Omega^{\rm win}_{T,r}$ is the explicit $\Omega_{T,r}$ in
+\Cref{cor:rank-near-linear} with $A_{\rm inf}=1$.  Hence
+\eqref{eq:growing-window-regret-main} contains no uncontrolled information-gain
+placeholder.  The excitation premise is restrictive and standard in persistently excited
+identification; contextual diversity alone does not imply it.  For $\dim U=r>1$
+one must choose $\tau_w$ after a rank-$r$ burn-in, as the formal early charge
+records.  The predictable rank schedule in
+\Cref{cor:rank-near-linear} makes $H_T$ polylogarithmic under the same bounded-path
+conditions.  These sufficient upper-bound exponents are not a Pareto frontier
+or a lower bound.  When $U$ is supplied, the projected Gram in
+\eqref{eq:projected-width} can instead be solved directly.

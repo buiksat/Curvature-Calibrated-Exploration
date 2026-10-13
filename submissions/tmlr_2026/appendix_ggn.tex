@@ -1,0 +1,31 @@
+%% appendix_ggn.tex
+%% Shared manuscript source, extracted verbatim from the historical
+%% entry point paper/main.tex (lines 3973-3995) so that it and the TMLR
+%% entry point submissions/tmlr_2026/main.tex read one copy of this
+%% material instead of two. Content is unchanged by the extraction
+%% itself. The revision the lines refer to is recorded in
+%% paper/EXPOSITION_REVISION.md, which is not part of any submission
+%% upload.
+\section{GGN Approximation Error}\label{app:ggn-approx}
+
+\begin{lemma}[GGN approximation error]\label{lem:ggn-approx}
+Suppose $\mu_{\btheta}(\bx,a)$ is twice differentiable in~$\btheta$.
+Suppose $|r_s - \mu_{\btheta_t}(\bx_s,a_s)| \le \epsilon_r$ and
+$\|\nabla^2 \mu_{\btheta_t}(\bx_s,a_s)\|_{\mathrm{op}} \le H$
+for all $s < t$.
+Define $\zeta := (t{-}1)\,\epsilon_r\, H / (\sigma^2 \lambda)$.
+Then:
+\begin{enumerate}[nosep,label=(\roman*)]
+\item $\|\bH_t - \bC_t\|_{\mathrm{op}}
+\le (t{-}1)\,\epsilon_r\, H / \sigma^2 = \zeta\lambda$.
+\item If $\zeta < 1$, then
+$(1{-}\zeta)\bC_t \preceq \bH_t \preceq (1{+}\zeta)\bC_t$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+For $D_t=\sigma^{-2}\sum_{s<t}(r_s-\mu_{\btheta_t})
+\nabla^2\mu_{\btheta_t}$, the triangle inequality gives
+$\|D_t\|_{\rm op}\le\zeta\lambda$, proving~(i).  Combining
+$-\|D_t\|\bI\preceq-D_t\preceq\|D_t\|\bI$ with
+$\bC_t\succeq\lambda\bI$ proves~(ii).
+\end{proof}
