@@ -16,6 +16,10 @@ This anonymous draft snapshots the newer TMLR manuscript from `cce-experiments`.
 It is prepared for review and has not been submitted. The build produces a PDF
 and a standalone LaTeX source archive outside the checkout.
 
+For an automated scientific review with Claude Fable, see
+[`tools/CLAUDE_REVIEW.md`](tools/CLAUDE_REVIEW.md). The runner supplies the
+manuscript and implementation snapshots and saves the review locally.
+
 ### AISTATS manuscript
 
 - Main source: [`paper/main.tex`](paper/main.tex)
