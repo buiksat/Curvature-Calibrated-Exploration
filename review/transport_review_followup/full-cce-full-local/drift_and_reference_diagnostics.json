@@ -1,0 +1,302 @@
+[
+  {
+    "W": 16.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.04491063298234695,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 0.98,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.03298,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "frozen_reference",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 37638.62973021188,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 97.32420048477151,
+    "total_rounds": 50000
+  },
+  {
+    "W": 16.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.04491063298234695,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 0.98,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.03136,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "naive_current",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 37591.656324283744,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 97.32420048477151,
+    "total_rounds": 50000
+  },
+  {
+    "W": 16.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.04491063298234695,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 0.98,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.03194,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "transport_endpoint",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 37579.49770292004,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 97.32420048477151,
+    "total_rounds": 50000
+  },
+  {
+    "W": 16.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.04491063298234695,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.0299,
+      "0.1": 0.0,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "transport_hessian",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 37680.745902636314,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 97.32420048477151,
+    "total_rounds": 50000
+  },
+  {
+    "W": 1.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.6401584744955129,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99584,
+      "0.1": 0.08884,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "frozen_reference",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 120544.15207463411,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 389.29680193908604,
+    "total_rounds": 50000
+  },
+  {
+    "W": 1.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.6938202709536725,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99578,
+      "0.1": 0.07778,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "naive_current",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 120389.70719890758,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 389.29680193908604,
+    "total_rounds": 50000
+  },
+  {
+    "W": 1.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.6137851065894534,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99578,
+      "0.1": 0.07954,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "transport_endpoint",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 120557.93415373715,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 389.29680193908604,
+    "total_rounds": 50000
+  },
+  {
+    "W": 1.0,
+    "deterministic_regret_cap": 2000.0,
+    "endpoint_maximum_across_seeds": 0.6274144931922455,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.0
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99578,
+      "0.1": 0.07608,
+      "1.0": 0.0
+    },
+    "horizon": 1000,
+    "method": "transport_hessian",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 120881.61546376866,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 389.29680193908604,
+    "total_rounds": 50000
+  },
+  {
+    "W": 0.25,
+    "deterministic_regret_cap": 1000.0,
+    "endpoint_maximum_across_seeds": 1.5266893711373655,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.34
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99726,
+      "0.1": 0.95266,
+      "1.0": 0.00632
+    },
+    "horizon": 1000,
+    "method": "frozen_reference",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 230842.31323210936,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 778.5936038781721,
+    "total_rounds": 50000
+  },
+  {
+    "W": 0.25,
+    "deterministic_regret_cap": 1000.0,
+    "endpoint_maximum_across_seeds": 1.5266893711373655,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.36
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99728,
+      "0.1": 0.94856,
+      "1.0": 0.00558
+    },
+    "horizon": 1000,
+    "method": "naive_current",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 230236.15975948807,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 778.5936038781721,
+    "total_rounds": 50000
+  },
+  {
+    "W": 0.25,
+    "deterministic_regret_cap": 1000.0,
+    "endpoint_maximum_across_seeds": 1.5266893711373655,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.32
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99728,
+      "0.1": 0.91118,
+      "1.0": 0.00534
+    },
+    "horizon": 1000,
+    "method": "transport_endpoint",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 230676.37384895925,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 778.5936038781721,
+    "total_rounds": 50000
+  },
+  {
+    "W": 0.25,
+    "deterministic_regret_cap": 1000.0,
+    "endpoint_maximum_across_seeds": 1.5809714547002858,
+    "endpoint_maximum_at_least_threshold_fraction": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 0.32
+    },
+    "endpoint_round_at_least_threshold_fraction": {
+      "0.01": 0.99726,
+      "0.1": 0.91246,
+      "1.0": 0.00572
+    },
+    "horizon": 1000,
+    "method": "transport_hessian",
+    "reference_geometry_rhs_below_2T_fraction": 0.0,
+    "reference_geometry_rhs_below_cap_fraction": 0.0,
+    "reference_geometry_rhs_mean_on_own_trajectory": 230813.0293471876,
+    "reference_rhs_note": "Statistical + historical + current-bias components on this method's actual trajectory; frozen-policy evidence only for frozen_reference. No policy-dominance inference.",
+    "regret_cap_formula": "2*T*min(feature_bound*theta_radius,sqrt(W))",
+    "seeds": 50,
+    "target_D": 778.5936038781721,
+    "total_rounds": 50000
+  }
+]
