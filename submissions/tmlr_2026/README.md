@@ -18,16 +18,19 @@ conclusion, and availability statement now match that evidence. See
 The readability revision introduces the decision problem before the formal
 conditions, explains an exact-matrix example before the general theorem, and
 organizes the results around reader questions. Existing mathematical results
-and experimental evidence are preserved. The draft now has 46 pages.
+and experimental evidence are preserved. A follow-up applies the checked Fable
+readability advice: a notation table, a chronological protocol guide, simpler
+abstract and policy explanations, explicit mean bound magnitudes, and a clearer
+chart comparator label. The draft now has 47 pages.
 
 Four explanatory figures guide the reader through the argument:
 
 | Figure | Current PDF page | Purpose |
 | --- | ---: | --- |
 | Certificate interfaces | 3 | Separate reference confidence, current metric, applied operator and numerical score width |
-| Abstract confidence geometry | 9 | Show why a smaller current width can miss a mean permitted by the reference band |
-| Policy outcomes | 19 | Show every policy mean and all nine pointwise paired comparisons |
-| Bound scale | 20 | Compare mean own-history bounds with the deterministic regret caps |
+| Abstract confidence geometry | 10 | Show why a smaller current width can miss a mean permitted by the reference band |
+| Policy outcomes | 20 | Show every policy mean and all nine pointwise paired comparisons |
+| Bound scale | 21 | Compare mean own-history bounds with the deterministic regret caps |
 
 The charts are generated from retained evidence. The analytic illustration is
 explicitly distinguished from observed experimental behavior. The numerical

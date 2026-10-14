@@ -55,10 +55,12 @@ such a comparison valid. The \emph{width} is the geometric part of the
 uncertainty bonus; a confidence radius scales it, and a separate term covers
 model bias.
 
-Direct reference scoring is already available. Transport is worth studying
-because it exposes what a policy must establish if it chooses to score with
-current curvature instead. It supplies no new observations or additional
-statistical information. In fact, with the same history, center, radius and
+Using the sensitivities of the current predictor to build its uncertainty
+matrix is a natural modeling choice. Whether that matrix supports the original
+confidence guarantee is a separate question. Transport states what a policy
+must establish if it chooses to score with current curvature; direct reference
+scoring is already available. The conversion supplies no new observations or
+additional statistical information. In fact, with the same history, center, radius and
 bias, the certified transported width is at least the direct reference width.
 An exact actionwise correction recovers that reference width
 (\Cref{prop:reference-width-floor}). This comparison leaves the ordering of
@@ -99,8 +101,9 @@ in terms of the reference matrix's accumulated information
 (\Cref{thm:transported-ucb}). A two-sided matrix comparison is essential for
 this guarantee: one direction preserves the upper confidence score, and the
 other controls the width of the action actually chosen. We obtain such
-comparisons from established Thompson--Finsler geometry
-\citep{thompson1963certain,nussbaum1994finsler} and give computable certificates
+comparisons from established Thompson--Finsler geometry, which measures
+multiplicative distance between positive-definite matrices
+\citep{thompson1963certain,nussbaum1994finsler}, and give computable certificates
 using changes in model gradients (\Cref{lem:factor-spd-path,cor:hessian-path-new}).
 The geometry and the UCB potential argument are established tools. The
 contribution is to state and connect the distinct statistical and computational
@@ -144,11 +147,16 @@ Approximate operators, conjugate-gradient performance and end-to-end
 scalability are outside the empirical study.
 
 \paragraph{Reading the paper.}
-\Cref{sec:abstract-transport} starts with the exact-matrix case, then states the
-general theorem. \Cref{sec:corrected-center} explains how the confidence center
-is constructed. Readers interested primarily in the findings can continue to
-\Cref{sec:transport-followup} and return to the certificate constructions when
-needed. Proofs and the full experimental protocol are in the appendices.
+\Cref{sec:abstract-transport} starts with the exact-matrix case and a notation
+guide, then states the general theorem and explains its bound. Readers working
+with finite action lists can use the guide beside the general protocol to
+separate its action-space details from the timing and certificate assumptions
+that still apply. The reference-width comparison then explains the limitation
+of transport. Readers interested primarily in the findings can continue to
+\Cref{sec:transport-followup} and return to the geometric certificates in
+\Cref{sec:logarithmic-transport} or the corrected-center construction in
+\Cref{sec:corrected-center} when needed.
+Proofs and the full experimental protocol are in the appendices.
 \iflegacyextras
 Earlier diagnostics are retained at their historical scope in
 \Cref{app:legacy-evidence}.

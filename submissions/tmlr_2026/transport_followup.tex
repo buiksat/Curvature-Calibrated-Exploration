@@ -20,12 +20,23 @@ and its curvature, so comparisons across conditions do not isolate an effect
 of metric drift.  The original near-linear study appears separately in
 \Cref{sec:transport-instantiation}; its evidence is not pooled with this study.
 
+The near-linear guarantee in \Cref{cor:global-near-linear-new} concerns a
+family in which $W$ grows at least linearly with the horizon, with a
+sufficiently large problem-dependent constant and the corollary's other
+assumptions.  This study evaluates the stated fixed values of $W$ at a single
+horizon.  It does not test that asymptotic scaling, and the numerical values
+alone do not establish a violation of a theorem assumption.
+
 \paragraph{What differs between the policies?}
 All policies use the corrected center and confidence radius from
 \Cref{cor:corrected-center-new}.  They differ in how they turn a width into an
 exploration bonus.  \emph{Hessian} inflates the current width using the analytic
-path certificate $\bar D_t^Q$.  \emph{Endpoint} replaces that path certificate
-with the dense endpoint Thompson distance.  \emph{Frozen reference} uses the
+path certificate $\bar D_t^Q$.  It uses a bound on how prediction gradients
+vary to control an auxiliary path joining the reference and current matrices.
+This comparison path is not the optimizer's training path.  \emph{Endpoint}
+replaces that path certificate with the dense endpoint Thompson distance:
+it compares the reference and current matrices directly, without accumulating
+changes along the auxiliary path.  \emph{Frozen reference} uses the
 reference width directly.  \emph{Naive current} uses the current width without
 transport and serves as an uncertified control.  All four policies update
 their representations: ``frozen'' describes the metric's collection-time
@@ -84,6 +95,13 @@ right-hand sides relative to the cap.  The frozen policy's mean bounds are
 much smaller than Hessian's, but neither provides a useful regret upper bound
 in this study.
 
+At $W=16,1,0.25$, the base-ten logarithms of
+Hessian's mean terminal RHS divided by the cap are approximately 9.51, 37.19,
+and 80.91.  The frozen policy's corresponding mean ratios, without taking
+logarithms, are approximately 19, 60, and 231.  Each mean uses the named
+policy's own 50 histories.  These summarize mean bound magnitudes; the
+statement that every individual bound exceeds its cap is a separate check.
+
 The largest contribution to the Hessian bounds is path inflation, the extra
 charge introduced by the path certificate, in all three conditions.  This
 explains their scale within the bound calculation, but
@@ -131,7 +149,7 @@ converged quadrature are numerical diagnostics; they do not verify the
 theorem's assumptions through rigorous numerical enclosures.
 
 There is measurable movement between the reference and current matrices.
-The primary policy reaches endpoint distances above one in 16 of 50 seeds at
+The Hessian policy reaches endpoint distances above one in 16 of 50 seeds at
 $W=0.25$, including 286 of 50,000 seed--round observations
 (\Cref{tab:transport-followup-drift-bounds}).  These round counts describe
 dependent observations, not additional independent replications.  The target
@@ -186,15 +204,22 @@ took that action.
 \paragraph{How tight are the endpoint certificates on recorded states?}
 The relative-weight construction in \Cref{cor:tanh-relative-weights} permits
 uniform and category-specific endpoint comparisons without using the Hessian
-path envelope.  After observing the outcomes, we audit these comparisons on
+path envelope.  A feature category groups observations with the same fixed
+context--action feature vector.  In this model, parameter updates change the
+scalar gradient coefficient in that feature direction.  The category
+construction compares the accumulated squared coefficients at collection
+time with those obtained at the current parameter.
+
+After observing the outcomes, we audit these comparisons on
 the same 600 recorded histories, replaying representation updates with the
-recorded actions and rewards.  On primary histories, the category-specific
+recorded actions and rewards.  On Hessian's histories, the category-specific
 outward factor gives mean
 effective-width overheads of $0.28\%$--$12.68\%$ relative to the direct reference
 width, versus $0.16\%$--$12.13\%$ for the dense endpoint factor across conditions
 (\Cref{app:transport-followup}).  These are means of actionwise ratios, not
-ratios of mean widths: each effective width is compared with its reference
-width before averaging.
+ratios of mean widths: for each candidate action at each recorded state, we
+divide its effective width by its reference width, then average over actions,
+rounds, and seeds.
 
 This calculation shows the size of the certificate overhead on existing
 states.  It evaluates neither a new adaptive policy nor end-to-end speed.

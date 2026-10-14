@@ -82,11 +82,13 @@ are added. In a contextual bandit, we ask when recomputing past gradients at
 the current model preserves the confidence guarantee used to choose actions.
 We give a conditional upper confidence bound (UCB) theorem that starts from
 features fixed before each reward and accounts for changing the uncertainty
-matrix, approximating it, and computing its widths. For squared loss, a
-correction based on those stored features supplies a confidence center without
-assuming that the nonlinear optimizer converges. This requires predictable
-parameter paths in a certified region and explicit Taylor and misspecification
-error bounds. The conversion has a basic limit: with the same history, center,
+matrix, approximating it, and computing its widths. A width gives the geometric
+scale of the uncertainty bonus. For squared loss, a correction based on stored
+features adjusts the prediction at the center of the confidence band. The
+resulting confidence guarantee does not require the nonlinear optimizer to
+converge. It does require predictable parameter paths in a certified region,
+together with explicit Taylor and misspecification error bounds.
+The conversion has a basic limit: with the same history, center,
 radius and bias, its certified width cannot be smaller than the direct
 reference width. Exact actionwise transport recovers that width; the result
 leaves the regret ordering of policies with different histories open.
@@ -94,7 +96,8 @@ A prespecified study tests four policies in three conditions using a
 29-parameter scaled-tanh model and 50 paired seeds per condition.
 Hessian transport, which bounds matrix changes using prediction Hessians, has
 higher mean pseudo-regret than every comparator in each condition; all nine
-pointwise paired confidence intervals for regret differences exclude zero. Transport inflation dominates its regret bounds, which give no
+pointwise paired confidence intervals for regret differences exclude zero.
+Transport inflation dominates its regret bounds, which give no
 improvement over a deterministic regret cap. The reference policy's own bounds
 are also vacuous. All policies, including an uncertified control, pass the
 recorded floating-point confidence and optimism checks. The study illustrates
