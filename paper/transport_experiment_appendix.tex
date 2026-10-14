@@ -1,11 +1,13 @@
-\section{Additional transport-instantiation diagnostics}
+\section{Additional original-study diagnostics}
 \label{app:transport-instantiation}
 
-This appendix expands the locked full aggregate summarized in
+This appendix expands the original locked full aggregate summarized in
 \Cref{sec:transport-instantiation}.  The experiment protocol, configuration,
 selection record, aggregate, and every generated artifact carry provenance and
 SHA-256 hashes.  The figures use only the 50 evaluation seeds.  Smoke and tuning
-results are absent.
+results are absent.  The original raw trajectories were unavailable for this
+revision; recorded hashes bind the retained artifacts but do not replace those
+missing inputs or establish an independent raw-data reproduction.
 
 \paragraph{Meaning of the cumulative bound decomposition.}
 For a transport-Hessian trajectory, write
@@ -37,7 +39,7 @@ These joint cumulative quantities establish the decomposition;
 marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
 
 \begin{ccewidefloatappendix}
-  \caption{Certificate and bound tightness for the transport-Hessian policy.
+  \caption{Original-study certificate and bound tightness for the transport-Hessian policy.
   The reported summary statistics are medians over the following populations.
   Terminal historical-radius and cumulative current-bias entries, and terminal
   width/bound ratios summarize 50 runs per cell.  Path ratios pool eligible
@@ -67,7 +69,7 @@ marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
 \begin{figure}[p]
   \centering
   \input{figures/transport_instantiation_regret.tex}
-  \caption{Mean cumulative pseudo-regret at $T=1000$.  Shaded bands are
+  \caption{Original-study mean cumulative pseudo-regret at $T=1000$.  Shaded bands are
   pointwise paired-bootstrap 95\% intervals over the 50 evaluation seeds, not
   simultaneous confidence bands.  All four methods are plotted; curves can
   coincide where their selected actions agree.}
@@ -78,7 +80,7 @@ marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
 \begin{figure}[p]
   \centering
   \input{figures/transport_instantiation_tightness.tex}
-  \caption{Path-certificate conservatism on log--log axes.  Blue circles bin
+  \caption{Original-study path-certificate conservatism on log--log axes.  Blue circles bin
   the per-round Hessian/$Q_t$ certificate $\bar D_t^Q$ against endpoint
   Thompson distance.  Orange triangles bin the numerical selected factor-path
   length at preregistered checkpoints.  Each target panel pools eligible
@@ -97,9 +99,9 @@ marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
 \begin{figure}[p]
   \centering
   \input{figures/transport_instantiation_bound.tex}
-  \caption{Per-round mean cumulative decomposition over 50 transport-Hessian
-  trajectories at $T=1000$.  The base confidence component, which includes the
-  regularization/norm-bound term, dominates; historical linearization, path
+  \caption{Original-study per-round mean cumulative decomposition over 50 transport-Hessian
+  trajectories at $T=1000$.  On this near-linear grid, the base confidence component,
+  which includes the regularization/norm-bound term, dominates; historical linearization, path
   inflation, and current bias are shown separately.  The red sharp right-hand
   side remains far above realized regret in every target condition.}
   \label{fig:transport-instantiation-bound}

@@ -126,6 +126,19 @@ SUPPLEMENT_GENERATED_ARTIFACTS = (
       for panel in _PANELS),
 )
 
+# Active follow-up outputs use a separate generator and one collective
+# provenance record. They must never be mistaken for excluded legacy evidence.
+# Classification is not a claim that their expanded anonymous evidence closure
+# is ready: followup_supplement_preflight rejects the incomplete release below.
+SUPPLEMENT_FOLLOWUP_ARTIFACTS = (
+    "paper/tables/transport_followup_drift_bounds.tex",
+    "paper/tables/transport_followup_mechanism_variation.tex",
+    "paper/tables/transport_followup_outcomes.tex",
+    "paper/tables/transport_followup_relative_audit.tex",
+    "paper/tables/transport_followup_same_history.tex",
+    "paper/tables/transport_followup_provenance.json",
+)
+
 # The active transport manuscript has no standalone symbolic-rate table.
 SUPPLEMENT_SYMBOLIC_ARTIFACTS: tuple[str, ...] = ()
 
@@ -166,6 +179,7 @@ def supplement_artifact_inventory(repo: Path) -> list[str]:
 
     shipped = _with_companions(
         repo, list(SUPPLEMENT_GENERATED_ARTIFACTS)
+        + list(SUPPLEMENT_FOLLOWUP_ARTIFACTS)
         + list(SUPPLEMENT_SYMBOLIC_ARTIFACTS))
     excluded = _with_companions(repo, list(SUPPLEMENT_EXCLUDED_LEGACY))
 
@@ -3373,6 +3387,7 @@ def vendored_package_member(source: Path, arcname: str) -> bool:
 
 
 def supplement_entries(repo: Path) -> list[tuple[Path, str]]:
+    """Proposed members; the CLI separately rejects an incomplete evidence set."""
     entries: list[tuple[Path, str]] = []
 
     def add(source: Path, arcname: str) -> None:
@@ -3403,6 +3418,45 @@ def supplement_entries(repo: Path) -> list[tuple[Path, str]]:
     add(repo / "submissions/tmlr_2026/supplement_README.md", "README.md")
     add(repo / "submissions/tmlr_2026/supplement_verify.sh", "verify.sh")
     return entries
+
+
+def followup_supplement_preflight(repo: Path) -> list[str]:
+    """Reject an incomplete anonymous follow-up supplement before building.
+
+    The revised manuscript's number checker requires original, independently
+    pinned follow-up inputs. Classifying its rendered tables alone does not
+    supply those inputs, their generators, or a reviewed identity transform.
+    Do not relax that checker or silently omit active evidence to make an old
+    supplement inventory look complete. Repository/diagnostic checks remain
+    usable while the expanded anonymous package is being prepared.
+    """
+
+    from verify_tmlr_submission_numbers import FOLLOWUP_SOURCE_HASHES
+
+    try:
+        members = {arc for _, arc in supplement_entries(repo)}
+    except (OSError, RuntimeError) as error:
+        return [f"follow-up supplement inventory cannot be derived: {error}"]
+    required = {str(path) for path in FOLLOWUP_SOURCE_HASHES}
+    missing = sorted(required - members)
+    findings = []
+    if missing:
+        findings.append(
+            "expanded follow-up evidence support is pending; required pinned "
+            "inputs/tools are absent from the proposed supplement: "
+            + ", ".join(missing))
+    # The existing reviewer entry point checks every evidence artifact against
+    # a sidecar or a code-pinned provenance record. The new collective record
+    # is not an exemption from that gate, and no fabricated sidecar is added.
+    uncovered = [path for path in SUPPLEMENT_FOLLOWUP_ARTIFACTS
+                 if path not in contract.PROVENANCE_PINS
+                 and f"{path}.sha256" not in members]
+    if uncovered:
+        findings.append(
+            "follow-up artifact verification/anonymous provenance support is "
+            "pending; no supported sidecar or pinned provenance record for: "
+            + ", ".join(uncovered))
+    return findings
 
 
 # --------------------------------------------------------------------------
@@ -3483,6 +3537,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             print("  " + finding, file=sys.stderr)
         return 6
     print("layout preflight (diagnostic, not the authority): clean")
+
+    followup = followup_supplement_preflight(repo)
+    if followup:
+        print("\nFOLLOW-UP ANONYMOUS SUPPLEMENT IS INCOMPLETE:", file=sys.stderr)
+        for finding in followup:
+            print("  " + finding, file=sys.stderr)
+        print("  No submission deliverable has been staged or published. "
+              "Keep the original evidence hashes and complete the reviewed "
+              "anonymous evidence handling before release.", file=sys.stderr)
+        return 14
 
     src, staged_sources = stage(repo, out)
     print(f"staged {len(list(src.rglob('*')))} paths into {src}")

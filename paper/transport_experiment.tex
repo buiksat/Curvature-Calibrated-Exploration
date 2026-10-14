@@ -1,7 +1,11 @@
-\section{A controlled instantiation of transported confidence}
+\section{Original near-linear audit of transported confidence}
 \label{sec:transport-instantiation}
 
-The experiment asks four questions about one controlled instantiation.  Do the
+This section retains the original locked study separately from the new
+nonlinear-regime follow-up.  Its raw trajectories were unavailable for this
+revision: the results below are supported by the committed aggregate and
+generated artifacts, rather than a fresh replay of those trajectories.
+The original experiment asks four questions about one controlled instantiation.  Do the
 declared algebra and confidence diagnostics pass?  How conservative is the
 analytic path certificate relative to endpoint and quadrature diagnostics?  Is
 the resulting regret bound informative relative to realized regret and the
@@ -37,7 +41,9 @@ distance computed from the learner-known matrices $\bVbar_t$ and $\bV_t$ before
 the reward is observed; it is a dense diagnostic comparator.  The \emph{frozen
 reference} policy uses the frozen width directly.  The \emph{naive current}
 policy omits transport and is intentionally uncertified.  Each policy has its
-own selected history and representation path.  Ten disjoint tuning seeds
+own selected history and representation path; the frozen-reference policy also
+updates its representation.  ``Frozen'' refers to its collection-time metric.
+Ten disjoint tuning seeds
 selected learning rate $3\times10^{-4}$ and 20 full-batch steps followed by
 projection each round by preregistered all-action prediction MSE; evaluation
 seeds never entered that selection.
@@ -64,7 +70,7 @@ float64 Cholesky, eigenvalue, and quadrature checks are not verified
 enclosures.
 
 \begin{ccewidefloat}
-  \caption{Locked theorem-instantiation audit for the transport-Hessian policy.
+  \caption{Original near-linear audit for the transport-Hessian policy.
   Coverage is run-level simultaneous coverage with exact Clopper--Pearson
   intervals.  The two median-maximum columns first maximize within each
   trajectory, then take the median over 50 runs per cell.  ``Event viol.'' counts
@@ -106,7 +112,7 @@ $T=1000$ cell and ranges from $1.02$ to $1.18$ across the four target cells at
 that horizon; it is not a terminal or run-maximum summary.
 
 \paragraph{Bound nonvacuity.}
-The cumulative guarantee is vacuous in every reported cell.  The median of the
+The cumulative guarantee is vacuous in every original-study cell.  The median of the
 per-trajectory terminal sharp-RHS/regret ratios is $126.7$--$155.7$ over the
 full grid and $126.7$--$135.0$ at $T=1000$.  No run has zero regret.
 Since $|\mu^*(z)|\le\|\phi(z)\|\|\btheta^\circ\|\le1$, cumulative
@@ -127,7 +133,8 @@ $9{,}948$--$10{,}010$, already above the cap $2{,}000$.  It includes the
 statistical and regularization/norm-bound terms together with the
 determinant-potential and Cauchy--Schwarz factors; its size cannot be
 attributed to the confidence radius alone.  Thus most of the bound's size
-on this grid is present before path inflation is added.  This is a
+on this original near-linear grid is present before path inflation is added.
+This dominance statement does not describe the nonlinear follow-up.  This is a
 decomposition along transport-Hessian histories, not a bound evaluated on
 the frozen-reference policy's different histories.  The appendix defines
 the components and reports the complete tightness table.
@@ -151,7 +158,7 @@ advantage for full curvature, and the reverse ordering they record is specific
 to this environment, this certificate, and this horizon.
 
 \begin{ccewidefloat}
-  \caption{Policy outcomes at the primary horizon $T=1000$.  Mean-regret and
+  \caption{Original-study policy outcomes at the primary horizon $T=1000$.  Mean-regret and
   paired-difference intervals are comparisonwise deterministic paired-bootstrap
   95\% intervals over the same 50 evaluation seeds.  Each difference is the row
   method minus transport Hessian, so negative values favor the row method.

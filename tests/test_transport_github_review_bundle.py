@@ -653,11 +653,11 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
 
     experiment = scratch / "paper/transport_experiment.tex"
     text = experiment.read_text(encoding="utf-8")
-    assert "The cumulative guarantee is vacuous in every reported cell" in text
+    assert "The cumulative guarantee is vacuous in every original-study cell" in text
     experiment.write_text(
         text.replace(
-            "The cumulative guarantee is vacuous in every reported cell",
-            "The cumulative guarantee is informative in every reported cell",
+            "The cumulative guarantee is vacuous in every original-study cell",
+            "The cumulative guarantee is informative in every original-study cell",
         ),
         encoding="utf-8",
     )
@@ -669,26 +669,26 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
 @pytest.mark.parametrize("relative,before,after,required_check", [
     (
         "submissions/tmlr_2026/main.tex",
-        "analytic path certificate exceeds the endpoint distance",
-        "analytic path certificate matches the endpoint distance",
+        "vacuous and dominated by path inflation",
+        "vacuous and independent of path inflation",
         "abstract keeps the conservative-certificate finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "every reported numerical regret bound exceeds the deterministic",
-        "every reported numerical regret bound improves on the deterministic",
+        "reference policy's own bounds are also vacuous",
+        "reference policy's own bounds are informative",
         "abstract keeps the vacuous-bound finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "These findings separate certificate validity from bound",
-        "These findings equate certificate validity with bound",
+        "Exploratory log analyses distinguish conditional validity",
+        "Exploratory log analyses equate conditional validity",
         "abstract separates certificate validity from usefulness",
     ),
     (
         "paper/body_conclusion.tex",
-        "Comparable worst-case guarantees do not order the",
-        "Comparable worst-case guarantees order the",
+        "nor orders the realized regret of",
+        "and orders the realized regret of",
         "conclusion refuses a uniform curvature ordering",
     ),
 ])
@@ -713,15 +713,18 @@ def test_introducing_an_overclaim_is_detected(tmp_path):
     verifier.check_manuscript(clean, scratch)
     assert clean.failures == [], [c["check"] for c in clean.failures]
 
-    experiment = scratch / "paper/transport_experiment.tex"
-    experiment.write_text(
-        experiment.read_text(encoding="utf-8")
-        + "\nThe transport policy outperforms every comparison policy.\n",
-        encoding="utf-8",
-    )
-    damaged = verifier.Report()
-    verifier.check_manuscript(damaged, scratch)
-    assert any("prohibited overclaim" in c["check"] for c in damaged.failures)
+    for relative in ("paper/transport_experiment.tex", "paper/transport_followup.tex"):
+        experiment = scratch / relative
+        text = experiment.read_text(encoding="utf-8")
+        experiment.write_text(
+            text + "\nThe transport policy outperforms every comparison policy.\n",
+            encoding="utf-8",
+        )
+        damaged = verifier.Report()
+        verifier.check_manuscript(damaged, scratch)
+        assert any(relative in c["check"] and "prohibited overclaim" in c["check"]
+                   for c in damaged.failures)
+        experiment.write_text(text, encoding="utf-8")
 
 
 def test_deanonymizing_style_option_is_detected(tmp_path):

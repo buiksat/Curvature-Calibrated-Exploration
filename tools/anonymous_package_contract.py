@@ -151,32 +151,36 @@ PROVENANCE_PINS: dict[str, dict[str, object]] = {
 #: `ships_in` is the field that stopped `main.bbl` being described wrongly.  Its
 #: bytes are in neither archive -- bibtex writes it during the build -- so the
 #: only thing a reviewer can check it against is the digest pinned right here.
+# Refreshed from an actual diagnostic recorder trace of the revised manuscript.
+# This pins project-local inputs only. The diagnostic TeX tree is user-writable;
+# strict external-input certification and the expanded anonymous evidence
+# package remain required and are not authorized by these expected bytes.
 COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     'availability.tex': {
         "repository": 'paper/availability.tex',
-        "sha256": '979303e00decffea2c85ad06f017abef1a19a69971eb136a939c296817148114',
-        "bytes": 3232,
+        "sha256": '0c4f42007653fd495ff070eb646cef4ba86c0faf2c6edeb75e0a1764b0cdeb12',
+        "bytes": 2688,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_conclusion.tex': {
         "repository": 'paper/body_conclusion.tex',
-        "sha256": 'ab396c99178150f3193f322ce799708dd441cbac2cabbee24aee1d5186424211',
-        "bytes": 4564,
+        "sha256": '66c46e55059e577ff9c7b0a4c85cac1716a377e70a205a8658b3b90a20ff9f36',
+        "bytes": 4297,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_intro.tex': {
         "repository": 'paper/body_intro.tex',
-        "sha256": '54b293311c2bc3a49a8d6dd22e43b74799b957d9fa0f82ed05a5fcaffbccb2d3',
-        "bytes": 6628,
+        "sha256": '2571136310853317ac71e97c3807fed11fff43fb2ee3343c3b893e423bdf09d9',
+        "bytes": 8539,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_related.tex': {
         "repository": 'paper/body_related.tex',
-        "sha256": '2b0975717830e66152a21d49ad10e873b52e55e54d6aa4efd39f6a3d8240ff30',
-        "bytes": 8980,
+        "sha256": 'fa5b061ac73bf7f2528bd46cf24f6e5c41ca16f4c9b4fc4ac7bad68fd923108a',
+        "bytes": 9366,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -322,15 +326,15 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'main.bbl': {
         "repository": None,
-        "sha256": 'ff0f5f07152711e96048b6877fc1dd0ea96d6f50ab92423b08a1fe6c30635284',
-        "bytes": 9909,
+        "sha256": '1bbce20259b3899c10c4362274ee17636d7ee1d9056c59873bf3d8423d734c78',
+        "bytes": 9668,
         "role": 'bibliography-output',
         "ships_in": 'neither',
     },
     'main.tex': {
         "repository": 'submissions/tmlr_2026/main.tex',
-        "sha256": '4e924c8019e8faf162bffc53ca95c4b8a6123d5ec46789fef3bef5127f0cd3fe',
-        "bytes": 5580,
+        "sha256": '4d8f9ed8d49c0737c63c772e414bea49a81bd26090b536fdcd1ed1c42e9719e2',
+        "bytes": 5689,
         "role": 'entry-point',
         "ships_in": 'supplement',
     },
@@ -621,6 +625,41 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
         "role": 'vendored-package',
         "ships_in": 'source',
     },
+    'tables/transport_followup_drift_bounds.tex': {
+        "repository": 'paper/tables/transport_followup_drift_bounds.tex',
+        "sha256": '200a6439a6c1c1bbc97ca8699fa50ac38927d719dfcc2cffb8c4b53b014379e7',
+        "bytes": 1884,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
+    'tables/transport_followup_mechanism_variation.tex': {
+        "repository": 'paper/tables/transport_followup_mechanism_variation.tex',
+        "sha256": 'b974fb4a44850eb71da11b38cdf49394161470f67906c63b3e4f77142e6aded0',
+        "bytes": 2402,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
+    'tables/transport_followup_outcomes.tex': {
+        "repository": 'paper/tables/transport_followup_outcomes.tex',
+        "sha256": 'cfd881e5c37a209d27587dbb816818279ed89d3dc2791bd185664a779c6f33a8',
+        "bytes": 2219,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
+    'tables/transport_followup_relative_audit.tex': {
+        "repository": 'paper/tables/transport_followup_relative_audit.tex',
+        "sha256": 'd7fc33fa11bf3ac5ee9a534cdd638aa58a18171eb069dacf32d0d30add4ecade',
+        "bytes": 2035,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
+    'tables/transport_followup_same_history.tex': {
+        "repository": 'paper/tables/transport_followup_same_history.tex',
+        "sha256": 'b738ac1932ba01871017042f98d7d8f3357adeeb1bdd9d6af4a50756fabd9f5c',
+        "bytes": 2471,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
     'tables/transport_instantiation_performance.tex': {
         "repository": 'paper/tables/transport_instantiation_performance.tex',
         "sha256": '5b2ea6000bfc123d9f52b38f37ddbb5aafb7eeb55139c8876a29d33879ee13ad',
@@ -686,29 +725,43 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'transport_experiment.tex': {
         "repository": 'paper/transport_experiment.tex',
-        "sha256": 'c1e6ba6e2e7b50da76c41973494cb50bf00709f32ca865864c8eb50ca82719e9',
-        "bytes": 9957,
+        "sha256": '9cfe71dbd8a549eb46a5ababc9dea37747c1c7d1cb575532388558d1dc88ada7',
+        "bytes": 10469,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'transport_experiment_appendix.tex': {
         "repository": 'paper/transport_experiment_appendix.tex',
-        "sha256": '416f1299f3dec230084f79a8a6e71ab9ca52dd8616854f2ed24f3b78310dc92d',
-        "bytes": 5022,
+        "sha256": '202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d',
+        "bytes": 5310,
+        "role": 'manuscript-source',
+        "ships_in": 'supplement',
+    },
+    'transport_followup.tex': {
+        "repository": 'paper/transport_followup.tex',
+        "sha256": '5c4dc470d197f7cef1193baad70653b62b6cd0f99c11b333ecbfc7967f5b6c22',
+        "bytes": 7931,
+        "role": 'manuscript-source',
+        "ships_in": 'supplement',
+    },
+    'transport_followup_appendix.tex': {
+        "repository": 'paper/transport_followup_appendix.tex',
+        "sha256": '2a2aad47a93653a5b6e409d392849f249b2ab7dca36ead6c0e0c07ee2896ed87',
+        "bytes": 10814,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'transport_proofs.tex': {
         "repository": 'paper/transport_proofs.tex',
-        "sha256": 'acd4eb2f3d144f05e7a987db97e62007ccd87f5962e8e90a8a386a4929d54c26',
-        "bytes": 17945,
+        "sha256": 'c0c25bda20826f710433a3c73f9c44688257ece63118d89b181ad3ebb0958095',
+        "bytes": 23888,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'transport_theory.tex': {
         "repository": 'paper/transport_theory.tex',
-        "sha256": '491c3abfe700aaed72fdef5578afe2f1ab933650663ebf480a85575ee72bbf3d',
-        "bytes": 31967,
+        "sha256": '337942ba663a315b66b71fa43d26971267185ca51acb7ad6d8f46174997cd46c',
+        "bytes": 37473,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -738,7 +791,7 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
 #: release manifest, which never ships.
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {
     "tools/numeric_context_pins.py":
-        "987da8c5ad122e6f870d45f67215cbbd89464e9a842fe0e383ab3cd36dabe674",
+        "9b14bb6b1397039572c37924828b49f17efed8693a76c8a38be7a4c08644e9b1",
 }
 
 #: Every field a declaration record must carry, and nothing else may be missing.

@@ -18,6 +18,10 @@ The distinction this tool refuses to blur:
 per-seed values that the committed aggregate does not carry, the check is
 reported `NOT EXECUTED` with the reason, and no synthetic data is invented.
 
+Numerical recomputation here concerns the original near-linear study. Current
+manuscript checks keep that study separate from the follow-up and preserve their
+scientific qualifications; they do not independently reproduce follow-up data.
+
 The existing full validator is untouched.  Exit status is nonzero on any FAIL.
 """
 
@@ -838,8 +842,20 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "no uniform curvature advantage",
         ),
         (
-            "The cumulative guarantee is vacuous in every reported cell",
+            "The cumulative guarantee is vacuous in every original-study cell",
             "empirical vacuity",
+        ),
+        (
+            "Its raw trajectories were unavailable for this revision",
+            "original raw trajectories remain unavailable",
+        ),
+        (
+            "This dominance statement does not describe the nonlinear follow-up",
+            "original base dominance is not generalized to the follow-up",
+        ),
+        (
+            "the analytic certificate is conservative by five to six orders of magnitude on this grid",
+            "original conservative-certificate finding retains its study scope",
         ),
         ("nor generic network width", "no generic network-width claim"),
         (
@@ -861,6 +877,70 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
         ),
         ("$10^{-12}$ ratio tolerance", "preregistered ratio tolerance"),
     ),
+    "paper/transport_followup.tex": (
+        (
+            "600 policy trajectories; a separate 294 development and tuning trajectories",
+            "follow-up separates evaluation from development and tuning",
+        ),
+        (
+            "its evidence is not pooled with this study",
+            "follow-up does not pool original-study evidence",
+        ),
+        (
+            "Hessian transport has higher mean cumulative pseudo-regret than every comparator in every condition",
+            "follow-up keeps the adverse regret comparison",
+        ),
+        (
+            "These are pointwise intervals from 10,000 paired seed-bootstrap resamples per comparison, without multiplicity adjustment",
+            "follow-up intervals remain pointwise and unadjusted",
+        ),
+        (
+            "They establish neither a universal policy ordering nor a causal attribution to the certificate alone",
+            "follow-up refuses universal regret ordering or causal attribution",
+        ),
+        (
+            "cross-condition trends do not isolate a causal effect of metric drift",
+            "follow-up changes reward tasks across W",
+        ),
+        (
+            "All 600 evaluation trajectories, including naive current, pass the recorded",
+            "follow-up optimism includes the uncertified control",
+        ),
+        (
+            "This observation does not establish population coverage, validate the theorem, or show that transport is necessary",
+            "follow-up diagnostics do not prove validity or necessity",
+        ),
+        (
+            "The primary bounds are dominated by path inflation in all three conditions",
+            "follow-up keeps path-certificate conservatism",
+        ),
+        (
+            "Every primary-policy bound exceeds the deterministic regret cap",
+            "follow-up keeps primary bound vacuity",
+        ),
+        (
+            "The frozen policy's own reference-geometry bounds also exceed these caps in all 150 of its trajectories",
+            "follow-up keeps frozen own-history bound vacuity",
+        ),
+        (
+            "After observing these outcomes, we independently recomputed score diagnostics",
+            "mechanism analysis remains post-outcome exploratory",
+        ),
+        (
+            "it does not evaluate a new adaptive policy or demonstrate an end-to-end computational advantage",
+            "relative-certificate audit does not establish adaptive performance or speedup",
+        ),
+    ),
+    "paper/transport_followup_appendix.tex": (
+        (
+            "They are not cumulative regret for an alternative adaptive policy",
+            "same-history recommendations are not alternative adaptive runs",
+        ),
+        (
+            "without converting floating-point residuals into verified certificates",
+            "relative audit is not verified numerical certification",
+        ),
+    ),
     "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md": (
         ("2,400/2,400 trajectories", "full grid complete"),
         ("Deterministic audit failures: 0", "zero deterministic failures"),
@@ -871,44 +951,56 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
         ),
         ("63 pages, 933,908 bytes", "PDF page count and size"),
     ),
-    # The TMLR submission entry point.  These are submission-compliance
-    # invariants, not restatements of the study's numbers.
+    # Submission compliance and the current abstract's scientific scope. The
+    # follow-up now leads the abstract; original-study findings remain guarded
+    # in their own sources rather than being relabeled as follow-up findings.
     "submissions/tmlr_2026/main.tex": (
         ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
-        ("600 transport-Hessian runs", "abstract states the run count"),
         (
-            "the analytic path certificate exceeds the endpoint distance by five to six orders\n"
-            "of magnitude",
+            "four policies across three conditions with 50 paired seeds per condition",
+            "abstract states the follow-up evaluation grid",
+        ),
+        (
+            "Its regret bounds are vacuous and dominated by path inflation",
             "abstract keeps the conservative-certificate finding",
         ),
         (
-            "every reported numerical regret bound exceeds the deterministic\ncap",
+            "reference policy's own bounds are also vacuous",
             "abstract keeps the vacuous-bound finding",
         ),
         (
-            "all three comparison policies attain lower sample-mean pseudo-regret",
+            "Hessian-transport policy has higher mean pseudo-regret than every comparator in every condition",
             "abstract keeps the adverse regret comparison",
         ),
         (
-            "These findings separate certificate validity from bound\n"
-            "tightness and policy performance; they establish no uniform regret ordering or\n"
-            "practical curvature advantage",
+            "Exploratory log analyses distinguish conditional validity, certificate usefulness, and observed policy behavior in this implementation",
             "abstract separates certificate validity from usefulness",
+        ),
+        (
+            "This comparison does not order the realized regret of policies with different histories",
+            "abstract refuses adaptive regret ordering from same-history widths",
+        ),
+        (
+            "all nine pointwise paired confidence intervals exclude zero",
+            "abstract keeps pointwise paired uncertainty",
         ),
     ),
     "paper/body_conclusion.tex": (
         (
-            "every reported theorem\nbound was vacuous relative to the deterministic cap",
+            "The frozen policy's own bounds remain vacuous",
             "conclusion keeps the vacuous-bound finding",
         ),
         (
-            "the three comparison\npolicies had lower sample mean regret at the primary horizon",
+            "All nine pointwise paired regret comparisons favor its comparators",
             "conclusion keeps the adverse regret comparison",
         ),
         (
-            "Comparable worst-case guarantees do not order the\n"
-            "realized regret of policies that generate different trajectories",
+            "it neither rules out stronger confidence information nor orders the realized regret of different policies",
             "conclusion refuses a uniform curvature ordering",
+        ),
+        (
+            "The primary bound is dominated by path inflation in this study",
+            "conclusion keeps follow-up certificate conservatism",
         ),
     ),
 }
@@ -938,6 +1030,8 @@ PROHIBITED_SCOPE: Sequence[str] = (
     "paper/body_conclusion.tex",
     "paper/transport_experiment.tex",
     "paper/transport_experiment_appendix.tex",
+    "paper/transport_followup.tex",
+    "paper/transport_followup_appendix.tex",
     "paper/transport_theory.tex",
     "paper/availability.tex",
 )

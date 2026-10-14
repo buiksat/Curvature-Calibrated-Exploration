@@ -1,0 +1,64 @@
+{
+  "inputs": [
+    {
+      "path": "review/post_full_fable/independent/analysis.json",
+      "sha256": "914013bf6436e82a50865d5ce3570b4195e7cdc2e4f25b436eb5b28a9b99ece3"
+    },
+    {
+      "path": "review/transport_relative_diagnostics/full/analysis.json",
+      "sha256": "fd67cdc031c02876ed1e18ea0444a35348b4cb80bdd261b3fd3d75e6e920b29e"
+    },
+    {
+      "path": "review/transport_relative_diagnostics/full/per_seed.jsonl",
+      "sha256": "9d7939364bfd7737df5daaf80d43c0673828505466ede181fe31f42fe2f98bea"
+    },
+    {
+      "path": "review/transport_review_followup/full-cce-full-local/aggregate_compact.json",
+      "sha256": "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658"
+    },
+    {
+      "path": "review/transport_review_followup/full-cce-full-local/drift_and_reference_diagnostics.json",
+      "sha256": "fb3293daacba3511ca5f3269d67e9aa0f0aca2708ad9876661ca062e197a59a4"
+    },
+    {
+      "path": "review/transport_review_followup/full-cce-full-local/round_drift_summaries.jsonl",
+      "sha256": "9b6bda78c88074e46e1ff3c4253b9623bb95f467f068b6339bee9d83e4e4fce1"
+    },
+    {
+      "path": "review/transport_review_followup/full-cce-full-local/seed_summaries.jsonl",
+      "sha256": "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60"
+    },
+    {
+      "path": "review/transport_review_followup/full-cce-full-local/terminal_bound_decomposition.json",
+      "sha256": "b1a6e9c5d8cfe70d3c3e3bb7cbd818502c21bb3b2f276426702cb016db323ecc"
+    },
+    {
+      "path": "tools/make_transport_followup_paper.py",
+      "sha256": "e8e0c87f16e2bf9252b27d022a473a114c33d395cc20303d156013568e9dc836"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "paper/tables/transport_followup_drift_bounds.tex",
+      "sha256": "200a6439a6c1c1bbc97ca8699fa50ac38927d719dfcc2cffb8c4b53b014379e7"
+    },
+    {
+      "path": "paper/tables/transport_followup_mechanism_variation.tex",
+      "sha256": "b974fb4a44850eb71da11b38cdf49394161470f67906c63b3e4f77142e6aded0"
+    },
+    {
+      "path": "paper/tables/transport_followup_outcomes.tex",
+      "sha256": "cfd881e5c37a209d27587dbb816818279ed89d3dc2791bd185664a779c6f33a8"
+    },
+    {
+      "path": "paper/tables/transport_followup_relative_audit.tex",
+      "sha256": "d7fc33fa11bf3ac5ee9a534cdd638aa58a18171eb069dacf32d0d30add4ecade"
+    },
+    {
+      "path": "paper/tables/transport_followup_same_history.tex",
+      "sha256": "b738ac1932ba01871017042f98d7d8f3357adeeb1bdd9d6af4a50756fabd9f5c"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Prespecified full-study tables and separately labeled exploratory same-history diagnostics."
+}

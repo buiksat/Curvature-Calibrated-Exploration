@@ -1,11 +1,5 @@
 %% body_intro.tex
-%% Shared manuscript source, extracted verbatim from the historical
-%% entry point paper/main.tex (lines 113-199) so that it and the TMLR
-%% entry point submissions/tmlr_2026/main.tex read one copy of this
-%% material instead of two. Content is unchanged by the extraction
-%% itself. The revision the lines refer to is recorded in
-%% paper/EXPOSITION_REVISION.md, which is not part of any submission
-%% upload.
+%% Shared scientific source for the research and TMLR entry points.
 \section{Introduction}\label{sec:intro}
 
 At each round, a contextual-bandit policy predicts the reward of every available
@@ -29,6 +23,17 @@ Laplace approximations provide related predictive-uncertainty tools
 \citep{maddox2021fast,daxberger2021laplace}, but they do not answer the online
 question studied here: when can confidence built from collection-time features
 justify scores computed with current replayed curvature?
+
+Validity alone does not explain why a policy should use that curvature.
+Transporting an existing confidence bound does not add statistical information:
+on a fixed history, the construction below produces an upper width at least as
+large as the direct reference width.  A loose certificate can therefore preserve
+optimism while making the bonus dominate reward predictions.  We study both the
+conditional guarantee and this operational limitation.  A completed controlled
+study motivates the distinction: the evaluated Hessian-transport policy has
+higher mean regret than each comparator in every follow-up condition, although
+all policies, including an uncertified control, pass the recorded optimism
+diagnostics.
 
 Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
 sequential statistical confidence.  The exact current metric $\bV_t$ replays
@@ -76,7 +81,7 @@ here.  Nor does a matrix-free solve make total policy memory $O(d)$, because the
 corrected center still needs frozen-feature access or a separately certified
 representation.
 
-\paragraph{What we establish.}
+\paragraph{Guarantee and scope.}
 The transported-UCB theorem composes reference confidence, metric transport,
 operator distortion, solver error, and approximate score maximization, then
 closes regret through frozen information gain
@@ -86,20 +91,40 @@ make the metric comparison operational without a small-drift premise
 specialization yields finite-dimensional and near-linear rates without an
 optimizer certificate
 (\Cref{cor:corrected-center-new,cor:finite-d-rate-new,%
-cor:global-near-linear-new}).  The novelty lies in this composition for current
-replayed curvature, not in Thompson geometry, CG, or the generic UCB reduction.
+cor:global-near-linear-new}).  Thompson geometry, the sandwich-to-width
+comparison, and the UCB determinant-potential argument are established tools.
+Our analysis organizes their obligations for current replayed curvature,
+including the distinction between all-action upper validity and selected-action
+sharpness of the same numerical score.
 
-The locked experiment audits the exact-current specialization in a 29-parameter
-scaled-tanh model with dense current and frozen matrices and direct Cholesky
-solves in float64.  Approximate operators and CG are not evaluated.  All declared
-confidence and optimism diagnostics pass, but the analytic path envelope is
-highly conservative, the numerical regret bound is vacuous, and all three
-comparison policies have lower sample mean regret in the reported
-primary-horizon conditions
-(\Cref{sec:transport-instantiation}).
-The recorded decomposition shows that the base confidence component dominates
-the bound, so the observed vacuity cannot be attributed to transport inflation
-alone.
+\paragraph{A limitation and a sharper specialization.}
+We make explicit the elementary same-history width comparison and its equality
+case: exact actionwise transport reproduces the reference width
+(\Cref{prop:reference-width-floor}).  An exact endpoint Thompson-distance factor
+is uniform and need not attain that equality for every action.  Neither
+comparison orders the realized regret of policies that collect different data.
+For the scaled-tanh specialization, fixed feature directions permit a direct
+relative-weight sandwich, with a horizon-independent uniform bound and a tighter
+category-weight construction (\Cref{cor:tanh-relative-weights}).  These
+comparisons avoid the ridge-only Hessian envelope without claiming a general
+result for rotating neural gradients or a new confidence event.
+
+\paragraph{Controlled evidence.}
+The prespecified stronger-drift follow-up uses a 29-parameter scaled-tanh model
+with dense matrices and direct Cholesky solves in float64
+(\Cref{sec:transport-followup}); the original near-linear audit is retained
+separately in \Cref{sec:transport-instantiation}.  The follow-up evaluates four policies in three conditions, with 50 paired seeds per
+condition.  All nine pointwise paired intervals favor the comparators over
+Hessian transport.  The original grid's bound decomposition is base-dominated;
+the follow-up's is path-dominated, and the frozen policy's own-trajectory bound
+is also vacuous.  Changing the smoothness parameter changes the reward task, so
+these are separate conditions, not a controlled causal intervention on drift.
+Exploratory analyses of the retained histories measure width-dominated selection
+and audit the relative-weight certificate.  Alternative scores on those same
+histories are diagnostic recommendations, not alternative adaptive-policy runs.
+The evidence supports a limitation of this implementation; it establishes
+neither universal policy dominance nor end-to-end scalability.  Approximate
+operators and CG remain theoretical interfaces and are not evaluated here.
 \iflegacyextras
 Earlier diagnostics are retained only at their historical scope in
 \Cref{app:legacy-evidence}.

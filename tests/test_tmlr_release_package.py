@@ -1064,6 +1064,14 @@ def _submitted_tex_tree(tmp_path: Path) -> Path:
         for path in sorted((REPO_ROOT / "paper" / directory).iterdir()):
             if path.is_file():
                 shutil.copy2(path, root / "paper" / directory / path.name)
+    # The revised manuscript's new tables are checked by exact regeneration
+    # from separately pinned follow-up evidence. A clean fixture must carry
+    # those inputs and the reviewed generator; old paper-only fixtures cannot
+    # truthfully establish a clean numerical-audit baseline any longer.
+    for relative in ledger_tool.FOLLOWUP_SOURCE_HASHES:
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO_ROOT / relative, target)
     return root
 
 
@@ -1237,6 +1245,46 @@ def test_every_manuscript_literal_is_accounted_for():
     assert _audit(REPO_ROOT) == []
 
 
+@pytest.mark.parametrize("before,after", [
+    (r"99.382\%", r"99.383\%"),
+    ("means of actionwise ratios, not", "ratios of mean widths, not"),
+])
+def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, before, after):
+    root = _submitted_tex_tree(tmp_path)
+    assert _audit(root) == []
+    path = root / "paper/transport_followup.tex"
+    text = path.read_text()
+    assert before in text
+    path.write_text(text.replace(before, after, 1))
+    assert any("pinned semantic unit" in failure or "pinned text" in failure
+               for failure in _audit(root))
+
+
+@pytest.mark.parametrize("relative", [
+    ledger_tool.FOLLOWUP_SEEDS, ledger_tool.RELATIVE_ANALYSIS,
+])
+def test_missing_new_evidence_cannot_pass_the_complete_manuscript_audit(tmp_path, relative):
+    root = _submitted_tex_tree(tmp_path)
+    assert _audit(root) == []
+    (root / relative).unlink()
+    assert "follow-up tables can be regenerated from reviewed sources" in _audit(root)
+
+
+def test_joint_followup_source_and_generated_table_mutation_does_not_authorize_itself(tmp_path):
+    root = _submitted_tex_tree(tmp_path)
+    assert _audit(root) == []
+    path = root / ledger_tool.RELATIVE_ANALYSIS
+    payload = json.loads(path.read_text())
+    payload["elapsed_seconds"] += 1
+    path.write_text(json.dumps(payload, sort_keys=True, indent=2) + "\n")
+    # Recompute all matching output bytes and the provenance inventory. Their
+    # mutual consistency cannot replace the independently fixed evidence hash.
+    generator = ledger_tool._load_reviewed_tool(root, ledger_tool.FOLLOWUP_GENERATOR)
+    for name, content in generator.build(root).items():
+        (root / "paper/tables" / name).write_text(content)
+    assert "follow-up tables can be regenerated from reviewed sources" in _audit(root)
+
+
 @pytest.mark.parametrize("source, before, after", [
     # the two mutations the independent reviewer demonstrated
     ("paper/transport_experiment.tex",
@@ -1325,7 +1373,8 @@ def test_the_grid_entries_recompute_from_the_frozen_configuration():
         (REPO_ROOT / ledger_tool.CONFIG).read_text(encoding="utf-8"))
     by_literal: dict[str, list] = {}
     for entry in LEDGER:
-        by_literal.setdefault(entry.literal, []).append(entry)
+        if entry.source == ledger_tool.CONFIG:
+            by_literal.setdefault(entry.literal, []).append(entry)
 
     horizons = by_literal[r"horizons $T\in\{250,500,1000\}$"]
     assert [e.display for e in horizons] == ["250", "500", "1000"]
@@ -1341,6 +1390,11 @@ def test_the_grid_entries_recompute_from_the_frozen_configuration():
 
     level = by_literal[r"exact 95\% Clopper--Pearson interval"]
     assert [e.compute({}, config) for e in level] == [95.0]
+    followup_config = json.loads((REPO_ROOT / ledger_tool.FOLLOWUP_CONFIG).read_text())
+    followup_level = [e for e in LEDGER if e.literal == r"exact 95\% Clopper--Pearson interval"
+                      and e.source == ledger_tool.FOLLOWUP_CONFIG]
+    assert len(followup_level) == 1
+    assert followup_level[0].compute(followup_config, {}) == 95.0
 
 
 def test_a_thousands_separated_display_parses_and_rounds():
@@ -1393,6 +1447,61 @@ def test_the_supplement_ships_every_active_artifact_with_its_records():
     for symbolic in packager.SUPPLEMENT_SYMBOLIC_ARTIFACTS:
         assert symbolic in shipped
         assert f"{symbolic}.sha256" in shipped
+
+
+def test_followup_artifacts_are_active_and_exactly_classified():
+    expected = set(ledger_tool.FOLLOWUP_GENERATED_SOURCES) | {
+        "paper/tables/transport_followup_provenance.json"}
+    assert set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS) == expected
+    inventory = set(packager.supplement_artifact_inventory(REPO_ROOT))
+    proposed = {arc for _, arc in packager.supplement_entries(REPO_ROOT)}
+    assert expected <= inventory and expected <= proposed
+    assert not expected.intersection(packager.SUPPLEMENT_EXCLUDED_LEGACY)
+    # The original generator's exact 21-artifact contract is separate.
+    assert not expected.intersection(packager.SUPPLEMENT_GENERATED_ARTIFACTS)
+
+
+def test_followup_collective_provenance_binds_exact_outputs_and_reviewed_inputs():
+    record = json.loads((REPO_ROOT / "paper/tables/transport_followup_provenance.json").read_text())
+    outputs = record["outputs"]
+    assert len(outputs) == len(ledger_tool.FOLLOWUP_GENERATED_SOURCES)
+    assert {row["path"] for row in outputs} == set(ledger_tool.FOLLOWUP_GENERATED_SOURCES)
+    for row in outputs:
+        assert hashlib.sha256((REPO_ROOT / row["path"]).read_bytes()).hexdigest() == row["sha256"]
+    assert record["inputs"]
+    assert len({row["path"] for row in record["inputs"]}) == len(record["inputs"])
+    for row in record["inputs"]:
+        source = Path(row["path"])
+        assert row["sha256"] == ledger_tool.FOLLOWUP_SOURCE_HASHES[source]
+        assert hashlib.sha256((REPO_ROOT / source).read_bytes()).hexdigest() == row["sha256"]
+
+
+def test_followup_supplement_preflight_reports_the_incomplete_evidence_inventory():
+    proposed = {arc for _, arc in packager.supplement_entries(REPO_ROOT)}
+    missing = {str(p) for p in ledger_tool.FOLLOWUP_SOURCE_HASHES} - proposed
+    assert missing, "the expanded anonymous evidence package is still pending"
+    findings = packager.followup_supplement_preflight(REPO_ROOT)
+    assert any("expanded follow-up evidence support is pending" in finding for finding in findings)
+    assert any("artifact verification/anonymous provenance support is pending" in finding
+               for finding in findings)
+    for path in missing:
+        assert any(path in finding for finding in findings), path
+
+
+def test_incomplete_followup_release_cli_preserves_prior_deliverables_before_staging(tmp_path):
+    out = tmp_path / "release"
+    prior = _sentinel_release(out)
+    done = subprocess.run(
+        [sys.executable, str(REPO_ROOT / "submissions/tmlr_2026/package.py"),
+         "--repo", str(REPO_ROOT), "--out", str(out)],
+        capture_output=True, text=True, cwd=REPO_ROOT)
+    assert done.returncode == 14, done.stdout + done.stderr
+    assert "FOLLOW-UP ANONYMOUS SUPPLEMENT IS INCOMPLETE" in done.stderr
+    assert "No submission deliverable has been staged or published" in done.stderr
+    assert "staged entry point" not in done.stdout
+    assert sorted(p.name for p in out.iterdir()) == sorted(prior)
+    for name, raw in prior.items():
+        assert (out / name).read_bytes() == raw
 
 
 def test_the_whitelist_is_exactly_what_the_checker_regenerates():
@@ -4550,10 +4659,10 @@ def test_a_classified_literal_is_scoped_to_its_own_file():
 
     for (path, literal) in ledger_tool.CLASSIFIED_LITERALS:
         assert path and literal
-    # a token classified in one theory source is not classified in another
-    assert ("paper/body_related.tex", "10^8") in \
+    # A metadata token classified in one source is not authorized in another.
+    assert ("paper/availability.tex", "1.13.1") in \
         ledger_tool.CLASSIFIED_LITERALS
-    assert ("paper/transport_theory.tex", "10^8") not in \
+    assert ("paper/transport_theory.tex", "1.13.1") not in \
         ledger_tool.CLASSIFIED_LITERALS
 
 
@@ -4874,14 +4983,28 @@ def test_the_log_check_stands_alone_without_a_text_extractor():
     assert "NOT EXECUTED" in source
 
 
-def test_the_static_validator_sees_citations_with_optional_arguments():
+def test_the_static_validator_sees_citations_with_optional_arguments(tmp_path):
     validator = (REPO_ROOT / "paper/validate.py").read_text(encoding="utf-8")
     assert r"(?:\[[^\]]*\])*" in validator
     done = subprocess.run(
         [sys.executable, str(REPO_ROOT / "paper/validate.py")],
         capture_output=True, text=True, cwd=REPO_ROOT)
     assert done.returncode == 0, done.stdout
-    assert "38 distinct cite keys, 0 missing" in done.stdout
+    assert re.search(r"\[cites\] \d+ distinct cite keys, 0 missing", done.stdout)
+    # Exercise optional-argument parsing directly, independently of how many
+    # references the current paper happens to cite.
+    entry = tmp_path / "main.tex"
+    (tmp_path / "macros.tex").write_text("")
+    (tmp_path / "references.bib").write_text("@article{known,title={Known}}\n")
+    entry.write_text(r"\citet[see][Theorem 1]{known}" + "\n")
+    command = [sys.executable, str(REPO_ROOT / "paper/validate.py"), str(entry)]
+    clean = subprocess.run(command, capture_output=True, text=True, cwd=REPO_ROOT)
+    assert clean.returncode == 0 and "1 distinct cite keys, 0 missing" in clean.stdout
+    entry.write_text(entry.read_text() + r"\citep[see]{missing_optional_key}" + "\n")
+    mutated = subprocess.run(command, capture_output=True, text=True, cwd=REPO_ROOT)
+    assert mutated.returncode == 1
+    assert "2 distinct cite keys, 1 missing" in mutated.stdout
+    assert "missing citations: ['missing_optional_key']" in mutated.stdout
 
 
 # --------------------------------------------------------------------------
@@ -5006,16 +5129,23 @@ def test_no_input_is_admitted_by_digest_alone(staged_tree, tmp_path):
     source = (REPO_ROOT / "submissions/tmlr_2026/package.py").read_text(
         encoding="utf-8")
     assert "import external_tex_inputs" not in source
-    assert "PINS" not in source
     assert not (REPO_ROOT / "submissions/tmlr_2026/external_tex_inputs.py").exists()
+    # Evidence provenance pins are legitimate in supplement preflight. The
+    # external-TeX admission path must not consult a pin escape hatch.
+    import ast
+    import inspect
+    for function in (packager.texmf_roots, packager.external_input_problems,
+                     packager.recorder_inputs):
+        tree = ast.parse(inspect.getsource(function))
+        identifiers = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
+        identifiers |= {node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute)}
+        assert not any(name == "PINS" or name.endswith("_PINS") for name in identifiers)
 
     src = _clone_staged(staged_tree, tmp_path / "tree")
-    home = packager.kpsewhich_value("TEXMFHOME")
-    if not home:
-        pytest.skip("this host reports no TEXMFHOME")
-    candidate = next((p for p in Path(home).rglob("*.sty") if p.is_file()), None)
-    if candidate is None:
-        pytest.skip("this host has no file under TEXMFHOME")
+    # Always exercise rejection, even on a host with an empty TEXMFHOME.
+    candidate = tmp_path / "user-texmf" / "untrusted.sty"
+    candidate.parent.mkdir()
+    candidate.write_text("% User-writable TeX input must remain untrusted.\n")
     fls = src / "main.fls"
     fls.write_text(fls.read_text(encoding="utf-8") + f"INPUT {candidate}\n",
                    encoding="utf-8")
@@ -5632,8 +5762,8 @@ def test_repository_preflight_is_usable_but_does_not_certify():
      "math-constant"),
     ("paper/transport_theory.tex", r"\delta\in(0,1)", r"\delta\in(0,2)",
      "interval-endpoint"),
-    ("paper/body_related.tex", "$>10^8$-parameter", "$>10^9$-parameter",
-     "cited-scale"),
+    ("paper/transport_followup_appendix.tex", r"$D_0=4\log\cosh",
+     r"$D_0=5\log\cosh", "math-constant"),
     ("paper/availability.tex", "SciPy 1.13.1", "SciPy 1.14.1",
      "historical-dependency-version"),
     ("submissions/tmlr_2026/supplement_README.md", "NumPy 2.2.3",
@@ -5789,7 +5919,7 @@ def test_structural_sources_are_still_checked_structurally(tmp_path):
 def test_every_audited_source_has_a_whole_file_binding():
     pinned = ledger_tool.file_pins(REPO_ROOT)
     for source in ledger_tool.audited_sources(REPO_ROOT):
-        if str(source) in ledger_tool.GENERATED_ARTIFACT_SOURCES:
+        if str(source) in ledger_tool.ALL_GENERATED_SOURCES:
             continue
         assert str(source) in pinned, source
         assert len(pinned[str(source)]) == 64

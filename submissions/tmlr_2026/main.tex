@@ -67,7 +67,7 @@
 \newif\iflegacyextras \legacyextrasfalse
 \input{notation}
 
-\title{Confidence Transport for Relinearized Curvature\\in Contextual Bandits\thanks{OpenAI Codex and Anthropic Claude assisted with manuscript editing, code preparation, and review.}}
+\title{Confidence Transport under Relinearization:\\Guarantees, Conservatism, and Policy Behavior\thanks{OpenAI Codex and Anthropic Claude assisted with manuscript editing, code preparation, and review.}}
 
 % Authors must not appear in the submitted version.  tmlr.sty hides this block
 % as long as the package is loaded without [accepted] or [preprint].
@@ -78,35 +78,35 @@
 \maketitle
 
 \begin{abstract}
-Retraining a contextual-bandit model changes the gradient features used to score
-actions, while sequential confidence rests on features fixed when rewards were
-collected.  We study when this confidence can justify scores based on current
-relinearized generalized Gauss--Newton or Fisher curvature.  Our conditional
-upper-confidence-bound theorem separates the frozen confidence metric, current
-metric, applied operator, and numerical solver width.  It composes a
-Thompson--Finsler path certificate, a two-sided operator comparison, and a solver
-certificate to bound regret through frozen sequential information gain, allowing
-measurable approximate selection on standard-Borel action spaces.  For
-differentiable squared-loss models, a corrected prediction center establishes
-reference confidence along any predictable parameter path inside the certified
-region, without assuming nonlinear optimizer convergence.  Historical
-approximation errors enter the radius; current errors remain additive.  A
-controlled audit of a 29-parameter scaled-tanh model uses dense matrices and
-Cholesky solves.  All 600 transport-Hessian runs retain simultaneous float64
-confidence and optimism, with no deterministic audit failure.  However, the
-analytic path certificate exceeds the endpoint distance by five to six orders
-of magnitude, every reported numerical regret bound exceeds the deterministic
-cap, and all three comparison policies attain lower sample-mean pseudo-regret
-at the primary horizon.  The base confidence component dominates the recorded
-bound decomposition.  These findings separate certificate validity from bound
-tightness and policy performance; they establish no uniform regret ordering or
-practical curvature advantage.
+Retraining a contextual-bandit model changes the gradient features used in
+current curvature, while sequential confidence can be built from features
+frozen when rewards were collected. We study the guarantees and limitations of
+transporting this confidence to relinearized curvature. A conditional UCB
+theorem separates metric transport, approximate operators, and solver widths,
+and bounds regret through the frozen sequential information gain. For squared
+loss, a corrected prediction center supplies reference confidence along
+predictable parameter paths without requiring nonlinear optimizer convergence,
+while retaining explicit approximation-error charges. The construction also
+has a simple limitation: its certified width cannot be smaller than the direct
+reference width on the same history, and exact actionwise transport reproduces
+that width. This comparison does not order the realized regret of policies
+with different histories. We examine these distinctions in a 29-parameter
+scaled-tanh model, for which a relative-weight comparison also supplies a
+horizon-independent endpoint certificate. A prespecified follow-up evaluates
+four policies across three conditions with 50 paired seeds per condition. The
+Hessian-transport policy has higher mean pseudo-regret than every comparator
+in every condition; all nine pointwise paired confidence intervals exclude
+zero. Its regret bounds are vacuous and dominated by path inflation, while the
+reference policy's own bounds are also vacuous. Floating-point confidence and
+optimism diagnostics pass for all evaluated policies, including an uncertified
+control. Exploratory log analyses distinguish conditional validity,
+certificate usefulness, and observed policy behavior in this implementation.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------
 \input{body_intro}
 \input{transport_theory}
-\input{transport_experiment}
+\input{transport_followup}
 \input{body_related}
 \input{body_conclusion}
 
@@ -122,7 +122,9 @@ practical curvature advantage.
 % --- appendix -------------------------------------------------------------
 \appendix
 \input{transport_proofs}
+\input{transport_experiment}
 \input{transport_experiment_appendix}
+\input{transport_followup_appendix}
 \input{legacy_scope}
 
 \end{document}

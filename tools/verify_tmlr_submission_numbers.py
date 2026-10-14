@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Executable numerical-provenance ledger for the TMLR submission candidate.
 
-Every number the submission states about the controlled transport-instantiation
-study is listed here once, together with
+Every numerical claim in the two controlled studies and the separately labeled
+exploratory diagnostics is derived here or regenerated as a table, together with
 
 * the manuscript file and the exact literal as it is displayed there,
 * the committed source file and the SHA-256 that source must have,
@@ -20,9 +20,10 @@ The script then checks three separate things and refuses to conflate them:
 3. the literal really occurs in the manuscript file it is attributed to, so
    that a later edit which silently changes a number is caught.
 
-It does not recompute anything that needs the raw per-run trajectories.  Those
-files were never committed; checks that would need them are reported as
-NOT EXECUTED with the reason, never as passes.
+It does not recompute anything that needs raw per-run trajectories. The original
+study's per-seed inputs are unavailable; the follow-up's compact per-seed export
+does permit independent terminal-bootstrap reconstruction. Checks requiring the
+external raw archives are NOT EXECUTED, never passes.
 
 Runs from the repository root or from an unpacked supplement root with the same
 layout.  Exit status is nonzero if any check fails.
@@ -32,10 +33,12 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import os
 import re
+import statistics
 import sys
 from collections import Counter
 from collections.abc import Callable, Sequence
@@ -56,6 +59,39 @@ COST_APPENDIX_TEX = Path("paper/appendix_deferred.tex")
 
 AGGREGATE_SHA256 = "0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02"
 CONFIG_SHA256 = "d6f6c0de47651a7e6a291f63ba609654afd5cff6cc13d11722d9fae587e7abdd"
+
+# The completed follow-up is a distinct population. Its exported seed summaries
+# permit terminal bootstrap reconstruction; they do not replace absent raw logs.
+FOLLOWUP_ROOT = Path("review/transport_review_followup/full-cce-full-local")
+FOLLOWUP_CONFIG = FOLLOWUP_ROOT / "execution_config.json"
+FOLLOWUP_AGGREGATE = FOLLOWUP_ROOT / "aggregate_compact.json"
+FOLLOWUP_SEEDS = FOLLOWUP_ROOT / "seed_summaries.jsonl"
+FOLLOWUP_ROUNDS = FOLLOWUP_ROOT / "round_drift_summaries.jsonl"
+FOLLOWUP_DIAGNOSTICS = FOLLOWUP_ROOT / "drift_and_reference_diagnostics.json"
+FOLLOWUP_DECOMPOSITION = FOLLOWUP_ROOT / "terminal_bound_decomposition.json"
+FOLLOWUP_ANALYSIS = Path("review/post_full_fable/independent/analysis.json")
+FOLLOWUP_TEX = Path("paper/transport_followup.tex")
+FOLLOWUP_APPENDIX_TEX = Path("paper/transport_followup_appendix.tex")
+FOLLOWUP_GENERATOR = Path("tools/make_transport_followup_paper.py")
+FOLLOWUP_EXPORT_VERIFIER = Path("tools/verify_review_experiment_export.py")
+RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
+RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
+RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
+FOLLOWUP_SOURCE_HASHES = {
+    FOLLOWUP_CONFIG: "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
+    FOLLOWUP_AGGREGATE: "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
+    FOLLOWUP_SEEDS: "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60",
+    FOLLOWUP_ROUNDS: "9b6bda78c88074e46e1ff3c4253b9623bb95f467f068b6339bee9d83e4e4fce1",
+    FOLLOWUP_DIAGNOSTICS: "fb3293daacba3511ca5f3269d67e9aa0f0aca2708ad9876661ca062e197a59a4",
+    FOLLOWUP_DECOMPOSITION: "b1a6e9c5d8cfe70d3c3e3bb7cbd818502c21bb3b2f276426702cb016db323ecc",
+    FOLLOWUP_ANALYSIS: "914013bf6436e82a50865d5ce3570b4195e7cdc2e4f25b436eb5b28a9b99ece3",
+    FOLLOWUP_ROOT / "export_manifest.json": "adbf7ab8d401fa057999d4f98582a52f8ca5af71362efd05632345be4984eaca",
+    FOLLOWUP_EXPORT_VERIFIER: "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
+    FOLLOWUP_GENERATOR: "e8e0c87f16e2bf9252b27d022a473a114c33d395cc20303d156013568e9dc836",
+    RELATIVE_ANALYSIS: "fd67cdc031c02876ed1e18ea0444a35348b4cb80bdd261b3fd3d75e6e920b29e",
+    RELATIVE_SEEDS: "9d7939364bfd7737df5daaf80d43c0673828505466ede181fe31f42fe2f98bea",
+    RELATIVE_ROOT / "input_inventory.jsonl": "c905bdcd58aa9c827a141ac024c49cccdba1d97bf5ad8908889b15d3f471190a",
+}
 
 # An anonymous supplement ships modified copies of some evidence files with one
 # metadata string replaced.  The shipped ANONYMIZATION.json is a reviewer-visible
@@ -247,6 +283,193 @@ def readme_sources(root: Path | None) -> tuple[Path, ...]:
     return tuple(present) or (SUPPLEMENT_README_REPO,)
 
 
+def _followup_group(analysis, width, method="transport_hessian"):
+    return next(g for g in analysis["groups"]
+                if g["W"] == width and g["behavior_method"] == method)
+
+
+def _followup_tuning_count(config):
+    tuning = config["representation_update"]["tuning"]
+    return len(tuning["learning_rate_grid"]) * len(tuning["steps_per_round_grid"])
+
+
+def _followup_pre_evaluation_count(config):
+    return len(config["target_D"]) * (
+        len(config["methods"]) * len(config["seed_sets"]["development"])
+        + _followup_tuning_count(config) * len(config["seed_sets"]["tuning"]))
+
+
+def followup_ledger() -> list[Entry]:
+    """Explicit selectors for new prose; table cells are regenerated separately."""
+    entries = []
+    main, appendix = FOLLOWUP_TEX, FOLLOWUP_APPENDIX_TEX
+    C, A, S, D, X = (FOLLOWUP_CONFIG, FOLLOWUP_AGGREGATE, FOLLOWUP_SEEDS,
+                     FOLLOWUP_DIAGNOSTICS, FOLLOWUP_ANALYSIS)
+
+    def add(file, phrase, display, source, selector, compute, units="count"):
+        entries.append(Entry(file, phrase, display, source, selector, units,
+                             "explicit selector over the retained follow-up export",
+                             "completed follow-up; exploratory results identified separately",
+                             lambda data, _old_config: compute(data)))
+
+    for file, phrase in ((main, "600 policy trajectories"),
+                         (main, "All 600 evaluation trajectories"),
+                         (main, "all 600 preserved trajectories"),
+                         (appendix, "the 600\ntrajectories"),
+                         (AVAILABILITY_TEX, "600 evaluation seed summaries")):
+        add(file, phrase, "600", A, "completed_run_count", lambda a: a["completed_run_count"])
+    for file, phrase in ((main, "294 development and tuning trajectories"),
+                         (appendix, "294 development and tuning trajectories")):
+        add(file, phrase, "294", C, "conditions * (policies * development seeds + candidates * tuning seeds)",
+            _followup_pre_evaluation_count)
+    for phrase in ("dimension 29", "29-parameter"):
+        add(main, phrase, "29", C, "environment.feature_dimension", lambda c: c["environment"]["feature_dimension"])
+    add(main, "$T=1000$", "1000", C, "reporting.primary_horizon", lambda c: c["reporting"]["primary_horizon"], "rounds")
+    for phrase in (r"$W\in\{16,1,0.25\}$", "$W=16,1,0.25$"):
+        for i, value in enumerate(("16", "1", "0.25")):
+            add(main, phrase, value, C, f"followup.prespecified_width_W[{i}]",
+                lambda c, i=i: c["followup"]["prespecified_width_W"][i], "model smoothness parameter")
+    add(main, "$W=0.25$", "0.25", C, "min(followup.prespecified_width_W)",
+        lambda c: min(c["followup"]["prespecified_width_W"]))
+    for file, phrases in ((main, ("50 common evaluation seeds", "50 paired evaluation seeds", "50 successes out of 50", "50 histories")),
+                          (appendix, ("50 evaluation seeds",))):
+        for phrase in phrases:
+            add(file, phrase, "50", C, "len(seed_sets.evaluation)", lambda c: len(c["seed_sets"]["evaluation"]))
+    for file in (main, appendix):
+        add(file, r"learning rate $3\times10^{-4}$", "3e-4", A, "selected_optimizer.learning_rate",
+            lambda a: a["selected_optimizer"]["learning_rate"], "optimizer learning rate")
+        add(file, "20 " + ("full-batch steps" if file == main else "steps"), "20", A,
+            "selected_optimizer.steps_per_round", lambda a: a["selected_optimizer"]["steps_per_round"])
+        add(file, "10,000", "10,000", C, "statistics.paired_bootstrap_resamples",
+            lambda c: c["statistics"]["paired_bootstrap_resamples"])
+    for phrase in (r"paired 95\% intervals", r"pointwise 95\% paired", r"exact 95\% Clopper--Pearson interval"):
+        add(main, phrase, "95", C, "100 * statistics.paired_bootstrap_level (also coverage_level)",
+            lambda c: 100 * c["statistics"]["paired_bootstrap_level"], "percent")
+    for value, key in (("92.9", "ci_low"), ("100", "ci_high")):
+        add(main, r"$[92.9\%,100\%]$", value, A, f"policy_outcomes[0].simultaneous_optimism_coverage.{key} * 100",
+            lambda a, k=key: 100 * a["policy_outcomes"][0]["simultaneous_optimism_coverage"][k], "percent")
+    for value, fn in (("16", lambda rows: sum(r["max_endpoint_thompson_distance"] > 1 for r in rows if r["W"] == .25 and r["method"] == "transport_hessian")),
+                      ("50", lambda rows: sum(r["W"] == .25 and r["method"] == "transport_hessian" for r in rows))):
+        add(main, "16 of 50 seeds", value, S, "primary W=0.25 seed maxima strictly above one; count and denominator", fn)
+    add(main, "286 of 50,000", "286", FOLLOWUP_ROUNDS,
+        "sum primary W=.25 endpoint_at_least_threshold_counts['1.0']",
+        lambda rows: sum(r["endpoint_at_least_threshold_counts"]["1.0"] for r in rows
+                         if r["W"] == .25 and r["method"] == "transport_hessian"))
+    for file, phrases in ((main, ("of 50,000 seed--round observations", "50,000 seed--round observations per condition")),
+                          (appendix, ("50,000 dependent states", "50,000 rounds"))):
+        for phrase in phrases:
+            add(file, phrase, "50,000", C, "primary_horizon * number evaluation seeds",
+                lambda c: c["reporting"]["primary_horizon"] * len(c["seed_sets"]["evaluation"]), "dependent seed-round observations")
+    for i, value in enumerate(("2000", "2000", "1000")):
+        add(main, "2000, 2000, and 1000", value, C, f"2*T*min(1,sqrt(prespecified_width_W[{i}]))",
+            lambda c, i=i: 2*c["reporting"]["primary_horizon"]*min(1, math.sqrt(c["followup"]["prespecified_width_W"][i])), "cumulative regret upper cap")
+    add(main, "all 150 of its trajectories", "150", S, "count(method=frozen_reference)",
+        lambda rows: sum(r["method"] == "frozen_reference" for r in rows))
+    for i, width in enumerate((16., 1., .25)):
+        for display, key in ((("99.382", "99.962", "99.982")[i], "width_argmax_first_matches"),
+                             (("97.104", "99.372", "99.508")[i], "strict_width_dominance_sufficient")):
+            add(main, display + r"\%", display, X, f"100 * primary W={width} {key} / rounds",
+                lambda a, w=width, k=key: 100*_followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"][k]
+                / _followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"]["rounds"], "percent of dependent rounds")
+    add(appendix, "teacher seed 1729", "1729", C, "teacher.seed", lambda c: c["teacher"]["seed"], "seed identifier")
+    for kind, first, last in (("development", "30000", "30001"), ("tuning", "30100", "30109"), ("evaluation", "30200", "30249")):
+        for value, fn in ((first, min), (last, max)):
+            add(appendix, first+"--"+last, value, C, f"{fn.__name__}(seed_sets.{kind})",
+                lambda c, kind=kind, fn=fn: fn(c["seed_sets"][kind]), "seed identifier")
+    for phrase in ("24 development trajectories", "24 declared trajectories"):
+        add(appendix, phrase, "24", C, "conditions * policies * development seeds",
+            lambda c: len(c["target_D"])*len(c["methods"])*len(c["seed_sets"]["development"]))
+    add(appendix, "270 tuning trajectories", "270", C, "conditions * optimizer candidates * tuning seeds",
+        lambda c: len(c["target_D"])*_followup_tuning_count(c)*len(c["seed_sets"]["tuning"]))
+    for i,value in enumerate(("3e-5", "1e-4", "3e-4")):
+        add(appendix, r"$\{3\times10^{-5},10^{-4},3\times10^{-4}\}$", value, C,
+            f"representation_update.tuning.learning_rate_grid[{i}]", lambda c,i=i: c["representation_update"]["tuning"]["learning_rate_grid"][i])
+    for i,value in enumerate(("1","5","20")):
+        add(appendix, r"$\{1,5,20\}$", value, C, f"representation_update.tuning.steps_per_round_grid[{i}]",
+            lambda c,i=i: c["representation_update"]["tuning"]["steps_per_round_grid"][i])
+    add(appendix, "Candidate 008", "008", A, "selected_optimizer.candidate_id numeric suffix",
+        lambda a: int(a["selected_optimizer"]["candidate_id"].split("-")[-1]), "candidate identifier")
+    add(appendix, "30 tuning", "30", C, "conditions * tuning seeds", lambda c: len(c["target_D"])*len(c["seed_sets"]["tuning"]))
+    add(appendix, "$0.00392155$", "0.00392155", A, "selected_optimizer.aggregate_mean_all_action_prediction_mse",
+        lambda a: a["selected_optimizer"]["aggregate_mean_all_action_prediction_mse"], "mean squared prediction error")
+    for value, fn in (("3",lambda c:len(c["target_D"])), ("4",lambda c:len(c["methods"])),
+                      ("50",lambda c:len(c["seed_sets"]["evaluation"])),
+                      ("600",lambda c:len(c["target_D"])*len(c["methods"])*len(c["seed_sets"]["evaluation"]))):
+        add(appendix, r"$3\times4\times50=600$", value, C, "condition, policy, seed counts and their product", fn)
+    for value in ("1024","2048","4096"):
+        add(appendix, value, value, C, "transport.quadrature declared orders contains this exact value",
+            lambda c,v=int(value): next(x for x in set(c["transport"]["quadrature"]["development_orders"]
+                +c["transport"]["quadrature"]["independent_validation_orders"]) if x==v), "quadrature order")
+    add(appendix, "12 combinations", "12", X, "len(groups)", lambda a: len(a["groups"]))
+    add(appendix, "divided by 1000", "1000", C, "reporting.primary_horizon",lambda c:c["reporting"]["primary_horizon"])
+    for i,w in enumerate((16.,1.,.25)):
+        for value,key in ((("49,691","49,981","49,991")[i],"width_argmax_first_matches"),
+                          (("48,552","49,686","49,754")[i],"strict_width_dominance_sufficient")):
+            add(appendix,value,value,X,f"primary W={w} {key}",
+                lambda a,w=w,k=key:_followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"][k])
+    add(appendix,"250-digit", "250", X,"decimal_precision",lambda a:a["decimal_precision"],"decimal digits for stored-input score arithmetic")
+    add(appendix,"at 16 states", "16", X,"sum primary exact_rank_first_mismatch",
+        lambda a:sum(_followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"]["exact_rank_first_mismatch"] for w in (16.,1.,.25)))
+    add(appendix,"65 changes", "65", X,"sum all behavior exact_rank_first_mismatch",
+        lambda a:sum(g["hessian_recommendation_diagnostics"]["counts"]["exact_rank_first_mismatch"] for g in a["groups"]))
+    add(appendix,"600,000 states", "600,000", X,"raw_rounds",lambda a:a["raw_rounds"])
+    for value,fn in (("2",min),("10",max)):
+        add(appendix,"2--10",value,X,f"{fn.__name__} mismatch round over all behavior histories",
+            lambda a,fn=fn:fn(r["round"] for g in a["groups"] for r in g["hessian_recommendation_diagnostics"]["stored_input_rank_mismatches"]))
+    add(appendix,"below 0.629", "0.629", X,"ceil(1000 * maximum primary gap_in_score_ulps) / 1000",
+        lambda a:math.ceil(1000*max(r["gap_in_score_ulps"] for w in (16.,1.,.25)
+            for r in _followup_group(a,w)["hessian_recommendation_diagnostics"]["stored_input_rank_mismatches"]))/1000,"score ULP upper bound")
+    add(main, "there are five actions", "5", C, "environment.action_count", lambda c:c["environment"]["action_count"])
+    add(main, "standard deviation $0.25$", "0.25", C,
+        "environment.noise_std", lambda c: c["environment"]["noise_std"])
+    add(main, r"$\delta=0.05$", "0.05", C,
+        "confidence.delta", lambda c: c["confidence"]["delta"])
+    add(main, "same 600 recorded histories", "600", RELATIVE_ANALYSIS,
+        "trajectories", lambda a: a["trajectories"])
+    for value, fn in (("4", lambda c:c["environment"]["context_dimension"]),
+                      ("5", lambda c:c["environment"]["action_count"]),
+                      ("20", lambda c:c["environment"]["context_dimension"]*c["environment"]["action_count"]),
+                      ("29", lambda c:c["environment"]["feature_dimension"])):
+        add(appendix, "$4+5+20=29$", value, C, "context, action and tensor-product feature dimensions", fn)
+    for phrase in ("1000 rounds in its denominator", "and 1000 rounds"):
+        add(appendix, phrase, "1000", C, "reporting.primary_horizon", lambda c:c["reporting"]["primary_horizon"])
+    for phrase in ("summarize 50 seeds", "across 50 seeds", "50 seeds per condition"):
+        add(appendix, phrase, "50", C, "len(seed_sets.evaluation)", lambda c:len(c["seed_sets"]["evaluation"]))
+    for width, value in ((16.,"0.124"), (1.,"1.735"), (.25,"5.300")):
+        add(appendix, "$"+value+"$", value, C, f"4 log cosh(feature_bound * theta_radius / sqrt(W={width}))",
+            lambda c,w=width:4*math.log(math.cosh(c["environment"]["feature_bound"]*c["teacher"]["theta_radius"]/math.sqrt(w))), "uniform endpoint bound")
+    add(appendix, "all 600 trajectories", "600", RELATIVE_ANALYSIS, "trajectories", lambda a:a["trajectories"])
+    for i,value in enumerate(("1","2","10","100","500","1000")):
+        add(appendix, "rounds 1, 2, 10, 100, 500, and 1000", value, RELATIVE_ANALYSIS,
+            f"checkpoint_rounds[{i}]", lambda a,i=i:a["checkpoint_rounds"][i], "reconstruction checkpoint")
+    add(appendix, "80 feature", "80", S, "common category_count across all seed summaries",
+        lambda rows: next(iter({r["category_count"] for r in rows})) if len({r["category_count"] for r in rows}) == 1 else math.nan)
+    add(appendix, "including 80 projections", "80", S, "common category_count across all seed summaries",
+        lambda rows: next(iter({r["category_count"] for r in rows})) if len({r["category_count"] for r in rows}) == 1 else math.nan)
+    for method, bounds in (("category_asymmetric", ("0.28", "12.68")),
+                           ("transport_endpoint", ("0.16", "12.13"))):
+        for fn, value in zip((min, max), bounds):
+            add(main, "$"+value+r"\%$", value, RELATIVE_ANALYSIS,
+                f"{fn.__name__} over primary-history conditions of 100*(mean actionwise width ratio for {method} - 1)",
+                lambda a,fn=fn,m=method:fn(100*(g["width_overhead_seed_mean_variation"][m]["mean"]-1)
+                    for g in a["groups"] if g["behavior_method"]=="transport_hessian"),
+                "percent overhead; mean of actionwise ratios with equal-size seed cells")
+    add(appendix, "$0.005$", "0.005", RELATIVE_ANALYSIS,
+        "ceil(1000 * maximum residual/original_tolerance) / 1000",
+        lambda a:math.ceil(1000*max(a["maximum_residual_or_excess_over_original_tolerance"].values()))/1000,
+        "upper bound on normalized floating-point diagnostic residual")
+    add(appendix, "36 states", "36", RELATIVE_SEEDS, "sum number fixed_state_kernel_timings",
+        lambda rows:sum(len(r["fixed_state_kernel_timings"]) for r in rows))
+    for kernel,value in (("category_ratios_precomputed_scales","27.7"),
+                         ("category_ratios_with_80_projections","34.8"),
+                         ("dense_endpoint_preassembled_metrics","213.3")):
+        add(appendix, "$"+value+r"\,\mu\mathrm{s}$",value,RELATIVE_SEEDS,
+            f"1e6 * median across 36 states of five-batch median {kernel} seconds/call",
+            lambda rows,k=kernel:1e6*statistics.median(t["kernels_seconds_per_call"][k]["median"]
+                for r in rows for t in r["fixed_state_kernel_timings"]),"microseconds per kernel call; descriptive same-host timing")
+    return entries
+
+
 def build_ledger(root: Path | None = None) -> list[Entry]:
     A, C = AGGREGATE, CONFIG
     e: list[Entry] = []
@@ -304,7 +527,7 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
     add(EXPERIMENT_TEX, "Contexts have dimension $4$", "4", C,
         "base.environment.context_dimension", "dimensionless", "declared constant",
         "configuration", lambda a, c: float(c["base"]["environment"]["context_dimension"]))
-    add(EXPERIMENT_TEX, "there are five\nactions", "5", C,
+    add(EXPERIMENT_TEX, "there are five actions", "5", C,
         "base.environment.action_count", "dimensionless", "declared constant",
         "configuration", lambda a, c: float(c["base"]["environment"]["action_count"]))
     add(EXPERIMENT_TEX, "feature map has dimension $29$", "29", C,
@@ -614,24 +837,16 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
                            ["cumulative_pseudo_regret"]["mean"]))
 
     # ---- claims repeated in the abstract, introduction and conclusion ------
-    add(ABSTRACT_TEX, "All 600 transport-Hessian runs", "600", A,
-        "len(horizons) * len(target_D) * len(evaluation_seeds)", "runs", "count",
-        "transport-Hessian arm of the grid",
-        lambda a, c: float(len(a["horizons"]) * len(a["target_D"])
-                           * len(a["evaluation_seeds"])))
-    add(ABSTRACT_TEX, "29-parameter", "29", C,
-        "base.environment.feature_dimension", "parameters", "declared constant",
-        "configuration",
-        lambda a, c: float(c["base"]["environment"]["feature_dimension"]))
-    add(CONCLUSION_TEX, "All 600 transport-Hessian trajectories", "600", A,
-        "len(horizons) * len(target_D) * len(evaluation_seeds)", "runs", "count",
-        "transport-Hessian arm of the grid",
-        lambda a, c: float(len(a["horizons"]) * len(a["target_D"])
-                           * len(a["evaluation_seeds"])))
-    add(INTRO_TEX, "29-parameter", "29", C,
-        "base.environment.feature_dimension", "parameters", "declared constant",
-        "configuration",
-        lambda a, c: float(c["base"]["environment"]["feature_dimension"]))
+    # Abstract and introduction now describe the distinct completed follow-up.
+    for manuscript in (ABSTRACT_TEX, INTRO_TEX):
+        add(manuscript, "29-parameter", "29", FOLLOWUP_CONFIG,
+            "environment.feature_dimension", "parameters", "declared constant",
+            "completed follow-up configuration",
+            lambda a, c: float(a["environment"]["feature_dimension"]))
+        add(manuscript, "50 paired seeds", "50", FOLLOWUP_CONFIG,
+            "len(seed_sets.evaluation)", "seeds", "count",
+            "completed follow-up evaluation seeds within each condition",
+            lambda a, c: float(len(a["seed_sets"]["evaluation"])))
     add(LEGACY_SCOPE_TEX, "29-parameter", "29", C,
         "base.environment.feature_dimension", "parameters", "declared constant",
         "configuration",
@@ -657,6 +872,7 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
             "+ 3 tables + 3 figure sources", "files", "derived count",
             "generated artifact set",
             lambda a, c: float(3 * (3 + len(a["target_D"]))))
+    e.extend(followup_ledger())
     return e
 
 
@@ -704,6 +920,14 @@ GENERATED_ARTIFACT_SOURCES = (
     "paper/figures/transport_instantiation_tightness.tex",
     "paper/figures/transport_instantiation_bound.tex",
 )
+FOLLOWUP_GENERATED_SOURCES = (
+    "paper/tables/transport_followup_outcomes.tex",
+    "paper/tables/transport_followup_drift_bounds.tex",
+    "paper/tables/transport_followup_same_history.tex",
+    "paper/tables/transport_followup_mechanism_variation.tex",
+    "paper/tables/transport_followup_relative_audit.tex",
+)
+ALL_GENERATED_SOURCES = GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
 
 #: Two sources that are neither ledger-covered nor per-literal classified.  They
 #: used to be whole-file exemptions, which meant an empirical value dropped into
@@ -832,15 +1056,18 @@ def _classify(path: str, category: str, counts: dict[str, int]) -> None:
 _classify("paper/availability.tex", "historical-dependency-version",
           {"1.13.1": 1, "1.15.2": 1})
 _classify("paper/body_related.tex", "math-constant", {"1": 3, "2": 2})
-_classify("paper/body_related.tex", "cited-scale", {"10^8": 1})
 _classify("paper/notation.tex", "math-constant", {"1": 2, "2": 3})
 _classify("paper/transport_experiment_appendix.tex", "math-constant",
           {"1": 7, "2": 10})
 _classify("paper/transport_proofs.tex", "math-constant",
-          {"0": 8, "1": 63, "2": 73, "4": 2})
+          {"0": 16, "1": 80, "2": 110, "4": 4})
+_classify("paper/transport_proofs.tex", "interval-endpoint", {"0,1": 1})
 _classify("paper/transport_theory.tex", "math-constant",
-          {"0": 22, "1": 84, "2": 87, "3": 2, "4": 4})
+          {"0": 29, "1": 94, "2": 105, "3": 2, "4": 5})
 _classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
+_classify("paper/transport_followup.tex", "math-constant", {"1": 1, "2": 1})
+_classify("paper/transport_followup_appendix.tex", "math-constant",
+          {"1": 4, "2": 5, "4": 1})
 for _readme in (str(SUPPLEMENT_README_REPO), str(SUPPLEMENT_README_PACKAGED)):
     _classify(_readme, "document-structure",
               {"0": 1, "1": 2, "2": 2, "3": 2, "4": 1})
@@ -883,9 +1110,8 @@ NON_EMPIRICAL_LITERALS = (
 #
 # `$T=1000$` and `\xi_t=0` legitimately recur; the count records how often.
 PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
-    ("paper/body_conclusion.tex", "$D_t<1$"): 1,
-    ("paper/body_conclusion.tex", "All 600 transport-Hessian trajectories"): 1,
     ("paper/body_intro.tex", "29-parameter"): 1,
+    ("paper/body_intro.tex", "50 paired seeds"): 1,
     ("paper/legacy_scope.tex", "29-parameter"): 1,
     ("paper/transport_experiment.tex",
      "$1.20$--$1.22$ times the endpoint distance"): 1,
@@ -955,7 +1181,7 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
      "target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$"): 1,
     ("paper/transport_experiment.tex", "the 50-seed means"): 1,
     ("paper/transport_experiment.tex", "the same 50 base seeds"): 1,
-    ("paper/transport_experiment.tex", "there are five\nactions"): 1,
+    ("paper/transport_experiment.tex", "there are five actions"): 1,
     ("paper/transport_experiment.tex", "to $0.384$"): 1,
     ("paper/transport_experiment.tex", "to $1.18$"): 1,
     ("paper/transport_experiment.tex", "to $94.0$"): 1,
@@ -981,12 +1207,115 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/transport_theory.tex", "\\kappa_{-,t}=\\kappa_{+,t}=1"): 2,
     ("paper/transport_theory.tex", "\\xi_t=0"): 3,
     ("submissions/tmlr_2026/main.tex", "29-parameter"): 1,
-    ("submissions/tmlr_2026/main.tex", "All 600 transport-Hessian runs"): 1,
+    ("submissions/tmlr_2026/main.tex", "50 paired seeds"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "2,400 trajectories"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "21 artifacts"): 1,
     ("submissions/tmlr_2026/supplement_README.md",
      "all 21 published tables, figures and CSVs"): 1,
 }
+
+
+# Reviewed follow-up prose: exact file, phrase and occurrence count.
+PHRASE_OCCURRENCES.update({
+    ('paper/availability.tex', '600 evaluation seed summaries'): 1,
+    ('paper/transport_followup.tex', '$0.16\\%$'): 1,
+    ('paper/transport_followup.tex', '$0.28\\%$'): 1,
+    ('paper/transport_followup.tex', '$12.13\\%$'): 1,
+    ('paper/transport_followup.tex', '$12.68\\%$'): 1,
+    ('paper/transport_followup.tex', '$T=1000$'): 2,
+    ('paper/transport_followup.tex', '$W=0.25$'): 1,
+    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 1,
+    ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
+    ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
+    ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
+    ('paper/transport_followup.tex', '10,000'): 1,
+    ('paper/transport_followup.tex', '16 of 50 seeds'): 1,
+    ('paper/transport_followup.tex', '20 full-batch steps'): 1,
+    ('paper/transport_followup.tex', '2000, 2000, and 1000'): 1,
+    ('paper/transport_followup.tex', '286 of 50,000'): 1,
+    ('paper/transport_followup.tex', '29-parameter'): 1,
+    ('paper/transport_followup.tex', '294 development and tuning trajectories'): 1,
+    ('paper/transport_followup.tex', '50 common evaluation seeds'): 1,
+    ('paper/transport_followup.tex', '50 histories'): 1,
+    ('paper/transport_followup.tex', '50 paired evaluation seeds'): 1,
+    ('paper/transport_followup.tex', '50 successes out of 50'): 1,
+    ('paper/transport_followup.tex', '50,000 seed--round observations per condition'): 1,
+    ('paper/transport_followup.tex', '600 policy trajectories'): 1,
+    ('paper/transport_followup.tex', '97.104\\%'): 1,
+    ('paper/transport_followup.tex', '99.372\\%'): 1,
+    ('paper/transport_followup.tex', '99.382\\%'): 1,
+    ('paper/transport_followup.tex', '99.508\\%'): 1,
+    ('paper/transport_followup.tex', '99.962\\%'): 1,
+    ('paper/transport_followup.tex', '99.982\\%'): 1,
+    ('paper/transport_followup.tex', 'All 600 evaluation trajectories'): 1,
+    ('paper/transport_followup.tex', 'all 150 of its trajectories'): 1,
+    ('paper/transport_followup.tex', 'all 600 preserved trajectories'): 1,
+    ('paper/transport_followup.tex', 'dimension 29'): 1,
+    ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
+    ('paper/transport_followup.tex', 'learning rate $3\\times10^{-4}$'): 1,
+    ('paper/transport_followup.tex', 'of 50,000 seed--round observations'): 1,
+    ('paper/transport_followup.tex', 'paired 95\\% intervals'): 1,
+    ('paper/transport_followup.tex', 'pointwise 95\\% paired'): 1,
+    ('paper/transport_followup.tex', 'same 600 recorded histories'): 1,
+    ('paper/transport_followup.tex', 'standard deviation $0.25$'): 1,
+    ('paper/transport_followup.tex', 'there are five actions'): 1,
+    ('paper/transport_followup_appendix.tex', '$0.00392155$'): 1,
+    ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
+    ('paper/transport_followup_appendix.tex', '$0.124$'): 1,
+    ('paper/transport_followup_appendix.tex', '$1.735$'): 1,
+    ('paper/transport_followup_appendix.tex', '$213.3\\,\\mu\\mathrm{s}$'): 1,
+    ('paper/transport_followup_appendix.tex', '$27.7\\,\\mu\\mathrm{s}$'): 1,
+    ('paper/transport_followup_appendix.tex', '$34.8\\,\\mu\\mathrm{s}$'): 1,
+    ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'): 1,
+    ('paper/transport_followup_appendix.tex', '$4+5+20=29$'): 1,
+    ('paper/transport_followup_appendix.tex', '$5.300$'): 1,
+    ('paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'): 1,
+    ('paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'): 1,
+    ('paper/transport_followup_appendix.tex', '10,000'): 1,
+    ('paper/transport_followup_appendix.tex', '1000 rounds in its denominator'): 1,
+    ('paper/transport_followup_appendix.tex', '1024'): 1,
+    ('paper/transport_followup_appendix.tex', '12 combinations'): 1,
+    ('paper/transport_followup_appendix.tex', '2--10'): 1,
+    ('paper/transport_followup_appendix.tex', '20 steps'): 1,
+    ('paper/transport_followup_appendix.tex', '2048'): 3,
+    ('paper/transport_followup_appendix.tex', '24 declared trajectories'): 1,
+    ('paper/transport_followup_appendix.tex', '24 development trajectories'): 1,
+    ('paper/transport_followup_appendix.tex', '250-digit'): 1,
+    ('paper/transport_followup_appendix.tex', '270 tuning trajectories'): 1,
+    ('paper/transport_followup_appendix.tex', '294 development and tuning trajectories'): 1,
+    ('paper/transport_followup_appendix.tex', '30 tuning'): 1,
+    ('paper/transport_followup_appendix.tex', '30000--30001'): 1,
+    ('paper/transport_followup_appendix.tex', '30100--30109'): 1,
+    ('paper/transport_followup_appendix.tex', '30200--30249'): 1,
+    ('paper/transport_followup_appendix.tex', '36 states'): 1,
+    ('paper/transport_followup_appendix.tex', '4096'): 1,
+    ('paper/transport_followup_appendix.tex', '48,552'): 1,
+    ('paper/transport_followup_appendix.tex', '49,686'): 1,
+    ('paper/transport_followup_appendix.tex', '49,691'): 1,
+    ('paper/transport_followup_appendix.tex', '49,754'): 1,
+    ('paper/transport_followup_appendix.tex', '49,981'): 1,
+    ('paper/transport_followup_appendix.tex', '49,991'): 1,
+    ('paper/transport_followup_appendix.tex', '50 evaluation seeds'): 1,
+    ('paper/transport_followup_appendix.tex', '50 seeds per condition'): 1,
+    ('paper/transport_followup_appendix.tex', '50,000 dependent states'): 1,
+    ('paper/transport_followup_appendix.tex', '50,000 rounds'): 1,
+    ('paper/transport_followup_appendix.tex', '600,000 states'): 1,
+    ('paper/transport_followup_appendix.tex', '65 changes'): 1,
+    ('paper/transport_followup_appendix.tex', '80 feature'): 1,
+    ('paper/transport_followup_appendix.tex', 'Candidate 008'): 1,
+    ('paper/transport_followup_appendix.tex', 'across 50 seeds'): 1,
+    ('paper/transport_followup_appendix.tex', 'all 600 trajectories'): 1,
+    ('paper/transport_followup_appendix.tex', 'and 1000 rounds'): 1,
+    ('paper/transport_followup_appendix.tex', 'at 16 states'): 1,
+    ('paper/transport_followup_appendix.tex', 'below 0.629'): 1,
+    ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
+    ('paper/transport_followup_appendix.tex', 'including 80 projections'): 1,
+    ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'): 1,
+    ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'): 1,
+    ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'): 1,
+    ('paper/transport_followup_appendix.tex', 'teacher seed 1729'): 1,
+    ('paper/transport_followup_appendix.tex', 'the 600\ntrajectories'): 1,
+})
 
 
 def _mirror_readme(table: dict) -> dict:
@@ -2036,7 +2365,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     classified_pinned = classified_pins(root)
     file_pinned = file_pins(root)
     structural = {MACRO_SOURCE, SYMBOLIC_TABLE_SOURCE}
-    regenerated = set(GENERATED_ARTIFACT_SOURCES)
+    regenerated = set(ALL_GENERATED_SOURCES)
 
     # The pinned record and the reviewable category table have to describe the
     # same set: a pin without a category is unexplained, and a category without
@@ -2173,7 +2502,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # "Regenerated evidence" has to be earned: the artifact checker rebuilds
     # that exact file from the locked aggregate and requires byte identity, and
     # the sidecar has to describe the bytes on disk.
-    for relative in sorted(regenerated):
+    for relative in sorted(GENERATED_ARTIFACT_SOURCES):
         path = root / relative
         if not path.is_file():
             expect(f"regenerated source present: {relative}", False, "missing")
@@ -2188,13 +2517,41 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
             "missing or does not describe it",
         )
 
+    # New cells have no self-authorizing sidecar exemption: exact regeneration
+    # requires the reviewed generator and every pinned input, then byte identity
+    # for all tables and their provenance record. Missing inputs fail closed.
+    # Only original retained follow-up bytes are reviewed here. An expanded
+    # anonymous export and its sanitized provenance are not yet specified;
+    # merely adding a sanitizer's claim to a package must not authorize it.
+    try:
+        for source, expected_digest in FOLLOWUP_SOURCE_HASHES.items():
+            path = root / source
+            if not path.is_file() or sha256_file(path) != expected_digest:
+                raise LedgerError(f"missing or unreviewed generated-table input: {source}")
+        generator = _load_reviewed_tool(root, FOLLOWUP_GENERATOR)
+        expected_outputs = generator.build(root)
+        expected_names = {Path(p).name for p in FOLLOWUP_GENERATED_SOURCES}
+        expected_names.add("transport_followup_provenance.json")
+        expect("follow-up generator produces exactly the reviewed artifact set",
+               set(expected_outputs) == expected_names,
+               f"got {sorted(expected_outputs)}")
+        for name in sorted(expected_names):
+            path = root / "paper/tables" / name
+            expected = expected_outputs.get(name)
+            expect(f"follow-up generated bytes agree: {name}",
+                   isinstance(expected, str) and path.is_file()
+                   and path.read_bytes() == expected.encode("utf-8"),
+                   "compared with deterministic rendering from fixed source inputs")
+    except Exception as exc:
+        expect("follow-up tables can be regenerated from reviewed sources", False, repr(exc))
+
     checks.extend(macro_file_checks(root))
     checks.extend(symbolic_table_checks(root))
 
     # Typeset generated artifacts are bound by byte-identical regeneration, not
     # by per-literal entries.  Anything else \input from tables/ or figures/
     # must be declared symbolic.
-    known = {Path(name).name for name in GENERATED_ARTIFACT_SOURCES}
+    known = {Path(name).name for name in ALL_GENERATED_SOURCES}
     known |= {Path(name).name for name in SYMBOLIC_TABLE_INPUTS}
     undeclared: list[str] = []
     for relative in sources:
@@ -2216,7 +2573,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # packaged tree the other, so neither is stale just because this tree has
     # only one of them.
     in_closure = ({str(p) for p in sources}
-                  | set(GENERATED_ARTIFACT_SOURCES)
+                  | set(ALL_GENERATED_SOURCES)
                   | {MACRO_SOURCE, SYMBOLIC_TABLE_SOURCE}
                   | {str(SUPPLEMENT_README_REPO),
                      str(SUPPLEMENT_README_PACKAGED)})
@@ -2396,6 +2753,157 @@ def not_executed_checks() -> list[Check]:
 # --------------------------------------------------------------------------
 
 
+def _load_reviewed_tool(root: Path, relative: Path):
+    """Load only the exact reviewed implementation; an input cannot pick code."""
+    expected = FOLLOWUP_SOURCE_HASHES[relative]
+    path = root / relative
+    if not path.is_file() or sha256_file(path) != expected:
+        raise LedgerError(f"unreviewed or missing tool: {relative}")
+    spec = importlib.util.spec_from_file_location(f"_numeric_{relative.stem}", path)
+    if spec is None or spec.loader is None:
+        raise LedgerError(f"cannot load {relative}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def followup_checks(root: Path, data: dict[Path, Any]) -> list[Check]:
+    """Check new claims from the distinct retained follow-up population."""
+    checks: list[Check] = []
+
+    def verify(name: str, test: Callable[[], Any]) -> None:
+        try:
+            result = test()
+            if not result:
+                raise LedgerError("condition is false")
+            checks.append(Check("follow-up: " + name, STATUS_PASS, str(result)))
+        except Exception as exc:
+            checks.append(Check("follow-up: " + name, STATUS_FAIL, repr(exc)))
+
+    verify("terminal bootstrap reconstruction from preserved seed summaries",
+           lambda: _load_reviewed_tool(root, FOLLOWUP_EXPORT_VERIFIER)
+           .verify_export(root / FOLLOWUP_ROOT))
+
+    required = {FOLLOWUP_CONFIG, FOLLOWUP_AGGREGATE, FOLLOWUP_SEEDS,
+                FOLLOWUP_ROUNDS, FOLLOWUP_DIAGNOSTICS, FOLLOWUP_DECOMPOSITION,
+                FOLLOWUP_ANALYSIS}
+    if not required <= data.keys():
+        checks.append(Check("follow-up: source set available", STATUS_FAIL,
+                            str(sorted(str(p) for p in required - data.keys()))))
+        return checks
+    config, aggregate, seeds, rounds, diagnostics, components, analysis = (
+        data[p] for p in (FOLLOWUP_CONFIG, FOLLOWUP_AGGREGATE, FOLLOWUP_SEEDS,
+                         FOLLOWUP_ROUNDS, FOLLOWUP_DIAGNOSTICS,
+                         FOLLOWUP_DECOMPOSITION, FOLLOWUP_ANALYSIS))
+    methods = set(config["methods"])
+    widths = set(config["followup"]["prespecified_width_W"])
+    verify("four policies, three conditions, fifty evaluation seeds",
+           lambda: len(methods) == 4 and len(widths) == 3
+           and len(config["seed_sets"]["evaluation"]) == 50
+           and aggregate["completed_run_count"] == len(seeds) == 600)
+    verify("development, tuning and evaluation seed sets are disjoint",
+           lambda: all(not (set(config["seed_sets"][a]) & set(config["seed_sets"][b]))
+                       for a, b in (("development", "tuning"),
+                                    ("development", "evaluation"),
+                                    ("tuning", "evaluation"))))
+    verify("all recorded confidence, optimism and deterministic diagnostics pass",
+           lambda: all(row["simultaneous_reference_confidence"] is True
+                       and row["simultaneous_method_optimism"] is True
+                       and row["deterministic_audit_passed"] is True for row in seeds))
+    comparisons = [row for row in aggregate["policy_outcomes"]
+                   if row["method"] != "transport_hessian"]
+    verify("all nine pointwise comparator-minus-Hessian intervals exclude zero below",
+           lambda: len(comparisons) == 9 and all(
+               row["paired_difference_from_transport_hessian"]["bootstrap_mean_interval"]["ci_high"] < 0
+               for row in comparisons))
+    verify("primary terminal decomposition adds to its sharp RHS and is path dominated",
+           lambda: len(components) == 3 and all(
+               math.isclose(sum(row[k] for k in ("statistical_bound_component",
+                            "historical_bound_component", "path_inflation_component",
+                            "current_bias_cumulative")), row["sharp_theorem_rhs"], rel_tol=1e-12)
+               and row["path_inflation_component"] > row["sharp_theorem_rhs"] / 2
+               for row in components))
+    def own_bound_nonvacuity():
+        counts = Counter()
+        for row in seeds:
+            method = row["method"]
+            if method not in {"transport_hessian", "frozen_reference"}:
+                continue
+            cap = 2 * row["horizon"] * min(1.0, math.sqrt(row["W"]))
+            rhs = row["sharp_theorem_rhs"] if method == "transport_hessian" else sum(
+                row[key] for key in ("statistical_bound_component",
+                                     "historical_bound_component", "current_bias_cumulative"))
+            if not math.isfinite(rhs) or rhs <= cap:
+                return False
+            counts[method] += 1
+        return counts == {"transport_hessian": 150, "frozen_reference": 150}
+    verify("all primary and frozen-policy bounds exceed each own-trajectory cap",
+           own_bound_nonvacuity)
+    verify("round-threshold denominators and summaries agree in all policy cells",
+           lambda: len(rounds) == 600 and all(
+               len(members := [r for r in rounds if r["W"] == d["W"]
+                               and r["method"] == d["method"]]) == 50
+               and sum(r["round_count"] for r in members) == d["total_rounds"] == 50000
+               and all(math.isclose(sum(r["endpoint_at_least_threshold_counts"][threshold]
+                                        for r in members) / d["total_rounds"], fraction,
+                                    rel_tol=1e-12, abs_tol=1e-12)
+                       for threshold, fraction in d["endpoint_round_at_least_threshold_fraction"].items())
+               for d in diagnostics))
+    verify("exploratory same-history grid is complete and diagonals reproduce actual behavior",
+           lambda: analysis["experiments_rerun"] is False
+           and analysis["raw_rounds"] == 600000
+           and len(analysis["groups"]) == 12
+           and {(g["W"], g["behavior_method"]) for g in analysis["groups"]}
+           == {(w, m) for w in widths for m in methods}
+           and all(math.isclose(g["same_history_recommendations"]["mean_one_step_pseudo_regret"][g["behavior_method"]]
+                                * config["reporting"]["primary_horizon"],
+                                g["actual_behavior_mean_terminal_regret"], rel_tol=1e-12)
+                   for g in analysis["groups"]))
+    def relative_consistency():
+        relative = data[RELATIVE_ANALYSIS]
+        members = data[RELATIVE_SEEDS]
+        if not (relative["complete_600_trajectory_audit"] is True
+                and relative["new_adaptive_experiments"] is False
+                and relative["optimizer_replayed_on_logged_actions_rewards"] is True
+                and relative["floating_point_checks_are_verified_certificates"] is False
+                and relative["trajectories"] == len(members) == 600
+                and relative["rounds"] == sum(row["rounds"] for row in members) == 600000
+                and relative["source_config_digest"] == aggregate["config_digest"]):
+            return False
+        expected = {(w, m, seed) for w in widths for m in methods
+                    for seed in config["seed_sets"]["evaluation"]}
+        if {(r["W"], r["behavior_method"], r["seed"]) for r in members} != expected:
+            return False
+        for key, maximum in relative["maximum_residual_or_excess_over_original_tolerance"].items():
+            measured = max(r["maximum_residual_or_excess_over_original_tolerance"][key] for r in members)
+            if not (math.isfinite(maximum) and maximum == measured and maximum < .005):
+                return False
+        for group in relative["groups"]:
+            w, behavior = group["W"], group["behavior_method"]
+            old = _followup_group(analysis, w, behavior)
+            counts = group["diagnostic_counts"]["transport_hessian"]
+            for name in ("width_argmax_first_matches", "strict_width_dominance_sufficient"):
+                if counts[name] != old["hessian_recommendation_diagnostics"]["counts"][name]:
+                    return False
+            for method in methods:
+                if not math.isclose(group["same_history_mean_one_step_regret"][method]["mean"],
+                                    old["same_history_recommendations"]["mean_one_step_pseudo_regret"][method],
+                                    rel_tol=1e-12, abs_tol=1e-12):
+                    return False
+        timing_rows = [t for row in members for t in row["fixed_state_kernel_timings"]]
+        return len(timing_rows) == 36 and all(
+            kernel["count"] == 5 for row in timing_rows
+            for kernel in row["kernels_seconds_per_call"].values())
+    verify("relative replay identities, old-score agreement, residual bounds and timing denominators",
+           relative_consistency)
+    checks.append(Check("follow-up: raw trajectories and upstream floating-point operations",
+                        STATUS_NOT_EXECUTED,
+                        "compact summaries and exploratory outputs are bound to retained bytes; "
+                        "this ledger does not read the external raw archive or rerun policy "
+                        "trajectories, matrix solves, exponentials or decimal score calculations"))
+    return checks
+
+
 def run(root: Path, *, check_manuscript: bool = True,
         require_package: bool | None = None) -> tuple[list[Check], list[Entry]]:
     checks: list[Check] = []
@@ -2421,7 +2929,8 @@ def run(root: Path, *, check_manuscript: bool = True,
                 detail,
             ))
 
-    sources = {AGGREGATE: AGGREGATE_SHA256, CONFIG: CONFIG_SHA256}
+    sources = {AGGREGATE: AGGREGATE_SHA256, CONFIG: CONFIG_SHA256,
+               **FOLLOWUP_SOURCE_HASHES}
     for relative, expected in sources.items():
         path = root / relative
         if not path.is_file():
@@ -2477,12 +2986,23 @@ def run(root: Path, *, check_manuscript: bool = True,
     aggregate = json.loads((root / AGGREGATE).read_text(encoding="utf-8"))
     config = json.loads((root / CONFIG).read_text(encoding="utf-8"))
 
+    followup_data: dict[Path, Any] = {}
+    for relative in FOLLOWUP_SOURCE_HASHES:
+        if relative.suffix not in {".json", ".jsonl"}:
+            continue
+        try:
+            raw = (root / relative).read_text(encoding="utf-8")
+            followup_data[relative] = ([json.loads(line) for line in raw.splitlines()]
+                                      if relative.suffix == ".jsonl" else json.loads(raw))
+        except (OSError, ValueError) as exc:
+            checks.append(Check(f"follow-up source parses: {relative}", STATUS_FAIL, repr(exc)))
+
     manuscript_cache: dict[Path, str] = {}
 
     for entry in ledger:
         label = f"{entry.manuscript.name}: {entry.literal.splitlines()[0][:52]}"
         try:
-            entry.unrounded = float(entry.compute(aggregate, config))
+            entry.unrounded = float(entry.compute(followup_data[entry.source] if entry.source in FOLLOWUP_SOURCE_HASHES else aggregate, config))
         except Exception as exc:  # noqa: BLE001 - reported, not swallowed
             checks.append(Check(f"recompute {label}", STATUS_FAIL, repr(exc)))
             continue
@@ -2521,6 +3041,7 @@ def run(root: Path, *, check_manuscript: bool = True,
         ))
 
     checks.extend(structural_checks(root, aggregate, config))
+    checks.extend(followup_checks(root, followup_data))
     if check_manuscript:
         checks.extend(literal_coverage_checks(root, ledger,
                                               require_package=required))
@@ -2646,7 +3167,7 @@ def regenerated_pin_module(root: Path) -> str:
     covered = set(declared_phrases) | set(declared_literals)
     covered |= {str(p) for p in audited_sources(root)
                 if (root / p).is_file()
-                and str(p) not in GENERATED_ARTIFACT_SOURCES}
+                and str(p) not in ALL_GENERATED_SOURCES}
 
     for relative in sorted(covered):
         path = root / relative
@@ -2788,6 +3309,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "schema_version": 1,
             "aggregate_sha256": AGGREGATE_SHA256,
             "config_sha256": CONFIG_SHA256,
+            "additional_source_sha256": {str(path): digest for path, digest in FOLLOWUP_SOURCE_HASHES.items()},
             "entries": [
                 {
                     "manuscript": str(x.manuscript),

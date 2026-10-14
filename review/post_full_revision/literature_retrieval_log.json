@@ -1,0 +1,32 @@
+[
+  {
+    "source": "granziol_arxiv",
+    "url": "https://arxiv.org/abs/2602.00816",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "source": "wen_openreview",
+    "url": "https://api2.openreview.net/notes?content.title=Revisiting+Matrix+Sketching+in+Linear+Bandits%3A+Achieving+Sublinear+Regret+via+Dyadic+Block+Sketching&limit=10",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "source": "wen_iclr",
+    "url": "https://iclr.cc/virtual/2026/papers.html",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "source": "kuzborskij_pmlr",
+    "url": "https://proceedings.mlr.press/v89/kuzborskij19a.html",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "source": "lattimore_pmlr",
+    "url": "https://proceedings.mlr.press/v119/lattimore20a.html",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "source": "misspecified_arxiv_search",
+    "url": "https://export.arxiv.org/api/query?search_query=ti%3A%22Misspecified+Linear+Bandits%22&max_results=3",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  }
+]

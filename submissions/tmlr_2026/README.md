@@ -1,20 +1,20 @@
 # TMLR 2026 submission candidate
 
-**Status: revised manuscript, not submitted; strict release not rebuilt.**
-The review revision was synchronized with the manuscript mirror on
-2026-10-13 (America/Los_Angeles). `REVISION_VALIDATION.md` records current
-checks and blockers. `FINALIZATION_REPORT.md` is the historical release record,
-not evidence that the revised sources have passed its old release checks.
+**Status: manuscript revised around the completed follow-up; not submitted.**
+The current revision adds a same-history width comparison, direct endpoint and
+scaled-tanh relative-weight certificates, and the full negative follow-up study.
+The follow-up is the main empirical section; the original near-linear audit is
+retained separately in the appendix with its provenance limits. Exploratory
+state-replay diagnostics are distinguished from the prespecified evaluation.
+`REVISION_VALIDATION.md` records build and evidence checks. The historical
+`FINALIZATION_REPORT.md` does not establish validity of this revised release.
 
-This directory is a thin entry point. It contains no mathematics of its own:
-`main.tex` `\input`s the shared canonical sources under `paper/`, which are the
-shared files the historical AISTATS entry point `paper/main.tex` reads. TMLR
-now includes the transport theorem, its proofs, the controlled-study diagnostics,
-and a short historical-scope note. The nine legacy one-sided/rate/protocol
-appendix sources remain in Git but are excluded from both TMLR archives. The
-symbolic growing-window table is also excluded. No experiment configuration,
-execution source, selection record, result, or frozen PDF was changed by this
-manuscript synchronization.
+This directory is a thin entry point. Its sections are shared canonical sources
+under `paper/`; the main branch carries a self-contained TMLR mirror. The nine
+legacy one-sided/rate/protocol appendix sources remain in Git but are excluded
+from the active TMLR manuscript. The frozen historical PDF, experiment source,
+protocols, selections, and evaluation exports are preserved. New analyses have
+separate scripts and output directories.
 
 ```
 main.tex                 the anonymous TMLR entry point
@@ -27,6 +27,14 @@ PORTAL.md                private portal text; NOT uploaded
 ```
 
 ## Build
+
+The current strict release command deliberately stops before staging: the
+expanded follow-up supplement is missing required evidence/tool inputs and
+reviewed anonymous provenance handling. Its new tables are classified as active
+evidence, but classification alone does not make the supplement complete.
+The diagnostic compiled-source contract has been refreshed; protected system
+TeX dependencies remain an additional prerequisite. Use the main-branch build
+for the current manuscript PDF and standalone LaTeX archive.
 
 ```bash
 bash submissions/tmlr_2026/build.sh
@@ -201,18 +209,26 @@ of the repository; the root `README.md` says how.
 
 ## Evidence
 
-Every empirical claim comes from one locked aggregate,
+The original near-linear study comes from the locked aggregate,
 `results/derived/transport_instantiation/full_aggregate.json`, SHA-256
 `0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02`, produced at
 execution revision `0cd6264c1f8b8751728f3c4a198207e8289aed74`. The ledger lists
 each reported number with its selector, unit, aggregation rule, population,
-unrounded value and display rounding.
+unrounded value and display rounding. The full follow-up is recorded separately under
+`review/transport_review_followup/full-cce-full-local/`, including all 600
+evaluation seed summaries and a verifier for terminal paired intervals.
+`review/transport_relative_diagnostics/` contains exploratory certificate/state
+replays; `tools/make_transport_followup_paper.py` derives the new manuscript
+tables and their input provenance. These new evidence sources are not yet part
+of the historical anonymous-supplement packaging contract. A successful
+manuscript PDF/source build must not be called a complete verified release.
 
 ## Limitations that are part of the submission, not bugs
 
-- Raw per-run trajectories are not distributed and were never committed. Checks
-  that would need them are reported NOT EXECUTED, including recomputation of the
-  paired bootstrap.
+- The original study's raw per-run trajectories are missing; its paired
+  bootstrap cannot be replayed. Full follow-up raw trajectories are retained
+  outside Git, and its portable seed summaries support terminal bootstrap
+  replay. Roundwise replay still requires those raw trajectories.
 - The realistic Covertype/Nyström extension is **not** part of this submission
   and is **not** cleared. It stays in `experiments/realistic_transport/` with its
   open evidence-integrity blockers, and CI runs it in a separate job so that its

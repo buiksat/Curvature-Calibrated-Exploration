@@ -96,6 +96,36 @@ updates gives its cumulative bound.  Only the reference-confidence event is
 used, so no additional certificate-failure probability is charged.
 \end{proof}
 
+\begin{proof}[Proof of \Cref{prop:reference-width-floor}]
+The outward inequalities in \eqref{eq:path-width-proof} and
+\eqref{eq:operator-width-proof}, followed by the all-action solver upper
+certificate, give
+\[
+ \bar s_t(a)\le e^{\bar D_t/2}s_t(a)
+ \le e^{\bar D_t/2}\sqrt{\kappa_{+,t}}s_{\Calg,t}(a)
+ \le w_t^{\rm tr}(a).
+\]
+For a nonzero query, positive definiteness makes both $\bar s_t(a)$ and
+$s_t(a)$ strictly positive, so their ratio is well defined and gives the
+stated equality.  For a zero query, both exact widths vanish, and the assigned
+multiplier $1$ avoids division by zero.  This equality concerns exact widths;
+the solver interface may allow a positive upper estimate at an unplayed zero
+query.
+
+For the fixed-band statement, the largest admissible mean is
+$m_t(a)+\beta_t\bar s_t(a)+b_t(a)$.  Comparing this endpoint to the proposed
+score and using $\beta_t>0$ proves necessity and sufficiency.  When
+$\beta_t=0$, this comparison imposes no restriction on the candidate width.
+It makes no assertion about uncertainty sets constrained by additional
+information or about distinct adaptive histories.
+
+For completeness, an exact scalar endpoint distance does not generally give
+the actionwise equality.  Set $\bVbar=I_2$,
+$\bV=\operatorname{diag}(e^D,e^{-D})$ with $D>0$, and
+$\bq=(0,1)^\top$.  Then $d_{\rm Th}(\bVbar,\bV)=D$ and $\bar s=1$,
+whereas the scalar corrected width is $e^{D/2}s=e^D>1$.
+\end{proof}
+
 \begin{proof}[Proof of \Cref{cor:finite-enumeration-new}]
 On the measurable event $\{K_t=n\}$, the finite vector
 $\{U_t(a_{t,k})\}_{k=1}^n$ is $\cHist_t$-measurable by joint measurability on
@@ -192,6 +222,37 @@ $-\varepsilon_t\bI\preceq
 \preceq\varepsilon_t\bI$; undoing the congruence gives the claimed factors.
 \end{proof}
 
+\begin{proof}[Proof of \Cref{cor:relative-endpoint-ucb}]
+Inverting \eqref{eq:relative-endpoint-sandwich} gives, for every query,
+\[
+ \bar s_t(a)\le\sqrt{c_{+,t}}s_t(a),\qquad
+ s_t(a)\le c_{-,t}^{-1/2}\bar s_t(a).
+\]
+The first inequality, the outward operator inequality in
+\eqref{eq:operator-width-proof}, and solver upper validity imply
+$\bar s_t(a)\le\sqrt{c_{+,t}\kappa_{+,t}}\hat s_t(a)$.
+Consequently, \eqref{eq:relative-endpoint-score} is optimistic on the reference
+confidence event.  Its approximate-selector condition and lower reference
+confidence at the played action give
+\begin{align*}
+ \operatorname{reg}_t
+ &\le\beta_t\bar s_t(a_t)
+ +\beta_t\sqrt{c_{+,t}\kappa_{+,t}}\hat s_t(a_t)
+ +2b_t(a_t)+\xi_t\\
+ &\le\beta_t\left[1+\alpha_t
+ \sqrt{\frac{c_{+,t}\kappa_{+,t}}{c_{-,t}\kappa_{-,t}}}\right]
+ \bar s_t(a_t)+2b_t(a_t)+\xi_t.
+\end{align*}
+The last line uses played-action sharpness, the return operator inequality,
+and the second width inequality above, for the same width map used to select
+the action.  Summation, Cauchy--Schwarz, and
+\eqref{eq:frozen-potential-proof} prove the cumulative statement.  The same
+union bound proves its probability guarantee.  Finally, with
+$D=\max\{-\log c_{-,t},\log c_{+,t}\}$, the endpoint sandwich implies
+$e^{-D}\bVbar_t\preceq\bV_t\preceq e^D\bVbar_t$, hence the stated Thompson
+distance bound.  No path-length estimate was used.
+\end{proof}
+
 \begin{proof}[Proof of \Cref{cor:corrected-center-new}]
 Taylor expansion around $\btheta_s$ gives
 \[
@@ -279,6 +340,79 @@ Substitute these inequalities, $S=R$, $\alpha=1$, $K=1$, and $\xi_t=0$
 into \Cref{cor:finite-d-rate-new}.  The asymptotic statement follows from
 $\Gamma_{T,d}=O(d\log T)$ for fixed problem constants.
 \end{proof}
+
+\begin{proof}[Proof of \Cref{cor:tanh-relative-weights}]
+Write $\omega_s=\omega_{\btheta_s}(z_s)$ and
+$\widetilde\omega_s=\omega_{\btheta_t}(z_s)$.  Cauchy--Schwarz and the parameter
+and feature bounds give $\ell\le\omega_s,\widetilde\omega_s\le1$.  Thus
+\[
+ \ell^2\omega_s^2\le\widetilde\omega_s^2
+ \le\ell^{-2}\omega_s^2.
+\]
+Multiplying by the positive semidefinite matrix
+$\sigma^{-2}\phi(z_s)\phi(z_s)^\top$ and summing proves the comparison for the
+data terms.  Including the ridge preserves it because
+\[
+ \bV_t-\ell^2\bVbar_t\succeq(1-\ell^2)\lambda\bI\succeq0,
+ \qquad
+ \ell^{-2}\bVbar_t-\bV_t
+ \succeq(\ell^{-2}-1)\lambda\bI\succeq0.
+\]
+Since $-2\log\ell=4\log\cosh(B_\phi R/\sqrt W)$, this also proves the uniform
+Thompson distance bound.
+
+For the category certificate, finite positive collection weights imply
+$f_{t,c}>0$ whenever $n_{t,c}>0$, and
+\[
+ \bVbar_t=\lambda\bI+\sigma^{-2}\sum_c f_{t,c}\phi_c\phi_c^\top,
+ \qquad
+ \bV_t=\lambda\bI+\sigma^{-2}\sum_c g_{t,c}\phi_c\phi_c^\top.
+\]
+For $m=c_{-,t}$ and $M=c_{+,t}$, the definitions give
+\begin{align*}
+ \bV_t-m\bVbar_t
+ &=(1-m)\lambda\bI+\sigma^{-2}\sum_c(g_{t,c}-mf_{t,c})\phi_c\phi_c^\top
+ \succeq0,\\
+ M\bVbar_t-\bV_t
+ &=(M-1)\lambda\bI+\sigma^{-2}\sum_c(Mf_{t,c}-g_{t,c})\phi_c\phi_c^\top
+ \succeq0.
+\end{align*}
+The inclusion of $1$ in the minimum and maximum accounts for the ridge.
+Each category ratio is a weighted average of sample ratios
+$r_s=\widetilde\omega_s^2/\omega_s^2$, with weights
+$\omega_s^2/f_{t,c}$.  Therefore $\ell^2\le g_{t,c}/f_{t,c}\le\ell^{-2}$,
+which gives the asserted uniform bounds on $m,M$.  It also shows that the
+category factors are no looser than the direct sample factors
+$\min\{1,\min_{s<t}r_s\}$ and $\max\{1,\max_{s<t}r_s\}$.
+For an empty history both metrics equal $\lambda\bI$.
+
+The category certificate uses only scalar sums and current projections.
+After collecting category $c$ at time $t$, its count increases by one and its
+collection sum increases by $\omega_{\btheta_t}(z_t)^2$; other category sums
+are unchanged.  These are sufficient statistics for this comparison, although
+the category factors need not be the tight spectral factors when feature
+outer products are linearly dependent.
+\end{proof}
+
+\paragraph{An endpoint certificate need not bound the synthetic path.}
+Consider one sample with scalar feature $\phi=1$, collection parameter $-R$,
+and current parameter $R$, where $R>0$.  Write
+$\ell=\operatorname{sech}^2(R/\sqrt W)$ with $W>0$.  The endpoint metrics are
+equal to $\lambda+\sigma^{-2}\ell^2$, so their Thompson distance is zero and
+the category factors are $m=M=1$.  Along the synthetic interpolation
+\eqref{eq:scalar-factor-path-new}, however, the scalar metric is
+\[
+ V(\tau)=\lambda+\sigma^{-2}
+ \operatorname{sech}^4((2\tau-1)R/\sqrt W).
+\]
+It increases up to $\tau=1/2$ and then decreases, giving path length
+\[
+ \int_0^1\frac{|\dot V(\tau)|}{V(\tau)}\,d\tau
+ =2\log\!\left(\frac{\lambda+\sigma^{-2}}
+ {\lambda+\sigma^{-2}\ell^2}\right)>0.
+\]
+Thus \Cref{cor:tanh-relative-weights} controls endpoint comparison, not the
+length used by the original synthetic-path certificate.
 
 \begin{proof}[Proof of \Cref{cor:local-small-drift-new}]
 Inverting \eqref{eq:local-additive-new} gives

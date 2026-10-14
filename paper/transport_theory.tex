@@ -238,6 +238,40 @@ reference-confidence event has probability at least $1-\delta$, so does this
 guarantee.
 \end{proposition}
 
+\begin{proposition}[Reference-width floor on a fixed history]
+\label{prop:reference-width-floor}
+On the certificate event of \Cref{asm:abstract-transport}, every scored action
+satisfies
+\begin{equation}\label{eq:reference-width-floor}
+ w_t^{\rm tr}(a):=e^{\bar D_t/2}\sqrt{\kappa_{+,t}}\hat s_t(a)
+ \ge \bar s_t(a).
+\end{equation}
+For exact current widths, the actionwise multiplier
+\begin{equation}\label{eq:actionwise-width-ratio}
+ c_t(a)=\begin{cases}
+ \bar s_t(a)/s_t(a),&\bq_t(a)\ne0,\\
+ 1,&\bq_t(a)=0
+ \end{cases}
+ \qquad\text{satisfies}\qquad c_t(a)s_t(a)=\bar s_t(a).
+\end{equation}
+Thus this exact actionwise correction reproduces the frozen-width score when
+the center, radius, and bias are the same.
+
+More generally, fix an action and $m_t(a)$, $b_t(a)$, $\beta_t>0$, and
+$\bar s_t(a)$.  If the only restriction on its mean is the full interval
+\eqref{eq:abstract-confidence-new}, a score
+$m_t(a)+\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that
+interval if and only if $w_t(a)\ge\bar s_t(a)$.
+\end{proposition}
+
+The last statement concerns the uncertainty set supplied by one confidence
+band.  Additional restrictions on the mean, a different center, or another
+simultaneous confidence event can change that set.  An exact scalar endpoint
+distance supplies a worst-direction multiplier, not necessarily the
+actionwise equality in \eqref{eq:actionwise-width-ratio}.  These are
+same-history comparisons; they do not order the realized regret of policies
+whose actions and subsequent histories differ.
+
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
 Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and
@@ -436,6 +470,42 @@ gives $\kappa_{-,t}=1-\varepsilon_t$ and
 $\kappa_{+,t}=1+\varepsilon_t$.  An upper comparison alone does not imply a
 lower factor.
 \end{proposition}
+
+\begin{corollary}[Direct endpoint sandwich]
+\label{cor:relative-endpoint-ucb}
+Replace the path premise \eqref{eq:path-length-new} in
+\Cref{thm:transported-ucb} by pre-reward measurable factors that, on the joint
+certificate event, satisfy
+\begin{equation}\label{eq:relative-endpoint-sandwich}
+ 0<c_{-,t}\le c_{+,t}<\infty,\qquad
+ c_{-,t}\bVbar_t\preceq\bV_t\preceq c_{+,t}\bVbar_t.
+\end{equation}
+Replace \eqref{eq:transported-score-new} by the score
+\begin{equation}\label{eq:relative-endpoint-score}
+ U_t^{\rm rel}(a)=m_t(a)+\beta_t\sqrt{c_{+,t}\kappa_{+,t}}
+ \hat s_t(a)+b_t(a),
+\end{equation}
+and require the same finite measurable supremum and approximate-selector
+condition for this score.  Keep every other hypothesis of that theorem.
+On the joint confidence and certificate event, writing
+$h_t=1+\alpha_t\sqrt{c_{+,t}\kappa_{+,t}/(c_{-,t}\kappa_{-,t})}$,
+\begin{align}
+ \operatorname{reg}_t
+ &\le\beta_t h_t\bar s_t(a_t)+2b_t(a_t)+\xi_t,\nonumber\\
+ R_T&\le\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)
+ \gamma_T\sum_{t=1}^T\beta_t^2h_t^2}
+ +2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.
+ \label{eq:relative-endpoint-regret}
+\end{align}
+The probability statement of \Cref{thm:transported-ucb} is unchanged, with
+the endpoint certificate included in its joint certificate event.
+\end{corollary}
+
+This result uses the endpoint matrices directly.  In particular,
+$\max\{-\log c_{-,t},\log c_{+,t}\}$ bounds their Thompson distance;
+it need not bound the length of the synthetic path
+\eqref{eq:scalar-factor-path-new}.  Its effective width still obeys the
+reference-width floor: $\sqrt{c_{+,t}\kappa_{+,t}}\hat s_t(a)\ge\bar s_t(a)$.
 
 For vector outputs, let $J_s(\theta)\in\R^{p_s\times d}$ and supply an
 absolutely continuous factor $R_s(\theta)\in\R^{r_s\times p_s}$ satisfying
@@ -661,6 +731,50 @@ The symbol $W$ is a smoothness scale here; it is not identified with hidden
 width or parameter count.
 \end{remark}
 
+\begin{corollary}[Relative weights for scaled tanh]
+\label{cor:tanh-relative-weights}
+For the scaled-tanh model above, suppose $W>0$, $\|\phi(z_s)\|_2\le B_\phi$,
+and $\|\btheta_s\|_2,\|\btheta_t\|_2\le R$ for all $s<t$.
+Set $\omega_\theta(z)=\operatorname{sech}^2(\phi(z)^\top\theta/\sqrt W)$ and
+$\ell=\operatorname{sech}^2(B_\phi R/\sqrt W)>0$.  For
+\begin{align*}
+ \bVbar_t&=\lambda\bI+\sigma^{-2}\sum_{s<t}
+ \omega_{\btheta_s}(z_s)^2\phi(z_s)\phi(z_s)^\top,\\
+ \bV_t&=\lambda\bI+\sigma^{-2}\sum_{s<t}
+ \omega_{\btheta_t}(z_s)^2\phi(z_s)\phi(z_s)^\top,
+\end{align*}
+the uniform endpoint certificate is
+\begin{equation}\label{eq:tanh-uniform-relative}
+ \ell^2\bVbar_t\preceq\bV_t\preceq\ell^{-2}\bVbar_t,
+ \qquad d_{\rm Th}(\bVbar_t,\bV_t)
+ \le4\log\cosh(B_\phi R/\sqrt W).
+\end{equation}
+If the observed feature vectors belong to a finite set $\{\phi_c\}$, let
+$n_{t,c}$ be their counts, let
+$f_{t,c}=\sum_{s<t:\phi(z_s)=\phi_c}\omega_{\btheta_s}(z_s)^2$, and put
+$g_{t,c}=n_{t,c}\operatorname{sech}^4(\phi_c^\top\btheta_t/\sqrt W)$.
+The sharper category certificate is
+\begin{equation}\label{eq:tanh-category-relative}
+ c_{-,t}=\min\!\left\{1,\min_{c:n_{t,c}>0}\frac{g_{t,c}}{f_{t,c}}\right\},
+ \qquad
+ c_{+,t}=\max\!\left\{1,\max_{c:n_{t,c}>0}\frac{g_{t,c}}{f_{t,c}}\right\},
+\end{equation}
+with $c_{-,1}=c_{+,1}=1$ for an empty history.  It satisfies
+\eqref{eq:relative-endpoint-sandwich} and
+$\ell^2\le c_{-,t}\le1\le c_{+,t}\le\ell^{-2}$.
+Either certificate can be used in \Cref{cor:relative-endpoint-ucb}.
+\end{corollary}
+
+These certificates compare scalar weights on fixed feature directions;
+they make no claim about general gradient rotation.  Maintaining the counts
+and one collection-weight sum per category makes
+\eqref{eq:tanh-category-relative} computable from current category projections
+without an eigensolve or a scan of the full history.  This reduces the work
+needed for an endpoint certificate, not the cost of all width or center
+solves, and does not itself imply improved regret.  The appendix gives the
+termwise proof and a case where the endpoint distance is zero although the
+synthetic path has positive length.
+
 The previous additive stacked-design result remains a useful local corollary.
 If $\chi_t<1$ and
 \begin{equation}\label{eq:local-additive-new}
@@ -704,6 +818,8 @@ whether replay gradients may change direction.}
 Route & Assumption & two-way factor & smallness & rotation \\
 \midrule
 Logarithmic path & normalized SPD path length $\bar D_t$ & $e^{\bar D_t}$ & no & yes \\
+Direct endpoint & \eqref{eq:relative-endpoint-sandwich} & $\sqrt{c_+/c_-}$ & no & yes \\
+Category weights & fixed feature directions; \eqref{eq:tanh-category-relative} & $\sqrt{c_+/c_-}$ & no & no \\
 Local sandwich & \eqref{eq:local-additive-new} & $(1+\chi_t)/(1-\chi_t)$ & $\chi_t<1$ & yes \\
 Exact current & $\Calg_t=\bV_t$ & $1$ & no & yes \\
 Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kappa_-}$ & $\kappa_->0$ & yes \\

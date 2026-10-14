@@ -1,0 +1,183 @@
+\section{Full-study protocol and exploratory diagnostics}
+\label{app:transport-followup}
+
+\subsection{Prespecified protocol, uncertainty, and provenance}
+
+The full study fixes teacher seed 1729, development seeds 30000--30001,
+tuning seeds 30100--30109, and evaluation seeds 30200--30249.
+Contexts are normalized Rademacher vectors.  The feature map concatenates the
+context, action indicator, and their tensor product, then normalizes it to
+unit norm; its dimension is $4+5+20=29$.  The teacher has unit norm and a fixed
+regular-simplex construction in the interaction block.  The learner starts at
+zero, uses training ridge one, and receives only the selected action's reward.
+The potential-noise table couples methods without revealing unselected rewards.
+The 24 development trajectories cover three conditions and four policies at
+both development seeds.  The 270 tuning trajectories cover nine optimizer
+candidates, three conditions, and ten tuning seeds, using uniform-random
+actions.  The nine candidates combine learning rates
+$\{3\times10^{-5},10^{-4},3\times10^{-4}\}$ with $\{1,5,20\}$ full-batch steps.
+All were eligible.  Candidate 008, learning rate $3\times10^{-4}$ and 20 steps,
+minimized equally weighted all-action prediction MSE over the 30 tuning
+seed--condition cells, with selected MSE $0.00392155$.
+Evaluation consists of $3\times4\times50=600$ further trajectories.  The 294
+development and tuning trajectories are not evaluation replicates.
+
+A documented development-only numerical refinement froze Gauss--Legendre
+quadrature order 2048 before tuning and evaluation.  The full development gate
+compared orders 1024 and 2048 on all 24 declared trajectories; a separate
+development check also compared 2048 and 4096.  No failed development check was
+reclassified as a passing evaluation.  Quadrature checks, dense eigenvalue
+comparisons, and confidence/optimism checks remain floating-point diagnostics.
+They do not supply rigorous numerical enclosures for theorem assumptions.
+
+The paired-bootstrap intervals resample the 50 evaluation seeds within a
+condition, preserving the pairing between policies, with 10,000 resamples and
+the recorded deterministic bootstrap seed.  The nine intervals in
+\Cref{tab:transport-followup-outcomes} are comparisonwise rather than
+multiplicity-adjusted.  Shared seeds across conditions do not make the 600
+trajectories independent observations from one common population.  The teacher,
+conditions, and shared optimizer are fixed in this uncertainty calculation.
+
+The committed full-study export records the exact configuration, selected
+optimizer, source inventory, development/tuning summaries, per-seed terminal
+outcomes, drift summaries, and compact aggregate.  Its independent verifier
+recomputes the final-horizon means and paired intervals from the per-seed
+values.  The later mechanism analysis scans the preserved raw trajectories and
+records their hash inventory.  The new paper tables are generated directly
+from these machine artifacts by
+\texttt{tools/make\_transport\_followup\_paper.py}; the accompanying
+\texttt{transport\_followup\_provenance.json} binds input and output SHA-256
+digests.  This provenance is separate from the original near-linear study,
+whose raw trajectories were unavailable for the revision.
+
+\subsection{Exploratory recommendations on fixed histories}
+
+For each logged state, we evaluate all four original score rules using that
+state's matrices, centers, and radii, without changing its history.
+\Cref{tab:transport-followup-same-history} includes all 12 combinations of
+condition and behavior policy.  Each entry averages one-step pseudo-regret
+over 50,000 dependent states; the diagonal equals the actual mean cumulative
+pseudo-regret divided by 1000.  Off-diagonal entries are recommendations on
+states visited by the row policy.  They are not cumulative regret for an
+alternative adaptive policy: a changed action would generally change future
+observations, parameters, matrices, and decisions.  The analysis was specified
+after the full-study outcomes were observed.
+
+\begin{table}[t]
+  \centering
+  \caption{Exploratory same-history mean one-step pseudo-regret.  Rows identify
+  the policy that generated the history; columns identify the score used to
+  recommend an action on that state.  Bold diagonal entries are realized
+  behavior-policy outcomes divided by $T$.  Off-diagonal entries do not
+  reconstruct alternative adaptive runs.}
+  \label{tab:transport-followup-same-history}
+  \input{tables/transport_followup_same_history.tex}
+\end{table}
+
+Write the primary score on a recorded state as
+$m_t(a)+B_t s_t(a)+b_t$, where $b_t$ is action independent and
+$B_t=\beta_t^{\rm corr}\exp(\bar D_t^Q/2)$.
+Let $s_{t,(1)}\ge s_{t,(2)}$ be the largest two current widths.
+The strict condition
+\[
+ B_t\bigl(s_{t,(1)}-s_{t,(2)}\bigr)
+ >\max_a m_t(a)-\min_a m_t(a)
+\]
+is sufficient for the unique largest-width action to maximize the score.
+Width-argmax agreement alone is weaker: prediction centers might favor the
+same action.  On primary histories, agreement counts are 49,691, 49,981, and
+49,991 out of 50,000 rounds, and strict-condition counts are 48,552, 49,686,
+and 49,754.  The exact tie rule is the smallest action index.
+
+The numerical scan reconstructs the recorded selected scores exactly and
+finds no nonfinite coefficients or scores and no zero widths.  A separate
+250-digit decimal calculation evaluates the final score arithmetic from the
+exact stored binary64 centers, widths, offsets, and \emph{already rounded}
+coefficient $B_t$.  It changes the primary recommendation at 16 states:
+five, five, and six in the respective conditions.  Across all behavior
+histories there are 65 changes among 600,000 states.  All occur at rounds
+2--10; the primary differences are below 0.629 of a binary64 score ULP.
+The decimal calculation does not recompute upstream matrix solves,
+exponentials, coefficients, or fitted parameters.  An early changed action
+could affect subsequent adaptive history; that effect has not been measured.
+Likewise, equality between the full score vector and its bonus-plus-offset
+part in binary64 arithmetic includes initially zero centers and is not, by
+itself, evidence that the selected action was corrupted.
+
+\Cref{tab:transport-followup-mechanism-variation} reports per-seed variation
+instead of treating the pooled rounds as independent.  In every row, the
+recommendation being diagnosed is the Hessian score evaluated on the row's
+behavior histories.  It is the behavior policy only in Hessian rows; in other
+rows its conditional recommendation can still coincide with the logged action.
+Each fraction has 1000 rounds in its denominator, and the
+reported median and range summarize 50 seeds.  These descriptive summaries
+are not confidence intervals.
+
+\begin{table}[t]
+  \centering
+  \caption{Exploratory per-seed variation in Hessian-score recommendations on
+  all four behavior histories.  Entries are the median percentage of rounds
+  and the minimum--maximum range across 50 seeds.  Width argmax uses the exact
+  smallest-index tie rule; the strict condition is the bonus-gap inequality
+  above.}
+  \label{tab:transport-followup-mechanism-variation}
+  \input{tables/transport_followup_mechanism_variation.tex}
+\end{table}
+
+\subsection{Exploratory relative-certificate audit}
+
+For unit feature and parameter bounds, \Cref{cor:tanh-relative-weights} gives
+the uniform endpoint bound $D_0=4\log\cosh(1/\sqrt W)$, approximately
+$0.124$, $1.735$, and $5.300$ at the three conditions.  The category-specific
+sandwich $c_{-,t}\bVbar_t\preceq\bV_t\preceq c_{+,t}\bVbar_t$ gives a
+symmetric coefficient $\exp(D_{{\rm cat},t}/2)$, where
+$D_{{\rm cat},t}=\max\{-\log c_{-,t},\log c_{+,t}\}$, or the separate outward
+coefficient $\sqrt{c_{+,t}}$ of \Cref{cor:relative-endpoint-ucb}.
+The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the
+cumulative bound.  Neither category construction is an upper bound on the
+length of the original interpolated factor path.
+
+The post-outcome audit replays the original representation optimizer with
+fixed logged actions and rewards for all 600 trajectories; it never replaces
+a behavior action or generates a new observation.  It reconstructs
+collection-time category weights and compares the resulting sandwich,
+effective widths, and recommendations at the stored states.  Matrix, center,
+and endpoint reconstruction are checked at rounds 1, 2, 10, 100, 500, and 1000;
+the original float64 tolerances are retained.  These computations check an
+implementation of the mathematical construction, without converting
+floating-point residuals into verified certificates.  All declared checks
+passed; the largest residual divided by its original tolerance was below
+$0.005$.  The per-seed variation in the preceding table was reproduced by this
+separate fixed-action replay.
+
+\begin{table}[t]
+  \centering
+  \caption{Exploratory relative certificates on Hessian's recorded histories.
+  The upper panel averages effective-width/reference-width ratios over all
+  five candidate actions and 1000 rounds, then over 50 seeds per condition;
+  the direct reference ratio is identically one.  The lower panel averages
+  one-step pseudo-regret of recommendations on these same states.  Uniform
+  uses $D_0$; the category columns use symmetric and separate outward factors.
+  These are fixed-history diagnostics, not adaptive policy outcomes.}
+  \label{tab:transport-followup-relative-audit}
+  \input{tables/transport_followup_relative_audit.tex}
+\end{table}
+
+\Cref{tab:transport-followup-relative-audit} uses the primary policy's
+histories; the machine artifact also reports all four behavior-history groups
+and per-seed summaries.  Direct frozen-reference recommendations on these
+states appear in \Cref{tab:transport-followup-same-history}.  The audit also
+records timings for category-ratio kernels with and without the 80 feature
+projections, and for dense endpoint evaluation with preassembled matrices.
+These are fixed-state microbenchmarks under parallel analysis load; they
+exclude matrix construction, confidence estimation, and the policy loop.
+Over 36 states (one seed, three checkpoints, four behaviors, and three
+conditions), the median of the per-state median kernel times was
+$27.7\,\mu\mathrm{s}$ for category ratios with precomputed scales,
+$34.8\,\mu\mathrm{s}$ including 80 projections, and
+$213.3\,\mu\mathrm{s}$ for dense endpoint evaluation.  Each state's timing
+uses five repeated batches; these timings are descriptive observations on
+one host, not a statistical comparison of end-to-end algorithms.
+The category construction requires additional accumulated collection weights
+and still uses matrix solves and the frozen confidence construction.  No
+end-to-end speedup or adaptive regret improvement has been established.
