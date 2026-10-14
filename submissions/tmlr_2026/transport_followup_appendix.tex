@@ -1,8 +1,15 @@
 \section{Full-study protocol and exploratory diagnostics}
 \label{app:transport-followup}
 
+This appendix explains how the study was run and what its later diagnostics
+can tell us.  The protocol and policy comparisons were specified before
+evaluation.  The analyses on recorded histories came afterward: they hold
+the learner's information fixed to examine scores, rather than rerun an
+adaptive policy after changing its action.
+
 \subsection{Prespecified protocol, uncertainty, and provenance}
 
+\paragraph{Environment and data splits.}
 The full study fixes teacher seed 1729, development seeds 30000--30001,
 tuning seeds 30100--30109, and evaluation seeds 30200--30249.
 Contexts are normalized Rademacher vectors.  The feature map concatenates the
@@ -12,7 +19,12 @@ regular-simplex construction in the interaction block.  The learner starts at
 zero, uses training ridge one, and receives only the selected action's reward.
 The potential-noise table couples methods without revealing unselected rewards.
 The 24 development trajectories cover three conditions and four policies at
-both development seeds.  The 270 tuning trajectories cover nine optimizer
+both development seeds.
+
+\paragraph{Selecting a shared optimizer.}
+We select the optimizer by prediction accuracy, using histories generated
+independently of the study policies' evaluation decisions.  The 270 tuning
+trajectories cover nine optimizer
 candidates, three conditions, and ten tuning seeds, using uniform-random
 actions.  The nine candidates combine learning rates
 $\{3\times10^{-5},10^{-4},3\times10^{-4}\}$ with $\{1,5,20\}$ full-batch steps.
@@ -22,6 +34,7 @@ seed--condition cells, with selected MSE $0.00392155$.
 Evaluation consists of $3\times4\times50=600$ further trajectories.  The 294
 development and tuning trajectories are not evaluation replicates.
 
+\paragraph{Numerical checks before evaluation.}
 A documented development-only numerical refinement froze Gauss--Legendre
 quadrature order 2048 before tuning and evaluation.  The full development gate
 compared orders 1024 and 2048 on all 24 declared trajectories; a separate
@@ -30,6 +43,9 @@ reclassified as a passing evaluation.  Quadrature checks, dense eigenvalue
 comparisons, and confidence/optimism checks remain floating-point diagnostics.
 They do not supply rigorous numerical enclosures for theorem assumptions.
 
+\paragraph{What the intervals measure.}
+Pairing compares policies exposed to the same underlying context and
+potential-noise stream.  It does not force them to select the same actions.
 The paired-bootstrap intervals resample the 50 evaluation seeds within a
 condition, preserving the pairing between policies, with 10,000 resamples and
 the recorded deterministic bootstrap seed.  The nine intervals in
@@ -49,6 +65,10 @@ conditions, and shared optimizer are fixed in this uncertainty calculation.
   \input{tables/transport_followup_outcomes.tex}
 \end{table}
 
+\paragraph{Descriptive benchmarks.}
+These benchmarks provide reference performance levels for the same reward
+streams.  They neither estimate the best achievable contextual performance
+nor serve as equivalence tests between policies.
 The online context-free benchmark samples each action once, then selects the
 smallest-index action with the largest empirical mean of its own selected
 rewards, ignoring context.  The best-fixed-action benchmark instead selects in
@@ -56,6 +76,7 @@ hindsight the action with the largest total true mean along the realized
 context stream.  Both use the same potential-outcome streams as the study
 policies, but neither follows a study policy's selected-action history.
 
+\paragraph{What the retained evidence can reproduce.}
 The committed full-study export records the exact configuration, selected
 optimizer, source inventory, development/tuning summaries, per-seed terminal
 outcomes, drift summaries, and compact aggregate.  Its independent verifier
@@ -81,16 +102,19 @@ analytic example, independently of these empirical summaries.
 
 \subsection{Exploratory recommendations on fixed histories}
 
-For each logged state, we evaluate all four original score rules using that
-state's matrices, centers, and radii, without changing its history.
+This analysis asks what different scores recommend when given the same
+information.  For each logged state, we evaluate all four original score
+rules using that state's matrices, centers, and radii, without changing its
+history.
 \Cref{tab:transport-followup-same-history} includes all 12 combinations of
 condition and behavior policy.  Each entry averages one-step pseudo-regret
 over 50,000 dependent states; the diagonal equals the actual mean cumulative
 pseudo-regret divided by 1000.  Off-diagonal entries are recommendations on
-states visited by the row policy.  They are not cumulative regret for an
-alternative adaptive policy: a changed action would generally change future
-observations, parameters, matrices, and decisions.  The analysis was specified
-after the full-study outcomes were observed.
+states visited by the row policy.  They describe a recommendation at a
+recorded state, not the subsequent trajectory of an alternative policy.
+Taking a different action would generally change future observations,
+parameters, matrices, and decisions.  The analysis was specified after the
+full-study outcomes were observed.
 
 \begin{table}[t]
   \centering
@@ -103,6 +127,10 @@ after the full-study outcomes were observed.
   \input{tables/transport_followup_same_history.tex}
 \end{table}
 
+\paragraph{When the width bonus determines the action.}
+A large bonus can make the widest action win even when its predicted reward
+is lower.  A sufficient check is that its bonus advantage exceeds the largest
+possible difference between prediction centers on the recorded state.
 Write the primary score on a recorded state as
 $m_t(a)+B_t s_t(a)+b_t$, where $b_t$ is action independent and
 $B_t=\beta_t^{\rm corr}\exp(\bar D_t^Q/2)$.
@@ -116,6 +144,9 @@ is sufficient for the unique largest-width action to maximize the score.
 Width-argmax agreement alone is weaker: prediction centers might favor the
 same action.  The exact tie rule is the smallest action index.
 
+\paragraph{Sensitivity to score rounding.}
+We distinguish recomputing the final score from recomputing the quantities
+that enter it.  This matters when two actions have nearly equal scores.
 The numerical scan reconstructs the recorded selected scores exactly and
 finds no nonfinite coefficients or scores and no zero widths.  A separate
 250-digit decimal calculation evaluates the final score arithmetic from the
@@ -123,7 +154,8 @@ exact stored binary64 centers, widths, offsets, and \emph{already rounded}
 coefficient $B_t$.  It changes the primary recommendation at 16 states:
 five, five, and six in the respective conditions.  Across all behavior
 histories there are 65 changes among 600,000 states.  All occur at rounds
-2--10, with score differences below 0.629 of a binary64 score ULP.
+2--10, with score differences below 0.629 of a binary64 score ULP
+(the spacing of representable numbers at the score's magnitude).
 The decimal calculation does not recompute upstream matrix solves,
 exponentials, coefficients, or fitted parameters.  An early changed action
 could affect subsequent adaptive history; that effect has not been measured.
@@ -131,12 +163,14 @@ Likewise, equality between the full score vector and its bonus-plus-offset
 part in binary64 arithmetic includes initially zero centers and is not, by
 itself, evidence that the selected action was corrupted.
 
+\paragraph{Variation across seeds and history-generating policies.}
 \Cref{tab:transport-followup-mechanism-variation} reports per-seed variation
-instead of treating the pooled rounds as independent.  In every row, the
-recommendation being diagnosed is the Hessian score evaluated on the row's
-behavior histories.  Only Hessian rows describe that behavior policy's own
-score.  The other rows do not establish width-dominated selection by endpoint,
-frozen-reference, or naive-current policies.
+instead of treating the pooled rounds as independent.  The row label tells
+us which policy generated the history; the score being diagnosed is always
+Hessian's.  Thus only Hessian rows describe the behavior policy's own score.
+The other rows ask what Hessian would recommend on states visited by endpoint,
+frozen reference, or naive current.  They do not diagnose width dominance in
+those policies' own scores.
 Each fraction has 1000 rounds in its denominator, and the
 reported median and range summarize 50 seeds.  These descriptive summaries
 are not confidence intervals.
@@ -155,6 +189,12 @@ are not confidence intervals.
 
 \subsection{Exploratory relative-certificate audit}
 
+The endpoint constructions compare the current matrix directly with the
+reference matrix.  This audit checks their implementation and measures the
+resulting widths and recommendations on recorded states.  It does not test
+the behavior of a new adaptive policy.
+
+\paragraph{Which factors are compared?}
 For unit feature and parameter bounds, \Cref{cor:tanh-relative-weights} gives
 the uniform endpoint bound $D_0=4\log\cosh(1/\sqrt W)$, approximately
 $0.124$, $1.735$, and $5.300$ at the three conditions.  The category-specific
@@ -166,6 +206,7 @@ The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the
 cumulative bound.  Neither category construction is an upper bound on the
 length of the original interpolated factor path.
 
+\paragraph{Replay and numerical checks.}
 The post-outcome audit replays the original representation optimizer with
 fixed logged actions and rewards for all 600 trajectories; it never replaces
 a behavior action or generates a new observation.  It reconstructs
@@ -178,6 +219,13 @@ floating-point residuals into verified certificates.  All declared checks
 passed; the largest residual divided by its original tolerance was below
 $0.005$.  The per-seed variation in the preceding table was reproduced by this
 separate fixed-action replay.
+
+\paragraph{How to read the width and regret comparisons.}
+The upper panel of \Cref{tab:transport-followup-relative-audit} compares each
+effective width with its reference width before averaging.  The lower panel
+asks what immediate expected reward is lost by the recommendations on those
+same states.  It does not accumulate the outcomes of a policy that follows
+those recommendations over time.
 
 \begin{table}[t]
   \centering
@@ -192,13 +240,15 @@ separate fixed-action replay.
   \input{tables/transport_followup_relative_audit.tex}
 \end{table}
 
-\Cref{tab:transport-followup-relative-audit} uses the primary policy's
-histories; the machine artifact also reports all four behavior-history groups
-and per-seed summaries.  Direct frozen-reference recommendations on these
-states appear in \Cref{tab:transport-followup-same-history}.  Fixed-state kernel
-timings are retained in the audit artifact; they were collected under parallel
-analysis load, exclude matrix construction, confidence estimation, and the
-policy loop, and do not establish end-to-end speedup.
-The category construction requires additional accumulated collection weights
-and still uses matrix solves and the frozen confidence construction.  No
-new adaptive policy was evaluated by this audit.
+The displayed table uses the primary policy's histories; the machine
+artifact also reports all four behavior-history groups and per-seed summaries.
+Direct frozen-reference recommendations on these states appear in
+\Cref{tab:transport-followup-same-history}.
+
+\paragraph{What the timing records leave out.}
+Fixed-state kernel timings are retained in the audit artifact.  They were
+collected under parallel analysis load and exclude matrix construction,
+confidence estimation, and the policy loop, so they do not establish
+end-to-end speedup.  The category construction requires additional
+accumulated collection weights and still uses matrix solves and the frozen
+confidence construction.

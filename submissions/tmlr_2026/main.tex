@@ -77,28 +77,29 @@
 \maketitle
 
 \begin{abstract}
-Sequential confidence in a contextual bandit can use features frozen when
-rewards are collected, while retraining changes the features used by current
-curvature. We study the guarantees and limitations of transporting confidence
-to this relinearized curvature. A conditional UCB theorem separates metric
-transport, approximate operators, and solver widths, and bounds regret through
-the frozen sequential information gain. For squared loss, a corrected
-prediction center supplies reference confidence along predictable parameter
-paths in a certified region, with explicit Taylor and misspecification error
-envelopes and no nonlinear optimizer-convergence requirement. The certified
-width cannot be smaller than the direct reference width on the same history;
-exact actionwise transport reproduces that width. This comparison does not order the realized regret of policies
-with different histories. We examine these distinctions in a 29-parameter
-scaled-tanh model, for which a relative-weight comparison also supplies a
-horizon-independent endpoint certificate. A prespecified follow-up evaluates
-four policies across three conditions with 50 paired seeds per condition. The
-Hessian-transport policy has higher mean pseudo-regret than every comparator
-in every condition; all nine pointwise paired confidence intervals exclude
-zero. Its regret bounds are vacuous and dominated by path inflation, while the
-reference policy's own bounds are also vacuous. Floating-point confidence and
-optimism diagnostics pass for all evaluated policies, including an uncertified
-control. Exploratory log analyses distinguish conditional validity,
-certificate usefulness, and observed policy behavior in this implementation.
+Retraining a model can change its uncertainty estimates even when no new data
+are added. In a contextual bandit, we ask when recomputing past gradients at
+the current model preserves the confidence guarantee used to choose actions.
+We give a conditional upper confidence bound (UCB) theorem that starts from
+features fixed before each reward and accounts for changing the uncertainty
+matrix, approximating it, and computing its widths. For squared loss, a
+correction based on those stored features supplies a confidence center without
+assuming that the nonlinear optimizer converges. This requires predictable
+parameter paths in a certified region and explicit Taylor and misspecification
+error bounds. The conversion has a basic limit: with the same history, center,
+radius and bias, its certified width cannot be smaller than the direct
+reference width. Exact actionwise transport recovers that width; the result
+leaves the regret ordering of policies with different histories open.
+A prespecified study tests four policies in three conditions using a
+29-parameter scaled-tanh model and 50 paired seeds per condition.
+Hessian transport, which bounds matrix changes using prediction Hessians, has
+higher mean pseudo-regret than every comparator in each condition; all nine
+pointwise paired confidence intervals for regret differences exclude zero. Transport inflation dominates its regret bounds, which give no
+improvement over a deterministic regret cap. The reference policy's own bounds
+are also vacuous. All policies, including an uncertified control, pass the
+recorded floating-point confidence and optimism checks. The study illustrates
+why a conditionally valid confidence score, a tight regret bound and a useful
+decision rule must be assessed separately.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------

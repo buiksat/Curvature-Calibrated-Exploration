@@ -15,14 +15,19 @@ retained follow-up histories. The abstract, introduction, related work,
 conclusion, and availability statement now match that evidence. See
 [REVISION_STATUS.md](REVISION_STATUS.md) for the checks and remaining limits.
 
-Four explanatory figures now guide the reader through the argument:
+The readability revision introduces the decision problem before the formal
+conditions, explains an exact-matrix example before the general theorem, and
+organizes the results around reader questions. Existing mathematical results
+and experimental evidence are preserved. The draft now has 46 pages.
+
+Four explanatory figures guide the reader through the argument:
 
 | Figure | Current PDF page | Purpose |
 | --- | ---: | --- |
-| Certificate interfaces | 2 | Separate reference confidence, current metric, applied operator and numerical score width |
-| Abstract confidence geometry | 7 | Show why a smaller current width can miss a mean permitted by the reference band |
-| Policy outcomes | 15 | Show every policy mean and all nine pointwise paired comparisons |
-| Bound scale | 16 | Compare mean own-history bounds with the deterministic regret caps |
+| Certificate interfaces | 3 | Separate reference confidence, current metric, applied operator and numerical score width |
+| Abstract confidence geometry | 9 | Show why a smaller current width can miss a mean permitted by the reference band |
+| Policy outcomes | 19 | Show every policy mean and all nine pointwise paired comparisons |
+| Bound scale | 20 | Compare mean own-history bounds with the deterministic regret caps |
 
 The charts are generated from retained evidence. The analytic illustration is
 explicitly distinguished from observed experimental behavior. The numerical
