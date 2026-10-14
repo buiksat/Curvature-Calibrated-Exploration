@@ -292,6 +292,26 @@ scaled-tanh learning trajectory or establish that this certificate family was
 necessary in the reported runs.
 \end{remark}
 
+\Cref{fig:transport-confidence-geometry} shows the illustrative slice
+$D=\log 4$ and $\beta=1$.  The support of a metric unit ball in direction
+$\bq$ is the corresponding inverse-metric width.  Here that support shrinks
+under the current metric even though the reference confidence band still
+allows its original upper endpoint.
+
+\begin{figure}[t]
+ \centering
+ \input{figures/transport_conceptual_geometry.tex}
+ \caption{Why the reference band alone does not justify a smaller current
+ width.  In this abstract instance, the reference and current metric unit
+ balls have different supports in the query direction.  With $D=\log4$,
+ $m=b=0$ and $\beta=1$, the permitted mean $\mu^*=1$ exceeds the naive score
+ $1/2$, whereas multiplying the current width by $e^{D/2}$ recovers the
+ reference width.  The unit balls illustrate metric geometry; the current
+ ball is not asserted to be a valid statistical confidence set.  This is an
+ analytic illustration, not an observed failure in the scaled-tanh study.}
+ \label{fig:transport-confidence-geometry}
+\end{figure}
+
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
 Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and

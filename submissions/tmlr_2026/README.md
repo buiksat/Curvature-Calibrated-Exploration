@@ -15,6 +15,20 @@ retained follow-up histories. The abstract, introduction, related work,
 conclusion, and availability statement now match that evidence. See
 [REVISION_STATUS.md](REVISION_STATUS.md) for the checks and remaining limits.
 
+Four explanatory figures now guide the reader through the argument:
+
+| Figure | Current PDF page | Purpose |
+| --- | ---: | --- |
+| Certificate interfaces | 2 | Separate reference confidence, current metric, applied operator and numerical score width |
+| Abstract confidence geometry | 7 | Show why a smaller current width can miss a mean permitted by the reference band |
+| Policy outcomes | 15 | Show every policy mean and all nine pointwise paired comparisons |
+| Bound scale | 16 | Compare mean own-history bounds with the deterministic regret caps |
+
+The charts are generated from retained evidence. The analytic illustration is
+explicitly distinguished from observed experimental behavior. The numerical
+outcomes table remains available in the appendix. All figures use native
+body-size text without resizing; no new experiments were run.
+
 ## Format and provenance
 
 The official [TMLR template](https://github.com/JmlrOrg/tmlr-style-file/tree/7bf90efe3a0debbba703c05c43f3ff7e4d4a2992)

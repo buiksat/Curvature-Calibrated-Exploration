@@ -38,6 +38,17 @@ multiplicity-adjusted.  Shared seeds across conditions do not make the 600
 trajectories independent observations from one common population.  The teacher,
 conditions, and shared optimizer are fixed in this uncertainty calculation.
 
+\begin{table}[t]
+  \centering
+  \caption{Numerical values underlying \Cref{fig:transport-followup-outcomes}
+  at $T=1000$, with 50 paired evaluation seeds per condition.  $\Delta$ is
+  the row policy's cumulative pseudo-regret minus Hessian's.  All nine
+  intervals are pointwise 95\% paired bootstrap intervals; no simultaneous
+  coverage is asserted.}
+  \label{tab:transport-followup-outcomes}
+  \input{tables/transport_followup_outcomes.tex}
+\end{table}
+
 The online context-free benchmark samples each action once, then selects the
 smallest-index action with the largest empirical mean of its own selected
 rewards, ignoring context.  The best-fixed-action benchmark instead selects in
@@ -56,6 +67,17 @@ from these machine artifacts by
 \texttt{transport\_followup\_provenance.json} binds input and output SHA-256
 digests.  This provenance is separate from the original near-linear study,
 whose raw trajectories were unavailable for the revision.
+
+The explanatory charts in
+\Cref{fig:transport-followup-outcomes,fig:transport-followup-bound-scale}
+are generated from the same fixed summaries by
+\texttt{tools/make\_transport\_explanatory\_figures.py}.
+Their CSV sources retain the plotted values, and
+\texttt{transport\_explanatory\_provenance.json} records the input and output
+digests.  The logarithmic bound chart transforms the mean RHS divided by the
+condition's deterministic cap; it does not average trajectory-level logarithms.
+The conceptual figures illustrate the stated certificate interfaces and
+analytic example, independently of these empirical summaries.
 
 \subsection{Exploratory recommendations on fixed histories}
 

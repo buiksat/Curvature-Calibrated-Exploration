@@ -34,23 +34,29 @@ In our controlled follow-up, the evaluated Hessian-transport policy has higher
 mean regret than each comparator in every condition, despite passing the
 recorded optimism diagnostics.
 
+\paragraph{From reference confidence to an implemented score.}
 Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
 sequential statistical confidence.  The exact current metric $\bV_t$ replays
 past observations at the current parameter.  The algorithm applies an SPD
 operator $\Calg_t$, which may approximate $\bV_t$.  Finally, a solver returns
 the numerical upper width $\hat s_t(a)$ used in the score.  The analysis
-certifies the chain
-\[
- \begin{aligned}
-  \bVbar_t\ (\text{frozen confidence})
-    &\ \xrightarrow{\text{path certificate}}\ \bV_t\ (\text{current metric}),\\
-  \bV_t\ (\text{current metric})
-    &\ \xrightarrow{\text{operator comparison}}\ \Calg_t\ (\text{applied operator}),\\
-  \Calg_t\ (\text{applied operator})
-    &\ \xrightarrow{\text{solver certificate}}\ \hat s_t(a)\ (\text{score width}).
- \end{aligned}
-\]
-Each arrow has a separate obligation.  A Thompson--Finsler path length controls
+connects these objects through the separate obligations in
+\Cref{fig:transport-interfaces}.
+
+\begin{figure}[t]
+ \centering
+ \input{figures/transport_conceptual_interfaces.tex}
+ \caption{From reference confidence to the width actually used for selection.
+ Each comparison is a separate certificate obligation under
+ \Cref{asm:abstract-transport}; the schematic does not identify statistical
+ confidence with current curvature.  All-action upper validity and
+ selected-action sharpness concern the same realized numerical width map.
+ The same-history reference-width floor does not order the adaptive regret
+ of different policies.}
+ \label{fig:transport-interfaces}
+\end{figure}
+
+A Thompson--Finsler path length controls
 the first arrow through a two-sided exponential Loewner sandwich
 \citep{thompson1963certain,nussbaum1994finsler}.  A second two-sided comparison
 accounts for replacing $\bV_t$ by $\Calg_t$.  Solver certification then provides
