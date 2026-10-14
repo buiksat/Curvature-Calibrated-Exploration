@@ -24,6 +24,18 @@ instantiate it as an operational confidence-transport device linking frozen
 bandit confidence, current replayed GGN/Fisher curvature, approximate operators,
 and certified solver widths.
 
+\paragraph{Misspecified linear confidence.}
+\citet[Appendix~E]{lattimore2020learning} analyze LinUCB with round-dependent
+feature sets and an explicit bonus for bounded misspecification.
+Our pseudo-responses in \Cref{eq:pseudo-response-new} reduce the nonlinear
+observations to predictable linear regression with a Taylor remainder and
+misspecification error.  The corrected center then adds the current affine
+offset.  Its confidence argument combines standard self-normalized regression
+confidence with deterministic bias bounds; we do not claim a new generic
+misspecified-linear confidence method.  The additional issue studied here is
+how to certify the use of current replayed curvature, approximate operators,
+and computed widths for this reference confidence model.
+
 \paragraph{Neural contextual bandits.}
 LinUCB \citep{abbasi2011improved} and Thompson sampling
 \citep{thompson1933likelihood,agrawal2013thompson} provide the statistical
@@ -108,26 +120,19 @@ computationally preferable to the alternatives.
 \paragraph{Spectral sketching for linear bandits.}
 \citet{kuzborskij2019efficient} analyze linear bandits where the Gram
 matrix is replaced by a Frequent Directions sketch, deriving regret
-bounds that depend on the spectral approximation quality.
-\citet{wen2026revisiting} show that fixed-size sketch regret bounds can
-degenerate to the trivial linear rate under heavy spectral tails, and propose
-an adaptive dyadic block sketch.
+bounds that depend on the spectral approximation quality.  They already note
+that SOFUL may incur linear regret when the spectrum has heavy tails.
 The two-sided comparison in \Cref{thm:transported-ucb} uses the same conceptual
 lever to relate an applied operator to exact current curvature.  A separate path
 certificate relates that curvature to the frozen-feature confidence metric,
 and a solver certificate controls the computed width.  We claim no novelty for
 the sandwich-to-regret reduction itself and do not evaluate a sketched operator.
 
-\paragraph{GGN--vector products, Hessian spectral analysis, and influence
-functions.}
+\paragraph{Curvature--vector products and influence functions.}
 Pearlmutter's algorithm \citep{pearlmutter1994fast} computes exact
 Hessian--vector products; the analogous GGN--vector product has the same
 Jacobian-transpose-times-Jacobian-times-vector structure
 \citep{schraudolph2002fast}.
-Recent work on Krylov methods for Hessian spectral analysis
-\citep{granziol2026hessian} demonstrates related distributed HVP/Krylov
-infrastructure at $>10^8$-parameter scale, but does not benchmark the exact
-per-example GGN operator or end-to-end transported-UCB latency.
 Influence functions
 \citep{koh2017understanding} use inverse-curvature--vector products to
 attribute predictions to training points.  A CG-based realization of our solver

@@ -2,21 +2,18 @@
 
 **Status: anonymous manuscript draft; not submitted.**
 
-`main.tex` is the TMLR entry point. This directory is a self-contained snapshot
-of the TMLR manuscript already present on `cce-experiments` at
-`7bd8e4d78b62e1ea510da51deac7cc2c4624637d`. The AISTATS and CODE sources under
-`paper/` and `submissions/code_mit_2026/` remain unchanged. Research code,
-results, and test infrastructure stay on the research branch.
+`main.tex` is the self-contained TMLR entry point. Scientific sources are
+synchronized with `paper/` on `cce-review-revisions`; research code and evaluation
+artifacts live on that branch. The historical AISTATS and CODE sources on main
+remain separate from this submission.
 
-The October 14 revision addresses the scientific-review findings: it clarifies
-method scope, adds a frozen-width guarantee with an explicit own-history caveat,
-foregrounds the existing bound decomposition, and removes the historical
-one-sided appendix cluster from the active paper. Those sources remain in Git;
-`legacy_scope.tex` explains their exclusion. The original reported experiment
-values are unchanged. Scientific source changes are synchronized to the
-`cce-review-revisions` research branch, where the follow-up experiment workflow
-lives. See [REVISION_STATUS.md](REVISION_STATUS.md) for completed work and
-remaining evidence requirements.
+The current revision makes the completed stronger-drift follow-up the main
+empirical section and retains the original near-linear study in the appendix.
+It adds the precise same-history width comparison, direct endpoint and
+scaled-tanh relative-weight certificates, and exploratory diagnostics from the
+retained follow-up histories. The abstract, introduction, related work,
+conclusion, and availability statement now match that evidence. See
+[REVISION_STATUS.md](REVISION_STATUS.md) for the checks and remaining limits.
 
 ## Format and provenance
 
@@ -61,17 +58,12 @@ BibTeX/style files, and build instructions. It contains no inactive legacy
 appendices, code supplement, internal review notes, or portal declarations. See `BUILD.md` for
 the non-cloud build instructions.
 
-## Validation on 2026-10-14
+## Current validation
 
-The revised PDF builds to 29 Letter pages, with 16 pages before the references
-(the preceding draft was 68 pages). The final log has no unresolved citations,
-missing characters, overfull boxes, or LaTeX warnings; one underfull box remains.
-The title page, shorter abstract, and assistance disclosure were visually checked.
-
-A clean extraction of `source.zip` builds without manuscript-checkout inputs
-and produces a byte-identical PDF, SHA-256
-`5e6ea1c9229d090e350987ae851fa49238b36d1a20a84839b43c34e52303d8eb`.
-These checks validate the manuscript build, not the experimental results.
+Final build and archive-reproduction facts are recorded in
+[REVISION_STATUS.md](REVISION_STATUS.md). Manuscript build checks are separate
+from experimental verification and from the stricter anonymous code/evidence
+supplement. The latter has not been produced for this revision.
 
 ## Before submission
 
@@ -84,5 +76,4 @@ author list and OpenReview declarations, and confirm that the work is not
 published, accepted, or under concurrent review at another archival venue.
 An AISTATS-formatted source file alone says nothing about its submission status.
 Prepare and verify any anonymous evidence supplement separately; TMLR allows
-up to 100 MB in PDF or ZIP format. Nothing in this directory submits a paper
-or changes a remote branch.
+up to 100 MB in PDF or ZIP format. No paper has been submitted.

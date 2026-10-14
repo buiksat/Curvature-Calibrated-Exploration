@@ -1,0 +1,128 @@
+\section{Nonlinear-regime study and certificate conservatism}
+\label{sec:transport-followup}
+
+We test whether valid confidence transport produces useful certificates and
+decisions in a controlled nonlinear model.  The prespecified follow-up evaluates
+600 policy trajectories; a separate 294 development and tuning trajectories
+precede evaluation.  The original near-linear study is retained separately in
+\Cref{sec:transport-instantiation}; its evidence is not pooled with this study.
+
+\paragraph{Model and prespecified protocol.}
+We use Gaussian observations with mean
+$\mu_{\btheta}(z)=\sqrt W\tanh(\phi(z)^\top\btheta/\sqrt W)$,
+with $\|\phi(z)\|_2\le1$ and projected parameters $\|\btheta\|_2\le1$.
+Contexts have dimension four, there are five actions, and the context--action
+feature map has dimension 29.  Noise has standard deviation $0.25$, the metric
+ridge is one, and the confidence parameter is $\delta=0.05$.
+A fixed teacher generates the rewards.  We fix
+$T=1000$ and $W\in\{16,1,0.25\}$, with 50 common evaluation seeds per condition
+and four policies.  Changing $W$ changes both the reward function and its
+curvature; cross-condition trends do not isolate a causal effect of metric
+drift.  The conditions were specified before their evaluation outcomes were
+observed.  Development, tuning, and evaluation use disjoint seed sets.
+
+All policies use the corrected center and confidence radius of
+\Cref{cor:corrected-center-new}.  \emph{Hessian} uses the analytic path
+certificate $\bar D_t^Q$; \emph{endpoint} substitutes the dense endpoint Thompson
+distance; \emph{frozen reference} uses the reference width directly; and
+\emph{naive current} uses the current width without transport, an uncertified
+control.  All four policies update their representations: ``frozen'' describes
+the collection-time metric, not a fixed representation.  They share contexts
+and potential-noise streams but have their own adaptive action histories.
+The common optimizer, learning rate $3\times10^{-4}$ with 20 full-batch steps
+followed by projection each round, was selected from nine candidates by prediction MSE
+on uniform-random tuning histories.  This controls one implementation choice;
+it does not establish policy-specific regret-optimal tuning.
+
+Dense float64 matrices and Cholesky solves implement the exact-operator
+abstraction, and finite action enumeration uses the smallest-index tie rule.
+This is a 29-parameter diagnostic study, not a test of approximate solvers,
+large-model scalability, or real-data performance.  Further protocol and
+provenance details appear in \Cref{app:transport-followup}.
+
+\paragraph{Prespecified policy outcomes.}
+Hessian transport has higher mean cumulative pseudo-regret than every
+comparator in every condition (\Cref{tab:transport-followup-outcomes}).  All nine
+paired 95\% intervals for comparator-minus-Hessian regret exclude zero.
+These are pointwise intervals from 10,000 paired seed-bootstrap resamples per
+comparison, without multiplicity adjustment.  They quantify evaluation-seed
+variation conditional on the fixed teacher, design, and selected optimizer;
+they do not include uncertainty from environment selection or tuning.
+The comparisons are total-policy outcomes on matched exogenous streams, not
+fixed-history interventions.  They establish neither a universal policy
+ordering nor a causal attribution to the certificate alone.
+
+\begin{table}[t]
+  \centering
+  \caption{Prespecified full-study outcomes at $T=1000$, with 50 paired
+  evaluation seeds per condition.  $\Delta$ is the row policy's cumulative
+  pseudo-regret minus Hessian's.  All nine intervals are pointwise 95\% paired
+  bootstrap intervals; no simultaneous coverage is asserted.}
+  \label{tab:transport-followup-outcomes}
+  \input{tables/transport_followup_outcomes.tex}
+\end{table}
+
+\paragraph{Realized drift, validity diagnostics, and vacuous bounds.}
+The primary policy reaches endpoint distances above one in 16 of 50 seeds at
+$W=0.25$, including 286 of 50,000 seed--round observations
+(\Cref{tab:transport-followup-drift-bounds}).  These round counts describe
+dependent observations, not additional independent replications.  Target
+labels used to encode $W$ are not realized distances.
+All 600 evaluation trajectories, including naive current, pass the recorded
+simultaneous reference-confidence, method-optimism, and deterministic
+diagnostics.  Each policy--condition cell has 50 successes out of 50, with an
+exact 95\% Clopper--Pearson interval of approximately $[92.9\%,100\%]$.
+This observation does not establish population coverage, validate the theorem,
+or show that transport is necessary.  Float64 checks and converged quadrature
+are numerical diagnostics, not verified enclosures.
+
+The primary bounds are dominated by path inflation in all three conditions.
+Every primary-policy bound exceeds the deterministic regret cap
+$2T\min(1,\sqrt W)$, which is 2000, 2000, and 1000 for the three conditions.
+The frozen policy's own reference-geometry bounds also exceed these caps in
+all 150 of its trajectories.  Their mean right-hand sides are much smaller
+than the primary bounds but remain vacuous.  Removing the path term along
+Hessian's histories would be an accounting decomposition, not the bound or
+outcome of a frozen policy following different histories.  Base dominance
+reported for the original near-linear grid does not describe this follow-up.
+
+\begin{table}[t]
+  \centering
+  \caption{Prespecified drift and bound diagnostics.  The maximum and threshold
+  counts use Hessian's 50,000 seed--round observations per condition; thresholds
+  use $\ge$.  Mean terminal right-hand sides (RHS) use each named policy's own
+  50 histories.  All individual primary and frozen-policy bounds exceed the
+  corresponding deterministic regret cap.}
+  \label{tab:transport-followup-drift-bounds}
+  \input{tables/transport_followup_drift_bounds.tex}
+\end{table}
+
+\paragraph{Exploratory decision analysis.}
+After observing these outcomes, we independently recomputed score diagnostics
+from all 600 preserved trajectories.  On Hessian's own histories, its selected
+action equals the current-width argmax on 99.382\%, 99.962\%, and 99.982\% of
+rounds for $W=16,1,0.25$.  A stronger sufficient condition---the bonus gap
+between the two largest widths exceeding the entire range of prediction
+centers---holds on 97.104\%, 99.372\%, and 99.508\% of rounds.
+These pooled fractions describe extensive width-dominated selection in the
+visited states, not an adaptive causal mechanism or an independent-round test.
+\Cref{app:transport-followup} reports variation across seeds, all four behavior
+histories, fixed-history alternative recommendations, and early numerical
+ranking sensitivity.  The fixed-history comparisons respect
+\Cref{prop:reference-width-floor}: tightening a transport certificate does not
+create additional statistical information or order policies' adaptive regret.
+
+\paragraph{Exploratory tighter endpoint certificates.}
+The relative-weight construction in \Cref{cor:tanh-relative-weights} permits
+uniform and category-specific endpoint comparisons without using the Hessian
+path envelope.  We audit these comparisons on the same 600 recorded histories,
+replaying representation updates with the recorded actions and rewards.
+On primary histories, the category-specific outward factor gives mean
+effective-width overheads of $0.28\%$--$12.68\%$ relative to the direct reference
+width, versus $0.16\%$--$12.13\%$ for the dense endpoint factor across conditions
+(\Cref{app:transport-followup}).  These are means of actionwise ratios, not
+ratios of mean widths.  This analysis evaluates new scores
+on existing states; it does not evaluate a new adaptive policy or demonstrate
+an end-to-end computational advantage.  The relative certificate bounds an
+endpoint comparison, not the original interpolated factor-path length, and
+does not remove the historical and current approximation-error charges.

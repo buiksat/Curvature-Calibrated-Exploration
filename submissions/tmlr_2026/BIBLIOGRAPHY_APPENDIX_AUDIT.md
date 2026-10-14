@@ -96,3 +96,23 @@ supplement's `SUPPLEMENT_SYMBOLIC_ARTIFACTS`, which explicitly includes
 `growing_window_pareto.tex`. Repin that contract only after auditing a rebuilt
 source closure; the old pins describe the old manuscript. Those research-branch
 contracts were inspected but not changed by this audit.
+
+
+## Follow-up disposition on 2026-10-14
+
+The full-study revision removes the active Wen/adaptive-dyadic and
+Granziol/large-scale-HVP claims. Their historical BibTeX records are retained;
+the blocked retrievals establish neither correctness nor fabrication. Publisher
+repositories supplied primary sources for Kuzborskij et al. (2019), Lattimore
+et al. (2020), and Zhou et al. (2020). The related-work section now credits the
+verified heavy-spectrum limitation and misspecified-linear confidence
+connection directly. The bounded source check, retrieval outcomes and PDF
+hashes are recorded in the research branch's
+[literature audit](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/post_full_revision/LITERATURE_CHECK.md).
+It is not a comprehensive novelty review.
+
+The current manuscript adds the full-study appendix and new transport proofs
+while retaining the earlier exclusion of the legacy cluster. The main-branch
+source archive is generated from the new active compiler closure. Its successful
+build does not update or certify the research branch's stricter anonymous
+supplement contract; see [REVISION_STATUS.md](REVISION_STATUS.md).

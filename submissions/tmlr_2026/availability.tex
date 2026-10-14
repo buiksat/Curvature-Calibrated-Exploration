@@ -1,50 +1,42 @@
-%% availability.tex
-%% Availability statement for the self-contained TMLR manuscript snapshot.
-\iflegacyextras
-The repository contains the manuscript, theory derivations, implementation,
-tests, frozen transport-instantiation protocol and configuration, optimizer
-selection record, strict full aggregate, provenance records, and generated
-tables and figures used in \Cref{sec:transport-instantiation}.  The aggregate is
-bound to the complete raw-input inventory by SHA-256 provenance.  Raw run files
-remain outside the committed source tree; no public raw-bundle URL is claimed.
-The manuscript does not use the legacy experiments as evidence for
-\Cref{thm:transported-ucb}; their scope is summarized in
-\Cref{app:legacy-evidence}.  Detailed legacy figures, raw-bundle inventories,
-and derived benchmark outputs are not part of the compact checkout; Git history
-preserves them.
-\else
-The research codebase retains the frozen
-transport-instantiation protocol and configuration, the experiment
-implementation, the aggregation and artifact-rendering code, the optimizer
-selection record, the strict full aggregate, the SHA-256 provenance sidecars,
-the generated tables and figures used in \Cref{sec:transport-instantiation},
-and a detached verifier for aggregate-derived statistics and generated
-artifacts.  The verifier checks the reported aggregate summaries and regenerates
-tables, figures, and CSV files from the retained aggregate; it does not rerun
-the study or recover missing per-seed observations.  The aggregate is bound to
-its complete raw-input inventory by SHA-256 provenance.
+%% Availability statement: distinguish historical and new evidence.
+The research codebase retains the scientific implementation, protocols,
+configurations, selection records, aggregation code, and manuscript tables.
+The two controlled studies have different reproducibility limits.
 
-The following reproducibility limits remain.  First, the raw per-run
-trajectory files are not distributed: they are large and were never committed,
-so the detached verifier checks the aggregate's inventory structure and digests but
-cannot verify the raw bytes those digests name, and the verifier labels those
-checks accordingly instead of reporting them as passes.  Consequently the
-deterministic paired bootstrap, which resamples per-seed values, is not
-recomputable from the retained aggregate alone; its algorithm, level, resample count and
-derived child seeds are recorded, and no per-seed values are synthesized in
-their place.  Second, the inspected historical research snapshot specifies
-SciPy 1.15.2 in its dependency requirements but retains a host-specific
-SciPy 1.13.1 wheel link.  These historical records do not establish a single
-matched runtime for the study.  The portable dependency lock prepared for
-new runs does not recover the runtime used to generate the historical evidence.  Two selection-time source files, the artifact renderer and the Buck
-build declaration, also differ from their recorded source digests.  The
-verifier records both divergences explicitly; verifying the retained outputs
-does not restore the selection-time source tree.  These dependency and source
-provenance limitations are distinct from agreement between the manuscript and
-the locked aggregate.
+\paragraph{Original near-linear study.}
+For \Cref{sec:transport-instantiation}, the retained full aggregate, generated
+tables and figures, provenance sidecars, and detached verifier support
+aggregate-derived checks. The original per-run trajectories and per-seed
+observations remain unavailable. Their inventory digests do not establish
+access to or integrity of the missing raw bytes. In particular, the original
+paired bootstrap cannot be recomputed from the aggregate alone; no per-seed
+values have been synthesized to replace it. The historical dependency records
+also disagree: requirements specify SciPy 1.15.2 while a retained host-specific
+wheel link names SciPy 1.13.1. Two selection-time sources, the artifact renderer
+and Buck build declaration, differ from their recorded digests. The verifier
+reports these gaps explicitly. Fresh runs and dependency locks do not repair
+the historical runtime or source provenance.
 
-Earlier studies in the same line of work were designed for
-the one-sided dynamic theorem, do not execute the transported score, and record
-none of its certificates; they are excluded from this submission and are not
-evidence for any claim in it.
-\fi
+\paragraph{Prespecified follow-up.}
+For \Cref{sec:transport-followup}, the retained portable export contains all
+600 evaluation seed summaries, the development and tuning summaries, selected
+optimizer, exact source and execution configurations, run provenance, terminal
+bound decompositions, drift summaries, and a raw-input hash inventory. An
+independent verifier reconstructs the reported terminal intervals from the seed
+summaries. The pinned Python environment and source revision are recorded with
+the run. Full raw trajectories are retained outside Git; the portable export
+alone does not reproduce every roundwise audit or regret-curve interval. No
+public raw-bundle URL or completed anonymous supplement is claimed.
+
+\paragraph{Exploratory analyses.}
+The mechanism and relative-certificate analyses use the already observed
+follow-up histories. Their scripts, compact outputs, per-seed diagnostics, and
+input hashes are retained separately from the frozen evaluation export.
+Recomputing these analyses requires the corresponding raw trajectories; their
+summary files alone are not a substitute. No new adaptive evaluation is
+implied by rescoring recorded states. Ordinary floating-point replay and
+source-hash agreement do not constitute verified numerical certification.
+
+Earlier studies of the one-sided dynamic theorem do not execute the transported
+score or record its certificate chain. They are excluded from this submission
+and are not evidence for its claims.
