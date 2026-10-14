@@ -8,14 +8,15 @@ of the TMLR manuscript already present on `cce-experiments` at
 `paper/` and `submissions/code_mit_2026/` remain unchanged. Research code,
 results, and test infrastructure stay on the research branch.
 
-The newer manuscript includes its revised abstract, clarified computational
-cost assumptions, and additional description of the endpoint-distance ratio.
-It inherits the research draft's exclusion of legacy experiments and optional
-legacy material. The central transport theorem, proofs, generated numerical
-tables, plots, and bibliography come from that revision. This is a deliberate
-manuscript snapshot, not a new experiment or a claim of scientific validation.
-Future scientific edits should be synchronized deliberately from the canonical
-research branch rather than letting these copies drift.
+The October 14 revision addresses the scientific-review findings: it clarifies
+method scope, adds a frozen-width guarantee with an explicit own-history caveat,
+foregrounds the existing bound decomposition, and removes the historical
+one-sided appendix cluster from the active paper. Those sources remain in Git;
+`legacy_scope.tex` explains their exclusion. The original reported experiment
+values are unchanged. Scientific source changes are synchronized to the
+`cce-review-revisions` research branch, where the follow-up experiment workflow
+lives. See [REVISION_STATUS.md](REVISION_STATUS.md) for completed work and
+remaining evidence requirements.
 
 ## Format and provenance
 
@@ -26,8 +27,8 @@ are unchanged upstream files; `STYLE_SHA256SUMS` records their hashes.
 The manuscript uses a 10pt article, the default anonymous TMLR mode, native
 single-column layout and fonts, author/year citations, and appendices after
 references. The wide evidence tables retain body-size text on landscape
-floats. Captions were moved above tables, and the first page discloses the
-Codex formatting assistance. The availability statement describes retained
+floats. Captions appear above tables, and the first page discloses the
+Codex and Claude assistance. The availability statement describes retained
 research materials without claiming that a supplement has already been built
 or attached. The anonymous PDF contains no author contact details or
 identifying metadata.
@@ -54,22 +55,22 @@ TMLR_OUT=/workspace/cce-build/tmlr-current bash submissions/tmlr_2026/build.sh
 This creates `main.pdf` and `source.zip` outside the checkout and checks for
 unresolved references, citations, and missing characters. The default output
 directory is `/tmp/cce-tmlr`. `source.zip` is suitable for a standalone LaTeX
-project or Overleaf, with `main.tex` as its Main document. It contains no code
-supplement, internal review notes, or portal declarations. See `BUILD.md` for
+project or Overleaf, with `main.tex` as its Main document. The archive uses the
+compiler's input list and contains only active manuscript inputs, required
+BibTeX/style files, and build instructions. It contains no inactive legacy
+appendices, code supplement, internal review notes, or portal declarations. See `BUILD.md` for
 the non-cloud build instructions.
 
-## Validation on 2026-10-13
+## Validation on 2026-10-14
 
-The PDF builds to 68 Letter pages, with 16 pages before the references. The
-research branch's static validator passes on this entry point: 249 unique
-labels, 178 resolved reference targets, and 38 citation keys. The final log has
-no unresolved citations, missing characters, overfull boxes, or LaTeX warnings;
-seven underfull boxes remain. Title-page and landscape-table layout were
-visually checked.
+The revised PDF builds to 29 Letter pages, with 16 pages before the references
+(the preceding draft was 68 pages). The final log has no unresolved citations,
+missing characters, overfull boxes, or LaTeX warnings; one underfull box remains.
+The title page, shorter abstract, and assistance disclosure were visually checked.
 
 A clean extraction of `source.zip` builds without manuscript-checkout inputs
 and produces a byte-identical PDF, SHA-256
-`4e7f18400ae477beb196ff69ceff986e0db3932948716165581f90ed08cfed7a`.
+`5e6ea1c9229d090e350987ae851fa49238b36d1a20a84839b43c34e52303d8eb`.
 These checks validate the manuscript build, not the experimental results.
 
 ## Before submission

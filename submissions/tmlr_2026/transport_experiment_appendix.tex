@@ -7,6 +7,35 @@ selection record, aggregate, and every generated artifact carry provenance and
 SHA-256 hashes.  The figures use only the 50 evaluation seeds.  Smoke and tuning
 results are absent.
 
+\paragraph{Meaning of the cumulative bound decomposition.}
+For a transport-Hessian trajectory, write
+$P_T=(\sigma^2+G^2/\lambda)\gamma_T$ and
+$\beta_t^{\rm stat}=\sqrt{\gamma_{t-1}+2\log(1/\delta)}+\sqrt\lambda S$.
+The reported components are
+\begin{align*}
+ B_T^{\rm base}
+ &=2\sqrt{P_T\sum_{t=1}^T(\beta_t^{\rm stat})^2},\\
+ B_T^{\rm hist}
+ &=2\sqrt{P_T\sum_{t=1}^T(\beta_t^{\rm corr})^2}-B_T^{\rm base},\\
+ B_T^{\rm path}
+ &=\sqrt{P_T\sum_{t=1}^T(\beta_t^{\rm corr})^2
+       (1+e^{\bar D_t^Q})^2}-B_T^{\rm base}-B_T^{\rm hist},\\
+ B_T^{\rm cur}&=2\sum_{t=1}^Tb_t(a_t).
+\end{align*}
+Their sum equals the sharp right-hand side in
+\eqref{eq:sharp-transport-regret-new} for the experiment's
+$\alpha_t=\kappa_{-,t}=\kappa_{+,t}=1$ and $\xi_t=0$.
+The differences retain the same trajectory and the same potential factor;
+they do not rerun a policy with a component removed.  The committed figure
+CSVs report the mean of each component over 50 primary-policy trajectories
+at each round.  At $T=1000$, dividing those terminal component means by the
+corresponding mean sharp right-hand side gives base shares
+$97.33\%,94.66\%,89.39\%,79.39\%$ and path shares
+$2.01\%,4.04\%,8.16\%,16.27\%$ for
+$D_{\rm target}=0.25,0.5,1,2$, respectively.
+These joint cumulative quantities establish the decomposition;
+marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
+
 \begin{ccewidefloatappendix}
   \caption{Certificate and bound tightness for the transport-Hessian policy.
   The reported summary statistics are medians over the following populations.
@@ -31,7 +60,7 @@ results are absent.
     >{\raggedleft\arraybackslash}p{74pt}%
     >{\raggedleft\arraybackslash}p{60pt}@{}}{%
     \input{tables/transport_instantiation_tightness.tex}}
-  
+
 \end{ccewidefloatappendix}
 \clearpage
 

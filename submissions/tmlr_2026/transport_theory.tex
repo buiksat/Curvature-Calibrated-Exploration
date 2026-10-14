@@ -211,6 +211,33 @@ joint certificate event has probability at least $1-\delta_{\rm cert}$, these
 bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
 \end{theorem}
 
+\begin{proposition}[Frozen-width UCB on its own trajectory]
+\label{prop:frozen-width-ucb}
+Keep the timing, measurability, bounded-query, and frozen-update assumptions
+above, and assume \eqref{eq:abstract-confidence-new} along the trajectory of
+the policy that uses
+\[
+ U_t^{\rm fr}(a)=m_t(a)+\beta_t\bar s_t(a)+b_t(a).
+\]
+Assume its score supremum is finite and measurable and its pre-reward
+measurable selector satisfies
+$U_t^{\rm fr}(a_t)\ge\sup_{a\in\cA_t}U_t^{\rm fr}(a)-\xi_t$.
+On the reference-confidence event,
+\begin{align}
+ \operatorname{reg}_t
+ &\le 2\beta_t\bar s_t(a_t)+2b_t(a_t)+\xi_t,\nonumber\\
+ R_T
+ &\le 2\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)
+ \gamma_T\sum_{t=1}^T\beta_t^2}
+ +2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.
+ \label{eq:frozen-width-regret}
+\end{align}
+All quantities are evaluated on this policy's own selected history.  No path,
+current-metric, or operator certificate is needed for this score.  If its
+reference-confidence event has probability at least $1-\delta$, so does this
+guarantee.
+\end{proposition}
+
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
 Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and
@@ -234,8 +261,9 @@ selected width to the frozen potential and produce the closed regret bound.
 Large $\bar D_t$, a small $\kappa_{-,t}$, loose solver sharpness, persistent
 bias, or oracle error can still make that bound uninformative.  No optimizer
 residual, CG-specific formula, or dynamic-width complexity appears in the
-headline result.  When a lower operator factor is unavailable, the one-sided
-dynamic theorem in \Cref{app:one-sided-fallback} remains the applicable fallback.
+headline result.  The displayed closed bound requires a positive lower
+operator factor: an upper comparison alone does not supply the return
+comparison used in its proof.
 
 \begin{algorithm}[t]
 \caption{Corrected-center specialization of transported UCB}\label{alg:transported-ucb}
@@ -586,6 +614,27 @@ result is not an unrestricted neural-training theorem.  No optimizer-residual
 rate is required because the corrected center is used.
 \end{corollary}
 
+\begin{remark}[Comparable guarantees do not order policies]
+\Cref{prop:frozen-width-ucb,cor:corrected-center-new} give a frozen-width
+counterpart to \eqref{eq:finite-d-rate-new-display}, with the factor
+$\alpha e^D\sqrt K$ removed and all remaining quantities evaluated on the
+frozen policy's own history.  With the same $\lambda$, $\sigma$, and
+confidence level, common uniform bounds on the query norm, reference norm,
+approximation envelopes, and accumulated oracle error give guarantees of the
+same order when $D$, $\alpha$, and $K$ are bounded.  In particular, under the
+statistical, uniform-region, and smoothness assumptions of
+\Cref{cor:global-near-linear-new}, the corrected center and exact
+frozen-width score maximization give the same
+$O(d\sqrt T\log T)+O(\sqrt T)$ rate when $W=\Omega(T)$, for fixed $d$
+and fixed problem constants.
+This comparison does not rank realized regret: different selected actions
+change the representation paths, centers, radii, and information gains.
+It neither proves that transport is unnecessary nor rules out improved
+performance from current curvature.  The stated $W$ scaling is a sufficient
+condition for these bounds, not a necessary condition for an informative
+transport certificate.
+\end{remark}
+
 \begin{remark}[Scaled-tanh specialization]
 For
 \[
@@ -639,8 +688,10 @@ Neither the local factor nor the exponential factor uniformly dominates the
 other because they summarize different paths.
 
 \begin{table}[t]
-\caption{Transport certificates.  ``Rotation'' records whether replay
-gradients may change direction.}
+\caption{Transport certificates used in this paper.  The two-way factor is
+the product of the outward and return width factors.  ``Smallness'' states
+the additional restriction needed for that factor; ``rotation'' records
+whether replay gradients may change direction.}
 \label{tab:transport-comparison-new}
 \centering\ccetablesize
 \begin{tabularx}{\columnwidth}{@{}
@@ -653,8 +704,7 @@ gradients may change direction.}
 Route & Assumption & two-way factor & smallness & rotation \\
 \midrule
 Logarithmic path & normalized SPD path length $\bar D_t$ & $e^{\bar D_t}$ & no & yes \\
-Additive endpoint & whitened design error $\chi_t$ & $(1+\chi_t)/(1-\chi_t)$ & yes & yes \\
-Scalar link & fixed features, derivative ratios & ratio bound & lower ratio & scalar only \\
+Local sandwich & \eqref{eq:local-additive-new} & $(1+\chi_t)/(1-\chi_t)$ & $\chi_t<1$ & yes \\
 Exact current & $\Calg_t=\bV_t$ & $1$ & no & yes \\
 Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kappa_-}$ & $\kappa_->0$ & yes \\
 \bottomrule

@@ -45,7 +45,9 @@ The environment was not filtered after generation.  Within each $T=1000$
 target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality
 gap $0.123$, best-fixed-action regret $180.4$, and online context-free
 mean-only regret $185.4$.  All five actions are optimal somewhere in every
-evaluation stream.  These diagnostics were reported after the grid was fixed;
+evaluation stream.  Entropy is measured in nats; its maximum for five actions
+is $\log 5\approx1.609$, so the mean entropy is close to its uniform-action
+maximum.  These diagnostics were reported after the grid was fixed;
 they were not used to select seeds.
 
 \paragraph{Validity audit.}
@@ -82,7 +84,7 @@ enclosures.
     >{\raggedleft\arraybackslash}p{52pt}%
     >{\raggedleft\arraybackslash}p{32pt}@{}}{%
     \input{tables/transport_instantiation_validity.tex}}
-  
+
 \end{ccewidefloat}
 
 \paragraph{Certificate tightness.}
@@ -110,8 +112,25 @@ full grid and $126.7$--$135.0$ at $T=1000$.  No run has zero regret.
 Since $|\mu^*(z)|\le\|\phi(z)\|\|\btheta^\circ\|\le1$, cumulative
 pseudo-regret has the deterministic cap $2T$.  In every cell the theorem bound
 also exceeds this cap: the median right-hand sides are
-$3{,}989$--$12{,}607$, versus caps of $500$--$2{,}000$.  The appendix reports
-the complete tightness table and bound decomposition.
+$3{,}989$--$12{,}607$, versus caps of $500$--$2{,}000$.
+
+The existing cumulative decomposition in
+\Cref{fig:transport-instantiation-bound} separates base confidence,
+historical linearization, path inflation, and current bias.  At $T=1000$,
+the base component accounts for $79.4\%$--$97.3\%$ of the mean terminal
+sharp right-hand side across target cells; path inflation accounts for
+$2.0\%$--$16.3\%$.  Each percentage divides a component's mean over the
+50 transport-Hessian trajectories by the mean sharp right-hand side over
+those same trajectories.  These are ratios of means, not medians of runwise
+shares.  The base component alone has cell means of about
+$9{,}948$--$10{,}010$, already above the cap $2{,}000$.  It includes the
+statistical and regularization/norm-bound terms together with the
+determinant-potential and Cauchy--Schwarz factors; its size cannot be
+attributed to the confidence radius alone.  Thus most of the bound's size
+on this grid is present before path inflation is added.  This is a
+decomposition along transport-Hessian histories, not a bound evaluated on
+the frozen-reference policy's different histories.  The appendix defines
+the components and reports the complete tightness table.
 
 \paragraph{Policy outcomes.}
 At $T=1000$, mean regret for the operational Hessian-certificate policy rises
@@ -148,5 +167,5 @@ to this environment, this certificate, and this horizon.
     >{\raggedleft\arraybackslash}p{105pt}%
     >{\raggedleft\arraybackslash}p{88pt}@{}}{%
     \input{tables/transport_instantiation_performance.tex}}
-  
+
 \end{ccewidefloat}

@@ -1,0 +1,16 @@
+\section{Scope of retained historical material}\label{app:legacy-evidence}
+This submission concerns the confidence-transport theorem and the controlled
+study in \Cref{sec:transport-instantiation}.  Its preceding appendices contain
+the proofs and experimental diagnostics needed for those claims.  Earlier
+one-sided dynamic-width results, auxiliary rate derivations, and their
+experimental protocols remain in the research source history; they are not
+additional contributions of this manuscript and are not needed to establish
+\Cref{thm:transported-ucb}.
+
+The earlier experiments did not execute the transported score or record its
+path, operator, and solver certificates.  They therefore provide no evidence
+for the current theorem or its numerical performance.  The present paper
+makes no empirical claim for a large neural model, an approximate operator,
+or an iterative solver: its reported study uses a 29-parameter model and
+dense Cholesky solves.  These exclusions do not change the conditional
+operator and solver interfaces proved in the theorem.
