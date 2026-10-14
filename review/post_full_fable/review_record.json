@@ -1,0 +1,45 @@
+{
+  "created_at": "2026-10-14T04:11:43.968857+00:00",
+  "refs": {
+    "manuscript": {
+      "ref": "origin/main",
+      "sha": "6a9ea20c3f1bdd91738984160d707b808061aa1f"
+    },
+    "implementation": {
+      "ref": "origin/cce-review-revisions",
+      "sha": "739067b17f1f93b032263bf5fbada6d9910c4871"
+    }
+  },
+  "requested_model": "claude-fable-5",
+  "model": "claude-fable-5",
+  "status": "complete",
+  "access_verified": true,
+  "prompt_sha256": "2266a8f43312102eca90e85791e350976a7f2be83224bb29e2750a3f58b2feef",
+  "limits": {
+    "max_turns": 24,
+    "max_tokens_per_response": 32000,
+    "max_tool_calls": 128,
+    "max_tool_bytes": 2097152
+  },
+  "purpose": "Scientific direction and revision plan after the complete prespecified follow-up",
+  "usage": {
+    "input_tokens": 506314,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 20269
+  },
+  "turns": 12,
+  "tool_bytes": 149095,
+  "evidence_refs": [
+    "implementation",
+    "manuscript"
+  ],
+  "returned_models": [
+    "claude-fable-5"
+  ],
+  "final_stop_reason": "end_turn",
+  "tool_call_count": 26,
+  "review_sha256": "f1795f522440653f9151965627de599e0c6af9476a4a55fbf017509d55e2b77d",
+  "review_bytes": 24842,
+  "qualification": "Complete API response; partial scientific source inspection, not a complete proof audit or independent experimental replay."
+}

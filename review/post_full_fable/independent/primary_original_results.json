@@ -1,0 +1,185 @@
+{
+  "provenance": {
+    "status": "transcribed_from_original_tool_stdout_without_rescan",
+    "raw_root": "/workspace/cce-full-local/raw/evaluation/T-1000",
+    "behavior_method": "transport_hessian",
+    "seeds": "30200-30249",
+    "primary_script": "primary_scan_original.py",
+    "recommendation_script": "primary_recommendations_original.py",
+    "python": "/workspace/cce-research-env/bin/python",
+    "decimal_precision": 250,
+    "coefficient_definition": "B = float(beta_t_corr * exp_bar_D_over_2), then Decimal.from_float(B)",
+    "recommendation_scope": "One-step score recommendations on fixed primary behavior histories; not alternative adaptive trajectories.",
+    "input_hash_inventory": "Not collected by this original scan; parent is producing a symmetric one-pass verification and inventory."
+  },
+  "cells": [
+    {
+      "W": 16,
+      "condition": "D-97p3242004848",
+      "counts": {
+        "seeds": 50,
+        "rounds": 50000,
+        "width_argmax_first_matches": 49691,
+        "width_argmax_set_matches": 49691,
+        "strict_width_dominance_sufficient": 48552,
+        "strict_width_dominance_sufficient_decimal": 48552,
+        "width_top_tie": 203,
+        "width_top_tie_after_round1": 153,
+        "score_top_tie": 212,
+        "score_top_tie_after_round1": 162,
+        "exact_top_tie": 204,
+        "exact_rank_first_mismatch": 5,
+        "selected_not_exact_argmax_set": 5,
+        "rounded_score_tie_exact_unique": 8,
+        "width_argmax_is_exact_unique_max": 49494,
+        "normalized_rank_first_mismatch": 3,
+        "all_centers_numerically_absorbed": 50,
+        "some_centers_numerically_absorbed": 56,
+        "score_reconstruction_mismatch": 0,
+        "nonfinite_score_or_coefficient": 0,
+        "zero_width": 0,
+        "endpoint_recommendation_disagrees": 35172,
+        "frozen_recommendation_disagrees": 35169,
+        "naive_recommendation_disagrees": 35177
+      },
+      "max": {
+        "B": 8803019.554971278,
+        "D_Q": 23.74325582030929,
+        "score": 357490.5918992455,
+        "center_range": 1.791668920360865,
+        "theta_t_norm": 1.0000000000000004,
+        "current_metric_condition_number": 1788.541285173589
+      },
+      "min": {
+        "width": 0.03760410744613186,
+        "top_score_gap_ulps": 1.0,
+        "top_width_gap": 1.1102230246251565e-16
+      },
+      "mean_one_step_regret": {
+        "primary_logged_one_step_regret": 0.18510060051412533,
+        "endpoint_same_primary_history_one_step_regret": 0.02903189867722083,
+        "frozen_same_primary_history_one_step_regret": 0.029066073330608237,
+        "naive_same_primary_history_one_step_regret": 0.029027319336221023
+      },
+      "beta_hist_over_beta_stat": {
+        "min": 0.0,
+        "median": 2.587604259149061,
+        "max": 3.5441224170985692
+      },
+      "exact_ranking_mismatch_seed_round": [[30202, 2], [30220, 10], [30227, 7], [30234, 2], [30245, 3]],
+      "maximum_mismatch_gap_in_score_ulps": 0.5413373142770459
+    },
+    {
+      "W": 1,
+      "condition": "D-389p296801939",
+      "counts": {
+        "seeds": 50,
+        "rounds": 50000,
+        "width_argmax_first_matches": 49981,
+        "width_argmax_set_matches": 49981,
+        "strict_width_dominance_sufficient": 49686,
+        "strict_width_dominance_sufficient_decimal": 49686,
+        "width_top_tie": 207,
+        "width_top_tie_after_round1": 157,
+        "score_top_tie": 209,
+        "score_top_tie_after_round1": 159,
+        "exact_top_tie": 204,
+        "exact_rank_first_mismatch": 5,
+        "selected_not_exact_argmax_set": 5,
+        "rounded_score_tie_exact_unique": 5,
+        "width_argmax_is_exact_unique_max": 49776,
+        "normalized_rank_first_mismatch": 0,
+        "all_centers_numerically_absorbed": 18552,
+        "some_centers_numerically_absorbed": 26619,
+        "score_reconstruction_mismatch": 0,
+        "nonfinite_score_or_coefficient": 0,
+        "zero_width": 0,
+        "endpoint_recommendation_disagrees": 29524,
+        "frozen_recommendation_disagrees": 28460,
+        "naive_recommendation_disagrees": 29739
+      },
+      "max": {
+        "B": 2.1940916616160705e21,
+        "D_Q": 87.65481063440726,
+        "score": 8.968478680239776e19,
+        "center_range": 1.7516285180481797,
+        "theta_t_norm": 1.0000000000000002,
+        "current_metric_condition_number": 1745.4546314807662
+      },
+      "min": {
+        "width": 0.037516106798696595,
+        "top_score_gap_ulps": 1.0,
+        "top_width_gap": 1.1102230246251565e-16
+      },
+      "mean_one_step_regret": {
+        "primary_logged_one_step_regret": 0.18290041423907052,
+        "endpoint_same_primary_history_one_step_regret": 0.0495063889406753,
+        "frozen_same_primary_history_one_step_regret": 0.059206406549996045,
+        "naive_same_primary_history_one_step_regret": 0.04865984808609026
+      },
+      "beta_hist_over_beta_stat": {
+        "min": 0.0,
+        "median": 10.392063296090981,
+        "max": 14.204174768788516
+      },
+      "exact_ranking_mismatch_seed_round": [[30204, 5], [30211, 6], [30235, 7], [30239, 2], [30245, 3]],
+      "maximum_mismatch_gap_in_score_ulps": 0.0625
+    },
+    {
+      "W": 0.25,
+      "condition": "D-778p593603878",
+      "counts": {
+        "seeds": 50,
+        "rounds": 50000,
+        "width_argmax_first_matches": 49991,
+        "width_argmax_set_matches": 49991,
+        "strict_width_dominance_sufficient": 49754,
+        "strict_width_dominance_sufficient_decimal": 49754,
+        "width_top_tie": 205,
+        "width_top_tie_after_round1": 155,
+        "score_top_tie": 208,
+        "score_top_tie_after_round1": 158,
+        "exact_top_tie": 202,
+        "exact_rank_first_mismatch": 6,
+        "selected_not_exact_argmax_set": 6,
+        "rounded_score_tie_exact_unique": 6,
+        "width_argmax_is_exact_unique_max": 49790,
+        "normalized_rank_first_mismatch": 3,
+        "all_centers_numerically_absorbed": 46876,
+        "some_centers_numerically_absorbed": 47352,
+        "score_reconstruction_mismatch": 0,
+        "nonfinite_score_or_coefficient": 0,
+        "zero_width": 0,
+        "endpoint_recommendation_disagrees": 18589,
+        "frozen_recommendation_disagrees": 25723,
+        "naive_recommendation_disagrees": 19605
+      },
+      "max": {
+        "B": 2.222223823860762e43,
+        "D_Q": 187.76487344412786,
+        "score": 9.484602339331987e41,
+        "center_range": 1.240105060142638,
+        "theta_t_norm": 1.0000000000000004,
+        "current_metric_condition_number": 1649.2928553171412
+      },
+      "min": {
+        "width": 0.036080613082173994,
+        "top_score_gap_ulps": 1.0,
+        "top_width_gap": 1.1102230246251565e-16
+      },
+      "mean_one_step_regret": {
+        "primary_logged_one_step_regret": 0.17643913757957588,
+        "endpoint_same_primary_history_one_step_regret": 0.10177278656892808,
+        "frozen_same_primary_history_one_step_regret": 0.14460629755820306,
+        "naive_same_primary_history_one_step_regret": 0.09765633593056515
+      },
+      "beta_hist_over_beta_stat": {
+        "min": 0.0,
+        "median": 20.957058964753088,
+        "max": 28.575843191651867
+      },
+      "exact_ranking_mismatch_seed_round": [[30204, 6], [30216, 6], [30228, 8], [30239, 2], [30244, 4], [30246, 7]],
+      "maximum_mismatch_gap_in_score_ulps": 0.6283498985722342
+    }
+  ]
+}
