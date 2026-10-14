@@ -342,6 +342,28 @@ class ReviewLoopTests(RepoFixture):
 
 
 class CLITests(RepoFixture):
+    def test_defaults_pin_revised_implementation_even_when_historical_ref_exists(self):
+        self.git("update-ref", "refs/remotes/origin/cce-experiments", self.manuscript_sha)
+        self.git("update-ref", "refs/remotes/origin/cce-review-revisions", self.implementation_sha)
+        snapshot = review.RepoSnapshot(self.repo)
+        self.assertEqual(snapshot.refs["implementation"], {
+            "ref": "origin/cce-review-revisions", "sha": self.implementation_sha,
+        })
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            code = review.main(["--repo", str(self.repo), "--prepare-only", "--output", str(self.output)])
+        self.assertEqual(code, 0)
+        manifest = json.loads((self.output / "manifest.json").read_text())
+        self.assertEqual(manifest["refs"]["implementation"], snapshot.refs["implementation"])
+
+    def test_missing_revised_ref_does_not_fall_back_to_historical_branch(self):
+        self.git("update-ref", "refs/remotes/origin/cce-experiments", self.implementation_sha)
+        stderr = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+            code = review.main(["--repo", str(self.repo), "--prepare-only", "--output", str(self.output)])
+        self.assertEqual(code, 1)
+        self.assertIn("Git read failed", stderr.getvalue())
+        self.assertFalse((self.output / "manifest.json").exists())
+
     def test_prepare_only_is_offline_preserves_checkout_and_records_exact_refs(self):
         before = self.git("status", "--porcelain=v1", "--untracked-files=all")
         with mock.patch.dict(os.environ, {}, clear=True):

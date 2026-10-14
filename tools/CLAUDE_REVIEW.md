@@ -18,14 +18,35 @@ python3 tools/claude_review.py
 ```
 
 The runner checks that the account exposes `claude-fable-5-1`, pins the local
-`main` and `origin/cce-experiments` refs to exact commits, supplies the research
+`main` and `origin/cce-review-revisions` refs to exact commits, supplies the research
 review prompt, handles read-only file-inspection calls, and saves the response
 with its revision and usage manifest. It never silently substitutes a different
 model. To select another model explicitly, use `--model` or `CLAUDE_MODEL`.
 
 The snapshots use locally available Git refs. To review newer remote commits,
 fetch the relevant branch first; fetching does not switch or reset the working
-tree. The workflow does not submit the paper or change either branch. Its
+tree:
+
+```bash
+git fetch origin \
+  main:refs/remotes/origin/main \
+  cce-review-revisions:refs/remotes/origin/cce-review-revisions
+python3 tools/claude_review.py \
+  --manuscript-ref origin/main \
+  --implementation-ref origin/cce-review-revisions
+```
+
+The explicit fetch destinations also create the required remote-tracking refs
+in checkouts configured to fetch only `main`.
+
+`cce-review-revisions` carries the implementation follow-up to the revised
+manuscript. The earlier `cce-experiments` branch retains the historical study;
+review it only when explicitly requested with
+`--implementation-ref origin/cce-experiments`. A missing revision branch causes
+an error rather than a fallback to historical code. The saved manifest records
+the exact requested refs and resolved commits for either choice.
+
+The workflow does not submit the paper or change either branch. Its
 inspection tools cannot execute tests or experiments, and the prompt requires
 the review to acknowledge that limitation.
 

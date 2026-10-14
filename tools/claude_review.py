@@ -17,6 +17,7 @@ MAX_RESULT = 64 * 1024
 MAX_TOOL_BYTES = 2 * 1024 * 1024
 MAX_TOOL_CALLS = 128
 DEFAULT_MODEL = "claude-fable-5-1"
+DEFAULT_IMPLEMENTATION_REF = "origin/cce-review-revisions"
 
 
 class ReviewError(Exception):
@@ -92,7 +93,7 @@ def git(repo, *args):
 
 
 class RepoSnapshot:
-    def __init__(self, repo, manuscript_ref="main", implementation_ref="origin/cce-experiments"):
+    def __init__(self, repo, manuscript_ref="main", implementation_ref=DEFAULT_IMPLEMENTATION_REF):
         self.repo, self.refs, self.files = Path(repo).resolve(), {}, {}
         for name, ref in (("manuscript", manuscript_ref), ("implementation", implementation_ref)):
             sha = git(self.repo, "rev-parse", "--verify", "--end-of-options", ref + "^{commit}").decode().strip()
@@ -336,7 +337,7 @@ def main(argv=None):
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--model", default=os.environ.get("CLAUDE_MODEL", DEFAULT_MODEL))
     parser.add_argument("--manuscript-ref", default="main")
-    parser.add_argument("--implementation-ref", default="origin/cce-experiments")
+    parser.add_argument("--implementation-ref", default=DEFAULT_IMPLEMENTATION_REF)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--max-turns", type=int, default=16)
     parser.add_argument("--max-tokens", type=int, default=10000)

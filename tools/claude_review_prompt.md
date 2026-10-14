@@ -6,8 +6,10 @@ submission readiness. Give a substantive review, not a generic checklist.
 The repository is Curvature-Calibrated-Exploration. The target manuscript is
 `submissions/tmlr_2026/main.tex` in the manuscript snapshot, including all its
 inputs, appendices, bibliography, tables, and figure sources. The implementation
-snapshot is the canonical research branch, `cce-experiments`. The initial user
-prompt names the exact immutable revisions. Review the current TMLR draft,
+snapshot defaults to the revised research branch, `cce-review-revisions`;
+`cce-experiments` retains the historical study. The initial user prompt names
+the selected refs and exact immutable revisions: those metadata are authoritative
+if an explicit override selects another implementation revision. Review the current TMLR draft,
 not the historical AISTATS PDF or CODE abstract.
 
 You have read-only Git inspection tools for both snapshots. Use them to inspect
