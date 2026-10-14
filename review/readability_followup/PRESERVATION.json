@@ -1,0 +1,179 @@
+{
+  "baseline_commit": "a9315960dbbf6e7c81d519872805041f9d8114dc",
+  "protected_count": 240,
+  "protected_unchanged_count": 236,
+  "protected_changed_files": [
+    "paper/figures/transport_explanatory_outcomes.tex",
+    "paper/figures/transport_explanatory_provenance.json",
+    "tools/followup_anonymous_contract.py",
+    "tools/make_transport_explanatory_figures.py"
+  ],
+  "protected_missing_files": [],
+  "protected_changes_exactly_authorized_label_chain": true,
+  "formal_and_display_math": {
+    "paper/transport_theory.tex": {
+      "formal": {
+        "old_count": 21,
+        "new_count": 21,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      },
+      "display": {
+        "old_count": 60,
+        "new_count": 60,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      }
+    },
+    "paper/transport_proofs.tex": {
+      "formal": {
+        "old_count": 18,
+        "new_count": 18,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      },
+      "display": {
+        "old_count": 44,
+        "new_count": 44,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      }
+    },
+    "paper/transport_followup.tex": {
+      "formal": {
+        "old_count": 0,
+        "new_count": 0,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      },
+      "display": {
+        "old_count": 0,
+        "new_count": 0,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      }
+    },
+    "paper/transport_followup_appendix.tex": {
+      "formal": {
+        "old_count": 0,
+        "new_count": 0,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      },
+      "display": {
+        "old_count": 1,
+        "new_count": 1,
+        "unchanged": true,
+        "removed": [],
+        "added": []
+      }
+    }
+  },
+  "all_figure_coordinate_lists_unchanged": true,
+  "figure_source_changes": [
+    "paper/figures/transport_explanatory_outcomes.tex"
+  ],
+  "generator_replacement_count": 1,
+  "outcome_tex_replacement_count": 3,
+  "provenance_only_updates_correct_label_chain_hashes": true,
+  "existing_review_history_changes": [],
+  "proof_source_byte_identical": true,
+  "shared_scientific_file_count": 46,
+  "main_mirror_mismatches": [],
+  "three_abstracts_identical": true,
+  "scientific_file_hashes": {
+    "paper/body_intro.tex": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6",
+    "paper/body_conclusion.tex": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0",
+    "paper/transport_theory.tex": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74",
+    "paper/transport_followup.tex": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb",
+    "paper/figures/transport_explanatory_outcomes.tex": "a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339",
+    "paper/figures/transport_explanatory_provenance.json": "7e8294965356fa113e7c8c67f8e0ceda6c21c85dcc44b14d5ef79489032067ea",
+    "paper/main.tex": "a090d739c84bdbaf6f91b43aa5dfdd4577382fcab2848de05e4ee10cdf026bc3",
+    "submissions/tmlr_2026/main.tex": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a",
+    "tools/make_transport_explanatory_figures.py": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150"
+  },
+  "scientific_scope_review": "PASS: finite enumeration leaves timing/confidence/certificate requirements in force; predictable precedes fresh randomization; notation separates three matrices/four widths and selected-action sharpness; asymptotic W family is not classified from a single finite horizon; empirical magnitudes explicitly summarize own-history means, individual vacuity is a separate check; no cross-policy decomposition or stronger motivation claim; width-floor prose retains zero-query convention and no general computational lower bound.",
+  "child_contract_other_ast_unchanged": true,
+  "child_contract_changed_artifact_pins": [
+    "paper/figures/transport_explanatory_outcomes.tex",
+    "paper/figures/transport_explanatory_provenance.json"
+  ],
+  "child_contract_all_artifact_pins_match_actual": true,
+  "formal_statement_bytes_identical": {
+    "paper/transport_theory.tex": true,
+    "paper/transport_proofs.tex": true
+  },
+  "source_freeze_mismatches": [],
+  "new_mean_magnitude_claims_review": "Six additional displayed claims use the original pinned per-seed summaries, select named policy/W/T1000, require 50 distinct histories and finite positive terminal bounds, average before dividing by the deterministic cap, and apply log10 only to Hessian. Frozen bounds sum statistical, historical and current-bias terms on frozen histories. Existing source pins and fail-closed guards remain in force; added tests mutate magnitudes and own-history attribution.",
+  "rendered_pages_inspected": [
+    20
+  ],
+  "rendered_pdf_sha256": "7ee8ab1b323434333108c88382c0f457fc3ea59e5f3e768eab1df7227f50f2d5",
+  "rendered_pdf_pages": 47,
+  "rendered_review": "PASS: final page 20 independently viewed at 160 dpi. All three Hessian=0 annotations are visibly left of the dashed zero guides, with no glyph crossing, clipping or data overlap. Plotted marks, intervals, axes and zero guides are unchanged. Other inspected candidate pages retain identical frozen prose sources.",
+  "scope": "Independent source preservation, prose safety, targeted validation-diff and rendered-page review only; no tests/builds/API calls executed.",
+  "parent_contract_other_ast_unchanged": true,
+  "numeric_existing_changed_definitions": [
+    "followup_ledger"
+  ],
+  "numeric_new_definitions": [
+    "_followup_mean_bound_ratio"
+  ],
+  "existing_followup_ledger_statements_preserved_in_order": true,
+  "followup_ledger_added_top_level_statements": 1,
+  "numeric_mutation_test_body_unchanged": true,
+  "existing_numeric_mutation_cases_preserved": true,
+  "new_numeric_mutation_cases": [
+    [
+      "9.51",
+      "9.52"
+    ],
+    [
+      "19, 60, and 231",
+      "19, 60, and 232"
+    ],
+    [
+      "Each mean uses the named\npolicy's own 50 histories",
+      "Each mean uses the same\nHessian policy's 50 histories"
+    ]
+  ],
+  "changes_since_candidate_frozen_science": [
+    "paper/figures/transport_explanatory_outcomes.tex",
+    "paper/figures/transport_explanatory_provenance.json",
+    "tools/make_transport_explanatory_figures.py"
+  ],
+  "only_annotation_chain_changed_since_candidate": true,
+  "generator_only_expected_annotation_replacement": true,
+  "outcome_tex_only_expected_annotation_replacement": true,
+  "annotation_coordinate_change": {
+    "old_relative_x": 1,
+    "new_relative_x": 0.9,
+    "relative_y": 0.88,
+    "count": 3,
+    "plotted_data_coordinates_changed": false
+  },
+  "parent_tool_pin_mismatches": [],
+  "previous_candidate_render_inspection": {
+    "report": "/workspace/cce-build/clarity-independent-preservation-candidate.json",
+    "pages": [
+      1,
+      5,
+      6,
+      19,
+      20
+    ],
+    "qualification_record": "/workspace/cce-build/clarity-independent-candidate-qualification.json",
+    "superseded_finding": "Candidate page-20 zero-glyph crossing was missed; that prior no-overlap finding is explicitly withdrawn."
+  },
+  "rendered_pdf_path": "/workspace/cce-build/tmlr-clarity-final-main/main.pdf",
+  "rendered_pdf_bytes": 691418,
+  "rendered_resolution_dpi": 160,
+  "status": "Final source, contract-scope, and corrected-page render review passed; clean rebuild/release verification is independently owned by another agent."
+}

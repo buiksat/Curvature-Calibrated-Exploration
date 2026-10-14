@@ -79,7 +79,7 @@ RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
 RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
 RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
 FOLLOWUP_SOURCE_HASHES = {
-    EXPLANATORY_GENERATOR: '10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8',
+    EXPLANATORY_GENERATOR: '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
     FOLLOWUP_CONFIG: "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
     FOLLOWUP_AGGREGATE: "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
     FOLLOWUP_SEEDS: "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60",
@@ -309,6 +309,24 @@ def _followup_environment_mean(aggregate, target, field_name):
     return float(rows[0][field_name]["mean"])
 
 
+def _followup_mean_bound_ratio(seeds, width, method):
+    """Arithmetic mean on the named policy's own histories, then divide by cap."""
+    if method not in {"transport_hessian", "frozen_reference"}:
+        raise LedgerError(f"unsupported bound policy: {method}")
+    rows = [row for row in seeds if row["W"] == width
+            and row["method"] == method and row["horizon"] == PRIMARY_HORIZON]
+    if len(rows) != 50 or len({row["seed"] for row in rows}) != 50:
+        raise LedgerError(f"expected 50 distinct terminal histories for {method}, W={width}")
+    bounds = [float(row["sharp_theorem_rhs"]) if method == "transport_hessian"
+              else math.fsum(float(row[key]) for key in (
+                  "statistical_bound_component", "historical_bound_component",
+                  "current_bias_cumulative")) for row in rows]
+    if any(not math.isfinite(value) or value <= 0 for value in bounds):
+        raise LedgerError("terminal bounds must be positive and finite")
+    cap = 2 * PRIMARY_HORIZON * min(1.0, math.sqrt(width))
+    return (math.fsum(bounds) / len(bounds)) / cap
+
+
 def followup_ledger() -> list[Entry]:
     """Explicit selectors for new prose; table cells are regenerated separately."""
     entries = []
@@ -321,6 +339,30 @@ def followup_ledger() -> list[Entry]:
                              "explicit selector over the retained follow-up export",
                              "completed follow-up; exploratory results identified separately",
                              lambda data, _old_config: compute(data)))
+
+    # Compute from retained per-seed evidence, independently of chart CSVs.
+    # The logarithm follows the arithmetic mean; these are not mean log bounds
+    # or bounds evaluated on another policy's adaptive histories.
+    for width, hessian_log, frozen_ratio in (
+            (16., "9.51", "19"), (1., "37.19", "60"), (.25, "80.91", "231")):
+        for method, display, phrase, logarithmic in (
+                ("transport_hessian", hessian_log,
+                 "approximately 9.51, 37.19, and 80.91", True),
+                ("frozen_reference", frozen_ratio,
+                 "approximately 19, 60, and 231", False)):
+            fields = ("sharp_theorem_rhs" if logarithmic else
+                      "statistical_bound_component + historical_bound_component "
+                      "+ current_bias_cumulative")
+            entries.append(Entry(
+                main, phrase, display, S,
+                f"seed_summaries[method={method}, W={width}, horizon={PRIMARY_HORIZON}].{fields}",
+                "base-ten log of mean bound/cap" if logarithmic else "mean bound/cap",
+                "arithmetic mean of 50 terminal bounds / (2*T*min(1,sqrt(W)))"
+                + (", then log10" if logarithmic else ""),
+                f"50 distinct evaluation seeds on {method}'s own histories at W={width}",
+                lambda data, _config, w=width, m=method, log=logarithmic:
+                    math.log10(_followup_mean_bound_ratio(data, w, m)) if log
+                    else _followup_mean_bound_ratio(data, w, m)))
 
     for file, phrase in ((main, "600 policy trajectories"),
                          (main, "All 600 evaluation trajectories"),
@@ -1344,7 +1386,7 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', '$12.68\\%$'): 1,
     ('paper/transport_followup.tex', '$T=1000$'): 2,
     ('paper/transport_followup.tex', '$W=0.25$'): 1,
-    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 2,
+    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 3,
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
     ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
@@ -1356,7 +1398,7 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', '29-parameter'): 1,
     ('paper/transport_followup.tex', '294 development and tuning trajectories'): 1,
     ('paper/transport_followup.tex', '50 common evaluation seeds'): 1,
-    ('paper/transport_followup.tex', '50 histories'): 2,
+    ('paper/transport_followup.tex', '50 histories'): 3,
     ('paper/transport_followup.tex', '50 seeds per condition'): 1,
     ('paper/transport_followup.tex', '50 successes out of 50'): 1,
     ('paper/transport_followup.tex', '50,000 seed--round observations per condition'): 1,
@@ -1370,6 +1412,8 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', 'All 600 evaluation trajectories'): 1,
     ('paper/transport_followup.tex', 'all 150 of its trajectories'): 1,
     ('paper/transport_followup.tex', 'all 600 preserved trajectories'): 1,
+    ('paper/transport_followup.tex', 'approximately 9.51, 37.19, and 80.91'): 1,
+    ('paper/transport_followup.tex', 'approximately 19, 60, and 231'): 1,
     ('paper/transport_followup.tex', 'dimension 29'): 1,
     ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
     ('paper/transport_followup.tex', 'learning rate $3\\times10^{-4}$'): 1,

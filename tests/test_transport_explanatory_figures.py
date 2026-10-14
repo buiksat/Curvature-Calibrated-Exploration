@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import anonymous_package_contract as package_contract
 import followup_anonymous_contract as followup_contract
 import make_transport_explanatory_figures as figures
+import verify_tmlr_submission_numbers as ledger
 
 
 def rows(name):
@@ -31,6 +32,8 @@ def test_plot_data_use_all_prespecified_cells_and_the_stated_statistics():
     outcomes = rows("transport_explanatory_outcomes.csv")
     paired = rows("transport_explanatory_paired.csv")
     bounds = rows("transport_explanatory_bounds.csv")
+    seeds = [json.loads(line) for line in
+             (ROOT / ledger.FOLLOWUP_SEEDS).read_text().splitlines()]
     assert len(outcomes) == 12 and len(paired) == 9 and len(bounds) == 6
     assert {(float(r["W"]), r["method"]) for r in outcomes} == {
         (width, method) for width in (16., 1., .25)
@@ -71,6 +74,13 @@ def test_plot_data_use_all_prespecified_cells_and_the_stated_statistics():
         assert float(row["deterministic_cap"]) == diagnostic["deterministic_regret_cap"] == cap
         assert float(row["mean_rhs_over_cap"]) == mean_rhs / cap
         assert float(row["log10_mean_rhs_over_cap"]) == math.log10(mean_rhs / cap)
+        # The prose ledger reconstructs these summary-derived chart quantities
+        # independently from each policy's terminal seed records. In particular,
+        # its Hessian values must be log(mean RHS/cap), not mean(log RHS/cap).
+        ratio = ledger._followup_mean_bound_ratio(seeds, width, row["method"])
+        assert ratio == pytest.approx(mean_rhs / cap, rel=1e-14)
+        assert math.log10(ratio) == pytest.approx(
+            float(row["log10_mean_rhs_over_cap"]), rel=1e-14)
 
 
 @pytest.fixture

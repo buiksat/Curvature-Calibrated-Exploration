@@ -204,16 +204,16 @@
   },
   "deliverables": {
     "main.pdf": {
-      "bytes": 685695,
-      "sha256": "93538407dc6203a490d08b6f2b2d702635de491822d403ea7a951e49e1234331"
+      "bytes": 691388,
+      "sha256": "f3d809c81247961058fe498a25048365d3f3a3b53c3f677cbb283fafdf688a70"
     },
     "source.zip": {
-      "bytes": 3407211,
-      "sha256": "d884ec8b852490a3999162389cc1cd1897ddfe7f29f6249cb9ff60ee884bef19"
+      "bytes": 3412620,
+      "sha256": "1f07ef7dbdcac50b97a8783dc82653c40fc4ae2002e5a7af3fe780f1e3d20fda"
     },
     "supplement.zip": {
-      "bytes": 93803092,
-      "sha256": "18ac06949e9b9a8f2c0830f4df130bcbba4846db39776a21c155f4d228fdfa53"
+      "bytes": 93812058,
+      "sha256": "3635fd755e8a2af17c438ed0c702552cf26434d7ec6f59ca45658c8497850ea0"
     }
   },
   "external_tex_inputs": [
@@ -1663,12 +1663,12 @@
     "review/post_full_fable/independent/symmetric_scan.py": "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/analyze_relative_transport.py": "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56",
     "tools/check_python_environment.py": "77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e",
-    "tools/followup_anonymous_contract.py": "1c3b9a69ecc26909bd9e854616a3135c28bc0c0a0e8bc88063e268ab87c49d5f",
-    "tools/make_transport_explanatory_figures.py": "10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8",
+    "tools/followup_anonymous_contract.py": "c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd",
+    "tools/make_transport_explanatory_figures.py": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150",
     "tools/make_transport_followup_paper.py": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
-    "tools/numeric_context_pins.py": "0ac3255a43cee7451dae0e782675b4b224bc48802310a978eddac978be4d6722",
+    "tools/numeric_context_pins.py": "3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5",
     "tools/verify_review_experiment_export.py": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
-    "tools/verify_tmlr_submission_numbers.py": "008bc3cd6dc73cb21cc8ea5934e640c7b08a1cb034ffac65f9d95efba220547a"
+    "tools/verify_tmlr_submission_numbers.py": "b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43"
   },
   "source_zip_contents": [
     {
@@ -1722,14 +1722,14 @@
       "sha256": "38a3a70b4a0a01cc39159c4cfb640fe88a1b642d2af6ddddda83469aded576b1"
     },
     {
-      "bytes": 3856,
+      "bytes": 3783,
       "path": "body_conclusion.tex",
-      "sha256": "7d65fa1f99a12441ae19178565bea1bebedbeafc3edeeef9555899cb3d415b1b"
+      "sha256": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0"
     },
     {
-      "bytes": 9605,
+      "bytes": 10179,
       "path": "body_intro.tex",
-      "sha256": "693ae657075460487cdb7178d1396523400d217e6f32c21ed88f3822c5990f18"
+      "sha256": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6"
     },
     {
       "bytes": 9713,
@@ -1767,9 +1767,9 @@
       "sha256": "bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324"
     },
     {
-      "bytes": 8635,
+      "bytes": 8626,
       "path": "figures/transport_explanatory_outcomes.tex",
-      "sha256": "c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3"
+      "sha256": "a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339"
     },
     {
       "bytes": 4242,
@@ -1857,9 +1857,9 @@
       "sha256": "0161bd1793fee89289ab990a267f89ba2e2d159ef997e649e032f6c304829f9d"
     },
     {
-      "bytes": 5700,
+      "bytes": 5831,
       "path": "main.tex",
-      "sha256": "e1551b6012d7d4d7b7766dd97e98c6ccac36c9d63c1b310303f57fcb3eea0b16"
+      "sha256": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a"
     },
     {
       "bytes": 56225,
@@ -2157,9 +2157,9 @@
       "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
     },
     {
-      "bytes": 12471,
+      "bytes": 14019,
       "path": "transport_followup.tex",
-      "sha256": "4b3b102aae878ff6d0ffc5274f01394d50e01b97ffe8ad99d2bb24d7b16dcb05"
+      "sha256": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb"
     },
     {
       "bytes": 14340,
@@ -2172,9 +2172,9 @@
       "sha256": "c0c25bda20826f710433a3c73f9c44688257ece63118d89b181ad3ebb0958095"
     },
     {
-      "bytes": 54103,
+      "bytes": 57341,
       "path": "transport_theory.tex",
-      "sha256": "6e9ba5ee8cd36acc893111bb474efc7f38066208aedd52cf00209dc6c1c37f63"
+      "sha256": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74"
     }
   ],
   "supplement_zip_contents": [
@@ -2194,9 +2194,9 @@
       "sha256": "c6f5e3ee3a238f1218909f54866e9a813038aae3d6aeac7d379532cc11c9320d"
     },
     {
-      "bytes": 28202,
+      "bytes": 28203,
       "path": "SOURCE_CLOSURE.json",
-      "sha256": "4163fb1fe607b5d6992e132152a9fc4f04268a12d8aa2fe87396125d66b29afb"
+      "sha256": "3b3290e2863e04f3f1df76bdac4bdc0122d0ec3999ee8c2cce0c549a45ca5902"
     },
     {
       "bytes": 29252,
@@ -2309,14 +2309,14 @@
       "sha256": "38a3a70b4a0a01cc39159c4cfb640fe88a1b642d2af6ddddda83469aded576b1"
     },
     {
-      "bytes": 3856,
+      "bytes": 3783,
       "path": "paper/body_conclusion.tex",
-      "sha256": "7d65fa1f99a12441ae19178565bea1bebedbeafc3edeeef9555899cb3d415b1b"
+      "sha256": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0"
     },
     {
-      "bytes": 9605,
+      "bytes": 10179,
       "path": "paper/body_intro.tex",
-      "sha256": "693ae657075460487cdb7178d1396523400d217e6f32c21ed88f3822c5990f18"
+      "sha256": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6"
     },
     {
       "bytes": 9713,
@@ -2354,9 +2354,9 @@
       "sha256": "0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe"
     },
     {
-      "bytes": 8635,
+      "bytes": 8626,
       "path": "paper/figures/transport_explanatory_outcomes.tex",
-      "sha256": "c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3"
+      "sha256": "a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339"
     },
     {
       "bytes": 1124,
@@ -2366,7 +2366,7 @@
     {
       "bytes": 3014,
       "path": "paper/figures/transport_explanatory_provenance.json",
-      "sha256": "6aceb41579165caab4573abe1db2997b81de5677b0568b3ee485767fdfc76cc4"
+      "sha256": "7e8294965356fa113e7c8c67f8e0ceda6c21c85dcc44b14d5ef79489032067ea"
     },
     {
       "bytes": 77173,
@@ -2849,9 +2849,9 @@
       "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
     },
     {
-      "bytes": 12471,
+      "bytes": 14019,
       "path": "paper/transport_followup.tex",
-      "sha256": "4b3b102aae878ff6d0ffc5274f01394d50e01b97ffe8ad99d2bb24d7b16dcb05"
+      "sha256": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb"
     },
     {
       "bytes": 14340,
@@ -2864,9 +2864,9 @@
       "sha256": "c0c25bda20826f710433a3c73f9c44688257ece63118d89b181ad3ebb0958095"
     },
     {
-      "bytes": 54103,
+      "bytes": 57341,
       "path": "paper/transport_theory.tex",
-      "sha256": "6e9ba5ee8cd36acc893111bb474efc7f38066208aedd52cf00209dc6c1c37f63"
+      "sha256": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74"
     },
     {
       "bytes": 77035395,
@@ -3004,9 +3004,9 @@
       "sha256": "dd17ab420a4b394864fbbd4d25efc66177e505e0dfc2a87a1d4512bf59cfaf44"
     },
     {
-      "bytes": 5700,
+      "bytes": 5831,
       "path": "submissions/tmlr_2026/main.tex",
-      "sha256": "e1551b6012d7d4d7b7766dd97e98c6ccac36c9d63c1b310303f57fcb3eea0b16"
+      "sha256": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a"
     },
     {
       "bytes": 28190,
@@ -3014,9 +3014,9 @@
       "sha256": "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56"
     },
     {
-      "bytes": 63573,
+      "bytes": 63574,
       "path": "tools/anonymous_package_contract.py",
-      "sha256": "37ec77cffeae0718ce810cc872e786e2e4a88cfa6bbec5b2db386d9ef15002ee"
+      "sha256": "7247eb5e0d8a29ef1830affacbb5488511f4685aada9b8cabf5ec3730d651976"
     },
     {
       "bytes": 3269,
@@ -3026,12 +3026,12 @@
     {
       "bytes": 34045,
       "path": "tools/followup_anonymous_contract.py",
-      "sha256": "1c3b9a69ecc26909bd9e854616a3135c28bc0c0a0e8bc88063e268ab87c49d5f"
+      "sha256": "c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd"
     },
     {
-      "bytes": 14912,
+      "bytes": 14909,
       "path": "tools/make_transport_explanatory_figures.py",
-      "sha256": "10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8"
+      "sha256": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150"
     },
     {
       "bytes": 12871,
@@ -3039,9 +3039,9 @@
       "sha256": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496"
     },
     {
-      "bytes": 131203,
+      "bytes": 131981,
       "path": "tools/numeric_context_pins.py",
-      "sha256": "0ac3255a43cee7451dae0e782675b4b224bc48802310a978eddac978be4d6722"
+      "sha256": "3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5"
     },
     {
       "bytes": 5170,
@@ -3059,9 +3059,9 @@
       "sha256": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0"
     },
     {
-      "bytes": 182951,
+      "bytes": 185731,
       "path": "tools/verify_tmlr_submission_numbers.py",
-      "sha256": "008bc3cd6dc73cb21cc8ea5934e640c7b08a1cb034ffac65f9d95efba220547a"
+      "sha256": "b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43"
     },
     {
       "bytes": 5833,

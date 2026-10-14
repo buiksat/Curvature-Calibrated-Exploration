@@ -4,16 +4,19 @@ This record covers the research revisions through 2026-10-14
 (America/Los_Angeles). `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current readability-revision status (2026-10-14):** both rewritten manuscript
-builds have 46 pages, and each source archive reproduces its PDF exactly.
-Preservation, focused validation and fresh extracted-supplement checks pass.
-The final full-suite run reports **713 passed, three skipped, zero failed**
-in 368.95 seconds. Compact evidence verification remains separate from raw replay.
+**Current targeted-readability status (2026-10-14):** the checked Fable advice
+has been applied and the main manuscript builds to 47 pages. Preservation and
+focused numerical, chart and detached-evidence checks pass. Both final source
+archives reproduce their PDFs byte for byte, and the extracted supplement passes
+its verification. The final regression reports **716 passed, three skipped,
+zero failed and two warnings** in **384.00 seconds**. The preceding readability
+run of 713 passed and three skipped remains a historical result.
+Compact evidence verification remains separate from raw replay.
 
 | Collection scope | Current collected cases |
 | --- | --- |
-| Release-package test collection | 552 collected |
-| Repository suite collection | 716 collected |
+| Release-package test collection | 555 collected |
+| Repository suite collection | 719 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the
@@ -713,3 +716,144 @@ active shared scientific files match the main branch; all three abstracts and
 the frozen scientific-source hashes agree. Actual PDF/ZIP bytes match the
 documentation, tracked manifest and clean-rebuild reports. The audit is
 `/workspace/cce-build/readability-independent-scope.json`.
+
+## Checked Fable readability follow-up (2026-10-14)
+
+This revision applies the checked recommendations from the fresh Fable
+readability review. The abstract separates the confidence-center construction
+from its conditions. A native-size notation table and chronological protocol
+guide precede the general assumptions; finite-action readers are told which
+selection details they may skim and which obligations remain. The empirical
+section gives the mean bound magnitudes with their own-history populations,
+clarifies the policy names and feature categories, and distinguishes an
+asymptotic scaling family from the fixed-horizon study. The chart label now
+reads “Hessian = 0.” The implementation record is
+`review/readability_followup/IMPLEMENTATION_REPORT.md`.
+
+### Preservation and numerical meaning
+
+The immutable baseline is research `a9315960dbbf6e7c81d519872805041f9d8114dc`
+and main `890943f9a031ab9d719827ea9446707e609fc450`. All 21 existing formal theory
+blocks, all 60 theory displays, all 18 proof blocks and all 44 proof displays
+remain unchanged. Every data CSV and plotted data coordinate is preserved.
+Experiments, configurations, original evidence and historical PDFs are unchanged.
+The notation table adds one label. All 46 active shared scientific sources and
+all three abstracts agree across the research entry points and main mirror.
+
+All 212 prior numerical-ledger entries retain their scientific literals,
+selectors, units, aggregations and populations. Six entries are added for the
+mean-bound explanation, independently recomputed from pinned per-seed summaries:
+Hessian uses the terminal sharp RHS, while frozen reference uses the sum of
+statistical, historical and current-bias components. Each cell selects 50
+distinct own-policy histories at the recorded horizon. The arithmetic mean is
+divided by the common within-cell cap; only then do the Hessian entries take a
+base-ten logarithm. The resulting displayed values round to 9.51, 37.19 and
+80.91 for Hessian log ratios, and 19, 60 and 231 for frozen mean ratios.
+The calculations agree with the original summary-derived chart quantities up
+to ordinary summation roundoff. They do not attach those means to each trajectory
+or decompose the difference between policies.
+
+Three existing parameterized mutation cases were added to reject a changed
+Hessian magnitude, changed frozen magnitude and substituted history population.
+The existing chart-statistics test adds an independent per-seed-to-chart
+comparison. No previous case, assertion or threshold was removed or weakened.
+Live collection reports **555 package cases and 719 repository cases**.
+
+### Candidate checks and rendered-label repair
+
+The first revised source passes **50 numerical tests, 505 deselected**, in
+34.51 seconds, and **79 chart/detached tests** in 52.39 seconds. The repository
+ledger reports **591 PASS, four NOT_EXECUTED, zero FAIL**, with 218 entries.
+The main build and a separate strict candidate build both succeed at 47 pages.
+The candidate main source archive rebuilds its PDF byte for byte.
+
+Rendered inspection then exposed a small overlap: the chart's dashed zero guide
+crossed the zero glyph in the new label. One independent initial page review
+missed it; the clean-rebuild visual review and root inspection identified it.
+The generator now moves that annotation's relative horizontal anchor from one
+to 0.90. Its three generated node commands and the associated provenance/contract
+pins change; data coordinates, axis bounds, intervals and CSVs do not. Candidate
+builds and reports are preserved under `tmlr-clarity-*`; the final artifacts use
+the distinct `tmlr-clarity-final-*` directories.
+
+After that placement repair, **12 chart/regeneration/mutation tests pass** in
+4.17 seconds, **13/13 repository contract checks pass**, and the ledger again
+reports **591 PASS, four NOT_EXECUTED, zero FAIL**. These affected checks use the
+final placement bytes; the earlier 50/79 results remain bound to the candidate.
+The final archive checks and complete regression are recorded below. No
+experiment or new Fable API review was run for this implementation.
+
+### Final artifacts and verification
+
+The final main build has **47 pages**, with the notation table on page 5,
+figures on pages 3, 10, 20 and 21, and references beginning on page 26. The final
+labels clear the zero guides without overlapping data. The remaining figure
+pages render identically to the inspected candidate. Independent extraction of
+`/workspace/cce-build/tmlr-clarity-final-main/source.zip` reproduces its PDF byte
+for byte. All four official style/licence pins pass; the recorder accounts for
+44 archived project inputs, three regenerated inputs and 291 environment inputs.
+There are no original-checkout or prior-build dependencies, identifying metadata,
+unresolved references/citations, missing characters, overfull boxes or compiler
+warnings. Four underfull horizontal and two underfull vertical boxes remain.
+The report is
+`/workspace/cce-build/tmlr-clarity-final-main-clean/verification.json`.
+
+The final strict release at `/workspace/cce-build/tmlr-clarity-final-release`
+passes its layout, identity, archive-member, size and digest checks. Its PDF
+also has **47 pages**. The exact artifact sizes and SHA-256 digests are recorded
+in `README.md` and the tracked `release_manifest.json`. The 93,812,058-byte
+supplement leaves 6,187,942 bytes below the decimal 100 MB limit. An independent
+clean extraction of the strict source archive also reproduces its matched PDF
+byte for byte. All four official and 54 vendor pins pass. Its actual recorder
+contains 93 project inputs, 240 protected external inputs and two generated
+auxiliary inputs; the project closure and external records match the release
+manifest exactly. No original checkout, release directory, prior build or user
+environment supplies an input. Identifying metadata is empty; no unresolved
+references, missing characters or overfull boxes remain. There are four
+underfull horizontal and two underfull vertical boxes, plus the known deprecated
+`package/after/fontspec` hook warning. The report is
+`/workspace/cce-build/tmlr-clarity-final-strict-clean/verification.json`.
+
+A fresh extraction of the final supplement passes its verification in
+**20.022 seconds** with the locked Python 3.12.14, NumPy 2.2.3 and SciPy 1.15.2
+environment and inherited `PYTHONPATH` removed. All eight verification steps
+exit successfully. The ledger reports **600 PASS, 37 PASS_ANON, three
+NOT_EXECUTED, zero FAIL**, with 218 entries, and all **24/24** required contract
+checks pass. It reproduces 21 original artifacts byte for byte, six follow-up
+table artifacts and six explanatory-chart artifacts exactly, and recomputes all
+24 terminal intervals from 600 summaries. It verifies 42 sidecarred and 37
+independently pinned evidence files. The **23 shipped tests pass** in 0.83 seconds
+with 1,202 existing pytest assertion-rewrite AST deprecation warnings. The three
+unexecuted checks concern follow-up raw/upstream operations, the original study's
+bootstrap inputs and original raw trajectory bytes. Compact terminal-interval
+verification does not establish raw-dependent roundwise replay. The log and
+machine-readable report are
+`/workspace/cce-build/clarity-final-reviewer-verify.{log,json}`.
+
+### Final repository regression for the follow-up
+
+The complete run on the frozen final sources and verification code used:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  TMLR_OUT=/workspace/cce-build/tmlr-clarity-final-release \
+  /workspace/cce-research-env/bin/python -m pytest -q -ra tests experiments/tests
+```
+
+Result: **716 passed, three skipped, zero failed, two warnings**, in
+**384.00 seconds**. The log is
+`/workspace/cce-build/tmlr-clarity-final-tests.log`. The skips concern the host
+reporting no user `TEXMFVAR`, its `TEXMFSYSVAR` not being a symlink, and the legacy
+clean-bibliography test looking for a rebuild at an old workstation path. Both
+final source archives and their bibliographies were independently rebuilt as
+recorded above. Both warnings come from deliberate duplicate-ZIP-member mutation
+tests; those tests pass. Only internal documentation changed after this run.
+
+The final independent commit-scope audit confirms the frozen source hashes,
+all 46 active scientific mirrors, all 358 preceding review files and the
+historical PDFs. The four allowed protected-file changes are the chart generator,
+its generated annotation and provenance, and the child contract's corresponding
+pins; the other 236 protected files remain byte-identical. Every source and
+supplement member matches its manifest record. No internal review or manifest
+record is included in the upload archives. The report is
+`/workspace/cce-build/clarity-final-commit-scope.json`.

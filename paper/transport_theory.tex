@@ -1,8 +1,8 @@
 \section{From frozen confidence to current-curvature scores}\label{sec:abstract-transport}
 
 Consider a learner choosing from a finite list of available actions $\cA_t$
-at round $t$.  After observing the context, it predicts each action's mean
-reward $\mu_t^*(a)$ and chooses an action $a_t$ whose reward could plausibly
+at round $t$.  After observing the context, it forms a prediction of each
+action's true mean reward $\mu_t^*(a)$ and chooses an action $a_t$ whose reward could plausibly
 be high.  Only the chosen reward is then revealed.
 An \emph{upper confidence bound} (UCB) makes this rule precise: its score adds
 an uncertainty allowance to a prediction.  We call the score \emph{optimistic}
@@ -35,7 +35,9 @@ a small discrepancy in an experiment is not itself such a guarantee.
 For the moment, suppose the learner computes the current matrix and its
 width $s_t(a)$ exactly.  Suppose also that a statistical argument bounds the
 absolute prediction error by $\beta_t\bar s_t(a)+b_t(a)$ in the frozen matrix.
-A valid path certificate $\bar D_t$ supplies the comparison
+A \emph{path certificate} bounds change along an auxiliary matrix path joining
+the frozen and current matrices; this need not be the learner's training
+trajectory.  A valid certificate $\bar D_t$ supplies the comparison
 $\bar s_t(a)\le e^{\bar D_t/2}s_t(a)$ for every action.  Thus the exact-case
 score is
 \[
@@ -93,6 +95,38 @@ For the same current query, the matrices can give different widths:
 These are exact mathematical widths.  The computed upper width
 $\hat s_t(a)$ will be a separate object, because a numerical solver need not
 return the exact width of $\Calg_t$.
+\Cref{tab:transport-notation} collects these distinctions and the score terms
+introduced below.  Their precise requirements remain in
+\Cref{asm:abstract-transport} and the score-selection condition.
+
+\begin{table}[t]
+\caption{Notation for confidence transport.  Widths are geometric scales;
+the confidence and certificate assumptions justify their use in a score.}
+\label{tab:transport-notation}
+\centering
+\begin{tabularx}{\columnwidth}{@{}p{.22\columnwidth}X@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\bVbar_t$ & Frozen reference matrix of collection-time queries. \\
+$\bV_t$ & Exact current matrix, with past queries recomputed at the current parameter. \\
+$\Calg_t$ & SPD matrix actually applied by the algorithm. \\
+\midrule
+$\bar s_t(a)$ & Exact width from the frozen reference matrix. \\
+$s_t(a)$ & Exact width from the current matrix. \\
+$s_{\Calg,t}(a)$ & Exact width from the applied matrix. \\
+$\hat s_t(a)$ & Computed upper width used in the score. \\
+\midrule
+$m_t(a)$ & Prediction center in the reference-confidence band. \\
+$\beta_t$ & Nonnegative confidence multiplier for the reference width. \\
+$b_t(a)$ & Nonnegative additive error allowance in the prediction band. \\
+$\bar D_t$ & Upper bound on the chosen auxiliary SPD path length. \\
+$\kappa_{-,t},\kappa_{+,t}$ & Lower and upper factors comparing applied and current matrices. \\
+$\alpha_t$ & Sharpness factor for the computed width at the played action. \\
+$\xi_t$ & Allowed gap between the selected score and the score supremum. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 The frozen update also gives a way to control widths accumulated over time.
 Its log-determinant growth, called the \emph{frozen information gain}, is
@@ -110,6 +144,25 @@ regret as the mean reward lost relative to the best available action:
  :=\sup_{a\in\cA_t}\mu_t^*(a)-\mu_t^*(a_t),
  \qquad R_T=\sum_{t=1}^T\operatorname{reg}_t.
 \end{equation}
+Throughout the theory, ``regret'' means this sum of mean-reward gaps, also
+called \emph{cumulative pseudo-regret}.  The selected history can be random,
+but the summands compare mean rewards rather than realized noisy rewards.
+
+\paragraph{Read the protocol in chronological order.}
+First observe the context and available actions.  The prefix history then
+determines the reference and current matrices before this round's fresh
+algorithmic randomness.  Next, use any permitted pre-reward randomness to construct the
+operator, certificates, and scores and select an action.  Only after selection
+is its reward observed and the statistics updated.  We call quantities fixed
+before the fresh randomness \emph{predictable}; \emph{pre-reward measurable}
+quantities may use that randomness but cannot use the new reward.
+
+For measurably enumerated finite action lists,
+\Cref{cor:finite-enumeration-new} reduces the general action-space selection
+and measurability details to finite maxima and intersections.  Readers working
+in that setting can skim those details in the next paragraph.  The timing,
+reference-confidence, and matrix and solver certificate requirements still
+apply; finite enumeration does not supply them.
 
 \paragraph{General protocol and timing.}
 Let $(\mathsf A,\mathcal B)$ be a standard Borel action space.  At round $t$,
@@ -378,16 +431,22 @@ $m_t(a)+\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that
 interval if and only if $w_t(a)\ge\bar s_t(a)$.
 \end{proposition}
 
-The last statement concerns the uncertainty set supplied by one confidence
-band.  Additional restrictions on the mean, a different center, or another
-simultaneous confidence event can change that set.  An exact scalar endpoint
-distance supplies a worst-direction multiplier, not necessarily the
-actionwise equality in \eqref{eq:actionwise-width-ratio}.  These are
-same-history comparisons; they do not order the realized regret of policies
-whose actions and subsequent histories differ.
-Evaluating the ratio in \eqref{eq:actionwise-width-ratio} as written uses the
-reference width itself and supplies no computational shortcut.  This
-observation is not a general computational lower bound.
+The proposition's last statement treats the full interval supplied by one
+confidence band as the set of possible means.  Additional restrictions on
+the mean, a different center, or another simultaneous confidence event can
+change that set.  The width floor concerns the information in that band.
+
+The exact actionwise correction in \eqref{eq:actionwise-width-ratio}, including
+its zero-query convention, reproduces the reference width.  An exact scalar
+endpoint distance instead supplies a worst-direction multiplier, not
+necessarily that actionwise equality.  Both comparisons hold on the same
+history; they do not order the realized regret of policies whose actions and
+subsequent histories differ.
+
+The exact ratio also has a practical limitation: evaluating it as written in
+\eqref{eq:actionwise-width-ratio} already uses the reference width that it
+recovers.  It therefore supplies no computational shortcut as written.
+This observation is not a general computational lower bound.
 
 \begin{remark}[The reference band alone does not justify a smaller width]
 \label{rem:naive-width-band-counterexample}

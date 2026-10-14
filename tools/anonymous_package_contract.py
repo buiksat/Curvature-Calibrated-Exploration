@@ -170,13 +170,13 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                       'role': 'manuscript-source',
                       'ships_in': 'supplement'},
  'body_conclusion.tex': {'repository': 'paper/body_conclusion.tex',
-                         'sha256': '7d65fa1f99a12441ae19178565bea1bebedbeafc3edeeef9555899cb3d415b1b',
-                         'bytes': 3856,
+                         'sha256': '2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0',
+                         'bytes': 3783,
                          'role': 'manuscript-source',
                          'ships_in': 'supplement'},
  'body_intro.tex': {'repository': 'paper/body_intro.tex',
-                    'sha256': '693ae657075460487cdb7178d1396523400d217e6f32c21ed88f3822c5990f18',
-                    'bytes': 9605,
+                    'sha256': '3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6',
+                    'bytes': 10179,
                     'role': 'manuscript-source',
                     'ships_in': 'supplement'},
  'body_related.tex': {'repository': 'paper/body_related.tex',
@@ -215,8 +215,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                                               'role': 'generated-artifact',
                                               'ships_in': 'supplement'},
  'figures/transport_explanatory_outcomes.tex': {'repository': 'paper/figures/transport_explanatory_outcomes.tex',
-                                                'sha256': 'c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3',
-                                                'bytes': 8635,
+                                                'sha256': 'a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339',
+                                                'bytes': 8626,
                                                 'role': 'generated-artifact',
                                                 'ships_in': 'supplement'},
  'figures/transport_instantiation_bound.tex': {'repository': 'paper/figures/transport_instantiation_bound.tex',
@@ -310,8 +310,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
               'role': 'bibliography-output',
               'ships_in': 'neither'},
  'main.tex': {'repository': 'submissions/tmlr_2026/main.tex',
-              'sha256': 'e1551b6012d7d4d7b7766dd97e98c6ccac36c9d63c1b310303f57fcb3eea0b16',
-              'bytes': 5700,
+              'sha256': 'aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a',
+              'bytes': 5831,
               'role': 'entry-point',
               'ships_in': 'supplement'},
  'mathtools.sty': {'repository': 'paper/texmf_vendor/mathtools.sty',
@@ -600,8 +600,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                                        'role': 'manuscript-source',
                                        'ships_in': 'supplement'},
  'transport_followup.tex': {'repository': 'paper/transport_followup.tex',
-                            'sha256': '4b3b102aae878ff6d0ffc5274f01394d50e01b97ffe8ad99d2bb24d7b16dcb05',
-                            'bytes': 12471,
+                            'sha256': '3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb',
+                            'bytes': 14019,
                             'role': 'manuscript-source',
                             'ships_in': 'supplement'},
  'transport_followup_appendix.tex': {'repository': 'paper/transport_followup_appendix.tex',
@@ -615,8 +615,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                           'role': 'manuscript-source',
                           'ships_in': 'supplement'},
  'transport_theory.tex': {'repository': 'paper/transport_theory.tex',
-                          'sha256': '6e9ba5ee8cd36acc893111bb474efc7f38066208aedd52cf00209dc6c1c37f63',
-                          'bytes': 54103,
+                          'sha256': '8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74',
+                          'bytes': 57341,
                           'role': 'manuscript-source',
                           'ships_in': 'supplement'}}
 
@@ -643,11 +643,11 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
 #: root, and a reviewer who wants certainty compares these bytes against the
 #: release manifest, which never ships.
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {
-    'tools/make_transport_explanatory_figures.py': '10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8',
+    'tools/make_transport_explanatory_figures.py': '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
     "tools/verify_tmlr_submission_numbers.py":
-        '008bc3cd6dc73cb21cc8ea5934e640c7b08a1cb034ffac65f9d95efba220547a',
+        'b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43',
     "tools/followup_anonymous_contract.py":
-        '1c3b9a69ecc26909bd9e854616a3135c28bc0c0a0e8bc88063e268ab87c49d5f',
+        'c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd',
     "tools/make_transport_followup_paper.py":
         "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
     "tools/verify_review_experiment_export.py":
@@ -659,7 +659,7 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {
     "review/post_full_fable/independent/symmetric_scan.py":
         "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/numeric_context_pins.py":
-        '0ac3255a43cee7451dae0e782675b4b224bc48802310a978eddac978be4d6722',
+        '3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5',
 }
 
 #: Every field a declaration record must carry, and nothing else may be missing.

@@ -1272,6 +1272,10 @@ def test_every_manuscript_literal_is_accounted_for():
     ("means of actionwise ratios, not", "ratios of mean widths, not"),
     ("185.26", "185.27"),
     ("no equivalence test was performed", "an equivalence test confirmed matching performance"),
+    ("9.51", "9.52"),
+    ("19, 60, and 231", "19, 60, and 232"),
+    ("Each mean uses the named\npolicy's own 50 histories",
+     "Each mean uses the same\nHessian policy's 50 histories"),
 ])
 def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, before, after):
     root = _submitted_tex_tree(tmp_path)

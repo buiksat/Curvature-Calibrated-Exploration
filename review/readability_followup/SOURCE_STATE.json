@@ -1,0 +1,14 @@
+{
+  "baseline_commit": "a9315960dbbf6e7c81d519872805041f9d8114dc",
+  "scientific_and_generator_source_sha256": {
+    "paper/body_intro.tex": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6",
+    "paper/body_conclusion.tex": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0",
+    "paper/transport_theory.tex": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74",
+    "paper/transport_followup.tex": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb",
+    "paper/figures/transport_explanatory_outcomes.tex": "a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339",
+    "paper/figures/transport_explanatory_provenance.json": "7e8294965356fa113e7c8c67f8e0ceda6c21c85dcc44b14d5ef79489032067ea",
+    "paper/main.tex": "a090d739c84bdbaf6f91b43aa5dfdd4577382fcab2848de05e4ee10cdf026bc3",
+    "submissions/tmlr_2026/main.tex": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a",
+    "tools/make_transport_explanatory_figures.py": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150"
+  }
+}

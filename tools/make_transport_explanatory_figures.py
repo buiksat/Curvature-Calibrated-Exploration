@@ -98,7 +98,7 @@ def outcomes_tex(rows, paired):
         text += (r"\nextgroupplot[" + title + xlabel
                  + "xmin=-36,xmax=2,xtick={-30,-20,-10,0},yticklabels={,,,}]\n")
         text += r"\draw[densely dashed,black!65] (axis cs:0,-0.5) -- (axis cs:0,3.5);" + "\n"
-        text += r"\node[anchor=east] at (rel axis cs:1,0.88) {Hessian: reference};" + "\n"
+        text += r"\node[anchor=east] at (rel axis cs:0.90,0.88) {Hessian $=0$};" + "\n"
         for method_index, method in enumerate(METHODS[1:], 1):
             row = exact_row(paired, W=width, method=method)
             y = str(3 - method_index)
