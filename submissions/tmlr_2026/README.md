@@ -2,11 +2,13 @@
 
 **Status: revised anonymous manuscript and compact evidence package built; not submitted.**
 
-The current revision incorporates the checked Fable feedback: an abstract
-confidence-band example, more concise framing, descriptive context-free and
-best-fixed-action comparisons, and an explicit distinction between Hessian-score
-diagnostics and the policies that generated their histories. See
-[the implementation and publication assessment](../../review/post_fable_revision/IMPLEMENTATION_REPORT.md).
+The current revision adds four explanatory figures: the certificate interfaces,
+an abstract confidence-geometry example, all policy outcomes and paired
+comparisons, and the mean bound scale relative to the deterministic regret cap.
+The detailed outcome table moves to the appendix. The charts use retained
+evidence and the diagrams state their analytic scope; no new experiment was
+run. See [the visual revision record](../../review/visual_revision/IMPLEMENTATION_REPORT.md)
+and [the earlier implementation and publication assessment](../../review/post_fable_revision/IMPLEMENTATION_REPORT.md).
 
 This entry point uses canonical scientific sources under `paper/`. The main
 branch carries a self-contained LaTeX mirror. The historical `paper/main.pdf`,
@@ -21,7 +23,7 @@ From the prepared research checkout:
 ```bash
 cd /workspace/cce-research
 PYTHON=/workspace/cce-research-env/bin/python \
-  TMLR_OUT=/workspace/cce-build/tmlr-fable-final-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-visual-release \
   bash submissions/tmlr_2026/build.sh
 ```
 
@@ -39,31 +41,32 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/workspace/cce-build/tmlr-fable-final-release`.
-The PDF has **38 pages**, in anonymous official TMLR style.
+Final build directory: `/workspace/cce-build/tmlr-visual-release`.
+The PDF has **40 pages**, in anonymous official TMLR style. The new explanatory
+figures appear on pages 2, 7, 15 and 16; references begin on page 20.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 644,571 | — | — |
-| `source.zip` | 3,364,042 | 97 | 3,351,306 |
-| `supplement.zip` | 93,693,136 | 169 | 93,661,942 |
-| `release_manifest.json` | 110,726 | — | — |
+| `main.pdf` | 660,312 | — | — |
+| `source.zip` | 3,386,125 | 101 | 3,372,753 |
+| `supplement.zip` | 93,770,633 | 178 | 93,737,907 |
+| `release_manifest.json` | 113,264 | — | — |
 
-The supplement occupies 93.7% of the 100,000,000-byte limit, leaving
-6,306,864 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+The supplement occupies 93.8% of the 100,000,000-byte limit, leaving
+6,229,367 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
 (`ZIP_STORED`) entries. No unpinned compressor determines their bytes.
 The size gate remains enforced.
 
-The compiled closure contains 89 entries: 38 whose bytes the supplement
+The compiled closure contains 93 entries: 42 whose bytes the supplement
 carries, 50 in `source.zip`, and `main.bbl` in neither archive. BibTeX
 regenerates the latter from the shipped bibliography and style. The manifest
 also records 240 protected external TeX inputs by distribution variable
 and content hash under `external_tex_inputs`. Those distribution files are
 recorded, not redistributed.
 
-- `main.pdf`: `158c98e99f2665d0c804a7f13a8c8d76fe0c6ae1d18f3c45bfae21caf3e64822`.
-- `source.zip`: `da0e004d58b3198da3e3526c4c9a36921f665d60e0e4dac93d25d889ad0e5fa3`.
-- `supplement.zip`: `8be0424f9fdc98387dde264d8e2dc8fe7bb3ea3eb3438c9fdf86aa3180fff81a`.
+- `main.pdf`: `c50a5bfbd19b2cbe63766c1c07e70fa2f087f8a21bcf118d793bb63d3485b659`.
+- `source.zip`: `9fe9eb68c01829c7c34210282df70293afaf9a983f40ad15b99139d8eed5e935`.
+- `supplement.zip`: `a2c63ce2bbacb5b52d17dc7f7339200a4cf47163aa1c2c4a23c17cc9cb45f95a`.
 
 ## Dependencies and trust
 
@@ -104,18 +107,21 @@ identity.
 ```bash
 /workspace/cce-research-env/bin/python tools/verify_tmlr_submission_numbers.py
 /workspace/cce-research-env/bin/python tools/transport_artifact_expectations.py --root .
+/workspace/cce-research-env/bin/python tools/make_transport_explanatory_figures.py --check
 /workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/workspace/cce-build/tmlr-fable-final-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-visual-release \
   /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
 ```
 
-After extracting `supplement.zip`, run `bash verify.sh` with the supported
-Python environment on `PATH`. Its mandatory anonymous-package gates authenticate
+After extracting `supplement.zip`, run `PYTHON=/path/to/supported/python bash
+verify.sh` with the supported Python environment. Its mandatory anonymous-package gates authenticate
 both contracts before the ledger, artifact regeneration, terminal interval
 reconstruction, evidence coverage and shipped study tests. The follow-up
-contract requires all 20 compact evidence files and six generated artifacts;
-scientific values are unchanged. Metadata transforms and dependent hash updates
+contract requires all 20 compact evidence files, the six original follow-up
+table/provenance artifacts, six explanatory chart artifacts, and two separately
+pinned schematic sources. Chart regeneration is distinct from checking the
+manually authored schematics. Scientific values are unchanged. Metadata transforms and dependent hash updates
 are explicit, and original external-input hashes continue to describe original,
 unshipped raw files. The 14-file compact export reconstructs the reported
 terminal intervals from all 600 evaluation summaries.

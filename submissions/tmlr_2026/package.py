@@ -129,8 +129,7 @@ SUPPLEMENT_GENERATED_ARTIFACTS = (
 
 # Active follow-up outputs use a separate generator and one collective
 # provenance record. They must never be mistaken for excluded legacy evidence.
-# Classification is not a claim that their expanded anonymous evidence closure
-# is ready: followup_supplement_preflight rejects the incomplete release below.
+# The preflight validates their complete anonymous evidence closure.
 SUPPLEMENT_FOLLOWUP_ARTIFACTS = (
     "paper/tables/transport_followup_drift_bounds.tex",
     "paper/tables/transport_followup_mechanism_variation.tex",
@@ -140,6 +139,22 @@ SUPPLEMENT_FOLLOWUP_ARTIFACTS = (
     "paper/tables/transport_followup_provenance.json",
 )
 
+# Empirical charts are reconstructed from the same immutable compact evidence.
+# Analytical schematics have separate reviewed source pins; they are never
+# labeled regenerated empirical evidence.
+SUPPLEMENT_EXPLANATORY_ARTIFACTS = (
+    "paper/figures/transport_explanatory_outcomes.tex",
+    "paper/figures/transport_explanatory_outcomes.csv",
+    "paper/figures/transport_explanatory_paired.csv",
+    "paper/figures/transport_explanatory_bounds.tex",
+    "paper/figures/transport_explanatory_bounds.csv",
+    "paper/figures/transport_explanatory_provenance.json",
+)
+SUPPLEMENT_SCHEMATIC_ARTIFACTS = (
+    "paper/figures/transport_conceptual_interfaces.tex",
+    "paper/figures/transport_conceptual_geometry.tex",
+)
+
 # The complete compact follow-up export and fixed-history audit evidence are
 # pinned independently of their editable declarations. Raw trajectories remain
 # outside this compact archive; their original hashes are provenance records,
@@ -147,6 +162,7 @@ SUPPLEMENT_FOLLOWUP_ARTIFACTS = (
 SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "tools/followup_anonymous_contract.py",
     "tools/make_transport_followup_paper.py",
+    "tools/make_transport_explanatory_figures.py",
     "tools/verify_review_experiment_export.py",
     "tools/analyze_relative_transport.py",
     "tools/check_python_environment.py",
@@ -198,6 +214,8 @@ def supplement_artifact_inventory(repo: Path) -> list[str]:
     shipped = _with_companions(
         repo, list(SUPPLEMENT_GENERATED_ARTIFACTS)
         + list(SUPPLEMENT_FOLLOWUP_ARTIFACTS)
+        + list(SUPPLEMENT_EXPLANATORY_ARTIFACTS)
+        + list(SUPPLEMENT_SCHEMATIC_ARTIFACTS)
         + list(SUPPLEMENT_SYMBOLIC_ARTIFACTS))
     excluded = _with_companions(repo, list(SUPPLEMENT_EXCLUDED_LEGACY))
 
@@ -1239,6 +1257,8 @@ def closure_role(staged: str) -> str:
         return "bibliography"
     if staged.endswith(".csv"):
         return "figure-data"
+    if f"paper/{staged}" in SUPPLEMENT_SCHEMATIC_ARTIFACTS:
+        return "manuscript-source"
     if staged.startswith(("tables/", "figures/")):
         return "generated-artifact"
     return "manuscript-source"
@@ -3511,7 +3531,8 @@ def followup_supplement_preflight(repo: Path) -> list[str]:
     findings.extend(followup_contract.validate_original(repo))
     # An artifact may be covered by an exact typed contract or an ordinary
     # sidecar. An unvalidated collective provenance record is never an exemption.
-    uncovered = [path for path in SUPPLEMENT_FOLLOWUP_ARTIFACTS
+    uncovered = [path for path in (*SUPPLEMENT_FOLLOWUP_ARTIFACTS,
+                                   *SUPPLEMENT_EXPLANATORY_ARTIFACTS)
                  if path not in followup_contract.ARTIFACT_PINS
                  and f"{path}.sha256" not in members]
     if uncovered:
@@ -3519,6 +3540,8 @@ def followup_supplement_preflight(repo: Path) -> list[str]:
             "follow-up artifact verification/anonymous provenance support is "
             "pending; no supported sidecar or pinned provenance record for: "
             + ", ".join(uncovered))
+    if set(SUPPLEMENT_SCHEMATIC_ARTIFACTS) != set(followup_contract.SCHEMATIC_PINS):
+        findings.append("Analytical schematic inventory differs from its reviewed source pins")
     return findings
 
 

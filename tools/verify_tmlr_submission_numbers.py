@@ -72,12 +72,14 @@ FOLLOWUP_ANALYSIS = Path("review/post_full_fable/independent/analysis.json")
 FOLLOWUP_TEX = Path("paper/transport_followup.tex")
 FOLLOWUP_APPENDIX_TEX = Path("paper/transport_followup_appendix.tex")
 FOLLOWUP_GENERATOR = Path("tools/make_transport_followup_paper.py")
+EXPLANATORY_GENERATOR = Path("tools/make_transport_explanatory_figures.py")
 FOLLOWUP_EXPORT_VERIFIER = Path("tools/verify_review_experiment_export.py")
 FOLLOWUP_PACKAGE_CONTRACT = Path("tools/followup_anonymous_contract.py")
 RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
 RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
 RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
 FOLLOWUP_SOURCE_HASHES = {
+    EXPLANATORY_GENERATOR: '10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8',
     FOLLOWUP_CONFIG: "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
     FOLLOWUP_AGGREGATE: "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
     FOLLOWUP_SEEDS: "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60",
@@ -333,6 +335,7 @@ def followup_ledger() -> list[Entry]:
     for phrase in ("dimension 29", "29-parameter"):
         add(main, phrase, "29", C, "environment.feature_dimension", lambda c: c["environment"]["feature_dimension"])
     add(main, "$T=1000$", "1000", C, "reporting.primary_horizon", lambda c: c["reporting"]["primary_horizon"], "rounds")
+    add(appendix, "$T=1000$", "1000", C, "reporting.primary_horizon", lambda c: c["reporting"]["primary_horizon"], "rounds")
     for phrase in (r"$W\in\{16,1,0.25\}$", "$W=16,1,0.25$"):
         for i, value in enumerate(("16", "1", "0.25")):
             add(main, phrase, value, C, f"followup.prespecified_width_W[{i}]",
@@ -353,8 +356,8 @@ def followup_ledger() -> list[Entry]:
                 f"environment_diagnostics[horizon={PRIMARY_HORIZON}, target_D={target} (W={width})].{field_name}.mean; 50 evaluation streams",
                 lambda a, t=target, k=field_name: _followup_environment_mean(a, t, k),
                 "mean cumulative pseudo-regret within one condition")
-    for file, phrases in ((main, ("50 common evaluation seeds", "50 paired evaluation seeds", "50 successes out of 50", "50 histories")),
-                          (appendix, ("50 evaluation seeds",))):
+    for file, phrases in ((main, ("50 common evaluation seeds", "50 seeds per condition", "50 successes out of 50", "50 histories")),
+                          (appendix, ("50 evaluation seeds", "50 paired evaluation seeds"))):
         for phrase in phrases:
             add(file, phrase, "50", C, "len(seed_sets.evaluation)", lambda c: len(c["seed_sets"]["evaluation"]))
     for file in (main, appendix):
@@ -367,6 +370,9 @@ def followup_ledger() -> list[Entry]:
     for phrase in (r"paired 95\% intervals", r"pointwise 95\% paired", r"exact 95\% Clopper--Pearson interval"):
         add(main, phrase, "95", C, "100 * statistics.paired_bootstrap_level (also coverage_level)",
             lambda c: 100 * c["statistics"]["paired_bootstrap_level"], "percent")
+    add(appendix, r"pointwise 95\% paired", "95", C,
+        "100 * statistics.paired_bootstrap_level",
+        lambda c: 100 * c["statistics"]["paired_bootstrap_level"], "percent")
     for value, key in (("92.9", "ci_low"), ("100", "ci_high")):
         add(main, r"$[92.9\%,100\%]$", value, A, f"policy_outcomes[0].simultaneous_optimism_coverage.{key} * 100",
             lambda a, k=key: 100 * a["policy_outcomes"][0]["simultaneous_optimism_coverage"][k], "percent")
@@ -931,7 +937,20 @@ FOLLOWUP_GENERATED_SOURCES = (
     "paper/tables/transport_followup_mechanism_variation.tex",
     "paper/tables/transport_followup_relative_audit.tex",
 )
-ALL_GENERATED_SOURCES = GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
+EXPLANATORY_GENERATED_SOURCES = (
+    "paper/figures/transport_explanatory_outcomes.tex",
+    "paper/figures/transport_explanatory_outcomes.csv",
+    "paper/figures/transport_explanatory_paired.csv",
+    "paper/figures/transport_explanatory_bounds.tex",
+    "paper/figures/transport_explanatory_bounds.csv",
+)
+EXPLANATORY_PROVENANCE = "paper/figures/transport_explanatory_provenance.json"
+ANALYTICAL_SCHEMATIC_SOURCES = (
+    "paper/figures/transport_conceptual_interfaces.tex",
+    "paper/figures/transport_conceptual_geometry.tex",
+)
+ALL_GENERATED_SOURCES = (GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
+                         + EXPLANATORY_GENERATED_SOURCES)
 
 #: Two sources that are neither ledger-covered nor per-literal classified.  They
 #: used to be whole-file exemptions, which meant an empirical value dropped into
@@ -1036,6 +1055,10 @@ _CATEGORY_REASON = {
     "historical-dependency-version":
         "dependency metadata from the retained implementation snapshot, not "
         "an experimental measurement; the exact provenance statement is pinned",
+    "analytic-schematic":
+        "a formula in a declared analytical illustration or its drawing "
+        "coordinates and layout; not measured evidence; the entire source "
+        "and each occurrence's semantic unit are independently pinned",
 }
 
 # Each entry is bound to one file AND to an exact number of occurrences in it.
@@ -1067,14 +1090,109 @@ _classify("paper/transport_proofs.tex", "math-constant",
           {"0": 16, "1": 80, "2": 110, "4": 4})
 _classify("paper/transport_proofs.tex", "interval-endpoint", {"0,1": 1})
 _classify("paper/transport_theory.tex", "math-constant",
-          {"0": 32, "1": 95, "1,0": 1, "2": 107, "3": 2, "4": 5})
+          {"0": 33, "1": 99, "1,0": 1, "2": 109, "3": 2, "4": 6})
 _classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
-_classify("paper/transport_followup.tex", "math-constant", {"1": 1, "2": 1})
+_classify("paper/transport_followup.tex", "math-constant", {"1": 2, "2": 2})
 _classify("paper/transport_followup_appendix.tex", "math-constant",
           {"1": 4, "2": 5, "4": 1})
 for _readme in (str(SUPPLEMENT_README_REPO), str(SUPPLEMENT_README_PACKAGED)):
     _classify(_readme, "environment-version",
               {"3.12": 1, "2.2.3": 1, "1.15.2": 1})
+
+_classify('paper/figures/transport_conceptual_interfaces.tex', "analytic-schematic",
+          {'.3': 1,
+           '0': 7,
+           '0,0': 1,
+           '1.15': 4,
+           '1.8': 1,
+           '10.2': 1,
+           '11': 1,
+           '14.4': 1,
+           '16.2': 2,
+           '2': 2,
+           '2.2': 3,
+           '28': 2,
+           '4.6': 2,
+           '4.95': 1,
+           '5.5': 1,
+           '5.57': 1,
+           '55': 1,
+           '6': 1,
+           '6.11': 1,
+           '6.65': 1,
+           '6.8': 1})
+_classify('paper/figures/transport_conceptual_geometry.tex', "analytic-schematic",
+          {'.25': 1,
+           '.55': 2,
+           '.65': 1,
+           '.82': 1,
+           '0': 8,
+           '0,0': 1,
+           '0,13': 1,
+           '1': 6,
+           '1,0': 1,
+           '1,10': 1,
+           '1.05': 1,
+           '1.25': 2,
+           '1.8': 2,
+           '1.95': 1,
+           '10': 3,
+           '11.5': 4,
+           '13': 3,
+           '14.5': 13,
+           '14.72': 1,
+           '14.85': 1,
+           '16.2': 1,
+           '2': 4,
+           '2.1': 1,
+           '2.25': 1,
+           '2.35': 1,
+           '2.73': 2,
+           '2.85': 3,
+           '2.97': 2,
+           '3': 5,
+           '3.02': 3,
+           '3.525': 3,
+           '3.55': 1,
+           '3.6': 4,
+           '3.75': 1,
+           '30': 1,
+           '4': 2,
+           '4.05': 3,
+           '4.2': 1,
+           '4.23': 2,
+           '4.32': 2,
+           '4.35': 12,
+           '4.37': 1,
+           '4.4': 2,
+           '4.47': 4,
+           '4.53': 1,
+           '4.6': 2,
+           '40': 2,
+           '5.2': 1,
+           '5.25': 1,
+           '5.73': 2,
+           '5.85': 3,
+           '5.97': 2,
+           '50': 2,
+           '55': 1,
+           '6': 1,
+           '6.35': 2,
+           '6.64': 1,
+           '6.7': 3,
+           '6.76': 1,
+           '6.86': 1,
+           '65': 3,
+           '7': 4,
+           '7.15': 6,
+           '7.4': 1,
+           '7.85': 1,
+           '70': 1,
+           '8.15': 1,
+           '8.32': 1,
+           '8.35': 1,
+           '8.5': 7,
+           '80': 3})
 
 #: Literals that are definitions or mathematics rather than measurements, and
 #: that are easier to read as a phrase than as a bare token.  Each is masked
@@ -1230,7 +1348,7 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
     ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
-    ('paper/transport_followup.tex', '10,000'): 1,
+    ('paper/transport_followup.tex', '10,000'): 2,
     ('paper/transport_followup.tex', '16 of 50 seeds'): 1,
     ('paper/transport_followup.tex', '20 full-batch steps'): 1,
     ('paper/transport_followup.tex', '2000, 2000, and 1000'): 1,
@@ -1238,8 +1356,8 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', '29-parameter'): 1,
     ('paper/transport_followup.tex', '294 development and tuning trajectories'): 1,
     ('paper/transport_followup.tex', '50 common evaluation seeds'): 1,
-    ('paper/transport_followup.tex', '50 histories'): 1,
-    ('paper/transport_followup.tex', '50 paired evaluation seeds'): 1,
+    ('paper/transport_followup.tex', '50 histories'): 2,
+    ('paper/transport_followup.tex', '50 seeds per condition'): 1,
     ('paper/transport_followup.tex', '50 successes out of 50'): 1,
     ('paper/transport_followup.tex', '50,000 seed--round observations per condition'): 1,
     ('paper/transport_followup.tex', '600 policy trajectories'): 1,
@@ -1264,6 +1382,9 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', 'standard deviation $0.25$'): 1,
     ('paper/transport_followup.tex', 'there are five actions'): 1,
     ('paper/transport_followup_appendix.tex', '$0.00392155$'): 1,
+    ('paper/transport_followup_appendix.tex', '$T=1000$'): 1,
+    ('paper/transport_followup_appendix.tex', '50 paired evaluation seeds'): 1,
+    ('paper/transport_followup_appendix.tex', 'pointwise 95\\% paired'): 1,
     ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
     ('paper/transport_followup_appendix.tex', '$0.124$'): 1,
     ('paper/transport_followup_appendix.tex', '$1.735$'): 1,
@@ -1838,6 +1959,8 @@ def derive_closure_role(staged: str) -> str:
         return "bibliography"
     if staged.endswith(".csv"):
         return "figure-data"
+    if f"paper/{staged}" in ANALYTICAL_SCHEMATIC_SOURCES:
+        return "manuscript-source"
     if staged.startswith(("tables/", "figures/")):
         return "generated-artifact"
     return "manuscript-source"
@@ -2150,12 +2273,43 @@ def closure_manifest_checks(root: Path, *,
     expect("every shipped manuscript source is a recorded compiled input",
            not extra, f"shipped but not recorded as compiled: {extra}")
 
+    # The explanatory TeX embeds its coordinates, so its reviewer-facing CSV
+    # exports are not compiler inputs. Admit only the exact reviewed CSV paths
+    # after authenticating both implementations, checking the independent
+    # artifact pins, and reconstructing their bytes from immutable evidence.
+    # A new CSV, editable provenance record, or rewritten sidecar cannot grant
+    # this status. Required package mode also requires the full declaration.
+    reconstructed: set[str] = set()
+    reconstruction_problem = ""
+    explanatory_csvs = {name for name in EXPLANATORY_GENERATED_SOURCES
+                        if name.endswith(".csv")}
+    if (data_shipped - recorded) & explanatory_csvs:
+        try:
+            _validated_followup_packaged_sources(root, require_package=require_manifest)
+            helper = contract.load_followup_contract(root)
+            generator = _load_reviewed_tool(root, EXPLANATORY_GENERATOR)
+            outputs = generator.build(root)
+            expected = {Path(name) for name in EXPLANATORY_GENERATED_SOURCES}
+            expected.add(Path(EXPLANATORY_PROVENANCE))
+            if set(outputs) != expected:
+                raise LedgerError("explanatory output inventory differs")
+            for name in explanatory_csvs:
+                path = root / name
+                pin = helper.ARTIFACT_PINS[name]
+                if (path.is_file() and not path.is_symlink()
+                        and path.stat().st_size == pin["bytes"]
+                        and sha256_file(path) == pin["sha256"]
+                        and path.read_bytes() == outputs[Path(name)].encode("utf-8")):
+                    reconstructed.add(name)
+        except Exception as error:
+            reconstruction_problem = f"; explanatory reconstruction failed: {error}"
     loose = sorted(
         name for name in data_shipped - recorded
         if name not in CLOSURE_UNSIDECARRED_SOURCES
+        and name not in reconstructed
         and not (root / f"{name}.sha256").is_file())
-    expect("every shipped figure-data file is recorded or sidecarred",
-           not loose, f"bound to nothing: {loose}")
+    expect("every shipped figure-data file is recorded, sidecarred, or independently reconstructed",
+           not loose, f"bound to nothing: {loose}{reconstruction_problem}")
 
     # And the audit actually reads every audited-role source the archive
     # carries: a role whose text the number audit reads, whose bytes are here,
@@ -2553,6 +2707,28 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     except Exception as exc:
         expect("follow-up tables can be regenerated from reviewed sources", False, repr(exc))
 
+    # Charts have their own exact output inventory and reviewed generator. They
+    # share only fixed evidence inputs with the tables; a new drawing does not
+    # earn a blanket numerical exemption merely by living in figures/.
+    try:
+        generator = _load_reviewed_tool(root, EXPLANATORY_GENERATOR)
+        expected_outputs = generator.build(root)
+        expected_paths = {Path(p) for p in EXPLANATORY_GENERATED_SOURCES}
+        expected_paths.add(Path(EXPLANATORY_PROVENANCE))
+        expect("explanatory generator produces exactly the reviewed artifact set",
+               set(expected_outputs) == expected_paths,
+               f"got {sorted(str(p) for p in expected_outputs)}")
+        for relative in sorted(expected_paths):
+            path = root / relative
+            expected = expected_outputs.get(relative)
+            expect(f"explanatory generated bytes agree: {relative}",
+                   isinstance(expected, str) and path.is_file()
+                   and path.read_bytes() == expected.encode("utf-8"),
+                   "compared with deterministic plotting data and rendering "
+                   "from fixed source inputs")
+    except Exception as exc:
+        expect("explanatory charts can be regenerated from reviewed sources", False, repr(exc))
+
     checks.extend(macro_file_checks(root))
 
     # Typeset generated artifacts are bound by byte-identical regeneration, not
@@ -2560,6 +2736,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # must be declared symbolic.
     known = {Path(name).name for name in ALL_GENERATED_SOURCES}
     known |= {Path(name).name for name in SYMBOLIC_TABLE_INPUTS}
+    known |= {Path(name).name for name in ANALYTICAL_SCHEMATIC_SOURCES}
     undeclared: list[str] = []
     # Retained legacy files are not automatically submitted claims. Require
     # their specialized check only when the compiled closure includes them or

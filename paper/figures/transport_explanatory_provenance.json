@@ -1,0 +1,58 @@
+{
+  "bounds": {
+    "frozen_selector": "drift_and_reference_diagnostics[horizon=1000,W,method=frozen_reference].reference_geometry_rhs_mean_on_own_trajectory",
+    "hessian_selector": "terminal_bound_decomposition[horizon=1000,round=1000,target_D].sharp_theorem_rhs",
+    "limits": "Each policy's own 50 histories. Not mean(log10 ratio), not a path-removal counterfactual, and no uncertainty intervals.",
+    "transformation": "log10(arithmetic mean terminal RHS / deterministic_regret_cap)"
+  },
+  "display": "Native 10pt body-size PGFPlots; condition categories unconnected; colors and distinct markers; no bars or resizing.",
+  "generator": {
+    "path": "tools/make_transport_explanatory_figures.py",
+    "sha256": "10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8"
+  },
+  "inputs": [
+    {
+      "original_sha256": "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
+      "path": "review/transport_review_followup/full-cce-full-local/aggregate_compact.json"
+    },
+    {
+      "original_sha256": "fb3293daacba3511ca5f3269d67e9aa0f0aca2708ad9876661ca062e197a59a4",
+      "path": "review/transport_review_followup/full-cce-full-local/drift_and_reference_diagnostics.json"
+    },
+    {
+      "original_sha256": "b1a6e9c5d8cfe70d3c3e3bb7cbd818502c21bb3b2f276426702cb016db323ecc",
+      "path": "review/transport_review_followup/full-cce-full-local/terminal_bound_decomposition.json"
+    }
+  ],
+  "outcomes": {
+    "interval_definition": "Pointwise 95% paired bootstrap, 10000 resamples, no multiplicity adjustment.",
+    "interval_selector": "policy_outcomes[horizon=1000,target_D,method].paired_difference_from_transport_hessian.bootstrap_mean_interval",
+    "limits": "Distinct adaptive histories; no fixed-history intervention or universal policy ordering. Descriptive mean panel has no uncertainty bars. W also changes the reward task.",
+    "mean_selector": "policy_outcomes[horizon=1000,target_D,method].cumulative_pseudo_regret.mean",
+    "population": "Four policies, three W conditions, 50 paired evaluation seeds per cell."
+  },
+  "outputs": [
+    {
+      "path": "paper/figures/transport_explanatory_bounds.csv",
+      "sha256": "523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1"
+    },
+    {
+      "path": "paper/figures/transport_explanatory_bounds.tex",
+      "sha256": "bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324"
+    },
+    {
+      "path": "paper/figures/transport_explanatory_outcomes.csv",
+      "sha256": "0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe"
+    },
+    {
+      "path": "paper/figures/transport_explanatory_outcomes.tex",
+      "sha256": "c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3"
+    },
+    {
+      "path": "paper/figures/transport_explanatory_paired.csv",
+      "sha256": "c5e92e0c7158419edfacc2b4b51576aa9c7197ba87958261d37beec44a032266"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Prespecified T=1000 follow-up only; all three W conditions; no new experiments."
+}

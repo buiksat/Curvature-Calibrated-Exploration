@@ -151,10 +151,9 @@ PROVENANCE_PINS: dict[str, dict[str, object]] = {
 #: `ships_in` is the field that stopped `main.bbl` being described wrongly.  Its
 #: bytes are in neither archive -- bibtex writes it during the build -- so the
 #: only thing a reviewer can check it against is the digest pinned right here.
-# Refreshed from an actual diagnostic recorder trace of the revised manuscript.
-# This pins project-local inputs only. The diagnostic TeX tree is user-writable;
-# strict external-input certification and the expanded anonymous evidence
-# package remain required and are not authorized by these expected bytes.
+# Refreshed from the actual recorder trace of the visual revision.
+# This binds project-local inputs; protected external-input verification and
+# the complete anonymous evidence checks remain separate release obligations.
 COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     'algorithm.sty': {
         "repository": 'paper/texmf_vendor/algorithm.sty',
@@ -186,8 +185,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'body_intro.tex': {
         "repository": 'paper/body_intro.tex',
-        "sha256": '2586018cd080da7dcfb5ae7dda6004c658908dd9bd75f84cc17fee3033ee1ebd',
-        "bytes": 8044,
+        "sha256": 'b434073dcbc1968a855b986c8de8063843cd295d9c97ef1ce39d13736e05f32e',
+        "bytes": 8330,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -218,6 +217,34 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
         "bytes": 17086,
         "role": 'venue-template',
         "ships_in": 'source',
+    },
+    'figures/transport_conceptual_geometry.tex': {
+        "repository": 'paper/figures/transport_conceptual_geometry.tex',
+        "sha256": '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b',
+        "bytes": 4104,
+        "role": 'manuscript-source',
+        "ships_in": 'supplement',
+    },
+    'figures/transport_conceptual_interfaces.tex': {
+        "repository": 'paper/figures/transport_conceptual_interfaces.tex',
+        "sha256": '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4',
+        "bytes": 2650,
+        "role": 'manuscript-source',
+        "ships_in": 'supplement',
+    },
+    'figures/transport_explanatory_bounds.tex': {
+        "repository": 'paper/figures/transport_explanatory_bounds.tex',
+        "sha256": 'bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324',
+        "bytes": 2297,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
+    },
+    'figures/transport_explanatory_outcomes.tex': {
+        "repository": 'paper/figures/transport_explanatory_outcomes.tex',
+        "sha256": 'c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3',
+        "bytes": 8635,
+        "role": 'generated-artifact',
+        "ships_in": 'supplement',
     },
     'figures/transport_instantiation_bound.tex': {
         "repository": 'paper/figures/transport_instantiation_bound.tex',
@@ -753,15 +780,15 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'transport_followup.tex': {
         "repository": 'paper/transport_followup.tex',
-        "sha256": '2f2d4b8fe191c09b9b23ed504fd9d274ab3ba3547cc5afaeac5bba59024a7378',
-        "bytes": 8596,
+        "sha256": 'd62270446af5877e53a15b882cba311ade09b58e287778ae113ab1a62b0bff7e',
+        "bytes": 9928,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'transport_followup_appendix.tex': {
         "repository": 'paper/transport_followup_appendix.tex',
-        "sha256": '24edb8cb336c54055492f9aa8c910bf9350b897dc6c8c428a06ab9fdd2d045da',
-        "bytes": 10665,
+        "sha256": '73e428dc998fb0af35cf5f6262bd5f2247bd14df1fc336ab9abc803a1fb9c43b',
+        "bytes": 11746,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -774,8 +801,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'transport_theory.tex': {
         "repository": 'paper/transport_theory.tex',
-        "sha256": 'efd23443ec0a64a39c8b3968b1d139a54d59759fc2cf4c7c91072d660bf3a385',
-        "bytes": 38429,
+        "sha256": 'd6ebed2e8810fde5ef92dce266bacbe4d358323ca2905d25a08cb52abe5c46e7',
+        "bytes": 39491,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -804,10 +831,11 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
 #: root, and a reviewer who wants certainty compares these bytes against the
 #: release manifest, which never ships.
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {
+    'tools/make_transport_explanatory_figures.py': '10b655007c8b07ae53faf61bb6d8a48523c18e73b2628f01873ff0d32855f9e8',
     "tools/verify_tmlr_submission_numbers.py":
-        "66a78b23bcc690408eed862c95488e605e80ccbd15fa8531634fc167dfdc5ac6",
+        '92795c5c9db8fdf8725f2ddefa7ffdff1786a5654249ae29899acaa489b474ce',
     "tools/followup_anonymous_contract.py":
-        "8c0410993e78112101b07b66b01df469f7d822b7de201ea6c55178933b0b21b9",
+        '1c3b9a69ecc26909bd9e854616a3135c28bc0c0a0e8bc88063e268ab87c49d5f',
     "tools/make_transport_followup_paper.py":
         "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
     "tools/verify_review_experiment_export.py":
@@ -819,7 +847,7 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {
     "review/post_full_fable/independent/symmetric_scan.py":
         "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/numeric_context_pins.py":
-        "8c2313d635896d60e9420e355ecad1b5b0538d737969eb6726831569b7f6915b",
+        'e4c79e761cd222ee6f2ca5cd5b5a49322efc16c8e466af9c55e11ee920953d02',
 }
 
 #: Every field a declaration record must carry, and nothing else may be missing.
@@ -1180,7 +1208,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         for relative in sorted(set(CONTRACT) | set(PROVENANCE_PINS)):
             print(relative)
             print(f"{relative}.sha256")
-        for relative in sorted(set(followup.INPUT_PATHS) | set(followup.ARTIFACT_PINS)):
+        for relative in sorted(set(followup.INPUT_PATHS) | set(followup.ARTIFACT_PINS)
+                               | set(followup.SCHEMATIC_PINS)):
             print(relative)
         print(followup.DECLARATION_NAME)
         return 0

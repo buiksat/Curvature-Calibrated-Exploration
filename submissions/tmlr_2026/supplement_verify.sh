@@ -123,6 +123,9 @@ run "follow-up paired terminal intervals from all per-seed summaries" \
 run "follow-up table regeneration with original-source attribution (writes nothing)" \
   "$python" tools/make_transport_followup_paper.py --check
 
+run "explanatory chart regeneration from the packaged follow-up summaries (writes nothing)" \
+  "$python" tools/make_transport_explanatory_figures.py --check
+
 run "SHA-256 sidecars for every shipped evidence file" check_evidence_sidecars
 
 run "study tests" \

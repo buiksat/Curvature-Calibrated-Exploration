@@ -1,0 +1,84 @@
+% Analytic illustration, not experimental data. Source: transport_theory.tex,
+% rem:naive-width-band-counterexample and prop:reference-width-floor.
+% Chosen slice D=log(4), beta=1, m=b=0. The metric unit balls use equal axes:
+% E(Vbar) has radii (1,1); E(V) has radii (1/2,2). The plotted score bands are
+% reference [-1,1], uncertified naive [-1/2,1/2], transported [-1,1].
+% Native body-size TikZ; no external data, rescaling, or extra TikZ libraries.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  every node/.style={font=\normalsize,inner sep=0pt},
+  reference/.style={blue!65!black,line width=1pt},
+  current/.style={orange!80!black,line width=1pt,dashed},
+  transported/.style={teal!70!black,line width=1pt}]
+  \path[use as bounding box] (0,-8.35) rectangle (16.2,.25);
+  \node[anchor=west] at (0,0)
+    {\textbf{Abstract illustration}\quad
+     $\bVbar=\bI_2$, $\bV=\operatorname{diag}(e^D,e^{-D})$,
+     $\bq=(1,0)^\top$, $m=b=0$.};
+  \node[anchor=west] at (0,-.55)
+    {Illustrative slice: $D=\log 4$, $\beta=1$; choose the allowed mean $\mu^*=\beta=1$.};
+
+  \node[anchor=west] at (0,-1.25) {\textbf{Metric unit balls}};
+  \node[anchor=west] at (0,-1.8) {$E(M)=\{z:z^\top Mz\le1\}$};
+  \node[anchor=west] at (7,-1.25) {\textbf{Bands along the query direction}};
+
+  % Equal coordinate scales: 1.05 cm per unit in both directions.
+  \draw[black!40,->,line width=.45pt] (1.05,-4.35) -- (5.2,-4.35)
+    node[right=3pt] {$z_1$};
+  \draw[black!40,->,line width=.45pt] (3,-6.7) -- (3,-2);
+  \node[anchor=west] at (3.6,-2.35) {$z_2$};
+  \draw[reference,fill=blue!4] (3,-4.35) circle[radius=1.05cm];
+  \draw[current,fill=orange!6,fill opacity=.55]
+    (3,-4.35) ellipse[x radius=.525cm,y radius=2.1cm];
+  \draw[black,->,line width=.7pt] (3,-4.35) -- (4.6,-4.35);
+  \node[anchor=north] at (4.6,-4.53) {$\bq=\mathbf e_1$};
+  \fill[orange!80!black] (3.525,-4.35) circle[radius=2pt];
+  \fill[blue!65!black] (4.05,-4.35) circle[radius=2pt];
+  \draw[orange!80!black,line width=.45pt]
+    (3.525,-4.32) -- (3.525,-3.6) -- (4.4,-3.6);
+  \node[anchor=west] at (4.47,-3.6) {$s=\tfrac12$};
+  \draw[blue!65!black,line width=.45pt]
+    (4.05,-4.32) -- (4.05,-3.02) -- (4.4,-3.02);
+  \node[anchor=west] at (4.47,-3.02) {$\bar s=1$};
+  \draw[reference] (0,-7.15) -- (.65,-7.15);
+  \node[anchor=west] at (.82,-7.15) {Reference $E(\bVbar)$};
+  \draw[current] (3.55,-7.15) -- (4.2,-7.15);
+  \node[anchor=west] at (4.37,-7.15) {Current $E(\bV)$};
+
+  % One common horizontal value scale: value v is placed at x=11.5+3v.
+  \draw[black!30,line width=.45pt] (11.5,-2.1) -- (11.5,-6.35);
+  \draw[black!55,densely dotted,line width=.55pt]
+    (14.5,-1.95) -- (14.5,-6.35);
+  \node[anchor=south] at (14.5,-1.8) {$\mu^*=1$};
+
+  \node[anchor=west] at (7,-2.25) {Reference: $m\pm\beta\bar s$};
+  \draw[reference] (8.5,-2.85) -- (14.5,-2.85);
+  \draw[reference] (8.5,-2.73) -- (8.5,-2.97);
+  \draw[reference] (14.5,-2.73) -- (14.5,-2.97);
+  \fill[black] (14.5,-2.85) circle[radius=2.2pt];
+
+  \node[anchor=west] at (7,-3.75)
+    {Naive: $m\pm\beta s$\quad (uncertified)};
+  \draw[current] (10,-4.35) -- (13,-4.35);
+  \draw[current] (10,-4.23) -- (10,-4.47);
+  \draw[current] (13,-4.23) -- (13,-4.47);
+  \fill[black] (14.5,-4.35) circle[radius=2.2pt];
+  \node[anchor=west] at (14.72,-4.35) {misses $\mu^*$};
+
+  \node[anchor=west] at (7,-5.25)
+    {Transported: $m\pm\beta e^{D/2}s$};
+  \draw[transported] (8.5,-5.85) -- (14.5,-5.85);
+  \draw[transported] (8.5,-5.73) -- (8.5,-5.97);
+  \draw[transported] (14.5,-5.73) -- (14.5,-5.97);
+  \fill[black] (14.5,-5.85) circle[radius=2.2pt];
+
+  \draw[black!50,line width=.45pt] (8.15,-6.7) -- (14.85,-6.7);
+  \foreach \x/\lab in {8.5/-1,10/-\frac12,11.5/0,13/\frac12,14.5/1}{
+    \draw[black!50,line width=.45pt] (\x,-6.64) -- (\x,-6.76);
+    \node[anchor=north] at (\x,-6.86) {$\lab$};
+  }
+  \node[anchor=north] at (11.5,-7.4) {Mean / score value};
+  \node[anchor=west] at (0,-7.85)
+    {$\bar s=1$, $s=e^{-D/2}$; transport restores $e^{D/2}s=\bar s$ in this direction.};
+  \node[anchor=west] at (0,-8.32)
+    {This is not a realized learning trajectory or an observed policy failure.};
+\end{tikzpicture}

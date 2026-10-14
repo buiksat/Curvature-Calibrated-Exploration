@@ -3,7 +3,7 @@
 This anonymous compact supplement contains the evidence behind the manuscript's
 full nonlinear follow-up, its exploratory fixed-history diagnostics, and the
 earlier controlled audit. It supports numerical verification and table
-regeneration. It does not contain the raw trajectory archive.
+and chart regeneration. It does not contain the raw trajectory archive.
 
 ## Contents
 
@@ -23,7 +23,7 @@ regeneration. It does not contain the raw trajectory archive.
 - `results/derived/transport_instantiation/` contains the earlier controlled
   audit's aggregate, optimizer selection, provenance records and checksums.
 - `paper/` contains the active manuscript sources and generated artifacts.
-  `tools/` contains the numerical ledger, both artifact checks and both pinned
+  `tools/` contains the numerical ledger, the artifact checks and both pinned
   anonymous-evidence contracts.
 - `ANONYMIZATION.json` describes the historical audit's metadata redaction.
   `FOLLOWUP_ANONYMIZATION.json` describes the follow-up's typed transformations
@@ -33,7 +33,9 @@ regeneration. It does not contain the raw trajectory archive.
 
 The earlier audit contributes 21 artifacts, each with its original provenance
 record and checksum sidecar. The follow-up contributes separately generated
-tables and a collective provenance record, all independently pinned in code.
+tables and explanatory charts with separate collective provenance records,
+all independently pinned in code. The conceptual diagrams are reviewed
+analytical schematics with separate source pins, not measured study outcomes.
 The excluded legacy appendix, symbolic rate table, autodiff-GGN benchmark and
 linear-bound benchmark are not evidence for the active manuscript and are not
 included.
@@ -61,8 +63,8 @@ in code. Editing evidence and then recomputing a sidecar, manifest or declaratio
 does not authorize the edit. Removing either required declaration fails package
 verification rather than falling back to repository semantics.
 
-Generated table comments continue to attribute the original source digests. The
-generator may use those attributions only after validating all packaged follow-up
+Generated table and chart comments continue to attribute the original source
+digests. A generator may use those attributions only after validating all packaged follow-up
 bytes against the independent contract. This keeps original attribution distinct
 from the hashes of anonymous copies. The ledger reports transformed evidence as
 `PASS_ANON`, with an explicit statement that it is **NOT original evidence bytes**.
@@ -122,6 +124,11 @@ check fails:
 - **Follow-up table regeneration:** regenerates the manuscript tables from the
   packaged summaries and fixed-history outputs, verifies the original-source
   attribution, and requires exact artifact bytes.
+- **Explanatory chart regeneration:** reconstructs every plotted mean, paired
+  interval and bound-to-cap ratio from the fixed follow-up summaries, and
+  requires exact TeX, CSV and provenance bytes. The outcome means are
+  descriptive; the plotted intervals describe paired policy differences. The
+  bound chart takes the logarithm after averaging the RHS, not before.
 - **Evidence coverage:** scans the actual evidence directories. Each file must
   have a valid checksum sidecar or an exact, independently checked contract pin.
   An added file without coverage is a failure.

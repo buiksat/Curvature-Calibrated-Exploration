@@ -42,7 +42,8 @@ provenance details appear in \Cref{app:transport-followup}.
 
 \paragraph{Prespecified policy outcomes.}
 Hessian transport has higher mean cumulative pseudo-regret than every
-comparator in every condition (\Cref{tab:transport-followup-outcomes}).  All nine
+comparator in every condition (\Cref{fig:transport-followup-outcomes});
+\Cref{tab:transport-followup-outcomes} gives the numerical values.  All nine
 paired 95\% intervals for comparator-minus-Hessian regret exclude zero.
 These are pointwise intervals from 10,000 paired seed-bootstrap resamples per
 comparison, without multiplicity adjustment.  They quantify evaluation-seed
@@ -60,15 +61,20 @@ context-free benchmark's, but no equivalence test was performed, and similar
 regret does not imply matching actions or identical use of context.
 \Cref{app:transport-followup} defines both benchmarks.
 
-\begin{table}[t]
+\begin{figure}[p]
   \centering
-  \caption{Prespecified full-study outcomes at $T=1000$, with 50 paired
-  evaluation seeds per condition.  $\Delta$ is the row policy's cumulative
-  pseudo-regret minus Hessian's.  All nine intervals are pointwise 95\% paired
-  bootstrap intervals; no simultaneous coverage is asserted.}
-  \label{tab:transport-followup-outcomes}
-  \input{tables/transport_followup_outcomes.tex}
-\end{table}
+  \input{figures/transport_explanatory_outcomes.tex}
+  \caption{Policy outcomes and paired comparisons in every prespecified
+  condition.  Left: descriptive mean cumulative pseudo-regret at $T=1000$,
+  without error bars.  Right: each comparator's regret minus Hessian's, with
+  pointwise 95\% paired seed-bootstrap intervals from 10,000 resamples of
+  50 seeds per condition.  Negative differences favor the comparator.
+  The intervals condition on the fixed teacher, design and selected optimizer;
+  they are not multiplicity-adjusted.  Each policy follows its own adaptive
+  history on matched exogenous streams.  Changing $W$ changes the reward task
+  as well as curvature, so the rows do not isolate an effect of drift.}
+  \label{fig:transport-followup-outcomes}
+\end{figure}
 
 \paragraph{Realized drift, validity diagnostics, and vacuous bounds.}
 The primary policy reaches endpoint distances above one in 16 of 50 seeds at
@@ -89,10 +95,27 @@ Every primary-policy bound exceeds the deterministic regret cap
 $2T\min(1,\sqrt W)$, which is 2000, 2000, and 1000 for the three conditions.
 The frozen policy's own reference-geometry bounds also exceed these caps in
 all 150 of its trajectories.  Their mean right-hand sides are much smaller
-than the primary bounds but remain vacuous.  Removing the path term along
+than the primary bounds but remain vacuous.
+\Cref{fig:transport-followup-bound-scale} makes their scale visible relative
+to the cap; values above the cap provide no improvement over that deterministic
+upper bound.  Removing the path term along
 Hessian's histories would be an accounting decomposition, not the bound or
 outcome of a frozen policy following different histories.  Base dominance
 reported for the original near-linear grid does not describe this follow-up.
+
+\begin{figure}[t]
+ \centering
+ \input{figures/transport_explanatory_bounds.tex}
+ \caption{The reported bound scale exceeds the deterministic regret cap.
+ Each point is the base-ten logarithm of the mean terminal theorem RHS divided
+ by $2T\min(1,\sqrt W)$, using the named policy's own 50 histories.
+ The zero line represents equality with the cap; positive values indicate
+ that the mean bound is larger.  These are descriptive means without
+ uncertainty intervals.  Every individual bound also exceeds its cap, as
+ checked in the retained diagnostics.  The comparison is not a decomposition
+ of one policy's bound on another policy's history.}
+ \label{fig:transport-followup-bound-scale}
+\end{figure}
 
 \begin{table}[t]
   \centering

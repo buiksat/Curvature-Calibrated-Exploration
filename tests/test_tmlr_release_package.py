@@ -515,7 +515,8 @@ def packaged_tree(tmp_path_factory):
     wanted += [packager.followup_contract.DECLARATION_NAME,
                "tools/followup_anonymous_contract.py",
                *packager.followup_contract.INPUT_PATHS,
-               *packager.followup_contract.ARTIFACT_PINS]
+               *packager.followup_contract.ARTIFACT_PINS,
+               *packager.followup_contract.SCHEMATIC_PINS]
     # The provenance records are pinned by the contract too, so a tree without
     # them is not a package the contract can pass.  `_materialize` falls back to
     # a copy: the repository and the temporary tree are often on two devices.
@@ -863,7 +864,8 @@ def test_the_supplement_verifier_covers_every_shipped_evidence_file(
     }
     pinned = (set(contract.CONTRACT) | set(contract.PROVENANCE_PINS)
               | set(packager.followup_contract.INPUT_PATHS)
-              | set(packager.followup_contract.ARTIFACT_PINS))
+              | set(packager.followup_contract.ARTIFACT_PINS)
+                | set(packager.followup_contract.SCHEMATIC_PINS))
     sidecarred = evidence - pinned
     assert sidecarred and evidence & pinned
     assert all((full_package_tree / f"{path}.sha256").is_file()
@@ -990,7 +992,8 @@ def test_verify_sh_requires_package_mode_for_every_advertised_check():
     assert f"export {contract.ENV_REQUIRE_PACKAGE}=1" in text
     gate = text.index("anonymous_package_contract.py --root . --require-package")
     for later in ("verify_tmlr_submission_numbers.py",
-                  "transport_artifact_expectations.py"):
+                  "transport_artifact_expectations.py",
+                  "make_transport_explanatory_figures.py"):
         assert text.index(later) > gate, later
     # the gate must abort rather than merely record a failure
     assert "exit 1" in text[gate:text.index("numerical-provenance ledger")]
@@ -1311,7 +1314,8 @@ def _followup_ledger_tree(packaged_tree, tmp_path):
     tree, _records = packaged_tree
     root = _clone(tree, tmp_path / "followup-ledger")
     for relative in (ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
-                     ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER):
+                     ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER,
+                     ledger_tool.EXPLANATORY_GENERATOR):
         if not (root / relative).is_file():
             _materialize(REPO_ROOT / relative, root / relative)
     return root
@@ -1534,6 +1538,27 @@ def test_followup_artifacts_are_active_and_exactly_classified():
     assert not expected.intersection(packager.SUPPLEMENT_GENERATED_ARTIFACTS)
 
 
+def test_explanatory_figures_and_analytical_schematics_have_distinct_exact_inventories():
+    expected = set(ledger_tool.EXPLANATORY_GENERATED_SOURCES) | {ledger_tool.EXPLANATORY_PROVENANCE}
+    schematic = set(ledger_tool.ANALYTICAL_SCHEMATIC_SOURCES)
+    assert set(packager.SUPPLEMENT_EXPLANATORY_ARTIFACTS) == expected
+    assert set(packager.SUPPLEMENT_SCHEMATIC_ARTIFACTS) == schematic
+    assert expected <= set(packager.followup_contract.ARTIFACT_PINS)
+    assert schematic == set(packager.followup_contract.SCHEMATIC_PINS)
+    assert not schematic.intersection(ledger_tool.ALL_GENERATED_SOURCES)
+    for relative in schematic:
+        staged = str(Path(relative).relative_to("paper"))
+        assert packager.closure_role(staged) == ledger_tool.derive_closure_role(staged) == "manuscript-source"
+    proposed = {arc for _, arc in packager.supplement_entries(REPO_ROOT)}
+    assert expected | schematic <= proposed
+    assert str(ledger_tool.EXPLANATORY_GENERATOR) in proposed
+    record = json.loads((REPO_ROOT / ledger_tool.EXPLANATORY_PROVENANCE).read_text())
+    assert {row["path"] for row in record["outputs"]} == set(ledger_tool.EXPLANATORY_GENERATED_SOURCES)
+    for row in record["inputs"]:
+        assert row["original_sha256"] == ledger_tool.FOLLOWUP_SOURCE_HASHES[Path(row["path"])]
+    assert record["generator"]["sha256"] == ledger_tool.FOLLOWUP_SOURCE_HASHES[ledger_tool.EXPLANATORY_GENERATOR]
+
+
 def test_followup_collective_provenance_binds_exact_outputs_and_reviewed_inputs():
     record = json.loads((REPO_ROOT / "paper/tables/transport_followup_provenance.json").read_text())
     outputs = record["outputs"]
@@ -1554,7 +1579,9 @@ def test_followup_supplement_preflight_requires_the_complete_pinned_evidence_inv
     missing = {str(p) for p in ledger_tool.FOLLOWUP_SOURCE_HASHES} - proposed
     assert not missing
     assert set(packager.followup_contract.INPUT_PATHS) <= proposed
-    assert set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS) == set(packager.followup_contract.ARTIFACT_PINS)
+    assert (set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS)
+            | set(packager.SUPPLEMENT_EXPLANATORY_ARTIFACTS)) == set(packager.followup_contract.ARTIFACT_PINS)
+    assert set(packager.SUPPLEMENT_SCHEMATIC_ARTIFACTS) == set(packager.followup_contract.SCHEMATIC_PINS)
     assert packager.followup_supplement_preflight(REPO_ROOT) == []
 
 
@@ -1620,15 +1647,16 @@ def test_the_whitelist_is_exactly_what_the_checker_regenerates():
     assert set(packager.SUPPLEMENT_GENERATED_ARTIFACTS) == regenerated
 
 
-def test_an_unclassified_artifact_stops_the_build(tmp_path):
+@pytest.mark.parametrize("directory", ["paper/tables", "paper/figures"])
+def test_an_unclassified_artifact_stops_the_build(tmp_path, directory):
     root = tmp_path / "repo"
-    for directory in ("paper/tables", "paper/figures"):
-        (root / directory).mkdir(parents=True)
-        for path in sorted((REPO_ROOT / directory).iterdir()):
-            (root / directory / path.name).write_bytes(b"")
+    for existing_directory in ("paper/tables", "paper/figures"):
+        (root / existing_directory).mkdir(parents=True)
+        for path in sorted((REPO_ROOT / existing_directory).iterdir()):
+            (root / existing_directory / path.name).write_bytes(b"")
     packager.supplement_artifact_inventory(root)        # classified: fine
 
-    (root / "paper/tables/brand_new_result.tex").write_bytes(b"")
+    (root / directory / "brand_new_result.tex").write_bytes(b"")
     with pytest.raises(RuntimeError, match="neither shipped nor explicitly"):
         packager.supplement_artifact_inventory(root)
 
@@ -2392,7 +2420,8 @@ def _evidence_clone(tmp_path: Path) -> Path:
 
     clone = tmp_path / "evidence-clone"
     required = (set(contract.CONTRACT) | set(packager.followup_contract.INPUT_PATHS)
-                | set(packager.followup_contract.ARTIFACT_PINS))
+                | set(packager.followup_contract.ARTIFACT_PINS)
+                | set(packager.followup_contract.SCHEMATIC_PINS))
     for arcname in sorted(required):
         target = clone / arcname
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -5620,7 +5649,58 @@ def test_an_unbound_shipped_data_file_fails(tmp_path):
     (root / "paper/figures").mkdir(parents=True, exist_ok=True)
     (root / "paper/figures/loose.csv").write_text("x,y\n1,2\n", encoding="utf-8")
     failures = _closure_failures(root)
-    assert any("recorded or sidecarred" in name for name in failures), failures
+    assert any("every shipped figure-data file" in name for name in failures), failures
+
+
+@pytest.mark.parametrize("state", ["clean", "changed_csv_and_provenance",
+                                    "missing_generator", "replaced_generator",
+                                    "untracked_csv"])
+def test_uncompiled_explanatory_csv_requires_pins_and_authenticated_reconstruction(
+        packaged_tree, tmp_path, state):
+    root = _closure_tree(tmp_path)
+    evidence = _followup_ledger_tree(packaged_tree, tmp_path / "evidence")
+    for source in evidence.rglob("*"):
+        if source.is_file():
+            _materialize(source, root / source.relative_to(evidence))
+    _materialize(REPO_ROOT / "submissions/tmlr_2026/supplement_README.md", root / "README.md")
+    for relative in ledger_tool.GENERATED_ARTIFACT_SOURCES:
+        _materialize(REPO_ROOT / f"{relative}.sha256", root / f"{relative}.sha256")
+    assert _closure_failures(root, require=True) == []
+    assert not [c for c in ledger_tool.literal_coverage_checks(root, LEDGER, require_package=True)
+                if c.status == ledger_tool.STATUS_FAIL]
+    if state == "clean":
+        return
+    marker = root / "executed.txt"
+    if state == "changed_csv_and_provenance":
+        path = root / "paper/figures/transport_explanatory_paired.csv"
+        # Change a paired interval endpoint and authorize it in the editable
+        # collective provenance. The independent artifact pin still rejects it.
+        import csv
+        with path.open(newline="") as stream:
+            rows = list(csv.DictReader(stream))
+        rows[0]["ci_low"] = str(float(rows[0]["ci_low"]) - 1)
+        with path.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=tuple(rows[0]), lineterminator="\n")
+            writer.writeheader()
+            writer.writerows(rows)
+        provenance = root / ledger_tool.EXPLANATORY_PROVENANCE
+        record = json.loads(provenance.read_text())
+        for row in record["outputs"]:
+            if row["path"] == str(path.relative_to(root)):
+                row["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+        provenance.write_text(json.dumps(record, sort_keys=True, indent=2) + "\n")
+    elif state == "missing_generator":
+        (root / ledger_tool.EXPLANATORY_GENERATOR).unlink()
+    elif state == "replaced_generator":
+        (root / ledger_tool.EXPLANATORY_GENERATOR).write_text(
+            "from pathlib import Path\nPath(" + repr(str(marker)) + ").touch()\n")
+    else:
+        (root / "paper/figures/untracked.csv").write_text("x,y\n1,2\n")
+    assert any("every shipped figure-data file" in name
+               for name in _closure_failures(root, require=True))
+    assert [c for c in ledger_tool.literal_coverage_checks(root, LEDGER, require_package=True)
+            if c.status == ledger_tool.STATUS_FAIL]
+    assert not marker.exists()
 
 
 def _mandatory_failures(root: Path) -> str:

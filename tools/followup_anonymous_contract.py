@@ -118,7 +118,19 @@ FOLLOWUP_CONTRACT: dict[str, dict[str, Any]] = {'review/post_full_fable/independ
 # PINNED_CONTRACT_END
 
 # PINNED_ARTIFACTS_START
-ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/tables/transport_followup_drift_bounds.tex': {'bytes': 1884,
+ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_explanatory_bounds.csv': {'bytes': 787,
+                                                    'sha256': '523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1'},
+ 'paper/figures/transport_explanatory_bounds.tex': {'bytes': 2297,
+                                                    'sha256': 'bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324'},
+ 'paper/figures/transport_explanatory_outcomes.csv': {'bytes': 841,
+                                                      'sha256': '0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe'},
+ 'paper/figures/transport_explanatory_outcomes.tex': {'bytes': 8635,
+                                                      'sha256': 'c0f254ee3d20606453c2dcc52b6a46055bbbcc105a9140bbe4e2bc2d391e0aa3'},
+ 'paper/figures/transport_explanatory_paired.csv': {'bytes': 1124,
+                                                    'sha256': 'c5e92e0c7158419edfacc2b4b51576aa9c7197ba87958261d37beec44a032266'},
+ 'paper/figures/transport_explanatory_provenance.json': {'bytes': 3014,
+                                                         'sha256': '6aceb41579165caab4573abe1db2997b81de5677b0568b3ee485767fdfc76cc4'},
+ 'paper/tables/transport_followup_drift_bounds.tex': {'bytes': 1884,
                                                       'sha256': '6130e0e66e34c6117f5e6d4bc0d1b4a574394a1b00dbf4b363b50062530bac2c'},
  'paper/tables/transport_followup_mechanism_variation.tex': {'bytes': 2402,
                                                              'sha256': '2725e1b7940683b696b5f93c90a1abbf7ba4c001915ce13cf43cf9dfadd8c851'},
@@ -131,6 +143,13 @@ ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/tables/transport_followup_dri
  'paper/tables/transport_followup_same_history.tex': {'bytes': 2471,
                                                       'sha256': 'e3cbe9e68cf611f0ccf296fcee0e5c7adc34ff50b594933710be97e47d33105e'}}
 # PINNED_ARTIFACTS_END
+
+# Analytical illustrations are reviewed source material, not empirical outputs
+# reconstructed from the experiment. Keep their provenance class explicit.
+SCHEMATIC_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_conceptual_geometry.tex': {'bytes': 4104,
+                                                     'sha256': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b'},
+ 'paper/figures/transport_conceptual_interfaces.tex': {'bytes': 2650,
+                                                       'sha256': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4'}}
 
 README = """# Anonymous compact follow-up evidence
 
@@ -340,7 +359,7 @@ def declaration() -> dict:
             "original_file_hashes": "Each original_sha256 binds the pre-transformation evidence; each packaged_sha256 binds the supplied copy.",
         },
         "rebound_metadata": "Packaged selection hashes, anonymized input-set digests, analysis inventory digest, export manifest and relative output checksums are updated deterministically.",
-        "generated_artifact_provenance": "Generated table headers retain original evidence digests. The generator may recover those digests only after the complete packaged contract and this declaration validate; original and packaged scientific JSON values are identical.",
+        "generated_artifact_provenance": "Generated table and chart headers retain original evidence digests. A generator may recover those digests only after the complete packaged contract and this declaration validate; original and packaged scientific JSON values are identical. Separately pinned analytical schematics are not measured evidence.",
     }
 
 
@@ -411,11 +430,11 @@ def _validate_bindings(root: Path) -> None:
 
 def _validate_artifacts(root: Path) -> list[str]:
     errors = []
-    for relative, pin in ARTIFACT_PINS.items():
+    for relative, pin in {**ARTIFACT_PINS, **SCHEMATIC_PINS}.items():
         try:
             data = _regular_file(root, relative).read_bytes()
             _require(len(data) == pin["bytes"] and _digest(data) == pin["sha256"],
-                     f"Original generated follow-up artifact differs: {relative}")
+                     f"Reviewed follow-up artifact differs: {relative}")
         except (OSError, ValueError, TypeError, KeyError) as error:
             errors.append(str(error))
     return errors
@@ -449,7 +468,7 @@ def stage_transform(root: str | Path, source_repo: str | Path) -> list[str]:
                for relative in INPUT_PATHS}
     _require(not _validate_artifacts(source_repo), "Original generated follow-up artifacts differ")
     outputs.update({relative: _regular_file(source_repo, relative).read_bytes()
-                    for relative in ARTIFACT_PINS})
+                    for relative in (*ARTIFACT_PINS, *SCHEMATIC_PINS)})
     outputs[DECLARATION_NAME] = (json.dumps(declaration(), sort_keys=True, indent=2) + "\n").encode("ascii")
     for relative, data in outputs.items():
         destination = root / relative

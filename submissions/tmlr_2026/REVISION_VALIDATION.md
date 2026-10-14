@@ -1,20 +1,20 @@
 # Review-revision validation
 
-This record concerns the manuscript revision synchronized on 2026-10-13
+This record covers the research revisions through 2026-10-14
 (America/Los_Angeles). `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current result (2026-10-14):** the final strict release, extracted supplement
-verification and byte-identical clean source rebuild all pass. The final full
-repository run reports **694 passed, 3 skipped, zero failed**. The final sections
-record the commands, artifacts, diagnostics and remaining raw-data limitations.
-These results supersede the historical system-TeX and missing-inventory blockers
-below. Compact evidence verification remains separate from raw-trajectory replay.
+**Current visual-revision result (2026-10-14):** the 40-page strict release,
+extracted supplement verification and independent byte-identical clean source
+rebuilds pass. The final full repository run reports **713 passed, 3 skipped,
+zero failed** in 336.30 seconds. The visual-revision section below records
+commands, artifacts, diagnostics and repairs. Compact evidence verification
+remains separate from raw-trajectory replay.
 
 | Collection scope | Current collected cases |
 | --- | --- |
-| Release-package test collection | 545 collected |
-| Repository suite collection | 697 collected |
+| Release-package test collection | 552 collected |
+| Repository suite collection | 716 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the
@@ -451,3 +451,129 @@ tamper, layout or compiled-closure protection. Scientific manuscript sources,
 the bibliography and abstract match the main-branch mirror. Final artifact
 hashes remain exactly those recorded above; the frozen experiment and historical
 PDF digests are unchanged. No new experimental run or TMLR submission occurred.
+
+## Explanatory visual revision (2026-10-14)
+
+The requested precise technical communication skill guided four new native
+LaTeX figures. They explain the conditional certificate interfaces, an abstract
+confidence-geometry example, all policy outcomes and paired intervals, and
+the mean bound scale relative to the deterministic regret cap. The detailed
+outcomes table moves to the appendix; the theorem statements, proofs, original
+experiment sources, locked configurations and retained evidence are unchanged.
+No new experiment or model review was run. Figure-level claims and sources are
+recorded in `review/visual_revision/IMPLEMENTATION_REPORT.md`.
+
+Independent numerical review matched all 12 policy means, nine paired means,
+18 interval endpoints and six transformed bound values to retained evidence.
+The charts retain pointwise paired uncertainty, all evaluated conditions and
+the own-history interpretation. The geometric diagram is an abstract example,
+not an observed study failure. The first outcome render exposed incorrectly
+positioned interval caps; explicit data coordinates repaired the rendering
+without changing the numerical endpoints. All four standalone figures and all
+four integrated pages were visually inspected.
+
+### Build and source reproduction
+
+Both the main mirror and strict research release now have **40 pages**. The
+new figures appear on pages **2, 7, 15 and 16**; references begin on page **20**.
+They use native body-size text without shrinking or page-limit compression.
+Both builds have empty identifying PDF metadata and no unresolved references,
+citations, missing characters or overfull boxes. Each retains four underfull
+horizontal-box and five underfull vertical-box diagnostics. The main build has
+no LaTeX warnings; the strict build retains one existing generic package-hook
+deprecation warning.
+
+The main build is `/workspace/cce-build/tmlr-visual-main`. Its 660,363-byte PDF
+has SHA-256 `0e910f8fc70aa07238a10937b2028a4b1e426a6d81054430fef470fa68d5eedb`.
+The 181,445-byte source ZIP has 49 members, 646,190 unpacked bytes and SHA-256
+`cf1e8731e1d4e9763134974d1c55384d4efa9b9089dfa424c9fe3f9612d435c4`.
+An independent clean extraction rebuilt the PDF byte for byte. The actual
+recorder has 338 unique canonical inputs: 44 archived project inputs, three
+regenerated inputs and 291 environment inputs. No original-checkout or
+prior-build input was used. All four official style/licence pins pass.
+The report's broad `inputs_sha256` inventory also includes inactive source
+files and must not be described as the actual compiler closure.
+
+The strict release is `/workspace/cce-build/tmlr-visual-release`. Its matched
+PDF/source/supplement hashes and sizes are in `README.md` and the tracked
+internal `release_manifest.json`. An independent clean extraction of its
+101-member source ZIP rebuilt the 660,312-byte PDF exactly. The recorder has
+93 project inputs, of which 92 are archived and `main.bbl` is regenerated;
+all 240 protected external input records match the release manifest. No
+original-checkout, release-staging or writable user-environment input was used.
+All four official and 54 vendored file pins pass. The strict clean-rebuild
+report is `/workspace/cce-build/tmlr-visual-strict-clean/verification.json`.
+The final tool-only supplement repair leaves the PDF and source ZIP byte
+identical to this independently rebuilt candidate; the final external records
+are also exactly equal. The report records that final release binding.
+
+The final supplement is 93,770,633 bytes with 178 members and 93,737,907 unpacked
+bytes. It remains below the 100,000,000-byte limit by 6,229,367 bytes. Both ZIPs
+use deterministic uncompressed entries. The build passes layout, identity,
+archive-member, byte-size and exact-digest gates. The internal manifest is not
+anonymous submission material.
+
+### Integration failures and repairs
+
+An initial focused package/numeric run reported 69 passed, six skipped and one
+failed: its miniature ledger fixture omitted the newly required generator.
+The fixture now supplies that generator and checks gate order. The rerun
+reported **71 passed, six skipped, 470 deselected**. The figure/follow-up
+contract checks report **26 passed**.
+
+The first strict candidate compiled successfully, but verification from its
+extracted supplement found a real closure gap: the three new CSV data exports
+are shipped for inspection, while PGFPlots reads their generated TeX coordinates
+instead of the CSVs. The generic closure check therefore found neither recorder
+entries nor standalone sidecars for those files. Its other checks passed.
+The repair admits only those three exact paths after complete anonymous-package
+validation, authenticated generator/helper loading, exact six-output inventory,
+fixed byte-size/digest checks and exact regeneration. It does not exempt other
+CSV files or rely on a mutable provenance record. Independent review found no
+weakening of the integrity gates.
+
+The added mutation tests initially reported five failures and two passes
+because their fixture omitted the six historical figure sidecars before even
+reaching the new CSV checks. Supplying the actual sidecars repaired the fixture;
+no production gate was relaxed. The final targeted run reports **seven passed,
+545 deselected**. It covers changed CSV/provenance, unknown CSVs and missing or
+replaced generators, as well as a valid packaged baseline. Collection is now
+552 package cases and 716 repository cases.
+
+The first failed extracted verification and the subsequent successful one are
+retained separately. Fresh extraction of the final supplement passes its
+advertised `verify.sh`, using the supported locked Python explicitly and no
+repository `PYTHONPATH`: **24/24 required contract checks**, a ledger of
+**588 PASS, 37 PASS_ANON, three NOT_EXECUTED, zero FAIL**, reconstruction of all
+24 terminal intervals from 600 summaries, exact regeneration of both sets of
+six artifacts, coverage of 42 sidecarred and 37 code-pinned files, and
+**23 shipped study tests passed**. Exit status was zero in 10.183 seconds.
+The log is `/workspace/cce-build/tmlr-visual-reviewer-verify-final.log`.
+The remaining nonexecuted checks concern raw/upstream replay and historical
+missing raw/per-seed bootstrap inputs; they remain limitations, not passes.
+
+### Final repository regression
+
+The final complete run, after the source, generator and verification code were
+frozen, used:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  TMLR_OUT=/workspace/cce-build/tmlr-visual-release \
+  /workspace/cce-research-env/bin/python -m pytest -q -ra tests experiments/tests
+```
+
+Result: **713 passed, three skipped, zero failed, two warnings**, in
+**336.30 seconds**. The log is
+`/workspace/cce-build/tmlr-visual-final-tests.log`. The three skips are the host
+reporting no user `TEXMFVAR`, its `TEXMFSYSVAR` not being a symlink, and a legacy
+clean-bibliography test looking for a rebuild at an old workstation path.
+The actual current clean source rebuild and bibliography were checked separately
+as recorded above. Both warnings come from deliberate duplicate-ZIP-member
+mutation tests; those tests passed.
+
+A final independent scope audit confirmed all 172 protected experiment,
+configuration, evidence and historical-PDF files unchanged, all 46 active shared
+scientific/figure files synchronized with main, and final release sizes,
+hashes and contents equal to the records. The source PDF builds precede only
+internal documentation updates; those files are outside the compiler closure.
