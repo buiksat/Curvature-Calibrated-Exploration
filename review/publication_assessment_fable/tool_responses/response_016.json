@@ -1,0 +1,59 @@
+{
+  "request": {
+    "name": "inspect_json",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/transport_review_followup/full-cce-full-local/terminal_bound_decomposition.json",
+      "components": [
+        0
+      ]
+    },
+    "response_utf8_sha256": "ba0f51bdaf8f8b40ed1d5f7ad79449f61c8d9fbb52c007346a1e51cd61f964ee",
+    "response_bytes": 567,
+    "source_git_blob": "5b31725daa88b487e7b4b00671cf5c0436724d8c",
+    "source_commit": "8647166427c8c97e3a9230b40135809b82961ea4"
+  },
+  "result": {
+    "type": "dict",
+    "length": 9,
+    "items": [
+      {
+        "key": "cumulative_pseudo_regret",
+        "value": 185.1006005141332
+      },
+      {
+        "key": "current_bias_cumulative",
+        "value": 752.2198362941548
+      },
+      {
+        "key": "historical_bound_component",
+        "value": 26752.362622169512
+      },
+      {
+        "key": "horizon",
+        "value": 1000
+      },
+      {
+        "key": "path_inflation_component",
+        "value": 6513384414969.581
+      },
+      {
+        "key": "round",
+        "value": 1000
+      },
+      {
+        "key": "sharp_theorem_rhs",
+        "value": 6513384452650.326
+      },
+      {
+        "key": "statistical_bound_component",
+        "value": 10176.163444172638
+      },
+      {
+        "key": "target_D",
+        "value": 97.32420048477151
+      }
+    ],
+    "next_offset": null
+  }
+}

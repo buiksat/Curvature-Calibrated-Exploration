@@ -1,0 +1,104 @@
+{
+  "request": {
+    "name": "inspect_json",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/transport_review_followup/full-cce-full-local/drift_and_reference_diagnostics.json"
+    },
+    "response_utf8_sha256": "91fd567714091e3a48dc73a9fca285bf624cacd9256983bb0276ce570f826f98",
+    "response_bytes": 700,
+    "source_git_blob": "fca118948557d4c52823bdd2ba8ec0e5410b555f",
+    "source_commit": "8647166427c8c97e3a9230b40135809b82961ea4"
+  },
+  "result": {
+    "type": "list",
+    "length": 12,
+    "items": [
+      {
+        "key": 0,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 1,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 2,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 3,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 4,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 5,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 6,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 7,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 8,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 9,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 10,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      },
+      {
+        "key": 11,
+        "value": {
+          "type": "dict",
+          "length": 15
+        }
+      }
+    ],
+    "next_offset": null
+  }
+}

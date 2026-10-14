@@ -1,0 +1,18 @@
+{
+  "request": {
+    "name": "search_files",
+    "arguments": {
+      "ref": "implementation",
+      "query": "def _confidence_radius",
+      "prefix": "experiments"
+    },
+    "response_utf8_sha256": "e303c9d7975a804095110726fed55729d8c282a838084141cbf13b308548e641",
+    "response_bytes": 70
+  },
+  "result": {
+    "matches": [],
+    "truncated": false,
+    "skipped": [],
+    "skipped_count": 0
+  }
+}

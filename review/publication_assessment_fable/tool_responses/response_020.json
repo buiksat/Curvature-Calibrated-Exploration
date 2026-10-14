@@ -1,0 +1,94 @@
+{
+  "request": {
+    "name": "search_files",
+    "arguments": {
+      "ref": "implementation",
+      "query": "corrected_center",
+      "prefix": "experiments/transport_instantiation.py",
+      "limit": 15
+    },
+    "response_utf8_sha256": "495e91b4b327554e764a4cfe0ab72cabdab02776e98e8ab9771bcfa0489855b7",
+    "response_bytes": 2185
+  },
+  "result": {
+    "matches": [
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 207,
+        "text": "def corrected_center("
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 261,
+        "text": "    corrected_centers: ArrayLike,"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 271,
+        "text": "    centers = _float_array(corrected_centers, name=\"corrected_centers\", ndim=1)"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1546,
+        "text": "        corrected_centers = corrected_center("
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1591,
+        "text": "            corrected_centers + beta * hessian_inflation * current_widths + current_bias"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1594,
+        "text": "            corrected_centers + beta * endpoint_inflation * current_widths + current_bias"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1596,
+        "text": "        frozen_scores = corrected_centers + beta * frozen_widths + current_bias"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1597,
+        "text": "        naive_scores = corrected_centers + beta * current_widths + current_bias"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1622,
+        "text": "        center_identity_residuals = true_means - corrected_centers - center_identity_rhs"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1625,
+        "text": "            corrected_centers,"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1631,
+        "text": "        confidence_margins = confidence_radii - np.abs(true_means - corrected_centers)"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 1654,
+        "text": "            \"corrected_center_identity\","
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 2011,
+        "text": "            \"corrected_centers\": corrected_centers.tolist(),"
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 2020,
+        "text": "            \"corrected_center_identity_max_residual\": float("
+      },
+      {
+        "path": "experiments/transport_instantiation.py",
+        "line": 2243,
+        "text": "            centers = corrected_center(theta, theta_hat, action_features, environment)"
+      }
+    ],
+    "truncated": true,
+    "skipped": []
+  }
+}

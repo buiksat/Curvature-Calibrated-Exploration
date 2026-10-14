@@ -1,0 +1,26 @@
+Access verified: exact requested model claude-fable-5. Beginning publication assessment of two pinned commits.
+API response 1/12; inspected 0 tool requests.
+Received response 1: model=claude-fable-5, stop=tool_use.
+API response 2/12; inspected 2 tool requests.
+Received response 2: model=claude-fable-5, stop=tool_use.
+API response 3/12; inspected 4 tool requests.
+Received response 3: model=claude-fable-5, stop=tool_use.
+API response 4/12; inspected 5 tool requests.
+Received response 4: model=claude-fable-5, stop=tool_use.
+API response 5/12; inspected 7 tool requests.
+Received response 5: model=claude-fable-5, stop=tool_use.
+API response 6/12; inspected 9 tool requests.
+Received response 6: model=claude-fable-5, stop=tool_use.
+API response 7/12; inspected 11 tool requests.
+Received response 7: model=claude-fable-5, stop=tool_use.
+API response 8/12; inspected 13 tool requests.
+Received response 8: model=claude-fable-5, stop=tool_use.
+API response 9/12; inspected 16 tool requests.
+Received response 9: model=claude-fable-5, stop=tool_use.
+API response 10/12; inspected 18 tool requests.
+Received response 10: model=claude-fable-5, stop=tool_use.
+API response 11/12; inspected 21 tool requests.
+Received response 11: model=claude-fable-5, stop=tool_use.
+API response 12/12; inspected 22 tool requests.
+Received response 12: model=claude-fable-5, stop=end_turn.
+Model did not produce a completed review.

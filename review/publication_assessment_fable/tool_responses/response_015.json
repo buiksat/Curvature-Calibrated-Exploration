@@ -1,0 +1,49 @@
+{
+  "request": {
+    "name": "inspect_json",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/transport_review_followup/full-cce-full-local/aggregate_compact.json",
+      "components": [
+        "paired_bootstrap"
+      ]
+    },
+    "response_utf8_sha256": "882e75b31c730ff2b735fc1278800e091721478040c8f45a3bb23f0c9f1834fd",
+    "response_bytes": 337,
+    "source_git_blob": "49eb6a83a284f081f5a48256410f60c1f88a88d9",
+    "source_commit": "8647166427c8c97e3a9230b40135809b82961ea4"
+  },
+  "result": {
+    "type": "dict",
+    "length": 5,
+    "items": [
+      {
+        "key": "child_seeds",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "level",
+        "value": 0.95
+      },
+      {
+        "key": "paired_by",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "resamples",
+        "value": 10000
+      },
+      {
+        "key": "seed_source",
+        "value": "resolved config digest and fixed namespace"
+      }
+    ],
+    "next_offset": null
+  }
+}

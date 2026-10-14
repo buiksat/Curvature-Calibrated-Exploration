@@ -1,0 +1,165 @@
+{
+  "request": {
+    "name": "inspect_json",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/transport_review_followup/full-cce-full-local/aggregate_compact.json"
+    },
+    "response_utf8_sha256": "80434c9196b911b907066aae1e6325eb402bd99f061ff0846b50ad6fb53acb45",
+    "response_bytes": 1970,
+    "source_git_blob": "49eb6a83a284f081f5a48256410f60c1f88a88d9",
+    "source_commit": "8647166427c8c97e3a9230b40135809b82961ea4"
+  },
+  "result": {
+    "type": "dict",
+    "length": 28,
+    "items": [
+      {
+        "key": "all_deterministic_audits_pass",
+        "value": true
+      },
+      {
+        "key": "bound_nonvacuity",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "certificate_tightness",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "completed_run_count",
+        "value": 600
+      },
+      {
+        "key": "config_digest",
+        "value": "662bd97b87c523dd7168ed057004002a583aa4cb50759fdc24df027adc695117"
+      },
+      {
+        "key": "coverage_interval",
+        "value": "exact Clopper-Pearson"
+      },
+      {
+        "key": "environment_diagnostics",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "evaluation_seeds",
+        "value": {
+          "type": "list",
+          "length": 50
+        }
+      },
+      {
+        "key": "event",
+        "value": "transport_instantiation_aggregate"
+      },
+      {
+        "key": "expected_run_count",
+        "value": 600
+      },
+      {
+        "key": "experiment",
+        "value": "transport_instantiation"
+      },
+      {
+        "key": "export_note",
+        "value": "New follow-up evidence. Raw provenance validated on the server; raw inputs remain there."
+      },
+      {
+        "key": "full_grid_complete",
+        "value": true
+      },
+      {
+        "key": "git_revision",
+        "value": "707c8243ea6d5395369ed812a68cf7e27d700596"
+      },
+      {
+        "key": "horizons",
+        "value": {
+          "type": "list",
+          "length": 1
+        }
+      },
+      {
+        "key": "input_set_sha256",
+        "value": "8c297b88db0d44ae8a4ca40f1dff14f5ed9cae92ec8b9b6ac55aa36daa3caa4a"
+      },
+      {
+        "key": "methods",
+        "value": {
+          "type": "list",
+          "length": 4
+        }
+      },
+      {
+        "key": "paired_bootstrap",
+        "value": {
+          "type": "dict",
+          "length": 5
+        }
+      },
+      {
+        "key": "policy_outcomes",
+        "value": {
+          "type": "list",
+          "length": 12
+        }
+      },
+      {
+        "key": "profile",
+        "value": "full"
+      },
+      {
+        "key": "publication_ready",
+        "value": true
+      },
+      {
+        "key": "schema_version",
+        "value": 1
+      },
+      {
+        "key": "selected_optimizer",
+        "value": {
+          "type": "dict",
+          "length": 5
+        }
+      },
+      {
+        "key": "selection_path",
+        "value": "/workspace/cce-full-local/selection.json"
+      },
+      {
+        "key": "selection_sha256",
+        "value": "4ec58fcac633b5ab28eae302b4a9695b411b378023836436a1ecfffbec942952"
+      },
+      {
+        "key": "stochastic_confidence_failures_retained",
+        "value": true
+      },
+      {
+        "key": "target_D",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      },
+      {
+        "key": "validity",
+        "value": {
+          "type": "list",
+          "length": 3
+        }
+      }
+    ],
+    "next_offset": null
+  }
+}

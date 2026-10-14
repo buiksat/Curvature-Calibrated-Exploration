@@ -1,0 +1,88 @@
+{
+  "created_at": "2026-10-14T20:17:56.812009+00:00",
+  "requested_model": "claude-fable-5",
+  "status": "complete",
+  "access_verified": true,
+  "purpose": "Fresh independent publication-worthiness and TMLR readiness assessment",
+  "limits": {
+    "max_turns": 12,
+    "max_tokens_per_response": 12000,
+    "max_tool_calls": 64,
+    "max_tool_bytes": 524288
+  },
+  "runner_sha256": "ad299a30d1c9906b9ed0415736eefc2b36fe1dd631fae61a7258a8a4baa9d9d3",
+  "external_driver_sha256": "6d01d46e871bf8a630a68460c2f18a8ac59147fb427e26a88c8980d07c9f1812",
+  "refs": {
+    "manuscript": {
+      "ref": "add7a565e779230949b72c2f3018ae4753ac3c97",
+      "sha": "add7a565e779230949b72c2f3018ae4753ac3c97"
+    },
+    "implementation": {
+      "ref": "8647166427c8c97e3a9230b40135809b82961ea4",
+      "sha": "8647166427c8c97e3a9230b40135809b82961ea4"
+    }
+  },
+  "prompt_sha256": "348b8911c305383c3f50e12208d780024c892b340b6156ab8bc72be59f7d9fe2",
+  "available_models": [
+    "claude-fable-5",
+    "claude-fable-5-1",
+    "claude-haiku-4-5-20251001",
+    "claude-haiku-5-5",
+    "claude-opus-4-5-20251101",
+    "claude-opus-4-6",
+    "claude-opus-4-7",
+    "claude-opus-4-8",
+    "claude-opus-5",
+    "claude-opus-5-5",
+    "claude-sonnet-4-5-20250929",
+    "claude-sonnet-4-6",
+    "claude-sonnet-5",
+    "claude-sonnet-5-5"
+  ],
+  "model": "claude-fable-5",
+  "usage": {
+    "input_tokens": 631853,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 11286
+  },
+  "turns": 13,
+  "tool_bytes": 139821,
+  "evidence_refs": [
+    "manuscript",
+    "implementation"
+  ],
+  "recovery": {
+    "reason": "Observed final end_turn response contained no visible text; no timeout and no uncertain paid retry.",
+    "maximum_total_responses": 14,
+    "new_source_inspection": false,
+    "actual_continuation_responses": 1
+  },
+  "returned_models": [
+    "claude-fable-5"
+  ],
+  "final_stop_reason": "end_turn",
+  "response_ids": [
+    "msg_011Cg2kGtMwpAvhBAHPzspR1",
+    "msg_011Cg2kHCvtskaPy2JJoGF8u",
+    "msg_011Cg2kHVBwgdFwXTZCZepr6",
+    "msg_011Cg2kHjygzbwKs9NR4g9H6",
+    "msg_011Cg2kJ7V1Si5pLJ2qZEyZX",
+    "msg_011Cg2kJYDYgzyDgW4tx1e3W",
+    "msg_011Cg2kKCME5UPTiQYEqVyC8",
+    "msg_011Cg2kKeYq5WE4C9reGdy3j",
+    "msg_011Cg2kL5aUAMoghpanMFq1K",
+    "msg_011Cg2kLh9sXpiz5z2qPmT3Q",
+    "msg_011Cg2kM7rAt8YKVqfnaWjK8",
+    "msg_011Cg2kMS6XC1mUwwVx6ax7E",
+    "msg_011Cg2kXYR4HGdFwG6YLnG9Z"
+  ],
+  "completed_at": "2026-10-14T20:23:03.225363+00:00",
+  "tool_call_count": 22,
+  "successful_tool_access_count": 22,
+  "review_sha256": "36c9df9b8aae0c8337d1d6bd76d7a8552de1529f9f87e43ff75a2c30ed00af87",
+  "review_bytes": 11622,
+  "verbatim_review_sha256": "946c67af7e12ec221e56882535d7db911a368b31edfd163cd9a7d3c8e3374b60",
+  "verbatim_review_bytes": 11621,
+  "qualification": "Complete API response after one explicit final-text continuation; pinned read-only source inspection, not execution, rendered-PDF inspection, external literature/policy verification or raw replay."
+}

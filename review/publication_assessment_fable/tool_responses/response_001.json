@@ -1,0 +1,302 @@
+{
+  "request": {
+    "name": "list_files",
+    "arguments": {
+      "ref": "manuscript",
+      "prefix": "submissions/tmlr_2026",
+      "limit": 100
+    },
+    "response_utf8_sha256": "1ab06f8d29a8621a69e38f07fd1ba655e6ed3d114fafd7bb44bf9ec59c7c1c8c",
+    "response_bytes": 5850
+  },
+  "result": {
+    "total": 71,
+    "files": [
+      {
+        "path": "submissions/tmlr_2026/BIBLIOGRAPHY_APPENDIX_AUDIT.md",
+        "bytes": 7728
+      },
+      {
+        "path": "submissions/tmlr_2026/BUILD.md",
+        "bytes": 898
+      },
+      {
+        "path": "submissions/tmlr_2026/IMPLEMENTATION_REVIEW.md",
+        "bytes": 3374
+      },
+      {
+        "path": "submissions/tmlr_2026/LICENSE",
+        "bytes": 11357
+      },
+      {
+        "path": "submissions/tmlr_2026/README.md",
+        "bytes": 5214
+      },
+      {
+        "path": "submissions/tmlr_2026/REVISION_STATUS.md",
+        "bytes": 5894
+      },
+      {
+        "path": "submissions/tmlr_2026/STYLE_SHA256SUMS",
+        "bytes": 303
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_cg.tex",
+        "bytes": 4979
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_deferred.tex",
+        "bytes": 115094
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_expfam.tex",
+        "bytes": 1619
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_ggn.tex",
+        "bytes": 1361
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_onesided_proof.tex",
+        "bytes": 5951
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_protocol.tex",
+        "bytes": 28328
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_rates.tex",
+        "bytes": 9753
+      },
+      {
+        "path": "submissions/tmlr_2026/appendix_twosided.tex",
+        "bytes": 4817
+      },
+      {
+        "path": "submissions/tmlr_2026/availability.tex",
+        "bytes": 2980
+      },
+      {
+        "path": "submissions/tmlr_2026/body_conclusion.tex",
+        "bytes": 3631
+      },
+      {
+        "path": "submissions/tmlr_2026/body_intro.tex",
+        "bytes": 8330
+      },
+      {
+        "path": "submissions/tmlr_2026/body_related.tex",
+        "bytes": 9933
+      },
+      {
+        "path": "submissions/tmlr_2026/broader_impact.tex",
+        "bytes": 669
+      },
+      {
+        "path": "submissions/tmlr_2026/build.sh",
+        "bytes": 2597
+      },
+      {
+        "path": "submissions/tmlr_2026/fancyhdr.sty",
+        "bytes": 17086
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_conceptual_geometry.tex",
+        "bytes": 4104
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex",
+        "bytes": 2650
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_bounds.csv",
+        "bytes": 787
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_bounds.tex",
+        "bytes": 2297
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.csv",
+        "bytes": 841
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.tex",
+        "bytes": 8635
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_paired.csv",
+        "bytes": 1124
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_explanatory_provenance.json",
+        "bytes": 3014
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound.csv",
+        "bytes": 77173
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound.tex",
+        "bytes": 4242
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound_D-0p25.csv",
+        "bytes": 19634
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound_D-0p5.csv",
+        "bytes": 19506
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound_D-1.csv",
+        "bytes": 19301
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_bound_D-2.csv",
+        "bytes": 19293
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret.csv",
+        "bytes": 247071
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret.tex",
+        "bytes": 12544
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret_D-0p25.csv",
+        "bytes": 62546
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret_D-0p5.csv",
+        "bytes": 62117
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret_D-1.csv",
+        "bytes": 61320
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_regret_D-2.csv",
+        "bytes": 61328
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness.csv",
+        "bytes": 50113
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness.tex",
+        "bytes": 4910
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness_D-0p25.csv",
+        "bytes": 13554
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness_D-0p5.csv",
+        "bytes": 12170
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness_D-1.csv",
+        "bytes": 12098
+      },
+      {
+        "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness_D-2.csv",
+        "bytes": 12471
+      },
+      {
+        "path": "submissions/tmlr_2026/legacy_dynamic.tex",
+        "bytes": 25914
+      },
+      {
+        "path": "submissions/tmlr_2026/legacy_scope.tex",
+        "bytes": 1056
+      },
+      {
+        "path": "submissions/tmlr_2026/macros.tex",
+        "bytes": 2225
+      },
+      {
+        "path": "submissions/tmlr_2026/main.tex",
+        "bytes": 5562
+      },
+      {
+        "path": "submissions/tmlr_2026/notation.tex",
+        "bytes": 3209
+      },
+      {
+        "path": "submissions/tmlr_2026/references.bib",
+        "bytes": 13064
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/growing_window_pareto.tex",
+        "bytes": 363
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_followup_drift_bounds.tex",
+        "bytes": 1884
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_followup_mechanism_variation.tex",
+        "bytes": 2402
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_followup_outcomes.tex",
+        "bytes": 2219
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_followup_relative_audit.tex",
+        "bytes": 2035
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_followup_same_history.tex",
+        "bytes": 2471
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_instantiation_performance.tex",
+        "bytes": 2269
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_instantiation_tightness.tex",
+        "bytes": 1761
+      },
+      {
+        "path": "submissions/tmlr_2026/tables/transport_instantiation_validity.tex",
+        "bytes": 1765
+      },
+      {
+        "path": "submissions/tmlr_2026/tmlr.bst",
+        "bytes": 26969
+      },
+      {
+        "path": "submissions/tmlr_2026/tmlr.sty",
+        "bytes": 6560
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_experiment.tex",
+        "bytes": 10469
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_experiment_appendix.tex",
+        "bytes": 5310
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_followup.tex",
+        "bytes": 9928
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_followup_appendix.tex",
+        "bytes": 11746
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_proofs.tex",
+        "bytes": 23888
+      },
+      {
+        "path": "submissions/tmlr_2026/transport_theory.tex",
+        "bytes": 39491
+      }
+    ],
+    "next_offset": null
+  }
+}

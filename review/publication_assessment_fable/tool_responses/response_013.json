@@ -1,0 +1,41 @@
+{
+  "request": {
+    "name": "inspect_json",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/transport_review_followup/full-cce-full-local/terminal_bound_decomposition.json"
+    },
+    "response_utf8_sha256": "9d4e13fb342701d20346274ef2ce61172af69f6e43031ca5e0286d12e62113b4",
+    "response_bytes": 217,
+    "source_git_blob": "5b31725daa88b487e7b4b00671cf5c0436724d8c",
+    "source_commit": "8647166427c8c97e3a9230b40135809b82961ea4"
+  },
+  "result": {
+    "type": "list",
+    "length": 3,
+    "items": [
+      {
+        "key": 0,
+        "value": {
+          "type": "dict",
+          "length": 9
+        }
+      },
+      {
+        "key": 1,
+        "value": {
+          "type": "dict",
+          "length": 9
+        }
+      },
+      {
+        "key": 2,
+        "value": {
+          "type": "dict",
+          "length": 9
+        }
+      }
+    ],
+    "next_offset": null
+  }
+}
