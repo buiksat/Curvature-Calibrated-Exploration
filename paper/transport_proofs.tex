@@ -81,6 +81,21 @@ $1+x\le2x$ gives \eqref{eq:simple-transport-regret-new}.  The probability
 statement follows by a union bound; independence is not required.
 \end{proof}
 
+\begin{proof}[Proof of \Cref{prop:frozen-width-ucb}]
+On the reference-confidence event, $\mu_t^*(a)\le U_t^{\rm fr}(a)$ for
+every action.  Taking suprema and applying the approximate-selector inequality
+gives
+\[
+ \sup_{a\in\cA_t}\mu_t^*(a)
+ \le U_t^{\rm fr}(a_t)+\xi_t.
+\]
+The lower side of reference confidence at $a_t$ then yields the instantaneous
+bound in \eqref{eq:frozen-width-regret}.  Summing, applying Cauchy--Schwarz,
+and using \eqref{eq:frozen-potential-proof} for this policy's frozen rank-one
+updates gives its cumulative bound.  Only the reference-confidence event is
+used, so no additional certificate-failure probability is charged.
+\end{proof}
+
 \begin{proof}[Proof of \Cref{cor:finite-enumeration-new}]
 On the measurable event $\{K_t=n\}$, the finite vector
 $\{U_t(a_{t,k})\}_{k=1}^n$ is $\cHist_t$-measurable by joint measurability on

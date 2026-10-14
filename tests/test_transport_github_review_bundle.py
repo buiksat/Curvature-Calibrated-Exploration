@@ -666,6 +666,44 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
     assert any("empirical vacuity" in c["check"] for c in damaged.failures)
 
 
+@pytest.mark.parametrize("relative,before,after,required_check", [
+    (
+        "submissions/tmlr_2026/main.tex",
+        "analytic path certificate exceeds the endpoint distance",
+        "analytic path certificate matches the endpoint distance",
+        "abstract keeps the conservative-certificate finding",
+    ),
+    (
+        "submissions/tmlr_2026/main.tex",
+        "every reported numerical regret bound exceeds the deterministic",
+        "every reported numerical regret bound improves on the deterministic",
+        "abstract keeps the vacuous-bound finding",
+    ),
+    (
+        "submissions/tmlr_2026/main.tex",
+        "These findings separate certificate validity from bound",
+        "These findings equate certificate validity with bound",
+        "abstract separates certificate validity from usefulness",
+    ),
+    (
+        "paper/body_conclusion.tex",
+        "Comparable worst-case guarantees do not order the",
+        "Comparable worst-case guarantees order the",
+        "conclusion refuses a uniform curvature ordering",
+    ),
+])
+def test_revised_abstract_and_conclusion_qualifiers_remain_required(
+        tmp_path, relative, before, after, required_check):
+    scratch = _manuscript_scratch(tmp_path)
+    path = scratch / relative
+    text = path.read_text(encoding="utf-8")
+    assert before in text
+    path.write_text(text.replace(before, after, 1), encoding="utf-8")
+    report = verifier.Report()
+    verifier.check_manuscript(report, scratch)
+    assert any(required_check in check["check"] for check in report.failures)
+
+
 def test_introducing_an_overclaim_is_detected(tmp_path):
     """Adding an unsupported claim must FAIL even though every literal survives."""
 

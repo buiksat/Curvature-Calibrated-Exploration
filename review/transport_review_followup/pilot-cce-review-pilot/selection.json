@@ -1,0 +1,1543 @@
+{
+  "candidate_count": 9,
+  "candidates": [
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.015735880667815685,
+      "candidate_id": "candidate-000",
+      "eligible": true,
+      "learning_rate": 3e-05,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.016303486892674798,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015978309063694754,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015017854869987265,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01629407332405471,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01593612996319999,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.0148854298932826,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 1
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.015038431293315668,
+      "candidate_id": "candidate-001",
+      "eligible": true,
+      "learning_rate": 3e-05,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01533227353450133,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015028379682691134,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014131101123470685,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015798735560963274,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015463012701042602,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014477085157224984,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 5
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.01611509491482166,
+      "candidate_id": "candidate-002",
+      "eligible": true,
+      "learning_rate": 3e-05,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014399981768793592,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014105708239250121,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.013245560284816611,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01913689205528621,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.018625732742941003,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.017176694397842425,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 20
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.01522615500844065,
+      "candidate_id": "candidate-003",
+      "eligible": true,
+      "learning_rate": 0.0001,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015671283125744274,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015359227139223913,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01443779150243295,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01585970795721658,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01551718590137871,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014511734424647474,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 1
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.015677395484179003,
+      "candidate_id": "candidate-004",
+      "eligible": true,
+      "learning_rate": 0.0001,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01441531558559945,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014128708765028974,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.013286375390109871,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.018131048945209213,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01768765836054226,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01641526585858425,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 5
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.022135983890417075,
+      "candidate_id": "candidate-005",
+      "eligible": true,
+      "learning_rate": 0.0001,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01611961286691746,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015645826871436314,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014233586318224864,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.03124475447774237,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.029805587772211133,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.025766535035970317,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 20
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.015035873125461846,
+      "candidate_id": "candidate-006",
+      "eligible": true,
+      "learning_rate": 0.0003,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014706592719136423,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.014419363773813088,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.013571260176733137,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.016412976459754324,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.016063956419346215,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015041089203987881,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 1
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.020313113097579955,
+      "candidate_id": "candidate-007",
+      "eligible": true,
+      "learning_rate": 0.0003,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015457752740209144,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01502597159592744,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01378899232675612,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.027704994448276954,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.02656662588721675,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.023334341587093323,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 5
+    },
+    {
+      "aggregate_mean_all_action_prediction_mse": 0.025467297332104084,
+      "candidate_id": "candidate-008",
+      "eligible": true,
+      "learning_rate": 0.0003,
+      "rejection_reasons": [],
+      "runs": [
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.01778955526231095,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20100/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.017054198967609777,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20100/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.015165682171580925,
+          "rejection_reasons": [],
+          "seed": 20100,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20100/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.03825460645435588,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20101/summary.json",
+          "target_D": 24.440403706431148,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.035343523988468316,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20101/summary.json",
+          "target_D": 97.76161482572459,
+          "valid": true
+        },
+        {
+          "horizon": 64,
+          "mean_all_action_prediction_mse": 0.029196217148298665,
+          "rejection_reasons": [],
+          "seed": 20101,
+          "summary_path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20101/summary.json",
+          "target_D": 195.52322965144918,
+          "valid": true
+        }
+      ],
+      "steps_per_round": 20
+    }
+  ],
+  "complete_tuning_input_inventory": true,
+  "config_digest": "bb7aa06b995bd1e54a180630aa01ccd55b7751ade598dbad906a6702a63282bb",
+  "evaluation_seeds": [
+    20200,
+    20201
+  ],
+  "event": "transport_instantiation_selection",
+  "git_dirty": true,
+  "git_revision": "7bd8e4d78b62e1ea510da51deac7cc2c4624637d",
+  "input_set_sha256": "cae1fc2a4dbbc7f4d5658722945a419a88f430641a0824ee7aa4f91106e03d07",
+  "inputs": [
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20100/manifest.jsonl",
+      "sha256": "1477548599b6b206c94b7140051e8b134c528217927eb586d26ce263db88a506"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20100/raw.jsonl",
+      "sha256": "9af4f8df208f020809e31c0c1416090674b4c9eb3745b7c3a7a455abaf35bb4e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20100/summary.json",
+      "sha256": "dd0e9ea04485a816f356e0a49884714eefa1b215561ab2b82cd2867efaeb22ab"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20100/summary.json.sha256",
+      "sha256": "9fdeb9a76d4cdc353636d413f414ebd04b2234518e66b3c169455badc1fca9b3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20101/manifest.jsonl",
+      "sha256": "86fe78a59f30a5f920284eae368f04f0ea6eb7681bda0fd2fe803da116c49bc4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20101/raw.jsonl",
+      "sha256": "9299e18be811a67d55db720639280c564d4400982bc08be718f3c850f24f9bd8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20101/summary.json",
+      "sha256": "4946d01e8450b7dc9a4638205924c3aaf84e52fd2ee4650673403454470cb6b6"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-000/seed-20101/summary.json.sha256",
+      "sha256": "faa7b26a6fd31271d07051648b4608581e392f7c611d75bf67b678e42ef165f7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20100/manifest.jsonl",
+      "sha256": "6f31d8af9f8bbc6829a5364c189df959541a3d9484f8acce2248a20969bfbb1d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20100/raw.jsonl",
+      "sha256": "8d0688fe33d1e023e4c56f5e8a845f75c5beb9c74f63a95ce37ed697b3f59b79"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20100/summary.json",
+      "sha256": "9db6f2fe2b3344a33923503daa8a51f7352dc0c53f39acffed639d6d3d507a4b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20100/summary.json.sha256",
+      "sha256": "2967da63a77a47a5250843893a42fb785b5a3bc342e2b5de4500dc5e759d004f"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20101/manifest.jsonl",
+      "sha256": "93f13e70e3a1b03f4e2e8a6bfc9ad53c57026b47fcc69c49bdca1dd6a098358d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20101/raw.jsonl",
+      "sha256": "3793422461c19bcb30e7b81c19b388a9cb474b83d44f88de56fd47d43137cae4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20101/summary.json",
+      "sha256": "9793f4d1ca12c6c216d1feb23562151007219986f973e12ac785bb72ec7feb61"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-001/seed-20101/summary.json.sha256",
+      "sha256": "43a955e07a4fcd68eeb0ed0ffa21291f457117843f867135079710eb2a0697a9"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20100/manifest.jsonl",
+      "sha256": "43e3c2a257448e1c6c6541b67c6b3a1915d2f1b6e3551789fbd95739098d9524"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20100/raw.jsonl",
+      "sha256": "b88544d86aac525f28f6025bac8d6c684d6aef0616d85151c2aeefb4b0f2f936"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20100/summary.json",
+      "sha256": "1c04cc92d316d60246a5d7a90e98eaedaf4ea71e1fbd3af09e6f7ff2faf0a3fa"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20100/summary.json.sha256",
+      "sha256": "213459ac2df44d73a851dcb20760eff7cde85f3a5eebf68cf0e20a681a48c93e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20101/manifest.jsonl",
+      "sha256": "ee58d9afb2524b006e06fe586ea92c4399a3389fd262fc71a3e8d001a635e906"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20101/raw.jsonl",
+      "sha256": "81d628e37dbbb5c2e7d92b0c6ccc7ec42b357d08828f068687db918e08b8cfde"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20101/summary.json",
+      "sha256": "401e951de6039a84cab8a8662abf54817230dc1bbccc5dd5644fb7ff394099d7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-002/seed-20101/summary.json.sha256",
+      "sha256": "6b10deb3f733a1eeab0b0a3b0208e0cf2d0e18f7d40643c6a321c1bb525c8f82"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20100/manifest.jsonl",
+      "sha256": "473d46ba3a77b6a5e2218a823490e1d719b5ce041fc6473bc4f82c6ad0baf2ba"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20100/raw.jsonl",
+      "sha256": "7193d30539c9500a4201f5aa176ea3e5df5c3c5c910f6e4b99473c50524cd132"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20100/summary.json",
+      "sha256": "795711151f8b94ef924aa7516024a956e21e7563dfdaa4a52f2708a321261777"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20100/summary.json.sha256",
+      "sha256": "a5579bf461d0c009e3b0c4614f579bd83601bbfbe6e43ef4fc33cc11873a06a2"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20101/manifest.jsonl",
+      "sha256": "1bc435a97067ed1306915d249ec283668ab48d515725921455d784b9df8c0669"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20101/raw.jsonl",
+      "sha256": "f72e965e543b7d14e8912f9a721a2e5e98ab31f607b152fc8a432b4fc3bd22bb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20101/summary.json",
+      "sha256": "8195c8e28c7bce63539c5bce47a099d71b6799c2b854673da182ddafc143118a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-003/seed-20101/summary.json.sha256",
+      "sha256": "ce3a61199efd72ae85a2f197f794787e9eb7f28bd2c533db9998820a5074643c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20100/manifest.jsonl",
+      "sha256": "a5b1a84e3ba4cf6a12eaa2d5fba33d6434fca3e7c33c9d712407e273e0011393"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20100/raw.jsonl",
+      "sha256": "26a3a58d252711f514bb13586640419b434dc39a4db0abb6a33b646116f0a3d6"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20100/summary.json",
+      "sha256": "ce54c999a9107587f74b96d074595b8ee14ed19bf0b9343e0ff44fd7f1cdf4d1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20100/summary.json.sha256",
+      "sha256": "33038e1f18d5026ba1d4d7fdc2770931b0d7e16725330355470ac3e8bc0df5ec"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20101/manifest.jsonl",
+      "sha256": "78c122c5e3486b4336091e9265f1ad0137fbe2ec1aab1f2b4cf95e23f75c2355"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20101/raw.jsonl",
+      "sha256": "97e17146a1656db488802f63bb5c8b2d64b03558e77e9522a121d287cf54addc"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20101/summary.json",
+      "sha256": "709f837901caa13c08f8a321050320bdca9133e2571b82d90822444e876a8795"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-004/seed-20101/summary.json.sha256",
+      "sha256": "3a416b6168716ae08c5774246eae2ac5e329b2da8050bbde9ccbc5aa734ebd4c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20100/manifest.jsonl",
+      "sha256": "880aaab510e72c364cb87f5f137c383e4e1e4451d79d0d36d1fcaf71a936bb6c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20100/raw.jsonl",
+      "sha256": "f33bb8b6a761c89128ef9af6e28fd1ddc2334784adf4bf7d44b55d95ea5a7c81"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20100/summary.json",
+      "sha256": "b0f78bc4bcc5baa46952f547862e7a6a6a2bcdee935e6efc455c9d694c23ea07"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20100/summary.json.sha256",
+      "sha256": "78d67265a77f8c03820cb3c5f17c8073dc3baff81eb83a565483062641d3a44d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20101/manifest.jsonl",
+      "sha256": "d57b3397d28fdc9a28e18746d1b5e579b0d758cb0051eaf7d7f2ec08d29d34b7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20101/raw.jsonl",
+      "sha256": "040a25e47b8ded35f11c09cc5ceaf9b0c65a11ff81c63bc06e85cb7b24f8f4c8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20101/summary.json",
+      "sha256": "c416f3b47a755ec1223534313fbb0fd860787f1a8146295d1631842abd3c97af"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-005/seed-20101/summary.json.sha256",
+      "sha256": "b8e0e8d3074de068c27a45629ccd04e0d81673c367dd7536e733927c75619c67"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20100/manifest.jsonl",
+      "sha256": "71172316c54daae2ceb39d42292491231783d30e6698be49d62bdde0288c18c0"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20100/raw.jsonl",
+      "sha256": "552e39427eca2cf4e3c3e32d6fd46451a92fd6cc72d9abeadb28aa9556cb11e7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20100/summary.json",
+      "sha256": "d20e55f4855a445f470302078f5b21dd94061ea3facbc2d846ae368106b11d2e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20100/summary.json.sha256",
+      "sha256": "55b7f8b6366418361aca022ae6808aefbc943761e14028b47dda5c9ce8e5b270"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20101/manifest.jsonl",
+      "sha256": "761cbe34d791bab09d1bb6b3e5f5f2da57f100986efbb2798569f2bfd25b778e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20101/raw.jsonl",
+      "sha256": "75a3952508d4f63d87c3254e949a9fdd0cb34c20d0dc9c93b1d16ec54789b5e4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20101/summary.json",
+      "sha256": "9be3da5cc51e6478be81069d993f8caae12936cbbc5abdde7c3d050e9e8932e8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-006/seed-20101/summary.json.sha256",
+      "sha256": "d32ef7c8f0edd466379716573c446de03120940623c3d5dea5f73d48fa1907e4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20100/manifest.jsonl",
+      "sha256": "c20632a8ea771dc80b42d3a84ff822b65dbf4fdcc79120882891cf47af3d2fca"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20100/raw.jsonl",
+      "sha256": "56cfba75adff95643c3eb103fb94ec00b3f257071e58cbe821263380064a8f4d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20100/summary.json",
+      "sha256": "408fc30e50585b2878209b6536a403ae5a6d5038e4385a8413fcdddbc53c31ee"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20100/summary.json.sha256",
+      "sha256": "6dd2641f95d210020f305df7809371db4f00f84e836d9baa4aabc1a1ee862216"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20101/manifest.jsonl",
+      "sha256": "c92c78dd61b0c954c890cb87ec429f51b38d3900a7977a04a14261d068735cd1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20101/raw.jsonl",
+      "sha256": "cd1aed27f008242419041b6a273dd4a5045b35fbaa508818130703b8aee89b9c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20101/summary.json",
+      "sha256": "b2eaf62135d6e480e0140ec72c000894e2b415a851acd7c20a1e39ae7d8f061c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-007/seed-20101/summary.json.sha256",
+      "sha256": "43d7d1160c3ac0f688dbc1edbd2cdfc33625f09a19ff2d98deae6b2931404c19"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20100/manifest.jsonl",
+      "sha256": "32046c3c38ca91f2fb55afe8c8842067fbca8cebf0dde51ec164ac86da662882"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20100/raw.jsonl",
+      "sha256": "497053d9a52b62f9189a8f65153660e1c3eddc374b28a5be82c94b2cfa7f7ef3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20100/summary.json",
+      "sha256": "200420d6dd63dff5db202b8fcb5c2d3aa5e77c96d551e162a95a615df149351e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20100/summary.json.sha256",
+      "sha256": "6b84c18f520f6076de01e7e00f66d760fc9fcac12322f899e6814715159a6b2a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20101/manifest.jsonl",
+      "sha256": "da8eb9de88e88d0cf38f6a8434693eb084ad3710de83863dff45d1b0f89f86af"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20101/raw.jsonl",
+      "sha256": "a1fc9a6db51e365d11abb4208f6c1114e8c53796509eca3f7d2492b5b4c5e3ef"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20101/summary.json",
+      "sha256": "6be6d8f4537863d8b5ef21bedb48d24269f1c8fccbdeb14d13a0581485a13052"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-195p523229651/candidate-008/seed-20101/summary.json.sha256",
+      "sha256": "e77d923047eb47b3838c8b407a7c1f6d9f53066520a6cba76930dbbdb58444ae"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20100/manifest.jsonl",
+      "sha256": "2f327190049f2fc3b3ae7a40736b4ab519d256aa413171d5843bb8945ccdb7e8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20100/raw.jsonl",
+      "sha256": "67dd968faa8ef5732c033cf5a91fc3bb6f5b62afd13417ee128f996526203978"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20100/summary.json",
+      "sha256": "c933d17afcf788228ae51ecef64b2212a844c5d03d61fbb0f289472159234612"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20100/summary.json.sha256",
+      "sha256": "09144bf07c647577a383cac7ae6482677a366cd11de387736f0529dafc0cf511"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20101/manifest.jsonl",
+      "sha256": "4be0391d54fc49f85d9c1ca0c451219a06d0e62f4165f9bfe267b0bed5591cf4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20101/raw.jsonl",
+      "sha256": "ee25bfaf901da7c435a8e2312086e35246ac32bbdd5ac767f11cd01d27be33f3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20101/summary.json",
+      "sha256": "71477efc331892b9d65b8ef1ab3c861c01e0cb51a893f72c1d08a4e96fedc76a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-000/seed-20101/summary.json.sha256",
+      "sha256": "e623e353dd85dd7674941f61283b72e8bf76e05ca4e3140f2b67835e892b996b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20100/manifest.jsonl",
+      "sha256": "bd1770f6e9e50509bbf5a3a5d2db1b6043e9ba8fdc8f2c3721aa40aa5cb6dfba"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20100/raw.jsonl",
+      "sha256": "4555f28d5916ba632fb7813d880d605dc6a448e1ca907e2365cca56694d6e0a3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20100/summary.json",
+      "sha256": "67ed74301333e5da900fc1a75e7050e4e9c34063af743241c908df9f01479aa7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20100/summary.json.sha256",
+      "sha256": "4035e10cdee57885366aa190c3fc8ed2ec4e133fa2c990a050cfb755c37155a4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20101/manifest.jsonl",
+      "sha256": "248d9b3982e7cb649c442e4f90bcb068e1c282135b553d8c8c33765802470314"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20101/raw.jsonl",
+      "sha256": "a71b4562764a46334e1e17341ca9212f037079fbefa15595442e3f0e34863dfb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20101/summary.json",
+      "sha256": "6c8874b846f8367135635db813e234ebab58e975fb13b1f21c40a0a238873379"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-001/seed-20101/summary.json.sha256",
+      "sha256": "a286b586893f91deb26adc3118ff31c6a492b72ea883e2e6980506a99e31b959"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20100/manifest.jsonl",
+      "sha256": "a14c0e1973c31220112a522c62eeee874d3b11c2233751e2c9418adc9ae93769"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20100/raw.jsonl",
+      "sha256": "a42be5a44b6ee28e62e09bfeb5d61feeac63eb2741fc7d57c9232906c06df5ae"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20100/summary.json",
+      "sha256": "0b93edf4e6d9b99f0e58e18fe3c20cd5b52a4d218653225839a21574fe9c45b1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20100/summary.json.sha256",
+      "sha256": "692c3f575b8fee95174d348eb59bd7080dd12297d89748c78a6517e971b440a2"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20101/manifest.jsonl",
+      "sha256": "ad4c50af9748e7d607418e13d9e6184fe95f890267605c6ef6b19c41c2aaafe1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20101/raw.jsonl",
+      "sha256": "2106dcc39a6a84bd5339d1a5e18aeb146c0c485a98d65428e8cecc80206a1360"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20101/summary.json",
+      "sha256": "3c68a9730d2354b0e514e5f157acc6fc1726bdb2ff94c245d35ddf1567a60eec"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-002/seed-20101/summary.json.sha256",
+      "sha256": "d54f7900f416ec9a4cb60c33816ff0779f36d9c4ac8450396ac184c867d2882a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20100/manifest.jsonl",
+      "sha256": "70d24ddd39e7a53a9108b580c383ba55a7124ca87143e6193e88f9feb81bb84b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20100/raw.jsonl",
+      "sha256": "a309a7a7658404fe87cb2ae9faa54de4e6fcf82190e76c6b299fe70ed8a8b714"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20100/summary.json",
+      "sha256": "d1d28c273e9019ed6f49d86f743cd7c16ea74e007e4e4229fb40fedd89cb81aa"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20100/summary.json.sha256",
+      "sha256": "3781910eaaf0d30e96ae76d72a73b59023a3c33827317e8adc609261950ae845"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20101/manifest.jsonl",
+      "sha256": "3704e0d10a156a602b49c8548701728f2e0c051f324966cc6b597e424f182e09"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20101/raw.jsonl",
+      "sha256": "8471f5eefa2d0fabd7a95d28c04d27b42d3443c224b7ca4033dd163e1ae8cb87"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20101/summary.json",
+      "sha256": "3ed7f4ddef2356d57458a58f03cacd9f5b450022b1177a52cba776b0f36cb077"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-003/seed-20101/summary.json.sha256",
+      "sha256": "b2eb0afcec69c56981765eb04b8aa9d401da1165d20fbad29a7f344b49241cae"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20100/manifest.jsonl",
+      "sha256": "bab3a9af796d2ef0c676a1b76900f5f8e69b2f37d8a04d3f898b7ae78dbb8c2c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20100/raw.jsonl",
+      "sha256": "49d61b8b0c9ae6c2b9177376ee31a4f437e2688ee37bcfa8e297ea10b2123e25"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20100/summary.json",
+      "sha256": "653054bad0803670b4b7894d8b3d5e7b5d994c41babcad5503f4c6f73dc87325"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20100/summary.json.sha256",
+      "sha256": "c3cff61dfb25390303c6c3e734e35fcaf6d86022c5f81c663115d2bd5b84e4b7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20101/manifest.jsonl",
+      "sha256": "540e40c37417279562bc4809008902c88dcc810186694b7b77662d1f34784035"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20101/raw.jsonl",
+      "sha256": "bdf08d164e1a8a14416b955626e278e6c9ba5e2d8218a8413c2051d6a69f7fbb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20101/summary.json",
+      "sha256": "c2d33f062b99c65441037d7003993b86b24711707556701394cdc2b52e2d8525"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-004/seed-20101/summary.json.sha256",
+      "sha256": "efcc24fa6f4bf082c3482c6578e48f84e3c4f48eb5fe22c1bb3dc6a57d70b09c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20100/manifest.jsonl",
+      "sha256": "14e702d5b591fc7eb44c26833882e406b8a07282bc87ad7f6e83b3a2fd6d80d0"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20100/raw.jsonl",
+      "sha256": "5dba7daffec9858bc9e8766d81075cceb4d43b52dc19c1c03ecd419a05700213"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20100/summary.json",
+      "sha256": "6ab6b4246aad6622f0a8252e4391b65320fb48f774d5b04f801ff74602cd775d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20100/summary.json.sha256",
+      "sha256": "fcf87ebff43d56c6bde8d8d4dc88555c48370cd096fbb53c40cd3122cb55c79c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20101/manifest.jsonl",
+      "sha256": "c6eba3127cb3d945b53adf0c8cd02132e5128ab996436e273bc730b8325e6633"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20101/raw.jsonl",
+      "sha256": "e4e13d82a8b9bc2681b12623dadc28a740f8835c2188cf44d69ce63360f4863e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20101/summary.json",
+      "sha256": "b04c0da0a14403fb8bd3d1cbcce47db60a1c9cc74e6c52304aee7ae64009f62e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-005/seed-20101/summary.json.sha256",
+      "sha256": "d086dac0645d241280b5babef65ab71077e9f720ef12fc720a16001500b60144"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20100/manifest.jsonl",
+      "sha256": "1874836bf53ff3954830b6070176ee49983b2d75f6c97aca7662f1eeb4b89f13"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20100/raw.jsonl",
+      "sha256": "e32c74991e8dc7a7d57060e5c6e5bb40b84a531a0182aaacfd87ac0508d438e9"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20100/summary.json",
+      "sha256": "843ce4bb89b0b312c6ea2452c7257b794428a7fc599cf51e6b1b15ac85c86434"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20100/summary.json.sha256",
+      "sha256": "e63988c47215acb14816f420dd8ad91688ad202bb220b7324b93b60b014ae704"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20101/manifest.jsonl",
+      "sha256": "28dcc644e1ff87937b39739417f0a86ef7dc75203172e30f525e93cc3cfe25f3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20101/raw.jsonl",
+      "sha256": "bea4f5fbba82301163fb0e09115799db5420872c5a958d30f9ae9cccfbb8b801"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20101/summary.json",
+      "sha256": "45e48c308fcf860e78649245f2d88d9257cb319804cae042e9612da416c68c65"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-006/seed-20101/summary.json.sha256",
+      "sha256": "5f06972d88bd730ad854ecbc4b9399ae15765bebf7fa34470936791a7b77f76e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20100/manifest.jsonl",
+      "sha256": "6043ac392fc508e0707159680d89e41ae94d5426800db05ab30987206e6202d1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20100/raw.jsonl",
+      "sha256": "7ea19c2802aa67331e82149aa37d6e9ed5bdc16a0dc4071b821dac428a34e1d8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20100/summary.json",
+      "sha256": "bfe8650004170f26b0f004f33a7fcd0f27eec53883e58d085d5e5679b3f4c78c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20100/summary.json.sha256",
+      "sha256": "5e579d1dac3a0c032fca4eca39852826c76842a8568db1ce3ac27d3861b915f4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20101/manifest.jsonl",
+      "sha256": "27124c179d60140fb4dc09928690fd16b979df162efdfbf3240719b0d47b517d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20101/raw.jsonl",
+      "sha256": "4d667db729a666c35c75860a0f4cce9aef62d32c4f1a851c07aee1407de530a6"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20101/summary.json",
+      "sha256": "0a11c92e13be9485a91b4d1ad2f6fbfc5ad63d9e508ce4c219e24d4f2a6436a3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-007/seed-20101/summary.json.sha256",
+      "sha256": "1de982588db235d00aa4cbe71c900b09f5950f6125fc8a05f9d179bb2ae60fec"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20100/manifest.jsonl",
+      "sha256": "49f3ba153af48fcf8b84f243f4b44de664f5f5f825e3590c6855d237b93b552b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20100/raw.jsonl",
+      "sha256": "aa17c92ba31d4ea9c81e1bacc62d9dd7a93653462d808e2012f3f9ba27828b4f"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20100/summary.json",
+      "sha256": "ea291453f623571c768053e066d6d6b3c09e27e1ba3b6d9d9885341be894ab6d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20100/summary.json.sha256",
+      "sha256": "a38e8fb9dc9d1162114b72bc10b40ac096a387d36a3923c14b1bb0dad7348fdd"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20101/manifest.jsonl",
+      "sha256": "7a6182d3cc142b1ed3280c1f06639f75f0caae79bafd528a7ce95f80223b1d7d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20101/raw.jsonl",
+      "sha256": "c792bb9b9702e07c50f40e98a3206e78f4f1935c5f738c63447200ce3ddd47a4"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20101/summary.json",
+      "sha256": "51b5001760ecd07acb6366b18a11bc28ad19c4a7c18d39c196b98bc7725ce477"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-24p4404037064/candidate-008/seed-20101/summary.json.sha256",
+      "sha256": "4bf8ef67281acb1f1c306a131c7c3c46937b335172fa0061466b6c0360c10e26"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20100/manifest.jsonl",
+      "sha256": "3fac549894e3b49ed2b2cb34f4c1ede2b59ad9c6fdb9346032ec77118891b9ad"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20100/raw.jsonl",
+      "sha256": "3c6dee7825e9e684cd650cd20aae2d49b2f0133af6456f5bb68b8cc392b73928"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20100/summary.json",
+      "sha256": "6f5f0f447210021014bc29369cd13630df9223da97cc9cdb6278c0b7c632b694"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20100/summary.json.sha256",
+      "sha256": "58a8ebcea286e375568d61e3ea170716611e2b2a047d8900785c9c136ea40016"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20101/manifest.jsonl",
+      "sha256": "21fe1a9c67f532b7f75cde1af16d07908d2c9f3f141c487f5b8c69acb9c5fb1f"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20101/raw.jsonl",
+      "sha256": "ca98a17b086bac2b96c8a2b703cb11d321b63db7eb968fba4b8120405339d982"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20101/summary.json",
+      "sha256": "ea82727fbe29e4d5e403fe18c1018d5ec7fd88a76f084da7e425d8406d0cea09"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-000/seed-20101/summary.json.sha256",
+      "sha256": "60f6775bafa55a8a8fb874c41c743bc7f073e83966e3220b78016f39b5c920ef"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20100/manifest.jsonl",
+      "sha256": "cf81353db40023d5ff2b9ae53e70e9f650efd12fd7dd71364abe1921882465a1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20100/raw.jsonl",
+      "sha256": "505e2b6fa12dcf22668599133c70997d5c5a279094b4648037659c691d6e6b60"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20100/summary.json",
+      "sha256": "51c0072da8b5765d02b875ee62df43e5ee2908ae466c9f827c9d190066805c74"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20100/summary.json.sha256",
+      "sha256": "ced08d234d8f6ea3640db7f92dd656184720df121acdeafd1bb7e633f5eb0556"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20101/manifest.jsonl",
+      "sha256": "2b6a3881b35db0d7bc31ca8969832ee84ca5da80f621b23572c67976189d545e"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20101/raw.jsonl",
+      "sha256": "2e56b9e1f6dcd962bd4db4f20b2a4c7f8ae2aa0f272c04d6050c1d89faa7a264"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20101/summary.json",
+      "sha256": "e0d4f5a9abdf10ebc11933ec2e154e71ba0808e2e01155d41d280437335daf7b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-001/seed-20101/summary.json.sha256",
+      "sha256": "b6b8a473017de0ffa6cf9354c30abe3f26da021429f5d1119f44ea3e748d9618"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20100/manifest.jsonl",
+      "sha256": "807d512c097f508c7ff300506bc2b1ae01095ab98d295a26142ed8d582858664"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20100/raw.jsonl",
+      "sha256": "212145ec2615466f8c0929cf89b3dc3ef409d6a937b1b4f690c63965914fcddb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20100/summary.json",
+      "sha256": "1036f85417c6b10f31c01f72e89f6341e07d28b72981433c56c3082d7820b1ac"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20100/summary.json.sha256",
+      "sha256": "ce77954763de9e047005775afa7d19cdca4e943f6d76fde8d0e5d35bd6e24cb9"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20101/manifest.jsonl",
+      "sha256": "1d0e47f65a41f7b0631d09e9757d8fcdcab8c08c8db82ea6a7678b8fe8cbd9a7"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20101/raw.jsonl",
+      "sha256": "260d01bf3cb32b7bc7b0b895b7b636a71f60a29668fa93b811e38e4d8e03b072"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20101/summary.json",
+      "sha256": "cc6426ea8a055a9b26fc7eeb38161ae80d9bbc29bee2f2eddcf6c4a72c32ec3c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-002/seed-20101/summary.json.sha256",
+      "sha256": "dd17400941a80dc7f87df67b1e5691c0dd8cdc44507aea182961a607c810bf72"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20100/manifest.jsonl",
+      "sha256": "9f37bb52f82b4be970f2f833fa25245b9c848105597559c9d4a92cd53b0f9243"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20100/raw.jsonl",
+      "sha256": "ff42404e369e7cac2d727697229a659174ce4531688b71ec00fc10ec6c21500a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20100/summary.json",
+      "sha256": "a1b6386842dc68f4412cf2fe01e77dbfcfe47fa409928c7ab4df3cf24e6c06c6"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20100/summary.json.sha256",
+      "sha256": "c1c50a0a2206c0a22b839d2b5c0fa1b4751d98d1f72bc2273db8f3e7847db407"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20101/manifest.jsonl",
+      "sha256": "d19351fcbc5130747eea5907e1e4cd85ae6867200d9b25456d3c8804120ae5ea"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20101/raw.jsonl",
+      "sha256": "6d38cdfdff46f314894a2be9ad00cd6000c97d5a23b091a9b555f3dec6fc6b4f"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20101/summary.json",
+      "sha256": "54ef79b594fe879e02ed05f4dd3400d5e89428ae9dffaf078e41b2cc6f93b56d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-003/seed-20101/summary.json.sha256",
+      "sha256": "8588e8ecc6388270dd235972e8a2cb1780a8447200284a48daa02a7ed2f50235"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20100/manifest.jsonl",
+      "sha256": "6f4867a7102eb5798a66f06e2bf345c39d05ea9980b9bbc82d406fcf1b8af42d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20100/raw.jsonl",
+      "sha256": "6024d78b2cc4b63cd02fe4d96f1d47c8e776d121beed7ddfb9171df0533bb1bb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20100/summary.json",
+      "sha256": "18f7517969959ec6e5af5dc3ed97fb5ef4163a7a2770bbe99f57a036e7b2cde5"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20100/summary.json.sha256",
+      "sha256": "5372cf2cbc4d07e3e27e8afbd17bcdff3f8f37075cf056bdc175460b15b22979"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20101/manifest.jsonl",
+      "sha256": "8808019ca030f9289d4a181e7ea686094488262c46015c60134c86309cebb044"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20101/raw.jsonl",
+      "sha256": "d052d1553758acc43068927099118703ecd58611b2e4fe7d38104d5c3e2ec8e1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20101/summary.json",
+      "sha256": "268b400142556d2891e3db7b2957242188e6b5d86cb4962c1edee093ac6d1c71"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-004/seed-20101/summary.json.sha256",
+      "sha256": "8db96ae3986accc0df2371f23a112411a33d2e0479f6b5496cdf9724b9b02566"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20100/manifest.jsonl",
+      "sha256": "545fdbb2668e4f30b54b8006a8f3cd168cc5b46c117289ec8795e62cf087eac9"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20100/raw.jsonl",
+      "sha256": "7bdbb7798ecc47dd4b105893622c6db0f63261c509a6ed27ffc778972b6c9a49"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20100/summary.json",
+      "sha256": "5f6d9a3bbbf51b6af480f6de0a9b418cea4b69e743e84d41c9bccf6b600e5676"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20100/summary.json.sha256",
+      "sha256": "4f5bbac07534fe4df7fa9065d1d8b69a43f2d47e745978d69fdff02c684ca5c2"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20101/manifest.jsonl",
+      "sha256": "e71fb7f1a61ebffdd0abb3c78f1f649658b1361940d51cb2ac9f15f0ec0b6726"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20101/raw.jsonl",
+      "sha256": "86ff746916cd4463487562a392ba65bea9b3180133e0faa018d53a42a04992d8"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20101/summary.json",
+      "sha256": "b2032488359dfeb1c900b5732921b41d3f9053e65736776b21508ad3052b2feb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-005/seed-20101/summary.json.sha256",
+      "sha256": "2e35f00b722ab5dfd09559bd43b333715640046c052b8f8cd47c12237e78e5af"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20100/manifest.jsonl",
+      "sha256": "187bcb561c5134868aac8449f2914a90ca343bf122faca734640754edc9da51d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20100/raw.jsonl",
+      "sha256": "eefea0ec1445007bf52888d9ca66129ba9fbe4beae8283bb3f3cf8746c93e71b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20100/summary.json",
+      "sha256": "788416b19ecb0baf3dc1755f8f52c1b3ea1365fe31ec8e55f1f1efabbf3820f0"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20100/summary.json.sha256",
+      "sha256": "0f92900c5f28ed27009b7ad928da83e0ae8e40cb4aff7cbdd4fb9140f0816f6b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20101/manifest.jsonl",
+      "sha256": "7fe552851a06b10962d9e66f2620fc8c16843dc6ea4098633098e15f097d322d"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20101/raw.jsonl",
+      "sha256": "5ef0cdb849d8e23938f595f9cfc0471f08fdbb28b607a7390771d59c1b0794ad"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20101/summary.json",
+      "sha256": "930b942cf6cbd2b191902b923990e272dff1ef9f6e4242f104c4210ce730f2a2"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-006/seed-20101/summary.json.sha256",
+      "sha256": "3df0e5a76e55cf00df83dcd6731f570ed3d1c468cb2bc0d51af75f0faffc0d80"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20100/manifest.jsonl",
+      "sha256": "99f042ef34dd6c0cb8b473cb02bd87c9bbc9621b60673089156d7b9a2727aba1"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20100/raw.jsonl",
+      "sha256": "b4881dffdd978c26b3ac39674b508b1df695d2cc3e1e121e873068e19948ab9a"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20100/summary.json",
+      "sha256": "c069e1e368e14df6215b50b5938ab7b5c840c2976128c517fde17f5d172ee754"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20100/summary.json.sha256",
+      "sha256": "45a0e1d97bb9831c875f1d54bdf36220710a6ef37d22616ad4c211ae1bfd6ac3"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20101/manifest.jsonl",
+      "sha256": "44f726df6efb774d658f9405b55e88ea3f2ac14373f47f935a16bfb5d569f0c5"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20101/raw.jsonl",
+      "sha256": "df06a905c91c7bbb67ba7dfc510ec0e810330c7a99c1360ffc699d98cb9d55d6"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20101/summary.json",
+      "sha256": "9eb485ecf6ce71a34c19a3d96df3b25dfbaa65804297a7b1ad63a38f6bcb670f"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-007/seed-20101/summary.json.sha256",
+      "sha256": "0dc530b62481e394e2c35bf5af46d5119397b2d8380801ab28f4c1961cfb6369"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20100/manifest.jsonl",
+      "sha256": "adc240458065f33d133299634737673656d5f2c5bee46de29f6fc8cb95163b91"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20100/raw.jsonl",
+      "sha256": "5c7cd8edc6ad6bd1203030f6bb3452129b9b93166dd9bd82a0ed439c2cb020eb"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20100/summary.json",
+      "sha256": "9f771eb46cb034c2dd87c411a98b629b06ddddebdf52f9d87e51ff4e921bd113"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20100/summary.json.sha256",
+      "sha256": "31cbae2454459ceab2ba8f6add06feb76643299869fbe3a718735eb0b6eb9b8b"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20101/manifest.jsonl",
+      "sha256": "4c997733a762bdd804394e41dc47e00748c03b258e754363962010a7ec1c9e72"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20101/raw.jsonl",
+      "sha256": "2f9328b86061f006f7fa1ae21a62c8bfd9bd3eefc579df08edfcdbc9374ce0b9"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20101/summary.json",
+      "sha256": "f0af7c7552feb587cd3e46fa6a50bb879b53731b87589674d690fb9df699fa3c"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/raw/tuning/T-64/D-97p7616148257/candidate-008/seed-20101/summary.json.sha256",
+      "sha256": "48f3721b2c1bf16f0485109f423c9fb61042a0d0df666ec55e0cc7cda0cb83e0"
+    },
+    {
+      "path": "/workspace/cce-review-pilot/source_config.json",
+      "sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+    }
+  ],
+  "profile": "smoke",
+  "schema_version": 1,
+  "seed_sets_disjoint": true,
+  "selected": {
+    "aggregate_mean_all_action_prediction_mse": 0.015035873125461846,
+    "candidate_id": "candidate-006",
+    "learning_rate": 0.0003,
+    "steps_per_round": 1,
+    "tie_break": [
+      "fewer_steps_per_round",
+      "smaller_learning_rate"
+    ]
+  },
+  "selection_metric": "mean_all_action_prediction_mse_after_burn_in",
+  "selection_metric_description": "equal-weight mean of per-(seed,horizon,target_D) all-action prediction MSE after burn-in",
+  "study_source_input_set_sha256": "d2810062da6ef84c09650abc937c2afe11e3194e6f54379f4c389aecbf8e2565",
+  "study_source_inputs": [
+    {
+      "path": "experiments/BUCK",
+      "sha256": "08375551ccf5bedc6751864ad40a29a731f161d9ca9c74b40a0be964364f21f9"
+    },
+    {
+      "path": "experiments/README.md",
+      "sha256": "e52a9e90cdcbc74962d86e280859be1dee733a80f540e59bc7246116f6c2fbcc"
+    },
+    {
+      "path": "experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md",
+      "sha256": "6aee823a2e4f11b02ae4144b8f7c8f2be07d8adadc8e44cfaac1ee10c0ca59f0"
+    },
+    {
+      "path": "experiments/__init__.py",
+      "sha256": "c539b544fa3ed7b353fe2c70ccfe6139aa8d3bc35b5eca782758dd804dcdeeaf"
+    },
+    {
+      "path": "experiments/aggregate_transport_instantiation.py",
+      "sha256": "145a79d598ac27edcf4fe3a7cbbe7ed3482df4fb09a72a922e1d2a2382ee7afe"
+    },
+    {
+      "path": "experiments/artifact_utils.py",
+      "sha256": "5a246d33e387b2149a81876aa2f64434889b2a789c4a1fe9fb44a9ff46f30da4"
+    },
+    {
+      "path": "experiments/config.py",
+      "sha256": "8ed13f49df07e6e5d606572764ccbcca9e529b9a3291f0cb777b6ef8fb825410"
+    },
+    {
+      "path": "experiments/configs/transport_instantiation.yaml",
+      "sha256": "d6f6c0de47651a7e6a291f63ba609654afd5cff6cc13d11722d9fae587e7abdd"
+    },
+    {
+      "path": "experiments/curvature_operators.py",
+      "sha256": "8231fc8be87c90f9a3333ee5fb6743f14455885c1e317436a02bafb4238bbf95"
+    },
+    {
+      "path": "experiments/logging_utils.py",
+      "sha256": "9ddf4a586ce536bdf37575e2a7d68f955223fb249da298acce3b5aed678fea97"
+    },
+    {
+      "path": "experiments/make_transport_instantiation_artifacts.py",
+      "sha256": "5886932695fabfcc174798e94c93d372a09ffa9f51543ce3e1bcdc7c9297ba16"
+    },
+    {
+      "path": "experiments/run_transport_instantiation.py",
+      "sha256": "034a876331fa173877ebe7f7c873130160b35053df3cff176e43ca3ba1873550"
+    },
+    {
+      "path": "experiments/run_transport_instantiation_study.py",
+      "sha256": "6154655f8e31928fc3e6dd9cd7d92a8f77df6df63080c662e9af115a210859ed"
+    },
+    {
+      "path": "experiments/theory_metrics.py",
+      "sha256": "4d89ee79488f94a0e9d812af27d75fe638e57c1bebc4e038294dde3c9645f249"
+    },
+    {
+      "path": "experiments/transport_instantiation.py",
+      "sha256": "68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4"
+    }
+  ],
+  "tuning_seeds": [
+    20100,
+    20101
+  ]
+}

@@ -58,9 +58,10 @@ the sidecars say. A `.sha256` sidecar tells you the bytes are the expected ones;
 only the closure tells you the compiler read the file at all.
 
 `paper/tables/` and `paper/figures/` carry the 21 artifacts this study
-generates, each with its sidecar and provenance record, plus one symbolic table
-of asymptotic rates. They do **not** carry the project's older autodiff-GGN and
-linear-bound benchmark outputs: those were designed for an earlier one-sided
+generates, each with its sidecar and provenance record. The earlier symbolic
+growing-window rate table and nine legacy appendix sources are outside the
+current manuscript and are not shipped. The older autodiff-GGN and
+linear-bound benchmark outputs are also excluded: those were designed for an earlier one-sided
 theorem, do not execute the transported score, and are not evidence for any
 claim in this paper, so shipping them here would only invite them to be read as
 if they were. Check 3 below verifies every evidence file that is here.
@@ -152,8 +153,8 @@ It runs one gate and four checks, and prints the exit status of each:
    It also audits every *other* numeric literal in every compiled input listed
    in `SOURCE_CLOSURE.json`. Each one must be either a ledger entry or an
    explicit classification bound to that file and to an exact number of
-   occurrences; `paper/macros.tex` and the symbolic rate table are checked
-   structurally instead. Anything left over is a failure, so a number added to
+   occurrences; `paper/macros.tex` is checked structurally instead. Anything
+   left over is a failure, so a number added to
    the manuscript without being declared cannot pass.
 
 2. **Artifact regeneration.**

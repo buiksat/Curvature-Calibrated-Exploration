@@ -13,9 +13,8 @@ current relinearized curvature, but only through an explicit chain of
 certificates.  The metric path controls frozen-to-current drift, the two-sided
 operator comparison controls the curvature actually applied, and the solver
 interface controls the numerical width used for selection.  The lower operator
-factor is what returns the played width to the frozen sequential potential.  If
-that factor is unavailable, the one-sided dynamic result remains valid but does
-not supply the same closed rate.
+factor is what returns the played width to the frozen sequential potential;
+without that factor, the hypotheses of this closed regret bound are not met.
 
 For squared loss, the corrected center makes this chain independent of
 nonlinear optimizer convergence.  The representation may follow any
@@ -29,15 +28,19 @@ problem-dependent constant yields
 $R_T=O(d\sqrt T\log T)+O(\sqrt T)$ without requiring $D_t<1$.  Here $W$ is an
 abstract smoothness scale, not generic network width.
 
-The controlled scaled-tanh audit separates formal validity from practical
-usefulness.  All 600 transport-Hessian trajectories retained simultaneous
-reference confidence and transported optimism, and the locked grid recorded no
-deterministic audit failure.  Yet the analytic path envelope was orders of
-magnitude longer than the selected-path diagnostic, every reported theorem
-bound was vacuous relative to the deterministic cap, and the three comparison
-policies had lower sample mean regret at the primary horizon.  The result is a
-negative practical finding about this certificate and environment, not evidence
-for a uniform ordering of curvature methods.
+The controlled scaled-tanh audit uses dense current matrices and direct
+Cholesky solves in float64.  All 600 transport-Hessian trajectories retained
+simultaneous reference confidence and transported optimism, and the locked grid
+recorded no deterministic audit failure.  Yet the analytic path certificate
+exceeded the endpoint distance by five to six orders of magnitude in the
+reported medians, every
+reported theorem bound was vacuous relative to the deterministic cap, and the
+three comparison policies had lower sample mean regret at the primary horizon.
+The recorded decomposition is dominated by the base confidence component,
+which includes the regularization/norm-bound term; transport inflation alone
+does not explain the vacuity.  These are findings about this certificate,
+environment, and horizon.  Comparable worst-case guarantees do not order the
+realized regret of policies that generate different trajectories.
 
 \paragraph{Limitations.}
 The abstract theorem assumes a standard-Borel action space, a graph-measurable
@@ -56,8 +59,9 @@ nonvanishing misspecification, two-sided guarantees for arbitrary diagonal,
 low-rank, stale, or sketched operators, empirical validation of the transported
 theorem, or end-to-end scalability of the full policy.  Ordinary floating-point
 residual checks are diagnostics rather than verified numerical certificates.
-The new experiment is a controlled execution and audit, not empirical proof or
-validation of the theorem.  Its endpoint method is a dense diagnostic comparator,
+The experiment does not evaluate approximate curvature operators or CG, so
+those solver and operator interfaces remain theoretical results.  Its endpoint
+method is a dense diagnostic comparator,
 and its intentionally naive current-width control is uncertified even where its
 observed optimism rate is high.
 \iflegacyextras
@@ -65,5 +69,6 @@ Legacy audits are summarized in
 \Cref{app:legacy-evidence}; none instantiates the revised theorem event.
 \else
 Earlier repository audits are excluded from this paper: none of them
-instantiates the transported theorem event, and none is used here as evidence.
+instantiates the transported theorem event, and none is used here as evidence
+(\Cref{app:legacy-evidence}).
 \fi

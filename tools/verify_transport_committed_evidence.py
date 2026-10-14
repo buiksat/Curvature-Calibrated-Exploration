@@ -877,12 +877,12 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
         ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
         ("600 transport-Hessian runs", "abstract states the run count"),
         (
-            "the analytic path certificate is\nconservative",
+            "the analytic path certificate exceeds the endpoint distance by five to six orders\n"
+            "of magnitude",
             "abstract keeps the conservative-certificate finding",
         ),
         (
-            "every reported numerical regret bound is vacuous relative to the\n"
-            "deterministic\ncap",
+            "every reported numerical regret bound exceeds the deterministic\ncap",
             "abstract keeps the vacuous-bound finding",
         ),
         (
@@ -890,7 +890,9 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "abstract keeps the adverse regret comparison",
         ),
         (
-            "does not by itself deliver a useful bound or better regret",
+            "These findings separate certificate validity from bound\n"
+            "tightness and policy performance; they establish no uniform regret ordering or\n"
+            "practical curvature advantage",
             "abstract separates certificate validity from usefulness",
         ),
     ),
@@ -904,7 +906,8 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "conclusion keeps the adverse regret comparison",
         ),
         (
-            "not evidence\nfor a uniform ordering of curvature methods",
+            "Comparable worst-case guarantees do not order the\n"
+            "realized regret of policies that generate different trajectories",
             "conclusion refuses a uniform curvature ordering",
         ),
     ),

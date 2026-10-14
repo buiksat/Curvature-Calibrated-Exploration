@@ -1,0 +1,175 @@
+{
+  "aggregate_sha256": "2b60ccc1f9e527f7e68c4a26933bce241271953a71580067321dcb84ea681f9c",
+  "completed_at": "2026-10-14T01:03:51.420049+00:00",
+  "config_digest": "bb7aa06b995bd1e54a180630aa01ccd55b7751ade598dbad906a6702a63282bb",
+  "evaluation_complete": true,
+  "git_dirty_at_start": true,
+  "git_revision": "7bd8e4d78b62e1ea510da51deac7cc2c4624637d",
+  "output": "/workspace/cce-review-pilot",
+  "packages": {
+    "numpy": "2.2.3",
+    "psutil": "7.2.2",
+    "scipy": "1.15.2"
+  },
+  "plan": {
+    "GPU_required": false,
+    "blas_threads_per_worker": 1,
+    "development_runs": 24,
+    "evaluation_runs": 24,
+    "horizons": [
+      64
+    ],
+    "output": "/workspace/cce-review-pilot",
+    "profile": "pilot",
+    "target_D": [
+      24.440403706431148,
+      97.76161482572459,
+      195.52322965144918
+    ],
+    "tuning_runs": 54,
+    "workers": 4
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "quadrature_node_cache": {
+    "arrays": "unchanged values, read-only",
+    "function": "numpy.polynomial.legendre.leggauss",
+    "maxsize": 8,
+    "scope": "per worker process"
+  },
+  "raw_retention_required": true,
+  "requested_profile": "pilot",
+  "selection_sha256": "4878ce49371a2b6a1d93371d5141e91c3316c63295dfe69d7b4caac37f5c5419",
+  "signature": "beb58f0b665c0cec8f8ffb106fb3c73aec917c7f729f556dbaee90ffc6717f98",
+  "source_inputs": [
+    {
+      "path": "experiments/BUCK",
+      "sha256": "08375551ccf5bedc6751864ad40a29a731f161d9ca9c74b40a0be964364f21f9"
+    },
+    {
+      "path": "experiments/README.md",
+      "sha256": "e52a9e90cdcbc74962d86e280859be1dee733a80f540e59bc7246116f6c2fbcc"
+    },
+    {
+      "path": "experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md",
+      "sha256": "6aee823a2e4f11b02ae4144b8f7c8f2be07d8adadc8e44cfaac1ee10c0ca59f0"
+    },
+    {
+      "path": "experiments/TRANSPORT_REVIEW_FOLLOWUP_PROTOCOL.md",
+      "sha256": "a1af65dfaf6ea3e6a5017a810eb085df29da08586a996177d46d605558c3b6f1"
+    },
+    {
+      "path": "experiments/__init__.py",
+      "sha256": "c539b544fa3ed7b353fe2c70ccfe6139aa8d3bc35b5eca782758dd804dcdeeaf"
+    },
+    {
+      "path": "experiments/aggregate_linear_audit.py",
+      "sha256": "266b67c7494fa8fc54670effd413bbf36470e45d75b0add365436fd495f69e19"
+    },
+    {
+      "path": "experiments/aggregate_transport_instantiation.py",
+      "sha256": "145a79d598ac27edcf4fe3a7cbbe7ed3482df4fb09a72a922e1d2a2382ee7afe"
+    },
+    {
+      "path": "experiments/artifact_utils.py",
+      "sha256": "5a246d33e387b2149a81876aa2f64434889b2a789c4a1fe9fb44a9ff46f30da4"
+    },
+    {
+      "path": "experiments/autodiff_ggn.py",
+      "sha256": "5b121f18d3c58ec15891166f4ab6942cb2d845ae0972b34ef20b7633ad31a186"
+    },
+    {
+      "path": "experiments/config.py",
+      "sha256": "8ed13f49df07e6e5d606572764ccbcca9e529b9a3291f0cb777b6ef8fb825410"
+    },
+    {
+      "path": "experiments/configs/transport_instantiation.yaml",
+      "sha256": "d6f6c0de47651a7e6a291f63ba609654afd5cff6cc13d11722d9fae587e7abdd"
+    },
+    {
+      "path": "experiments/configs/transport_review_followup.yaml",
+      "sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+    },
+    {
+      "path": "experiments/curvature_operators.py",
+      "sha256": "8231fc8be87c90f9a3333ee5fb6743f14455885c1e317436a02bafb4238bbf95"
+    },
+    {
+      "path": "experiments/linear_environment.py",
+      "sha256": "12056a15c493c7cbc6b4cf8f7e9d7fa05b5b34f6b57a5fe213e06cfe78fed5c3"
+    },
+    {
+      "path": "experiments/logging_utils.py",
+      "sha256": "9ddf4a586ce536bdf37575e2a7d68f955223fb249da298acce3b5aed678fea97"
+    },
+    {
+      "path": "experiments/make_autodiff_ggn_artifacts.py",
+      "sha256": "12401728be65a61e077274bc2242db667dd0a804d3f0887e38c7e296b546728a"
+    },
+    {
+      "path": "experiments/make_certification_audit.py",
+      "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8"
+    },
+    {
+      "path": "experiments/make_closed_rate_artifact.py",
+      "sha256": "60705a7377a37097b6383b7189dfac3f69e07a98a9d1a00cbaac3baeed217f0e"
+    },
+    {
+      "path": "experiments/make_linear_bound_artifact.py",
+      "sha256": "c47679b44ad8121a568c4028553554718f1abacbb69ebadde2c7b676343d6b0b"
+    },
+    {
+      "path": "experiments/make_transport_instantiation_artifacts.py",
+      "sha256": "5886932695fabfcc174798e94c93d372a09ffa9f51543ce3e1bcdc7c9297ba16"
+    },
+    {
+      "path": "experiments/requirements-python312.lock",
+      "sha256": "71c48ca1849295fe0908335bc36c15d27641ff51a33a78146ecf9f4a1f1a7b3b"
+    },
+    {
+      "path": "experiments/run_autodiff_ggn_benchmark.py",
+      "sha256": "1b5044af019e27f0305ed7b899a5afc7e5797791ed7fb88a4c1ccab06fad99e1"
+    },
+    {
+      "path": "experiments/run_linear_audit.py",
+      "sha256": "c98655c17da3d4669d3a17843fca9e5dbe61f2ae7cd4db39417bab041220eacb"
+    },
+    {
+      "path": "experiments/run_linear_study.py",
+      "sha256": "8925a77a77815448f508722f6874431b339d60628eb81aeac3651aadf1e905ab"
+    },
+    {
+      "path": "experiments/run_transport_instantiation.py",
+      "sha256": "034a876331fa173877ebe7f7c873130160b35053df3cff176e43ca3ba1873550"
+    },
+    {
+      "path": "experiments/run_transport_instantiation_study.py",
+      "sha256": "6154655f8e31928fc3e6dd9cd7d92a8f77df6df63080c662e9af115a210859ed"
+    },
+    {
+      "path": "experiments/theory_metrics.py",
+      "sha256": "4d89ee79488f94a0e9d812af27d75fe638e57c1bebc4e038294dde3c9645f249"
+    },
+    {
+      "path": "experiments/transport_instantiation.py",
+      "sha256": "68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4"
+    },
+    {
+      "path": "tools/check_python_environment.py",
+      "sha256": "77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e"
+    },
+    {
+      "path": "tools/run_review_experiments.py",
+      "sha256": "c4bd51b2e93d839a117ab02edb08d776a3b53646dce34bf74458ea3bdcf10575"
+    },
+    {
+      "path": "tools/run_review_experiments.sh",
+      "sha256": "80961d796f8bcad6eb921cf8e74cefa1ce689b5fbdca6f1df0dbd720bee598c8"
+    },
+    {
+      "path": "tools/verify_review_experiment_export.py",
+      "sha256": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0"
+    }
+  ],
+  "started_at": "2026-10-14T00:55:16.602573+00:00",
+  "status": "complete"
+}

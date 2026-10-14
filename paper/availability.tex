@@ -1,11 +1,5 @@
 %% availability.tex
-%% Shared manuscript source, extracted from the historical entry point
-%% paper/main.tex (lines 4040-4050) so that it and the TMLR entry point
-%% submissions/tmlr_2026/main.tex read one copy of this material instead
-%% of two.  The venue-conditional branches differ only in what the reader
-%% is actually handed; the factual content is the same.  The revision the
-%% lines refer to is recorded in paper/EXPOSITION_REVISION.md, which is
-%% not part of any submission upload.
+%% Availability statement for the self-contained TMLR manuscript snapshot.
 \iflegacyextras
 The repository contains the manuscript, theory derivations, implementation,
 tests, frozen transport-instantiation protocol and configuration, optimizer
@@ -19,24 +13,37 @@ The manuscript does not use the legacy experiments as evidence for
 and derived benchmark outputs are not part of the compact checkout; Git history
 preserves them.
 \else
-The anonymous supplement accompanying this submission contains the frozen
+The research codebase retains the frozen
 transport-instantiation protocol and configuration, the experiment
 implementation, the aggregation and artifact-rendering code, the optimizer
 selection record, the strict full aggregate, the SHA-256 provenance sidecars,
 the generated tables and figures used in \Cref{sec:transport-instantiation},
-and a detached verifier that recomputes the reported statistics and regenerates
-every published table, figure and CSV byte from the aggregate.  The aggregate is
-bound to its complete raw-input inventory by SHA-256 provenance.
+and a detached verifier for aggregate-derived statistics and generated
+artifacts.  The verifier checks the reported aggregate summaries and regenerates
+tables, figures, and CSV files from the retained aggregate; it does not rerun
+the study or recover missing per-seed observations.  The aggregate is bound to
+its complete raw-input inventory by SHA-256 provenance.
 
-Two limits are stated rather than worked around.  First, the raw per-run
+The following reproducibility limits remain.  First, the raw per-run
 trajectory files are not distributed: they are large and were never committed,
-so the supplement verifies the aggregate's inventory structure and digests but
+so the detached verifier checks the aggregate's inventory structure and digests but
 cannot verify the raw bytes those digests name, and the verifier labels those
 checks accordingly instead of reporting them as passes.  Consequently the
 deterministic paired bootstrap, which resamples per-seed values, is not
-recomputable from the supplement; its algorithm, level, resample count and
+recomputable from the retained aggregate alone; its algorithm, level, resample count and
 derived child seeds are recorded, and no per-seed values are synthesized in
-their place.  Second, earlier studies in the same line of work were designed for
+their place.  Second, the inspected historical research snapshot specifies
+SciPy 1.15.2 in its dependency requirements but retains a host-specific
+SciPy 1.13.1 wheel link.  These historical records do not establish a single
+matched runtime for the study.  The portable dependency lock prepared for
+new runs does not recover the runtime used to generate the historical evidence.  Two selection-time source files, the artifact renderer and the Buck
+build declaration, also differ from their recorded source digests.  The
+verifier records both divergences explicitly; verifying the retained outputs
+does not restore the selection-time source tree.  These dependency and source
+provenance limitations are distinct from agreement between the manuscript and
+the locked aggregate.
+
+Earlier studies in the same line of work were designed for
 the one-sided dynamic theorem, do not execute the transported score, and record
 none of its certificates; they are excluded from this submission and are not
 evidence for any claim in it.

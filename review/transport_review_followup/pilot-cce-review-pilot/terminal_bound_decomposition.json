@@ -1,0 +1,35 @@
+[
+  {
+    "cumulative_pseudo_regret": 10.95125782017279,
+    "current_bias_cumulative": 15.94604988277101,
+    "historical_bound_component": 381.4459811886786,
+    "horizon": 64,
+    "path_inflation_component": 3995.403460234804,
+    "round": 64,
+    "sharp_theorem_rhs": 5748.001854076337,
+    "statistical_bound_component": 1355.2063627700834,
+    "target_D": 24.440403706431148
+  },
+  {
+    "cumulative_pseudo_regret": 11.141894066468318,
+    "current_bias_cumulative": 63.76572007984063,
+    "historical_bound_component": 1536.3629059836348,
+    "horizon": 64,
+    "path_inflation_component": 11397000.24935013,
+    "round": 64,
+    "sharp_theorem_rhs": 11399955.524429563,
+    "statistical_bound_component": 1355.1464533691415,
+    "target_D": 97.76161482572459
+  },
+  {
+    "cumulative_pseudo_regret": 10.759299424315913,
+    "current_bias_cumulative": 127.07919904040483,
+    "historical_bound_component": 3077.137060966369,
+    "horizon": 64,
+    "path_inflation_component": 229225230495.599,
+    "round": 64,
+    "sharp_theorem_rhs": 229225235053.9131,
+    "statistical_bound_component": 1354.0978071517984,
+    "target_D": 195.52322965144918
+  }
+]

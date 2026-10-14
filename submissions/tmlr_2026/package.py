@@ -51,10 +51,16 @@ ENTRY_POINT = Path("submissions/tmlr_2026/main.tex")
 #: The compiled-source-closure manifest, shipped at the supplement root.
 SOURCE_CLOSURE_NAME = "SOURCE_CLOSURE.json"
 
-# Shared manuscript sources.  paper/main.tex is the historical AISTATS entry
-# point and is deliberately absent; paper/legacy_experiments.tex is the cut
-# legacy-benchmark appendix (see FINALIZATION_REPORT.md).
-STAGE_TEX_EXCLUDE = {"main.tex", "legacy_experiments.tex"}
+# Shared manuscript sources. Historical AISTATS and one-sided material stays
+# in Git; the current TMLR paper contains the transport theorem and its audit.
+# Exclusion applies to staging and the anonymous supplement together, so an
+# inactive legacy file cannot quietly enlarge the review surface.
+STAGE_TEX_EXCLUDE = {
+    "main.tex", "legacy_experiments.tex", "legacy_dynamic.tex",
+    "appendix_rates.tex", "appendix_deferred.tex", "appendix_protocol.tex",
+    "appendix_onesided_proof.tex", "appendix_cg.tex", "appendix_twosided.tex",
+    "appendix_ggn.tex", "appendix_expfam.tex",
+}
 STAGE_STY_EXCLUDE = {"aistats2026.sty"}
 
 STYLE_FILES = ("tmlr.sty", "tmlr.bst", "fancyhdr.sty")
@@ -120,10 +126,8 @@ SUPPLEMENT_GENERATED_ARTIFACTS = (
       for panel in _PANELS),
 )
 
-# Typeset by the submission but not generated from the study: every cell is an
-# asymptotic rate, so it has no aggregate to regenerate from.  It ships because
-# the manuscript sources ship, and its sidecar is verified like any other.
-SUPPLEMENT_SYMBOLIC_ARTIFACTS = ("paper/tables/growing_window_pareto.tex",)
+# The active transport manuscript has no standalone symbolic-rate table.
+SUPPLEMENT_SYMBOLIC_ARTIFACTS: tuple[str, ...] = ()
 
 # Deliberately not shipped.  These are the legacy autodiff-GGN and linear-bound
 # benchmarks: they were designed for the earlier one-sided dynamic theorem, do
@@ -132,6 +136,7 @@ SUPPLEMENT_SYMBOLIC_ARTIFACTS = ("paper/tables/growing_window_pareto.tex",)
 SUPPLEMENT_EXCLUDED_LEGACY = (
     "paper/tables/autodiff_ggn_summary.tex",
     "paper/tables/linear_bound_ratios.tex",
+    "paper/tables/growing_window_pareto.tex",
 )
 
 #: Companion records that travel with an artifact when they exist on disk.

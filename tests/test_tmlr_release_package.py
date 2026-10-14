@@ -1900,25 +1900,21 @@ def test_the_readme_current_release_table_matches_the_artifacts():
 
 
 def test_the_report_states_the_current_release_package_test_count():
-    """The report's current count is this file's count, not a stale literal.
-
-    The report carried 402 -- the pre-amend R11 run -- while the post-amend run
-    had 403.  A number that has to be retyped after every amend will be wrong
-    again, so it is asserted here against the suite itself.
-    """
+    """Current collection is recorded separately from historical run results."""
 
     import re
 
-    report = (REPO_ROOT / "submissions/tmlr_2026/FINALIZATION_REPORT.md").read_text(
+    report = (REPO_ROOT / "submissions/tmlr_2026/REVISION_VALIDATION.md").read_text(
         encoding="utf-8")
     row = next(line for line in report.splitlines()
-               if line.startswith("| Release-package and anonymization tests"))
-    stated = re.search(r"\| (\d+) passed, 0 skipped", row)
+               if line.startswith("| Release-package test collection"))
+    stated = re.search(r"\| (\d+) collected", row)
     assert stated, row
     done = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "--no-header",
          "-p", "no:cacheprovider", "--collect-only", "-q", str(Path(__file__))],
         capture_output=True, text=True, cwd=REPO_ROOT)
+    assert done.returncode == 0, done.stdout + done.stderr
     collected = re.search(r"test_tmlr_release_package\.py: (\d+)", done.stdout)
     assert collected, done.stdout[-2000:]
     assert int(stated.group(1)) == int(collected.group(1)), (
@@ -1927,23 +1923,20 @@ def test_the_report_states_the_current_release_package_test_count():
 
 
 def test_the_report_states_the_current_repository_suite_count():
-    """The combined-suite count is derived too, for the same reason.
+    """Collection does not imply every collected test passed or ran."""
 
-    It sat at 525 for two passes after the suite had grown, because only the
-    release-package number was asserted anywhere.
-    """
-
-    report = (REPO_ROOT / "submissions/tmlr_2026/FINALIZATION_REPORT.md").read_text(
+    report = (REPO_ROOT / "submissions/tmlr_2026/REVISION_VALIDATION.md").read_text(
         encoding="utf-8")
     row = next(line for line in report.splitlines()
-               if line.startswith("| Repository test suites"))
-    stated = re.search(r"\| (\d+) passed, 0 skipped", row)
+               if line.startswith("| Repository suite collection"))
+    stated = re.search(r"\| (\d+) collected", row)
     assert stated, row
     done = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "--no-header",
          "-p", "no:cacheprovider", "--collect-only", "-q",
          "tests", "experiments/tests"],
         capture_output=True, text=True, cwd=REPO_ROOT)
+    assert done.returncode == 0, done.stdout + done.stderr
     # `--collect-only -q` prints one `path: count` line per file, no total
     per_file = re.findall(r"^(\S+\.py): (\d+)$", done.stdout, re.MULTILINE)
     assert per_file, done.stdout[-2000:]
@@ -4558,9 +4551,9 @@ def test_a_classified_literal_is_scoped_to_its_own_file():
     for (path, literal) in ledger_tool.CLASSIFIED_LITERALS:
         assert path and literal
     # a token classified in one theory source is not classified in another
-    assert ("paper/appendix_deferred.tex", "256") in \
+    assert ("paper/body_related.tex", "10^8") in \
         ledger_tool.CLASSIFIED_LITERALS
-    assert ("paper/transport_theory.tex", "256") not in \
+    assert ("paper/transport_theory.tex", "10^8") not in \
         ledger_tool.CLASSIFIED_LITERALS
 
 
@@ -4770,11 +4763,13 @@ def test_a_second_occurrence_of_a_classified_literal_fails(tmp_path):
 
 def test_a_missing_classified_occurrence_fails(tmp_path):
     root = _submitted_tex_tree(tmp_path)
-    path = root / "paper/appendix_deferred.tex"
+    path = root / "paper/transport_theory.tex"
+    text = path.read_text(encoding="utf-8")
+    assert "At $t=1$" in text
     path.write_text(
-        path.read_text(encoding="utf-8").replace("$K=10$", "$K=11$", 1),
+        text.replace("At $t=1$", "At the first round", 1),
         encoding="utf-8")
-    assert _audit_fails(root)
+    assert any("pinned semantic unit" in name for name in _audit_fails(root))
 
 
 def test_an_empirical_value_in_the_macro_file_fails(tmp_path):
@@ -5633,14 +5628,18 @@ def test_repository_preflight_is_usable_but_does_not_certify():
 
 
 @pytest.mark.parametrize("source, before, after, category", [
-    ("paper/appendix_deferred.tex", "Thm.~6.1.1", "Thm.~6.1.2",
-     "citation-locator"),
+    ("paper/transport_theory.tex", r"\lambda>0", r"\lambda>7",
+     "math-constant"),
+    ("paper/transport_theory.tex", r"\delta\in(0,1)", r"\delta\in(0,2)",
+     "interval-endpoint"),
     ("paper/body_related.tex", "$>10^8$-parameter", "$>10^9$-parameter",
      "cited-scale"),
-    ("paper/appendix_deferred.tex", "$K=10$, $I=25$", "$K=10$, $I=26$",
-     "illustration-input"),
+    ("paper/availability.tex", "SciPy 1.13.1", "SciPy 1.14.1",
+     "historical-dependency-version"),
     ("submissions/tmlr_2026/supplement_README.md", "NumPy 2.2.3",
      "NumPy 2.2.4", "environment-version"),
+    ("submissions/tmlr_2026/supplement_README.md", "1. **Numerical-provenance",
+     "9. **Numerical-provenance", "document-structure"),
 ])
 def test_each_classification_category_is_context_bound(
         tmp_path, source, before, after, category):
@@ -5654,7 +5653,7 @@ def test_each_classification_category_is_context_bound(
 
 def test_a_classified_literal_reused_in_a_new_sentence_fails(tmp_path):
     root = _submitted_tex_tree(tmp_path)
-    path = root / "paper/appendix_cg.tex"
+    path = root / "paper/transport_proofs.tex"
     text = path.read_text(encoding="utf-8")
     anchor = text.splitlines()[3]
     path.write_text(text.replace(anchor, "The measured value is 2.\n" + anchor, 1),
@@ -5680,13 +5679,14 @@ def test_rewording_around_a_number_without_changing_it_fails(tmp_path):
 
 def test_a_moved_classified_occurrence_fails(tmp_path):
     root = _submitted_tex_tree(tmp_path)
-    path = root / "paper/appendix_twosided.tex"
+    path = root / "paper/transport_theory.tex"
     text = path.read_text(encoding="utf-8")
-    index = text.index("\\begin{proof}")
+    assert "At $t=1$" in text
+    # Preserve the constant's count while moving its meaning to a new statement.
     path.write_text(
-        text[:index] + "A restatement with $3$ terms.\n"
-        + text[index:].replace("$3$", "$\\mathbf{3}$", 1), encoding="utf-8")
-    assert _audit(root)
+        "A restatement with $1$ terms.\n\n"
+        + text.replace("At $t=1$", "At the first round", 1), encoding="utf-8")
+    assert any("pinned semantic unit" in name for name in _audit(root))
 
 
 def test_a_symbolic_rate_change_that_still_parses_fails(tmp_path):
@@ -5740,8 +5740,6 @@ def test_every_pin_carries_a_complete_reviewable_unit():
     ("paper/macros.tex", r"\DeclareMathOperator*{\argmin}{arg\,min}",
      r"\DeclareMathOperator*{\argmin}{arg\,max}",
      "argmin now renders as arg max"),
-    ("paper/tables/growing_window_pareto.tex", "$KT^{2}$", "$KT^{3}$",
-     "a different asymptotic rate"),
 ])
 def test_a_structural_source_is_held_to_its_whole_file_pin(tmp_path, source,
                                                            before, after, what):
@@ -5808,34 +5806,34 @@ def test_the_pinned_units_can_be_printed_for_review():
 
 
 def test_a_meaning_change_beyond_the_old_forty_character_radius_fails(tmp_path):
-    """The exact false negative the fixed-radius pin had.
+    """A meaning change can lie beyond every old fixed-radius number pin.
 
-    "independently of $T$" -> "growing linearly in $T$" reverses a claim about
-    the sufficient budget, 60-odd characters away from the nearest pinned
-    number. The old +-40 context is byte-identical before and after; the unit is
-    not.
+    Reverse the active empirical paragraph's attribution of bound size while
+    leaving every numeric value and its surrounding +-40 characters unchanged.
+    The complete semantic unit still changes and must fail verification.
     """
 
     root = _submitted_tex_tree(tmp_path)
-    path = root / "paper/appendix_cg.tex"
+    relative = "paper/transport_experiment.tex"
+    path = root / relative
     text = path.read_text(encoding="utf-8")
-    before = "independently of~$T$."
+    before = "its size cannot be\nattributed to the confidence radius alone."
     assert before in text
-    path.write_text(text.replace(before, "growing linearly in~$T$.", 1),
+    path.write_text(text.replace(
+        before, "its size can be\nattributed entirely to the confidence radius alone.", 1),
                     encoding="utf-8")
 
     # the old pin would not have seen it
     edited = ledger_tool.auditable_text(path)
-    pristine = ledger_tool.auditable_text(REPO_ROOT / "paper/appendix_cg.tex")
+    pristine = ledger_tool.auditable_text(REPO_ROOT / relative)
 
     def radius_40(body):
-        mine = [ledger_tool.normalize_prose(p) for (f, p)
-                in ledger_tool.phrase_pins(REPO_ROOT) if f == "paper/appendix_cg.tex"]
-        spans = ledger_tool.literal_spans(
-            body, sorted(mine, key=len, reverse=True)).get("0,1", [])
-        return [ledger_tool.normalize_prose(body[max(0, a - 40):b + 40])
+        # Include all numeric occurrences, not merely one convenient constant.
+        return [(literal, ledger_tool.normalize_prose(body[max(0, a - 40):b + 40]))
+                for literal, spans in sorted(ledger_tool.literal_spans(body, []).items())
                 for a, b in sorted(spans)]
 
+    assert radius_40(pristine), "the radius comparison must not be vacuous"
     assert radius_40(edited) == radius_40(pristine), \
         "pick a different anchor: this one is inside the old radius"
 

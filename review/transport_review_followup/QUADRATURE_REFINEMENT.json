@@ -1,0 +1,446 @@
+{
+  "archive": {
+    "bytes": 1699629,
+    "compression": "DEFLATE",
+    "contains_author_linked_runtime_metadata": true,
+    "for_anonymous_submission": false,
+    "members": 20,
+    "path": "review/transport_review_followup/development_refinement_raw.zip",
+    "sha256": "92e8a75684db631e1b37395de30e64eb3ef781b98dd8763d3837bb8c1b062141",
+    "zlib_version": "1.3.2"
+  },
+  "baseline_execution_source_revision": "7bd8e4d78b62e1ea510da51deac7cc2c4624637d",
+  "cases": [
+    {
+      "cache": {
+        "enabled": false,
+        "maxsize": null,
+        "read_only_arrays": false
+      },
+      "case": "smoke-order32",
+      "comparison_order": 16,
+      "deterministic_failures": [
+        "round 3: factor_path_quadrature_convergence: residual=3.623530245695783e-06, tolerance=1.2288317492935253e-08",
+        "round 4: factor_path_quadrature_convergence: residual=1.1705413373447326e-05, tolerance=2.3475642016792686e-08",
+        "round 5: factor_path_quadrature_convergence: residual=5.0955663272178597e-06, tolerance=3.5840123787323019e-08",
+        "round 6: factor_path_quadrature_convergence: residual=1.3298638554898323e-05, tolerance=4.8185409049842237e-08",
+        "round 7: factor_path_quadrature_convergence: residual=1.0416705009508309e-05, tolerance=6.046084716216667e-08",
+        "round 8: factor_path_quadrature_convergence: residual=7.6040154265988313e-06, tolerance=7.2631219999660301e-08",
+        "round 9: factor_path_quadrature_convergence: residual=4.8471755951240425e-06, tolerance=8.4266769539898885e-08",
+        "round 10: factor_path_quadrature_convergence: residual=7.2051329330635738e-07, tolerance=9.6996153632501342e-08",
+        "round 12: factor_path_quadrature_convergence: residual=2.20887259335667e-05, tolerance=1.2489261658518334e-07",
+        "round 13: factor_path_quadrature_convergence: residual=4.9534596345379711e-05, tolerance=1.3860866463599082e-07",
+        "round 14: factor_path_quadrature_convergence: residual=6.7668030777401356e-05, tolerance=1.5113932226998081e-07",
+        "round 15: factor_path_quadrature_convergence: residual=1.5445192244611938e-05, tolerance=1.6139265102154153e-07",
+        "round 16: factor_path_quadrature_convergence: residual=0.00011895820847229732, tolerance=1.7140671589585184e-07",
+        "round 17: factor_path_quadrature_convergence: residual=9.2430897358775077e-05, tolerance=1.8128316030788411e-07",
+        "round 18: factor_path_quadrature_convergence: residual=6.6403297036554676e-06, tolerance=1.9580261161260706e-07",
+        "round 19: factor_path_quadrature_convergence: residual=0.0002540243653791352, tolerance=2.1510171524314932e-07",
+        "round 20: factor_path_quadrature_convergence: residual=0.00044133294975845505, tolerance=2.366385547567485e-07",
+        "round 21: factor_path_quadrature_convergence: residual=0.00024612438331250708, tolerance=2.5884118440255703e-07",
+        "round 22: factor_path_quadrature_convergence: residual=0.00038165449226801318, tolerance=2.8161047888458084e-07",
+        "round 23: factor_path_quadrature_convergence: residual=0.0004518086976389446, tolerance=3.0331224047720291e-07",
+        "round 24: factor_path_quadrature_convergence: residual=0.00028170954001938142, tolerance=3.2238784627930592e-07",
+        "round 25: factor_path_quadrature_convergence: residual=0.0003015735509253048, tolerance=3.3630893856290976e-07",
+        "round 26: factor_path_quadrature_convergence: residual=0.00040845548752910243, tolerance=3.503184710220221e-07",
+        "round 27: factor_path_quadrature_convergence: residual=0.00017609757807135473, tolerance=3.6462259279459438e-07",
+        "round 28: factor_path_quadrature_convergence: residual=0.00038146486925383361, tolerance=3.7417774556034062e-07",
+        "round 29: factor_path_quadrature_convergence: residual=0.00066376517680610814, tolerance=3.848762244500221e-07",
+        "round 30: factor_path_quadrature_convergence: residual=0.00087227174904114246, tolerance=3.9626538279699365e-07",
+        "round 31: factor_path_quadrature_convergence: residual=0.0010012931354477228, tolerance=4.0917540253452142e-07",
+        "round 32: factor_path_quadrature_convergence: residual=0.0015431584504757012, tolerance=4.1974912495677219e-07",
+        "round 33: factor_path_quadrature_convergence: residual=0.0013205612174405079, tolerance=4.3165147205981373e-07",
+        "round 34: factor_path_quadrature_convergence: residual=0.0012635818620505557, tolerance=4.4363608087010585e-07",
+        "round 35: factor_path_quadrature_convergence: residual=2.6303453618758965e-05, tolerance=4.4894427835188835e-07",
+        "round 36: factor_path_quadrature_convergence: residual=0.00031693472681082469, tolerance=4.5566513257519045e-07",
+        "round 37: factor_path_quadrature_convergence: residual=0.00037181482937032051, tolerance=4.6414704886045018e-07",
+        "round 38: factor_path_quadrature_convergence: residual=0.00037834332546238247, tolerance=4.7466760571259574e-07",
+        "round 39: factor_path_quadrature_convergence: residual=0.00042246252310329524, tolerance=4.8593343731525172e-07",
+        "round 40: factor_path_quadrature_convergence: residual=0.00043399370116026237, tolerance=4.9559952827421342e-07",
+        "round 41: factor_path_quadrature_convergence: residual=0.00030333645165181444, tolerance=5.068456014198684e-07",
+        "round 42: factor_path_quadrature_convergence: residual=0.00023010930601874424, tolerance=5.1808900666480757e-07",
+        "round 43: factor_path_quadrature_convergence: residual=0.00089849533166175277, tolerance=5.2859284211574704e-07",
+        "round 44: factor_path_quadrature_convergence: residual=0.00015146250491870905, tolerance=5.328142419715381e-07",
+        "round 45: factor_path_quadrature_convergence: residual=0.0005438374686835834, tolerance=5.3685270405108419e-07",
+        "round 46: factor_path_quadrature_convergence: residual=0.00062296145894058519, tolerance=5.3769038247498252e-07",
+        "round 47: factor_path_quadrature_convergence: residual=0.00034434484646828079, tolerance=5.4183156486764548e-07",
+        "round 48: factor_path_quadrature_convergence: residual=0.00038654295924200888, tolerance=5.4592473947962065e-07",
+        "round 49: factor_path_quadrature_convergence: residual=0.00011948849928888894, tolerance=5.497298401687703e-07",
+        "round 50: factor_path_quadrature_convergence: residual=0.00020986684758605989, tolerance=5.5426303994182451e-07",
+        "round 51: factor_path_quadrature_convergence: residual=6.9551860370831164e-05, tolerance=5.5865094051943773e-07",
+        "round 52: factor_path_quadrature_convergence: residual=5.3697676595632071e-05, tolerance=5.5985548130715819e-07",
+        "round 53: factor_path_quadrature_convergence: residual=0.00033563281175380544, tolerance=5.6433809937276096e-07",
+        "round 54: factor_path_quadrature_convergence: residual=4.4551487085597863e-06, tolerance=5.6925738159623822e-07",
+        "round 55: factor_path_quadrature_convergence: residual=0.00071310470536334325, tolerance=5.7396935809115392e-07",
+        "round 56: factor_path_quadrature_convergence: residual=0.000904432890345086, tolerance=5.7859633266525702e-07",
+        "round 57: factor_path_quadrature_convergence: residual=0.00082171053427737561, tolerance=5.8319097248134537e-07",
+        "round 58: factor_path_quadrature_convergence: residual=0.00057800841341892895, tolerance=5.8752039959704025e-07",
+        "round 59: factor_path_quadrature_convergence: residual=0.00084835319271342469, tolerance=5.9054986459199423e-07",
+        "round 60: factor_path_quadrature_convergence: residual=0.00023206759832195001, tolerance=5.8987013156278809e-07",
+        "round 61: factor_path_quadrature_convergence: residual=7.0032716096568581e-05, tolerance=5.9199412983403448e-07",
+        "round 62: factor_path_quadrature_convergence: residual=1.1475366372415419e-05, tolerance=5.9676180074235542e-07",
+        "round 63: factor_path_quadrature_convergence: residual=0.0001053498960893462, tolerance=6.002602560589602e-07",
+        "round 64: factor_path_quadrature_convergence: residual=0.00012220187619871314, tolerance=6.0449338508358355e-07"
+      ],
+      "original_external_directory": "/workspace/cce-followup-feasibility/development/T-64/D-195p523229651/transport_hessian/seed-20000",
+      "phase": "development",
+      "policy_trace_signature_sha256": "2f704bd44bdaf035b888201df95a5252a86f2824f4ff7bf22f0be6327eb30576",
+      "quadrature_order": 32,
+      "raw_members": [
+        {
+          "bytes": 9643,
+          "member": "smoke-order32/manifest.jsonl",
+          "sha256": "b5acbd49df7ed60348340d161a84d211d65fefa62ff561f030d87d3f236b11a3"
+        },
+        {
+          "bytes": 402751,
+          "member": "smoke-order32/raw.jsonl",
+          "sha256": "5ece6deb81440e0f5cc7938d3fe6be595e30ab93a8c8efd6056072e6c77115d3"
+        },
+        {
+          "bytes": 9243,
+          "member": "smoke-order32/summary.json",
+          "sha256": "1a7257c1213745d3d6844782e9868c04d3a7e7f5bd7e4880d5f27bab8e1ea1f9"
+        },
+        {
+          "bytes": 79,
+          "member": "smoke-order32/summary.json.sha256",
+          "sha256": "efb9e4ffbf7fd94f0b75c11e8bd2ab6923dca6ca9709c18433dcd5a1b718f301"
+        }
+      ],
+      "status": "failed_diagnostic",
+      "summary": {
+        "W": 0.25,
+        "cumulative_pseudo_regret": 11.334275052698649,
+        "deterministic_audit_failure_count": 61,
+        "horizon": 64,
+        "max_endpoint_thompson_distance": 0.9484845560317126,
+        "max_factor_path_length_quad": 0.9937761751069986,
+        "max_quadrature_order_difference": 0.0015431584504757012,
+        "max_realized_D_Q": 60.34933850835836,
+        "profile": "smoke",
+        "runtime_seconds": 1.5772890560001542,
+        "seed": 20000,
+        "sharp_theorem_rhs": 1.8737560281562438e+29,
+        "simultaneous_method_optimism": true,
+        "simultaneous_reference_confidence": true
+      }
+    },
+    {
+      "cache": {
+        "enabled": false,
+        "maxsize": null,
+        "read_only_arrays": false
+      },
+      "case": "smoke-order256",
+      "comparison_order": 128,
+      "deterministic_failures": [
+        "round 3: factor_path_quadrature_convergence: residual=1.7425363389722559e-07, tolerance=1.2288317492935253e-08",
+        "round 12: factor_path_quadrature_convergence: residual=3.8804083790644484e-07, tolerance=1.2489261658518334e-07",
+        "round 13: factor_path_quadrature_convergence: residual=2.7316487094530828e-07, tolerance=1.3860866463599082e-07",
+        "round 14: factor_path_quadrature_convergence: residual=9.4024000196757385e-07, tolerance=1.5113932226998081e-07",
+        "round 15: factor_path_quadrature_convergence: residual=5.3400558119864883e-07, tolerance=1.6139265102154153e-07",
+        "round 16: factor_path_quadrature_convergence: residual=6.2260188238294489e-07, tolerance=1.7140671589585184e-07",
+        "round 17: factor_path_quadrature_convergence: residual=1.5432112349111904e-06, tolerance=1.8128316030788411e-07",
+        "round 19: factor_path_quadrature_convergence: residual=2.6244764144145449e-06, tolerance=2.1510171524314932e-07",
+        "round 20: factor_path_quadrature_convergence: residual=7.8456834627926852e-06, tolerance=2.366385547567485e-07",
+        "round 21: factor_path_quadrature_convergence: residual=2.7159518876107569e-06, tolerance=2.5884118440255703e-07",
+        "round 22: factor_path_quadrature_convergence: residual=9.0534001589981372e-06, tolerance=2.8161047888458084e-07",
+        "round 23: factor_path_quadrature_convergence: residual=8.0727832353355566e-06, tolerance=3.0331224047720291e-07",
+        "round 24: factor_path_quadrature_convergence: residual=1.2601484244978423e-06, tolerance=3.2238784627930592e-07",
+        "round 25: factor_path_quadrature_convergence: residual=1.5621270159638101e-06, tolerance=3.3630893856290976e-07",
+        "round 26: factor_path_quadrature_convergence: residual=1.223590845134126e-05, tolerance=3.503184710220221e-07",
+        "round 27: factor_path_quadrature_convergence: residual=6.3883082648263922e-06, tolerance=3.6462259279459438e-07",
+        "round 28: factor_path_quadrature_convergence: residual=2.2963029949529812e-05, tolerance=3.7417774556034062e-07",
+        "round 29: factor_path_quadrature_convergence: residual=5.8864596678143144e-06, tolerance=3.848762244500221e-07",
+        "round 30: factor_path_quadrature_convergence: residual=9.1649056619402813e-06, tolerance=3.9626538279699365e-07",
+        "round 31: factor_path_quadrature_convergence: residual=1.1178619511276189e-05, tolerance=4.0917540253452142e-07",
+        "round 32: factor_path_quadrature_convergence: residual=5.4163874714241445e-06, tolerance=4.1974912495677219e-07",
+        "round 33: factor_path_quadrature_convergence: residual=8.2178690898881968e-06, tolerance=4.3165147205981373e-07",
+        "round 34: factor_path_quadrature_convergence: residual=8.885001003711146e-06, tolerance=4.4363608087010585e-07",
+        "round 35: factor_path_quadrature_convergence: residual=9.7159220846521066e-06, tolerance=4.4894427835188835e-07",
+        "round 36: factor_path_quadrature_convergence: residual=3.9227201925617905e-06, tolerance=4.5566513257519045e-07",
+        "round 37: factor_path_quadrature_convergence: residual=1.4577802209037038e-05, tolerance=4.6414704886045018e-07",
+        "round 38: factor_path_quadrature_convergence: residual=2.1520983775280556e-05, tolerance=4.7466760571259574e-07",
+        "round 39: factor_path_quadrature_convergence: residual=9.6166956990995089e-06, tolerance=4.8593343731525172e-07",
+        "round 40: factor_path_quadrature_convergence: residual=6.1662344987833961e-06, tolerance=4.9559952827421342e-07",
+        "round 41: factor_path_quadrature_convergence: residual=5.2126630988302836e-06, tolerance=5.068456014198684e-07",
+        "round 42: factor_path_quadrature_convergence: residual=2.2684938352224293e-06, tolerance=5.1808900666480757e-07",
+        "round 43: factor_path_quadrature_convergence: residual=7.1968609867134603e-06, tolerance=5.2859284211574704e-07",
+        "round 44: factor_path_quadrature_convergence: residual=4.3589155118706202e-06, tolerance=5.328142419715381e-07",
+        "round 45: factor_path_quadrature_convergence: residual=4.6071227042254748e-06, tolerance=5.3685270405108419e-07",
+        "round 46: factor_path_quadrature_convergence: residual=5.1970990675442863e-06, tolerance=5.3769038247498252e-07",
+        "round 47: factor_path_quadrature_convergence: residual=5.5065594037895238e-06, tolerance=5.4183156486764548e-07",
+        "round 48: factor_path_quadrature_convergence: residual=3.3713891711695254e-06, tolerance=5.4592473947962065e-07",
+        "round 49: factor_path_quadrature_convergence: residual=3.4367243516575385e-06, tolerance=5.497298401687703e-07",
+        "round 50: factor_path_quadrature_convergence: residual=3.5475334700940664e-06, tolerance=5.5426303994182451e-07",
+        "round 51: factor_path_quadrature_convergence: residual=4.3106706235640502e-06, tolerance=5.5865094051943773e-07",
+        "round 52: factor_path_quadrature_convergence: residual=7.4202437545523026e-06, tolerance=5.5985548130715819e-07",
+        "round 53: factor_path_quadrature_convergence: residual=4.937395820692192e-06, tolerance=5.6433809937276096e-07",
+        "round 54: factor_path_quadrature_convergence: residual=8.7403232507110573e-07, tolerance=5.6925738159623822e-07",
+        "round 55: factor_path_quadrature_convergence: residual=4.0646355423668012e-06, tolerance=5.7396935809115392e-07",
+        "round 56: factor_path_quadrature_convergence: residual=4.4695735499367117e-06, tolerance=5.7859633266525702e-07",
+        "round 57: factor_path_quadrature_convergence: residual=6.1948659261790162e-06, tolerance=5.8319097248134537e-07",
+        "round 58: factor_path_quadrature_convergence: residual=1.1635610085325432e-05, tolerance=5.8752039959704025e-07",
+        "round 59: factor_path_quadrature_convergence: residual=2.9412642479353934e-06, tolerance=5.9054986459199423e-07",
+        "round 61: factor_path_quadrature_convergence: residual=1.7522462842922693e-06, tolerance=5.9199412983403448e-07",
+        "round 62: factor_path_quadrature_convergence: residual=1.9630929332659086e-06, tolerance=5.9676180074235542e-07",
+        "round 63: factor_path_quadrature_convergence: residual=2.2151117928248532e-06, tolerance=6.002602560589602e-07",
+        "round 64: factor_path_quadrature_convergence: residual=8.7852837193924671e-07, tolerance=6.0449338508358355e-07"
+      ],
+      "original_external_directory": "/workspace/cce-followup-feasibility-order256/development/T-64/D-195p523229651/transport_hessian/seed-20000",
+      "phase": "development",
+      "policy_trace_signature_sha256": "2f704bd44bdaf035b888201df95a5252a86f2824f4ff7bf22f0be6327eb30576",
+      "quadrature_order": 256,
+      "raw_members": [
+        {
+          "bytes": 9645,
+          "member": "smoke-order256/manifest.jsonl",
+          "sha256": "0ca979c6470e6b770c25c540f075f3af699834d78b6a618825d094ec05bcb437"
+        },
+        {
+          "bytes": 401832,
+          "member": "smoke-order256/raw.jsonl",
+          "sha256": "d93bd81a6fe0d996fe1c5f0114bc6ba1e39892813c4db05c188882dd39090d2d"
+        },
+        {
+          "bytes": 8235,
+          "member": "smoke-order256/summary.json",
+          "sha256": "1bf0e72e2cc31d71320c768a6f61d2eeb842ca550df7deba98c10c0359c4722e"
+        },
+        {
+          "bytes": 79,
+          "member": "smoke-order256/summary.json.sha256",
+          "sha256": "a9012de51da3f79e5055a5997271599b16c81ab9bef4db0f0bc33d05ce7f5658"
+        }
+      ],
+      "status": "failed_diagnostic",
+      "summary": {
+        "W": 0.25,
+        "cumulative_pseudo_regret": 11.334275052698649,
+        "deterministic_audit_failure_count": 52,
+        "horizon": 64,
+        "max_endpoint_thompson_distance": 0.9484845560317126,
+        "max_factor_path_length_quad": 0.9938782462142697,
+        "max_quadrature_order_difference": 2.2963029949529812e-05,
+        "max_realized_D_Q": 60.34933850835836,
+        "profile": "smoke",
+        "runtime_seconds": 2.869803913000169,
+        "seed": 20000,
+        "sharp_theorem_rhs": 1.8737560281562438e+29,
+        "simultaneous_method_optimism": true,
+        "simultaneous_reference_confidence": true
+      }
+    },
+    {
+      "cache": {
+        "enabled": false,
+        "maxsize": null,
+        "read_only_arrays": false
+      },
+      "case": "smoke-order2048",
+      "comparison_order": 1024,
+      "deterministic_failures": [],
+      "original_external_directory": "/workspace/cce-followup-feasibility-order2048/development/T-64/D-195p523229651/transport_hessian/seed-20000",
+      "phase": "development",
+      "policy_trace_signature_sha256": "2f704bd44bdaf035b888201df95a5252a86f2824f4ff7bf22f0be6327eb30576",
+      "quadrature_order": 2048,
+      "raw_members": [
+        {
+          "bytes": 9648,
+          "member": "smoke-order2048/manifest.jsonl",
+          "sha256": "058a4dd105a9fb972801bbb8be90f67b535255197dc5f0f565928c7d05663061"
+        },
+        {
+          "bytes": 396457,
+          "member": "smoke-order2048/raw.jsonl",
+          "sha256": "d2b4bcd323a9ac192c07126ed0415402660cc774b15df14e976c306f41ec19db"
+        },
+        {
+          "bytes": 2315,
+          "member": "smoke-order2048/summary.json",
+          "sha256": "0aa378e848d06580a798958d336d2608b55542c800aa897cd916a71aaa85dde6"
+        },
+        {
+          "bytes": 79,
+          "member": "smoke-order2048/summary.json.sha256",
+          "sha256": "a4a25ddbd76391a5f38414dc458ee026b245ba479680a15bb538b5a3e332869e"
+        }
+      ],
+      "status": "pass",
+      "summary": {
+        "W": 0.25,
+        "cumulative_pseudo_regret": 11.334275052698649,
+        "deterministic_audit_failure_count": 0,
+        "horizon": 64,
+        "max_endpoint_thompson_distance": 0.9484845560317126,
+        "max_factor_path_length_quad": 0.9938763617993561,
+        "max_quadrature_order_difference": 1.880117312946794e-07,
+        "max_realized_D_Q": 60.34933850835836,
+        "profile": "smoke",
+        "runtime_seconds": 78.45914783000012,
+        "seed": 20000,
+        "sharp_theorem_rhs": 1.8737560281562438e+29,
+        "simultaneous_method_optimism": true,
+        "simultaneous_reference_confidence": true
+      }
+    },
+    {
+      "cache": {
+        "enabled": true,
+        "maxsize": 4,
+        "read_only_arrays": true
+      },
+      "case": "smoke-order4096-cached",
+      "comparison_order": 2048,
+      "deterministic_failures": [],
+      "original_external_directory": "/workspace/cce-followup-feasibility-order4096-cached/development/T-64/D-195p523229651/transport_hessian/seed-20000",
+      "phase": "development",
+      "policy_trace_signature_sha256": "2f704bd44bdaf035b888201df95a5252a86f2824f4ff7bf22f0be6327eb30576",
+      "quadrature_order": 4096,
+      "raw_members": [
+        {
+          "bytes": 9749,
+          "member": "smoke-order4096-cached/manifest.jsonl",
+          "sha256": "7a7a4ea144920b2632b24cdaa1df1292075dfbc626a88b4bde4bdebc4f331cae"
+        },
+        {
+          "bytes": 396443,
+          "member": "smoke-order4096-cached/raw.jsonl",
+          "sha256": "47fb2d45096aedd9247e4e0474cfc1bdec52fdf5c9e347add5be0821a049b2f6"
+        },
+        {
+          "bytes": 2313,
+          "member": "smoke-order4096-cached/summary.json",
+          "sha256": "2ead530a007391e738328f730d0c1e4084326cdb9805f586e1ba369285b23dd0"
+        },
+        {
+          "bytes": 79,
+          "member": "smoke-order4096-cached/summary.json.sha256",
+          "sha256": "9d35f262d8968ffe92a6a55a20d77147d256d002f3f769340d93c9b377fb2f97"
+        }
+      ],
+      "status": "pass",
+      "summary": {
+        "W": 0.25,
+        "cumulative_pseudo_regret": 11.334275052698649,
+        "deterministic_audit_failure_count": 0,
+        "horizon": 64,
+        "max_endpoint_thompson_distance": 0.9484845560317126,
+        "max_factor_path_length_quad": 0.993876447153475,
+        "max_quadrature_order_difference": 9.836559222708985e-08,
+        "max_realized_D_Q": 60.34933850835836,
+        "profile": "smoke",
+        "runtime_seconds": 78.0380899300003,
+        "seed": 20000,
+        "sharp_theorem_rhs": 1.8737560281562438e+29,
+        "simultaneous_method_optimism": true,
+        "simultaneous_reference_confidence": true
+      }
+    },
+    {
+      "cache": {
+        "enabled": true,
+        "maxsize": 4,
+        "read_only_arrays": true
+      },
+      "case": "full-order2048-cached",
+      "comparison_order": 1024,
+      "deterministic_failures": [],
+      "original_external_directory": "/workspace/cce-followup-full-feasibility-order2048/development/T-1000/D-778p593603878/transport_hessian/seed-30000",
+      "phase": "development",
+      "policy_trace_signature_sha256": "7be4df205adf23ad45200fee66a617b5cfb2a96a0b2b70b84e90eba45b2aea2d",
+      "quadrature_order": 2048,
+      "raw_members": [
+        {
+          "bytes": 10092,
+          "member": "full-order2048-cached/manifest.jsonl",
+          "sha256": "557e0e981147b5d8f75ea4e73e326204bc67641bd5f4a9f2964aca76f8d4bbc6"
+        },
+        {
+          "bytes": 6226599,
+          "member": "full-order2048-cached/raw.jsonl",
+          "sha256": "2a4c04ab7bbf415efbb882ad843e70d391b532c1722b053405568457f1147ae1"
+        },
+        {
+          "bytes": 2319,
+          "member": "full-order2048-cached/summary.json",
+          "sha256": "0c74534694bfb8d3fd4593745c3e3a21f3340916113eb4d57e6f029ec85de590"
+        },
+        {
+          "bytes": 79,
+          "member": "full-order2048-cached/summary.json.sha256",
+          "sha256": "c5dc20a92e1bb95cd652068e67a090ecba1804e7fd428500ef2a23c707ac2bf9"
+        }
+      ],
+      "status": "pass",
+      "summary": {
+        "W": 0.25,
+        "cumulative_pseudo_regret": 180.2170152028836,
+        "deterministic_audit_failure_count": 0,
+        "horizon": 1000,
+        "max_endpoint_thompson_distance": 0.9354130927217013,
+        "max_factor_path_length_quad": 0.8706027616307873,
+        "max_quadrature_order_difference": 2.016374418545297e-07,
+        "max_realized_D_Q": 143.2052144256896,
+        "profile": "full",
+        "runtime_seconds": 46.213092493999966,
+        "seed": 30000,
+        "sharp_theorem_rhs": 2.634424566033119e+66,
+        "simultaneous_method_optimism": true,
+        "simultaneous_reference_confidence": true
+      }
+    }
+  ],
+  "declared_development_grid_passed": false,
+  "development_grid_status": "not executed; launcher must pass all declared development cells before tuning/evaluation",
+  "independent_higher_order_check": 4096,
+  "initial_config": {
+    "path": "review/transport_review_followup/initial_followup_config.json",
+    "sha256": "37d174dd5370f9286817517ad65c67201f6f1950fd80778c2ded21f5a39d2ab8"
+  },
+  "interrupted_attempts": [
+    {
+      "case": "smoke-order4096-uncached",
+      "exit_status": 130,
+      "interruption_stack": "numpy.polynomial.legendre.leggauss -> numpy.linalg.eigvalsh",
+      "observed_elapsed_seconds_at_least": 329,
+      "reason": "Repeated identical quadrature-node generation; switched to approved exact-node memoization, with no tolerance or policy change.",
+      "replaced_by": "smoke-order4096-cached",
+      "saved_summary": false,
+      "signal": "SIGINT",
+      "status": "interrupted_for_runtime_optimization"
+    }
+  ],
+  "limitations": [
+    "These are development trajectories, not tuning/evaluation results.",
+    "Convergence checks are floating-point diagnostics, not verified numerical enclosures.",
+    "Passing these selected development runs does not clear the complete development or evaluation grid."
+  ],
+  "policy_trace_signature_fields": [
+    "round",
+    "selected_action",
+    "selected_reward",
+    "scores",
+    "theta_t_norm",
+    "theta_next_norm",
+    "cumulative_pseudo_regret",
+    "D_Q",
+    "d_Th",
+    "reference_confidence_all_actions",
+    "method_optimism_all_actions"
+  ],
+  "purpose": "pre-evaluation numerical refinement and runtime feasibility, not publication evidence",
+  "recorded_utc": "2026-10-14T00:54:03.938045+00:00",
+  "refined_config": {
+    "path": "experiments/configs/transport_review_followup.yaml",
+    "sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+  },
+  "same_smoke_policy_trace_across_all_orders": true,
+  "schema_version": 1,
+  "selected_quadrature_order": 2048,
+  "study": "transport-review-followup-v1.1",
+  "tuning_or_evaluation_executed_in_this_refinement": false,
+  "unchanged_scientific_core_sha256": "68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4",
+  "unchanged_tolerances": true
+}

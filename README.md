@@ -54,11 +54,14 @@ validation of the headline result.
 
 ## Validation
 
-Run the tests and the static manuscript validation directly:
+Install the exact Python 3.12 package lock using
+[`PYTHON_SETUP.md`](PYTHON_SETUP.md), then run the tests and the static manuscript
+validation directly:
 
 ```bash
-python -m pytest -q tests experiments/tests
-python paper/validate.py
+"$CCE_VENV/bin/python" tools/check_python_environment.py
+"$CCE_VENV/bin/python" -m pytest -q tests experiments/tests
+"$CCE_VENV/bin/python" paper/validate.py
 ```
 
 Buck2 is **not** a verified path right now.  `buck2 test` and `buck2 run` fail

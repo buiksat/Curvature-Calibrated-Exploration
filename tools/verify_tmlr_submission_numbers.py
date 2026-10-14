@@ -51,6 +51,7 @@ ABSTRACT_TEX = Path("submissions/tmlr_2026/main.tex")
 INTRO_TEX = Path("paper/body_intro.tex")
 CONCLUSION_TEX = Path("paper/body_conclusion.tex")
 AVAILABILITY_TEX = Path("paper/availability.tex")
+LEGACY_SCOPE_TEX = Path("paper/legacy_scope.tex")
 COST_APPENDIX_TEX = Path("paper/appendix_deferred.tex")
 
 AGGREGATE_SHA256 = "0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02"
@@ -201,6 +202,30 @@ def _policy(aggregate, method, horizon, target):
         ):
             return row
     raise LedgerError(f"no policy outcome for {method} at T={horizon}, D={target}")
+
+
+def _terminal_decomposition(aggregate):
+    """One terminal mean over 50 primary-policy runs for each target cell."""
+
+    rows = [r for r in aggregate["bound_decomposition"]
+            if int(r["horizon"]) == PRIMARY_HORIZON
+            and int(r["round"]) == PRIMARY_HORIZON]
+    targets = [float(r["target_D"]) for r in rows]
+    if sorted(targets) != sorted(float(d) for d in aggregate["target_D"]):
+        raise LedgerError("terminal decomposition does not cover each target once")
+    return sorted(rows, key=lambda r: float(r["target_D"]))
+
+
+def _decomposition_shares(aggregate, field_name):
+    """Ratios of component means to sharp-RHS means, not means of ratios."""
+
+    shares = []
+    for row in _terminal_decomposition(aggregate):
+        denominator = float(row["sharp_theorem_rhs"])
+        if not math.isfinite(denominator) or denominator <= 0:
+            raise LedgerError("nonpositive or nonfinite mean sharp RHS")
+        shares.append(100.0 * float(row[field_name]) / denominator)
+    return shares
 
 
 def readme_sources(root: Path | None) -> tuple[Path, ...]:
@@ -388,6 +413,14 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
         "all 12 cells",
         lambda a, c: float(min(r["distinct_optimal_actions"]["minimum"]
                                for r in a["environment_diagnostics"])))
+    add(EXPERIMENT_TEX, r"$\log 5\approx1.609$", "5", C,
+        "base.environment.action_count", "actions", "declared constant",
+        "uniform distribution on the configured action set",
+        lambda a, c: float(c["base"]["environment"]["action_count"]))
+    add(EXPERIMENT_TEX, r"$\log 5\approx1.609$", "1.609", C,
+        "log(base.environment.action_count)", "nats", "maximum discrete entropy",
+        "uniform distribution on the configured action set",
+        lambda a, c: math.log(float(c["base"]["environment"]["action_count"])))
 
     # ---- certificate tightness at the primary horizon ----------------------
     add(EXPERIMENT_TEX, "ranges from $0.0486$", "0.0486", A,
@@ -512,6 +545,60 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
         "50 transport-Hessian trajectories per cell, full grid",
         lambda a, c: max(_medians(a, "bound_nonvacuity", "sharp_theorem_rhs")))
 
+    # ---- the existing cumulative decomposition, along primary-policy paths --
+    # The aggregate stores per-round component means.  Taking their ratio is
+    # intentional: it is neither a median share nor a frozen-policy replay.
+    for field_name, literal, displays in (
+        ("statistical_bound_component", r"$79.4\%$--$97.3\%$", ("79.4", "97.3")),
+        ("path_inflation_component", r"$2.0\%$--$16.3\%$", ("2.0", "16.3")),
+    ):
+        for reducer, display in zip((min, max), displays):
+            add(EXPERIMENT_TEX, literal, display, A,
+                f"{reducer.__name__} over terminal primary-horizon cells of "
+                f"100 * bound_decomposition.{field_name} / sharp_theorem_rhs",
+                "percent", "ratio of component mean to sharp-RHS mean, then cell extremum",
+                "50 transport-Hessian trajectories per T=1000 target cell",
+                lambda a, c, field=field_name, reduce=reducer:
+                reduce(_decomposition_shares(a, field)))
+    for reducer, display in ((min, "9{,}948"), (max, "10{,}010")):
+        add(EXPERIMENT_TEX, r"$9{,}948$--$10{,}010$", display, A,
+            f"{reducer.__name__} over terminal primary-horizon cells of "
+            "bound_decomposition.statistical_bound_component",
+            "cumulative reward units", "mean over 50 runs, then cell extremum",
+            "50 transport-Hessian trajectories per T=1000 target cell",
+            lambda a, c, reduce=reducer: reduce(
+                float(r["statistical_bound_component"])
+                for r in _terminal_decomposition(a)))
+    add(EXPERIMENT_TEX, r"cap $2{,}000$", "2{,}000", C,
+        "2 * base.reporting.primary_horizon", "cumulative reward units",
+        "deterministic cap 2T", "primary horizon",
+        lambda a, c: 2.0 * float(c["base"]["reporting"]["primary_horizon"]))
+    for manuscript, literal in (
+        (EXPERIMENT_TEX, "50 transport-Hessian trajectories"),
+        (APPENDIX_TEX, "50 primary-policy trajectories"),
+    ):
+        add(manuscript, literal, "50", A, "len(evaluation_seeds)", "trajectories",
+            "count", "one transport-Hessian target cell",
+            lambda a, c: float(len(a["evaluation_seeds"])))
+    for field_name, literal, displays in (
+        ("statistical_bound_component", r"$97.33\%,94.66\%,89.39\%,79.39\%$",
+         ("97.33", "94.66", "89.39", "79.39")),
+        ("path_inflation_component", r"$2.01\%,4.04\%,8.16\%,16.27\%$",
+         ("2.01", "4.04", "8.16", "16.27")),
+    ):
+        for index, display in enumerate(displays):
+            add(APPENDIX_TEX, literal, display, A,
+                "terminal primary-horizon target cells in ascending target order, "
+                f"index {index}: 100 * {field_name} / sharp_theorem_rhs",
+                "percent", "ratio of component mean to sharp-RHS mean",
+                "50 transport-Hessian trajectories in one T=1000 target cell",
+                lambda a, c, field=field_name, i=index: _decomposition_shares(a, field)[i])
+    for index, target in enumerate((0.25, 0.5, 1, 2)):
+        add(APPENDIX_TEX, r"$D_{\rm target}=0.25,0.5,1,2$", str(target), C,
+            f"base.target_D[{index}]", "dimensionless", "design label",
+            "configuration", lambda a, c, i=index:
+            float(c["base"]["target_D"][i]))
+
     # ---- policy outcomes at the primary horizon ----------------------------
     add(EXPERIMENT_TEX, "rises\nfrom $81.0$", "81.0", A,
         "policy_outcomes[transport_hessian, T=1000, D=0.25].cumulative_pseudo_regret.mean",
@@ -527,12 +614,12 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
                            ["cumulative_pseudo_regret"]["mean"]))
 
     # ---- claims repeated in the abstract, introduction and conclusion ------
-    add(ABSTRACT_TEX, "all\n600 transport-Hessian runs", "600", A,
+    add(ABSTRACT_TEX, "All 600 transport-Hessian runs", "600", A,
         "len(horizons) * len(target_D) * len(evaluation_seeds)", "runs", "count",
         "transport-Hessian arm of the grid",
         lambda a, c: float(len(a["horizons"]) * len(a["target_D"])
                            * len(a["evaluation_seeds"])))
-    add(ABSTRACT_TEX, "locked 29-parameter scaled-tanh audit", "29", C,
+    add(ABSTRACT_TEX, "29-parameter", "29", C,
         "base.environment.feature_dimension", "parameters", "declared constant",
         "configuration",
         lambda a, c: float(c["base"]["environment"]["feature_dimension"]))
@@ -542,6 +629,10 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
         lambda a, c: float(len(a["horizons"]) * len(a["target_D"])
                            * len(a["evaluation_seeds"])))
     add(INTRO_TEX, "29-parameter", "29", C,
+        "base.environment.feature_dimension", "parameters", "declared constant",
+        "configuration",
+        lambda a, c: float(c["base"]["environment"]["feature_dimension"]))
+    add(LEGACY_SCOPE_TEX, "29-parameter", "29", C,
         "base.environment.feature_dimension", "parameters", "declared constant",
         "configuration",
         lambda a, c: float(c["base"]["environment"]["feature_dimension"]))
@@ -714,6 +805,9 @@ _CATEGORY_REASON = {
     "environment-version":
         "a declared software version, checked against "
         "experiments/requirements.txt by a structural check",
+    "historical-dependency-version":
+        "dependency metadata from the retained implementation snapshot, not "
+        "an experimental measurement; the exact provenance statement is pinned",
 }
 
 # Each entry is bound to one file AND to an exact number of occurrences in it.
@@ -735,41 +829,17 @@ def _classify(path: str, category: str, counts: dict[str, int]) -> None:
         CLASSIFIED_LITERALS[(path, literal)] = (category, count)
 
 
-_classify("paper/appendix_cg.tex", "math-constant",
-          {"0": 3, "1": 24, "2": 12})
-_classify("paper/appendix_cg.tex", "interval-endpoint", {"0,1": 1})
-_classify("paper/appendix_deferred.tex", "math-constant",
-          {"0": 48, "1": 520, "2": 476, "3": 25, "4": 34, "5": 1, "6": 3,
-           "8": 8})
-_classify("paper/appendix_deferred.tex", "interval-endpoint", {"0,1": 13})
-_classify("paper/appendix_deferred.tex", "citation-locator", {"6.1.1": 2})
-_classify("paper/appendix_deferred.tex", "cited-scale", {"10^8": 1})
-_classify("paper/appendix_deferred.tex", "illustration-input",
-          {"10": 1, "25": 1, "256": 1})
-_classify("paper/appendix_deferred.tex", "derived-arithmetic",
-          {"64{,}000": 1, "66{,}560": 1})
-_classify("paper/appendix_expfam.tex", "math-constant", {"1": 6, "2": 7})
-_classify("paper/appendix_ggn.tex", "math-constant", {"1": 5, "2": 5})
-_classify("paper/appendix_onesided_proof.tex", "math-constant",
-          {"1": 16, "2": 24, "3": 1, "4": 1, "5": 1, "6": 1})
-_classify("paper/appendix_protocol.tex", "math-constant",
-          {"0": 17, "1": 83, "2": 81, "3": 2, "4": 1})
-_classify("paper/appendix_protocol.tex", "interval-endpoint", {"0,1": 1})
-_classify("paper/appendix_rates.tex", "math-constant",
-          {"0": 4, "1": 59, "2": 52, "3": 5, "4": 2})
-_classify("paper/appendix_rates.tex", "interval-endpoint", {"0,1": 2})
-_classify("paper/appendix_twosided.tex", "math-constant",
-          {"0": 2, "1": 20, "2": 31, "3": 1, "4": 1})
+_classify("paper/availability.tex", "historical-dependency-version",
+          {"1.13.1": 1, "1.15.2": 1})
 _classify("paper/body_related.tex", "math-constant", {"1": 3, "2": 2})
 _classify("paper/body_related.tex", "cited-scale", {"10^8": 1})
-_classify("paper/legacy_dynamic.tex", "math-constant",
-          {"0": 12, "1": 97, "2": 79, "4": 1, "16": 2})
-_classify("paper/legacy_dynamic.tex", "interval-endpoint", {"0,1": 1})
 _classify("paper/notation.tex", "math-constant", {"1": 2, "2": 3})
+_classify("paper/transport_experiment_appendix.tex", "math-constant",
+          {"1": 7, "2": 10})
 _classify("paper/transport_proofs.tex", "math-constant",
           {"0": 8, "1": 63, "2": 73, "4": 2})
 _classify("paper/transport_theory.tex", "math-constant",
-          {"0": 19, "1": 79, "2": 80, "3": 2, "4": 4})
+          {"0": 22, "1": 84, "2": 87, "3": 2, "4": 4})
 _classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
 for _readme in (str(SUPPLEMENT_README_REPO), str(SUPPLEMENT_README_PACKAGED)):
     _classify(_readme, "document-structure",
@@ -816,6 +886,7 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/body_conclusion.tex", "$D_t<1$"): 1,
     ("paper/body_conclusion.tex", "All 600 transport-Hessian trajectories"): 1,
     ("paper/body_intro.tex", "29-parameter"): 1,
+    ("paper/legacy_scope.tex", "29-parameter"): 1,
     ("paper/transport_experiment.tex",
      "$1.20$--$1.22$ times the endpoint distance"): 1,
     ("paper/transport_experiment.tex", "$1.88\\times10^6$"): 1,
@@ -824,7 +895,13 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/transport_experiment.tex", "$2.51\\times10^5$"): 1,
     ("paper/transport_experiment.tex", "$3{,}989$--$12{,}607$"): 1,
     ("paper/transport_experiment.tex", "$8.74\\times10^{-6}$"): 1,
-    ("paper/transport_experiment.tex", "$T=1000$"): 7,
+    ("paper/transport_experiment.tex", "$T=1000$"): 8,
+    ("paper/transport_experiment.tex", r"$\log 5\approx1.609$"): 1,
+    ("paper/transport_experiment.tex", r"$79.4\%$--$97.3\%$"): 1,
+    ("paper/transport_experiment.tex", r"$2.0\%$--$16.3\%$"): 1,
+    ("paper/transport_experiment.tex", r"$9{,}948$--$10{,}010$"): 1,
+    ("paper/transport_experiment.tex", r"cap $2{,}000$"): 1,
+    ("paper/transport_experiment.tex", "50 transport-Hessian trajectories"): 1,
     ("paper/transport_experiment.tex", "$[92.9\\%,100\\%]$"): 1,
     ("paper/transport_experiment.tex", "$e^{\\bar D_t^Q/2}$"): 1,
     ("paper/transport_experiment.tex",
@@ -883,8 +960,14 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/transport_experiment.tex", "to $1.18$"): 1,
     ("paper/transport_experiment.tex", "to $94.0$"): 1,
     ("paper/transport_experiment.tex", "versus caps of $500$--$2{,}000$"): 1,
-    ("paper/transport_experiment_appendix.tex", "$T=1000$"): 2,
-    ("paper/transport_experiment_appendix.tex", "$e^{\\bar D_t^Q/2}$"): 1,
+    ("paper/transport_experiment_appendix.tex", "$T=1000$"): 3,
+    ("paper/transport_experiment_appendix.tex", "$e^{\\bar D_t^Q/2}$"): 2,
+    ("paper/transport_experiment_appendix.tex", "50 primary-policy trajectories"): 1,
+    ("paper/transport_experiment_appendix.tex", r"$97.33\%,94.66\%,89.39\%,79.39\%$"): 1,
+    ("paper/transport_experiment_appendix.tex", r"$2.01\%,4.04\%,8.16\%,16.27\%$"): 1,
+    ("paper/transport_experiment_appendix.tex", r"$D_{\rm target}=0.25,0.5,1,2$"): 1,
+    ("paper/transport_experiment_appendix.tex", r"\kappa_{-,t}=\kappa_{+,t}=1"): 1,
+    ("paper/transport_experiment_appendix.tex", r"\xi_t=0"): 1,
     ("paper/transport_experiment_appendix.tex", "50 evaluation seeds"): 2,
     ("paper/transport_experiment_appendix.tex", "50 runs per cell"): 1,
     ("paper/transport_experiment_appendix.tex",
@@ -898,9 +981,7 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/transport_theory.tex", "\\kappa_{-,t}=\\kappa_{+,t}=1"): 2,
     ("paper/transport_theory.tex", "\\xi_t=0"): 3,
     ("submissions/tmlr_2026/main.tex", "29-parameter"): 1,
-    ("submissions/tmlr_2026/main.tex", "all\n600 transport-Hessian runs"): 1,
-    ("submissions/tmlr_2026/main.tex",
-     "locked 29-parameter scaled-tanh audit"): 1,
+    ("submissions/tmlr_2026/main.tex", "All 600 transport-Hessian runs"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "2,400 trajectories"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "21 artifacts"): 1,
     ("submissions/tmlr_2026/supplement_README.md",
@@ -2211,6 +2292,28 @@ def structural_checks(root: Path, aggregate, config) -> list[Check]:
            and float(config["base"]["teacher"]["theta_radius"]) == 1.0,
            "feature_bound = theta_radius = 1")
 
+    components = ("statistical_bound_component", "historical_bound_component",
+                  "path_inflation_component", "current_bias_cumulative")
+    decomposition = aggregate["bound_decomposition"]
+    bad_decomposition = [
+        (r["target_D"], r["round"])
+        for r in decomposition
+        if not math.isclose(math.fsum(float(r[k]) for k in components),
+                            float(r["sharp_theorem_rhs"]), rel_tol=1e-12, abs_tol=1e-10)
+        or min(float(r[k]) for k in components) < -1e-10
+    ]
+    expect("recorded bound components are nonnegative and sum to the sharp RHS",
+           bool(decomposition) and not bad_decomposition,
+           f"inconsistent rows: {bad_decomposition[:5]}")
+    expect("base component dominates the recorded mean bound decomposition",
+           bool(decomposition) and all(
+               float(r["statistical_bound_component"])
+               >= max(float(r[k]) for k in components[1:])
+               for r in decomposition))
+    expect("each terminal mean base component exceeds the primary-horizon cap",
+           all(float(r["statistical_bound_component"]) > 2 * PRIMARY_HORIZON
+               for r in _terminal_decomposition(aggregate)))
+
     # Every comparison policy beats transport Hessian at the primary horizon.
     worse = []
     for target in aggregate["target_D"]:
@@ -2244,6 +2347,21 @@ def structural_checks(root: Path, aggregate, config) -> list[Check]:
         expect("the supplement README states the declared package versions",
                not wrong and len(wanted) == len(README_NAMED_PACKAGES),
                f"declared {wanted}; {wrong}")
+        availability = root / AVAILABILITY_TEX
+        if availability.is_file():
+            expect("availability names the declared SciPy requirement",
+                   declared.get("scipy") == "1.15.2"
+                   and "SciPy 1.15.2" in availability.read_text(encoding="utf-8"))
+    # The historical wheel inventory is retained in the repository, but is not
+    # a required supplement input.  Its version is dependency provenance, not
+    # an inferred runtime for the study; the availability statement remains
+    # bound by exact semantic-unit and whole-file pins in both layouts.
+    wheel_manifest = root / "third_party/wheels/SHA256SUMS"
+    if wheel_manifest.is_file():
+        expect("historical wheel inventory records the stated SciPy version",
+               "35043677e4c5d0c556fbd355380bee8e1d349905243b011c9714c5dde7d00628  "
+               "scipy-1.13.1-cp312-cp312-manylinux_x86_64.whl"
+               in wheel_manifest.read_text(encoding="ascii").splitlines())
 
     # The conservatism statement in the abstract, as an order-of-magnitude claim.
     ratios = _medians(aggregate, "certificate_tightness", "D_Q_over_d_Th",

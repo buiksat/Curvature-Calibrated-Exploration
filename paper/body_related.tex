@@ -40,17 +40,17 @@ confidence argument.  \citet{deb2024contextual} take a different route through
 online neural regression and contextual-bandit reductions.  These results do
 not lack proofs because their covariance differs from ours; they answer
 different questions.  We analyze the additional case in which every historical
-Jacobian is replayed at the current parameter and the resulting operator is
-solved approximately.
+Jacobian is replayed at the current parameter.  The theorem allows certified
+operator and solve approximations; the experiment uses dense current metrics
+and direct Cholesky solves.
 
 The NeuralLinear method maintains Bayesian linear uncertainty in learned
 final-layer features \citep{riquelme2018deep}; the methods of
 \citet{xu2022shallow} and \citet{bui2025variance} instead use UCB-style linear
 exploration over learned deep representations.  Recomputing those last-layer
 representations is not the same as transporting confidence to a full-parameter
-GGN.  Our supplied-subspace result recovers a projected linear geometry when
-such a subspace is fixed in advance, but it does not turn the general theorem
-into a neural-linear analysis.
+GGN.  The present theorem asks what certificates justify that transport; it
+does not provide a general analysis of neural-linear representation learning.
 
 \paragraph{Online Bayesian and EKF-style neural bandits.}
 \citet{duranmartin2022efficient} apply extended Kalman filter (EKF)
@@ -63,11 +63,12 @@ More directly, \citet{chang2023lowrank} maintain a diagonal-plus-low-rank
 approximation to the full-parameter posterior precision through recursive EKF
 and online-SVD updates, and use it for Thompson sampling in an MNIST contextual
 bandit.  Their LO-FI method is a one-pass compressed-posterior approach with
-fixed-rank cost linear in parameter count and no replay of past data.  CC-UCB
-instead relinearizes the full replay history at the current parameter and
-accesses the uncompressed GGN through residual-checked CG.  Their bandit study
-is empirical; our conditional UCB analysis explicitly accounts for CG
-truncation, but does not establish a practical advantage over LO-FI.
+fixed-rank cost linear in parameter count and no replay of past data.  Our
+transported-UCB analysis instead relates current replayed curvature to a
+separate frozen-feature confidence metric.  Certified approximate operators and
+solver widths enter through explicit comparison factors.  The dense audit
+evaluates neither compressed operators nor CG, and establishes no practical
+advantage over LO-FI.
 
 \paragraph{Linearized networks and Laplace approximations.}
 \citet{maddox2021fast} linearize once around a trained network and use implicit
@@ -87,19 +88,19 @@ operator differs from the predictable confidence Gram.
 \paragraph{Sampling-based full-parameter exploration.}
 Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin}
 explores with approximate samples of a loss-defined parameter posterior,
-obtained by noisy gradient steps on the regularized loss; like CC-UCB it never
-materializes a covariance matrix.  Its regret guarantee is for linear
+obtained by noisy gradient steps on the regularized loss without materializing
+a covariance matrix.  Its regret guarantee is for linear
 contextual bandits; its neural-bandit evidence is empirical.
-The two routes pay for exploration differently: LMC-TS through the
-mixing of a per-round sampling chain, CC-UCB through CG truncation and
-spectral distortion of an explicit curvature metric, which yields
-deterministic widths, an optimism-style analysis, and a fixed curvature operator
-reused across separate per-action CG solves.
+LMC-TS requires control of its per-round sampling approximation.  Our
+optimism-based theorem instead requires certificates for metric transport,
+operator distortion, and the width used by action selection.  These are
+different statistical obligations; our dense audit does not compare their
+computational cost or empirical performance.
 \paragraph{Scope of efficient nonlinear exploration.}
 The methods above obtain efficiency through different statistical objects:
 fixed NTK features, grouped data, regression reductions, or learned last-layer
-representations.  CC-UCB targets a practitioner who chooses to score with a
-specific current full-parameter GGN/Fisher operator.  Its conditional theorem
+representations.  Our conditional theorem addresses scores based on a specific
+current full-parameter GGN/Fisher operator.  It
 exposes what that choice requires: transport from collection-time confidence,
 operator distortion, and solver error.  It does not imply that this route is
 computationally preferable to the alternatives.
@@ -111,12 +112,11 @@ bounds that depend on the spectral approximation quality.
 \citet{wen2026revisiting} show that fixed-size sketch regret bounds can
 degenerate to the trivial linear rate under heavy spectral tails, and propose
 an adaptive dyadic block sketch.
-Our spectral-distortion theorem (\Cref{thm:spectral-distortion}) instantiates the
-same conceptual lever in the matrix-free GGN/CVP setting by exposing transfer
-and realized-width terms along the realized trajectory.
-We do not claim novelty for the sandwich-to-regret reduction itself;
-the contribution is adapting it to the CG/GGN context with explicit
-CG truncation and feature-drift factors.
+The two-sided comparison in \Cref{thm:transported-ucb} uses the same conceptual
+lever to relate an applied operator to exact current curvature.  A separate path
+certificate relates that curvature to the frozen-feature confidence metric,
+and a solver certificate controls the computed width.  We claim no novelty for
+the sandwich-to-regret reduction itself and do not evaluate a sketched operator.
 
 \paragraph{GGN--vector products, Hessian spectral analysis, and influence
 functions.}
@@ -127,16 +127,18 @@ Jacobian-transpose-times-Jacobian-times-vector structure
 Recent work on Krylov methods for Hessian spectral analysis
 \citep{granziol2026hessian} demonstrates related distributed HVP/Krylov
 infrastructure at $>10^8$-parameter scale, but does not benchmark the exact
-per-example GGN operator or end-to-end CC-UCB latency.
+per-example GGN operator or end-to-end transported-UCB latency.
 Influence functions
 \citep{koh2017understanding} use inverse-curvature--vector products to
-attribute predictions to training points; the CG-based implicit solve
-we employ is the same computational primitive.
+attribute predictions to training points.  A CG-based realization of our solver
+interface would use the same implicit-solve primitive.  The present experiment
+uses direct dense solves and makes no matrix-free scalability claim.
 
 \paragraph{Optimal experimental design.}
 Information-theoretic exploration objectives---such as maximizing
-$\log\det(\bCbar_t)$ or minimizing the trace of~$\bCbar_t^{-1}$---connect
+$\log\det(\bVbar_t)$ or minimizing the trace of~$\bVbar_t^{-1}$---connect
 bandit exploration to the classical D-optimal and A-optimal design
-criteria \citep{valko2013finite}.  CC-UCB's use of the full GGN/Fisher curvature
-enables stochastic estimates of these quantities via Hutchinson-type trace
-estimators \citep{ubaru2017fast}, without forming the matrix.
+criteria \citep{valko2013finite}.  Stochastic trace and log-determinant
+estimators provide related matrix-free tools \citep{ubaru2017fast}.  Here the
+frozen log-determinant appears in the regret analysis; the audited policy
+selects actions by its UCB score and does not implement these estimators.

@@ -1,14 +1,20 @@
 # TMLR 2026 submission candidate
 
-**Status: prepared, not submitted.** Nothing here has been uploaded anywhere.
-`FINALIZATION_REPORT.md` lists the release holds that still need a human
-decision before anything is sent.
+**Status: revised manuscript, not submitted; strict release not rebuilt.**
+The review revision was synchronized with the manuscript mirror on
+2026-10-13 (America/Los_Angeles). `REVISION_VALIDATION.md` records current
+checks and blockers. `FINALIZATION_REPORT.md` is the historical release record,
+not evidence that the revised sources have passed its old release checks.
 
 This directory is a thin entry point. It contains no mathematics of its own:
 `main.tex` `\input`s the shared canonical sources under `paper/`, which are the
-same files the historical AISTATS entry point `paper/main.tex` reads. The two
-venues differ in their shell, their abstract and one `\newif` switch, not in
-their theorems.
+shared files the historical AISTATS entry point `paper/main.tex` reads. TMLR
+now includes the transport theorem, its proofs, the controlled-study diagnostics,
+and a short historical-scope note. The nine legacy one-sided/rate/protocol
+appendix sources remain in Git but are excluded from both TMLR archives. The
+symbolic growing-window table is also excluded. No experiment configuration,
+execution source, selection record, result, or frozen PDF was changed by this
+manuscript synchronization.
 
 ```
 main.tex                 the anonymous TMLR entry point
@@ -87,7 +93,13 @@ the build closure, not by quietly turning deflate back on.
 
 ## Current release
 
-Every figure here is read from the built artifacts themselves;
+No strict release has been produced for the review revision: its packager
+requires system-owned TeX inputs and the current cloud machine provides some
+required packages only in a writable local tree. That trust requirement remains
+enforced. The following table is the **historical pre-revision release**;
+it must be regenerated after a successful revised strict build.
+
+Every historical figure here was read from the built artifacts themselves;
 `tests/test_tmlr_release_package.py` recomputes each one against
 `release_manifest.json` rather than trusting this table.
 
@@ -154,7 +166,7 @@ string or author metadata.
 From the repository root, with NumPy and SciPy available:
 
 ```bash
-python3 paper/validate.py                                   # static TeX validation
+python3 paper/validate.py                                   # historical AISTATS entry
 python3 tools/verify_tmlr_submission_numbers.py             # numerical-provenance ledger
 python3 tools/transport_artifact_expectations.py --root .   # regenerate all 21 artifacts
 python3 tools/verify_transport_committed_evidence.py        # detached committed-evidence verifier
@@ -166,6 +178,10 @@ Also run the release-package suite against a real build, which is what CI does:
 TMLR_OUT=/tmp/cce-tmlr-release bash submissions/tmlr_2026/build.sh
 TMLR_OUT=/tmp/cce-tmlr-release python3 -m pytest -q tests/test_tmlr_release_package.py
 ```
+
+The packager statically checks the staged TMLR entry point separately; a pass
+for `paper/main.tex` alone does not validate TMLR. Current test collection counts
+are recorded separately from execution outcomes in `REVISION_VALIDATION.md`.
 
 Inside an unpacked `supplement.zip`, `bash verify.sh` runs the required-package
 contract gate and then four checks: the ledger, the artifact regeneration, the

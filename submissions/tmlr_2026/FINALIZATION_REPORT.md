@@ -3,6 +3,12 @@
 **Internal. Not uploaded.** `package.py` refuses to place this file in
 `source.zip` or `supplement.zip`, and a test enforces that.
 
+**Historical release record.** The October review revision changes the active
+manuscript and source-closure contract. Its current checks, collected test
+counts, and strict-release blocker are recorded in `REVISION_VALIDATION.md`.
+The pass counts and artifact hashes below describe their original runs; they
+are not current validation results and have not been relabeled as such.
+
 Written 2026-09-15, last revised 2026-09-16.
 Baseline `b99b682ecc8f69552a3f57b1b85333378ed12ac1` on
 `cce-experiments`, re-resolved against `origin/cce-experiments` after a fetch.

@@ -22,6 +22,7 @@ CONFIG_NAMES = {
     "linear_audit",
     "realistic_transport_covtype",
     "transport_instantiation",
+    "transport_review_followup",
 }
 
 

@@ -1,0 +1,32 @@
+# Supported review/reproduction environment: CPython 3.12, Linux x86_64.
+# All runtime/test dependencies are exact pins; hashes select trusted PyPI wheels.
+# Direct versions match experiments/requirements.txt. Transitive versions were
+# resolved and validated for the new review runs, not attributed to historical runs.
+# Install in a fresh venv with --require-hashes --only-binary=:all:.
+
+# attrs-26.1.0-py3-none-any.whl
+attrs==26.1.0 --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
+# cloudpickle-3.1.2-py3-none-any.whl
+cloudpickle==3.1.2 --hash=sha256:9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a
+# iniconfig-2.3.1-py3-none-any.whl
+iniconfig==2.3.1 --hash=sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7
+# joblib-1.6.0-py3-none-any.whl
+joblib==1.6.0 --hash=sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba
+# numpy-2.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+numpy==2.2.3 --hash=sha256:3b787adbf04b0db1967798dba8da1af07e387908ed1553a0d6e74c084d1ceafe
+# packaging-26.3-py3-none-any.whl
+packaging==26.3 --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+# pluggy-1.6.0-py3-none-any.whl
+pluggy==1.6.0 --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
+# psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl
+psutil==7.2.2 --hash=sha256:076a2d2f923fd4821644f5ba89f059523da90dc9014e85f8e45a5774ca5bc6f9
+# pytest-7.2.2-py3-none-any.whl
+pytest==7.2.2 --hash=sha256:130328f552dcfac0b1cec75c12e3f005619dc5f874f0a06e8ff7263f0ee6225e
+# scikit_learn-1.5.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+scikit-learn==1.5.1 --hash=sha256:97625f217c5c0c5d0505fa2af28ae424bd37949bb2f16ace3ff5f2f81fb4498b
+# scipy-1.15.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+scipy==1.15.2 --hash=sha256:2b871df1fe1a3ba85d90e22742b93584f8d2b8e6124f8372ab15c71b73e428b8
+# threadpoolctl-3.5.0-py3-none-any.whl
+threadpoolctl==3.5.0 --hash=sha256:56c1e26c150397e58c4926da8eeee87533b1e32bef131bd4bf6a2f45f3185467
+# pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (release/package test dependency)
+PyYAML==6.0.3 --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc

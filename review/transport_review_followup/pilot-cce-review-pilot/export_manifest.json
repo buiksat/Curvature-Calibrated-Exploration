@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "bytes": 802,
+      "path": "README.md",
+      "sha256": "488583bb5db847ec1e8bc048c5a85f183c6ccfcdec4dd3b476ddeaf1c1225adf"
+    },
+    {
+      "bytes": 65487,
+      "path": "aggregate_compact.json",
+      "sha256": "a1432c2454b458268587ae096551191862ed81db2db303902a90ae7aaf64e7bc"
+    },
+    {
+      "bytes": 58197,
+      "path": "development_summaries.jsonl",
+      "sha256": "1a1569e9f590ffb14d60d62a8ae0e424c03aa5d60282c26216bbd68eac94e027"
+    },
+    {
+      "bytes": 11185,
+      "path": "drift_and_reference_diagnostics.json",
+      "sha256": "40ec6cbbabe0b8a50126d18d7f2cf5085f33a946f9fc0fd2393c881fc32c35c3"
+    },
+    {
+      "bytes": 10573,
+      "path": "execution_config.json",
+      "sha256": "70e19e13c3c1496f10ef3e67ed55de332cd75935faccb29fdb6edcc0ee67ddb7"
+    },
+    {
+      "bytes": 60215,
+      "path": "raw_input_inventory.jsonl",
+      "sha256": "765c5320721f692872bb77c2955d026aabe3178fc47e18f72d150424e92e4518"
+    },
+    {
+      "bytes": 4658,
+      "path": "round_drift_summaries.jsonl",
+      "sha256": "15d6aa9e5a5ac36cba70f1ae018b86aa988299da21e9be0c5bfd8337c0f41f60"
+    },
+    {
+      "bytes": 6267,
+      "path": "run_manifest.json",
+      "sha256": "4b6e734cb0b2786275590cc4bf3f600b6e2c47d76030d261b193c76095c03b8a"
+    },
+    {
+      "bytes": 59220,
+      "path": "seed_summaries.jsonl",
+      "sha256": "ad6fbe968836db76e3d3ca69b9714869c0063031a860a5b458b8e8fd5880fd1d"
+    },
+    {
+      "bytes": 71503,
+      "path": "selection.json",
+      "sha256": "4878ce49371a2b6a1d93371d5141e91c3316c63295dfe69d7b4caac37f5c5419"
+    },
+    {
+      "bytes": 12971,
+      "path": "source_config.json",
+      "sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+    },
+    {
+      "bytes": 1158,
+      "path": "terminal_bound_decomposition.json",
+      "sha256": "feb3d9ccad1ee93f7580e66b0bc566c8df66070c3672681c57626f6459b72e34"
+    },
+    {
+      "bytes": 44711,
+      "path": "tuning_summaries.jsonl",
+      "sha256": "3b0cc60afd536ecb262419271f381ec5176af98d40ea9eb06da2c4520e496635"
+    }
+  ],
+  "raw_data_included": false,
+  "schema_version": 1,
+  "server_raw_validation_passed": true,
+  "source": {
+    "aggregate_sha256": "2b60ccc1f9e527f7e68c4a26933bce241271953a71580067321dcb84ea681f9c",
+    "execution_sha256": "70e19e13c3c1496f10ef3e67ed55de332cd75935faccb29fdb6edcc0ee67ddb7"
+  }
+}
