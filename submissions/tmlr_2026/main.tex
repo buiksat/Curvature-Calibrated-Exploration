@@ -77,18 +77,17 @@
 \maketitle
 
 \begin{abstract}
-Retraining a contextual-bandit model changes the gradient features used in
-current curvature, while sequential confidence can be built from features
-frozen when rewards were collected. We study the guarantees and limitations of
-transporting this confidence to relinearized curvature. A conditional UCB
-theorem separates metric transport, approximate operators, and solver widths,
-and bounds regret through the frozen sequential information gain. For squared
-loss, a corrected prediction center supplies reference confidence along
-predictable parameter paths without requiring nonlinear optimizer convergence,
-while retaining explicit approximation-error charges. The construction also
-has a simple limitation: its certified width cannot be smaller than the direct
-reference width on the same history, and exact actionwise transport reproduces
-that width. This comparison does not order the realized regret of policies
+Sequential confidence in a contextual bandit can use features frozen when
+rewards are collected, while retraining changes the features used by current
+curvature. We study the guarantees and limitations of transporting confidence
+to this relinearized curvature. A conditional UCB theorem separates metric
+transport, approximate operators, and solver widths, and bounds regret through
+the frozen sequential information gain. For squared loss, a corrected
+prediction center supplies reference confidence along predictable parameter
+paths in a certified region, with explicit Taylor and misspecification error
+envelopes and no nonlinear optimizer-convergence requirement. The certified
+width cannot be smaller than the direct reference width on the same history;
+exact actionwise transport reproduces that width. This comparison does not order the realized regret of policies
 with different histories. We examine these distinctions in a 29-parameter
 scaled-tanh model, for which a relative-weight comparison also supplies a
 horizon-independent endpoint certificate. A prespecified follow-up evaluates

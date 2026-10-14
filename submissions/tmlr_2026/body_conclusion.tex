@@ -1,65 +1,57 @@
 %% Shared scientific source for the research and TMLR entry points.
 \section{Conclusion}\label{sec:conclusion}
 
-Collection-time confidence can justify a score computed with current
-relinearized curvature through explicit metric, operator, and solver
-certificates. The corrected center supplies the reference-confidence event
-without requiring nonlinear optimizer convergence, while retaining historical
-error and current bias. The resulting theorem reduces to the usual frozen
-linear-feature UCB argument for exact solves and unchanged features.
+Collection-time confidence can justify current-curvature scores through
+explicit metric, operator, and solver certificates. The corrected center
+supplies reference confidence along predictable parameter paths in a certified
+region, without requiring nonlinear optimizer convergence. Historical error
+and current bias remain explicit costs.
 
-This construction also clarifies what transport alone cannot add. Its certified
-width is at least the direct reference width on the same history, and exact
-actionwise transport reproduces that width (\Cref{prop:reference-width-floor}).
+The construction's certified width is at least the direct reference width on
+the same history, and exact actionwise transport reproduces that width
+(\Cref{prop:reference-width-floor}).
 This elementary comparison concerns the same information and center; it neither
 rules out stronger confidence information nor orders the realized regret of
-different policies. A cheaper way to compute a justified width could still be
-useful, but its total cost must include the frozen estimator needed by the
-corrected center.
+different policies. In particular, a larger bonus could change actions
+beneficially; the width comparison does not exclude that possibility.
 
 The completed follow-up exposes a substantial operational cost of the evaluated
 Hessian certificate. All nine pointwise paired regret comparisons favor its
 comparators, and exploratory log analysis finds that its bonus usually
-determines the selected action despite variation in the corrected centers.
+determines its recommendation on the recorded states.
 The primary bound is dominated by path inflation in this study. This differs
 from base-component dominance in the original near-linear grid; neither
-decomposition establishes a causal effect of drift across reward tasks. The
-frozen policy's own bounds remain vacuous, so tightening transport does not
+decomposition establishes a causal effect of drift across reward tasks.
+The frozen policy's own bounds remain vacuous, so tightening transport does not
 remove all confidence and approximation-error costs. All evaluated policies,
 including the uncertified naive control, retain the reported floating-point
 confidence and optimism diagnostics in the follow-up. These observations do
 not establish the empirical necessity of the transport correction.
 
-For this model, a relative-weight comparison supplies a horizon-independent
-endpoint certificate (\Cref{cor:tanh-relative-weights}). Its derivation exploits
-scalar reweighting of fixed feature directions. Auditing that certificate on
-existing histories evaluates its tightness and numerical behavior; it does not
-measure a new policy's adaptive regret. Any such evaluation requires a
-separately fixed protocol and fresh evaluation data.
+The model's fixed feature directions permit a relative-weight endpoint
+certificate (\Cref{cor:tanh-relative-weights}). Its audit measures tightness on
+existing histories, not a new policy's adaptive regret. A horizon-independent
+endpoint certificate alone does not make the fixed-smoothness regret bound
+sublinear: the separate confidence and bias terms remain.
 
 \paragraph{Limitations and research questions.}
-The abstract theorem requires measurable action and certificate events, finite
-measurable suprema, a measurable approximate selector, valid pre-reward
-confidence and metric comparisons, and the same realized solver-width map for
-selection and sharpness. The squared-loss specialization requires a fixed
-ex-ante reference model, a predictable parameter path in a certified region,
-and supplied linearization and misspecification envelopes. Persistent errors
-can produce linear or vacuous bounds. The horizon-independent relative-weight
-certificate does not itself make the fixed-smoothness regret bound sublinear;
-the separate confidence and bias terms remain.
+The guarantee is conditional on the pre-reward confidence, certificate,
+measurability, and solver-width obligations in
+\Cref{asm:abstract-transport,thm:transported-ucb}. The corrected-center
+specialization additionally requires a fixed ex-ante reference model and
+supplied linearization and misspecification envelopes. The empirical evidence
+covers one synthetic model, a fixed teacher, shared prediction-based optimizer
+selection, and dense direct solves. It establishes no practical advantage over
+scalable neural-bandit methods. Floating-point checks are diagnostics, not
+verified numerical enclosures. The original study's raw-data and runtime
+provenance gaps remain distinct from the retained follow-up evidence, as
+detailed in the reproducibility statement.
 
-The experiment is one finite-dimensional synthetic model with a fixed teacher,
-shared prediction-based optimizer selection, dense matrices, and direct solves.
-It evaluates neither approximate operators nor CG, and establishes no practical
-advantage over scalable neural-bandit methods. Floating-point checks are
-diagnostics, not verified numerical enclosures. The endpoint method is a dense
-diagnostic comparator, and the naive policy remains uncertified despite its
-observed optimism. The original study has unresolved raw-data and runtime
-provenance gaps, distinguished from the retained follow-up evidence in the
-reproducibility statement. The next statistical question is whether genuinely
-stronger confidence information can justify useful current-geometry scores;
-the computational question is whether their complete cost can improve on
-direct reference scoring.
+Two questions motivate further work: can stronger confidence information
+justify useful current-geometry scores, and can their complete computational
+cost improve on direct reference scoring? That cost must include the frozen
+estimator needed by the corrected center. A new adaptive-policy comparison
+would require a separately fixed protocol and fresh evaluation data.
 
 \iflegacyextras
 Legacy audits are summarized in \Cref{app:legacy-evidence}; none instantiates

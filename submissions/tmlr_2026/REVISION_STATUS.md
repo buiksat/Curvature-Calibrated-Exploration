@@ -1,98 +1,92 @@
-# Revision status: completed study and certificate audit
+# Revision status after checked Fable feedback
 
-Updated 2026-10-14. This anonymous TMLR manuscript is a revised draft, not a
-submitted paper. Scientific sources are synchronized with `paper/` on
-`cce-review-revisions`; the research branch holds the executable analyses and
-full verification record.
+Updated 2026-10-14. The anonymous manuscript and compact research supplement
+have been built; no TMLR submission has been made. Scientific sources are
+synchronized with `paper/` on `cce-review-revisions`.
 
-## Scientific changes
+## Current manuscript
 
-- Reframed the title, abstract, introduction and conclusion around conditional
-  guarantees, certificate conservatism and observed policy behavior. The paper
-  makes no practical regret-improvement or large-model scalability claim.
-- Added the same-history width-floor proposition, including exact actionwise
-  equality and a limited-information necessity statement. It does not establish
-  an ordering of adaptive policies' realized regret.
-- Added direct two-sided endpoint transport and a scaled-tanh relative-weight
-  certificate, with proofs and a distinction from the original factor-path
-  length. The uniform bound is independent of the horizon; category weights
-  provide a tighter, asymmetric comparison.
-- Made the completed 600-trajectory follow-up the main empirical study. Its 294
-  development/tuning trajectories are separate. All nine paired pointwise
-  intervals favor the comparators over Hessian transport. Both the primary
-  policy's and frozen policy's own regret bounds are vacuous.
-- Retained the original near-linear study separately in the appendix, including
-  its missing-raw-data and dependency-provenance limitations. Its aggregate
-  evidence was not changed or pooled with the new study.
-- Added clearly labeled exploratory diagnostics on all 600 saved histories:
-  per-seed width-dominance variation, fixed-history alternative recommendations,
-  numerical tie sensitivity and relative-certificate overhead. All 600,000
-  recorded rounds passed the original numerical consistency checks during
-  optimizer replay on fixed actions and rewards. This is not a new adaptive
-  policy evaluation.
-- Checked close related work against publisher sources. Removed two peripheral
-  active claims whose 2026 sources could not be verified; their historical
-  bibliography entries remain. No novelty guarantee is claimed.
+The revision adds a short abstract confidence-band example, clarifies the
+certified-region and approximation-error requirements, reduces repetition,
+and explains the exact actionwise ratio's computational meaning. It adds
+source-checked descriptive context-free and best-fixed-action comparisons and
+makes explicit that every mechanism-table row evaluates the Hessian score on
+the named behavior histories. No new experiments were run.
+
+The strongest publication case is a focused methodological and diagnostic
+study separating conditional validity, certificate conservatism and policy
+behavior. Its significance remains a reviewer judgment: the ingredients are
+largely established and the empirical scope is one synthetic model and teacher.
+The same-history width floor does not order adaptive regret. No practical
+regret-improvement, end-to-end speedup or large-model scalability is claimed.
 
 The research branch's
-[implementation report](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/post_full_revision/IMPLEMENTATION_REPORT.md)
-links the data, proofs, numerical verification and research decision.
+[implementation and publication assessment](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/post_fable_revision/IMPLEMENTATION_REPORT.md)
+records the revisions and remaining scientific limits. Its
+[validation record](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/submissions/tmlr_2026/REVISION_VALIDATION.md)
+records actual execution results, including earlier failed checks and repairs.
 
-## Manuscript build
+The final research regression run passed **694 tests**, with **3 skipped** and
+no failures. An independently extracted supplement passed its advertised checks,
+including reconstruction of all 24 follow-up terminal intervals and regeneration
+of six artifacts. An independently extracted strict source archive rebuilt its
+38-page PDF byte for byte. The research validation record retains the exact
+skip reasons and toolchain warnings; these checks do not establish raw replay.
 
-The final manuscript builds with the unmodified official TMLR style at 10pt.
-It has **38 pages**, with references beginning on page 18. The compile log has
-no unresolved references or citations, missing characters, overfull boxes or
-LaTeX warnings. Four underfull-box diagnostics remain (three horizontal and one
-vertical); inspected main-result and appendix tables fit at body font size.
-The first page, theorem layout and key empirical tables were visually checked.
-PDF author, title, subject, keywords, creator and producer metadata are empty.
-The official template's default “under review” header does not indicate that
-an actual submission has been made.
+## Main-branch build
 
-Final build artifacts in the prepared workspace:
+The main mirror builds with the unmodified official TMLR style at 10pt:
+**38 pages**, references beginning on page 18, no unresolved references or
+citations, missing characters, overfull boxes or LaTeX warnings. Eight
+underfull-box diagnostics remain. The first page, analytic example and main
+empirical table were visually checked; the final availability page was checked
+in the strict build. PDF author, title, subject, keywords, creator and producer
+metadata are empty. The template's default review header is not a submission
+status assertion.
 
-- `/workspace/cce-build/tmlr-full-revision/main.pdf`: 642,844 bytes;
-  SHA-256 `8cc566123e1fe13bdb23b5f7929f1d3bb22df9d8f847007b350b61840ddac5d7`.
-- `/workspace/cce-build/tmlr-full-revision/source.zip`:
-  SHA-256 `4872f6e2da31318ec7263573ec6737f49aa0d8ff6c9bb25ac453f840b8cc47a5`.
+- `/workspace/cce-build/tmlr-fable-revision/main.pdf`:
+  644,620 bytes; SHA-256
+  `21c6e0a031d4255376806349ef570fc11fec9cc5360d8ad7e3828902718e15d5`.
+- `/workspace/cce-build/tmlr-fable-revision/source.zip`:
+  SHA-256 `e76c616993c646254312f4acab598373bc9c118d447f3ebccb54d51ab3088e8d`.
 
-An independent clean extraction of all 45 source-archive entries rebuilt the
-PDF byte for byte under the same TeX environment. Its recorder has no input
-from either original checkout; all external inputs resolve to the installed
-TeX distribution or the declared local TeX environment. All four official
-style/licence hashes match the pinned upstream version.
+An independent clean extraction of all 45 source members rebuilt the PDF byte
+for byte under the declared local TeX activation. The recorder has no original
+checkout or build-directory dependencies. All four official style/licence
+hashes match their independently pinned upstream values. The local report is
+`/workspace/cce-build/tmlr-fable-main-clean/rebuild_report.md`.
 
-The source archive contains the active LaTeX compile inputs and build
-instructions. It excludes internal review documents, code/evidence supplements
-and inactive legacy appendices. It is a manuscript source archive, not a
-complete research reproduction bundle.
+## Strict research release
+
+The research branch builds a matched PDF, source archive and anonymous compact
+supplement at `/workspace/cce-build/tmlr-fable-final-release`:
+
+- `main.pdf`: `158c98e99f2665d0c804a7f13a8c8d76fe0c6ae1d18f3c45bfae21caf3e64822`.
+- `source.zip`: `da0e004d58b3198da3e3526c4c9a36921f665d60e0e4dac93d25d889ad0e5fa3`.
+- `supplement.zip`: 93,693,136 bytes;
+  `8be0424f9fdc98387dde264d8e2dc8fe7bb3ea3eb3438c9fdf86aa3180fff81a`.
+
+Use these matched release files together. The strict build vendors exact
+runtime/source/licence files for its additional TeX packages and records every
+protected external compiler input. Its PDF bytes differ from the main mirror's
+build because their declared TeX dependency sets differ; the scientific sources
+are synchronized. The exact archives and checks are described in the research
+branch's release README and validation record.
+
+The compact supplement covers the complete follow-up export and authoritative
+exploratory outputs. Metadata-anonymized copies have explicit transformation
+records and original/packaged digests; scientific values are preserved. The
+original study's aggregate evidence is kept distinct from the follow-up.
 
 ## Remaining submission work
 
-The new relative certificate brings width overhead close to the available
-frozen-reference score, but supplies no additional confidence information and
-has no established end-to-end speed or adaptive-regret advantage. The recorded
-research decision is to stop further adaptive experiments until a distinct
-computational or statistical hypothesis is specified. The current 29-parameter
-NumPy study runs on CPU; two A100 GPUs do not resolve that scientific gap.
+The follow-up raw tree is retained locally, but no anonymous raw archive or
+durable anonymous hosting location has been completed. Compact terminal-interval
+verification does not establish raw-dependent roundwise replay. The original
+study's missing raw trajectories and historical runtime gaps remain unresolved;
+the follow-up does not recover them.
 
-The compact Git export supports independent terminal-interval verification.
-Full roundwise replay also requires the retained external raw archive (about
-3.7 GB of audited inputs); a durable anonymous distribution path remains open.
-The original study's absent raw trajectories cannot be recreated from its
-aggregate.
-
-The strict research supplement has not been rebuilt. Its protected-system-TeX
-requirement is unchanged: `algorithm.sty` and `algorithmic.sty` are missing from
-those system trees, and installing the authenticated Debian package failed
-because this session has no operating-system administrator privileges. This
-was not an automatic approval rejection. The compiled-source contract has been
-refreshed from a diagnostic research build, but the expanded anonymous evidence
-inventory and provenance handling
-remain incomplete. The research release now stops before staging or publishing
-when those required inputs are absent; the historical supplement is insufficient.
-
-The authors still need to judge scientific submission readiness, review the
-final anonymous materials and make the required OpenReview declarations. No
-submission or venue-eligibility assertion has been made by this revision.
+Broader adaptive or computational claims would require a distinct research
+hypothesis and new evidence. Two A100 GPUs do not resolve that conceptual issue
+for this CPU-based 29-parameter study. The authors must review the final
+materials and make the required OpenReview declarations before submission.

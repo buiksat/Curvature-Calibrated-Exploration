@@ -1,7 +1,9 @@
 %% Availability statement: distinguish historical and new evidence.
-The research codebase retains the scientific implementation, protocols,
-configurations, selection records, aggregation code, and manuscript tables.
-The two controlled studies have different reproducibility limits.
+The compact anonymous supplement includes the scientific implementation,
+protocols, configurations, selection records, verification tools, and manuscript
+tables. Pinned contracts and transformation records distinguish original evidence
+from metadata-anonymized copies. The two controlled studies have different
+reproducibility limits.
 
 \paragraph{Original near-linear study.}
 For \Cref{sec:transport-instantiation}, the retained full aggregate, generated
@@ -23,10 +25,12 @@ For \Cref{sec:transport-followup}, the retained portable export contains all
 optimizer, exact source and execution configurations, run provenance, terminal
 bound decompositions, drift summaries, and a raw-input hash inventory. An
 independent verifier reconstructs the reported terminal intervals from the seed
-summaries. The pinned Python environment and source revision are recorded with
-the run. Full raw trajectories are retained outside Git; the portable export
-alone does not reproduce every roundwise audit or regret-curve interval. No
-public raw-bundle URL or completed anonymous supplement is claimed.
+summaries. The pinned Python environment and scientific source digests are
+recorded. Identifying metadata is redacted in packaged copies without changing
+scientific values; the declarations record their original and packaged digests.
+Full raw trajectories are retained outside Git and are not included in the
+compact supplement. The portable export alone does not reproduce every roundwise
+audit or regret-curve interval. A durable public raw-bundle URL is not provided.
 
 \paragraph{Exploratory analyses.}
 The mechanism and relative-certificate analyses use the already observed

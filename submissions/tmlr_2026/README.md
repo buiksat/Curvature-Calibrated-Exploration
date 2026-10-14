@@ -1,13 +1,13 @@
 # TMLR manuscript on main
 
-**Status: anonymous manuscript draft; not submitted.**
+**Status: revised anonymous manuscript; compact research supplement built; not submitted.**
 
 `main.tex` is the self-contained TMLR entry point. Scientific sources are
 synchronized with `paper/` on `cce-review-revisions`; research code and evaluation
 artifacts live on that branch. The historical AISTATS and CODE sources on main
 remain separate from this submission.
 
-The current revision makes the completed stronger-drift follow-up the main
+The current revision makes the completed nonlinear-regime follow-up the main
 empirical section and retains the original near-linear study in the appendix.
 It adds the precise same-history width comparison, direct endpoint and
 scaled-tanh relative-weight certificates, and exploratory diagnostics from the
@@ -25,10 +25,9 @@ The manuscript uses a 10pt article, the default anonymous TMLR mode, native
 single-column layout and fonts, author/year citations, and appendices after
 references. The wide evidence tables retain body-size text on landscape
 floats. Captions appear above tables, and the first page discloses the
-Codex and Claude assistance. The availability statement describes retained
-research materials without claiming that a supplement has already been built
-or attached. The anonymous PDF contains no author contact details or
-identifying metadata.
+Codex and Claude assistance. The availability statement describes the compact
+anonymous evidence supplement and separately states its raw-data limitations.
+The anonymous PDF contains no author contact details or identifying metadata.
 
 TMLR is a journal with rolling submissions and no fixed page limit. Manuscripts
 over 12 main-text pages have longer review timelines. Policies were checked in
@@ -55,15 +54,16 @@ directory is `/tmp/cce-tmlr`. `source.zip` is suitable for a standalone LaTeX
 project or Overleaf, with `main.tex` as its Main document. The archive uses the
 compiler's input list and contains only active manuscript inputs, required
 BibTeX/style files, and build instructions. It contains no inactive legacy
-appendices, code supplement, internal review notes, or portal declarations. See `BUILD.md` for
-the non-cloud build instructions.
+appendices, code supplement, internal review notes, or portal declarations.
+See `BUILD.md` for the non-cloud build instructions.
 
 ## Current validation
 
 Final build and archive-reproduction facts are recorded in
 [REVISION_STATUS.md](REVISION_STATUS.md). Manuscript build checks are separate
-from experimental verification and from the stricter anonymous code/evidence
-supplement. The latter has not been produced for this revision.
+from experimental verification and from the strict anonymous code/evidence
+supplement built on the research branch. Use its matched release files together;
+see the status record for paths and hashes.
 
 ## Before submission
 
@@ -75,5 +75,6 @@ Before uploading, the authors must review the manuscript, confirm the full
 author list and OpenReview declarations, and confirm that the work is not
 published, accepted, or under concurrent review at another archival venue.
 An AISTATS-formatted source file alone says nothing about its submission status.
-Prepare and verify any anonymous evidence supplement separately; TMLR allows
-up to 100 MB in PDF or ZIP format. No paper has been submitted.
+The verified compact supplement is below TMLR's 100 MB limit; its verification
+scope and raw-data limitations are recorded in `REVISION_STATUS.md`. No paper
+has been submitted.

@@ -52,6 +52,14 @@ The comparisons are total-policy outcomes on matched exogenous streams, not
 fixed-history interventions.  They establish neither a universal policy
 ordering nor a causal attribution to the certificate alone.
 
+For descriptive context, the online context-free mean-only benchmark has mean
+regrets 185.26, 183.06, and 176.67 at $W=16,1,0.25$, respectively; the best fixed
+action in hindsight has mean regrets 180.01, 177.97, and 171.84.  These means
+use the same evaluation streams.  Hessian's sample means are close to the
+context-free benchmark's, but no equivalence test was performed, and similar
+regret does not imply matching actions or identical use of context.
+\Cref{app:transport-followup} defines both benchmarks.
+
 \begin{table}[t]
   \centering
   \caption{Prespecified full-study outcomes at $T=1000$, with 50 paired
@@ -106,9 +114,11 @@ between the two largest widths exceeding the entire range of prediction
 centers---holds on 97.104\%, 99.372\%, and 99.508\% of rounds.
 These pooled fractions describe extensive width-dominated selection in the
 visited states, not an adaptive causal mechanism or an independent-round test.
-\Cref{app:transport-followup} reports variation across seeds, all four behavior
-histories, fixed-history alternative recommendations, and early numerical
-ranking sensitivity.  The fixed-history comparisons respect
+The per-seed mechanism table in \Cref{app:transport-followup} applies this same
+Hessian score to all four behavior histories; it does not report width dominance
+of each behavior policy's own score.  The appendix also compares alternative
+score recommendations on fixed histories and checks early numerical ranking
+sensitivity.  The fixed-history comparisons respect
 \Cref{prop:reference-width-floor}: tightening a transport certificate does not
 create additional statistical information or order policies' adaptive regret.
 

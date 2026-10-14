@@ -38,6 +38,13 @@ multiplicity-adjusted.  Shared seeds across conditions do not make the 600
 trajectories independent observations from one common population.  The teacher,
 conditions, and shared optimizer are fixed in this uncertainty calculation.
 
+The online context-free benchmark samples each action once, then selects the
+smallest-index action with the largest empirical mean of its own selected
+rewards, ignoring context.  The best-fixed-action benchmark instead selects in
+hindsight the action with the largest total true mean along the realized
+context stream.  Both use the same potential-outcome streams as the study
+policies, but neither follows a study policy's selected-action history.
+
 The committed full-study export records the exact configuration, selected
 optimizer, source inventory, development/tuning summaries, per-seed terminal
 outcomes, drift summaries, and compact aggregate.  Its independent verifier
@@ -85,9 +92,7 @@ The strict condition
 \]
 is sufficient for the unique largest-width action to maximize the score.
 Width-argmax agreement alone is weaker: prediction centers might favor the
-same action.  On primary histories, agreement counts are 49,691, 49,981, and
-49,991 out of 50,000 rounds, and strict-condition counts are 48,552, 49,686,
-and 49,754.  The exact tie rule is the smallest action index.
+same action.  The exact tie rule is the smallest action index.
 
 The numerical scan reconstructs the recorded selected scores exactly and
 finds no nonfinite coefficients or scores and no zero widths.  A separate
@@ -96,7 +101,7 @@ exact stored binary64 centers, widths, offsets, and \emph{already rounded}
 coefficient $B_t$.  It changes the primary recommendation at 16 states:
 five, five, and six in the respective conditions.  Across all behavior
 histories there are 65 changes among 600,000 states.  All occur at rounds
-2--10; the primary differences are below 0.629 of a binary64 score ULP.
+2--10, with score differences below 0.629 of a binary64 score ULP.
 The decimal calculation does not recompute upstream matrix solves,
 exponentials, coefficients, or fitted parameters.  An early changed action
 could affect subsequent adaptive history; that effect has not been measured.
@@ -107,8 +112,9 @@ itself, evidence that the selected action was corrupted.
 \Cref{tab:transport-followup-mechanism-variation} reports per-seed variation
 instead of treating the pooled rounds as independent.  In every row, the
 recommendation being diagnosed is the Hessian score evaluated on the row's
-behavior histories.  It is the behavior policy only in Hessian rows; in other
-rows its conditional recommendation can still coincide with the logged action.
+behavior histories.  Only Hessian rows describe that behavior policy's own
+score.  The other rows do not establish width-dominated selection by endpoint,
+frozen-reference, or naive-current policies.
 Each fraction has 1000 rounds in its denominator, and the
 reported median and range summarize 50 seeds.  These descriptive summaries
 are not confidence intervals.
@@ -116,7 +122,8 @@ are not confidence intervals.
 \begin{table}[t]
   \centering
   \caption{Exploratory per-seed variation in Hessian-score recommendations on
-  all four behavior histories.  Entries are the median percentage of rounds
+  all four behavior histories.  Every row evaluates the Hessian score; row
+  labels identify the history-generating policy.  Entries are the median percentage of rounds
   and the minimum--maximum range across 50 seeds.  Width argmax uses the exact
   smallest-index tie rule; the strict condition is the bonus-gap inequality
   above.}
@@ -166,18 +173,10 @@ separate fixed-action replay.
 \Cref{tab:transport-followup-relative-audit} uses the primary policy's
 histories; the machine artifact also reports all four behavior-history groups
 and per-seed summaries.  Direct frozen-reference recommendations on these
-states appear in \Cref{tab:transport-followup-same-history}.  The audit also
-records timings for category-ratio kernels with and without the 80 feature
-projections, and for dense endpoint evaluation with preassembled matrices.
-These are fixed-state microbenchmarks under parallel analysis load; they
-exclude matrix construction, confidence estimation, and the policy loop.
-Over 36 states (one seed, three checkpoints, four behaviors, and three
-conditions), the median of the per-state median kernel times was
-$27.7\,\mu\mathrm{s}$ for category ratios with precomputed scales,
-$34.8\,\mu\mathrm{s}$ including 80 projections, and
-$213.3\,\mu\mathrm{s}$ for dense endpoint evaluation.  Each state's timing
-uses five repeated batches; these timings are descriptive observations on
-one host, not a statistical comparison of end-to-end algorithms.
+states appear in \Cref{tab:transport-followup-same-history}.  Fixed-state kernel
+timings are retained in the audit artifact; they were collected under parallel
+analysis load, exclude matrix construction, confidence estimation, and the
+policy loop, and do not establish end-to-end speedup.
 The category construction requires additional accumulated collection weights
 and still uses matrix solves and the frozen confidence construction.  No
-end-to-end speedup or adaptive regret improvement has been established.
+new adaptive policy was evaluated by this audit.

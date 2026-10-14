@@ -25,15 +25,14 @@ question studied here: when can confidence built from collection-time features
 justify scores computed with current replayed curvature?
 
 Validity alone does not explain why a policy should use that curvature.
-Transporting an existing confidence bound does not add statistical information:
+Transporting a given confidence bound does not add statistical information:
 on a fixed history, the construction below produces an upper width at least as
-large as the direct reference width.  A loose certificate can therefore preserve
-optimism while making the bonus dominate reward predictions.  We study both the
-conditional guarantee and this operational limitation.  A completed controlled
-study motivates the distinction: the evaluated Hessian-transport policy has
-higher mean regret than each comparator in every follow-up condition, although
-all policies, including an uncertified control, pass the recorded optimism
-diagnostics.
+large as the direct reference width.  A loose certificate can preserve optimism
+while making the bonus dominate reward predictions.  We therefore separate
+conditional validity, certificate usefulness, and observed policy behavior.
+In our controlled follow-up, the evaluated Hessian-transport policy has higher
+mean regret than each comparator in every condition, despite passing the
+recorded optimism diagnostics.
 
 Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
 sequential statistical confidence.  The exact current metric $\bV_t$ replays
@@ -69,23 +68,13 @@ misspecification errors enter the radius through an explicit energy, while
 current errors enter additively.  These terms remain genuine costs: persistent
 misspecification can make the guarantee linear or vacuous.
 
-One decision round now has a concrete order.  Before the reward is observed, the
-learner forms the current query and corrected center, constructs or receives
-$\Calg_t$, certifies transport and operator distortion, computes one upper-valid
-width map over the score domain, and selects an action.  Only then does it observe
-the reward and update the frozen statistics and model.  The theory permits
-matrix-free CG to apply a fixed SPD operator through curvature--vector products,
-provided its width satisfies the solver certificate.  This separates solve
-approximation from operator approximation; it is not the implementation audited
-here.  Nor does a matrix-free solve make total policy memory $O(d)$, because the
-corrected center still needs frozen-feature access or a separately certified
-representation.
-
 \paragraph{Guarantee and scope.}
 The transported-UCB theorem composes reference confidence, metric transport,
 operator distortion, solver error, and approximate score maximization, then
 closes regret through frozen information gain
-(\Cref{thm:transported-ucb}).  Factor-path and prediction-Hessian certificates
+(\Cref{thm:transported-ucb}).  Its confidence and certificates are available
+before the selected reward is observed.  Factor-path and prediction-Hessian
+certificates
 make the metric comparison operational without a small-drift premise
 (\Cref{lem:factor-spd-path,cor:hessian-path-new}), and the corrected-center
 specialization yields finite-dimensional and near-linear rates without an
@@ -95,7 +84,10 @@ cor:global-near-linear-new}).  Thompson geometry, the sandwich-to-width
 comparison, and the UCB determinant-potential argument are established tools.
 Our analysis organizes their obligations for current replayed curvature,
 including the distinction between all-action upper validity and selected-action
-sharpness of the same numerical score.
+sharpness of the same numerical score.  The solver interface permits
+matrix-free CG for a fixed SPD operator when its width is certified; it does
+not eliminate the corrected center's need for frozen-feature access or a
+separately certified representation.
 
 \paragraph{A limitation and a sharper specialization.}
 We make explicit the elementary same-history width comparison and its equality
@@ -110,21 +102,25 @@ comparisons avoid the ridge-only Hessian envelope without claiming a general
 result for rotating neural gradients or a new confidence event.
 
 \paragraph{Controlled evidence.}
-The prespecified stronger-drift follow-up uses a 29-parameter scaled-tanh model
+The prespecified nonlinear-regime follow-up uses a 29-parameter scaled-tanh model
 with dense matrices and direct Cholesky solves in float64
 (\Cref{sec:transport-followup}); the original near-linear audit is retained
-separately in \Cref{sec:transport-instantiation}.  The follow-up evaluates four policies in three conditions, with 50 paired seeds per
-condition.  All nine pointwise paired intervals favor the comparators over
-Hessian transport.  The original grid's bound decomposition is base-dominated;
-the follow-up's is path-dominated, and the frozen policy's own-trajectory bound
-is also vacuous.  Changing the smoothness parameter changes the reward task, so
-these are separate conditions, not a controlled causal intervention on drift.
-Exploratory analyses of the retained histories measure width-dominated selection
-and audit the relative-weight certificate.  Alternative scores on those same
-histories are diagnostic recommendations, not alternative adaptive-policy runs.
-The evidence supports a limitation of this implementation; it establishes
-neither universal policy dominance nor end-to-end scalability.  Approximate
-operators and CG remain theoretical interfaces and are not evaluated here.
+separately in \Cref{sec:transport-instantiation}.  Four policies are evaluated
+in three conditions, with 50 paired seeds per condition.  All nine pointwise
+paired intervals favor the comparators over Hessian transport.  Its bounds are
+dominated by path inflation in the follow-up, whereas the original grid's
+decomposition is base-dominated.  The frozen policy's own-trajectory bounds
+also remain vacuous.  All follow-up policies, including the uncertified naive
+control, pass the recorded optimism diagnostics; these floating-point checks
+do not establish verified numerical certification.
+
+The conditions change the reward task as well as its curvature, so they do not
+isolate a causal effect of drift.  Post-outcome analyses measure width-dominated
+Hessian recommendations and audit the relative-weight certificate on recorded
+states; they do not reconstruct alternative adaptive runs.  These findings
+concern one model and fixed teacher with shared prediction-based optimizer
+selection.  Approximate operators, CG, and end-to-end scalability are not
+evaluated here.
 \iflegacyextras
 Earlier diagnostics are retained only at their historical scope in
 \Cref{app:legacy-evidence}.
