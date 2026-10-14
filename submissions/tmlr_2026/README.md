@@ -1,237 +1,139 @@
-# TMLR 2026 submission candidate
+# TMLR submission candidate
 
-**Status: manuscript revised around the completed follow-up; not submitted.**
-The current revision adds a same-history width comparison, direct endpoint and
-scaled-tanh relative-weight certificates, and the full negative follow-up study.
-The follow-up is the main empirical section; the original near-linear audit is
-retained separately in the appendix with its provenance limits. Exploratory
-state-replay diagnostics are distinguished from the prespecified evaluation.
-`REVISION_VALIDATION.md` records build and evidence checks. The historical
-`FINALIZATION_REPORT.md` does not establish validity of this revised release.
+**Status: revised anonymous manuscript and compact evidence package built; not submitted.**
 
-This directory is a thin entry point. Its sections are shared canonical sources
-under `paper/`; the main branch carries a self-contained TMLR mirror. The nine
-legacy one-sided/rate/protocol appendix sources remain in Git but are excluded
-from the active TMLR manuscript. The frozen historical PDF, experiment source,
-protocols, selections, and evaluation exports are preserved. New analyses have
-separate scripts and output directories.
+The current revision incorporates the checked Fable feedback: an abstract
+confidence-band example, more concise framing, descriptive context-free and
+best-fixed-action comparisons, and an explicit distinction between Hessian-score
+diagnostics and the policies that generated their histories. See
+[the implementation and publication assessment](../../review/post_fable_revision/IMPLEMENTATION_REPORT.md).
 
-```
-main.tex                 the anonymous TMLR entry point
-build.sh                 one command: build, package, hash
-package.py               staging, .fls dependency closure, zips, scrub, manifest
-supplement_README.md     becomes README.md inside supplement.zip
-supplement_verify.sh     becomes verify.sh inside supplement.zip
-FINALIZATION_REPORT.md   internal; NOT uploaded
-PORTAL.md                private portal text; NOT uploaded
-```
+This entry point uses canonical scientific sources under `paper/`. The main
+branch carries a self-contained LaTeX mirror. The historical `paper/main.pdf`,
+original experiment sources, locked configurations and evidence exports remain
+unchanged. The current supplement includes metadata-anonymized copies of the
+follow-up evidence, with separate original and packaged digests.
 
 ## Build
 
-The current strict release command deliberately stops before staging: the
-expanded follow-up supplement is missing required evidence/tool inputs and
-reviewed anonymous provenance handling. Its new tables are classified as active
-evidence, but classification alone does not make the supplement complete.
-The diagnostic compiled-source contract has been refreshed; protected system
-TeX dependencies remain an additional prerequisite. Use the main-branch build
-for the current manuscript PDF and standalone LaTeX archive.
+From the prepared research checkout:
 
 ```bash
-bash submissions/tmlr_2026/build.sh
+cd /workspace/cce-research
+PYTHON=/workspace/cce-research-env/bin/python \
+  TMLR_OUT=/workspace/cce-build/tmlr-fable-final-release \
+  bash submissions/tmlr_2026/build.sh
 ```
 
-Output goes to `${TMLR_OUT:-$TMPDIR/cce-tmlr-2026-release}`, which must be
-outside the repository; `package.py` refuses otherwise, so the build cannot
-touch a protected path. It produces:
+`TMLR_OUT` must be outside the repository. The build stages, compiles, checks
+references and layout, validates the evidence inventory, anonymizes metadata,
+checks identity strings and archive size, and publishes the local deliverables
+only after their manifest and member checks pass. It uploads nothing.
 
-| File | What it is |
-|---|---|
-| `main.pdf` | the anonymous submission PDF |
-| `source.zip` | the staged project-local compile closure, flat, plus the permitted style and licence inputs |
-| `supplement.zip` | the anonymous reproducibility material |
-| `release_manifest.json` | deliverable and per-file hashes; never hashes itself |
-| `src/` | the staged flat build tree, kept for inspection |
-
-`source.zip` is not a copy of the repository, and it is not everything pdfTeX
-opened either. It is the **project-local** part of the compile closure: every
-file the recorder lists that lives inside the staged tree, which is the
-manuscript sources, the generated table and figure inputs, the venue template,
-and the four vendored third-party packages. On top of that it carries the
-inputs a compile needs but pdfTeX itself never opens or the recorder does not
-list — `references.bib` and `tmlr.bst`, which bibtex reads, and the four licence
-texts. Unpacking it into an empty directory and running `latexmk -pdf main.tex`
-reproduces the submitted PDF byte for byte.
-
-The rest of the closure is the TeX distribution: 249 files in the recorded
-build, under `/usr/share/texlive`, `/var/lib/texmf` and `/etc/texlive/web2c`.
-Those are **not** in `source.zip` — redistributing a TeX installation is not
-what a paper source archive is for — but they are not unrecorded either. Every
-one is listed in `release_manifest.json` under `external_tex_inputs`, named by
-the kpathsea variable whose tree holds it and bound to its SHA-256, so a
-reviewer can see exactly which bytes outside the project the PDF depended on.
-`package.py` admits an external input only from a system distribution tree that
-is write-protected, unlinked and canonical at every path component; see
-`paper/texmf_vendor/VENDORED-PACKAGES.md` for why four packages had to be
-carried instead.
-
-### Both archives store their members; they do not compress them
-
-`write_zip` writes `ZIP_STORED` entries with fixed names, order, timestamps and
-modes. That is a deliberate trade, and the thing it buys is that the deliverable
-hash in `release_manifest.json` is a function of the members alone.
-
-A deflate stream is whatever the linked zlib decided to emit. Two hosts with
-different zlib builds, or one host after a zlib upgrade, produce different
-archive bytes from byte-identical members, and the recorded hash drifts for a
-reason that has nothing to do with the submission. Nothing in the declared build
-closure pins zlib, so the honest choices were to pin a compressor or to stop
-using one. Storing is the second.
-
-The cost is size. `source.zip` also grew when the four third-party packages
-were vendored into it, which is a separate change with its own reason; both are
-in the current numbers below.
-
-`supplement.zip` is dominated by one 77 MB evidence file, `full_aggregate.json`,
-which is committed evidence and is not going to be trimmed to fit.
-`package.check_archive_size` enforces TMLR's limit as a build failure, using
-100,000,000 bytes rather than 100 MiB so it cannot pass on a generous reading,
-and warns once the archive is within 10% of it. If a future change pushes the
-supplement over, the trade has to be revisited -- by pinning a compressor into
-the build closure, not by quietly turning deflate back on.
+The source ZIP contains the project-local compiler inputs and required BibTeX,
+style, source and licence extras. The supplement contains compact evidence and
+verification tools. `release_manifest.json` is an internal release record and
+must not be uploaded as anonymous material. The staged `src/` is retained for
+inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release;
+[REVISION_VALIDATION.md](REVISION_VALIDATION.md) records the current checks.
 
 ## Current release
 
-No strict release has been produced for the review revision: its packager
-requires system-owned TeX inputs and the current cloud machine provides some
-required packages only in a writable local tree. That trust requirement remains
-enforced. The following table is the **historical pre-revision release**;
-it must be regenerated after a successful revised strict build.
+Final build directory: `/workspace/cce-build/tmlr-fable-final-release`.
+The PDF has **38 pages**, in anonymous official TMLR style.
 
-Every historical figure here was read from the built artifacts themselves;
-`tests/test_tmlr_release_package.py` recomputes each one against
-`release_manifest.json` rather than trusting this table.
-
-| Artifact | Bytes | Members | Unpacked |
+| Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 931,804 | 68 pages | — |
-| `source.zip` | 3,420,977 | 94 | 3,408,765 |
-| `supplement.zip` | 84,190,529 | 140 | 84,165,371 |
-| `release_manifest.json` | 95,432 | — | — |
+| `main.pdf` | 644,571 | — | — |
+| `source.zip` | 3,364,042 | 97 | 3,351,306 |
+| `supplement.zip` | 93,693,136 | 169 | 93,661,942 |
+| `release_manifest.json` | 110,726 | — | — |
 
-`supplement.zip` is 84.2% of the 100,000,000-byte limit, leaving 15,809,471
-bytes of headroom. Compiled closure: 89 entries — 40 whose bytes the supplement
-carries, 48 in `source.zip`, and `main.bbl`, which is in neither.
+The supplement occupies 93.7% of the 100,000,000-byte limit, leaving
+6,306,864 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+(`ZIP_STORED`) entries. No unpinned compressor determines their bytes.
+The size gate remains enforced.
 
-## Environment
+The compiled closure contains 89 entries: 38 whose bytes the supplement
+carries, 50 in `source.zip`, and `main.bbl` in neither archive. BibTeX
+regenerates the latter from the shipped bibliography and style. The manifest
+also records 240 protected external TeX inputs by distribution variable
+and content hash under `external_tex_inputs`. Those distribution files are
+recorded, not redistributed.
 
-| Requirement | Version used |
-|---|---|
-| pdfTeX | 3.14159265-2.6-1.40.21 (TeX Live 2020) |
-| latexmk | 4.70b |
-| bibtex | 0.99d |
-| Python | 3.12 |
-| NumPy / SciPy | 2.2.3 / 1.13.1 (the evidence checks; the study declared SciPy 1.15.2) |
+- `main.pdf`: `158c98e99f2665d0c804a7f13a8c8d76fe0c6ae1d18f3c45bfae21caf3e64822`.
+- `source.zip`: `da0e004d58b3198da3e3526c4c9a36921f665d60e0e4dac93d25d889ad0e5fa3`.
+- `supplement.zip`: `8be0424f9fdc98387dde264d8e2dc8fe7bb3ea3eb3438c9fdf86aa3180fff81a`.
 
-LaTeX packages beyond a base TeX Live, where each comes from, and — the part
-that matters when you unpack the archive — whether `source.zip` carries it:
+## Dependencies and trust
 
-| Package | In `source.zip`? | TeX Live package | Debian/Ubuntu | RHEL/EL |
-|---|---|---|---|---|
-| venue template (`tmlr.sty`, `tmlr.bst`, `fancyhdr.sty`) | **bundled** | n/a, ships with the submission | n/a | n/a |
-| `mathtools` (with `mhsetup`) | **bundled** | `mathtools` | `texlive-latex-recommended` | `texlive-mathtools` |
-| `cleveref` | **bundled** | `cleveref` | `texlive-latex-extra` | `texlive-cleveref` |
-| `pgfplots` | **bundled** | `pgfplots` | `texlive-pictures` | `texlive-pgfplots` |
-| `microtype` | **bundled** | `microtype` | `texlive-latex-recommended` | `texlive-microtype` |
-| `rotating` | external | `rotating` | `texlive-latex-recommended` | `texlive-graphics` |
-| `cm-super` (fonts) | external | `cm-super` | `cm-super` | `texlive-cm-super` |
+The current cloud build uses pdfTeX 1.40.26 / TeX Live 2025-dev (Debian),
+latexmk 4.86 and BibTeX 0.99d. Evidence validation uses CPython 3.12 with the
+hash-pinned wheel environment in `experiments/requirements-python312.lock`.
+Run `tools/check_python_environment.py` to check installed package versions.
 
-Four third-party packages are bundled, not just the venue template: 46 files
-plus three licence texts, vendored into `paper/texmf_vendor/` and staged flat.
-The reason is the trusted-root rule, not convenience — this host's TeX Live does
-not package them, so they were living in a user-writable tree, which the build
-refuses. `paper/texmf_vendor/VENDORED-PACKAGES.md` records each package's
-licence: GPL v3 for `pgfplots`, LPPL 1.3c for `microtype` and `mathtools`, LPPL
-1.2 for `cleveref`. Nothing else is bundled; the remaining 249 compiled inputs
-come from the system TeX distribution and are recorded, not shipped.
+The project vendors exact copies of pgfplots, microtype, mathtools/mhsetup,
+cleveref and the algorithms bundle. The latter includes both runtime styles,
+the source files needed to regenerate them, and its LGPL text. These packages
+contribute 50 runtime/source files and four licence texts, separate from the
+venue template. Source/archive copies are bound to exact digests; see
+[the vendoring record](../../paper/texmf_vendor/VENDORED-PACKAGES.md).
 
-`rotating` supplies `sidewaystable`, which is how the three wide evidence tables
-are set at the body font size instead of being scaled down. It is **not**
-bundled: it is stock TeX Live and this host's distribution has it, so the
-trusted-root rule is satisfied without carrying it. On this host `rotating.sty`
-resolves to `texmf-dist/tex/latex/graphics/rotating.sty`, and the clean
-`source.zip` unpack rebuilds the submitted PDF byte for byte with nothing
-installed beyond the two external rows above. Without `cm-super` the document
-typesets and then dies at font embedding on a missing `cm-super-ts1.enc`. No
-font is bundled.
+| Package | In `source.zip`? | Role or external dependency |
+|---|---|---|
+| Venue template | **bundled** | Official `tmlr.sty`, `tmlr.bst`, `fancyhdr.sty` and licence |
+| `mathtools` | **bundled** | Includes `mhsetup` |
+| `cleveref` | **bundled** | Cross-reference formatting |
+| `pgfplots` | **bundled** | Plotting inputs |
+| `microtype` | **bundled** | Typography inputs |
+| `algorithms` | **bundled** | `algorithm.sty`, `algorithmic.sty`, regeneration sources and LGPL text |
+| `rotating` | external | Supplies `sidewaystable`; `texlive-latex-base` owns `rotating.sty` in the recorded Debian installation |
+| `cm-super` | external | Not bundled; its font package is not used by this recorded build |
 
-The build pins `SOURCE_DATE_EPOCH`, sets `\pdfinfoomitdate`, empties
-`\pdftrailerid` and suppresses the pdfTeX banner, so two builds of the same
-source produce identical bytes and the PDF carries no date, file ID, producer
-string or author metadata.
+No font is vendored. Remaining TeX inputs must be canonical, unlinked and
+write-protected at every path component. Debian's `TEXMFDEBIAN` tree is subject
+to these same checks. Writable user TeX trees are excluded from the strict build.
+
+Clean source rebuilds are checked against the recorded toolchain. Different
+TeX distributions can produce different PDF bytes; the recorded closure and
+external hashes expose that difference rather than claiming universal byte
+identity.
 
 ## Verification
 
-From the repository root, with NumPy and SciPy available:
-
 ```bash
-python3 paper/validate.py                                   # historical AISTATS entry
-python3 tools/verify_tmlr_submission_numbers.py             # numerical-provenance ledger
-python3 tools/transport_artifact_expectations.py --root .   # regenerate all 21 artifacts
-python3 tools/verify_transport_committed_evidence.py        # detached committed-evidence verifier
+/workspace/cce-research-env/bin/python tools/verify_tmlr_submission_numbers.py
+/workspace/cce-research-env/bin/python tools/transport_artifact_expectations.py --root .
+/workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  TMLR_OUT=/workspace/cce-build/tmlr-fable-final-release \
+  /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
 ```
 
-Also run the release-package suite against a real build, which is what CI does:
+After extracting `supplement.zip`, run `bash verify.sh` with the supported
+Python environment on `PATH`. Its mandatory anonymous-package gates authenticate
+both contracts before the ledger, artifact regeneration, terminal interval
+reconstruction, evidence coverage and shipped study tests. The follow-up
+contract requires all 20 compact evidence files and six generated artifacts;
+scientific values are unchanged. Metadata transforms and dependent hash updates
+are explicit, and original external-input hashes continue to describe original,
+unshipped raw files. The 14-file compact export reconstructs the reported
+terminal intervals from all 600 evaluation summaries.
 
-```bash
-TMLR_OUT=/tmp/cce-tmlr-release bash submissions/tmlr_2026/build.sh
-TMLR_OUT=/tmp/cce-tmlr-release python3 -m pytest -q tests/test_tmlr_release_package.py
-```
+## Remaining limits
 
-The packager statically checks the staged TMLR entry point separately; a pass
-for `paper/main.tex` alone does not validate TMLR. Current test collection counts
-are recorded separately from execution outcomes in `REVISION_VALIDATION.md`.
+The original near-linear study lacks its raw trajectories and per-seed bootstrap
+inputs. The follow-up raw tree is retained locally, but is not in the compact
+supplement, has not been transformed into an anonymous raw archive, and has no
+verified durable anonymous download location. Raw-dependent scans and optimizer
+replay therefore remain separate from compact evidence verification. See
+[the raw archive status](../../review/post_fable_revision/RAW_ARCHIVE_STATUS.md).
 
-Inside an unpacked `supplement.zip`, `bash verify.sh` runs the required-package
-contract gate and then four checks: the ledger, the artifact regeneration, the
-sidecars of every shipped evidence file, and the study tests.
+The Buck2/host-monorepo runtime remains an unverified historical route. The
+commands above use the supported portable Python environment. The separate
+Covertype/Nyström extension is outside this submission and retains its own
+open evidence-integrity issues.
 
-The declared native runtime is Buck2 against a host monorepo checkout
-(`BUCK2_SETUP.md`). It does not currently work on this host: the pinned buck2
-revision rejects a newer construct in the host prelude, so
-`buck2 targets //...` fails before any target is analyzed. The commands above
-are a portable route, not the declared build, and they are labelled as such in
-`FINALIZATION_REPORT.md`. Buck2 is not a verified path and must not be reported
-as one until that prelude block is fixed.
-
-Nothing above rebuilds `paper/main.pdf`. That file is frozen, pinned by its
-sidecar, and any command that could overwrite it belongs in a disposable copy
-of the repository; the root `README.md` says how.
-
-## Evidence
-
-The original near-linear study comes from the locked aggregate,
-`results/derived/transport_instantiation/full_aggregate.json`, SHA-256
-`0ddebd4915dd2e264e24b7b25047d24f86c3cdf63930a1e6df77585e0b97de02`, produced at
-execution revision `0cd6264c1f8b8751728f3c4a198207e8289aed74`. The ledger lists
-each reported number with its selector, unit, aggregation rule, population,
-unrounded value and display rounding. The full follow-up is recorded separately under
-`review/transport_review_followup/full-cce-full-local/`, including all 600
-evaluation seed summaries and a verifier for terminal paired intervals.
-`review/transport_relative_diagnostics/` contains exploratory certificate/state
-replays; `tools/make_transport_followup_paper.py` derives the new manuscript
-tables and their input provenance. These new evidence sources are not yet part
-of the historical anonymous-supplement packaging contract. A successful
-manuscript PDF/source build must not be called a complete verified release.
-
-## Limitations that are part of the submission, not bugs
-
-- The original study's raw per-run trajectories are missing; its paired
-  bootstrap cannot be replayed. Full follow-up raw trajectories are retained
-  outside Git, and its portable seed summaries support terminal bootstrap
-  replay. Roundwise replay still requires those raw trajectories.
-- The realistic Covertype/Nyström extension is **not** part of this submission
-  and is **not** cleared. It stays in `experiments/realistic_transport/` with its
-  open evidence-integrity blockers, and CI runs it in a separate job so that its
-  real status neither blocks nor is hidden by the submission checks.
-- `paper/main.pdf` is a frozen pre-rewrite AISTATS snapshot. It is not this
-  submission's PDF and is never rebuilt by anything here.
+The authors still need to review the final materials and supply the required
+OpenReview declarations. A successful build and evidence verification establish
+neither acceptance nor an actual submission.

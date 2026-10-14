@@ -4,10 +4,17 @@ This record concerns the manuscript revision synchronized on 2026-10-13
 (America/Los_Angeles). `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
+**Current result (2026-10-14):** the final strict release, extracted supplement
+verification and byte-identical clean source rebuild all pass. The final full
+repository run reports **694 passed, 3 skipped, zero failed**. The final sections
+record the commands, artifacts, diagnostics and remaining raw-data limitations.
+These results supersede the historical system-TeX and missing-inventory blockers
+below. Compact evidence verification remains separate from raw-trajectory replay.
+
 | Collection scope | Current collected cases |
 | --- | --- |
-| Release-package test collection | 531 collected |
-| Repository suite collection | 669 collected |
+| Release-package test collection | 545 collected |
+| Repository suite collection | 697 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the
@@ -298,3 +305,149 @@ environment, single-thread BLAS variables, and both `tests` and
 cases are accounted for. This passing test result, the 565-pass numerical
 ledger, and the byte-identical standalone PDF/source rebuild do not override
 the strict supplement's explicit incomplete-evidence preflight (exit 14).
+
+## Anonymous compact supplement completion (2026-10-14)
+
+The compact supplement now includes the complete follow-up export and the
+independent and relative fixed-history evidence. Its separate typed contract
+pins 20 evidence files and six generated artifacts. The transformation changes
+only enumerated metadata fields and their dependent digests; it checks that
+all scientific JSON values and types remain unchanged. The original raw-input
+hashes and historical run signatures explicitly describe unshipped original
+bytes. They are not relabeled as signatures of an anonymous raw archive.
+
+Both anonymous declarations are required. The parent contract, numerical ledger,
+table generator and standalone pinned-path listing authenticate the helper's
+exact bytes before importing it. The new helper is independently pinned at
+`8c0410993e78112101b07b66b01df469f7d822b7de201ea6c55178933b0b21b9`.
+The generator's final digest is
+`153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496`.
+Its source-attribution comments changed; the generated numerical table bodies
+did not. Missing evidence, changed scientific values, coordinated evidence and
+declaration edits, and replacement helper code are rejected.
+
+The first integrated strict candidate build completed successfully with
+`PYTHON=/workspace/cce-research-env/bin/python` and
+`TMLR_OUT=/workspace/cce-build/tmlr-anonymous-followup-candidate` running
+`bash submissions/tmlr_2026/build.sh`. It used 89 project-local recorded inputs
+and 240 protected distribution inputs, with no acceptance of mutable external
+TeX trees. Exact-byte vendoring supplies the algorithms styles and their source
+and license; runtime-derived `TEXMFDEBIAN` uses the existing canonicality,
+ownership and write-protection checks. The candidate supplement was 93,691,848
+bytes, below the enforced 100,000,000-byte ceiling. Its identity scan was clean.
+This candidate is an intermediate artifact, superseded by the final rebuild
+that includes the corrected availability text and final checker pins.
+
+The first extracted candidate verification exposed one stale ledger requirement:
+it demanded the excluded symbolic growing-window table. Every other advertised
+check passed, including all 24 terminal interval reconstructions, all six
+follow-up artifact checks, evidence coverage, and 23 shipped study tests. The
+ledger correctly reported one failure rather than declaring the archive valid.
+The repair restricts the specialized symbolic-table check to active source
+references and preserves failure for a missing referenced table. It does not
+add excluded legacy material to the supplement.
+
+Focused validation records are: 14 typed-transform tests passed; 26 initial
+package/contract cases passed; and 66 final numerical/context/module-authentication
+cases passed with 6 environment-dependent skips. The broader package-focused
+run reported 67 passed, 11 skipped and one closure failure because it imported
+the ledger before the concurrent vendor-name update; both affected clean-closure
+checks pass in a fresh process. The standalone helper-listing tests pass all
+three pinned/missing/replaced cases without executing replacement code. Current
+repository ledger result before final archive verification: 556 PASS,
+4 NOT_EXECUTED, zero FAIL. Nonexecuted checks remain limitations, not passes.
+
+The full follow-up raw run is locally intact but is not shipped in the compact
+supplement. Exact phase sizes and the verified receipt, inventory and source
+checks are recorded in `review/post_fable_revision/RAW_ARCHIVE_STATUS.md`.
+No sanitized raw archive or durable anonymous download endpoint has been
+claimed. The earlier near-linear study's raw and per-seed bootstrap inputs
+remain absent. Those gaps do not prevent the compact follow-up's terminal
+interval and generated-table reconstruction.
+
+The final strict release at `/workspace/cce-build/tmlr-fable-final-release`
+completed with exit status zero. A fresh extraction into
+`/workspace/cce-build/tmlr-fable-final-reviewer-check` ran `bash verify.sh`
+with the locked interpreter and no checkout imports. It passed in **15.73
+seconds**: the anonymous contract passed **23/23** checks; the numerical ledger
+reported **565 PASS, 36 PASS_ANON, 3 NOT_EXECUTED, zero FAIL**; all **24** follow-up
+terminal intervals reconstructed; all **six** follow-up artifacts matched;
+**42** evidence files passed sidecar checks and **29** further evidence files
+were covered by code pins; all **23** shipped study tests passed. Every
+advertised check returned zero. The three nonexecuted checks retain the raw
+follow-up replay, historical bootstrap-input and historical raw-byte limitations.
+The complete log is `/workspace/cce-build/tmlr-fable-final-reviewer-verify.log`.
+
+Final strict artifacts:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `main.pdf` | 644,571 | `158c98e99f2665d0c804a7f13a8c8d76fe0c6ae1d18f3c45bfae21caf3e64822` |
+| `source.zip` | 3,364,042 | `da0e004d58b3198da3e3526c4c9a36921f665d60e0e4dac93d25d889ad0e5fa3` |
+| `supplement.zip` | 93,693,136 | `8be0424f9fdc98387dde264d8e2dc8fe7bb3ea3eb3438c9fdf86aa3180fff81a` |
+
+The source archive has **97** members and **3,351,306** unpacked bytes. The
+supplement has **169** members and **93,661,942** unpacked bytes. Its stored size
+leaves **6,306,864** bytes below the venue ceiling. The internal release manifest
+is **110,726** bytes and is not part of either anonymous upload archive. The
+reviewer verification wrote only to its extracted scratch directory; original
+experiment sources, configurations, aggregate evidence and raw logs were not
+modified. The independent clean source rebuild and final repository test run
+are recorded below when complete.
+
+An independent clean extraction of the final source ZIP rebuilt the **38-page**
+PDF in **32.647914308 seconds**, byte-identical to the final release digest
+above. The recorder found **89** local inputs and **240** protected system
+inputs. Every external input record matched the release manifest, and no input
+came from either original checkout. All included vendor digests and the official
+TMLR style, bibliography style, header package and license digests matched their
+pinned provenance. There were no unresolved references/citations or overfull
+boxes; the final strict toolchain reported **eight underfull boxes and one
+LaTeX hook deprecation warning**. These diagnostics are reported rather than
+represented as a warning-free build. The machine-readable record is
+`/workspace/cce-build/tmlr-fable-final-clean-source/clean-build-verification.json`.
+
+The first complete repository run against those final archives reported
+**665 passed, 3 skipped, 29 failed, 2 warnings** in **338.22 seconds**. Its log is
+`/workspace/cce-build/tmlr-fable-final-tests.log`. The failures exposed outdated
+test fixtures and incomplete internal README details: the verifier subprocess
+used an unrelated Python without pytest; coverage assumed only sidecars and
+the older evidence inventory; the synthetic recorder incorrectly included the
+new upstream `.dtx`/`.ins` redistribution sources; two mutation checks selected
+an archive-only file by list position; and a layout mutation targeted an inactive
+table. The corrected fixtures use the test interpreter, complete evidence
+inventory and actual active inputs while retaining positive controls and
+tamper rejection. No production verification rule or release bytes changed.
+
+The internal README now identifies the actual bundled/external packages,
+`ZIP_STORED` format and external-input manifest field. Debian ownership checks
+identify `texlive-latex-base` as this build's provider of `rotating.sty`; the
+stale provider assertion was corrected accordingly. Focused fixture and
+mutation checks pass **47 cases**; the four README checks also pass. Each
+focused invocation reported 9,993 dependency deprecation warnings from the
+locked pytest version on Python 3.12, not additional test failures. The full
+rerun result is recorded below when complete.
+
+The final full rerun completed with **694 passed, 3 skipped, zero failed,
+9,995 warnings** in **331.78 seconds**, exit status zero:
+
+```sh
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+TMLR_OUT=/workspace/cce-build/tmlr-fable-final-release \
+  /workspace/cce-research-env/bin/python -m pytest -q -ra tests experiments/tests
+```
+
+All **697** collected cases are accounted for. The complete log is
+`/workspace/cce-build/tmlr-fable-final-tests-clean.log`. Two skips concern host
+TeX properties absent here (a user `TEXMFVAR` and a symlinked `TEXMFSYSVAR`).
+The third is a historical bibliography test looking in an old hard-coded
+workstation directory; the independent clean rebuild above verifies the
+current archive separately. The warning count comprises 9,993 locked-pytest
+AST deprecations on Python 3.12 and two intentional duplicate-ZIP-member
+warnings from rejection tests. No warning was represented as a passed check.
+
+An independent review of the final fixture changes found no weakened evidence,
+tamper, layout or compiled-closure protection. Scientific manuscript sources,
+the bibliography and abstract match the main-branch mirror. Final artifact
+hashes remain exactly those recorded above; the frozen experiment and historical
+PDF digests are unchanged. No new experimental run or TMLR submission occurred.

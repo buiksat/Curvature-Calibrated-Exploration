@@ -271,6 +271,26 @@ distance supplies a worst-direction multiplier, not necessarily the
 actionwise equality in \eqref{eq:actionwise-width-ratio}.  These are
 same-history comparisons; they do not order the realized regret of policies
 whose actions and subsequent histories differ.
+Evaluating the ratio in \eqref{eq:actionwise-width-ratio} as written uses the
+reference width itself and supplies no computational shortcut.  This
+observation is not a general computational lower bound.
+
+\begin{remark}[The reference band alone does not justify a smaller width]
+\label{rem:naive-width-band-counterexample}
+Consider an abstract confidence-band instance with $D>0$,
+$\bVbar=\bI_2$, $\bV=\operatorname{diag}(e^D,e^{-D})$, and
+$\bq=(1,0)^\top$.  Take $m=b=0$, $\beta>0$, and $\mu^*=\beta$.
+Then $\bar s=1$ and $s=e^{-D/2}$, so
+\[
+ |\mu^*-m|=\beta\bar s+b,\qquad
+ m+\beta s+b=\beta e^{-D/2}<\mu^*.
+\]
+Reference confidence therefore holds while the naive current-width score is
+not an upper bound.  This illustrates the limited-information statement of
+\Cref{prop:reference-width-floor}; it does not construct a realizable
+scaled-tanh learning trajectory or establish that this certificate family was
+necessary in the reported runs.
+\end{remark}
 
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}

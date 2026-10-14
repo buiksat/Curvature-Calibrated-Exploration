@@ -36,6 +36,15 @@ misspecified-linear confidence method.  The additional issue studied here is
 how to certify the use of current replayed curvature, approximate operators,
 and computed widths for this reference confidence model.
 
+\paragraph{Weighted Gram comparisons.}
+Weighted least-squares Grams also appear in the experimental-design analysis of
+\citet{lattimore2020learning}.  Our scaled-tanh specialization compares two
+positive weightings of fixed feature directions through termwise PSD bounds
+(\Cref{cor:tanh-relative-weights}).  The reward model stays fixed while
+relinearization changes the weights.  We use this elementary comparison as an
+operational endpoint certificate within the confidence-transport interface;
+nonstationary reward models require a separate statistical analysis.
+
 \paragraph{Neural contextual bandits.}
 LinUCB \citep{abbasi2011improved} and Thompson sampling
 \citep{thompson1933likelihood,agrawal2013thompson} provide the statistical

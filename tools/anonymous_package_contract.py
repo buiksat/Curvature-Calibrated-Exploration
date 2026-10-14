@@ -156,31 +156,45 @@ PROVENANCE_PINS: dict[str, dict[str, object]] = {
 # strict external-input certification and the expanded anonymous evidence
 # package remain required and are not authorized by these expected bytes.
 COMPILED_CLOSURE: dict[str, dict[str, object]] = {
+    'algorithm.sty': {
+        "repository": 'paper/texmf_vendor/algorithm.sty',
+        "sha256": 'd63fdf24879f0efd535bc6d06bc2a008b79ae77f6d6d2bc96156ff1f35e96bd7',
+        "bytes": 3249,
+        "role": 'vendored-package',
+        "ships_in": 'source',
+    },
+    'algorithmic.sty': {
+        "repository": 'paper/texmf_vendor/algorithmic.sty',
+        "sha256": '7fe47ed7f8222c56452bd73bf0682e72023ece06d59207653a02e080a341118d',
+        "bytes": 9318,
+        "role": 'vendored-package',
+        "ships_in": 'source',
+    },
     'availability.tex': {
         "repository": 'paper/availability.tex',
-        "sha256": '0c4f42007653fd495ff070eb646cef4ba86c0faf2c6edeb75e0a1764b0cdeb12',
-        "bytes": 2688,
+        "sha256": '38a3a70b4a0a01cc39159c4cfb640fe88a1b642d2af6ddddda83469aded576b1',
+        "bytes": 2980,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_conclusion.tex': {
         "repository": 'paper/body_conclusion.tex',
-        "sha256": '66c46e55059e577ff9c7b0a4c85cac1716a377e70a205a8658b3b90a20ff9f36',
-        "bytes": 4297,
+        "sha256": 'c44d15a5f06f3f6ee9910951f75c795623858f69d8ad279fc85ed05704562b8e',
+        "bytes": 3631,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_intro.tex': {
         "repository": 'paper/body_intro.tex',
-        "sha256": '2571136310853317ac71e97c3807fed11fff43fb2ee3343c3b893e423bdf09d9',
-        "bytes": 8539,
+        "sha256": '2586018cd080da7dcfb5ae7dda6004c658908dd9bd75f84cc17fee3033ee1ebd',
+        "bytes": 8044,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'body_related.tex': {
         "repository": 'paper/body_related.tex',
-        "sha256": 'fa5b061ac73bf7f2528bd46cf24f6e5c41ca16f4c9b4fc4ac7bad68fd923108a',
-        "bytes": 9366,
+        "sha256": 'afd4b3458a6a6a40d80dfab5d76fccd69bff7e5b2c67acbf0edde06691b75454',
+        "bytes": 9933,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -333,8 +347,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'main.tex': {
         "repository": 'submissions/tmlr_2026/main.tex',
-        "sha256": '4d8f9ed8d49c0737c63c772e414bea49a81bd26090b536fdcd1ed1c42e9719e2',
-        "bytes": 5689,
+        "sha256": '1503ccf89e65727a0f2370e2da922b408b1a01f01bd6abd70f4b87c51a0462e4',
+        "bytes": 5643,
         "role": 'entry-point',
         "ships_in": 'supplement',
     },
@@ -627,35 +641,35 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'tables/transport_followup_drift_bounds.tex': {
         "repository": 'paper/tables/transport_followup_drift_bounds.tex',
-        "sha256": '200a6439a6c1c1bbc97ca8699fa50ac38927d719dfcc2cffb8c4b53b014379e7',
+        "sha256": '6130e0e66e34c6117f5e6d4bc0d1b4a574394a1b00dbf4b363b50062530bac2c',
         "bytes": 1884,
         "role": 'generated-artifact',
         "ships_in": 'supplement',
     },
     'tables/transport_followup_mechanism_variation.tex': {
         "repository": 'paper/tables/transport_followup_mechanism_variation.tex',
-        "sha256": 'b974fb4a44850eb71da11b38cdf49394161470f67906c63b3e4f77142e6aded0',
+        "sha256": '2725e1b7940683b696b5f93c90a1abbf7ba4c001915ce13cf43cf9dfadd8c851',
         "bytes": 2402,
         "role": 'generated-artifact',
         "ships_in": 'supplement',
     },
     'tables/transport_followup_outcomes.tex': {
         "repository": 'paper/tables/transport_followup_outcomes.tex',
-        "sha256": 'cfd881e5c37a209d27587dbb816818279ed89d3dc2791bd185664a779c6f33a8',
+        "sha256": 'cb87dee8d0d4ceb3bf9c64f7b9c86643cfa69d6176493428bd92177c06cfc288',
         "bytes": 2219,
         "role": 'generated-artifact',
         "ships_in": 'supplement',
     },
     'tables/transport_followup_relative_audit.tex': {
         "repository": 'paper/tables/transport_followup_relative_audit.tex',
-        "sha256": 'd7fc33fa11bf3ac5ee9a534cdd638aa58a18171eb069dacf32d0d30add4ecade',
+        "sha256": 'b7ff2a9c5d3fec423bf6811f0f444ea035c6115b7f91c36d6faca11b7a6626aa',
         "bytes": 2035,
         "role": 'generated-artifact',
         "ships_in": 'supplement',
     },
     'tables/transport_followup_same_history.tex': {
         "repository": 'paper/tables/transport_followup_same_history.tex',
-        "sha256": 'b738ac1932ba01871017042f98d7d8f3357adeeb1bdd9d6af4a50756fabd9f5c',
+        "sha256": 'e3cbe9e68cf611f0ccf296fcee0e5c7adc34ff50b594933710be97e47d33105e',
         "bytes": 2471,
         "role": 'generated-artifact',
         "ships_in": 'supplement',
@@ -739,15 +753,15 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'transport_followup.tex': {
         "repository": 'paper/transport_followup.tex',
-        "sha256": '5c4dc470d197f7cef1193baad70653b62b6cd0f99c11b333ecbfc7967f5b6c22',
-        "bytes": 7931,
+        "sha256": '2f2d4b8fe191c09b9b23ed504fd9d274ab3ba3547cc5afaeac5bba59024a7378',
+        "bytes": 8596,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
     'transport_followup_appendix.tex': {
         "repository": 'paper/transport_followup_appendix.tex',
-        "sha256": '2a2aad47a93653a5b6e409d392849f249b2ab7dca36ead6c0e0c07ee2896ed87',
-        "bytes": 10814,
+        "sha256": '24edb8cb336c54055492f9aa8c910bf9350b897dc6c8c428a06ab9fdd2d045da',
+        "bytes": 10665,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -760,8 +774,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
     },
     'transport_theory.tex': {
         "repository": 'paper/transport_theory.tex',
-        "sha256": '337942ba663a315b66b71fa43d26971267185ca51acb7ad6d8f46174997cd46c',
-        "bytes": 37473,
+        "sha256": 'efd23443ec0a64a39c8b3968b1d139a54d59759fc2cf4c7c91072d660bf3a385',
+        "bytes": 38429,
         "role": 'manuscript-source',
         "ships_in": 'supplement',
     },
@@ -790,8 +804,22 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {
 #: root, and a reviewer who wants certainty compares these bytes against the
 #: release manifest, which never ships.
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {
+    "tools/verify_tmlr_submission_numbers.py":
+        "66a78b23bcc690408eed862c95488e605e80ccbd15fa8531634fc167dfdc5ac6",
+    "tools/followup_anonymous_contract.py":
+        "8c0410993e78112101b07b66b01df469f7d822b7de201ea6c55178933b0b21b9",
+    "tools/make_transport_followup_paper.py":
+        "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
+    "tools/verify_review_experiment_export.py":
+        "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
+    "tools/analyze_relative_transport.py":
+        "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56",
+    "tools/check_python_environment.py":
+        "77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e",
+    "review/post_full_fable/independent/symmetric_scan.py":
+        "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/numeric_context_pins.py":
-        "9b14bb6b1397039572c37924828b49f17efed8693a76c8a38be7a4c08644e9b1",
+        "8c2313d635896d60e9420e355ecad1b5b0538d737969eb6726831569b7f6915b",
 }
 
 #: Every field a declaration record must carry, and nothing else may be missing.
@@ -867,6 +895,23 @@ def original_sha256(relative: str) -> str | None:
 
     record = CONTRACT.get(str(relative))
     return str(record["original_sha256"]) if record else None
+
+
+def load_followup_contract(root: Path):
+    """Load the exact-root helper only after its independent digest matches."""
+    import importlib.util
+
+    relative = "tools/followup_anonymous_contract.py"
+    path = root / relative
+    if (not path.is_file() or path.is_symlink()
+            or sha256_file(path) != SHIPPED_TOOL_DIGESTS.get(relative)):
+        raise ImportError("follow-up contract module is missing or differs from its independent pin")
+    spec = importlib.util.spec_from_file_location("packaged_followup_contract", path)
+    if spec is None or spec.loader is None:
+        raise ImportError("Cannot load the pinned follow-up contract module")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def check_shipped_tools(root: Path) -> list[tuple[str, bool, str]]:
@@ -977,6 +1022,17 @@ def check(root: Path, *, require_package: bool | None = None
         if package_required(require_package):
             results.append(missing_declaration_result(root))
         return results
+
+    # The follow-up has a separate typed metadata contract; retaining the older
+    # declaration cannot downgrade a supplement to the historical evidence set.
+    # Its code and all packaged bytes are pinned independently of both editable
+    # declarations. The old single-field contract below remains unchanged.
+    try:
+        followup_problems = load_followup_contract(root).validate_packaged(root)
+    except (ImportError, OSError, ValueError, KeyError, TypeError) as error:
+        followup_problems = [repr(error)]
+    record_result("follow-up compact evidence matches its typed anonymous contract",
+                  not followup_problems, "; ".join(followup_problems))
 
     declaration_path = root / DECLARATION_NAME
     try:
@@ -1116,9 +1172,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     required = package_required(args.require_package)
 
     if args.list_pinned:
+        try:
+            followup = load_followup_contract(root)
+        except (ImportError, OSError, ValueError, KeyError, TypeError) as error:
+            print(f"FAIL: {error}")
+            return 1
         for relative in sorted(set(CONTRACT) | set(PROVENANCE_PINS)):
             print(relative)
             print(f"{relative}.sha256")
+        for relative in sorted(set(followup.INPUT_PATHS) | set(followup.ARTIFACT_PINS)):
+            print(relative)
+        print(followup.DECLARATION_NAME)
         return 0
 
     if not is_packaged_tree(root) and not required:

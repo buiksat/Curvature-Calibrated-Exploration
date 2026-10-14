@@ -34,29 +34,29 @@
     },
     {
       "path": "tools/make_transport_followup_paper.py",
-      "sha256": "e8e0c87f16e2bf9252b27d022a473a114c33d395cc20303d156013568e9dc836"
+      "sha256": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496"
     }
   ],
   "outputs": [
     {
       "path": "paper/tables/transport_followup_drift_bounds.tex",
-      "sha256": "200a6439a6c1c1bbc97ca8699fa50ac38927d719dfcc2cffb8c4b53b014379e7"
+      "sha256": "6130e0e66e34c6117f5e6d4bc0d1b4a574394a1b00dbf4b363b50062530bac2c"
     },
     {
       "path": "paper/tables/transport_followup_mechanism_variation.tex",
-      "sha256": "b974fb4a44850eb71da11b38cdf49394161470f67906c63b3e4f77142e6aded0"
+      "sha256": "2725e1b7940683b696b5f93c90a1abbf7ba4c001915ce13cf43cf9dfadd8c851"
     },
     {
       "path": "paper/tables/transport_followup_outcomes.tex",
-      "sha256": "cfd881e5c37a209d27587dbb816818279ed89d3dc2791bd185664a779c6f33a8"
+      "sha256": "cb87dee8d0d4ceb3bf9c64f7b9c86643cfa69d6176493428bd92177c06cfc288"
     },
     {
       "path": "paper/tables/transport_followup_relative_audit.tex",
-      "sha256": "d7fc33fa11bf3ac5ee9a534cdd638aa58a18171eb069dacf32d0d30add4ecade"
+      "sha256": "b7ff2a9c5d3fec423bf6811f0f444ea035c6115b7f91c36d6faca11b7a6626aa"
     },
     {
       "path": "paper/tables/transport_followup_same_history.tex",
-      "sha256": "b738ac1932ba01871017042f98d7d8f3357adeeb1bdd9d6af4a50756fabd9f5c"
+      "sha256": "e3cbe9e68cf611f0ccf296fcee0e5c7adc34ff50b594933710be97e47d33105e"
     }
   ],
   "schema_version": 1,

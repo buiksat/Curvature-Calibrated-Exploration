@@ -38,7 +38,6 @@ import json
 import math
 import os
 import re
-import statistics
 import sys
 from collections import Counter
 from collections.abc import Callable, Sequence
@@ -74,6 +73,7 @@ FOLLOWUP_TEX = Path("paper/transport_followup.tex")
 FOLLOWUP_APPENDIX_TEX = Path("paper/transport_followup_appendix.tex")
 FOLLOWUP_GENERATOR = Path("tools/make_transport_followup_paper.py")
 FOLLOWUP_EXPORT_VERIFIER = Path("tools/verify_review_experiment_export.py")
+FOLLOWUP_PACKAGE_CONTRACT = Path("tools/followup_anonymous_contract.py")
 RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
 RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
 RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
@@ -87,7 +87,7 @@ FOLLOWUP_SOURCE_HASHES = {
     FOLLOWUP_ANALYSIS: "914013bf6436e82a50865d5ce3570b4195e7cdc2e4f25b436eb5b28a9b99ece3",
     FOLLOWUP_ROOT / "export_manifest.json": "adbf7ab8d401fa057999d4f98582a52f8ca5af71362efd05632345be4984eaca",
     FOLLOWUP_EXPORT_VERIFIER: "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
-    FOLLOWUP_GENERATOR: "e8e0c87f16e2bf9252b27d022a473a114c33d395cc20303d156013568e9dc836",
+    FOLLOWUP_GENERATOR: "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
     RELATIVE_ANALYSIS: "fd67cdc031c02876ed1e18ea0444a35348b4cb80bdd261b3fd3d75e6e920b29e",
     RELATIVE_SEEDS: "9d7939364bfd7737df5daaf80d43c0673828505466ede181fe31f42fe2f98bea",
     RELATIVE_ROOT / "input_inventory.jsonl": "c905bdcd58aa9c827a141ac024c49cccdba1d97bf5ad8908889b15d3f471190a",
@@ -299,6 +299,14 @@ def _followup_pre_evaluation_count(config):
         + _followup_tuning_count(config) * len(config["seed_sets"]["tuning"]))
 
 
+def _followup_environment_mean(aggregate, target, field_name):
+    rows = [row for row in aggregate["environment_diagnostics"]
+            if row["horizon"] == PRIMARY_HORIZON and row["target_D"] == target]
+    if len(rows) != 1:
+        raise LedgerError(f"expected one follow-up environment cell at T={PRIMARY_HORIZON}, target_D={target}")
+    return float(rows[0][field_name]["mean"])
+
+
 def followup_ledger() -> list[Entry]:
     """Explicit selectors for new prose; table cells are regenerated separately."""
     entries = []
@@ -331,6 +339,20 @@ def followup_ledger() -> list[Entry]:
                 lambda c, i=i: c["followup"]["prespecified_width_W"][i], "model smoothness parameter")
     add(main, "$W=0.25$", "0.25", C, "min(followup.prespecified_width_W)",
         lambda c: min(c["followup"]["prespecified_width_W"]))
+    # The prescribed W values map to these target labels in the pinned config;
+    # target_D is an encoding, not an observed metric distance. Select each
+    # environment cell explicitly rather than pooling different reward tasks.
+    for width, target, context_free, best_fixed in (
+            (16., 97.32420048477151, "185.26", "180.01"),
+            (1., 389.29680193908604, "183.06", "177.97"),
+            (.25, 778.5936038781721, "176.67", "171.84")):
+        for field_name, phrase, display in (
+                ("context_free_mean_only_regret", "regrets 185.26, 183.06, and 176.67", context_free),
+                ("best_fixed_action_regret", "regrets 180.01, 177.97, and 171.84", best_fixed)):
+            add(main, phrase, display, A,
+                f"environment_diagnostics[horizon={PRIMARY_HORIZON}, target_D={target} (W={width})].{field_name}.mean; 50 evaluation streams",
+                lambda a, t=target, k=field_name: _followup_environment_mean(a, t, k),
+                "mean cumulative pseudo-regret within one condition")
     for file, phrases in ((main, ("50 common evaluation seeds", "50 paired evaluation seeds", "50 successes out of 50", "50 histories")),
                           (appendix, ("50 evaluation seeds",))):
         for phrase in phrases:
@@ -356,7 +378,7 @@ def followup_ledger() -> list[Entry]:
         lambda rows: sum(r["endpoint_at_least_threshold_counts"]["1.0"] for r in rows
                          if r["W"] == .25 and r["method"] == "transport_hessian"))
     for file, phrases in ((main, ("of 50,000 seed--round observations", "50,000 seed--round observations per condition")),
-                          (appendix, ("50,000 dependent states", "50,000 rounds"))):
+                          (appendix, ("50,000 dependent states",))):
         for phrase in phrases:
             add(file, phrase, "50,000", C, "primary_horizon * number evaluation seeds",
                 lambda c: c["reporting"]["primary_horizon"] * len(c["seed_sets"]["evaluation"]), "dependent seed-round observations")
@@ -402,11 +424,6 @@ def followup_ledger() -> list[Entry]:
                 +c["transport"]["quadrature"]["independent_validation_orders"]) if x==v), "quadrature order")
     add(appendix, "12 combinations", "12", X, "len(groups)", lambda a: len(a["groups"]))
     add(appendix, "divided by 1000", "1000", C, "reporting.primary_horizon",lambda c:c["reporting"]["primary_horizon"])
-    for i,w in enumerate((16.,1.,.25)):
-        for value,key in ((("49,691","49,981","49,991")[i],"width_argmax_first_matches"),
-                          (("48,552","49,686","49,754")[i],"strict_width_dominance_sufficient")):
-            add(appendix,value,value,X,f"primary W={w} {key}",
-                lambda a,w=w,k=key:_followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"][k])
     add(appendix,"250-digit", "250", X,"decimal_precision",lambda a:a["decimal_precision"],"decimal digits for stored-input score arithmetic")
     add(appendix,"at 16 states", "16", X,"sum primary exact_rank_first_mismatch",
         lambda a:sum(_followup_group(a,w)["hessian_recommendation_diagnostics"]["counts"]["exact_rank_first_mismatch"] for w in (16.,1.,.25)))
@@ -416,9 +433,9 @@ def followup_ledger() -> list[Entry]:
     for value,fn in (("2",min),("10",max)):
         add(appendix,"2--10",value,X,f"{fn.__name__} mismatch round over all behavior histories",
             lambda a,fn=fn:fn(r["round"] for g in a["groups"] for r in g["hessian_recommendation_diagnostics"]["stored_input_rank_mismatches"]))
-    add(appendix,"below 0.629", "0.629", X,"ceil(1000 * maximum primary gap_in_score_ulps) / 1000",
-        lambda a:math.ceil(1000*max(r["gap_in_score_ulps"] for w in (16.,1.,.25)
-            for r in _followup_group(a,w)["hessian_recommendation_diagnostics"]["stored_input_rank_mismatches"]))/1000,"score ULP upper bound")
+    add(appendix,"below 0.629", "0.629", X,"ceil(1000 * maximum gap_in_score_ulps over all behavior histories) / 1000",
+        lambda a:math.ceil(1000*max(r["gap_in_score_ulps"] for g in a["groups"]
+            for r in g["hessian_recommendation_diagnostics"]["stored_input_rank_mismatches"]))/1000,"score ULP upper bound")
     add(main, "there are five actions", "5", C, "environment.action_count", lambda c:c["environment"]["action_count"])
     add(main, "standard deviation $0.25$", "0.25", C,
         "environment.noise_std", lambda c: c["environment"]["noise_std"])
@@ -442,10 +459,6 @@ def followup_ledger() -> list[Entry]:
     for i,value in enumerate(("1","2","10","100","500","1000")):
         add(appendix, "rounds 1, 2, 10, 100, 500, and 1000", value, RELATIVE_ANALYSIS,
             f"checkpoint_rounds[{i}]", lambda a,i=i:a["checkpoint_rounds"][i], "reconstruction checkpoint")
-    add(appendix, "80 feature", "80", S, "common category_count across all seed summaries",
-        lambda rows: next(iter({r["category_count"] for r in rows})) if len({r["category_count"] for r in rows}) == 1 else math.nan)
-    add(appendix, "including 80 projections", "80", S, "common category_count across all seed summaries",
-        lambda rows: next(iter({r["category_count"] for r in rows})) if len({r["category_count"] for r in rows}) == 1 else math.nan)
     for method, bounds in (("category_asymmetric", ("0.28", "12.68")),
                            ("transport_endpoint", ("0.16", "12.13"))):
         for fn, value in zip((min, max), bounds):
@@ -458,15 +471,6 @@ def followup_ledger() -> list[Entry]:
         "ceil(1000 * maximum residual/original_tolerance) / 1000",
         lambda a:math.ceil(1000*max(a["maximum_residual_or_excess_over_original_tolerance"].values()))/1000,
         "upper bound on normalized floating-point diagnostic residual")
-    add(appendix, "36 states", "36", RELATIVE_SEEDS, "sum number fixed_state_kernel_timings",
-        lambda rows:sum(len(r["fixed_state_kernel_timings"]) for r in rows))
-    for kernel,value in (("category_ratios_precomputed_scales","27.7"),
-                         ("category_ratios_with_80_projections","34.8"),
-                         ("dense_endpoint_preassembled_metrics","213.3")):
-        add(appendix, "$"+value+r"\,\mu\mathrm{s}$",value,RELATIVE_SEEDS,
-            f"1e6 * median across 36 states of five-batch median {kernel} seconds/call",
-            lambda rows,k=kernel:1e6*statistics.median(t["kernels_seconds_per_call"][k]["median"]
-                for r in rows for t in r["fixed_state_kernel_timings"]),"microseconds per kernel call; descriptive same-host timing")
     return entries
 
 
@@ -1063,14 +1067,12 @@ _classify("paper/transport_proofs.tex", "math-constant",
           {"0": 16, "1": 80, "2": 110, "4": 4})
 _classify("paper/transport_proofs.tex", "interval-endpoint", {"0,1": 1})
 _classify("paper/transport_theory.tex", "math-constant",
-          {"0": 29, "1": 94, "2": 105, "3": 2, "4": 5})
+          {"0": 32, "1": 95, "1,0": 1, "2": 107, "3": 2, "4": 5})
 _classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
 _classify("paper/transport_followup.tex", "math-constant", {"1": 1, "2": 1})
 _classify("paper/transport_followup_appendix.tex", "math-constant",
           {"1": 4, "2": 5, "4": 1})
 for _readme in (str(SUPPLEMENT_README_REPO), str(SUPPLEMENT_README_PACKAGED)):
-    _classify(_readme, "document-structure",
-              {"0": 1, "1": 2, "2": 2, "3": 2, "4": 1})
     _classify(_readme, "environment-version",
               {"3.12": 1, "2.2.3": 1, "1.15.2": 1})
 
@@ -1224,7 +1226,7 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', '$12.68\\%$'): 1,
     ('paper/transport_followup.tex', '$T=1000$'): 2,
     ('paper/transport_followup.tex', '$W=0.25$'): 1,
-    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 1,
+    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 2,
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
     ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
@@ -1256,6 +1258,8 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup.tex', 'of 50,000 seed--round observations'): 1,
     ('paper/transport_followup.tex', 'paired 95\\% intervals'): 1,
     ('paper/transport_followup.tex', 'pointwise 95\\% paired'): 1,
+    ('paper/transport_followup.tex', 'regrets 180.01, 177.97, and 171.84'): 1,
+    ('paper/transport_followup.tex', 'regrets 185.26, 183.06, and 176.67'): 1,
     ('paper/transport_followup.tex', 'same 600 recorded histories'): 1,
     ('paper/transport_followup.tex', 'standard deviation $0.25$'): 1,
     ('paper/transport_followup.tex', 'there are five actions'): 1,
@@ -1263,9 +1267,6 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
     ('paper/transport_followup_appendix.tex', '$0.124$'): 1,
     ('paper/transport_followup_appendix.tex', '$1.735$'): 1,
-    ('paper/transport_followup_appendix.tex', '$213.3\\,\\mu\\mathrm{s}$'): 1,
-    ('paper/transport_followup_appendix.tex', '$27.7\\,\\mu\\mathrm{s}$'): 1,
-    ('paper/transport_followup_appendix.tex', '$34.8\\,\\mu\\mathrm{s}$'): 1,
     ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'): 1,
     ('paper/transport_followup_appendix.tex', '$4+5+20=29$'): 1,
     ('paper/transport_followup_appendix.tex', '$5.300$'): 1,
@@ -1287,21 +1288,12 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup_appendix.tex', '30000--30001'): 1,
     ('paper/transport_followup_appendix.tex', '30100--30109'): 1,
     ('paper/transport_followup_appendix.tex', '30200--30249'): 1,
-    ('paper/transport_followup_appendix.tex', '36 states'): 1,
     ('paper/transport_followup_appendix.tex', '4096'): 1,
-    ('paper/transport_followup_appendix.tex', '48,552'): 1,
-    ('paper/transport_followup_appendix.tex', '49,686'): 1,
-    ('paper/transport_followup_appendix.tex', '49,691'): 1,
-    ('paper/transport_followup_appendix.tex', '49,754'): 1,
-    ('paper/transport_followup_appendix.tex', '49,981'): 1,
-    ('paper/transport_followup_appendix.tex', '49,991'): 1,
     ('paper/transport_followup_appendix.tex', '50 evaluation seeds'): 1,
     ('paper/transport_followup_appendix.tex', '50 seeds per condition'): 1,
     ('paper/transport_followup_appendix.tex', '50,000 dependent states'): 1,
-    ('paper/transport_followup_appendix.tex', '50,000 rounds'): 1,
     ('paper/transport_followup_appendix.tex', '600,000 states'): 1,
     ('paper/transport_followup_appendix.tex', '65 changes'): 1,
-    ('paper/transport_followup_appendix.tex', '80 feature'): 1,
     ('paper/transport_followup_appendix.tex', 'Candidate 008'): 1,
     ('paper/transport_followup_appendix.tex', 'across 50 seeds'): 1,
     ('paper/transport_followup_appendix.tex', 'all 600 trajectories'): 1,
@@ -1309,7 +1301,6 @@ PHRASE_OCCURRENCES.update({
     ('paper/transport_followup_appendix.tex', 'at 16 states'): 1,
     ('paper/transport_followup_appendix.tex', 'below 0.629'): 1,
     ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
-    ('paper/transport_followup_appendix.tex', 'including 80 projections'): 1,
     ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'): 1,
     ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'): 1,
     ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'): 1,
@@ -1674,8 +1665,13 @@ CLOSURE_SCHEMA_VERSION = 2
 VENDORED_DIRECTORY = "paper/texmf_vendor"
 VENDORED_PACKAGE_NAMES = frozenset({
     'LICENSE-gpl-3-0',
+    'LICENSE-lgpl-2-1',
     'LICENSE-lppl-1-2',
     'LICENSE-lppl-1-3c',
+    'algorithm.sty',
+    'algorithmic.sty',
+    'algorithms.dtx',
+    'algorithms.ins',
     'cleveref.sty',
     'mathtools.sty',
     'mhsetup.sty',
@@ -1769,6 +1765,10 @@ CLOSURE_IGNORED_DIRECTORIES = frozenset({"tmlr_style", "texmf_vendor"})
 VENDORED_LICENSE_NAMES = frozenset(
     name for name in VENDORED_PACKAGE_NAMES if name.startswith("LICENSE-"))
 
+#: Exact package sources shipped for the algorithms bundle's licence terms.
+#: They generate the two style files but are not themselves pdfTeX inputs.
+VENDORED_SOURCE_EXTRA_NAMES = frozenset({"algorithms.dtx", "algorithms.ins"})
+
 #: Compiler inputs that must be recorded exactly once and byte-bound even
 #: though the supplement does not carry them.  `main.bbl` is the case that
 #: mattered: bibtex writes it during the build, it travels in neither archive,
@@ -1781,7 +1781,7 @@ VENDORED_LICENSE_NAMES = frozenset(
 #: pdfTeX does not, so they appear in `source.zip` but never in `main.fls`.
 MANDATORY_NON_SUPPLEMENT_STAGED = tuple(sorted(
     {"main.bbl", "tmlr.sty", "fancyhdr.sty"}
-    | (VENDORED_PACKAGE_NAMES - VENDORED_LICENSE_NAMES)))
+    | (VENDORED_PACKAGE_NAMES - VENDORED_LICENSE_NAMES - VENDORED_SOURCE_EXTRA_NAMES)))
 
 
 def derive_repository_path(staged: str) -> str | None:
@@ -2520,13 +2520,21 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # New cells have no self-authorizing sidecar exemption: exact regeneration
     # requires the reviewed generator and every pinned input, then byte identity
     # for all tables and their provenance record. Missing inputs fail closed.
-    # Only original retained follow-up bytes are reviewed here. An expanded
-    # anonymous export and its sanitized provenance are not yet specified;
-    # merely adding a sanitizer's claim to a package must not authorize it.
+    # Repository mode accepts only original retained bytes. Required package
+    # mode additionally permits the exact anonymous copies fixed in reviewed
+    # code, after validating the complete declaration and evidence set.
     try:
+        followup_packaged = _validated_followup_packaged_sources(
+            root, require_package=require_package)
         for source, expected_digest in FOLLOWUP_SOURCE_HASHES.items():
             path = root / source
-            if not path.is_file() or sha256_file(path) != expected_digest:
+            record = followup_packaged.get(str(source))
+            matches = path.is_file() and (
+                sha256_file(path) == expected_digest if record is None else
+                record["original_sha256"] == expected_digest
+                and sha256_file(path) == record["packaged_sha256"]
+                and path.stat().st_size == record["packaged_bytes"])
+            if not matches:
                 raise LedgerError(f"missing or unreviewed generated-table input: {source}")
         generator = _load_reviewed_tool(root, FOLLOWUP_GENERATOR)
         expected_outputs = generator.build(root)
@@ -2546,7 +2554,6 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
         expect("follow-up tables can be regenerated from reviewed sources", False, repr(exc))
 
     checks.extend(macro_file_checks(root))
-    checks.extend(symbolic_table_checks(root))
 
     # Typeset generated artifacts are bound by byte-identical regeneration, not
     # by per-literal entries.  Anything else \input from tables/ or figures/
@@ -2554,6 +2561,11 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     known = {Path(name).name for name in ALL_GENERATED_SOURCES}
     known |= {Path(name).name for name in SYMBOLIC_TABLE_INPUTS}
     undeclared: list[str] = []
+    # Retained legacy files are not automatically submitted claims. Require
+    # their specialized check only when the compiled closure includes them or
+    # an active source references them. The reference check also catches a
+    # missing table that the repository input walk could not open.
+    symbolic_active = Path(SYMBOLIC_TABLE_SOURCE) in sources
     for relative in sources:
         path = root / relative
         if not path.is_file() or path.suffix != ".tex":
@@ -2561,11 +2573,18 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
         body = visible_tex(path.read_text(encoding="utf-8"))
         for match in _INPUT.finditer(body):
             target = match.group(1) or match.group(2)
+            target_path = Path(target)
+            if not target_path.suffix:
+                target_path = target_path.with_suffix(".tex")
+            if (root / "paper" / target_path).resolve() == (root / SYMBOLIC_TABLE_SOURCE).resolve():
+                symbolic_active = True
             if target.startswith(("tables/", "figures/")) \
                     and Path(target).name not in known:
                 undeclared.append(f"{relative}: {target}")
     expect("every typeset table and figure is generated evidence or declared "
            "symbolic", not undeclared, f"undeclared: {sorted(undeclared)}")
+    if symbolic_active:
+        checks.extend(symbolic_table_checks(root))
 
     # The classification table must not rot: an entry naming a file that is no
     # longer in the closure is a stale exemption waiting to be reused.
@@ -2767,6 +2786,33 @@ def _load_reviewed_tool(root: Path, relative: Path):
     return module
 
 
+def _validated_followup_packaged_sources(
+        root: Path, *, require_package: bool) -> dict[str, dict[str, Any]]:
+    """Return anonymous source pins only in explicitly required package mode.
+
+    A declaration cannot choose its own digests. The helper's code is bound by
+    the separate shipped-tool contract, and it must validate every packaged
+    evidence file and the exact declaration before its fixed mapping is used.
+    """
+    if not require_package:
+        return {}
+    if not contract.is_packaged_tree(root):
+        raise LedgerError("anonymous follow-up sources require the package declaration")
+    path = root / FOLLOWUP_PACKAGE_CONTRACT
+    expected = contract.SHIPPED_TOOL_DIGESTS.get(str(FOLLOWUP_PACKAGE_CONTRACT))
+    if not expected or not path.is_file() or path.is_symlink() or sha256_file(path) != expected:
+        raise LedgerError(f"unreviewed or missing follow-up package contract: {FOLLOWUP_PACKAGE_CONTRACT}")
+    spec = importlib.util.spec_from_file_location("_numeric_followup_package_contract", path)
+    if spec is None or spec.loader is None:
+        raise LedgerError(f"cannot load {FOLLOWUP_PACKAGE_CONTRACT}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    failures = module.validate_packaged(root)
+    if failures:
+        raise LedgerError("invalid anonymous follow-up evidence: " + "; ".join(failures))
+    return module.FOLLOWUP_CONTRACT
+
+
 def followup_checks(root: Path, data: dict[Path, Any]) -> list[Check]:
     """Check new claims from the distinct retained follow-up population."""
     checks: list[Check] = []
@@ -2929,6 +2975,16 @@ def run(root: Path, *, check_manuscript: bool = True,
                 detail,
             ))
 
+    try:
+        followup_packaged = _validated_followup_packaged_sources(
+            root, require_package=required)
+    except Exception as exc:
+        checks.append(Check("follow-up anonymous source contract", STATUS_FAIL, repr(exc)))
+        return checks, ledger
+    if required:
+        checks.append(Check("follow-up anonymous source contract", STATUS_ANONYMIZED,
+                            "complete evidence set and declaration match fixed reviewed code"))
+
     sources = {AGGREGATE: AGGREGATE_SHA256, CONFIG: CONFIG_SHA256,
                **FOLLOWUP_SOURCE_HASHES}
     for relative, expected in sources.items():
@@ -2938,6 +2994,8 @@ def run(root: Path, *, check_manuscript: bool = True,
             continue
         actual = sha256_file(path)
         pinned = contract.CONTRACT.get(str(relative)) if packaged else None
+        if relative in FOLLOWUP_SOURCE_HASHES:
+            pinned = followup_packaged.get(str(relative), pinned)
         if pinned is None:
             # Original repository evidence: the digest must be exactly the one
             # this tool was written against.  Strict, and unchanged.
@@ -2973,9 +3031,9 @@ def run(root: Path, *, check_manuscript: bool = True,
             else:
                 # Pinned text, so a recomputed-but-consistent sidecar over
                 # mutated bytes is rejected rather than accepted.
-                ok = recorded == contract.sidecar_text(str(relative))
-                detail = (f"sidecar {recorded!r}, pinned "
-                          f"{contract.sidecar_text(str(relative))!r}")
+                expected_sidecar = f"{pinned['packaged_sha256']}  {path.name}\n"
+                ok = recorded == expected_sidecar
+                detail = f"sidecar {recorded!r}, pinned {expected_sidecar!r}"
             checks.append(Check(
                 f"sidecar agrees: {relative}.sha256"
                 + (" (pinned packaged text)" if pinned else ""),

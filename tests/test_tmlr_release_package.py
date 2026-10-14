@@ -512,6 +512,10 @@ def packaged_tree(tmp_path_factory):
     wanted = [contract.DECLARATION_NAME]
     for relative in contract.CONTRACT:
         wanted += [relative, f"{relative}.sha256"]
+    wanted += [packager.followup_contract.DECLARATION_NAME,
+               "tools/followup_anonymous_contract.py",
+               *packager.followup_contract.INPUT_PATHS,
+               *packager.followup_contract.ARTIFACT_PINS]
     # The provenance records are pinned by the contract too, so a tree without
     # them is not a package the contract can pass.  `_materialize` falls back to
     # a copy: the repository and the temporary tree are often on two devices.
@@ -521,7 +525,7 @@ def packaged_tree(tmp_path_factory):
         target = tree / arcname
         target.parent.mkdir(parents=True, exist_ok=True)
         # hard-link: the aggregate is 77 MB and every test only reads it
-        os.link(by_arcname[arcname], target)
+        _materialize(by_arcname[arcname], target)
     return tree, {record["path"]: record for record in records}
 
 
@@ -821,6 +825,9 @@ def _run_verify_sh(tree: Path) -> subprocess.CompletedProcess:
     env = dict(os.environ)
     env.pop("CCE_REQUIRE_ANONYMOUS_PACKAGE", None)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    # Exercise the shipped script using the interpreter running this test suite;
+    # a different python3 on PATH may not have its declared dependencies.
+    env["PYTHON"] = sys.executable
     return subprocess.run(["bash", "verify.sh"], cwd=tree, env=env,
                           capture_output=True, text=True)
 
@@ -844,14 +851,26 @@ def test_the_supplement_verifier_covers_every_shipped_evidence_file(
         full_package_tree, clean_verify_run):
     """Coverage, not a sample: every evidence file in the archive is checked."""
 
-    expected = sum(
-        1
-        for directory in ("paper/tables", "paper/figures")
-        for path in sorted((full_package_tree / directory).iterdir())
-        if path.is_file() and not path.name.endswith(".sha256")
-    )
-    assert expected > 0
-    assert f"verified {expected} shipped evidence files" \
+    evidence = {
+        str(path.relative_to(full_package_tree))
+        for directory in ("paper/tables", "paper/figures", "results/derived",
+                          packager.followup_contract.FULL,
+                          packager.followup_contract.INDEPENDENT,
+                          packager.followup_contract.RELATIVE)
+        for path in (full_package_tree / directory).rglob("*")
+        if path.is_file() and not path.name.endswith((".sha256", ".py"))
+        and "__pycache__" not in path.parts
+    }
+    pinned = (set(contract.CONTRACT) | set(contract.PROVENANCE_PINS)
+              | set(packager.followup_contract.INPUT_PATHS)
+              | set(packager.followup_contract.ARTIFACT_PINS))
+    sidecarred = evidence - pinned
+    assert sidecarred and evidence & pinned
+    assert all((full_package_tree / f"{path}.sha256").is_file()
+               for path in sidecarred)
+    assert f"verified {len(sidecarred)} shipped evidence files" \
+        in clean_verify_run.stdout
+    assert f"{len(evidence & pinned)} further shipped evidence files" \
         in clean_verify_run.stdout
 
 
@@ -1248,6 +1267,8 @@ def test_every_manuscript_literal_is_accounted_for():
 @pytest.mark.parametrize("before,after", [
     (r"99.382\%", r"99.383\%"),
     ("means of actionwise ratios, not", "ratios of mean widths, not"),
+    ("185.26", "185.27"),
+    ("no equivalence test was performed", "an equivalence test confirmed matching performance"),
 ])
 def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, before, after):
     root = _submitted_tex_tree(tmp_path)
@@ -1283,6 +1304,58 @@ def test_joint_followup_source_and_generated_table_mutation_does_not_authorize_i
     for name, content in generator.build(root).items():
         (root / "paper/tables" / name).write_text(content)
     assert "follow-up tables can be regenerated from reviewed sources" in _audit(root)
+
+
+def _followup_ledger_tree(packaged_tree, tmp_path):
+    """Complete evidence-only fixture; compiled-source closure is tested elsewhere."""
+    tree, _records = packaged_tree
+    root = _clone(tree, tmp_path / "followup-ledger")
+    for relative in (ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
+                     ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER):
+        if not (root / relative).is_file():
+            _materialize(REPO_ROOT / relative, root / relative)
+    return root
+
+
+def test_followup_anonymous_ledger_requires_explicit_package_mode(packaged_tree, tmp_path):
+    root = _followup_ledger_tree(packaged_tree, tmp_path)
+    assert ledger_tool._validated_followup_packaged_sources(root, require_package=False) == {}
+    records = ledger_tool._validated_followup_packaged_sources(root, require_package=True)
+    assert records[str(ledger_tool.FOLLOWUP_AGGREGATE)]["original_sha256"] == \
+        ledger_tool.FOLLOWUP_SOURCE_HASHES[ledger_tool.FOLLOWUP_AGGREGATE]
+    assert any(row["original_sha256"] != row["packaged_sha256"] for row in records.values())
+    checks, _entries = ledger_tool.run(root, check_manuscript=False, require_package=True)
+    assert not [check for check in checks if check.status == ledger_tool.STATUS_FAIL]
+    assert any(check.name == "follow-up anonymous source contract"
+               and check.status == ledger_tool.STATUS_ANONYMIZED for check in checks)
+    # A valid anonymous declaration does not relax repository-mode source pins.
+    repository_checks, _entries = ledger_tool.run(
+        root, check_manuscript=False, require_package=False)
+    assert any(check.status == ledger_tool.STATUS_FAIL
+               and check.name == f"source hash: {ledger_tool.FOLLOWUP_AGGREGATE}"
+               for check in repository_checks)
+
+
+@pytest.mark.parametrize("mutation", ["missing", "replaced"])
+def test_followup_package_ledger_rejects_untrusted_contract_before_import(
+        packaged_tree, tmp_path, mutation):
+    root = _followup_ledger_tree(packaged_tree, tmp_path)
+    assert ledger_tool._validated_followup_packaged_sources(root, require_package=True)
+    module = root / ledger_tool.FOLLOWUP_PACKAGE_CONTRACT
+    if mutation == "missing":
+        module.unlink()
+    else:
+        _rewrite(module, b'raise AssertionError("untrusted contract was executed")\n')
+    declaration_path = root / "FOLLOWUP_ANONYMIZATION.json"
+    declaration = json.loads(declaration_path.read_text())
+    declaration["claimed_contract_sha256"] = (
+        hashlib.sha256(module.read_bytes()).hexdigest() if module.is_file() else None)
+    _rewrite(declaration_path, json.dumps(declaration, sort_keys=True).encode())
+    checks, _entries = ledger_tool.run(root, check_manuscript=False, require_package=True)
+    assert any(check.name == "follow-up anonymous source contract"
+               and check.status == ledger_tool.STATUS_FAIL
+               and "unreviewed or missing follow-up package contract" in check.detail
+               for check in checks)
 
 
 @pytest.mark.parametrize("source, before, after", [
@@ -1476,24 +1549,59 @@ def test_followup_collective_provenance_binds_exact_outputs_and_reviewed_inputs(
         assert hashlib.sha256((REPO_ROOT / source).read_bytes()).hexdigest() == row["sha256"]
 
 
-def test_followup_supplement_preflight_reports_the_incomplete_evidence_inventory():
+def test_followup_supplement_preflight_requires_the_complete_pinned_evidence_inventory():
     proposed = {arc for _, arc in packager.supplement_entries(REPO_ROOT)}
     missing = {str(p) for p in ledger_tool.FOLLOWUP_SOURCE_HASHES} - proposed
-    assert missing, "the expanded anonymous evidence package is still pending"
-    findings = packager.followup_supplement_preflight(REPO_ROOT)
-    assert any("expanded follow-up evidence support is pending" in finding for finding in findings)
-    assert any("artifact verification/anonymous provenance support is pending" in finding
-               for finding in findings)
-    for path in missing:
-        assert any(path in finding for finding in findings), path
+    assert not missing
+    assert set(packager.followup_contract.INPUT_PATHS) <= proposed
+    assert set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS) == set(packager.followup_contract.ARTIFACT_PINS)
+    assert packager.followup_supplement_preflight(REPO_ROOT) == []
+
+
+@pytest.mark.parametrize("state", ["pinned", "missing", "replaced"])
+def test_pinned_path_listing_authenticates_the_exact_root_helper_before_import(tmp_path, state):
+    module = tmp_path / "tools/followup_anonymous_contract.py"
+    marker = tmp_path / "executed.txt"
+    if state != "missing":
+        module.parent.mkdir()
+        if state == "pinned":
+            module.write_bytes((REPO_ROOT / "tools/followup_anonymous_contract.py").read_bytes())
+        else:
+            module.write_text("from pathlib import Path\nPath(" + repr(str(marker))
+                              + ").write_text('executed')\n")
+    done = subprocess.run([sys.executable, str(CONTRACT_TOOL), "--root", str(tmp_path),
+                           "--list-pinned"], capture_output=True, text=True)
+    assert not marker.exists()
+    if state == "pinned":
+        assert done.returncode == 0, done.stdout + done.stderr
+        assert packager.followup_contract.DECLARATION_NAME in done.stdout
+    else:
+        assert done.returncode == 1
+        assert "missing or differs from its independent pin" in done.stdout
 
 
 def test_incomplete_followup_release_cli_preserves_prior_deliverables_before_staging(tmp_path):
+    # Remove a real required input from a disposable repository inventory. The
+    # production repository now has the complete compact closure; an incomplete
+    # copy must still fail before staging or replacing previous deliverables.
+    repo = tmp_path / "incomplete-repo"
+    for source, relative in packager.supplement_entries(REPO_ROOT):
+        if relative == packager.followup_contract.FULL + "seed_summaries.jsonl":
+            continue
+        _materialize(source, repo / relative)
+    for source in (REPO_ROOT / "paper/tmlr_style").iterdir():
+        if source.is_file():
+            _materialize(source, repo / "paper/tmlr_style" / source.name)
+    for source in (REPO_ROOT / "paper/texmf_vendor").iterdir():
+        if source.is_file():
+            _materialize(source, repo / "paper/texmf_vendor" / source.name)
+    # Source-only artifact classification also recognizes the retained legacy
+    # files. They are not supplement members and need not exist in this fixture.
     out = tmp_path / "release"
     prior = _sentinel_release(out)
     done = subprocess.run(
         [sys.executable, str(REPO_ROOT / "submissions/tmlr_2026/package.py"),
-         "--repo", str(REPO_ROOT), "--out", str(out)],
+         "--repo", str(repo), "--out", str(out)],
         capture_output=True, text=True, cwd=REPO_ROOT)
     assert done.returncode == 14, done.stdout + done.stderr
     assert "FOLLOW-UP ANONYMOUS SUPPLEMENT IS INCOMPLETE" in done.stderr
@@ -2283,7 +2391,9 @@ def _evidence_clone(tmp_path: Path) -> Path:
     """
 
     clone = tmp_path / "evidence-clone"
-    for arcname in sorted(contract.CONTRACT):
+    required = (set(contract.CONTRACT) | set(packager.followup_contract.INPUT_PATHS)
+                | set(packager.followup_contract.ARTIFACT_PINS))
+    for arcname in sorted(required):
         target = clone / arcname
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO_ROOT / arcname, target)
@@ -4289,7 +4399,7 @@ def test_the_vendored_licences_ship_with_the_code():
 
 def test_no_font_is_vendored():
     for name in packager.VENDORED_PACKAGE_DIGESTS:
-        assert Path(name).suffix in {".sty", ".tex", ".def", ".cfg", ""}, name
+        assert Path(name).suffix in {".sty", ".tex", ".def", ".cfg", ".dtx", ".ins", ""}, name
         assert not name.endswith((".pfb", ".ttf", ".otf", ".tfm", ".vf")), name
 
 
@@ -4308,10 +4418,30 @@ def test_the_vendored_packages_are_recorded_as_such():
 def test_the_vendored_packages_are_documented_with_their_licences():
     note = (REPO_ROOT / packager.VENDORED_DIRECTORY
             / "VENDORED-PACKAGES.md").read_text(encoding="utf-8")
-    for package in ("pgfplots", "microtype", "mathtools", "cleveref"):
+    for package in ("pgfplots", "microtype", "mathtools", "cleveref", "algorithms"):
         assert package in note, package
     for name in packager.VENDORED_LICENSE_FILES:
         assert name in note, name
+
+
+def test_algorithms_upstream_sources_regenerate_the_pinned_runtime(tmp_path):
+    """Ship corresponding source that reproduces the authenticated runtime bytes."""
+
+    vendor = REPO_ROOT / packager.VENDORED_DIRECTORY
+    for name in packager.VENDORED_SOURCE_FILES:
+        shutil.copy2(vendor / name, tmp_path / name)
+    extras = packager.source_archive_extras(REPO_ROOT)
+    for name in (*packager.VENDORED_SOURCE_FILES, "LICENSE-lgpl-2-1"):
+        assert extras[name] == vendor / name
+    if shutil.which("tex") is None:
+        pytest.skip("plain TeX is required to regenerate upstream docstrip sources")
+    done = subprocess.run(
+        ["tex", "-8bit", "-interaction=nonstopmode", "-halt-on-error", "algorithms.ins"],
+        cwd=tmp_path, env=packager.compile_environment(tmp_path),
+        capture_output=True, text=True, errors="replace")
+    assert done.returncode == 0, done.stdout + done.stderr
+    for name in ("algorithm.sty", "algorithmic.sty"):
+        assert (tmp_path / name).read_bytes() == (vendor / name).read_bytes(), name
 
 
 def test_an_upstream_repository_url_is_allowed_only_in_a_pinned_package(tmp_path):
@@ -4691,8 +4821,12 @@ def staged_tree(tmp_path_factory):
 
     out = tmp_path_factory.mktemp("staged")
     src, sources = packager.stage(REPO_ROOT, out)
+    # Upstream documented source files accompany the generated styles for
+    # redistribution, but pdfTeX does not open them when compiling the paper.
+    # Do not invent unsupported recorder inputs for these archive-only extras.
     lines = [f"INPUT {p.relative_to(src)}"
-             for p in sorted(src.rglob("*")) if p.is_file()]
+             for p in sorted(src.rglob("*")) if p.is_file()
+             and str(p.relative_to(src)) not in packager.VENDORED_SOURCE_FILES]
     (src / "main.fls").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return src, sources
 
@@ -4721,7 +4855,7 @@ def test_the_clean_compiled_closure_passes_the_layout_gate(staged_tree):
 
 @pytest.mark.parametrize("target", [
     "tables/transport_instantiation_validity.tex",
-    "tables/growing_window_pareto.tex",
+    "tables/transport_followup_outcomes.tex",
     "figures/transport_instantiation_bound.tex",
 ])
 @pytest.mark.parametrize("injected, expected", [
@@ -4893,6 +5027,8 @@ def test_an_empirical_value_in_the_macro_file_fails(tmp_path):
 
 def test_an_empirical_value_in_the_symbolic_table_fails(tmp_path):
     root = _submitted_tex_tree(tmp_path)
+    conclusion = root / "paper/body_conclusion.tex"
+    conclusion.write_text(conclusion.read_text() + "\n\\input{tables/growing_window_pareto.tex}\n")
     path = root / "paper/tables/growing_window_pareto.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
@@ -4900,6 +5036,21 @@ def test_an_empirical_value_in_the_symbolic_table_fails(tmp_path):
         encoding="utf-8")
     failures = _audit_fails(root)
     assert any("asymptotic rate" in name for name in failures), failures
+
+
+@pytest.mark.parametrize("referenced", [False, True])
+def test_missing_symbolic_table_fails_only_when_active(tmp_path, referenced):
+    root = _submitted_tex_tree(tmp_path)
+    assert _audit(root) == []
+    (root / ledger_tool.SYMBOLIC_TABLE_SOURCE).unlink()
+    if referenced:
+        conclusion = root / "paper/body_conclusion.tex"
+        conclusion.write_text(conclusion.read_text() + "\n\\input{tables/growing_window_pareto.tex}\n")
+    failures = _audit(root)
+    if referenced:
+        assert f"symbolic table present: {ledger_tool.SYMBOLIC_TABLE_SOURCE}" in failures
+    else:
+        assert failures == []
 
 
 def test_an_unbraced_input_is_followed(tmp_path):
@@ -5070,13 +5221,37 @@ def test_a_group_or_world_writable_component_is_refused(tmp_path):
     assert any("group- or world-writable" in p for p in problems), problems
 
 
-def test_an_environment_supplied_root_cannot_answer_for_the_engine(monkeypatch):
-    """`kpsewhich -var-value=TEXMFDIST` reports $TEXMFDIST if it is exported."""
+@pytest.mark.parametrize("variable", ["TEXMFDIST", "TEXMFDEBIAN"])
+def test_an_environment_supplied_root_cannot_answer_for_the_engine(monkeypatch, variable):
+    """The distribution variables must come from kpathsea, not the caller."""
 
-    monkeypatch.setenv("TEXMFDIST", "/tmp/not-a-distribution")
-    assert packager.kpsewhich_value("TEXMFDIST") != "/tmp/not-a-distribution"
+    monkeypatch.setenv(variable, "/tmp/not-a-distribution")
+    assert packager.kpsewhich_value(variable) != "/tmp/not-a-distribution"
     assert Path("/tmp/not-a-distribution") not in packager.texmf_roots(
         repo=REPO_ROOT, staged=REPO_ROOT / "x")
+
+
+def test_texmfdebian_can_name_a_protected_distribution_tree(monkeypatch):
+    roots = packager.texmf_roots(repo=REPO_ROOT, staged=REPO_ROOT / "x")
+    assert roots, "a protected system TeX tree is required for this test"
+    protected = roots[0]
+    assert packager.write_protection_problems(protected) == []
+    monkeypatch.setattr(packager, "kpsewhich_value",
+                        lambda variable: str(protected) if variable == "TEXMFDEBIAN" else "")
+    assert protected in packager.texmf_roots(repo=REPO_ROOT, staged=REPO_ROOT / "x")
+
+
+def test_texmfdebian_cannot_admit_a_writable_distribution_tree(tmp_path, monkeypatch):
+    writable = tmp_path / "texmf-debian"
+    writable.mkdir()
+    candidate = writable / "untrusted.sty"
+    candidate.write_text("% Untrusted, even when a system variable names the tree.\n")
+    monkeypatch.setattr(packager, "kpsewhich_value",
+                        lambda variable: str(writable) if variable == "TEXMFDEBIAN" else "")
+    roots = packager.texmf_roots(repo=REPO_ROOT, staged=REPO_ROOT / "x")
+    assert writable not in roots
+    assert packager.external_input_problems(
+        candidate, roots=roots, repo=REPO_ROOT, staged=REPO_ROOT / "x")
 
 
 def test_a_broad_root_is_refused():
@@ -5388,8 +5563,10 @@ def test_unparseable_manifest_json_fails(tmp_path):
      "only the generated bibliography output has no repository path"),
     (lambda r, m: m["entries"][0].update(role="figure-data"),
      "derived from the validated path"),
-    (lambda r, m: m["entries"][0].update(sha256="0" * 64), "recorded bytes"),
-    (lambda r, m: m["entries"][0].update(bytes=1), "recorded bytes"),
+    # Pick a file physically carried by the supplement. Alphabetical entry zero
+    # is now a source-archive vendor file, whose bytes are legitimately absent.
+    (lambda r, m: _entry(m, "availability.tex").update(sha256="0" * 64), "recorded bytes"),
+    (lambda r, m: _entry(m, "availability.tex").update(bytes=1), "recorded bytes"),
 ])
 def test_each_closure_manifest_invariant_is_enforced(tmp_path, edit, expected):
     failures = _closure_failures(_closure_tree(tmp_path, edit))
@@ -5768,8 +5945,6 @@ def test_repository_preflight_is_usable_but_does_not_certify():
      "historical-dependency-version"),
     ("submissions/tmlr_2026/supplement_README.md", "NumPy 2.2.3",
      "NumPy 2.2.4", "environment-version"),
-    ("submissions/tmlr_2026/supplement_README.md", "1. **Numerical-provenance",
-     "9. **Numerical-provenance", "document-structure"),
 ])
 def test_each_classification_category_is_context_bound(
         tmp_path, source, before, after, category):
@@ -5823,6 +5998,8 @@ def test_a_symbolic_rate_change_that_still_parses_fails(tmp_path):
     """`KT^{2}` -> `KT^{3}` is a different claim, and both are valid rates."""
 
     root = _submitted_tex_tree(tmp_path)
+    conclusion = root / "paper/body_conclusion.tex"
+    conclusion.write_text(conclusion.read_text() + "\n\\input{tables/growing_window_pareto.tex}\n")
     path = root / "paper/tables/growing_window_pareto.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace("$KT^{2}$", "$KT^{3}$", 1),
@@ -5870,6 +6047,10 @@ def test_every_pin_carries_a_complete_reviewable_unit():
     ("paper/macros.tex", r"\DeclareMathOperator*{\argmin}{arg\,min}",
      r"\DeclareMathOperator*{\argmin}{arg\,max}",
      "argmin now renders as arg max"),
+    ("submissions/tmlr_2026/supplement_README.md",
+     "Both declarations are claims, not authorities.",
+     "Both declarations define the authoritative expected values.",
+     "a package declaration is falsely presented as its own authority"),
 ])
 def test_a_structural_source_is_held_to_its_whole_file_pin(tmp_path, source,
                                                            before, after, what):
@@ -6113,6 +6294,8 @@ def test_rotating_is_documented_with_the_package_that_supplies_it():
     readme = (REPO_ROOT / "submissions/tmlr_2026/README.md").read_text(
         encoding="utf-8")
     assert "rotating" in readme
-    assert "texlive-latex-recommended" in readme
+    # The recorded Debian build supplies graphics/rotating.sty from
+    # texlive-latex-base (verified with dpkg-query -S), not the older provider.
+    assert "texlive-latex-base" in readme
     entry = (REPO_ROOT / packager.ENTRY_POINT).read_text(encoding="utf-8")
     assert r"\usepackage{rotating}" in entry

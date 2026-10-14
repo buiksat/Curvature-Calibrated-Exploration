@@ -37,6 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "tools"))
 import anonymous_package_contract as contract  # noqa: E402
+import followup_anonymous_contract as followup_contract  # noqa: E402
 import tex_conditionals  # noqa: E402
 
 SOURCE_DATE_EPOCH = "1609459200"  # 2021-01-01T00:00:00Z, fixed for reproducibility
@@ -137,6 +138,23 @@ SUPPLEMENT_FOLLOWUP_ARTIFACTS = (
     "paper/tables/transport_followup_relative_audit.tex",
     "paper/tables/transport_followup_same_history.tex",
     "paper/tables/transport_followup_provenance.json",
+)
+
+# The complete compact follow-up export and fixed-history audit evidence are
+# pinned independently of their editable declarations. Raw trajectories remain
+# outside this compact archive; their original hashes are provenance records,
+# not a claim that the reviewer received or replayed those trajectories.
+SUPPLEMENT_FOLLOWUP_SUPPORT = (
+    "tools/followup_anonymous_contract.py",
+    "tools/make_transport_followup_paper.py",
+    "tools/verify_review_experiment_export.py",
+    "tools/analyze_relative_transport.py",
+    "tools/check_python_environment.py",
+    "review/post_full_fable/independent/symmetric_scan.py",
+    "experiments/requirements-python312.lock",
+    "experiments/configs/transport_review_followup.yaml",
+    "experiments/TRANSPORT_REVIEW_FOLLOWUP_PROTOCOL.md",
+    "experiments/tests/test_transport_review_followup_config.py",
 )
 
 # The active transport manuscript has no standalone symbolic-rate table.
@@ -501,7 +519,8 @@ VENUE_TEMPLATE_DIGESTS = {
 #: here because the build refuses an external compiled input from any tree
 #: the invoking user can write, and this host's TeX Live does not package
 #: pgfplots, microtype, cleveref or mathtools -- so they were living in
-#: `TEXMFHOME`, which is exactly what the rule rejects.
+#: `TEXMFHOME`, which is exactly what the rule rejects. The algorithms bundle
+#: is also vendored for hosts whose protected distribution does not ship it.
 #:
 #: The exemption from the layout rule and from the per-literal number audit
 #: is earned by bytes, the same way the venue template's is: a file counts
@@ -511,10 +530,20 @@ VENUE_TEMPLATE_DIGESTS = {
 VENDORED_PACKAGE_DIGESTS = {
     'LICENSE-gpl-3-0':
         '8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903',
+    'LICENSE-lgpl-2-1':
+        'a9bdde5616ecdd1e980b44f360600ee8783b1f99b8cc83a2beb163a0a390e861',
     'LICENSE-lppl-1-2':
         'c5ccc6b3e36f75e1b44d8bfb178198a47692b6c86d936af804812c4866e0db58',
     'LICENSE-lppl-1-3c':
         '5f05fcf6ef25a6c31bccd2df7c0c46b23107bbeb2ce5cdba74efb5cc357f4dbb',
+    'algorithm.sty':
+        'd63fdf24879f0efd535bc6d06bc2a008b79ae77f6d6d2bc96156ff1f35e96bd7',
+    'algorithmic.sty':
+        '7fe47ed7f8222c56452bd73bf0682e72023ece06d59207653a02e080a341118d',
+    'algorithms.dtx':
+        '3f4e9f15310836eea02cbb9bdb0de79f5715385796ba11f84e5c2af4bb5a1d44',
+    'algorithms.ins':
+        'cbfaef0c84139952dd381b1229664f1189365952fa22c11baa81231a79f6ab81',
     'cleveref.sty':
         '58d7e2b67b8b165ec1c7e12dd2ea6edc807d5a61f68cb316267cea44fe128ef9',
     'mathtools.sty':
@@ -615,9 +644,14 @@ VENDORED_DIRECTORY = "paper/texmf_vendor"
 #: The licence texts that must travel with the vendored code.
 VENDORED_LICENSE_FILES = (
     'LICENSE-gpl-3-0',
+    'LICENSE-lgpl-2-1',
     'LICENSE-lppl-1-2',
     'LICENSE-lppl-1-3c',
 )
+
+#: Corresponding upstream source and generation script travel with the two
+#: generated algorithms styles, even though pdfTeX does not open them.
+VENDORED_SOURCE_FILES = ('algorithms.dtx', 'algorithms.ins')
 
 #: The three generated pgfplots figure sources.  They carry
 #: `legend style={font=\scriptsize}`, `tick label style={font=\scriptsize}` and
@@ -1248,6 +1282,7 @@ RECORDER_SUPPORTED_SUFFIXES = frozenset({
 #: filesystem root such as /usr or /home would not be an allowlist at all.
 SYSTEM_TEXMF_ROOT_VARIABLES = (
     "TEXMFDIST", "TEXMFMAIN", "TEXMFLOCAL", "TEXMFSYSVAR", "TEXMFSYSCONFIG",
+    "TEXMFDEBIAN",  # Debian's additional distribution tree, when declared.
 )
 
 #: kpathsea variables that name a *user* tree.  These are never trusted, even
@@ -1660,12 +1695,13 @@ def closure(src: Path, repo: Path | None = None) -> list[Path]:
     """The files that go into `source.zip`.
 
     The recorder's list, minus `main.bbl` -- a reviewer regenerates that by
-    running bibtex -- plus the three files bibtex needs and the style LICENSE.
+    running bibtex -- plus bibliography inputs, licence texts, and the pinned
+    corresponding upstream source for generated vendored packages.
     """
 
     opened = set(recorder_inputs(src, repo=repo))
     for extra in ("references.bib", "tmlr.bst", "LICENSE-tmlr-style",
-                  *VENDORED_LICENSE_FILES):
+                  *VENDORED_LICENSE_FILES, *VENDORED_SOURCE_FILES):
         if (src / extra).is_file():
             opened.add(Path(extra))
     opened.discard(Path("main.bbl"))
@@ -1799,8 +1835,8 @@ def derive_external_inputs(repo: Path, src: Path) -> list[dict]:
 def source_archive_extras(repo: Path) -> dict[str, Path]:
     """The `source.zip` members that are not compiled inputs, and their origins.
 
-    Six files: `references.bib` and `tmlr.bst`, which bibtex reads and pdfTeX
-    never opens, and the four licence texts.  The names are the ones `closure()`
+    Bibliography inputs, licence texts, and corresponding upstream sources.
+    The names are the ones `closure()`
     adds and the origins are the ones `stage()` copies from, both from committed
     constants -- so the expectation is a statement about the repository, not
     about the staged tree or the archive.
@@ -1811,7 +1847,7 @@ def source_archive_extras(repo: Path) -> dict[str, Path]:
         "tmlr.bst": repo / "paper/tmlr_style/tmlr.bst",
         "LICENSE-tmlr-style": repo / "paper/tmlr_style/LICENSE",
     }
-    for name in VENDORED_LICENSE_FILES:
+    for name in (*VENDORED_LICENSE_FILES, *VENDORED_SOURCE_FILES):
         extras[name] = repo / VENDORED_DIRECTORY / name
     return extras
 
@@ -1914,6 +1950,11 @@ def expected_supplement_members(repo: Path,
     packaged = {record["path"]: record for record in records}
     expected: dict[str, tuple[str, int]] = {}
     for source, arcname in supplement_entries(repo):
+        if arcname in followup_contract.FOLLOWUP_CONTRACT:
+            pinned_followup = followup_contract.FOLLOWUP_CONTRACT[arcname]
+            expected[arcname] = (pinned_followup["packaged_sha256"],
+                                 pinned_followup["packaged_bytes"])
+            continue
         pinned = packaged.get(arcname)
         if pinned is not None:
             expected[arcname] = (pinned["packaged_sha256"],
@@ -1929,6 +1970,9 @@ def expected_supplement_members(repo: Path,
     declaration = canonical_json_bytes(anonymization_declaration(records))
     expected[ANONYMIZATION_MANIFEST] = (
         hashlib.sha256(declaration).hexdigest(), len(declaration))
+    followup_declaration = canonical_json_bytes(followup_contract.declaration())
+    expected[followup_contract.DECLARATION_NAME] = (
+        hashlib.sha256(followup_declaration).hexdigest(), len(followup_declaration))
     closure_document = canonical_json_bytes(derive_source_closure_document())
     expected[SOURCE_CLOSURE_NAME] = (
         hashlib.sha256(closure_document).hexdigest(), len(closure_document))
@@ -2065,6 +2109,8 @@ def derive_release_manifest(repo: Path, src: Path, pending: Path) -> dict:
             "token": ANONYMIZED_TOKEN,
             "declaration_shipped_as": ANONYMIZATION_MANIFEST,
             "transformed": derive_anonymization_records(repo),
+            "followup_declaration_shipped_as": followup_contract.DECLARATION_NAME,
+            "followup_original_to_packaged": followup_contract.declaration(),
         },
     }
 
@@ -2440,6 +2486,7 @@ def check_pending_release(repo: Path, src: Path, pending: Path,
         return findings + [f"the anonymization records cannot be derived: "
                            f"{error!r}"]
     findings.extend(check_anonymization_record(records))
+    findings.extend(followup_contract.validate_original(repo))
     findings.extend(check_reported_transforms(reported, records))
     findings.extend(check_shipped_closure(pending / "supplement.zip"))
     try:
@@ -3295,6 +3342,26 @@ def anonymize(repo: Path, out: Path,
         (replacements.get(arc, source), arc) for source, arc in entries
     ]
     rewritten.append((declaration_path, ANONYMIZATION_MANIFEST))
+
+    # Follow-up metadata has a separate typed contract. Its hash-chain updates
+    # are explicit, and its declaration distinguishes packaged compact files
+    # from the original, unshipped raw evidence. Never modify committed inputs.
+    followup_replacements = {}
+    for arcname in followup_contract.INPUT_PATHS:
+        source = by_arcname.get(arcname)
+        if source is None:
+            raise RuntimeError(f"{arcname} is not in the supplement inventory")
+        target = stage_dir / arcname
+        target.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_bytes(target, followup_contract.transform_bytes(
+            arcname, source.read_bytes()))
+        followup_replacements[arcname] = target
+    rewritten = [(followup_replacements.get(arc, source), arc)
+                 for source, arc in rewritten]
+    followup_declaration_path = stage_dir / followup_contract.DECLARATION_NAME
+    atomic_write_bytes(followup_declaration_path,
+                       canonical_json_bytes(followup_contract.declaration()))
+    rewritten.append((followup_declaration_path, followup_contract.DECLARATION_NAME))
     return rewritten, transforms
 
 
@@ -3401,6 +3468,8 @@ def supplement_entries(repo: Path) -> list[tuple[Path, str]]:
         add(repo / "experiments/tests" / name, f"experiments/tests/{name}")
     for relative in SUPPLEMENT_EVIDENCE + SUPPLEMENT_OTHER:
         add(repo / relative, relative)
+    for relative in (*followup_contract.INPUT_PATHS, *SUPPLEMENT_FOLLOWUP_SUPPORT):
+        add(repo / relative, relative)
 
     # generated evidence artifacts with their sidecars and provenance records
     for relative in supplement_artifact_inventory(repo):
@@ -3421,15 +3490,7 @@ def supplement_entries(repo: Path) -> list[tuple[Path, str]]:
 
 
 def followup_supplement_preflight(repo: Path) -> list[str]:
-    """Reject an incomplete anonymous follow-up supplement before building.
-
-    The revised manuscript's number checker requires original, independently
-    pinned follow-up inputs. Classifying its rendered tables alone does not
-    supply those inputs, their generators, or a reviewed identity transform.
-    Do not relax that checker or silently omit active evidence to make an old
-    supplement inventory look complete. Repository/diagnostic checks remain
-    usable while the expanded anonymous package is being prepared.
-    """
+    """Validate the complete pinned compact evidence before any build mutation."""
 
     from verify_tmlr_submission_numbers import FOLLOWUP_SOURCE_HASHES
 
@@ -3437,7 +3498,9 @@ def followup_supplement_preflight(repo: Path) -> list[str]:
         members = {arc for _, arc in supplement_entries(repo)}
     except (OSError, RuntimeError) as error:
         return [f"follow-up supplement inventory cannot be derived: {error}"]
-    required = {str(path) for path in FOLLOWUP_SOURCE_HASHES}
+    required = ({str(path) for path in FOLLOWUP_SOURCE_HASHES}
+                | set(followup_contract.INPUT_PATHS)
+                | set(SUPPLEMENT_FOLLOWUP_SUPPORT))
     missing = sorted(required - members)
     findings = []
     if missing:
@@ -3445,11 +3508,11 @@ def followup_supplement_preflight(repo: Path) -> list[str]:
             "expanded follow-up evidence support is pending; required pinned "
             "inputs/tools are absent from the proposed supplement: "
             + ", ".join(missing))
-    # The existing reviewer entry point checks every evidence artifact against
-    # a sidecar or a code-pinned provenance record. The new collective record
-    # is not an exemption from that gate, and no fabricated sidecar is added.
+    findings.extend(followup_contract.validate_original(repo))
+    # An artifact may be covered by an exact typed contract or an ordinary
+    # sidecar. An unvalidated collective provenance record is never an exemption.
     uncovered = [path for path in SUPPLEMENT_FOLLOWUP_ARTIFACTS
-                 if path not in contract.PROVENANCE_PINS
+                 if path not in followup_contract.ARTIFACT_PINS
                  and f"{path}.sha256" not in members]
     if uncovered:
         findings.append(
@@ -3611,12 +3674,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     ) + sorted(
         arc for _, arc in supplement
         if Path(arc).name in never_upload and arc != "README.md"
+        and arc not in followup_contract.FOLLOWUP_CONTRACT
     )
     if leaked:
         print(f"\ninternal files would have shipped: {leaked}", file=sys.stderr)
         return 3
 
-    findings = scrub(source_entries) + scrub(supplement)
+    findings = scrub(source_entries) + scrub(
+        (source, arc) for source, arc in supplement
+        if arc not in followup_contract.FOLLOWUP_CONTRACT)
     if findings:
         print("\nSCRUB FAILED - these would have shipped:", file=sys.stderr)
         for finding in findings:
@@ -3643,6 +3709,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # Anonymous packaging transform, applied only to the external staging tree.
     supplement, transforms = anonymize(repo, out, supplement)
+    transformed_scrub = scrub(supplement)
+    if transformed_scrub:
+        print("\nSCRUB FAILED AFTER ANONYMIZATION:", file=sys.stderr)
+        for finding in transformed_scrub:
+            print("  " + finding, file=sys.stderr)
+        return 2
     for record in transforms:
         print(f"anonymized {record['path']}: {record['field']} -> "
               f"{record['replacement']!r}")

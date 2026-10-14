@@ -65,7 +65,10 @@ check_evidence_sidecars() {
       status=1
     fi
     checked=$((checked + 1))
-  done < <(find paper/tables paper/figures results/derived -type f 2>/dev/null | sort)
+  done < <(find paper/tables paper/figures results/derived \
+    review/transport_review_followup/full-cce-full-local \
+    review/post_full_fable/independent review/transport_relative_diagnostics/full \
+    -type f ! -name '*.py' ! -path '*/__pycache__/*' 2>/dev/null | sort)
   if [ "$checked" -eq 0 ]; then
     echo "no shipped evidence files were found to check" >&2
     status=1
@@ -112,6 +115,13 @@ run "numerical-provenance ledger" \
 
 run "artifact regeneration from the packaged aggregate (writes nothing)" \
   "$python" tools/transport_artifact_expectations.py --root . --require-package
+
+run "follow-up paired terminal intervals from all per-seed summaries" \
+  "$python" tools/verify_review_experiment_export.py \
+  review/transport_review_followup/full-cce-full-local
+
+run "follow-up table regeneration with original-source attribution (writes nothing)" \
+  "$python" tools/make_transport_followup_paper.py --check
 
 run "SHA-256 sidecars for every shipped evidence file" check_evidence_sidecars
 

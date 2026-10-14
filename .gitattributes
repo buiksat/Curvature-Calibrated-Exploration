@@ -17,7 +17,7 @@ paper/tmlr_style/tmlr.bst      -whitespace
 paper/tmlr_style/fancyhdr.sty  -whitespace
 
 # Vendored third-party LaTeX packages and their licence texts, redistributed
-# byte-for-byte under GPL v3 and LPPL; see paper/texmf_vendor/VENDORED-PACKAGES.md.
+# byte-for-byte under GPL v3, LGPL and LPPL; see paper/texmf_vendor/VENDORED-PACKAGES.md.
 # Upstream ships trailing whitespace, and these bytes are held to pinned
 # SHA-256 digests that the build enforces, so they must not be rewritten to
 # satisfy a lint.  As above, only the `whitespace` attribute is unset: no `text`
@@ -27,8 +27,13 @@ paper/tmlr_style/fancyhdr.sty  -whitespace
 # also covered VENDORED-PACKAGES.md, which is prose this project wrote and which
 # should be held to the same whitespace rule as every other authored file.
 paper/texmf_vendor/LICENSE-gpl-3-0 -whitespace
+paper/texmf_vendor/LICENSE-lgpl-2-1 -whitespace
 paper/texmf_vendor/LICENSE-lppl-1-2 -whitespace
 paper/texmf_vendor/LICENSE-lppl-1-3c -whitespace
+paper/texmf_vendor/algorithm.sty -whitespace
+paper/texmf_vendor/algorithmic.sty -whitespace
+paper/texmf_vendor/algorithms.dtx -whitespace
+paper/texmf_vendor/algorithms.ins -whitespace
 paper/texmf_vendor/cleveref.sty -whitespace
 paper/texmf_vendor/mathtools.sty -whitespace
 paper/texmf_vendor/mhsetup.sty -whitespace

@@ -1,0 +1,34 @@
+[
+  {
+    "label": "neurips2019-index",
+    "url": "https://papers.nips.cc/paper/2019",
+    "tls_verification": "default verified SSL context",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "label": "neurips2019-index-current",
+    "url": "https://proceedings.neurips.cc/paper/2019",
+    "tls_verification": "default verified SSL context",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "label": "arxiv-candidate",
+    "url": "https://arxiv.org/abs/1909.09146",
+    "tls_verification": "default verified SSL context",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "label": "candidate-official-abstract",
+    "url": "https://papers.nips.cc/paper/2019/hash/26337353b7962f533d78c762373b3318-Abstract.html",
+    "locator_status": "unverified candidate",
+    "tls_verification": "default verified SSL context",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "label": "candidate-official-pdf",
+    "url": "https://papers.nips.cc/paper_files/paper/2019/file/26337353b7962f533d78c762373b3318-Paper.pdf",
+    "locator_status": "unverified candidate",
+    "tls_verification": "default verified SSL context",
+    "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  }
+]

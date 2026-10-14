@@ -61,5 +61,5 @@ echo "pages: $pages"
 if command -v pdfinfo >/dev/null; then pdfinfo "$out/main.pdf" | sed -n '1,8p'; fi
 
 echo
-echo "Nothing has been uploaded or submitted.  See FINALIZATION_REPORT.md for the"
-echo "release holds that still need a human decision."
+echo "Nothing has been uploaded or submitted. See README.md and REVISION_VALIDATION.md"
+echo "for current release checks and remaining reproducibility limits."
