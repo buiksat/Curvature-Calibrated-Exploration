@@ -1,0 +1,30 @@
+{
+  "request": {
+    "name": "search_files",
+    "arguments": {
+      "ref": "implementation",
+      "query": "corrected-center",
+      "prefix": "paper/transport_proofs.tex",
+      "limit": 10
+    },
+    "response_utf8_sha256": "5a7ae2f2d742a767d77c8e72c1867335b082eeddcdb38b8fa8b39744b858bac2",
+    "response_bytes": 328
+  },
+  "result": {
+    "matches": [
+      {
+        "path": "paper/transport_proofs.tex",
+        "line": 7,
+        "text": "corrected-center proof is separate: it establishes the reference-confidence"
+      },
+      {
+        "path": "paper/transport_proofs.tex",
+        "line": 256,
+        "text": "\\begin{proof}[Proof of \\Cref{cor:corrected-center-new}]"
+      }
+    ],
+    "truncated": false,
+    "skipped": [],
+    "skipped_count": 0
+  }
+}

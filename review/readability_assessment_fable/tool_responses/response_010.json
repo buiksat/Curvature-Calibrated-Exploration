@@ -1,0 +1,21 @@
+{
+  "request": {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex"
+    },
+    "response_utf8_sha256": "db8b91206d12929b531ed9b2a3ed0a7f8251b204a614c2f1d1690f1b7463d61f",
+    "response_bytes": 3161,
+    "source_git_blob": "3e92e88d0cfdc87c72c43eb2eacdf7f122e11a6a",
+    "source_commit": "890943f9a031ab9d719827ea9446707e609fc450"
+  },
+  "result": {
+    "path": "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex",
+    "total_lines": 52,
+    "text": "1: % Analytic schematic, manually derived from transport_theory.tex:\n2: % asm:abstract-transport, eq:transported-score-new, prop:reference-width-floor.\n3: % Native body-size TikZ; requires only the existing TikZ/PGF dependency.\n4: % Arrows denote conditional certificate comparisons, not causal effects.\n5: \\begin{tikzpicture}[x=1cm,y=1cm,\n6:   every node/.style={font=\\normalsize,inner sep=0pt},\n7:   cert/.style={draw=blue!55!black,line width=.65pt,->},\n8:   object/.style={draw=black!28,fill=black!2,rounded corners=2pt,\n9:     minimum width=3.6cm,minimum height=1.25cm,align=center}]\n10:   \\path[use as bounding box] (0,-6.8) rectangle (16.2,.3);\n11:   \\node[anchor=west] at (0,0)\n12:     {\\textbf{Before the reward: conditional certificate comparisons}};\n13: \n14:   \\node[object] (reference) at (1.8,-1.15)\n15:     {Frozen confidence\\\\[5pt]$\\bVbar_t,\\ \\bar s_t(a)$};\n16:   \\node[object] (current) at (6,-1.15)\n17:     {Exact current metric\\\\[5pt]$\\bV_t,\\ s_t(a)$};\n18:   \\node[object] (operator) at (10.2,-1.15)\n19:     {Applied SPD operator\\\\[5pt]$\\Calg_t,\\ s_{\\Calg,t}(a)$};\n20:   \\node[object] (width) at (14.4,-1.15)\n21:     {Numerical score width\\\\[5pt]$\\hat s_t(a)$};\n22:   \\draw[cert] (reference.east) -- node[above=5pt]{A} (current.west);\n23:   \\draw[cert] (current.east) -- node[above=5pt]{B} (operator.west);\n24:   \\draw[cert] (operator.east) -- node[above=5pt]{C} (width.west);\n25: \n26:   \\node[anchor=north west,align=left] at (0,-2.2)\n27:     {\\textbf{A\\quad Metric transport}\\\\[8pt]\n28:      $e^{-\\bar D_t}\\bVbar_t\\preceq\\bV_t\n29:        \\preceq e^{\\bar D_t}\\bVbar_t$\\\\[7pt]\n30:      Certified path-length envelope $\\bar D_t$.};\n31:   \\node[anchor=north west,align=left] at (5.5,-2.2)\n32:     {\\textbf{B\\quad Operator comparison}\\\\[8pt]\n33:      $\\kappa_{-,t}\\bV_t\\preceq\\Calg_t\n34:        \\preceq\\kappa_{+,t}\\bV_t$\\\\[7pt]\n35:      Two-sided SPD comparison.};\n36:   \\node[anchor=north west,align=left] at (11,-2.2)\n37:     {\\textbf{C\\quad Solver certificate}\\\\[8pt]\n38:      $s_{\\Calg,t}(a)\\le\\hat s_t(a)$\\quad every $a$\\\\[7pt]\n39:      $\\hat s_t(a_t)\\le\\alpha_t s_{\\Calg,t}(a_t)$\\\\[7pt]\n40:      Sharpness: played action only.};\n41: \n42:   \\draw[black!28,line width=.5pt] (0,-4.6) -- (16.2,-4.6);\n43:   \\node[anchor=west] at (0,-4.95)\n44:     {Selection and sharpness use the \\textbf{same realized width map} $\\hat s_t(\\cdot)$.};\n45:   \\node[anchor=west] at (0,-5.57)\n46:     {\\textbf{Direct reference comparison}\\quad Same history, center, radius, and bias.};\n47:   \\node[anchor=west] at (0,-6.11)\n48:     {$w_t^{\\rm tr}(a)=e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a)\n49:        \\ge\\bar s_t(a)$;\\quad exact actionwise correction gives $c_t(a)s_t(a)=\\bar s_t(a)$.};\n50:   \\node[anchor=west] at (0,-6.65)\n51:     {These comparisons do not order the regret of policies with different adaptive histories.};\n52: \\end{tikzpicture}",
+    "truncated_line": false,
+    "next_line": null,
+    "hint": null
+  }
+}

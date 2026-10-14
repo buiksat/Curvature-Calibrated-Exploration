@@ -1,0 +1,21 @@
+{
+  "request": {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/notation.tex"
+    },
+    "response_utf8_sha256": "d9d8552f16ce5510dbda35aa9f3918459468c1e4fc6379c3962798d12121739e",
+    "response_bytes": 3694,
+    "source_git_blob": "a8f84f9adf1b2f03d20c51d9f47550e9a61074f4",
+    "source_commit": "890943f9a031ab9d719827ea9446707e609fc450"
+  },
+  "result": {
+    "path": "submissions/tmlr_2026/notation.tex",
+    "total_lines": 57,
+    "text": "1: %% notation.tex\n2: %% Shared manuscript source, extracted verbatim from the historical\n3: %% entry point paper/main.tex (lines 55-64) so that it and the TMLR\n4: %% entry point submissions/tmlr_2026/main.tex read one copy of this\n5: %% material instead of two. Content is unchanged by the extraction\n6: %% itself. The revision the lines refer to is recorded in\n7: %% paper/EXPOSITION_REVISION.md, which is not part of any submission\n8: %% upload.\n9: \\newcommand{\\epsCGbar}{\\bar\\varepsilon_{\\mathrm{CG}}}\n10: % --- notation introduced by the dynamic-transfer revision ------------------\n11: \\newcommand{\\bh}{\\mathbf{h}}                     % played gradient feature h_t\n12: \\newcommand{\\Calg}{\\mathcal{C}}                 % generic pre-reward SPD algorithmic curvature\n13: \\newcommand{\\Lamalg}{\\Lambda^{\\Calg}}           % realized width complexity\n14: \\newcommand{\\Valg}{V^{\\Calg}}                   % determinant-destroying variation charge\n15: \\newcommand{\\Gamdyn}{\\Gamma^{\\mathrm{dyn}}}     % dynamic potential bound\n16: \\newcommand{\\Gmat}{\\mathsf{G}}                  % whitened frozen-feature columns\n17: \\newcommand{\\Dmat}{\\mathsf{D}}                  % whitened replayed-drift columns\n18: \\newcommand{\\cHist}{\\mathcal{H}}                % pre-reward history sigma-algebra H_t\n19: \n20: % --- venue-dependent rendering of the generated evidence tables ------------\n21: % The three evidence tables are generated from the locked aggregate and carry\n22: % one fixed `tabular` preamble (all r/l columns), so every column header is set\n23: % on a single line and the widest table overruns a one-column text block.\n24: %\n25: % The historical two-column AISTATS entry point scaled them to the text width.\n26: % The TMLR submission must not: that venue forbids reducing font size or\n27: % spacing to fit content, and scaling a \\scriptsize table had put the rendered\n28: % text near 6pt against 9.96pt body copy.  It instead sets each table on a\n29: % landscape float at the body font size, with the template's \\tabcolsep, and\n30: % supplies its own column widths so that the long headers wrap.  Every cell,\n31: % value, unit, qualifier and rule still comes from the generated file exactly\n32: % as generated; only the column widths and the float type belong to the\n33: % manuscript.\n34: %\n35: % \\evidencetabular{<column preamble>}{<\\input of the generated table>}\n36: %   discards the generated `tabular` preamble and substitutes the one given\n37: %   here.  Nothing else about the table is touched.\n38: % \\ccetablesize is the size command for the hand-written (non-generated)\n39: %   tables; empty in the submission, \\scriptsize in the legacy layout.\n40: \\iflegacyextras\n41:   \\newenvironment{ccewidefloat}{\\begin{table*}[t]\\centering}{\\end{table*}}\n42:   \\newenvironment{ccewidefloatappendix}{\\begin{table}[H]\\centering}{\\end{table}}\n43:   \\newcommand{\\ccetablesize}{\\scriptsize}\n44:   \\newcommand{\\evidencetabular}[2]{\\scriptsize\\resizebox{\\textwidth}{!}{#2}}\n45: \\else\n46:   \\newenvironment{ccewidefloat}%\n47:     {\\begin{sidewaystable}[p]\\centering}{\\end{sidewaystable}}\n48:   \\newenvironment{ccewidefloatappendix}%\n49:     {\\begin{sidewaystable}[p]\\centering}{\\end{sidewaystable}}\n50:   \\newcommand{\\ccetablesize}{}\n51:   \\newcommand{\\evidencetabular}[2]{%\n52:     \\begingroup\n53:       \\let\\ccerealtabular\\tabular\n54:       \\renewcommand{\\tabular}[2][c]{\\ccerealtabular[##1]{#1}}%\n55:       #2%\n56:     \\endgroup}\n57: \\fi",
+    "truncated_line": false,
+    "next_line": null,
+    "hint": null
+  }
+}

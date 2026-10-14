@@ -1,0 +1,78 @@
+{
+  "created_at": "2026-10-14T22:18:55.779223+00:00",
+  "requested_model": "claude-fable-5",
+  "status": "complete",
+  "access_verified": true,
+  "purpose": "Fresh readability assessment and concrete revision advice for the rewritten manuscript",
+  "limits": {
+    "max_turns": 10,
+    "max_tokens_per_response": 12000,
+    "max_tool_calls": 48,
+    "max_tool_bytes": 524288
+  },
+  "runner_sha256": "ad299a30d1c9906b9ed0415736eefc2b36fe1dd631fae61a7258a8a4baa9d9d3",
+  "external_driver_sha256": "2352bca128fc946ea70aef784c113174fc05d05e57a96eaffa0f343837994f33",
+  "refs": {
+    "manuscript": {
+      "ref": "890943f9a031ab9d719827ea9446707e609fc450",
+      "sha": "890943f9a031ab9d719827ea9446707e609fc450"
+    },
+    "implementation": {
+      "ref": "ffc092d86db6f1d4077f584a180ae046d9e51980",
+      "sha": "ffc092d86db6f1d4077f584a180ae046d9e51980"
+    }
+  },
+  "prompt_sha256": "5687328bc6ea1ed99fbf89201de91b2248d30cf44c262109b886c9953d104305",
+  "available_models": [
+    "claude-fable-5",
+    "claude-fable-5-1",
+    "claude-haiku-4-5-20251001",
+    "claude-haiku-5-5",
+    "claude-opus-4-5-20251101",
+    "claude-opus-4-6",
+    "claude-opus-4-7",
+    "claude-opus-4-8",
+    "claude-opus-5",
+    "claude-opus-5-5",
+    "claude-sonnet-4-5-20250929",
+    "claude-sonnet-4-6",
+    "claude-sonnet-5",
+    "claude-sonnet-5-5"
+  ],
+  "model": "claude-fable-5",
+  "usage": {
+    "input_tokens": 444850,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 13484
+  },
+  "turns": 9,
+  "tool_bytes": 157139,
+  "evidence_refs": [
+    "manuscript",
+    "implementation"
+  ],
+  "returned_models": [
+    "claude-fable-5"
+  ],
+  "final_stop_reason": "end_turn",
+  "response_ids": [
+    "msg_011Cg2uVyskCk6fNgR8cY5CT",
+    "msg_011Cg2uX4xcrShByg5meHF1M",
+    "msg_011Cg2uXRi3T9Hxa5Z3MZFyh",
+    "msg_011Cg2uY1ASLQZfMBtUC65DK",
+    "msg_011Cg2uYRyS5GWQBwCTduoKP",
+    "msg_011Cg2uYyq75xRLKQ71NVugh",
+    "msg_011Cg2uZgP9TJYZn2G74kJkE",
+    "msg_011Cg2uZvvWBzntM1KwbMCit",
+    "msg_011Cg2uePkuv38eA8AFVKh5g"
+  ],
+  "completed_at": "2026-10-14T22:22:24.807732+00:00",
+  "tool_call_count": 17,
+  "successful_tool_access_count": 17,
+  "review_sha256": "587a1a5ec66438e4f8a814b17e61f4d357aca5b6c3094bc35c978ee96924c244",
+  "review_bytes": 19080,
+  "verbatim_review_sha256": "16d662ca895dab345577e46e3804477e7a45abb9f73fd1c9631d3632d30fec36",
+  "verbatim_review_bytes": 19079,
+  "qualification": "Complete API response with read-only pinned text-source inspection; no execution, rendered-PDF inspection, external literature/policy search, or independent raw-data replay."
+}
