@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-10-14T01:18:21.205494+00:00",
+  "development_only": true,
+  "files": [
+    {
+      "bytes": 4878,
+      "path": "README.md",
+      "sha256": "cd4bd03fe23dfbe2d77ebbbe66554a5d47098585fc4165db5534021d4a9fe671"
+    },
+    {
+      "bytes": 18041,
+      "path": "audit_development.py",
+      "sha256": "a22e53041c92a03bc577a463c4cba48c2af49bd36ad2a6aad132ae113f264f42"
+    },
+    {
+      "bytes": 1075,
+      "path": "audit_report.json",
+      "sha256": "1e967157dd52aebc231e3312aac0413e98ac96f495c9096ecbf58ea9102ad88e"
+    },
+    {
+      "bytes": 12432,
+      "path": "completion_receipts.jsonl",
+      "sha256": "727930bd88a2d9c0c26d505595f3e1aaedc791141c5a3a25a1a59a72a395334a"
+    },
+    {
+      "bytes": 55344,
+      "path": "development_summaries.jsonl",
+      "sha256": "3f8c9111ad94856c902c29cb1137eed789cc834135aac63a4d6590d3537f9c6d"
+    },
+    {
+      "bytes": 11306,
+      "path": "execution_config.json",
+      "sha256": "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3"
+    },
+    {
+      "bytes": 120,
+      "path": "progress.json",
+      "sha256": "70bb256f6e4e65fcc25f2cd2d5d6ca5d8fd03908542f8ad6757dec59c2ba2db3"
+    },
+    {
+      "bytes": 21984,
+      "path": "raw_input_inventory.jsonl",
+      "sha256": "1d4c16a43d60ebc5193a27f0f872a6793b2adc5ff5cf839c883bf52553b0a47a"
+    },
+    {
+      "bytes": 13903,
+      "path": "round_drift_summaries.jsonl",
+      "sha256": "6d611383390dbac0cc343f4d1952b42397ed101e9893282dd733e36df1fdd795"
+    },
+    {
+      "bytes": 6068,
+      "path": "run_manifest.json",
+      "sha256": "4420d95e78ecb1d3e25a96abdd71bb0abf5653e2ad9db739cc316ae4ef5d5d50"
+    },
+    {
+      "bytes": 12971,
+      "path": "source_config.json",
+      "sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+    }
+  ],
+  "raw_trajectories_included": false,
+  "schema_version": 1,
+  "source": {
+    "execution_config_sha256": "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
+    "raw_root": "/workspace/cce-full-development-check",
+    "run_manifest_sha256": "4420d95e78ecb1d3e25a96abdd71bb0abf5653e2ad9db739cc316ae4ef5d5d50",
+    "source_config_sha256": "caa289be9f6f95b4bf808af29238eccee4cebbbc4b2a6ac0f7f2a69edd46566d"
+  }
+}

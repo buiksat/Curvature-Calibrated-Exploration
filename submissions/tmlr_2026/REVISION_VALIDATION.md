@@ -57,6 +57,13 @@ the completed trajectories, tuning selection, and aggregate successfully.
 See `review/transport_review_followup/PILOT_VALIDATION.md` for the measured
 outcomes and limitations; this pilot does not substitute for the full study.
 
+The full-profile development gate also completed successfully from clean
+research revision `dc2e2dc9e3f9f7ace8d5335fdf634cd31159c41a`: **24 trajectories
+at horizon 1000**, on four CPU workers, with development-phase elapsed time
+358.367673 seconds. Tuning and held-out evaluation were not run for this profile.
+The separately retained development evidence is under
+`review/transport_review_followup/full-development-check/`.
+
 Focused package-contract validation passes: **10 passed, 511 deselected**.
 These checks exercise the evidence anonymization contract and a mutated
 declaration, original repository evidence handling, excluded/active artifact

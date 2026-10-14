@@ -1,0 +1,346 @@
+{
+  "action_selection": {
+    "approximation_error": 0.0,
+    "enumeration": "fixed_actions_0_through_4",
+    "tie_rule": "smallest_index"
+  },
+  "confidence": {
+    "bonus_multiplier": 1.0,
+    "current_envelope": "0.5 * L_mu * (theta_radius + norm(theta_current))^2",
+    "delta": 0.05,
+    "historical_envelope": "0.5 * L_mu * (theta_radius + norm(theta_collection))^2",
+    "reference_radius": "sqrt(gamma_previous + 2 * log(1 / delta)) + sqrt(ridge) * theta_radius + sqrt(sum_historical_envelope_squared) / noise_std",
+    "use_actual_remainders_in_policy": false
+  },
+  "description": "Prespecified nonlinear-regime follow-up to the locked scaled-tanh transport audit; independent tuning/evaluation and unchanged scientific implementation.",
+  "deterministic_audit": {
+    "checks": [
+      "pseudo_response_identity",
+      "corrected_center_identity",
+      "frozen_gram_recursion",
+      "information_gain_recursion",
+      "endpoint_thompson_sandwich",
+      "endpoint_distance_le_D_Q",
+      "quadrature_path_inequalities_at_checkpoints",
+      "both_all_action_width_transports",
+      "frozen_width_sum_potential_closure",
+      "instantaneous_regret_bound_on_confidence_event",
+      "sharp_cumulative_bound_on_joint_prefix_event",
+      "simple_cumulative_bound_on_joint_prefix_event"
+    ],
+    "confidence_premise_false_status": "premise_false",
+    "on_event_violation_status": "bound_violation_on_event"
+  },
+  "diagnostic_baselines": {
+    "context_free_mean_only": {
+      "initialization": "force_actions_0_through_4_once_in_index_order",
+      "publication_role": "environment_diagnostic_not_study_method",
+      "subsequent_rule": "smallest_index_maximum_selected_reward_empirical_mean",
+      "uses_context": false,
+      "uses_selected_rewards_only": true
+    }
+  },
+  "environment": {
+    "action_count": 5,
+    "context_dimension": 4,
+    "context_distribution": "normalized_rademacher",
+    "exact_realizability": true,
+    "feature_bound": 1.0,
+    "feature_dimension": 29,
+    "feature_map": "[x, one_hot(a), kron(x, one_hot(a))]",
+    "noise_distribution": "gaussian",
+    "noise_std": 0.25,
+    "potential_noise_table": true,
+    "reveal_selected_reward_only": true
+  },
+  "execution": {
+    "blas_threads_per_worker": 1,
+    "fail_fast": true,
+    "horizon_execution": "independent_runs",
+    "overwrite_requires_flag": true,
+    "packages": [
+      "numpy",
+      "scipy",
+      "psutil",
+      "pytest"
+    ],
+    "record_not_run_on_external_blocker": true,
+    "workers": 4
+  },
+  "followup": {
+    "bootstrap_archive": "retain per-seed tuning and evaluation summaries, paired terminal outcomes and bootstrap seeds; raw rounds retained in external archive",
+    "comparison_scope": "matched-stream total-policy comparison within one W/horizon cell",
+    "descriptive_drift_reporting_thresholds": [
+      0.01,
+      0.1,
+      1.0
+    ],
+    "drift_thresholds_select_cells_or_seeds": false,
+    "frozen_bound_accounting": "use frozen_reference own trajectory; subtract explicit path component from stored sharp RHS only as algebraic accounting, not transport-policy guarantee",
+    "full_status_before_execution": "not_run",
+    "independent_of_locked_results": true,
+    "locked_baseline_config": "experiments/configs/transport_instantiation.yaml",
+    "never_claim_strong_drift_from_target_label": true,
+    "pilot_publication_evidence": false,
+    "prespecified_width_W": [
+      16.0,
+      1.0,
+      0.25
+    ],
+    "protocol_id": "transport-review-followup-v1.1",
+    "protocol_path": "experiments/TRANSPORT_REVIEW_FOLLOWUP_PROTOCOL.md",
+    "quadrature_amendment": {
+      "evaluation_results_inspected": false,
+      "policy_changed": false,
+      "prior_config_sha256": "37d174dd5370f9286817517ad65c67201f6f1950fd80778c2ded21f5a39d2ab8",
+      "record": "review/transport_review_followup/QUADRATURE_REFINEMENT.json",
+      "stage": "development only, before tuning/evaluation",
+      "tolerances_changed": false
+    },
+    "retain_stochastic_failures": true,
+    "target_D_semantics": "horizon-dependent encoding of prescribed W; neither realized drift nor a treatment effect",
+    "width_target_pairing": "prespecified_width_W[i] maps to target_D[i] within each resolved profile"
+  },
+  "horizons": [
+    1000
+  ],
+  "method_roles": {
+    "frozen_reference": "certified_reference_geometry_comparison",
+    "naive_current": "uncertified_negative_control",
+    "transport_endpoint": "dense_endpoint_diagnostic_oracle",
+    "transport_hessian": "primary_certified_theorem_instantiation"
+  },
+  "methods": [
+    "transport_hessian",
+    "transport_endpoint",
+    "frozen_reference",
+    "naive_current"
+  ],
+  "metrics": {
+    "current": "ridge_identity_plus_current_relinearized_replay_query_gram_over_sigma_squared",
+    "form_explicit_inverse": false,
+    "frozen": "ridge_identity_plus_collection_query_gram_over_sigma_squared",
+    "operator": "exact_dense",
+    "solver": "float64_cholesky"
+  },
+  "model": {
+    "W_rule": "(4 * c_h * theta_radius * sqrt(horizon - 1) / (noise_std * sqrt(ridge) * target_D))^2",
+    "family": "scaled_tanh",
+    "gradient": "sech(phi(z)^T theta / sqrt(W))^2 * phi(z)",
+    "gradient_bound": "feature_bound",
+    "mean": "sqrt(W) * tanh(phi(z)^T theta / sqrt(W))",
+    "smoothness_constant": "4 * feature_bound^2 / (3 * sqrt(3))",
+    "smoothness_constant_name": "c_h"
+  },
+  "name": "transport_instantiation",
+  "numerics": {
+    "algebra_tolerance": "C_tol * machine_epsilon * max(1, dimension) * max(1, operator_norm, abs(scalar_reference))",
+    "algebra_tolerance_constant": 4096.0,
+    "dtype": "float64",
+    "fail_on_deterministic_violation": true,
+    "fail_on_nonfinite": true,
+    "generalized_eigensolver": "symmetric",
+    "linear_solve": "cholesky",
+    "ratio_denominator_tolerance": 1e-12,
+    "silent_clamping": false
+  },
+  "outputs": {
+    "derived_root": "results/derived/transport_review_followup",
+    "full_aggregate": "results/derived/transport_review_followup/full_aggregate.json",
+    "full_raw_root": "results/raw/transport_review_followup/full",
+    "full_selection": "results/derived/transport_review_followup/selection.json",
+    "raw_root": "results/raw/transport_review_followup",
+    "required_selection_export": null,
+    "required_selection_export_provenance": null,
+    "smoke_raw_root": "results/raw/transport_review_followup/smoke",
+    "smoke_selection": "results/derived/transport_review_followup/smoke_selection.json"
+  },
+  "profile": "full",
+  "reporting": {
+    "allow_smoke_or_tuning_in_paper": false,
+    "primary_horizon": 1000,
+    "publication_profile": "full"
+  },
+  "representation_update": {
+    "development_optimizer": {
+      "learning_rate": 0.0003,
+      "scope": "predeclared development feasibility runs; full evaluation uses independent tuning selection",
+      "steps_per_round": 20
+    },
+    "initial_theta": "zero",
+    "objective": "sum_selected_squared_residuals_over_2_sigma_squared_plus_training_ridge_norm_squared_over_2",
+    "optimizer": "projected_full_batch_gradient_descent",
+    "projection_radius": 1.0,
+    "shared_hyperparameters_across_methods": true,
+    "start_each_round_from_current_theta": true,
+    "tuning": {
+      "behavior_policy": "uniform_random",
+      "burn_in_rounds": 100,
+      "learning_rate_grid": [
+        3e-05,
+        0.0001,
+        0.0003
+      ],
+      "pool_over_target_D_and_tuning_seeds": true,
+      "reject_on_any_deterministic_failure": true,
+      "selection_aggregation": "equal_weight_mean_of_seed_horizon_target_D_cell_means",
+      "selection_metric": "mean_all_action_prediction_mse_after_burn_in",
+      "steps_per_round_grid": [
+        1,
+        5,
+        20
+      ],
+      "tie_break": [
+        "fewer_steps_per_round",
+        "smaller_learning_rate"
+      ]
+    },
+    "update_after_reward": true
+  },
+  "ridge": 1.0,
+  "rounds": 1000,
+  "schema_version": 1,
+  "seed_derivation": {
+    "bootstrap_algorithm": "repository_derive_seed_from_resolved_config_digest_and_condition",
+    "common_context_and_potential_noise_across_methods": true,
+    "namespaces": {
+      "behavior_policy_tuning_stream": "transport_instantiation/behavior_policy/v1",
+      "bootstrap_aggregation": "transport_instantiation/bootstrap/v1",
+      "context_stream": "transport_instantiation/context/v1",
+      "potential_noise_table": "transport_instantiation/potential_noise/v1",
+      "teacher_construction": "transport_instantiation/teacher/v1"
+    },
+    "python_randomized_hash_forbidden": true,
+    "stream_algorithm": "sha256_transport_instantiation_v1_seed_namespace_to_nonnegative_uint63"
+  },
+  "seed_sets": {
+    "development": [
+      30000,
+      30001
+    ],
+    "evaluation": [
+      30200,
+      30201,
+      30202,
+      30203,
+      30204,
+      30205,
+      30206,
+      30207,
+      30208,
+      30209,
+      30210,
+      30211,
+      30212,
+      30213,
+      30214,
+      30215,
+      30216,
+      30217,
+      30218,
+      30219,
+      30220,
+      30221,
+      30222,
+      30223,
+      30224,
+      30225,
+      30226,
+      30227,
+      30228,
+      30229,
+      30230,
+      30231,
+      30232,
+      30233,
+      30234,
+      30235,
+      30236,
+      30237,
+      30238,
+      30239,
+      30240,
+      30241,
+      30242,
+      30243,
+      30244,
+      30245,
+      30246,
+      30247,
+      30248,
+      30249
+    ],
+    "tuning": [
+      30100,
+      30101,
+      30102,
+      30103,
+      30104,
+      30105,
+      30106,
+      30107,
+      30108,
+      30109
+    ]
+  },
+  "statistics": {
+    "bootstrap_seed_source": "config_digest_and_bootstrap_namespace",
+    "coverage_interval": "clopper_pearson",
+    "coverage_level": 0.95,
+    "descriptive_quantiles": [
+      0.1,
+      0.25,
+      0.5,
+      0.75,
+      0.9
+    ],
+    "paired_bootstrap_level": 0.95,
+    "paired_bootstrap_resamples": 10000,
+    "report_standard_error": true,
+    "zero_regret_ratios": "omit_ratio_and_report_count"
+  },
+  "target_D": [
+    97.32420048477151,
+    389.29680193908604,
+    778.5936038781721
+  ],
+  "task": "scaled_tanh_gaussian_contextual_bandit",
+  "teacher": {
+    "action_block_mass": 0.0,
+    "construction": "regular_simplex_context_action_interactions",
+    "context_block_mass": 0.0,
+    "interaction_block_mass": 1.0,
+    "seed": 1729,
+    "shared_across_methods_conditions_and_seeds": true,
+    "target_norm_fraction": 1.0,
+    "theta_radius": 1.0
+  },
+  "training_ridge": 1.0,
+  "transport": {
+    "D_Q": "2 * L_g * sqrt(Q) / (noise_std * sqrt(ridge))",
+    "Q": "sum_collection_parameter_to_current_parameter_squared_distance",
+    "endpoint_distance": "dense_generalized_eigenvalue_thompson_distance",
+    "factor_path": "synthetic_per_replay_linear_parameter_interpolation",
+    "operational_certificate": "hessian_Q",
+    "quadrature": {
+      "convergence_absolute_tolerance": 1e-09,
+      "convergence_relative_tolerance": 1e-08,
+      "development_orders": [
+        1024,
+        2048
+      ],
+      "frozen_order": 2048,
+      "full_checkpoint_period": 10,
+      "include_reported_horizons": true,
+      "independent_validation_orders": [
+        2048,
+        4096
+      ],
+      "inequality_absolute_tolerance": 1e-09,
+      "inequality_relative_tolerance": 1e-08,
+      "policy_certificate": false,
+      "rule": "gauss_legendre",
+      "smoke_every_round": true
+    }
+  }
+}
