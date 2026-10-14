@@ -64,6 +64,18 @@ at horizon 1000**, on four CPU workers, with development-phase elapsed time
 The separately retained development evidence is under
 `review/transport_review_followup/full-development-check/`.
 
+The subsequent complete local follow-up started from clean research revision
+`707c8243ea6d5395369ed812a68cf7e27d700596` and completed **24 development,
+270 tuning, and 600 evaluation trajectories**, with no failed trajectory records
+and all deterministic audits passing. It resumed 16 verified development
+trajectories after a user-requested pause. The strict raw-data aggregation passed;
+the portable verifier independently replayed all 24 reported terminal intervals
+from 600 exact evaluation summaries. Export commit
+`65dd4e76efd376c830e2ea7e9dfe23eddd4bf01e` is confirmed on GitHub. These checks do
+not imply favorable regret comparisons or manuscript readiness; see
+`review/transport_review_followup/FULL_RESULTS.md`. The prior source-test and
+ledger counts above have not been represented as new executions.
+
 Focused package-contract validation passes: **10 passed, 511 deselected**.
 These checks exercise the evidence anonymization contract and a mutated
 declaration, original repository evidence handling, excluded/active artifact

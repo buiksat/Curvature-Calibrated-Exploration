@@ -44,8 +44,11 @@ The default uses at most eight available logical CPUs. Set `--workers N` to
 match the CPU allocation for this job. BLAS uses one thread per worker, avoiding
 nested thread pools. The full grid first runs all 24 declared development trajectories and
 checks full-order versus half-order quadrature, then runs 270 tuning trajectories
-and 600 fresh evaluation trajectories at horizon 1000. The complete full-study
-runtime has not been measured. All 24 full-horizon development trajectories
+and 600 fresh evaluation trajectories at horizon 1000. This full study has now
+[completed locally](../review/transport_review_followup/FULL_RESULTS.md).
+Its 600-run evaluation phase took about 100 minutes on four CPU workers;
+development, tuning, aggregation and the user-requested pause are excluded
+from that phase timing. All 24 full-horizon development trajectories
 passed locally on four workers in about six minutes; see the
 [development evidence](../review/transport_review_followup/full-development-check/README.md).
 That elapsed time covers the development phase only. Quadrature diagnostics
