@@ -887,53 +887,57 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "follow-up does not pool original-study evidence",
         ),
         (
-            "Hessian transport has higher mean cumulative pseudo-regret than every comparator in every condition",
+            "the Hessian policy has higher mean pseudo-regret than every comparator in every condition",
             "follow-up keeps the adverse regret comparison",
+        ),
+        (
+            "Cumulative pseudo-regret measures the expected reward lost, over all rounds, by choosing the learner's action instead of the best action for each context",
+            "follow-up comparison is cumulative contextual pseudo-regret",
         ),
         (
             "These are pointwise intervals from 10,000 paired seed-bootstrap resamples per comparison, without multiplicity adjustment",
             "follow-up intervals remain pointwise and unadjusted",
         ),
         (
-            "They establish neither a universal policy ordering nor a causal attribution to the certificate alone",
+            "Because policies follow their own adaptive histories, this comparison measures the outcome of each complete policy. It does not isolate the effect of changing only a certificate at a fixed state or establish a universal policy ordering",
             "follow-up refuses universal regret ordering or causal attribution",
         ),
         (
-            "cross-condition trends do not isolate a causal effect of metric drift",
+            "The model parameter $W$ changes both the reward function and its curvature, so comparisons across conditions do not isolate an effect of metric drift",
             "follow-up changes reward tasks across W",
         ),
         (
-            "All 600 evaluation trajectories, including naive current, pass the recorded",
+            "All 600 evaluation trajectories, including naive current, pass the simultaneous reference-confidence, method-optimism, and deterministic diagnostics",
             "follow-up optimism includes the uncertified control",
         ),
         (
-            "This observation does not establish population coverage, validate the theorem, or show that transport is necessary",
+            "These are observed checks, not proof of population coverage or of the need for transport. Float64 checks and converged quadrature are numerical diagnostics; they do not verify the theorem's assumptions through rigorous numerical enclosures",
             "follow-up diagnostics do not prove validity or necessity",
         ),
         (
-            "The primary bounds are dominated by path inflation in all three conditions",
+            "The largest contribution to the Hessian bounds is path inflation, the extra charge introduced by the path certificate, in all three conditions",
             "follow-up keeps path-certificate conservatism",
         ),
         (
-            "Every primary-policy bound exceeds the deterministic regret cap",
+            "We call a larger bound \\emph{vacuous}: it adds no information beyond the cap. Every Hessian-policy bound is vacuous",
             "follow-up keeps primary bound vacuity",
         ),
         (
-            "The frozen policy's own reference-geometry bounds also exceed these caps in all 150 of its trajectories",
+            "The frozen policy's own reference-geometry bounds also exceed the caps in all 150 of its trajectories",
             "follow-up keeps frozen own-history bound vacuity",
         ),
         (
-            "After observing these outcomes, we independently recomputed score diagnostics",
+            "After observing the policy outcomes, we examined how the Hessian score's width bonus related to its recommendations. We independently recomputed score diagnostics from all 600 preserved trajectories",
             "mechanism analysis remains post-outcome exploratory",
         ),
         (
-            "it does not evaluate a new adaptive policy or demonstrate an end-to-end computational advantage",
+            "It evaluates neither a new adaptive policy nor end-to-end speed",
             "relative-certificate audit does not establish adaptive performance or speedup",
         ),
     ),
     "paper/transport_followup_appendix.tex": (
         (
-            "They are not cumulative regret for an alternative adaptive policy",
+            "They describe a recommendation at a recorded state, not the subsequent trajectory of an alternative policy. Taking a different action would generally change future observations, parameters, matrices, and decisions",
             "same-history recommendations are not alternative adaptive runs",
         ),
         (
@@ -957,11 +961,11 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
     "submissions/tmlr_2026/main.tex": (
         ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
         (
-            "four policies across three conditions with 50 paired seeds per condition",
+            "four policies in three conditions using a 29-parameter scaled-tanh model and 50 paired seeds per condition",
             "abstract states the follow-up evaluation grid",
         ),
         (
-            "Its regret bounds are vacuous and dominated by path inflation",
+            "Transport inflation dominates its regret bounds, which give no improvement over a deterministic regret cap",
             "abstract keeps the conservative-certificate finding",
         ),
         (
@@ -969,37 +973,41 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "abstract keeps the vacuous-bound finding",
         ),
         (
-            "Hessian-transport policy has higher mean pseudo-regret than every comparator in every condition",
+            "Hessian transport, which bounds matrix changes using prediction Hessians, has higher mean pseudo-regret than every comparator in each condition",
             "abstract keeps the adverse regret comparison",
         ),
         (
-            "Exploratory log analyses distinguish conditional validity, certificate usefulness, and observed policy behavior in this implementation",
+            "a conditionally valid confidence score, a tight regret bound and a useful decision rule must be assessed separately",
             "abstract separates certificate validity from usefulness",
         ),
         (
-            "This comparison does not order the realized regret of policies with different histories",
+            "the result leaves the regret ordering of policies with different histories open",
             "abstract refuses adaptive regret ordering from same-history widths",
         ),
         (
-            "all nine pointwise paired confidence intervals exclude zero",
+            "all nine pointwise paired confidence intervals for regret differences exclude zero",
             "abstract keeps pointwise paired uncertainty",
         ),
     ),
     "paper/body_conclusion.tex": (
         (
-            "The frozen policy's own bounds remain vacuous",
+            "the reference policy's own bounds remain vacuous",
             "conclusion keeps the vacuous-bound finding",
         ),
         (
-            "All nine pointwise paired regret comparisons favor its comparators",
+            "all nine pointwise paired regret comparisons favor its comparators",
             "conclusion keeps the adverse regret comparison",
         ),
         (
-            "it neither rules out stronger confidence information nor orders the realized regret of different policies",
+            "The comparison does not order the realized regret of policies that collect different data",
             "conclusion refuses a uniform curvature ordering",
         ),
         (
-            "The primary bound is dominated by path inflation in this study",
+            "The next useful step is to identify stronger confidence information or a lower complete computational cost that could justify using current curvature instead of direct reference scoring",
+            "conclusion leaves stronger confidence information open",
+        ),
+        (
+            "In our prespecified study, the evaluated Hessian policy has higher mean regret than every comparator: all nine pointwise paired regret comparisons favor its comparators. Its regret bound is dominated by transport inflation",
             "conclusion keeps follow-up certificate conservatism",
         ),
     ),

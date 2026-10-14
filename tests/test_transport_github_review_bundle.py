@@ -669,26 +669,26 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
 @pytest.mark.parametrize("relative,before,after,required_check", [
     (
         "submissions/tmlr_2026/main.tex",
-        "vacuous and dominated by path inflation",
-        "vacuous and independent of path inflation",
+        "Transport inflation dominates its regret bounds",
+        "Transport inflation is irrelevant to its regret bounds",
         "abstract keeps the conservative-certificate finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "reference policy's own bounds are also vacuous",
-        "reference policy's own bounds are informative",
+        "are also vacuous",
+        "are informative",
         "abstract keeps the vacuous-bound finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "Exploratory log analyses distinguish conditional validity",
-        "Exploratory log analyses equate conditional validity",
+        "must be assessed separately",
+        "can be treated as equivalent",
         "abstract separates certificate validity from usefulness",
     ),
     (
         "paper/body_conclusion.tex",
-        "nor orders the realized regret of",
-        "and orders the realized regret of",
+        "comparison does not order the realized",
+        "comparison orders the realized",
         "conclusion refuses a uniform curvature ordering",
     ),
 ])

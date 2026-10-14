@@ -1,14 +1,117 @@
-\section{Abstract confidence transport}\label{sec:abstract-transport}
+\section{From frozen confidence to current-curvature scores}\label{sec:abstract-transport}
 
-The argument is easiest to read as a sequence of interfaces.  A statistical
-model supplies confidence in a frozen, predictable metric.  Geometry transports
-that confidence to the current relinearized metric.  An operator certificate
-then relates the current metric to the SPD operator used for scoring, and a
-solver certificate relates exact operator widths to the numerical widths seen
-by the action selector.  This section states that composition abstractly;
-\Cref{sec:corrected-center} supplies the primary squared-loss confidence model.
+Consider a learner choosing from a finite list of available actions $\cA_t$
+at round $t$.  After observing the context, it predicts each action's mean
+reward $\mu_t^*(a)$ and chooses an action $a_t$ whose reward could plausibly
+be high.  Only the chosen reward is then revealed.
+An \emph{upper confidence bound} (UCB) makes this rule precise: its score adds
+an uncertainty allowance to a prediction.  We call the score \emph{optimistic}
+when it upper-bounds the true mean reward of every available action on the
+stated confidence and certificate event.  This is a claim about mean rewards,
+not about every noisy reward that the learner might observe.
 
-\paragraph{Protocol and timing.}
+\paragraph{What changes when the model is retrained?}
+The feature vector used to interpret a past reward was fixed before that
+reward arrived.  Keeping these collection-time vectors gives a frozen
+reference matrix with the sequential update used by the confidence argument.
+Recomputing the past vectors at the current model can give a different matrix,
+even though no new rewards have been collected.  The question is how to use
+this current matrix without silently assuming that the original confidence
+argument still applies.
+
+The prediction query $\bq_t(a)$ is the vector whose uncertainty matters for
+action $a$; in the nonlinear specialization it is the current prediction
+gradient.  A metric here is a symmetric positive-definite (SPD) matrix: its
+quadratic form is positive in every nonzero direction.  A query's \emph{width}
+is its norm under the inverse metric.  It measures a geometric scale, not a
+confidence level by itself.  Statistical confidence also needs a valid
+nonnegative radius $\beta_t$, a prediction center $m_t(a)$, and a nonnegative
+error allowance $b_t(a)$.  A smaller width after retraining therefore does not, by itself,
+show that prediction error has become smaller.  A \emph{certificate} is a
+bound that guarantees a required comparison or numerical property; measuring
+a small discrepancy in an experiment is not itself such a guarantee.
+
+\paragraph{Start with an exact current matrix and exact widths.}
+For the moment, suppose the learner computes the current matrix and its
+width $s_t(a)$ exactly.  Suppose also that a statistical argument bounds the
+absolute prediction error by $\beta_t\bar s_t(a)+b_t(a)$ in the frozen matrix.
+A valid path certificate $\bar D_t$ supplies the comparison
+$\bar s_t(a)\le e^{\bar D_t/2}s_t(a)$ for every action.  Thus the exact-case
+score is
+\[
+ U_t(a)=m_t(a)+\beta_t e^{\bar D_t/2}s_t(a)+b_t(a).
+\]
+On the joint confidence and certificate event, this score upper-bounds the
+mean reward.  The multiplier enlarges the current width enough to retain
+the supplied reference confidence.  The center must be the one justified by
+that confidence argument; it need not be the raw nonlinear prediction.
+\Cref{sec:corrected-center} shows how to construct it.
+
+This exact case explains what transport provides: a justification for a score
+built around current curvature.  Direct reference scoring remains an
+alternative.  The transport argument alone establishes neither a smaller
+uncertainty allowance nor better action choices.  The general result next
+also allows an approximate matrix, numerical width computation, and an
+approximately maximizing action selector.
+
+\paragraph{How to read the argument.}
+We first assume a confidence band in the frozen metric and state the
+conditions that let a current-metric score use it.  The main result is
+\Cref{thm:transported-ucb}; its interpretation follows the statement.
+\Cref{sec:logarithmic-transport} then supplies geometric comparisons between
+metrics, and \Cref{sec:corrected-center} constructs the confidence band for
+squared loss.  \Cref{sec:closed-rates-new} combines these pieces into regret
+rates and explains the sharper comparison available for scaled tanh.
+The finite-action picture above is enough to follow these constructions;
+the general protocol below also covers action spaces that cannot be listed.
+
+\paragraph{The matrices and their widths.}
+Let $\bq_t(a)\in\R^d$ be the prediction query.  We distinguish the frozen
+reference matrix $\bVbar_t$, the exact current matrix $\bV_t$, and the SPD
+matrix $\Calg_t$ that the algorithm actually applies.  They are also called
+metrics because they define the norms used for uncertainty.  The reference
+matrix has the following update, whereas the current and applied matrices
+need not have a rank-one update:
+\begin{align}
+ \bVbar_1&=\lambda\bI,\nonumber\\
+ \bVbar_{t+1}&=\bVbar_t+\sigma^{-2}\bq_t(a_t)\bq_t(a_t)^\top,
+ \label{eq:reference-update-new}\\
+ \bV_t&=\text{the exact current relinearized metric},\nonumber\\
+ \Calg_t&=\text{the algorithmic SPD metric}.
+\end{align}
+Here $\lambda>0$ is the ridge regularization and $\sigma>0$ sets the scale
+of the updates; it is the noise scale in the squared-loss specialization.
+The reference update keeps each query as it was at collection time.
+For the same current query, the matrices can give different widths:
+\begin{equation}\label{eq:three-widths-new}
+ \begin{aligned}
+  \bar s_t^2(a)&=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\\
+  s_t^2(a)&=\bq_t(a)^\top\bV_t^{-1}\bq_t(a),\\
+  s_{\Calg,t}^2(a)&=\bq_t(a)^\top\Calg_t^{-1}\bq_t(a).
+ \end{aligned}
+\end{equation}
+These are exact mathematical widths.  The computed upper width
+$\hat s_t(a)$ will be a separate object, because a numerical solver need not
+return the exact width of $\Calg_t$.
+
+The frozen update also gives a way to control widths accumulated over time.
+Its log-determinant growth, called the \emph{frozen information gain}, is
+\begin{equation}\label{eq:frozen-gamma-new}
+ \gamma_T
+ :=\log\frac{\det\bVbar_{T+1}}{\det\bVbar_1}
+ =\sum_{t=1}^T\log\!\left(1+\sigma^{-2}\bar s_t^2(a_t)\right).
+\end{equation}
+Each term records the contribution of the action actually chosen.  This
+identity is why the regret proof returns to the frozen matrix even when the
+policy scores actions using the current matrix.  Set $\gamma_0=0$, and define
+regret as the mean reward lost relative to the best available action:
+\begin{equation}\label{eq:regret-definition-new}
+ \operatorname{reg}_t
+ :=\sup_{a\in\cA_t}\mu_t^*(a)-\mu_t^*(a_t),
+ \qquad R_T=\sum_{t=1}^T\operatorname{reg}_t.
+\end{equation}
+
+\paragraph{General protocol and timing.}
 Let $(\mathsf A,\mathcal B)$ be a standard Borel action space.  At round $t$,
 the learner observes a context and a nonempty random action correspondence
 $\cA_t:\Omega\to 2^{\mathsf A}$ whose graph
@@ -34,35 +137,6 @@ played-action sharpness validity, are measurable.  These are
 substantive assumptions; standard-Borel structure
 and graph measurability alone do not make every supremum or selector measurable.
 
-Let $\bq_t(a)\in\R^d$ be the prediction query.  The three metrics are
-\begin{align}
- \bVbar_1&=\lambda\bI,\nonumber\\
- \bVbar_{t+1}&=\bVbar_t+\sigma^{-2}\bq_t(a_t)\bq_t(a_t)^\top,
- \label{eq:reference-update-new}\\
- \bV_t&=\text{the exact current relinearized metric},\nonumber\\
- \Calg_t&=\text{the algorithmic SPD metric}.
-\end{align}
-Here $\lambda>0$ and $\sigma>0$.  Define the corresponding widths
-\begin{equation}\label{eq:three-widths-new}
- \begin{aligned}
-  \bar s_t^2(a)&=\bq_t(a)^\top\bVbar_t^{-1}\bq_t(a),\\
-  s_t^2(a)&=\bq_t(a)^\top\bV_t^{-1}\bq_t(a),\\
-  s_{\Calg,t}^2(a)&=\bq_t(a)^\top\Calg_t^{-1}\bq_t(a).
- \end{aligned}
-\end{equation}
-The frozen information gain is
-\begin{equation}\label{eq:frozen-gamma-new}
- \gamma_T
- :=\log\frac{\det\bVbar_{T+1}}{\det\bVbar_1}
- =\sum_{t=1}^T\log\!\left(1+\sigma^{-2}\bar s_t^2(a_t)\right).
-\end{equation}
-Set $\gamma_0=0$, and define
-\begin{equation}\label{eq:regret-definition-new}
- \operatorname{reg}_t
- :=\sup_{a\in\cA_t}\mu_t^*(a)-\mu_t^*(a_t),
- \qquad R_T=\sum_{t=1}^T\operatorname{reg}_t.
-\end{equation}
-
 The reference metric $\bVbar_t$ and, when used, the representation parameter
 $\btheta_t$ are determined from the prefix history and are
 $\cHist_t^-$-measurable.  The exact current metric $\bV_t$ is likewise formed
@@ -75,15 +149,15 @@ depend on $\Omega_t$ and are required only to be $\cHist_t$-measurable.  Thus
 quantities that may use $\Omega_t$ are called pre-reward measurable.  The
 reward is observed only after $a_t$ is selected.
 
-\paragraph{How one round uses the interfaces.}
-The prefix history determines $\bVbar_t$, $\bV_t$, and the representation used
-to form the current queries.  Before observing the reward, the learner
-constructs $\Calg_t$, obtains its path, operator, and solver certificates,
-forms one upper-valid width map over the score domain, and selects an action.
-After the reward arrives, it updates the frozen rank-one statistics.  This
-order is why confidence can use collection-time queries even though the score
-uses current queries.  It also prevents a selected-action solver refinement
-from changing the theorem's score without rechecking the selection guarantee.
+\paragraph{What must be certified.}
+The next assumption separates statistical confidence from the comparisons
+needed to use it.  The confidence band concerns the center $m_t(a)$ and the
+frozen width.  The path and operator certificates compare matrices.  The
+solver certificate controls the width that enters the score.
+Its quantifiers have different jobs: an upper-valid width is needed for every
+scored action to preserve optimism, while an upper bound on excess width
+(``sharpness'') is needed only for the action played to control regret.
+All of these objects must be available before that action's reward is seen.
 
 \begin{assumption}[Reference confidence and operational certificates]
 \label{asm:abstract-transport}
@@ -124,19 +198,23 @@ The first condition is an all-domain optimism certificate.  The second is
 required only at the played action.
 \end{assumption}
 
-Use the transported score
+The general score combines the center, the converted uncertainty allowance,
+and the current error allowance.  The operator factor accounts for using
+$\Calg_t$ in place of $\bV_t$, and $\hat s_t(a)$ is the width actually used
+by the selector:
 \begin{equation}\label{eq:transported-score-new}
  U_t(a)=m_t(a)
  +\beta_t e^{\bar D_t/2}\sqrt{\kappa_{+,t}}\,\hat s_t(a)
  +b_t(a),
 \end{equation}
-and let a pre-reward oracle return a $\cHist_t$-measurable selector
+Let a pre-reward oracle return a $\cHist_t$-measurable selector
 $a_t\in\cA_t$ satisfying
 \begin{equation}\label{eq:approx-score-oracle-new}
  U_t(a_t)\ge\sup_{a\in\cA_t}U_t(a)-\xi_t,\qquad \xi_t\ge0.
 \end{equation}
-Regret is defined against the mean-reward supremum, so an optimal action need
-not exist.
+The tolerance $\xi_t$ measures how far the selected score may fall below the
+best score; it is not a condition on nonlinear model training.  Regret is
+defined against the mean-reward supremum, so an optimal action need not exist.
 
 \begin{remark}[One realized solver-width map]
 The all-domain solver upper condition, the played-action sharpness condition,
@@ -170,6 +248,13 @@ Measurable approximate selector & Oracle premise \\
 \end{tabularx}
 
 \end{table}
+
+\paragraph{The regret guarantee.}
+Under these conditions, optimism bounds the loss at the selected action by
+its uncertainty and bias terms.  Comparing that selected width back to the
+reference width lets the frozen information gain control their accumulation.
+The theorem states this conclusion on the joint event where the supplied
+confidence and certificates hold.
 
 \begin{theorem}[Estimator- and solver-agnostic confidence transport]
 \label{thm:transported-ucb}
@@ -211,6 +296,28 @@ joint certificate event has probability at least $1-\delta_{\rm cert}$, these
 bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
 \end{theorem}
 
+\paragraph{Reading the bound.}
+The instantaneous bound has a statistical radius $\beta_t$, a frozen width
+$\bar s_t(a_t)$, and a factor accounting for transport and computation.
+The exponential $e^{\bar D_t}$ reflects two comparisons: a factor
+$e^{\bar D_t/2}$ makes the current-width score optimistic, and another
+compares the selected current width back to the frozen width for the regret
+proof.  The ratio $\kappa_{+,t}/\kappa_{-,t}$ accounts for operator distortion,
+and $\alpha_t$ accounts for excess width from the solver.  The additive terms
+charge current bias and approximate score maximization.
+
+Validity does not ensure that this bound is informative.  A large path
+envelope, a weak lower operator bound, a loose solver width, or persistent
+bias can make it vacuous.  In particular, an upper operator comparison alone
+can support the outward comparison but cannot supply the return comparison
+used by the displayed regret bound.
+
+\paragraph{Why keep direct reference scoring as a comparator?}
+Once a reference-confidence band is available, the learner can score actions
+with its reference widths directly.  The next proposition states that
+policy's guarantee on its own selected history.  It provides a baseline for
+understanding the additional factors required by transport.
+
 \begin{proposition}[Frozen-width UCB on its own trajectory]
 \label{prop:frozen-width-ucb}
 Keep the timing, measurability, bounded-query, and frozen-update assumptions
@@ -237,6 +344,13 @@ current-metric, or operator certificate is needed for this score.  If its
 reference-confidence event has probability at least $1-\delta$, so does this
 guarantee.
 \end{proposition}
+
+Holding the history fixed gives a different comparison.  If the confidence
+band is the only information supplied about the mean, reducing its upper
+endpoint would exclude a mean that the band still allows.  Transport cannot
+justify that reduction merely by expressing the same information in another
+matrix.  This is a statement about widths on the same history, not about the
+regret of policies that collect different histories.
 
 \begin{proposition}[Reference-width floor on a fixed history]
 \label{prop:reference-width-floor}
@@ -312,6 +426,11 @@ allows its original upper endpoint.
  \label{fig:transport-confidence-geometry}
 \end{figure}
 
+For a finite list of actions, the general selector and measurability
+requirements have a concrete implementation: evaluate the scores and choose
+the first maximizer in a fixed ordering.  The following corollary records
+the precise version used by finite-action policies.
+
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
 Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and
@@ -328,16 +447,13 @@ finite maxima and intersections.  A fixed finite action set is the immediate
 special case.
 \end{corollary}
 
-The theorem separates validity from usefulness.  Reference confidence and the
-all-domain upper width make the score optimistic.  The reverse metric and
-operator comparisons, together with played-action sharpness, return the
-selected width to the frozen potential and produce the closed regret bound.
-Large $\bar D_t$, a small $\kappa_{-,t}$, loose solver sharpness, persistent
-bias, or oracle error can still make that bound uninformative.  No optimizer
-residual, CG-specific formula, or dynamic-width complexity appears in the
-headline result.  The displayed closed bound requires a positive lower
-operator factor: an upper comparison alone does not supply the return
-comparison used in its proof.
+\paragraph{The order of a decision round.}
+Algorithm~\ref{alg:transported-ucb} uses the corrected center constructed in
+\Cref{sec:corrected-center}.  The learner forms and certifies its scores
+before seeing the reward, selects an action, and only then updates the frozen
+statistics.  This timing keeps the collection-time queries eligible for the
+sequential confidence argument.  Selection and the regret analysis must use
+the same computed width map, as the remark above emphasizes.
 
 \begin{algorithm}[t]
 \caption{Corrected-center specialization of transported UCB}\label{alg:transported-ucb}
@@ -352,18 +468,30 @@ comparison used in its proof.
 \end{algorithmic}
 \end{algorithm}
 
-Algorithm~\ref{alg:transported-ucb} specifies interfaces rather than a single
-linear algebra implementation.  Exact Cholesky solves satisfy the solver
-interface directly in exact arithmetic.  Matrix-free CG instead holds one SPD
-operator fixed and uses curvature--vector products to solve each action system;
-a residual or energy argument must certify the returned widths.  Replacing the
-operator by a window, subsample, or sketch is a separate approximation and
-requires its own operator comparison.  The controlled experiment in
-\Cref{sec:transport-instantiation} uses dense exact-current matrices and
+The algorithm leaves the linear algebra implementation open.  Exact Cholesky
+solves satisfy the solver conditions in exact arithmetic.  Conjugate gradient
+(CG) can instead solve each action system using products with a fixed SPD
+operator; a residual or energy argument must certify its returned widths.
+Changing the matrix through a window, subsample, or sketch is a separate
+approximation and requires an operator comparison.  The controlled experiment
+in \Cref{sec:transport-followup} uses dense exact-current matrices and
 Cholesky solves, so it does not evaluate these approximate or matrix-free paths.
 
-\section{Logarithmic transport for relinearized curvature}
+\section{How to compare the frozen and current matrices}
 \label{sec:logarithmic-transport}
+
+The main theorem assumes a comparison between matrices.  This section explains
+how to obtain one when past gradients are recomputed at the current parameter.
+The matrix order $A\preceq B$ means that $B-A$ is positive semidefinite: the
+quadratic form of $B$ is at least that of $A$ in every direction.  A two-sided
+comparison therefore controls all query widths at once.
+
+\paragraph{Measure relative change along a path.}
+Imagine continuously changing the frozen matrix into the current matrix.
+The path-length integrand below measures the largest relative change at each
+point, after normalizing by the matrix there.  Integrating those changes gives
+a multiplicative comparison between the endpoints.  The exponential form
+allows large changes; it does not promise that the resulting factor is small.
 
 \begin{lemma}[Logarithmic comparison along an SPD path]
 \label{lem:log-spd-path}
@@ -430,6 +558,14 @@ sharpness statement, not a contextual-bandit regret lower bound and not a
 claim that every trajectory attains the worst case.
 \end{remark}
 
+\paragraph{Work with the gradients that form the matrix.}
+A replay matrix is a ridge term plus a Gram matrix of gradient features.
+Stack those features as rows of $\Bmat$.  It is often easier to bound how
+these rows change than to analyze the full SPD path directly.  The next lemma
+turns a bound on the changing factor into a bound on matrix path length.
+Its normalization by $\bV(\tau)^{-1/2}$ retains information about which
+directions the data have already constrained.
+
 \begin{lemma}[Rectangular factor-path certificate]
 \label{lem:factor-spd-path}
 Let $\Bmat:[0,1]\to\R^{m\times d}$ be absolutely continuous and set
@@ -451,22 +587,31 @@ displayed PSD premise is equivalently the norm condition
 $\|\dot\Bmat(\tau)\bV(\tau)^{-1/2}\|_{\rm op}\le\nu_t(\tau)$ almost everywhere.
 \end{lemma}
 
-For scalar differentiable means, take the $s$th row of $\Bmat_t(\tau)$ to be
+For a scalar prediction, each past observation contributes a gradient row.
+Move that row from its collection-time parameter $\btheta_s$ to the current
+parameter $\btheta_t$ along its own straight segment.  The $s$th row is
 \begin{equation}\label{eq:scalar-factor-path-new}
  \sigma^{-1}\nabla_\theta\mu_{\btheta_s+
  \tau(\btheta_t-\btheta_s)}(x_s,a_s)^\top.
 \end{equation}
-This interpolates from collection-time frozen curvature to the exact current
-relinearized curvature.  It is a synthetic path in stacked factor space: each
-replay factor follows its own segment from the collection-time Jacobian to the
-current relinearized Jacobian.  The stacked path need not equal the GGN evaluated
-at one common intermediate parameter shared by all replay samples.
+The endpoint matrices are the frozen and exact current matrices.  The path
+between them is a device for comparing those endpoints: different rows begin
+at different collection-time parameters.  It need not be the generalized
+Gauss--Newton (GGN) matrix of any common intermediate model, and it is not the
+learner's training trajectory.
 A weighted or heteroscedastic squared loss uses row
 $\sqrt{w_s}\,\nabla\mu^\top$ for a nonnegative collection-time weight $w_s$
 fixed before the corresponding reward.
 If the weight is fixed along the interpolation, the same proof only rescales
 the corresponding row.  If it changes with the path, the derivative of
 $\sqrt{w_s(\tau)}$ is an additional obligation.
+
+\paragraph{A certificate from smoothness and parameter movement.}
+A prediction-Hessian bound controls how fast each gradient can change along
+its segment.  Combined with the ridge lower bound on the matrix, it gives a
+certificate in terms of $Q_t$, the accumulated squared distances from the
+current parameter to collection-time parameters.  This route is easy to state,
+but it can discard information about well-constrained directions.
 
 \begin{corollary}[Hessian path certificate]
 \label{cor:hessian-path-new}
@@ -486,10 +631,17 @@ This remains valid when $\bar D_t\ge1$.  At $t=1$, the factor has zero rows,
 $Q_1=0$, and both metrics equal $\lambda\bI$.
 \end{corollary}
 
-The relative condition in \Cref{lem:factor-spd-path} can be much sharper than
-the ridge-only bound in \Cref{cor:hessian-path-new}: excitation in the current
-metric attenuates motion in already-observed directions.  It permits arbitrary
-gradient rotation and requires neither a fixed subspace nor known rank.
+The relative condition in \Cref{lem:factor-spd-path} retains that directional
+information and can be much sharper than the ridge-only Hessian bound.
+Changes in directions with larger matrix eigenvalues are downweighted by
+the inverse-matrix normalization.  Both constructions permit gradient
+rotation; the factor-path lemma requires neither a fixed subspace nor known
+rank.
+
+\paragraph{Convert matrix comparisons into width comparisons.}
+The next proposition gives the outward and return comparisons used in the
+regret theorem.  It also shows how a relative-error bound for an approximate
+operator supplies the factors $\kappa_{-,t}$ and $\kappa_{+,t}$.
 
 \begin{proposition}[Width transport and approximate operators]
 \label{prop:width-transport-new}
@@ -510,6 +662,13 @@ gives $\kappa_{-,t}=1-\varepsilon_t$ and
 $\kappa_{+,t}=1+\varepsilon_t$.  An upper comparison alone does not imply a
 lower factor.
 \end{proposition}
+
+\paragraph{Compare the endpoints directly when possible.}
+Following an entire path is not required if a valid two-sided comparison of
+the endpoint matrices is already available.  The next corollary inserts that
+comparison into the same confidence and regret argument.  Its upper factor
+protects optimism; its lower factor supplies the return comparison, so their
+ratio enters the regret bound.
 
 \begin{corollary}[Direct endpoint sandwich]
 \label{cor:relative-endpoint-ucb}
@@ -547,7 +706,10 @@ it need not bound the length of the synthetic path
 \eqref{eq:scalar-factor-path-new}.  Its effective width still obeys the
 reference-width floor: $\sqrt{c_{+,t}\kappa_{+,t}}\hat s_t(a)\ge\bar s_t(a)$.
 
-For vector outputs, let $J_s(\theta)\in\R^{p_s\times d}$ and supply an
+\paragraph{What extends to vector outputs?}
+The factor construction also accommodates several output coordinates and
+weights, provided their changes are controlled as well.  For vector outputs,
+let $J_s(\theta)\in\R^{p_s\times d}$ and supply an
 absolutely continuous factor $R_s(\theta)\in\R^{r_s\times p_s}$ satisfying
 $R_s^\top R_s=W_s\succeq0$.  Stacking
 $B_s=R_sJ_s\in\R^{r_s\times d}$ gives
@@ -556,15 +718,25 @@ $\dot B_s=\dot R_sJ_s+R_s\dot J_s$; both terms must be controlled.  This
 covers the geometry of weighted Fisher/GGN factors but does not by itself prove
 a likelihood confidence sequence or an exponential-family regret theorem.
 
-\section{Corrected-center squared-loss specialization}
+\section{A confidence center that does not require optimizer convergence}
 \label{sec:corrected-center}
 
-We next instantiate the reference-confidence interface.  The corrected center
-keeps statistical estimation in the predictable collection-time features while
-using the current nonlinear prediction as its anchor.  The resulting identity
-does not assume that the representation parameter minimizes a nonlinear loss.
-Let $\sigma>0$ and let
-the reward obey $r_t=\mu_t^*(a_t)+\eta_t$, where, for every $u\in\R$,
+So far, the confidence band has been an assumption.  We now construct one
+for squared loss.  The difficulty is that an arbitrarily trained nonlinear
+predictor need not be the center of a valid confidence band.  The construction
+uses that predictor as an anchor, then corrects it using a linear estimate
+formed from collection-time features.  Confidence comes from this frozen
+linear estimation problem; it does not require the nonlinear optimizer to
+have converged.
+
+There is a cost to this separation.  Linearizing the model introduces Taylor
+error, and the reference model may not exactly represent the true mean.
+The resulting band must account for both errors, in past observations and in
+the current prediction.  The assumptions below make these costs explicit.
+
+\paragraph{Noise and the reference model.}
+Let $\sigma>0$ and let the reward obey
+$r_t=\mu_t^*(a_t)+\eta_t$, where, for every $u\in\R$,
 \begin{equation}\label{eq:new-noise-condition}
  \mathbb E[\exp(u\eta_t)\mid\cHist_t]
  \le\exp(u^2\sigma^2/2).
@@ -583,9 +755,14 @@ approximate realizability
  \mu^*(z)=\mu_{\btheta^\circ}(z)+m^\circ(z),\qquad
  |m^\circ(z)|\le\epsilon_{\rm mis}(z).
 \end{equation}
+\paragraph{Turn past rewards into a frozen linear estimation problem.}
 The predictable sequence $\btheta_t\in\Theta$ is otherwise arbitrary.  Set
-$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$ and define collection-time
-pseudo-responses and the frozen ridge estimator by
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$.  A collection-time
+linearization has a known nonlinear offset and a linear term in the reference
+parameter.  Subtracting that offset from the reward gives a
+\emph{pseudo-response}: an approximate linear observation of the fixed
+reference parameter, with noise and Taylor and misspecification errors.
+The pseudo-responses and their frozen ridge estimate are
 \begin{align}
  y_s&=r_s-\mu_{\btheta_s}(x_s,a_s)+\bq_s(a_s)^\top\btheta_s,
  \label{eq:pseudo-response-new}\\
@@ -593,12 +770,22 @@ pseudo-responses and the frozen ridge estimator by
  &=\bVbar_t^{-1}\sigma^{-2}\sum_{s<t}\bq_s(a_s)y_s.
  \label{eq:frozen-ridge-new}
 \end{align}
-The corrected center is
+\paragraph{Correct the current prediction.}
+The linear estimate uses old, predictable features, while the action query
+uses the current model.  The corrected center connects them:
 \begin{equation}\label{eq:corrected-center-new}
  m_t^{\rm corr}(a)=\mu_{\btheta_t}(x_t,a)
  +\bq_t(a)^\top(\hat\btheta_t^{\rm lin}-\btheta_t).
 \end{equation}
 
+The correction applies the current gradient to the difference between the
+frozen linear estimate and the current parameter.  Thus the certified center
+is generally different from the raw prediction of the trained model.  The
+identity supporting its confidence band holds for any predictable parameter
+path in the certified region, but it does not make the approximation errors
+small.
+
+\paragraph{Account for historical and current errors separately.}
 Fix $\delta\in(0,1)$.  Let $\rho_s^\circ$ be the Taylor remainder of
 $\mu_{\btheta^\circ}$ around $\btheta_s$, and supply envelopes
 \begin{equation}\label{eq:lin-mis-envelopes-new}
@@ -608,7 +795,10 @@ $\mu_{\btheta^\circ}$ around $\btheta_s$, and supply envelopes
 with the corresponding actionwise current envelopes
 $\epsilon_{\rm lin,t}(a)$ and $\epsilon_{\rm mis,t}(a)$.  Each envelope is
 deterministic or measurable before the reward at the round where it is used;
-the complete historical sum below is known before selecting $a_t$.  Define
+the complete historical sum below is known before selecting $a_t$.
+Past errors affect the fitted linear estimate and therefore enlarge the
+confidence radius.  Current errors enter the final prediction band
+additively.  Define
 \begin{equation}\label{eq:beta-corrected-new}
  \begin{aligned}
   \beta_t^{\rm corr}
@@ -617,6 +807,11 @@ the complete historical sum below is known before selecting $a_t$.  Define
   [\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2}.
  \end{aligned}
 \end{equation}
+
+The radius contains the stochastic uncertainty term, the ridge penalty for
+the reference parameter, and the accumulated historical approximation error.
+The following result supplies the reference-confidence band required by
+\Cref{asm:abstract-transport}.
 
 \begin{corollary}[Corrected-center confidence without optimizer assumptions]
 \label{cor:corrected-center-new}
@@ -639,15 +834,27 @@ creates a linear current-bias term and can also make the historical radius
 vacuous.  This is a graceful-degradation statement, not a robust
 misspecified-bandit guarantee.
 
-\section{Closed finite-dimensional rates and local alternatives}
+\section{When the regret bound is informative}
 \label{sec:closed-rates-new}
 
-Let $r_T=\min\{d,T\}$.  Rank--trace concavity gives the primitive closure
+The general theorem depends on quantities accumulated along the policy's
+history.  This section replaces the information gain by a bound in terms of
+parameter dimension and horizon, then asks when the remaining transport and
+approximation terms are controlled.  A valid certificate alone is not enough:
+a large historical error radius or persistent current bias can still prevent
+the displayed regret bound from being sublinear.
+
+\paragraph{Bound information gain using dimension.}
+Let $r_T=\min\{d,T\}$.  The frozen Gram matrix has at most this rank above
+its ridge term.  Bounding its eigenvalue sum using the query-norm bound gives
 \begin{equation}\label{eq:finite-d-gamma-new}
  \gamma_T\le\Gamma_{T,d}:=
  r_T\log\!\left(1+\frac{TG^2}{r_T\lambda\sigma^2}\right).
 \end{equation}
-No fixed tangent subspace is required.
+No fixed tangent subspace is required.  The next corollary substitutes this
+bound and the corrected-center radius into the general theorem.  Its
+$B_T$ collects historical error energy, while $E_T^{\rm cur}$ collects the
+current prediction-error allowances.
 
 \begin{corollary}[Finite-dimensional corrected-center rate]
 \label{cor:finite-d-rate-new}
@@ -677,6 +884,14 @@ $O(e^D\sqrt K\,d\sqrt T\log T)$.  Exact solves set $\alpha=1$, exact current
 curvature sets $K=1$, and exact score maximization sets $\xi_t=0$, recovering
 the standard LinUCB determinant-potential rate up to displayed constants.
 \end{corollary}
+
+\paragraph{Control both transport and linearization error.}
+The preceding bound becomes useful when the transport factors stay controlled
+and the approximation errors are small enough.  The next corollary gives a
+sufficient regime: the model is nearly linear throughout a certified parameter
+region.  Its scale $W$ controls both gradient change and Taylor error.  The
+condition relates this scale to the horizon; it is not a statement that an
+arbitrary fixed nonlinear model has sublinear regret.
 
 \begin{corollary}[Global near-linearity under exponential transport]
 \label{cor:global-near-linear-new}
@@ -745,6 +960,13 @@ condition for these bounds, not a necessary condition for an informative
 transport certificate.
 \end{remark}
 
+\paragraph{A concrete model with fixed feature directions.}
+The scaled-tanh model makes the smoothness condition explicit.  It also has
+more structure than the general Hessian argument uses: changing the parameter
+rescales each feature gradient without rotating its direction.  This permits
+the sharper endpoint comparison developed after the model's derivative
+formulas.
+
 \begin{remark}[Scaled-tanh specialization]
 For
 \[
@@ -770,6 +992,20 @@ $\sup_u|2\operatorname{sech}^2(u)\tanh(u)|=4/(3\sqrt3)$,
 The symbol $W$ is a smoothness scale here; it is not identified with hidden
 width or parameter count.
 \end{remark}
+
+\paragraph{Compare scalar weights instead of accumulating a path bound.}
+For a fixed observation, the gradients at collection time and at the current
+parameter point in the same feature direction.  Their contributions to the
+Gram matrix differ only by the \emph{squares} of their scalar gradient
+multipliers.  Bounds on the ratio of these weights therefore compare the
+endpoint matrices directly.  The common ridge term must be included in that
+comparison as well.
+
+There are two versions.  A uniform bound uses only the parameter and feature
+norm bounds.  When observations share a finite collection of feature vectors,
+a category-wise bound uses the accumulated collection-time weight and the
+current weight within each category.  Both are certificates for the same
+reference-confidence construction; neither supplies a new statistical event.
 
 \begin{corollary}[Relative weights for scaled tanh]
 \label{cor:tanh-relative-weights}
@@ -805,17 +1041,22 @@ $\ell^2\le c_{-,t}\le1\le c_{+,t}\le\ell^{-2}$.
 Either certificate can be used in \Cref{cor:relative-endpoint-ucb}.
 \end{corollary}
 
-These certificates compare scalar weights on fixed feature directions;
-they make no claim about general gradient rotation.  Maintaining the counts
-and one collection-weight sum per category makes
-\eqref{eq:tanh-category-relative} computable from current category projections
-without an eigensolve or a scan of the full history.  This reduces the work
-needed for an endpoint certificate, not the cost of all width or center
-solves, and does not itself imply improved regret.  The appendix gives the
-termwise proof and a case where the endpoint distance is zero although the
-synthetic path has positive length.
+The uniform bound has no explicit horizon dependence when its norm bounds and
+$W$ are fixed.  This controls transport, but does not remove the separate
+historical and current approximation errors from the regret bound.
+For the category version, maintaining a count and a collection-weight sum
+per category lets \eqref{eq:tanh-category-relative} use current category
+projections without an eigensolve or a scan of the full history.  It reduces
+the work needed for this certificate, not the cost of all width or center
+solves.  The construction relies on fixed gradient directions and does not
+cover general gradient rotation or establish improved policy regret.
+The appendix gives the termwise proof and an example where the endpoint
+distance is zero although the synthetic path has positive length.
 
-The previous additive stacked-design result remains a useful local corollary.
+\paragraph{A local comparison when changes are small.}
+A local two-sided comparison gives another way to relate the same matrices.
+It replaces the exponential factors by a local sandwich that requires a
+smallness condition.
 If $\chi_t<1$ and
 \begin{equation}\label{eq:local-additive-new}
  (1-\chi_t)^2\bVbar_t\preceq\bV_t
@@ -845,7 +1086,9 @@ other because they summarize different paths.
 \caption{Transport certificates used in this paper.  The two-way factor is
 the product of the outward and return width factors.  ``Smallness'' states
 the additional restriction needed for that factor; ``rotation'' records
-whether replay gradients may change direction.}
+whether replay gradients may change direction. The final two rows give only
+the operator-comparison factor; a separate metric-transport factor is still
+required.}
 \label{tab:transport-comparison-new}
 \centering\ccetablesize
 \begin{tabularx}{\columnwidth}{@{}
@@ -868,11 +1111,11 @@ Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kapp
 
 \end{table}
 
-\paragraph{Scope.}
-The abstract theorem applies to any estimator that supplies
-\eqref{eq:abstract-confidence-new}.  A complete exponential-family
-specialization would additionally require a likelihood-score confidence event,
-prediction conversion, pre-reward collection-time Fisher weights, control of
-weight and Jacobian transport, and an information-potential bound.  The factor
-geometry above does not establish those statistical steps, so no such theorem
-is claimed here.
+\paragraph{What remains model-specific.}
+The geometric comparisons can be reused with another estimator if it supplies
+\eqref{eq:abstract-confidence-new}.  Geometry alone does not supply that
+statistical premise.  For an exponential-family model, one would also need a
+likelihood-score confidence event, a conversion to prediction error,
+pre-reward collection-time Fisher weights, control of weight and Jacobian
+transport, and an information-potential bound.  Those additional steps are
+outside the squared-loss specialization established here.

@@ -1090,7 +1090,7 @@ _classify("paper/transport_proofs.tex", "math-constant",
           {"0": 16, "1": 80, "2": 110, "4": 4})
 _classify("paper/transport_proofs.tex", "interval-endpoint", {"0,1": 1})
 _classify("paper/transport_theory.tex", "math-constant",
-          {"0": 33, "1": 99, "1,0": 1, "2": 109, "3": 2, "4": 6})
+          {"0": 33, "1": 100, "1,0": 1, "2": 113, "3": 2, "4": 6})
 _classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
 _classify("paper/transport_followup.tex", "math-constant", {"1": 2, "2": 2})
 _classify("paper/transport_followup_appendix.tex", "math-constant",

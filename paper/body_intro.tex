@@ -2,137 +2,158 @@
 %% Shared scientific source for the research and TMLR entry points.
 \section{Introduction}\label{sec:intro}
 
-At each round, a contextual-bandit policy predicts the reward of every available
-action, adds an uncertainty bonus, and chooses from the resulting scores.  For a
-fixed linear representation, the same feature vectors support both the
-statistical confidence argument and the widths used for action selection.  A
-retrained nonlinear model breaks this identification.  The query used at round
-$s$ was $\bq_s(a_s)=\nabla_\theta\mu_{\btheta_s}(x_s,a_s)$, fixed before
-observing $r_s$, whereas a policy that replays the same sample at round $t$ uses
-$\nabla_\theta\mu_{\btheta_t}(x_s,a_s)$.  Updating $\btheta_t$ changes every
-replayed Jacobian at once, so the current relinearized Gram no longer has the
-predictable rank-one recursion required by the usual self-normalized argument.
+A contextual bandit must learn which action to take from the rewards of the
+actions it has already tried. An upper confidence bound (UCB) policy balances
+learning and reward by adding an uncertainty bonus to each predicted reward,
+then choosing an action with a large resulting score. The bonus matters: a
+policy that understates uncertainty can stop exploring too soon, while an
+excessively large bonus can overwhelm differences in predicted rewards.
 
-Existing neural-bandit methods avoid or absorb this mismatch in different ways.
-NeuralUCB and NeuralTS accumulate gradient features when observations arrive
-\citep{zhou2020neural,zhang2021neural}; NTK methods can keep the uncertainty
-features at initialization \citep{kassraie2022neural}; and neural-linear methods
-place exact linear uncertainty on a learned last-layer representation
-\citep{riquelme2018deep}.  Fixed-reference network linearizations and post-hoc
-Laplace approximations provide related predictive-uncertainty tools
-\citep{maddox2021fast,daxberger2021laplace}, but they do not answer the online
-question studied here: when can confidence built from collection-time features
-justify scores computed with current replayed curvature?
+With a nonlinear predictor, retraining changes how the model represents past
+observations. For example, a recommender may refit its reward predictor after
+each interaction, then recompute the gradients of all previously recommended
+items. Their recorded rewards stay the same, but the matrix built from their
+gradients changes. A narrower width computed from that new matrix does not by
+itself establish greater statistical certainty. This paper asks when such a
+change of matrix preserves a confidence guarantee, and what that guarantee
+costs in an implemented policy.
 
-Validity alone does not explain why a policy should use that curvature.
-Transporting a given confidence bound does not add statistical information:
-on a fixed history, the construction below produces an upper width at least as
-large as the direct reference width.  A loose certificate can preserve optimism
-while making the bonus dominate reward predictions.  We therefore separate
-conditional validity, certificate usefulness, and observed policy behavior.
-In our controlled follow-up, the evaluated Hessian-transport policy has higher
-mean regret than each comparator in every condition, despite passing the
-recorded optimism diagnostics.
+\paragraph{Why the old and new matrices need different justifications.}
+The usual sequential confidence argument uses a feature for each observation
+that was fixed before its reward was seen. We call the matrix that accumulates
+those collection-time features the \emph{reference matrix}. Its stored features
+stay fixed, even as the predictor continues to learn. The \emph{current matrix}
+instead recomputes the gradients of the same past samples at today's model
+parameters. We call this recomputation \emph{relinearization} or \emph{replay};
+it does not collect new rewards.
 
-\paragraph{From reference confidence to an implemented score.}
-Four objects must remain distinct.  The frozen Gram $\bVbar_t$ supports
-sequential statistical confidence.  The exact current metric $\bV_t$ replays
-past observations at the current parameter.  The algorithm applies an SPD
-operator $\Calg_t$, which may approximate $\bV_t$.  Finally, a solver returns
-the numerical upper width $\hat s_t(a)$ used in the score.  The analysis
-connects these objects through the separate obligations in
-\Cref{fig:transport-interfaces}.
+The distinction is statistical, not merely computational. Once the model has
+learned from past rewards, its recomputed features can depend on those rewards.
+The usual confidence argument therefore does not automatically apply to the
+current matrix. In notation, a sample collected at round $s$ contributes
+$\bq_s(a_s)=\nabla_\theta\mu_{\btheta_s}(x_s,a_s)$ to the reference matrix,
+but contributes $\nabla_\theta\mu_{\btheta_t}(x_s,a_s)$ when replayed at
+round $t$. The reference matrix retains the predictable rank-one update used by the
+standard self-normalized confidence argument; the replayed matrix need not.
+
+Existing methods make different choices here. NeuralUCB and NeuralTS store
+gradient features as observations arrive
+\citep{zhou2020neural,zhang2021neural}. Neural tangent kernel (NTK) methods can keep
+uncertainty features at initialization \citep{kassraie2022neural}, while
+neural-linear methods use linear uncertainty in a learned last-layer
+representation \citep{riquelme2018deep}. Fixed network linearizations and
+post-hoc Laplace approximations offer related ways to measure predictive
+uncertainty \citep{maddox2021fast,daxberger2021laplace}. We study the additional
+obligations created by replaying the historical gradients at the current
+parameter.
+
+\paragraph{The central result: valid transport can still be unhelpful.}
+\emph{Confidence transport} means using a justified comparison between the
+reference and current matrices to convert a reference confidence band into a
+score based on current curvature. A \emph{certificate} is a bound that makes
+such a comparison valid. The \emph{width} is the geometric part of the
+uncertainty bonus; a confidence radius scales it, and a separate term covers
+model bias.
+
+Direct reference scoring is already available. Transport is worth studying
+because it exposes what a policy must establish if it chooses to score with
+current curvature instead. It supplies no new observations or additional
+statistical information. In fact, with the same history, center, radius and
+bias, the certified transported width is at least the direct reference width.
+An exact actionwise correction recovers that reference width
+(\Cref{prop:reference-width-floor}). This comparison leaves the ordering of
+adaptive regret open: different bonuses can change actions, which changes the
+data on which subsequent decisions are based.
+
+Our controlled study makes the cost concrete. The evaluated Hessian-transport
+policy uses bounds on prediction Hessians to certify the change of matrix. It
+has higher mean regret than every comparator in every condition. Its
+recorded optimism checks pass, but its regret bounds are larger than a simple
+deterministic cap. Thus a confidence construction can be valid under its
+assumptions, conservative in its bound, and poor as a decision rule. These are
+separate questions, and the paper examines each one.
+
+\paragraph{What the analysis provides.}
+The theory connects a statistical confidence band to the score the algorithm
+actually uses. \Cref{fig:transport-interfaces} separates the reference matrix
+$\bVbar_t$, the current matrix $\bV_t$, an applied operator $\Calg_t$ that may
+approximate it, and the numerical width $\hat s_t(a)$ returned by a solver.
+The matrices are symmetric positive definite (SPD), so their inverse quadratic
+forms define widths. Each step needs its own bound, available before the
+selected reward is observed.
 
 \begin{figure}[t]
  \centering
  \input{figures/transport_conceptual_interfaces.tex}
- \caption{From reference confidence to the width actually used for selection.
- Each comparison is a separate certificate obligation under
- \Cref{asm:abstract-transport}; the schematic does not identify statistical
- confidence with current curvature.  All-action upper validity and
- selected-action sharpness concern the same realized numerical width map.
- The same-history reference-width floor does not order the adaptive regret
- of different policies.}
+ \caption{The steps between a statistical confidence band and an implemented
+ score. A bound on changing the matrix, a bound on approximating it, and a
+ bound on the solver's output serve different purposes. The formal conditions
+ are in \Cref{asm:abstract-transport}. Every scored action needs an upper-valid
+ numerical width; only the selected action needs the stated sharpness bound.
+ Both conditions refer to the same widths used to choose that action.}
  \label{fig:transport-interfaces}
 \end{figure}
 
-A Thompson--Finsler path length controls
-the first arrow through a two-sided exponential Loewner sandwich
-\citep{thompson1963certain,nussbaum1994finsler}.  A second two-sided comparison
-accounts for replacing $\bV_t$ by $\Calg_t$.  Solver certification then provides
-an upper-valid width for every scored action and a sharpness factor only for the
-action actually played.  The lower operator comparison is needed to return the
-played width to the frozen sequential potential.  A one-sided upper comparison
-alone does not satisfy the hypotheses of the closed bound studied here.
+The transported-UCB theorem combines these bounds and gives a regret guarantee
+in terms of the reference matrix's accumulated information
+(\Cref{thm:transported-ucb}). A two-sided matrix comparison is essential for
+this guarantee: one direction preserves the upper confidence score, and the
+other controls the width of the action actually chosen. We obtain such
+comparisons from established Thompson--Finsler geometry
+\citep{thompson1963certain,nussbaum1994finsler} and give computable certificates
+using changes in model gradients (\Cref{lem:factor-spd-path,cor:hessian-path-new}).
+The geometry and the UCB potential argument are established tools. The
+contribution is to state and connect the distinct statistical and computational
+obligations of scoring with replayed curvature.
 
-For squared loss, the main statistical construction is a corrected prediction
-center.  It combines the current nonlinear prediction with a ridge correction
-computed from collection-time features.  This identity holds for any predictable
-parameter path inside the certified region, so the confidence proof does not
-require the nonlinear optimizer to converge.  Historical Taylor and
-misspecification errors enter the radius through an explicit energy, while
-current errors enter additively.  These terms remain genuine costs: persistent
-misspecification can make the guarantee linear or vacuous.
+For squared loss, we also construct the center of the confidence band. A ridge
+correction based on collection-time features adjusts the current nonlinear
+prediction. The confidence band around this \emph{corrected center} remains valid along any
+predictable parameter path in the certified region, with supplied Taylor and
+misspecification error bounds (\Cref{cor:corrected-center-new}). It does not
+require the nonlinear optimizer to converge. The error bounds still have a
+cost: persistent model mismatch can make regret guarantees linear or vacuous.
+The finite-dimensional and near-linear consequences are given in
+\Cref{cor:finite-d-rate-new,cor:global-near-linear-new}.
 
-\paragraph{Guarantee and scope.}
-The transported-UCB theorem composes reference confidence, metric transport,
-operator distortion, solver error, and approximate score maximization, then
-closes regret through frozen information gain
-(\Cref{thm:transported-ucb}).  Its confidence and certificates are available
-before the selected reward is observed.  Factor-path and prediction-Hessian
-certificates
-make the metric comparison operational without a small-drift premise
-(\Cref{lem:factor-spd-path,cor:hessian-path-new}), and the corrected-center
-specialization yields finite-dimensional and near-linear rates without an
-optimizer certificate
-(\Cref{cor:corrected-center-new,cor:finite-d-rate-new,%
-cor:global-near-linear-new}).  Thompson geometry, the sandwich-to-width
-comparison, and the UCB determinant-potential argument are established tools.
-Our analysis organizes their obligations for current replayed curvature,
-including the distinction between all-action upper validity and selected-action
-sharpness of the same numerical score.  The solver interface permits
-matrix-free CG for a fixed SPD operator when its width is certified; it does
-not eliminate the corrected center's need for frozen-feature access or a
-separately certified representation.
+The scaled-tanh model permits a simpler comparison because its gradient
+directions are fixed and only their weights change. Comparing those weights
+gives a horizon-independent endpoint certificate and a tighter category-based
+version (\Cref{cor:tanh-relative-weights}). This specialization does not cover
+general rotating neural gradients.
 
-\paragraph{A limitation and a sharper specialization.}
-We make explicit the elementary same-history width comparison and its equality
-case: exact actionwise transport reproduces the reference width
-(\Cref{prop:reference-width-floor}).  An exact endpoint Thompson-distance factor
-is uniform and need not attain that equality for every action.  Neither
-comparison orders the realized regret of policies that collect different data.
-For the scaled-tanh specialization, fixed feature directions permit a direct
-relative-weight sandwich, with a horizon-independent uniform bound and a tighter
-category-weight construction (\Cref{cor:tanh-relative-weights}).  These
-comparisons avoid the ridge-only Hessian envelope without claiming a general
-result for rotating neural gradients or a new confidence event.
+\paragraph{What the experiments establish.}
+The main study uses a 29-parameter scaled-tanh model with dense matrices and
+direct Cholesky solves in float64 (\Cref{sec:transport-followup}). It compares
+four policies in three prespecified conditions, with 50 paired seeds per
+condition. All nine pointwise paired intervals favor the comparators over
+Hessian transport. Transport inflation dominates Hessian's bound; the reference
+policy's own-trajectory bounds also remain vacuous. All policies, including
+the uncertified naive control, pass the recorded optimism diagnostics. These
+floating-point checks neither certify numerical enclosures nor establish that
+the correction was necessary in the observed runs.
 
-\paragraph{Controlled evidence.}
-The prespecified nonlinear-regime follow-up uses a 29-parameter scaled-tanh model
-with dense matrices and direct Cholesky solves in float64
-(\Cref{sec:transport-followup}); the original near-linear audit is retained
-separately in \Cref{sec:transport-instantiation}.  Four policies are evaluated
-in three conditions, with 50 paired seeds per condition.  All nine pointwise
-paired intervals favor the comparators over Hessian transport.  Its bounds are
-dominated by path inflation in the follow-up, whereas the original grid's
-decomposition is base-dominated.  The frozen policy's own-trajectory bounds
-also remain vacuous.  All follow-up policies, including the uncertified naive
-control, pass the recorded optimism diagnostics; these floating-point checks
-do not establish verified numerical certification.
+The conditions change the reward task as well as curvature. The results
+therefore describe this fixed teacher, model and shared prediction-based
+optimizer selection; they do not isolate a causal effect of drift. Subsequent
+analyses explain scores on recorded histories and assess tighter certificates
+there. They do not run alternative adaptive policies. The original near-linear
+audit is reported separately in \Cref{sec:transport-instantiation}; its bound
+is dominated by the base component rather than transport inflation.
+Approximate operators, conjugate-gradient performance and end-to-end
+scalability are outside the empirical study.
 
-The conditions change the reward task as well as its curvature, so they do not
-isolate a causal effect of drift.  Post-outcome analyses measure width-dominated
-Hessian recommendations and audit the relative-weight certificate on recorded
-states; they do not reconstruct alternative adaptive runs.  These findings
-concern one model and fixed teacher with shared prediction-based optimizer
-selection.  Approximate operators, CG, and end-to-end scalability are not
-evaluated here.
+\paragraph{Reading the paper.}
+\Cref{sec:abstract-transport} starts with the exact-matrix case, then states the
+general theorem. \Cref{sec:corrected-center} explains how the confidence center
+is constructed. Readers interested primarily in the findings can continue to
+\Cref{sec:transport-followup} and return to the certificate constructions when
+needed. Proofs and the full experimental protocol are in the appendices.
 \iflegacyextras
-Earlier diagnostics are retained only at their historical scope in
+Earlier diagnostics are retained at their historical scope in
 \Cref{app:legacy-evidence}.
 \else
-Earlier repository studies were designed for the one-sided dynamic theorem, do
-not execute the transported score or record its certificates, and are therefore
-not reported here as evidence for any claim in this paper
+Earlier repository studies use a different, one-sided theorem and do not execute
+the transported score. They are excluded from the evidence for this paper
 (\Cref{app:legacy-evidence}).
 \fi

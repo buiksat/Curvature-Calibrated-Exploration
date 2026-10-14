@@ -2,13 +2,14 @@
 
 **Status: revised anonymous manuscript and compact evidence package built; not submitted.**
 
-The current revision adds four explanatory figures: the certificate interfaces,
-an abstract confidence-geometry example, all policy outcomes and paired
-comparisons, and the mean bound scale relative to the deterministic regret cap.
-The detailed outcome table moves to the appendix. The charts use retained
-evidence and the diagrams state their analytic scope; no new experiment was
-run. See [the visual revision record](../../review/visual_revision/IMPLEMENTATION_REPORT.md)
-and [the earlier implementation and publication assessment](../../review/post_fable_revision/IMPLEMENTATION_REPORT.md).
+The current revision rewrites the main prose for a machine-learning reader new
+to confidence transport. It explains the problem before introducing formal
+interfaces, adds an exact-matrix example before the general theorem, and leads
+the experimental section with questions and findings. Existing formal results,
+proofs and experimental evidence are preserved. See
+[the readability revision record](../../review/readability_revision/IMPLEMENTATION_REPORT.md),
+[the earlier visual revision](../../review/visual_revision/IMPLEMENTATION_REPORT.md)
+and [Fable's preceding publication assessment](../../review/publication_assessment_fable/CHECKED_ASSESSMENT.md).
 
 This entry point uses canonical scientific sources under `paper/`. The main
 branch carries a self-contained LaTeX mirror. The historical `paper/main.pdf`,
@@ -23,7 +24,7 @@ From the prepared research checkout:
 ```bash
 cd /workspace/cce-research
 PYTHON=/workspace/cce-research-env/bin/python \
-  TMLR_OUT=/workspace/cce-build/tmlr-visual-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-readable-release \
   bash submissions/tmlr_2026/build.sh
 ```
 
@@ -41,19 +42,19 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/workspace/cce-build/tmlr-visual-release`.
-The PDF has **40 pages**, in anonymous official TMLR style. The new explanatory
-figures appear on pages 2, 7, 15 and 16; references begin on page 20.
+Final build directory: `/workspace/cce-build/tmlr-readable-release`.
+The PDF has **46 pages**, in anonymous official TMLR style. The four explanatory
+figures appear on pages 3, 9, 19 and 20; references begin on page 25.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 660,312 | — | — |
-| `source.zip` | 3,386,125 | 101 | 3,372,753 |
-| `supplement.zip` | 93,770,633 | 178 | 93,737,907 |
-| `release_manifest.json` | 113,264 | — | — |
+| `main.pdf` | 685,695 | — | — |
+| `source.zip` | 3,407,211 | 101 | 3,393,839 |
+| `supplement.zip` | 93,803,092 | 178 | 93,770,366 |
+| `release_manifest.json` | 113,266 | — | — |
 
 The supplement occupies 93.8% of the 100,000,000-byte limit, leaving
-6,229,367 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+6,196,908 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
 (`ZIP_STORED`) entries. No unpinned compressor determines their bytes.
 The size gate remains enforced.
 
@@ -64,9 +65,9 @@ also records 240 protected external TeX inputs by distribution variable
 and content hash under `external_tex_inputs`. Those distribution files are
 recorded, not redistributed.
 
-- `main.pdf`: `c50a5bfbd19b2cbe63766c1c07e70fa2f087f8a21bcf118d793bb63d3485b659`.
-- `source.zip`: `9fe9eb68c01829c7c34210282df70293afaf9a983f40ad15b99139d8eed5e935`.
-- `supplement.zip`: `a2c63ce2bbacb5b52d17dc7f7339200a4cf47163aa1c2c4a23c17cc9cb45f95a`.
+- `main.pdf`: `93538407dc6203a490d08b6f2b2d702635de491822d403ea7a951e49e1234331`.
+- `source.zip`: `d884ec8b852490a3999162389cc1cd1897ddfe7f29f6249cb9ff60ee884bef19`.
+- `supplement.zip`: `18ac06949e9b9a8f2c0830f4df130bcbba4846db39776a21c155f4d228fdfa53`.
 
 ## Dependencies and trust
 
@@ -110,7 +111,7 @@ identity.
 /workspace/cce-research-env/bin/python tools/make_transport_explanatory_figures.py --check
 /workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/workspace/cce-build/tmlr-visual-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-readable-release \
   /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
 ```
 

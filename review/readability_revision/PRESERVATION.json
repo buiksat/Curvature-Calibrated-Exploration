@@ -1,0 +1,118 @@
+{
+  "baseline_commit": "650c072548f950c5b13bf58146c983a8ef88eadd",
+  "protected_file_count": 240,
+  "protected_file_changes": [],
+  "files": {
+    "paper/transport_theory.tex": {
+      "formal_results": {
+        "before": 21,
+        "after": 21,
+        "removed": [],
+        "added": []
+      },
+      "display_math": {
+        "before": 59,
+        "after": 60,
+        "removed": [],
+        "added": [
+          {
+            "kind": "display-bracket",
+            "text": "\\[ U_t(a)=m_t(a)+\\beta_t e^{\\bar D_t/2}s_t(a)+b_t(a). \\]",
+            "count": 1
+          }
+        ]
+      },
+      "labels": {
+        "removed": {},
+        "added": {}
+      },
+      "citations": {
+        "removed": {},
+        "added": {}
+      },
+      "inputs": {
+        "removed": {},
+        "added": {}
+      }
+    },
+    "paper/transport_proofs.tex": {
+      "formal_results": {
+        "before": 18,
+        "after": 18,
+        "removed": [],
+        "added": []
+      },
+      "display_math": {
+        "before": 44,
+        "after": 44,
+        "removed": [],
+        "added": []
+      },
+      "labels": {
+        "removed": {},
+        "added": {}
+      },
+      "citations": {
+        "removed": {},
+        "added": {}
+      },
+      "inputs": {
+        "removed": {},
+        "added": {}
+      }
+    },
+    "paper/transport_followup.tex": {
+      "formal_results": {
+        "before": 0,
+        "after": 0,
+        "removed": [],
+        "added": []
+      },
+      "display_math": {
+        "before": 0,
+        "after": 0,
+        "removed": [],
+        "added": []
+      },
+      "labels": {
+        "removed": {},
+        "added": {}
+      },
+      "citations": {
+        "removed": {},
+        "added": {}
+      },
+      "inputs": {
+        "removed": {},
+        "added": {}
+      }
+    },
+    "paper/transport_followup_appendix.tex": {
+      "formal_results": {
+        "before": 0,
+        "after": 0,
+        "removed": [],
+        "added": []
+      },
+      "display_math": {
+        "before": 1,
+        "after": 1,
+        "removed": [],
+        "added": []
+      },
+      "labels": {
+        "removed": {},
+        "added": {}
+      },
+      "citations": {
+        "removed": {},
+        "added": {}
+      },
+      "inputs": {
+        "removed": {},
+        "added": {}
+      }
+    }
+  },
+  "both_entrypoint_abstracts_identical": true
+}

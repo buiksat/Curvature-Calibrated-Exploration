@@ -4,12 +4,11 @@ This record covers the research revisions through 2026-10-14
 (America/Los_Angeles). `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current visual-revision result (2026-10-14):** the 40-page strict release,
-extracted supplement verification and independent byte-identical clean source
-rebuilds pass. The final full repository run reports **713 passed, 3 skipped,
-zero failed** in 336.30 seconds. The visual-revision section below records
-commands, artifacts, diagnostics and repairs. Compact evidence verification
-remains separate from raw-trajectory replay.
+**Current readability-revision status (2026-10-14):** both rewritten manuscript
+builds have 46 pages, and each source archive reproduces its PDF exactly.
+Preservation, focused validation and fresh extracted-supplement checks pass.
+The final full-suite run reports **713 passed, three skipped, zero failed**
+in 368.95 seconds. Compact evidence verification remains separate from raw replay.
 
 | Collection scope | Current collected cases |
 | --- | --- |
@@ -577,3 +576,140 @@ configuration, evidence and historical-PDF files unchanged, all 46 active shared
 scientific/figure files synchronized with main, and final release sizes,
 hashes and contents equal to the records. The source PDF builds precede only
 internal documentation updates; those files are outside the compiler closure.
+
+## Readability rewrite (2026-10-14)
+
+The author's request and Fable's preceding advice prompted a substantial prose
+rewrite. The abstract and introduction start with the decision problem and a
+concrete illustrative example. The theory explains the exact-matrix case before
+the general protocol and adds interpretation around its formal results. The
+empirical section answers questions about policies, regret, useful bounds and
+recorded checks. Related work is organized by uncertainty construction. The
+precise technical communication skill guided the rewrite; the original
+conditions, uncertainty statements and evidence limitations remain.
+
+### Preservation and focused checks
+
+An independent comparison against research commit
+`650c072548f950c5b13bf58146c983a8ef88eadd` confirms that all 240 protected evidence,
+configuration, experiment, generator, figure, table and historical-PDF files
+retain their original bytes. All 21 formal theory statements, 59 existing
+theory displays, 18 proof blocks and 44 proof displays are retained. The sole
+added display introduces an exact-matrix/exact-width specialization of the
+existing score. Empirical numeric and mathematical-expression inventories,
+labels, citations and input paths remain unchanged. The final comparison-table
+caption clarifies the separate metric-transport factor; its wording is therefore
+deliberately not claimed byte-identical. The independent preservation report
+and scientific-source hashes are tracked in `review/readability_revision/`.
+
+All 212 numerical-ledger entries retain their scientific literals, source
+selectors, units, aggregations and populations. Its 175 phrase/count contracts
+and 123 classified literal keys are unchanged. Reviewed source-context pins
+were refreshed for the rewritten prose. The introductory theory explanation
+adds one occurrence of mathematical constant one and four of two. No evidence
+hash, numerical computation, closure admission or unledgered-number guard was
+weakened. The repository ledger reports **579 PASS, four NOT_EXECUTED, zero
+FAIL**; focused numerical mutation tests report **47 passed, 505 deselected**
+in 16.70 seconds.
+
+The detached verifier's wording guards were translated to the rewritten prose
+while preserving the scientific requirements. Its first test run reported
+**66 passed and one failed**: the rewritten abstract's line wrapping split an
+existing mutation anchor. Updating the anchor to the same explicit vacuity
+predicate repaired that test; the complete reference-policy context remains
+required. The final module reports **67 passed** in 34.18 seconds. No test cases
+were added or removed. The complete detached evidence verifier reports
+**123 direct PASS, 39 recomputed PASS, two STRUCTURAL_PASS, two KNOWN_DIVERGENCE,
+four NOT_EXECUTED and zero FAIL**, plus one semantically identical but
+byte-different rebuild classification. Focused logs are under
+`/workspace/cce-build/readability-*`; the ledger and detached reports are under
+`/workspace/cce-reviews/`.
+
+### Rendered paper and clean builds
+
+Both final builds have **46 pages** in the unmodified official TMLR style at
+10pt. The figures appear on pages **3, 9, 19 and 20**, and references start on
+page **25**. The additional space is used for explanations. The abstract,
+introduction, interface diagram and exact-case guide on pages 1–4 were checked
+in rendered form. An independent reader also checked the main prose for
+comprehension and scientific scope. Its final clarifications corrected an
+experiment pointer, made the operator-comparison caption self-contained and
+removed a vague reference to a previous result before the source freeze.
+Final independent visual inspection covered pages **1–4, 7–9 and 17–20**.
+The theorem interpretation, operator-only table qualification and all four
+figures are legible, with no clipping or overlap.
+
+The main mirror build is `/workspace/cce-build/tmlr-readable-main`. Its PDF is
+685,705 bytes with SHA-256
+`a4f982c9569cf7f453b5346715f407149e1308b6f27830100abc6b38931cac2c`.
+Its 188,508-byte source ZIP has 49 members and 667,276 unpacked bytes, with SHA-256
+`aa649bde2c604a27230d73e117e4f99973a928ee3ea68b93548dc6097681b959`.
+An independent extraction rebuilt the PDF byte for byte. The recorder contains
+44 archived project inputs, three regenerated inputs and 291 environment inputs;
+there are no original-checkout or prior-build dependencies. All four official
+style/licence pins pass. The report is
+`/workspace/cce-build/tmlr-readable-main-clean/verification.json`.
+
+The strict research release is `/workspace/cce-build/tmlr-readable-release`.
+Its matched PDF, source and supplement sizes and hashes are in `README.md`
+and the internal tracked `release_manifest.json`. An independent fresh
+extraction of the 101-member source ZIP rebuilt the 685,695-byte PDF exactly.
+All 93 project records match the compiled closure: 92 archived inputs and
+regenerated `main.bbl`. All 240 protected external records match the release
+manifest. All four official and 54 vendored file pins pass, with no original
+checkout, release-staging, prior-build or user-environment inputs. The report is
+`/workspace/cce-build/tmlr-readable-strict-clean/verification.json`.
+
+Both PDFs have empty identifying metadata and no unresolved references or
+citations, missing characters or overfull boxes. Both logs retain four underfull
+horizontal-box and three underfull vertical-box notices. The main build has no
+compiler warnings; the strict build retains its existing generic package-hook
+deprecation warning. The final supplement is 93,803,092 bytes with 178 members
+and 93,770,366 unpacked bytes, below the decimal 100 MB limit by 6,196,908 bytes.
+Layout, identity, archive-member, size and exact-digest gates pass.
+
+### Fresh extracted supplement
+
+The final supplement's advertised `verify.sh` passed from a fresh extraction in
+**14.63 seconds** using locked Python 3.12.14, NumPy 2.2.3 and SciPy 1.15.2 with
+the inherited repository import path removed. All eight steps exited zero:
+**24/24 required contract checks**, **588 PASS, 37 PASS_ANON, three NOT_EXECUTED,
+zero FAIL** in the authoritative ledger, exact regeneration of all 21 original
+artifacts and both sets of six follow-up/chart artifacts, 24 terminal intervals
+recomputed from 600 summaries, coverage of 42 sidecarred and 37 code-pinned
+evidence files, and **23 shipped tests passed**. The locked pytest emits its
+existing Python AST deprecation warnings on this interpreter. The log is
+`/workspace/cce-build/tmlr-readable-reviewer-verify.log`.
+
+The nonexecuted checks still concern raw/upstream replay and historical missing
+raw/per-seed inputs. Compact terminal-interval checks do not certify roundwise
+raw replay. No new experiment, Fable API review or TMLR submission occurred.
+
+### Final repository regression
+
+The final complete run on the frozen scientific sources and verification code
+used:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  TMLR_OUT=/workspace/cce-build/tmlr-readable-release \
+  /workspace/cce-research-env/bin/python -m pytest -q -ra tests experiments/tests
+```
+
+Result: **713 passed, three skipped, zero failed, two warnings**, in
+**368.95 seconds**. The log is
+`/workspace/cce-build/tmlr-readable-final-tests.log`. The skips concern the host
+reporting no user `TEXMFVAR`, its `TEXMFSYSVAR` not being a symlink, and a legacy
+clean-bibliography test looking for a rebuild at an old workstation path.
+The actual final clean source rebuilds and bibliography were verified separately
+as recorded above. Both warnings arise from deliberate duplicate-ZIP-member
+mutation tests; those tests passed. Only internal documentation was edited
+after this run; the frozen scientific sources, verification code and final
+release artifacts remain unchanged.
+
+A final independent scope audit compared all 240 protected files, totaling
+103,540,985 bytes, against the baseline commit and found no changes. All 46
+active shared scientific files match the main branch; all three abstracts and
+the frozen scientific-source hashes agree. Actual PDF/ZIP bytes match the
+documentation, tracked manifest and clean-rebuild reports. The audit is
+`/workspace/cce-build/readability-independent-scope.json`.

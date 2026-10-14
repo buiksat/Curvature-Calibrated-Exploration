@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "650c072548f950c5b13bf58146c983a8ef88eadd",
+  "scientific_source_sha256": {
+    "paper/body_intro.tex": "693ae657075460487cdb7178d1396523400d217e6f32c21ed88f3822c5990f18",
+    "paper/body_conclusion.tex": "7d65fa1f99a12441ae19178565bea1bebedbeafc3edeeef9555899cb3d415b1b",
+    "paper/body_related.tex": "3a39b47ae1435cc4d97f988ebef20bf1f9a421f2fb98df3030e65bab3226c117",
+    "paper/transport_theory.tex": "6e9ba5ee8cd36acc893111bb474efc7f38066208aedd52cf00209dc6c1c37f63",
+    "paper/transport_followup.tex": "4b3b102aae878ff6d0ffc5274f01394d50e01b97ffe8ad99d2bb24d7b16dcb05",
+    "paper/transport_followup_appendix.tex": "335dd0bc4e3988b80a03ce5e58df42c3fcbeb618837b7781833c0bd90cc509e6",
+    "paper/main.tex": "d83826192070342e89fd555444b8700c4f38e129f916fe2cca430b5f468c6556",
+    "submissions/tmlr_2026/main.tex": "e1551b6012d7d4d7b7766dd97e98c6ccac36c9d63c1b310303f57fcb3eea0b16"
+  }
+}
