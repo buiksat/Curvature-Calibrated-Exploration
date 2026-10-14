@@ -1,0 +1,51 @@
+{
+  "created_at": "2026-10-14T17:27:11.057409+00:00",
+  "refs": {
+    "manuscript": {
+      "ref": "fb95a696863326345be0823de399937fcbdb8af8",
+      "sha": "fb95a696863326345be0823de399937fcbdb8af8"
+    },
+    "implementation": {
+      "ref": "5f00be1b537eef476150c3115822f00cd95461ae",
+      "sha": "5f00be1b537eef476150c3115822f00cd95461ae"
+    }
+  },
+  "requested_model": "claude-fable-5",
+  "model": "claude-fable-5",
+  "status": "complete",
+  "access_verified": true,
+  "prompt_sha256": "dd712f2186c9994b13bb020a9672f178827893cbb030acc4e6de3a08f0243aef",
+  "limits": {
+    "max_turns": 24,
+    "max_tokens_per_response": 32000,
+    "max_tool_calls": 128,
+    "max_tool_bytes": 2097152
+  },
+  "purpose": "Independent scientific review of revised paper, proofs, full study and relative-certificate audit",
+  "usage": {
+    "input_tokens": 1266945,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 21269
+  },
+  "turns": 18,
+  "tool_bytes": 229065,
+  "evidence_refs": [
+    "manuscript",
+    "implementation"
+  ],
+  "returned_models": [
+    "claude-fable-5"
+  ],
+  "final_stop_reason": "end_turn",
+  "tool_call_count": 37,
+  "review_sha256": "02739dcc6fd96a2ff7955944f2e3e29ad7a639801fc52cb468549a5785407263",
+  "review_bytes": 26551,
+  "qualification": "Complete API response with read-only text-source inspection; not execution, PDF visual review, full literature verification, or independent raw-data replay.",
+  "verbatim_review_sha256": "2e3f64e8b68d54a7a0bebe59a82acda41ed653c70691fa198ea19f0c81b4cdb9",
+  "verbatim_review_bytes": 26554,
+  "display_normalization": "Compared with the API text, review.md removes four trailing spaces and adds a terminal newline; the exact complete response text is retained in verbatim_review.json.",
+  "runner_sha256": "ad299a30d1c9906b9ed0415736eefc2b36fe1dd631fae61a7258a8a4baa9d9d3",
+  "runner_saved_review_sha256": "5b7efff36c0e93a42275f92404039f6e52e8180f781529c9fb7ed0d9da97db75",
+  "runner_saved_review_bytes": 26555
+}
