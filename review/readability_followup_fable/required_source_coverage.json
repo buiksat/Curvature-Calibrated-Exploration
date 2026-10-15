@@ -1,0 +1,68 @@
+{
+  "submissions/tmlr_2026/main.tex": {
+    "total_lines": 132,
+    "lines_read": 132,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/body_intro.tex": {
+    "total_lines": 167,
+    "lines_read": 167,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/body_related.tex": {
+    "total_lines": 153,
+    "lines_read": 153,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/body_conclusion.tex": {
+    "total_lines": 65,
+    "lines_read": 65,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/transport_theory.tex": {
+    "total_lines": 1180,
+    "lines_read": 1180,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/transport_followup.tex": {
+    "total_lines": 230,
+    "lines_read": 230,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/transport_followup_appendix.tex": {
+    "total_lines": 254,
+    "lines_read": 254,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex": {
+    "total_lines": 52,
+    "lines_read": 52,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/figures/transport_conceptual_geometry.tex": {
+    "total_lines": 84,
+    "lines_read": 84,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/figures/transport_explanatory_outcomes.tex": {
+    "total_lines": 92,
+    "lines_read": 92,
+    "complete": true,
+    "missing_lines": []
+  },
+  "submissions/tmlr_2026/figures/transport_explanatory_bounds.tex": {
+    "total_lines": 37,
+    "lines_read": 37,
+    "complete": true,
+    "missing_lines": []
+  }
+}

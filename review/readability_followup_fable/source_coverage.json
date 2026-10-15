@@ -1,0 +1,276 @@
+[
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/main.tex"
+    },
+    "response_utf8_sha256": "900c4872c5e5f2b61abbd03398bf1838fc6bd929a3528c51ae5c9998971d382d",
+    "response_bytes": 6635,
+    "source_git_blob": "34f245b66fb80e468782b05274460d1e2789d345",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/body_intro.tex"
+    },
+    "response_utf8_sha256": "4182a49adf956f9b6add2322dd53936bc6cb6dfe000de9ee1b8495822d65d98e",
+    "response_bytes": 11267,
+    "source_git_blob": "c0d77bbc319feb77178afdad91012fd481cb05d0",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/body_related.tex"
+    },
+    "response_utf8_sha256": "5df2eca44542ce9ecf3bf7c55705909bb6f27a6358c6cea2097cb81da7d84fe1",
+    "response_bytes": 10710,
+    "source_git_blob": "b87d4bd3fe4d7a6a709fc30bc87817eeb74b00d7",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/body_conclusion.tex"
+    },
+    "response_utf8_sha256": "d754288632111114dfb54d063eac02fb0dea5ab9b390c57e058bfe245186a9fa",
+    "response_bytes": 4250,
+    "source_git_blob": "8398de1863539c90f7bbb84757bf91308dd2cdbe",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_theory.tex",
+      "start_line": 1,
+      "max_lines": 400
+    },
+    "response_utf8_sha256": "833ce37debfb9d6188e5735ece2076c97c48c9f5b39cdbd414051aed5305743e",
+    "response_bytes": 23239,
+    "source_git_blob": "87705b6550ab916312de9de4c19f4b4d5a5db119",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_theory.tex",
+      "start_line": 401,
+      "max_lines": 400
+    },
+    "response_utf8_sha256": "a796915acad335604e1e795f4a8325a24d97c3749c1f621a2b1107f8dc12c183",
+    "response_bytes": 22364,
+    "source_git_blob": "87705b6550ab916312de9de4c19f4b4d5a5db119",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_theory.tex",
+      "start_line": 801,
+      "max_lines": 400
+    },
+    "response_utf8_sha256": "78e1817c70536c58d759c5279aee432d5b694e08f36248f3ed8965b9fb03e851",
+    "response_bytes": 21031,
+    "source_git_blob": "87705b6550ab916312de9de4c19f4b4d5a5db119",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_followup.tex"
+    },
+    "response_utf8_sha256": "65fd57a607ae6448a7af5559a6c1f0c5dead10c3f9893445ca465fc008aab476",
+    "response_bytes": 13509,
+    "source_git_blob": "e436e40cea5c731ead53225af35dec55dfda6087",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_followup_appendix.tex"
+    },
+    "response_utf8_sha256": "4d3a5c89259168d1da37f3de67de5ed8d8025dfb9b76ed0de219e80bc8de922a",
+    "response_bytes": 12555,
+    "source_git_blob": "ca6b91b556d86559f5d090f360d271b48196f95d",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_followup.tex",
+      "start_line": 201
+    },
+    "response_utf8_sha256": "6556b9b3d25650120a6b7dcfe39ac83b9c21c17c7505549bf886ed73c9e5307a",
+    "response_bytes": 2156,
+    "source_git_blob": "e436e40cea5c731ead53225af35dec55dfda6087",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/transport_followup_appendix.tex",
+      "start_line": 201
+    },
+    "response_utf8_sha256": "5f5ef31f8da78241f0236b434c47f33f9ac9da18e3c821446e7ec6d0c3ae74ab",
+    "response_bytes": 3611,
+    "source_git_blob": "ca6b91b556d86559f5d090f360d271b48196f95d",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex"
+    },
+    "response_utf8_sha256": "db8b91206d12929b531ed9b2a3ed0a7f8251b204a614c2f1d1690f1b7463d61f",
+    "response_bytes": 3161,
+    "source_git_blob": "3e92e88d0cfdc87c72c43eb2eacdf7f122e11a6a",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/figures/transport_conceptual_geometry.tex"
+    },
+    "response_utf8_sha256": "d004eb07947c8fc71a349767213ac2cd200eb9666505fc71b89c7731dc158edc",
+    "response_bytes": 4773,
+    "source_git_blob": "41626f0689ee3475df3acf583a5505d1587db56f",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.tex"
+    },
+    "response_utf8_sha256": "a0b83e697e02aa76bf8aad9ad37d4076e9755d8dcbf99013ed246ee8d1b1b819",
+    "response_bytes": 9328,
+    "source_git_blob": "5339a15bfe4fc6bc5252bb06a0b03bd5ab1116f5",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "manuscript",
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_bounds.tex"
+    },
+    "response_utf8_sha256": "7384081f5c9f72fd1d22d84e2f93d014e8c9f43a0eb7182665f7c8c43ca37fe4",
+    "response_bytes": 2662,
+    "source_git_blob": "173bced6e18b21786738feececd9d5fac3400223",
+    "source_commit": "dd0263f37560df411a077be9267f5fb931c280c6"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/transport_proofs.tex",
+      "start_line": 1,
+      "max_lines": 300
+    },
+    "response_utf8_sha256": "1b375cd77a5bca89c975b412ca823c6823c2f53a22db529c7f812f43b6833cb1",
+    "response_bytes": 14302,
+    "source_git_blob": "e253276c6cbeb417c138354697c469534e1d4e23",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/transport_proofs.tex",
+      "start_line": 301
+    },
+    "response_utf8_sha256": "93a3cb777fc55513f84e8033ad58a78435a625bb847527f4a091d608d78c7cdf",
+    "response_bytes": 9795,
+    "source_git_blob": "e253276c6cbeb417c138354697c469534e1d4e23",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "list_files",
+    "arguments": {
+      "ref": "implementation",
+      "prefix": "paper/tables/"
+    },
+    "response_utf8_sha256": "71a2a7d74d078417b92986d70c934a98b6f3eef02da8b7eb306d0865aa6a289e",
+    "response_bytes": 2179
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/transport_proofs.tex",
+      "start_line": 501
+    },
+    "response_utf8_sha256": "7d78870d39982bb24d70362e6f49d27d15236077170b58d50456943157f8c0b3",
+    "response_bytes": 4578,
+    "source_git_blob": "e253276c6cbeb417c138354697c469534e1d4e23",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/tables/transport_followup_outcomes.tex"
+    },
+    "response_utf8_sha256": "2f63199a7b156850f45fcd5a637e709d247770a4e0a586b19b32b03741af69e8",
+    "response_bytes": 2538,
+    "source_git_blob": "59d56aca58c0e0968faf7bcc96dd9ff9f9ffd35f",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/tables/transport_followup_drift_bounds.tex"
+    },
+    "response_utf8_sha256": "988a22bd40b9ac0a75af399bdc7b34e852ecfd07dde1cedaf7ec882eef23b017",
+    "response_bytes": 2153,
+    "source_git_blob": "e9cbcfffc53d794b67ecb6fe2845faf7b646c3d1",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/figures/transport_explanatory_bounds.csv"
+    },
+    "response_utf8_sha256": "d55c6227f85f1aaad009c2184ea3b87106cc4a0b34bfe29df3dc6a16051b217f",
+    "response_bytes": 959,
+    "source_git_blob": "85f0b7dcdf3500887e8771b9c7d8cdefd26a6a6e",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/readability_assessment_fable/CHECKED_ADVICE.md"
+    },
+    "response_utf8_sha256": "88943bdc72f8c426de3aaefaf35366ab9662725c8a8f14a561e9cf5b6e327295",
+    "response_bytes": 9825,
+    "source_git_blob": "bbbce0ad6db9b3f097d5284a205f484c088f8399",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "review/readability_followup/IMPLEMENTATION_REPORT.md"
+    },
+    "response_utf8_sha256": "0a8ad8c918737c373a9f8055ab6890ea1933d5920b16d4f8c80b101e1cc22099",
+    "response_bytes": 4935,
+    "source_git_blob": "7e3cd6d7fe1a4669187a2f2e31d52d914ab6d7ab",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  }
+]

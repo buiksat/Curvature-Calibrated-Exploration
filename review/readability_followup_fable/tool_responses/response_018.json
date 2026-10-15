@@ -1,0 +1,121 @@
+{
+  "request": {
+    "name": "list_files",
+    "arguments": {
+      "ref": "implementation",
+      "prefix": "paper/tables/"
+    },
+    "response_utf8_sha256": "71a2a7d74d078417b92986d70c934a98b6f3eef02da8b7eb306d0865aa6a289e",
+    "response_bytes": 2179
+  },
+  "result": {
+    "total": 26,
+    "files": [
+      {
+        "path": "paper/tables/autodiff_ggn_summary.tex",
+        "bytes": 892
+      },
+      {
+        "path": "paper/tables/autodiff_ggn_summary.tex.provenance.json",
+        "bytes": 700
+      },
+      {
+        "path": "paper/tables/autodiff_ggn_summary.tex.provenance.json.sha256",
+        "bytes": 107
+      },
+      {
+        "path": "paper/tables/autodiff_ggn_summary.tex.sha256",
+        "bytes": 91
+      },
+      {
+        "path": "paper/tables/growing_window_pareto.tex",
+        "bytes": 363
+      },
+      {
+        "path": "paper/tables/growing_window_pareto.tex.sha256",
+        "bytes": 92
+      },
+      {
+        "path": "paper/tables/linear_bound_ratios.tex",
+        "bytes": 455
+      },
+      {
+        "path": "paper/tables/linear_bound_ratios.tex.provenance.json",
+        "bytes": 432
+      },
+      {
+        "path": "paper/tables/transport_followup_drift_bounds.tex",
+        "bytes": 1884
+      },
+      {
+        "path": "paper/tables/transport_followup_mechanism_variation.tex",
+        "bytes": 2402
+      },
+      {
+        "path": "paper/tables/transport_followup_outcomes.tex",
+        "bytes": 2219
+      },
+      {
+        "path": "paper/tables/transport_followup_provenance.json",
+        "bytes": 2612
+      },
+      {
+        "path": "paper/tables/transport_followup_relative_audit.tex",
+        "bytes": 2035
+      },
+      {
+        "path": "paper/tables/transport_followup_same_history.tex",
+        "bytes": 2471
+      },
+      {
+        "path": "paper/tables/transport_instantiation_performance.tex",
+        "bytes": 2269
+      },
+      {
+        "path": "paper/tables/transport_instantiation_performance.tex.provenance.json",
+        "bytes": 644
+      },
+      {
+        "path": "paper/tables/transport_instantiation_performance.tex.provenance.json.sha256",
+        "bytes": 122
+      },
+      {
+        "path": "paper/tables/transport_instantiation_performance.tex.sha256",
+        "bytes": 106
+      },
+      {
+        "path": "paper/tables/transport_instantiation_tightness.tex",
+        "bytes": 1761
+      },
+      {
+        "path": "paper/tables/transport_instantiation_tightness.tex.provenance.json",
+        "bytes": 642
+      },
+      {
+        "path": "paper/tables/transport_instantiation_tightness.tex.provenance.json.sha256",
+        "bytes": 120
+      },
+      {
+        "path": "paper/tables/transport_instantiation_tightness.tex.sha256",
+        "bytes": 104
+      },
+      {
+        "path": "paper/tables/transport_instantiation_validity.tex",
+        "bytes": 1765
+      },
+      {
+        "path": "paper/tables/transport_instantiation_validity.tex.provenance.json",
+        "bytes": 641
+      },
+      {
+        "path": "paper/tables/transport_instantiation_validity.tex.provenance.json.sha256",
+        "bytes": 119
+      },
+      {
+        "path": "paper/tables/transport_instantiation_validity.tex.sha256",
+        "bytes": 103
+      }
+    ],
+    "next_offset": null
+  }
+}

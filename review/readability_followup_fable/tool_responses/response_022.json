@@ -1,0 +1,21 @@
+{
+  "request": {
+    "name": "read_file",
+    "arguments": {
+      "ref": "implementation",
+      "path": "paper/figures/transport_explanatory_bounds.csv"
+    },
+    "response_utf8_sha256": "d55c6227f85f1aaad009c2184ea3b87106cc4a0b34bfe29df3dc6a16051b217f",
+    "response_bytes": 959,
+    "source_git_blob": "85f0b7dcdf3500887e8771b9c7d8cdefd26a6a6e",
+    "source_commit": "8c056e27e631232d0a3f1ad1935ec43c4dc37078"
+  },
+  "result": {
+    "path": "paper/figures/transport_explanatory_bounds.csv",
+    "total_lines": 7,
+    "text": "1: W,target_D,horizon,method,n,mean_terminal_rhs,deterministic_cap,mean_rhs_over_cap,log10_mean_rhs_over_cap\n2: 16.0,97.32420048477151,1000,transport_hessian,50,6513384452650.326,2000.0,3256692226.325163,9.512776717507325\n3: 16.0,97.32420048477151,1000,frozen_reference,50,37638.62973021188,2000.0,18.819314865105937,1.274603808479119\n4: 1.0,389.29680193908604,1000,transport_hessian,50,3.0744081008122744e+40,2000.0,1.5372040504061371e+37,37.18673152012403\n5: 1.0,389.29680193908604,1000,frozen_reference,50,120544.15207463411,2000.0,60.272076037317056,1.7801161507515202\n6: 0.25,778.5936038781721,1000,transport_hessian,50,8.122810030933952e+83,1000.0,8.122810030933952e+80,80.90970629645953\n7: 0.25,778.5936038781721,1000,frozen_reference,50,230842.31323210936,1000.0,230.84231323210935,2.363315417650604",
+    "truncated_line": false,
+    "next_line": null,
+    "hint": null
+  }
+}
