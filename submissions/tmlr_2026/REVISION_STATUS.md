@@ -1,102 +1,94 @@
-# Revision status: checked Fable readability fixes
+# Revision status: local fixes after Fable follow-up
 
-Updated 2026-10-14. The manuscript now applies the checked advice from the fresh
-Fable readability review. It has **47 pages**, with scientific sources
-synchronized with `paper/` on `cce-review-revisions`. No TMLR submission has been
-made.
+Updated 2026-10-15 (UTC). The checked local recommendations are applied to the
+**47-page** manuscript, with scientific sources synchronized with `paper/` on
+`cce-review-revisions`. No TMLR submission has been made.
 
 ## What changed
 
-A notation table collects the matrices, widths and score terms. A chronological
-guide precedes the formal protocol; finite-action readers can skim general
-selection details while retaining the timing and certificate assumptions. The
-abstract and policy descriptions explain their terms locally. The empirical
-section gives the existing mean bound magnitudes with explicit own-history
-populations. The outcomes chart labels its zero comparator “Hessian = 0.” The
-first render exposed a line crossing that label; the final annotation sits
-clear of the zero guide.
+The empirical section now identifies the Hessian certificate notation by a
+corollary reference, separates the strict seed threshold from the non-strict
+round threshold, and improves the development/tuning sentence. The central
+score display ends with a period; the applied-matrix definition no longer has
+an unused equation number. LaTeX regenerates subsequent numbers and references.
 
-Existing formal statements, proof blocks, displayed theory equations, scientific
-data and plotted outcomes are preserved. The added numbers describe means,
-not individual-trajectory ratios. Comparisons between policies with different
-histories are not treated as a decomposition of transport's effect. The
-near-linear corollary remains a statement about an asymptotic scaling family.
+Formal mathematical expressions, theorem conditions, proofs, scientific data,
+figures and experimental outcomes are preserved. The two theory edits affect
+punctuation and equation numbering only. The abstract is unchanged because the
+review did not give a concrete improvement to its sentence structure. No new
+experiment or Fable API request was run for this implementation.
 
 The research branch records the
-[implementation](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/readability_followup/IMPLEMENTATION_REPORT.md),
-[checked advice](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/readability_assessment_fable/CHECKED_ADVICE.md)
+[implementation](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/readability_polish/IMPLEMENTATION_REPORT.md),
+[checked advice](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/readability_followup_fable/CHECKED_ADVICE.md)
 and [validation](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/submissions/tmlr_2026/REVISION_VALIDATION.md).
-No experiment or new Fable API request was run for this implementation. The
-prior review is advisory and is bound to its recorded earlier source snapshot.
+The earlier Fable verdict remains advisory and bound to the snapshot it read.
 
 ## Main-branch build
 
-The final build at `/workspace/cce-build/tmlr-clarity-final-main` uses the
-unmodified official TMLR style at 10pt. The notation table is on page 5, figures
-on pages 3, 10, 20 and 21, and references begin on page 26. Final visual checks
-cover the abstract, notation, protocol guide, bound-magnitude explanation and
-revised labels. The final label clears the guide; no clipping or data overlap
-was observed. The other figure pages are unchanged in rendering from the
-inspected candidate.
+The final build is `/workspace/cce-build/tmlr-polish-main`, using the unmodified
+official TMLR style at 10pt. The notation table is on page 5, figures on pages
+3, 10, 20 and 21, and references begin on page 26. Two rendered-page inspections
+cover the affected passages on pages 5, 7, 18 and 21. The certificate pointer,
+threshold conventions and regenerated references resolve clearly, with no
+clipping, overlap or visible reference issue.
 
-- `main.pdf`: 691,418 bytes; SHA-256
-  `7ee8ab1b323434333108c88382c0f457fc3ea59e5f3e768eab1df7227f50f2d5`.
-- `source.zip`: 190,109 bytes, 49 members,
-  672,685 unpacked bytes; SHA-256
-  `1d23ab13ec6105162e99ce0b74edb04280980ec4e8ff3c209945544af093e0ff`.
+- `main.pdf`: 691,558 bytes; SHA-256
+  `1085e8882544a31d6609d5ec2efed5ed82b49906ac8ee6874f0292991728f568`.
+- `source.zip`: 190,154 bytes, 49 members, 672,810 unpacked bytes; SHA-256
+  `c63227d2aafdfbfdff6fa464e453827e78883f16e0ebeee29e330e789b0c398c`.
 
-A fresh independent extraction rebuilt the PDF byte for byte. All four official
-style/licence pins pass. The recorder contains 44 archived project inputs,
-three regenerated inputs and 291 environment inputs, with no original-checkout
-or prior-build dependencies. Identifying PDF metadata is empty. There are no
-unresolved references/citations, missing characters, overfull boxes or compiler
-warnings; four underfull horizontal and two underfull vertical boxes remain.
-The report is `/workspace/cce-build/tmlr-clarity-final-main-clean/verification.json`.
+A fresh archive extraction reproduces the PDF byte for byte. All four official
+style/licence pins pass. The recorder has 44 archived project inputs, three
+regenerated inputs and 291 environment inputs, with no original-checkout or
+prior-build dependencies. Identifying PDF metadata is empty. There are no
+compiler warnings, unresolved references/citations, missing characters or
+overfull boxes; four underfull horizontal and three underfull vertical boxes
+remain. The report is
+`/workspace/cce-build/tmlr-polish-main-clean/verification.json`.
 The template's default review header is not a submission-status assertion.
 
-## Research release and regression
+## Research release and checks
 
-The matched final research release is at
-`/workspace/cce-build/tmlr-clarity-final-release`:
+The matched strict release is `/workspace/cce-build/tmlr-polish-release`:
 
-- `main.pdf`: 691,388 bytes;
-  `f3d809c81247961058fe498a25048365d3f3a3b53c3f677cbb283fafdf688a70`.
-- `source.zip`: 3,412,620 bytes, 101 members;
-  `1f07ef7dbdcac50b97a8783dc82653c40fc4ae2002e5a7af3fe780f1e3d20fda`.
-- `supplement.zip`: 93,812,058 bytes, 178 members;
-  `3635fd755e8a2af17c438ed0c702552cf26434d7ec6f59ca45658c8497850ea0`.
+- `main.pdf`: 691,514 bytes;
+  `56bb4aa967ddfc98643add811b70813626e5c79a40254ecb2a03aa7108b6124a`.
+- `source.zip`: 3,412,745 bytes, 101 members;
+  `890aafc6579081d4d750ca36bd54decfcbeadbfa5d17a885a59c681283cf17bf`.
+- `supplement.zip`: 93,812,230 bytes, 178 members;
+  `cfec83f2cb6e20f769a7123e71d1008d60d37286bd21f98e926b787ca83d77ac`.
 
-The strict release build passes its layout, identity, archive-member, size and
-digest checks. The actual compiled closure retains 93 project inputs and 240
-protected external inputs. The supplement is below the decimal 100 MB limit by
-6,187,942 bytes. The strict source includes the exact declared vendor files;
-its PDF bytes differ from the main mirror's because their dependency sets differ.
-Use each PDF with its matching source archive.
+The build passes its layout, identity, archive-member, size and digest gates.
+The supplement leaves 6,187,770 bytes below the decimal 100 MB limit. Independent
+strict source extraction reproduces its matched PDF byte for byte. All four
+official and 54 vendor pins pass; the recorder matches 93 project and 240
+protected external records, plus two generated auxiliaries. Metadata is empty;
+there are no checkout/user-environment dependencies, unresolved references,
+missing characters or overfull boxes. Four underfull horizontal and three
+underfull vertical boxes remain, with the existing deprecated fontspec-hook
+warning. Use each PDF with its matching source archive; their exact declared
+TeX dependency sets differ.
 
-An independent clean extraction reproduces the strict PDF byte for byte, with
-all four official and 54 vendor pins passing. Its recorder has exactly the
-93 project and 240 protected external inputs recorded in the manifest, plus two
-generated auxiliary inputs. There are no original-checkout or user-environment
-dependencies, identifying metadata, unresolved references, missing characters
-or overfull boxes. Four underfull horizontal and two underfull vertical boxes
-remain, along with the known deprecated `package/after/fontspec` hook warning.
+The affected existing checks pass: **50 numerical/package mutation tests** and
+**67 detached-evidence tests**. All 218 numerical-ledger entries, values and
+selectors are unchanged. No test files, cases or thresholds were changed, and
+no checks were weakened.
+Only reviewed source-context bindings and an equivalent manuscript-guard phrase
+were refreshed, with their dependent byte/hash records.
 
-Fresh extracted-supplement verification passes: **24/24 contract checks** and
-**23 shipped tests**, with all generated artifacts reproduced exactly and all
-24 terminal intervals recomputed from 600 summaries. Its numerical ledger
+Fresh extracted-supplement verification passes in 18.304 seconds: **24/24
+contract checks and 23 shipped tests**. All generated artifacts reproduce exactly,
+and all 24 terminal intervals are recomputed from 600 summaries. The ledger
 reports **600 PASS, 37 PASS_ANON, three NOT_EXECUTED, zero FAIL**. The unexecuted
 checks concern raw/upstream operations and original raw/bootstrap inputs;
 the shipped tests report 1,202 existing pytest AST deprecation warnings.
 
-The complete final regression reports **716 passed, three skipped, zero failed
-and two warnings** in **384.00 seconds**. The skips cover two host-specific TeX
-checks and a legacy clean-bibliography test using an old workstation path; both
-final source archives and bibliographies were independently rebuilt. The warnings
-come from deliberate duplicate-ZIP-member mutation tests, which pass. The log is
-`/workspace/cce-build/tmlr-clarity-final-tests.log`. Only internal documentation
-changed afterward. The final scope audit confirms that scientific source hashes,
-all active manuscript mirrors, historical evidence and protected files agree
-with the recorded preservation scope.
+The full 719-case suite was not rerun for these local prose, presentation and
+context-binding changes. Its preceding result of 716 passed and three skipped
+remains historical evidence for the earlier state, not a fresh pass. Current
+checks exercise the affected verifiers and final packages. Preservation checks
+confirm unchanged scientific results, evidence, old reviews and historical PDFs.
 
 ## Publication scope and remaining limits
 

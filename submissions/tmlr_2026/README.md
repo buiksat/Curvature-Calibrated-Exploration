@@ -21,7 +21,9 @@ organizes the results around reader questions. Existing mathematical results
 and experimental evidence are preserved. A follow-up applies the checked Fable
 readability advice: a notation table, a chronological protocol guide, simpler
 abstract and policy explanations, explicit mean bound magnitudes, and a clearer
-chart comparator label. The draft now has 47 pages.
+chart comparator label. A final local pass clarifies the empirical certificate
+notation and threshold conventions, fixes grammar and score punctuation, and
+removes an unused equation number. The draft has 47 pages.
 
 Four explanatory figures guide the reader through the argument:
 

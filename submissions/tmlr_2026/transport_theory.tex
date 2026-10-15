@@ -79,7 +79,7 @@ need not have a rank-one update:
  \bVbar_{t+1}&=\bVbar_t+\sigma^{-2}\bq_t(a_t)\bq_t(a_t)^\top,
  \label{eq:reference-update-new}\\
  \bV_t&=\text{the exact current relinearized metric},\nonumber\\
- \Calg_t&=\text{the algorithmic SPD metric}.
+ \Calg_t&=\text{the algorithmic SPD metric}.\nonumber
 \end{align}
 Here $\lambda>0$ is the ridge regularization and $\sigma>0$ sets the scale
 of the updates; it is the noise scale in the squared-loss specialization.
@@ -258,7 +258,7 @@ by the selector:
 \begin{equation}\label{eq:transported-score-new}
  U_t(a)=m_t(a)
  +\beta_t e^{\bar D_t/2}\sqrt{\kappa_{+,t}}\,\hat s_t(a)
- +b_t(a),
+ +b_t(a).
 \end{equation}
 Let a pre-reward oracle return a $\cHist_t$-measurable selector
 $a_t\in\cA_t$ satisfying
