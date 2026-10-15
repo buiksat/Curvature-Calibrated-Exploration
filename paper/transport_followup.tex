@@ -12,8 +12,9 @@ a simple deterministic cap.  The recorded confidence and optimism checks
 nevertheless pass.  The findings separate those numerical checks from the
 practical usefulness of the resulting scores and bounds.
 
-The prespecified follow-up evaluates 600 policy trajectories; a separate 294
-development and tuning trajectories precede evaluation.  We fix
+The prespecified follow-up evaluates 600 policy trajectories.
+A separate set of 294 development and tuning trajectories precedes evaluation.
+We fix
 $T=1000$ and $W\in\{16,1,0.25\}$, with 50 common evaluation seeds per condition
 and four policies.  The model parameter $W$ changes both the reward function
 and its curvature, so comparisons across conditions do not isolate an effect
@@ -31,7 +32,8 @@ alone do not establish a violation of a theorem assumption.
 All policies use the corrected center and confidence radius from
 \Cref{cor:corrected-center-new}.  They differ in how they turn a width into an
 exploration bonus.  \emph{Hessian} inflates the current width using the analytic
-path certificate $\bar D_t^Q$.  It uses a bound on how prediction gradients
+path certificate $\bar D_t^Q$, the Hessian bound $\bar D_t$ defined in
+\Cref{cor:hessian-path-new}.  It uses a bound on how prediction gradients
 vary to control an auxiliary path joining the reference and current matrices.
 This comparison path is not the optimizer's training path.  \emph{Endpoint}
 replaces that path certificate with the dense endpoint Thompson distance:
@@ -150,7 +152,8 @@ theorem's assumptions through rigorous numerical enclosures.
 
 There is measurable movement between the reference and current matrices.
 The Hessian policy reaches endpoint distances above one in 16 of 50 seeds at
-$W=0.25$, including 286 of 50,000 seed--round observations
+$W=0.25$.  In that condition, distances are at least one in
+286 of 50,000 seed--round observations
 (\Cref{tab:transport-followup-drift-bounds}).  These round counts describe
 dependent observations, not additional independent replications.  The target
 labels used to encode $W$ are not measured endpoint distances.

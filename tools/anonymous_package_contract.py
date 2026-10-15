@@ -600,8 +600,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                                        'role': 'manuscript-source',
                                        'ships_in': 'supplement'},
  'transport_followup.tex': {'repository': 'paper/transport_followup.tex',
-                            'sha256': '3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb',
-                            'bytes': 14019,
+                            'sha256': '5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113',
+                            'bytes': 14135,
                             'role': 'manuscript-source',
                             'ships_in': 'supplement'},
  'transport_followup_appendix.tex': {'repository': 'paper/transport_followup_appendix.tex',
@@ -615,8 +615,8 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'repository'
                           'role': 'manuscript-source',
                           'ships_in': 'supplement'},
  'transport_theory.tex': {'repository': 'paper/transport_theory.tex',
-                          'sha256': '8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74',
-                          'bytes': 57341,
+                          'sha256': 'b7bc4e63a40aa61d1a9eae3b93db914695ee6531e75169272d7a965b8d5c7d19',
+                          'bytes': 57350,
                           'role': 'manuscript-source',
                           'ships_in': 'supplement'}}
 
@@ -659,7 +659,7 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {
     "review/post_full_fable/independent/symmetric_scan.py":
         "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/numeric_context_pins.py":
-        '3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5',
+        'bf5ab83abed8d5941e6e27b92fc7239cf38b780207672a7672e053f0188be471',
 }
 
 #: Every field a declaration record must carry, and nothing else may be missing.

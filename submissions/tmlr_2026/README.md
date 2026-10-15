@@ -5,10 +5,13 @@
 The current revision applies the checked Fable readability advice: a notation
 table and chronological protocol guide, clearer abstract and policy descriptions,
 explicit own-history mean bound magnitudes, and an unambiguous chart comparator
-label. It builds on the earlier problem-first rewrite. Existing formal results,
-proofs and experimental evidence are preserved. See
-[the implementation record](../../review/readability_followup/IMPLEMENTATION_REPORT.md),
-[the checked Fable advice](../../review/readability_assessment_fable/CHECKED_ADVICE.md)
+label. A further local pass defines the empirical certificate notation by
+cross-reference, separates strict seed thresholds from non-strict round thresholds,
+and fixes grammar, score punctuation and an unused equation number. It builds on
+the earlier problem-first rewrite. Existing formal results, proofs and
+experimental evidence are preserved. See
+[the local-fix record](../../review/readability_polish/IMPLEMENTATION_REPORT.md),
+[the checked Fable advice](../../review/readability_followup_fable/CHECKED_ADVICE.md)
 and [the earlier readability rewrite](../../review/readability_revision/IMPLEMENTATION_REPORT.md).
 
 This entry point uses canonical scientific sources under `paper/`. The main
@@ -24,7 +27,7 @@ From the prepared research checkout:
 ```bash
 cd /workspace/cce-research
 PYTHON=/workspace/cce-research-env/bin/python \
-  TMLR_OUT=/workspace/cce-build/tmlr-clarity-final-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-polish-release \
   bash submissions/tmlr_2026/build.sh
 ```
 
@@ -42,20 +45,20 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/workspace/cce-build/tmlr-clarity-final-release`.
+Final build directory: `/workspace/cce-build/tmlr-polish-release`.
 The PDF has **47 pages**, in anonymous official TMLR style. The four explanatory
 figures appear on pages 3, 10, 20 and 21; references begin on page 26.
 The notation table is on page 5.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 691,388 | — | — |
-| `source.zip` | 3,412,620 | 101 | 3,399,248 |
-| `supplement.zip` | 93,812,058 | 178 | 93,779,332 |
+| `main.pdf` | 691,514 | — | — |
+| `source.zip` | 3,412,745 | 101 | 3,399,373 |
+| `supplement.zip` | 93,812,230 | 178 | 93,779,504 |
 | `release_manifest.json` | 113,268 | — | — |
 
 The supplement occupies 93.8% of the 100,000,000-byte limit, leaving
-6,187,942 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+6,187,770 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
 (`ZIP_STORED`) entries. No unpinned compressor determines their bytes.
 The size gate remains enforced.
 
@@ -66,9 +69,9 @@ also records 240 protected external TeX inputs by distribution variable
 and content hash under `external_tex_inputs`. Those distribution files are
 recorded, not redistributed.
 
-- `main.pdf`: `f3d809c81247961058fe498a25048365d3f3a3b53c3f677cbb283fafdf688a70`.
-- `source.zip`: `1f07ef7dbdcac50b97a8783dc82653c40fc4ae2002e5a7af3fe780f1e3d20fda`.
-- `supplement.zip`: `3635fd755e8a2af17c438ed0c702552cf26434d7ec6f59ca45658c8497850ea0`.
+- `main.pdf`: `56bb4aa967ddfc98643add811b70813626e5c79a40254ecb2a03aa7108b6124a`.
+- `source.zip`: `890aafc6579081d4d750ca36bd54decfcbeadbfa5d17a885a59c681283cf17bf`.
+- `supplement.zip`: `cfec83f2cb6e20f769a7123e71d1008d60d37286bd21f98e926b787ca83d77ac`.
 
 ## Dependencies and trust
 
@@ -112,7 +115,7 @@ identity.
 /workspace/cce-research-env/bin/python tools/make_transport_explanatory_figures.py --check
 /workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/workspace/cce-build/tmlr-clarity-final-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-polish-release \
   /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
 ```
 

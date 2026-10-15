@@ -204,16 +204,16 @@
   },
   "deliverables": {
     "main.pdf": {
-      "bytes": 691388,
-      "sha256": "f3d809c81247961058fe498a25048365d3f3a3b53c3f677cbb283fafdf688a70"
+      "bytes": 691514,
+      "sha256": "56bb4aa967ddfc98643add811b70813626e5c79a40254ecb2a03aa7108b6124a"
     },
     "source.zip": {
-      "bytes": 3412620,
-      "sha256": "1f07ef7dbdcac50b97a8783dc82653c40fc4ae2002e5a7af3fe780f1e3d20fda"
+      "bytes": 3412745,
+      "sha256": "890aafc6579081d4d750ca36bd54decfcbeadbfa5d17a885a59c681283cf17bf"
     },
     "supplement.zip": {
-      "bytes": 93812058,
-      "sha256": "3635fd755e8a2af17c438ed0c702552cf26434d7ec6f59ca45658c8497850ea0"
+      "bytes": 93812230,
+      "sha256": "cfec83f2cb6e20f769a7123e71d1008d60d37286bd21f98e926b787ca83d77ac"
     }
   },
   "external_tex_inputs": [
@@ -1666,7 +1666,7 @@
     "tools/followup_anonymous_contract.py": "c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd",
     "tools/make_transport_explanatory_figures.py": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150",
     "tools/make_transport_followup_paper.py": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
-    "tools/numeric_context_pins.py": "3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5",
+    "tools/numeric_context_pins.py": "bf5ab83abed8d5941e6e27b92fc7239cf38b780207672a7672e053f0188be471",
     "tools/verify_review_experiment_export.py": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
     "tools/verify_tmlr_submission_numbers.py": "b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43"
   },
@@ -2157,9 +2157,9 @@
       "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
     },
     {
-      "bytes": 14019,
+      "bytes": 14135,
       "path": "transport_followup.tex",
-      "sha256": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb"
+      "sha256": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
     },
     {
       "bytes": 14340,
@@ -2172,9 +2172,9 @@
       "sha256": "c0c25bda20826f710433a3c73f9c44688257ece63118d89b181ad3ebb0958095"
     },
     {
-      "bytes": 57341,
+      "bytes": 57350,
       "path": "transport_theory.tex",
-      "sha256": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74"
+      "sha256": "b7bc4e63a40aa61d1a9eae3b93db914695ee6531e75169272d7a965b8d5c7d19"
     }
   ],
   "supplement_zip_contents": [
@@ -2196,7 +2196,7 @@
     {
       "bytes": 28203,
       "path": "SOURCE_CLOSURE.json",
-      "sha256": "3b3290e2863e04f3f1df76bdac4bdc0122d0ec3999ee8c2cce0c549a45ca5902"
+      "sha256": "ecb1759c92fa02a3c24fbb1745679b4d9823e168afccfa6483ceaeded4357d37"
     },
     {
       "bytes": 29252,
@@ -2849,9 +2849,9 @@
       "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
     },
     {
-      "bytes": 14019,
+      "bytes": 14135,
       "path": "paper/transport_followup.tex",
-      "sha256": "3253659c388a91b85b6cd4f83e6b07bf1650624356ba0eceb30279fd442d64cb"
+      "sha256": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
     },
     {
       "bytes": 14340,
@@ -2864,9 +2864,9 @@
       "sha256": "c0c25bda20826f710433a3c73f9c44688257ece63118d89b181ad3ebb0958095"
     },
     {
-      "bytes": 57341,
+      "bytes": 57350,
       "path": "paper/transport_theory.tex",
-      "sha256": "8fdf6cbc1529b77a57fba94a5d67a8f5424f5bfca6e615fb4963e047b473dc74"
+      "sha256": "b7bc4e63a40aa61d1a9eae3b93db914695ee6531e75169272d7a965b8d5c7d19"
     },
     {
       "bytes": 77035395,
@@ -3016,7 +3016,7 @@
     {
       "bytes": 63574,
       "path": "tools/anonymous_package_contract.py",
-      "sha256": "7247eb5e0d8a29ef1830affacbb5488511f4685aada9b8cabf5ec3730d651976"
+      "sha256": "cdba81658cc0c6c5d8236a4e9d52de58ed708d8a7965310866147b4375d1090e"
     },
     {
       "bytes": 3269,
@@ -3039,9 +3039,9 @@
       "sha256": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496"
     },
     {
-      "bytes": 131981,
+      "bytes": 132028,
       "path": "tools/numeric_context_pins.py",
-      "sha256": "3202ce2d23c3e4df41eb36ec158d07901bc10ef3420ec43910ff1c2caf2c23c5"
+      "sha256": "bf5ab83abed8d5941e6e27b92fc7239cf38b780207672a7672e053f0188be471"
     },
     {
       "bytes": 5170,

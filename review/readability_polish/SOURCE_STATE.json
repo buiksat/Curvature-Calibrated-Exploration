@@ -1,0 +1,8 @@
+{
+  "research_base": "e1c2af1d39156609ed575b48dbe742f7ce1cbe64",
+  "main_base": "dd0263f37560df411a077be9267f5fb931c280c6",
+  "files": {
+    "paper/transport_theory.tex": "b7bc4e63a40aa61d1a9eae3b93db914695ee6531e75169272d7a965b8d5c7d19",
+    "paper/transport_followup.tex": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
+  }
+}

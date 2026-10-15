@@ -1,16 +1,16 @@
 # Review-revision validation
 
-This record covers the research revisions through 2026-10-14
-(America/Los_Angeles). `FINALIZATION_REPORT.md` remains the historical release
+This record covers the research revisions through 2026-10-15 (UTC).
+`FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current targeted-readability status (2026-10-14):** the checked Fable advice
-has been applied and the main manuscript builds to 47 pages. Preservation and
-focused numerical, chart and detached-evidence checks pass. Both final source
-archives reproduce their PDFs byte for byte, and the extracted supplement passes
-its verification. The final regression reports **716 passed, three skipped,
-zero failed and two warnings** in **384.00 seconds**. The preceding readability
-run of 713 passed and three skipped remains a historical result.
+**Current local-fix status (2026-10-15):** the checked notation, threshold wording
+and copyediting fixes have been applied and mirrored to main. Preservation,
+rendered-page checks and both clean source rebuilds pass at 47 pages. The affected
+checks report **117 passed**; fresh supplement verification reports **24/24
+contract checks and 23 shipped tests passed**. The complete suite was not rerun. The
+preceding readability run of **716 passed, three skipped, zero failed and two
+warnings** in **384.00 seconds** remains a historical result for that earlier state.
 Compact evidence verification remains separate from raw replay.
 
 | Collection scope | Current collected cases |
@@ -857,3 +857,95 @@ pins; the other 236 protected files remain byte-identical. Every source and
 supplement member matches its manifest record. No internal review or manifest
 record is included in the upload archives. The report is
 `/workspace/cce-build/clarity-final-commit-scope.json`.
+
+## Local fixes after the second readability review (2026-10-15 UTC)
+
+The author requested the small, checked recommendations from
+`review/readability_followup_fable/CHECKED_ADVICE.md`. The implementation is
+recorded in `review/readability_polish/IMPLEMENTATION_REPORT.md`, with source
+hashes and an independent preservation report alongside it. The baseline commits
+are research `e1c2af1d39156609ed575b48dbe742f7ce1cbe64` and main
+`dd0263f37560df411a077be9267f5fb931c280c6`.
+
+Only two scientific source files change. The empirical section adds a local alias
+and corollary pointer for the Hessian certificate, separates the strict seed
+threshold from the non-strict round threshold, and improves the development/tuning
+sentence. The theory suppresses one unused equation number and changes the score
+display's trailing comma to a period. All formal mathematical expressions,
+conditions and proofs are otherwise unchanged. All 240 protected files, 406 prior
+review files, historical PDFs, scientific data and figure sources are unchanged;
+all 46 active scientific mirrors match. The original numerical ledger remains
+byte-identical, with all 218 entries and selectors retained.
+
+The source-context bindings change only for the reviewed text. One detached
+manuscript guard initially expected the old development/tuning grammar; its phrase
+is updated to retain the same 600/294 counts and evaluation-separation requirement.
+The root contract updates the context tool's digest and the two actual compiled
+source records. No tests, cases, assertions, thresholds or semantic requirements
+are added, removed or weakened.
+
+### Affected checks
+
+The existing numerical/package mutation selection passes **50 tests, 505
+deselected**, in **29.45 seconds**. The detached-evidence module passes
+**67 tests** in **54.26 seconds**. Both selected runs pass on their first attempt,
+with no reported failures or warnings. Logs are
+`/workspace/cce-build/polish-numeric-tests.log` and
+`/workspace/cce-build/polish-detached-tests.log`. The repository ledger reports
+**591 PASS, four NOT_EXECUTED, zero FAIL**, with 218 entries; its log is
+`/workspace/cce-build/polish-numeric-ledger.log`.
+
+No new experiment, Fable API call or complete 719-case regression was run for
+these local prose, context-binding and presentation changes. The preceding full
+regression is retained above as historical evidence, not reported as a new pass.
+The current checks exercise the affected numerical and detached-evidence guards;
+final package verification is recorded separately below.
+
+### Final builds and archive checks
+
+The main build at `/workspace/cce-build/tmlr-polish-main` has **47 pages**. Fresh
+extraction of its source archive reproduces the PDF byte for byte. All four
+official style/licence pins pass. The actual recorder contains 44 archived
+project inputs, three regenerated inputs and 291 environment inputs, with no
+original-checkout or prior-build dependencies. Identifying metadata is empty;
+there are no compiler warnings, unresolved references/citations, missing
+characters or overfull boxes. Four underfull horizontal and three underfull
+vertical boxes remain.
+
+Two independent rendered-page checks cover pages 5, 7, 18 and 21: the unnumbered
+applied-matrix definition, score period, certificate alias, development/tuning
+grammar and two distinct threshold conventions. References resolve, including
+the score and oracle equations, Corollary 7 and Table 4. The notation table is on
+page 5, figures are on pages 3, 10, 20 and 21, and references begin on page 26.
+No clipping, overlap or visible reference issue was found. The report is
+`/workspace/cce-build/tmlr-polish-main-clean/verification.json`.
+
+The strict release at `/workspace/cce-build/tmlr-polish-release` also builds to
+47 pages and passes its layout, identity, archive-member, size and digest gates.
+Its actual compiled closure has 93 project entries and 240 protected external
+inputs. Artifact sizes and hashes are recorded in `README.md` and the tracked
+`release_manifest.json`. The 93,812,230-byte supplement leaves 6,187,770 bytes
+under the decimal 100 MB limit.
+
+An independent strict source extraction reproduces the matched PDF byte for
+byte. The recorder matches all 93 project and 240 protected external records,
+with two generated auxiliary inputs excluded from the source closure. All four
+official and 54 vendor pins pass, as do both frozen source hashes. There are no
+original-checkout, release-directory or user-environment dependencies. Identifying
+metadata is empty; no unresolved references/citations, missing characters or
+overfull boxes remain. There are four underfull horizontal and three underfull
+vertical boxes, plus the existing deprecated `package/after/fontspec` hook warning.
+The report is `/workspace/cce-build/tmlr-polish-strict-clean/verification.json`.
+
+Fresh extraction of the supplement passes its eight-step verification in
+**18.304 seconds**, using locked Python 3.12.14, NumPy 2.2.3 and SciPy 1.15.2
+with inherited `PYTHONPATH` removed. All **24/24** contract checks pass. The ledger
+reports **600 PASS, 37 PASS_ANON, three NOT_EXECUTED, zero FAIL**, with 218 entries.
+It reproduces 21 original artifacts, six follow-up table artifacts and six chart
+artifacts exactly, and recomputes all 24 terminal intervals from 600 summaries.
+It verifies 42 sidecarred and 37 independently pinned evidence files. All
+**23 shipped tests pass** in **1.06 seconds**, with 1,202 existing pytest AST
+deprecation warnings. The three unexecuted checks concern follow-up raw/upstream
+operations, original-study bootstrap inputs and original raw trajectory bytes.
+Compact verification does not establish raw-dependent roundwise replay. The
+record is `/workspace/cce-build/polish-final-reviewer-verify.{log,json}`.

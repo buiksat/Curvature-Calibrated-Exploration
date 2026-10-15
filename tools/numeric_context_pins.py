@@ -120,10 +120,10 @@ UNITS: tuple[str, ...] = (
     'The historical deterministic term in \\eqref{eq:beta-corrected-new} follows from $\\Phi_t^\\top\\bVbar_t^{-1}\\Phi_t\\preceq I$ for $\\Phi_t=[\\bq_1/\\sigma,\\ldots,\\bq_{t-1}/\\sigma]$. Its scaling is $1/\\sigma$, not $1/\\sigma^2$. Fixed nonvanishing misspecification generally creates a linear current-bias term and can also make the historical radius vacuous. This is a graceful-degradation statement, not a robust misspecified-bandit guarantee.',
     'The inclusion of $1$ in the minimum and maximum accounts for the ridge. Each category ratio is a weighted average of sample ratios $r_s=\\widetilde\\omega_s^2/\\omega_s^2$, with weights $\\omega_s^2/f_{t,c}$. Therefore $\\ell^2\\le g_{t,c}/f_{t,c}\\le\\ell^{-2}$, which gives the asserted uniform bounds on $m,M$. It also shows that the category factors are no looser than the direct sample factors $\\min\\{1,\\min_{s<t}r_s\\}$ and $\\max\\{1,\\max_{s<t}r_s\\}$. For an empty history both metrics equal $\\lambda\\bI$.',
     "The locked grid contains horizons $T\\in\\{250,500,1000\\}$, 50 evaluation seeds, and target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$. Each $(T,D_{\\rm target})$ cell is a separately executed model condition because both quantities enter the rule for $W$. The target label is neither realized transport distance nor generic network width, so trends across targets are not a dose response to certificate inflation. The four policies share contexts and potential-noise tables. The primary \\emph{transport Hessian} policy uses $\\bar D_t^Q$ in the score. The \\emph{transport endpoint} policy replaces it by the dense endpoint Thompson distance computed from the learner-known matrices $\\bVbar_t$ and $\\bV_t$ before the reward is observed; it is a dense diagnostic comparator. The \\emph{frozen reference} policy uses the frozen width directly. The \\emph{naive current} policy omits transport and is intentionally uncertified. Each policy has its own selected history and representation path; the frozen-reference policy also updates its representation. ``Frozen'' refers to its collection-time metric. Ten disjoint tuning seeds selected learning rate $3\\times10^{-4}$ and 20 full-batch steps followed by projection each round by preregistered all-action prediction MSE; evaluation seeds never entered that selection. The environment was not filtered after generation. Within each $T=1000$ target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality gap $0.123$, best-fixed-action regret $180.4$, and online context-free mean-only regret $185.4$. All five actions are optimal somewhere in every evaluation stream. Entropy is measured in nats; its maximum for five actions is $\\log 5\\approx1.609$, so the mean entropy is close to its uniform-action maximum. These diagnostics were reported after the grid was fixed; they were not used to select seeds.",
-    'The prespecified follow-up evaluates 600 policy trajectories; a separate 294 development and tuning trajectories precede evaluation. We fix $T=1000$ and $W\\in\\{16,1,0.25\\}$, with 50 common evaluation seeds per condition and four policies. The model parameter $W$ changes both the reward function and its curvature, so comparisons across conditions do not isolate an effect of metric drift. The original near-linear study appears separately in \\Cref{sec:transport-instantiation}; its evidence is not pooled with this study.',
+    'The prespecified follow-up evaluates 600 policy trajectories. A separate set of 294 development and tuning trajectories precedes evaluation. We fix $T=1000$ and $W\\in\\{16,1,0.25\\}$, with 50 common evaluation seeds per condition and four policies. The model parameter $W$ changes both the reward function and its curvature, so comparisons across conditions do not isolate an effect of metric drift. The original near-linear study appears separately in \\Cref{sec:transport-instantiation}; its evidence is not pooled with this study.',
     'The shared optimizer uses learning rate $3\\times10^{-4}$ with 20 full-batch steps followed by projection each round. It was selected from nine candidates by prediction MSE on uniform-random tuning histories. This fixes one implementation choice across policies; it does not establish policy-specific regret-optimal tuning. Dense float64 matrices and Cholesky solves implement the exact-operator abstraction. Actions are enumerated, with ties resolved by the smallest action index. This 29-parameter study therefore examines dense numerical implementations. It does not test approximate solvers, large-model scalability, or real-data performance. \\Cref{app:transport-followup} records the protocol and provenance.',
     "Their sum equals the sharp right-hand side in \\eqref{eq:sharp-transport-regret-new} for the experiment's $\\alpha_t=\\kappa_{-,t}=\\kappa_{+,t}=1$ and $\\xi_t=0$. The differences retain the same trajectory and the same potential factor; they do not rerun a policy with a component removed. The committed figure CSVs report the mean of each component over 50 primary-policy trajectories at each round. At $T=1000$, dividing those terminal component means by the corresponding mean sharp right-hand side gives base shares $97.33\\%,94.66\\%,89.39\\%,79.39\\%$ and path shares $2.01\\%,4.04\\%,8.16\\%,16.27\\%$ for $D_{\\rm target}=0.25,0.5,1,2$, respectively. These joint cumulative quantities establish the decomposition; marginal medians of $e^{\\bar D_t^Q/2}$ do not determine it.",
-    'There is measurable movement between the reference and current matrices. The Hessian policy reaches endpoint distances above one in 16 of 50 seeds at $W=0.25$, including 286 of 50,000 seed--round observations (\\Cref{tab:transport-followup-drift-bounds}). These round counts describe dependent observations, not additional independent replications. The target labels used to encode $W$ are not measured endpoint distances.',
+    'There is measurable movement between the reference and current matrices. The Hessian policy reaches endpoint distances above one in 16 of 50 seeds at $W=0.25$. In that condition, distances are at least one in 286 of 50,000 seed--round observations (\\Cref{tab:transport-followup-drift-bounds}). These round counts describe dependent observations, not additional independent replications. The target labels used to encode $W$ are not measured endpoint distances.',
     "This analysis asks what different scores recommend when given the same information. For each logged state, we evaluate all four original score rules using that state's matrices, centers, and radii, without changing its history. \\Cref{tab:transport-followup-same-history} includes all 12 combinations of condition and behavior policy. Each entry averages one-step pseudo-regret over 50,000 dependent states; the diagonal equals the actual mean cumulative pseudo-regret divided by 1000. Off-diagonal entries are recommendations on states visited by the row policy. They describe a recommendation at a recorded state, not the subsequent trajectory of an alternative policy. Taking a different action would generally change future observations, parameters, matrices, and decisions. The analysis was specified after the full-study outcomes were observed.",
     'This appendix expands the original locked full aggregate summarized in \\Cref{sec:transport-instantiation}. The experiment protocol, configuration, selection record, aggregate, and every generated artifact carry provenance and         hashes. The figures use only the 50 evaluation seeds. Smoke and tuning results are absent. The original raw trajectories were unavailable for this revision; recorded hashes bind the retained artifacts but do not replace those missing inputs or establish an independent raw-data reproduction.',
     'This proves \\eqref{eq:sharp-transport-regret-new}. Finally, $\\alpha_te^{\\bar D_t}\\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}\\ge1$, hence $1+x\\le2x$ gives \\eqref{eq:simple-transport-regret-new}. The probability statement follows by a union bound; independence is not required.',
@@ -189,7 +189,7 @@ UNITS: tuple[str, ...] = (
     '\\label{eq:scalar-factor-path-new} \\sigma^{-1}\\nabla_\\theta\\mu_{\\btheta_s+ \\tau(\\btheta_t-\\btheta_s)}(x_s,a_s)^\\top.',
     '\\label{eq:tanh-category-relative} c_{-,t}=\\min\\!\\left\\{1,\\min_{c:n_{t,c}>0}\\frac{g_{t,c}}{f_{t,c}}\\right\\}, \\qquad c_{+,t}=\\max\\!\\left\\{1,\\max_{c:n_{t,c}>0}\\frac{g_{t,c}}{f_{t,c}}\\right\\},',
     '\\label{eq:tanh-uniform-relative} \\ell^2\\bVbar_t\\preceq\\bV_t\\preceq\\ell^{-2}\\bVbar_t, \\qquad d_{\\rm Th}(\\bVbar_t,\\bV_t) \\le4\\log\\cosh(B_\\phi R/\\sqrt W).',
-    '\\label{eq:transported-score-new} U_t(a)=m_t(a) +\\beta_t e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a) +b_t(a),',
+    '\\label{eq:transported-score-new} U_t(a)=m_t(a) +\\beta_t e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a) +b_t(a).',
     '\\le 2\\beta_t\\bar s_t(a_t)+2b_t(a_t)+\\xi_t,\\nonumber',
     '\\le 2\\sqrt{\\left(\\sigma^2+\\frac{G^2}{\\lambda}\\right) \\gamma_T\\sum_{t=1}^T\\beta_t^2} +2\\sum_{t=1}^Tb_t(a_t)+\\sum_{t=1}^T\\xi_t. \\label{eq:frozen-width-regret}',
     '\\le 2e^{D_{T,W}} \\Biggl[',
@@ -455,13 +455,13 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '$12.68\\%$'):
         (1, _u((31, 276))),
     ('paper/transport_followup.tex', '$T=1000$'):
-        (2, _u((62, 140), (196, 124))),
+        (2, _u((62, 148), (196, 124))),
     ('paper/transport_followup.tex', '$W=0.25$'):
         (1, _u((65, 150))),
     ('paper/transport_followup.tex', '$W=16,1,0.25$'):
         (3, _u((40, 116), (33, 3), (210, 371))),
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'):
-        (1, _u((62, 153))),
+        (1, _u((62, 161))),
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'):
         (1, _u((209, 572))),
     ('paper/transport_followup.tex', '$\\delta=0.05$'):
@@ -475,13 +475,13 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '2000, 2000, and 1000'):
         (1, _u((179, 222))),
     ('paper/transport_followup.tex', '286 of 50,000'):
-        (1, _u((65, 170))),
+        (1, _u((65, 209))),
     ('paper/transport_followup.tex', '29-parameter'):
         (1, _u((63, 486))),
     ('paper/transport_followup.tex', '294 development and tuning trajectories'):
-        (1, _u((62, 73))),
+        (1, _u((62, 80))),
     ('paper/transport_followup.tex', '50 common evaluation seeds'):
-        (1, _u((62, 179))),
+        (1, _u((62, 187))),
     ('paper/transport_followup.tex', '50 histories'):
         (3, _u((33, 281), (176, 196), (198, 224))),
     ('paper/transport_followup.tex', '50 seeds per condition'):
@@ -521,7 +521,7 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', 'learning rate $3\\times10^{-4}$'):
         (1, _u((63, 26))),
     ('paper/transport_followup.tex', 'of 50,000 seed--round observations'):
-        (1, _u((65, 174))),
+        (1, _u((65, 213))),
     ('paper/transport_followup.tex', 'paired 95\\% intervals'):
         (1, _u((215, 330))),
     ('paper/transport_followup.tex', 'pointwise 95\\% paired'):
@@ -946,13 +946,13 @@ FILE_PINS: dict[str, str] = {
     'paper/transport_experiment_appendix.tex':
         '22bd9ab1ae3ab1ccb14ef237fb5fa01d1a4464fe4ac90a595f77b0efee7ea2ad',
     'paper/transport_followup.tex':
-        'f89f689a5230d7ff6aac5c63d3768a44849b27dcab1e3e488ed8b628caa049d4',
+        'b700b1329359d1773c37571eba444683a61d371beea9cecb40ebc69ab3e4b96c',
     'paper/transport_followup_appendix.tex':
         '966714a2ced59098263871881e360de19c772c843ad822388aeb614dedf69a89',
     'paper/transport_proofs.tex':
         'd9ff00e05381876fd7a5a3adac2fafc0ec0cc2556feaef8ba32d6dfa3f750558',
     'paper/transport_theory.tex':
-        'b4ab56822b58c7b8508526622542df15e893777f2b2135c11f5e07671112c75d',
+        '966350070de33b27119fe8f1f9a682cb0af0b9dbc53fc792e97fe0e0ddfe6019',
     'submissions/tmlr_2026/main.tex':
         '43470533f05a3304baa0509e1715b4bf151bbecf1e70dec348c1e31e6ff98868',
     'submissions/tmlr_2026/supplement_README.md':

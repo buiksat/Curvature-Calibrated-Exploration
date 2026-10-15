@@ -1,0 +1,58 @@
+{
+  "research_baseline": "e1c2af1d39156609ed575b48dbe742f7ce1cbe64",
+  "main_baseline": "dd0263f37560df411a077be9267f5fb931c280c6",
+  "theory_only_two_authorized_presentation_edits": true,
+  "proofs_byte_identical": true,
+  "empirical_numeric_token_multiset_unchanged": true,
+  "empirical_added_inline_math": [
+    "\\bar D_t"
+  ],
+  "empirical_removed_inline_math": [],
+  "empirical_added_cross_references": [
+    "cor:hessian-path-new"
+  ],
+  "empirical_removed_cross_references": [],
+  "empirical_figure_table_inputs_unchanged": true,
+  "protected_files_checked": 240,
+  "protected_changes": [],
+  "old_review_files_checked": 406,
+  "old_review_changes": [],
+  "historical_pdfs": {
+    "research_files": {
+      "checked": 2,
+      "changed": []
+    },
+    "main_files": {
+      "checked": 2,
+      "changed": []
+    }
+  },
+  "mirrored_files_checked": 46,
+  "mirror_mismatches": [],
+  "source_freeze_mismatches": [],
+  "source_sha256": {
+    "paper/transport_theory.tex": "b7bc4e63a40aa61d1a9eae3b93db914695ee6531e75169272d7a965b8d5c7d19",
+    "paper/transport_followup.tex": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
+  },
+  "prose_review": "PASS: Dbar^Q is explicitly an alias for the existing Hessian-path corollary bound; development/tuning population remains separate; 16 seed maxima >1 and 286 round observations >=1 are stated separately without claiming an unverified strict round count. Dependence and target-label qualifications remain. No theorem condition or empirical quantity changed.",
+  "render_review": {
+    "status": "PASS",
+    "pdf": "/workspace/cce-build/tmlr-polish-main/main.pdf",
+    "pdf_bytes": 691558,
+    "pdf_sha256": "1085e8882544a31d6609d5ec2efed5ed82b49906ac8ee6874f0292991728f568",
+    "pages_inspected": [
+      5,
+      7,
+      18,
+      21
+    ],
+    "raster_resolution_dpi": 160,
+    "findings": [
+      "Page 5: the reference update retains equation (1); the applied-matrix definition has no separate equation number. Matrix and width definitions remain legible.",
+      "Page 7: transported score equation ends with a visible period before the following sentence; no clipping or overlap.",
+      "Page 18: separate 294-trajectory development/tuning set reads clearly; Dbar^Q is locally identified with the Hessian bound and Corollary 7.",
+      "Page 21: the strict seed-max statement and non-strict seed-round count are distinct, readable sentences; dependent-round qualification and Table 4 reference remain visible."
+    ],
+    "limitation": "Targeted rendered-page review only; independent clean rebuild/log checks are performed by the build agent."
+  }
+}

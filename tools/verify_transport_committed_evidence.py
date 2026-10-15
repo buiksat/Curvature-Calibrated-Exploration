@@ -879,7 +879,7 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
     ),
     "paper/transport_followup.tex": (
         (
-            "600 policy trajectories; a separate 294 development and tuning trajectories",
+            "600 policy trajectories. A separate set of 294 development and tuning trajectories precedes evaluation",
             "follow-up separates evaluation from development and tuning",
         ),
         (
