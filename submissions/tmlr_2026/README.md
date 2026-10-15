@@ -2,7 +2,14 @@
 
 **Status: revised anonymous manuscript and compact evidence package built; not submitted.**
 
-The current revision applies the checked Fable readability advice: a notation
+The current revision replaces all eight numerical result tables with focused
+charts, retaining the original numerical tables in the reproducibility
+supplement. Ten new figures show policy intervals, fixed-history comparisons,
+seed ranges, drift frequencies and certificate diagnostics at native text size.
+The outcome table is consolidated into the existing outcome chart. See the
+[chart revision record](../../review/table_chart_revision/IMPLEMENTATION_REPORT.md).
+
+The preceding revision applied the checked Fable readability advice: a notation
 table and chronological protocol guide, clearer abstract and policy descriptions,
 explicit own-history mean bound magnitudes, and an unambiguous chart comparator
 label. A further local pass defines the empirical certificate notation by
@@ -27,7 +34,7 @@ From the prepared research checkout:
 ```bash
 cd /workspace/cce-research
 PYTHON=/workspace/cce-research-env/bin/python \
-  TMLR_OUT=/workspace/cce-build/tmlr-polish-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-charts-release \
   bash submissions/tmlr_2026/build.sh
 ```
 
@@ -45,33 +52,28 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/workspace/cce-build/tmlr-polish-release`.
-The PDF has **47 pages**, in anonymous official TMLR style. The four explanatory
-figures appear on pages 3, 10, 20 and 21; references begin on page 26.
-The notation table is on page 5.
+Final build directory: `/workspace/cce-build/tmlr-charts-release`.
+The PDF has **52 pages**, in anonymous official TMLR style. All eight numerical
+tables have chart replacements; all pages are portrait. The compact notation
+table remains on page 5. The chart revision record maps each result to its page.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 691,514 | — | — |
-| `source.zip` | 3,412,745 | 101 | 3,399,373 |
-| `supplement.zip` | 93,812,230 | 178 | 93,779,504 |
-| `release_manifest.json` | 113,268 | — | — |
+| `main.pdf` | 728,019 | — | — |
+| `source.zip` | 3,459,600 | 103 | 3,445,908 |
+| `supplement.zip` | 93,901,527 | 190 | 93,866,743 |
+| `release_manifest.json` | 116,522 | — | — |
 
-The supplement occupies 93.8% of the 100,000,000-byte limit, leaving
-6,187,770 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
-(`ZIP_STORED`) entries. No unpinned compressor determines their bytes.
-The size gate remains enforced.
+The supplement occupies 93.9% of the 100,000,000-byte limit, leaving
+6,098,473 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+(`ZIP_STORED`) entries. The size gate remains enforced.
 
-The compiled closure contains 93 entries: 42 whose bytes the supplement
+The compiled closure contains 95 entries: 44 whose bytes the supplement
 carries, 50 in `source.zip`, and `main.bbl` in neither archive. BibTeX
 regenerates the latter from the shipped bibliography and style. The manifest
-also records 240 protected external TeX inputs by distribution variable
-and content hash under `external_tex_inputs`. Those distribution files are
+also records 243 protected external TeX inputs by distribution variable and
+content hash under `external_tex_inputs`. Those distribution files are
 recorded, not redistributed.
-
-- `main.pdf`: `56bb4aa967ddfc98643add811b70813626e5c79a40254ecb2a03aa7108b6124a`.
-- `source.zip`: `890aafc6579081d4d750ca36bd54decfcbeadbfa5d17a885a59c681283cf17bf`.
-- `supplement.zip`: `cfec83f2cb6e20f769a7123e71d1008d60d37286bd21f98e926b787ca83d77ac`.
 
 ## Dependencies and trust
 
@@ -115,7 +117,7 @@ identity.
 /workspace/cce-research-env/bin/python tools/make_transport_explanatory_figures.py --check
 /workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/workspace/cce-build/tmlr-polish-release \
+  TMLR_OUT=/workspace/cce-build/tmlr-charts-release \
   /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
 ```
 

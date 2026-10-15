@@ -1,0 +1,110 @@
+{
+  "deliverables": {
+    "tmlr-charts-main/main.pdf": {
+      "bytes": 728044,
+      "sha256": "3772669e802c843bfccc8c632155cca3d39fc4bd6ce94c9c8f70fbd5a87fd39f"
+    },
+    "tmlr-charts-main/source.zip": {
+      "bytes": 195946,
+      "sha256": "fd0f55887c9c77a0c54e11003ce4ee0d65f473ace189cb85d0b841ea4e565649"
+    },
+    "tmlr-charts-release/main.pdf": {
+      "bytes": 728019,
+      "sha256": "0052f29d5e6e2caee1c072bfde6dc704e760a008d512952591b7a94fe4da7fb9"
+    },
+    "tmlr-charts-release/source.zip": {
+      "bytes": 3459600,
+      "sha256": "453353cb570b94f01f94b47da0a8c9502af07e1dd4cb02e3b458624405333b2a"
+    },
+    "tmlr-charts-release/supplement.zip": {
+      "bytes": 93901527,
+      "sha256": "f04595aa7f5bea0e6252b124d67ca2101282ed0827dea4b5a52c330c1c6bb7c9"
+    },
+    "tmlr-charts-release/release_manifest.json": {
+      "bytes": 116522,
+      "sha256": "310cd810a221ab06153fad556bbedf1bb04b484e42c8f498a18709c0f36d3fb4"
+    }
+  },
+  "main_clean_rebuild_byte_identical": true,
+  "strict_clean_status": "PASS",
+  "pages": 52,
+  "new_chart_pages": [
+    22,
+    36,
+    38,
+    40,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+  ],
+  "all_new_charts_visually_inspected": true,
+  "original_scientific_files_unchanged": 206,
+  "numeric_ledger_entries_unchanged": 218,
+  "mirror_matches": [
+    "transport_followup.tex",
+    "transport_experiment_appendix.tex",
+    "transport_proofs.tex",
+    "transport_followup_appendix.tex",
+    "transport_theory.tex",
+    "transport_experiment.tex",
+    "figures/transport_table_original_distribution.tex",
+    "figures/transport_table_same_history.tex",
+    "figures/transport_table_original_path_ratios.tex",
+    "figures/transport_table_original_bound_ratios.tex",
+    "figures/transport_table_original_performance.tex",
+    "figures/transport_table_provenance.json",
+    "figures/transport_table_original_components.tex",
+    "figures/transport_table_original_validity.tex",
+    "figures/transport_table_mechanism.tex",
+    "figures/transport_table_relative.tex",
+    "figures/transport_table_drift.tex"
+  ],
+  "logs_root": "/workspace/cce-build",
+  "supplement_checks": {
+    "contract_checks_passed": 25,
+    "ledger_pass": 614,
+    "ledger_pass_anonymous": 38,
+    "ledger_not_executed": 3,
+    "ledger_fail": 0,
+    "shipped_tests_passed": 23,
+    "all_checks_passed": true
+  },
+  "full_regression_before_final_description_fixes": {
+    "passed": 733,
+    "failed": 4,
+    "skipped": 3,
+    "warnings": 2,
+    "seconds": 378.69
+  },
+  "final_affected_checks": {
+    "passed": 86,
+    "failed": 0,
+    "skipped": 4,
+    "deselected": 512,
+    "seconds": 30.49,
+    "all_four_previous_failures_resolved": true
+  },
+  "main_commit": "39c6d16",
+  "legend_whitespace_cleanup_pdf_byte_identical": true,
+  "large_pinned_inventory_regression_passed": true,
+  "collected_tests": {
+    "release_package": 572,
+    "repository": 741
+  },
+  "final_release_integration": {
+    "passed": 7,
+    "failed": 0,
+    "deselected": 565,
+    "seconds": 14.34
+  },
+  "collection_guards": {
+    "passed": 2,
+    "failed": 0,
+    "deselected": 570,
+    "seconds": 1.21
+  },
+  "final_supplement_verifier_exit_status": 0
+}

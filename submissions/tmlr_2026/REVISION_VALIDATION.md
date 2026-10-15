@@ -4,19 +4,17 @@ This record covers the research revisions through 2026-10-15 (UTC).
 `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current local-fix status (2026-10-15):** the checked notation, threshold wording
-and copyediting fixes have been applied and mirrored to main. Preservation,
-rendered-page checks and both clean source rebuilds pass at 47 pages. The affected
-checks report **117 passed**; fresh supplement verification reports **24/24
-contract checks and 23 shipped tests passed**. The complete suite was not rerun. The
-preceding readability run of **716 passed, three skipped, zero failed and two
-warnings** in **384.00 seconds** remains a historical result for that earlier state.
-Compact evidence verification remains separate from raw replay.
+**Current chart revision (2026-10-15):** all eight numerical tables are
+replaced or consolidated into charts, with exact tables retained as supplemental
+lookup data. The main and strict PDFs both have 52 pages and reproduce byte for
+byte from clean source archives. Final chart/package regression results appear
+in the chart-revision record appended below. Earlier validation results remain
+historical records of their respective snapshots.
 
 | Collection scope | Current collected cases |
 | --- | --- |
-| Release-package test collection | 555 collected |
-| Repository suite collection | 719 collected |
+| Release-package test collection | 572 collected |
+| Repository suite collection | 741 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the
@@ -949,3 +947,75 @@ deprecation warnings. The three unexecuted checks concern follow-up raw/upstream
 operations, original-study bootstrap inputs and original raw trajectory bytes.
 Compact verification does not establish raw-dependent roundwise replay. The
 record is `/workspace/cce-build/polish-final-reviewer-verify.{log,json}`.
+
+## Numerical-table conversion, 2026-10-15
+
+The eight numerical result tables are replaced or consolidated into charts.
+Ten new native-size portrait figures show interval comparisons, descriptive
+seed ranges, fixed-history recommendations, drift frequencies and certificate
+ratios. The original numerical tables remain unchanged as supplemental lookup
+data. Compact notation, assumption and certificate-interface tables remain.
+
+All ten new charts were visually inspected. Crowded panel labels were corrected
+before the final render. Both main and strict PDFs have 52 pages, no unresolved
+references or missing characters, and no overfull boxes. Separate clean source
+rebuilds reproduce the corresponding PDFs byte for byte. All official TMLR style
+hashes match. There are 95 actual compiled project inputs and 243 protected
+external inputs in the strict release.
+
+The supplemental lookup exception is limited to the eight independently pinned
+original tables. A changed table cannot authorize itself with a rewritten
+sidecar. Unknown TeX files remain subject to the compiler-input check. The new
+charts themselves must be compiled, regenerated from reviewed inputs and
+matched against independent output hashes. The layout gate and mutation tests
+now cover all ten replacements.
+
+The full chart regression reported **733 passed, four failed, three skipped and
+two warnings in 378.69 seconds**. The four failures were stale check-description
+assertions: one documentation key and three assertions naming the former
+compiler-input check. These were corrected without weakening the rejection
+conditions. The subsequent source/closure/chart checks report **86 passed,
+four skipped and 512 deselected in 30.49 seconds**, including all four previously
+failing cases. The full suite was not repeated after these final fixes.
+A formatting-only cleanup also removes trailing spaces in generated legend
+lines; the resulting PDF is byte-identical. The focused checks include chart
+regeneration and mutation tests. The four targeted skips require release
+integration or unavailable platform contexts; final archive verification is
+recorded separately below.
+The earlier diagnostic run reported 723 passed, eight failed and seven skipped;
+its failures identified the retained-table inventory exception, incomplete test
+fixtures and stale release-documentation counts. Those issues were corrected.
+
+Fresh supplement verification passes all 25 required contract checks, all 23
+shipped study tests, and the numerical ledger (614 PASS, 38 PASS_ANON, three
+NOT_EXECUTED, zero FAIL). The NOT_EXECUTED checks still concern evidence outside
+the retained compact archive, including missing original raw trajectories.
+Chart regeneration, original table regeneration and all evidence sidecar checks
+pass without running new experiments.
+
+Preservation checks find 206 previously tracked scientific files unchanged and
+17 manuscript/chart mirror pairs equal between branches. All 218 numerical
+ledger entries remain unchanged; anonymous packaging only relocates the three
+supplement-README claim paths. No theorem, proof, configuration, experiment
+implementation or measured result was altered.
+
+Artifacts and logs are under `/workspace/cce-build/tmlr-charts-*`. The committed
+`review/table_chart_revision/VERIFICATION.json` records final artifact hashes
+and test results. `paper/main.pdf` remains the historical artifact. No new
+experiment, external model review or TMLR submission was performed.
+
+The final fresh-extraction check also exposed a shell-pipeline edge case:
+`grep -q` could close early while `printf` was still writing the enlarged
+pinned-path list, making `pipefail` reject a valid pinned artifact. The verifier
+now reads the complete list through a here-string. A deterministic regression
+with a large inventory passes. This changes verification plumbing only; both
+PDFs and source ZIPs remain unchanged. The release was repackaged through the
+ordinary gates after matching all compiled inputs before and after TeX-cache
+reuse; latexmk was still invoked.
+
+Final delivery checks after the shell-verifier fix: **seven release-integration
+tests passed, 565 deselected**; **two collection guards passed, 570 deselected**.
+The final fresh supplement extraction passes every advertised check, and the
+final source archive remains byte-bound to the independently rebuilt PDF.
+Current collection is 572 package cases and 741 repository cases. These
+collection counts are separate from the execution results above.

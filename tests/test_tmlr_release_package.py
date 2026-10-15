@@ -510,6 +510,8 @@ def packaged_tree(tmp_path_factory):
 
     tree = out / "tree"
     wanted = [contract.DECLARATION_NAME]
+    wanted += [name for name in packager.SUPPLEMENT_GENERATED_ARTIFACTS
+               if name.startswith("paper/tables/")]
     for relative in contract.CONTRACT:
         wanted += [relative, f"{relative}.sha256"]
     wanted += [packager.followup_contract.DECLARATION_NAME,
@@ -1133,8 +1135,8 @@ def test_layout_check_rejects_a_reintroduced_shrink_in_the_entry_point(
     assert findings and any(stem in finding for finding in findings), findings
 
 
-@pytest.mark.parametrize("table", packager.EVIDENCE_TABLE_INPUTS)
-def test_layout_check_rejects_a_shrink_around_an_evidence_table(tmp_path, table):
+@pytest.mark.parametrize("table", packager.EVIDENCE_CHART_INPUTS)
+def test_layout_check_rejects_a_shrink_around_an_evidence_chart(tmp_path, table):
     root = _submitted_tex_tree(tmp_path)
     marker = "\\input{" + table + "}"
     for path in sorted((root / "paper").glob("*.tex")):
@@ -1152,16 +1154,16 @@ def test_layout_check_rejects_a_shrink_around_an_evidence_table(tmp_path, table)
     assert any("scriptsize" in finding for finding in findings), findings
 
 
-@pytest.mark.parametrize("table", packager.EVIDENCE_TABLE_INPUTS)
-def test_layout_check_rejects_bypassing_the_evidence_table_wrapper(tmp_path,
+@pytest.mark.parametrize("table", packager.EVIDENCE_CHART_INPUTS)
+def test_layout_check_rejects_bypassing_the_evidence_chart_wrapper(tmp_path,
                                                                   table):
     root = _submitted_tex_tree(tmp_path)
     marker = "\\input{" + table + "}"
     for path in sorted((root / "paper").glob("*.tex")):
         text = path.read_text(encoding="utf-8")
-        if marker in text and packager.EVIDENCE_TABLE_WRAPPER in text:
+        if marker in text and packager.EVIDENCE_CHART_WRAPPER in text:
             path.write_text(
-                text.replace(packager.EVIDENCE_TABLE_WRAPPER, r"\relax"),
+                text.replace(packager.EVIDENCE_CHART_WRAPPER, r"\relax"),
                 encoding="utf-8")
             break
     else:
@@ -1171,10 +1173,10 @@ def test_layout_check_rejects_bypassing_the_evidence_table_wrapper(tmp_path,
         findings
 
 
-def test_layout_check_notices_an_evidence_table_that_stopped_being_typeset(
+def test_layout_check_notices_an_evidence_chart_that_stopped_being_typeset(
         tmp_path):
     root = _submitted_tex_tree(tmp_path)
-    table = packager.EVIDENCE_TABLE_INPUTS[0]
+    table = packager.EVIDENCE_CHART_INPUTS[0]
     marker = "\\input{" + table + "}"
     for path in sorted((root / "paper").glob("*.tex")):
         text = path.read_text(encoding="utf-8")
@@ -1319,7 +1321,7 @@ def _followup_ledger_tree(packaged_tree, tmp_path):
     root = _clone(tree, tmp_path / "followup-ledger")
     for relative in (ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
                      ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER,
-                     ledger_tool.EXPLANATORY_GENERATOR):
+                     ledger_tool.EXPLANATORY_GENERATOR, ledger_tool.TABLE_CHART_GENERATOR):
         if not (root / relative).is_file():
             _materialize(REPO_ROOT / relative, root / relative)
     return root
@@ -1584,7 +1586,8 @@ def test_followup_supplement_preflight_requires_the_complete_pinned_evidence_inv
     assert not missing
     assert set(packager.followup_contract.INPUT_PATHS) <= proposed
     assert (set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS)
-            | set(packager.SUPPLEMENT_EXPLANATORY_ARTIFACTS)) == set(packager.followup_contract.ARTIFACT_PINS)
+            | set(packager.SUPPLEMENT_EXPLANATORY_ARTIFACTS)
+            | set(packager.SUPPLEMENT_TABLE_CHART_ARTIFACTS)) == set(packager.followup_contract.ARTIFACT_PINS)
     assert set(packager.SUPPLEMENT_SCHEMATIC_ARTIFACTS) == set(packager.followup_contract.SCHEMATIC_PINS)
     assert packager.followup_supplement_preflight(REPO_ROOT) == []
 
@@ -1833,9 +1836,9 @@ def test_ci_writes_the_new_gate_logs_outside_the_worktree():
 
 @pytest.mark.parametrize("where, anchor", [
     ("paper/transport_experiment.tex",
-     "\\input{tables/transport_instantiation_validity.tex}"),
+     "\\input{figures/transport_table_original_validity.tex}"),
     ("paper/transport_experiment_appendix.tex",
-     "\\input{tables/transport_instantiation_tightness.tex}"),
+     "\\input{figures/transport_table_original_path_ratios.tex}"),
 ])
 def test_a_shrink_hidden_behind_a_foreign_conditional_is_caught(
         tmp_path, where, anchor):
@@ -1875,7 +1878,7 @@ def test_a_shrink_hidden_inside_the_compiled_legacy_branch_is_caught(tmp_path):
 def test_an_explicit_or_obfuscated_size_change_is_caught(
         tmp_path, injected, expected):
     root = _submitted_tex_tree(tmp_path)
-    anchor = "\\input{tables/transport_instantiation_validity.tex}"
+    anchor = "\\input{figures/transport_table_original_validity.tex}"
     path = root / "paper/transport_experiment.tex"
     text = path.read_text(encoding="utf-8")
     path.write_text(text.replace(anchor, injected + " " + anchor, 1),
@@ -4747,7 +4750,7 @@ def test_the_audited_set_is_the_transitive_input_closure():
     assert str(packager.ENTRY_POINT) in closure
     for expected in ("paper/transport_experiment.tex",
                      "paper/transport_proofs.tex",
-                     "paper/tables/transport_instantiation_validity.tex",
+                     "paper/figures/transport_table_original_validity.tex",
                      "paper/figures/transport_instantiation_bound.tex"):
         assert expected in closure, expected
     for excluded in ("paper/main.tex", "paper/legacy_experiments.tex"):
@@ -4873,12 +4876,12 @@ def _clone_staged(staged_tree, destination: Path) -> Path:
 def test_the_recorder_closure_covers_nested_inputs(staged_tree):
     src, sources = staged_tree
     closure = {str(p) for p in packager.recorder_inputs(src)}
-    for nested in ("tables/transport_instantiation_validity.tex",
+    for nested in ("figures/transport_table_original_validity.tex",
                    "figures/transport_instantiation_bound.tex",
                    "figures/transport_instantiation_bound_D-1.csv"):
         assert nested in closure, nested
-    assert sources["tables/transport_instantiation_validity.tex"] == \
-        "paper/tables/transport_instantiation_validity.tex"
+    assert sources["figures/transport_table_original_validity.tex"] == \
+        "paper/figures/transport_table_original_validity.tex"
 
 
 def test_the_clean_compiled_closure_passes_the_layout_gate(staged_tree):
@@ -4887,8 +4890,8 @@ def test_the_clean_compiled_closure_passes_the_layout_gate(staged_tree):
 
 
 @pytest.mark.parametrize("target", [
-    "tables/transport_instantiation_validity.tex",
-    "tables/transport_followup_outcomes.tex",
+    "figures/transport_table_original_validity.tex",
+    "figures/transport_explanatory_outcomes.tex",
     "figures/transport_instantiation_bound.tex",
 ])
 @pytest.mark.parametrize("injected, expected", [
@@ -4990,7 +4993,7 @@ def test_the_supplement_ships_the_source_closure_manifest():
         assert packager.SOURCE_CLOSURE_NAME in archive.namelist()
         manifest = json.loads(archive.read(packager.SOURCE_CLOSURE_NAME))
     staged = [entry["staged"] for entry in manifest["entries"]]
-    assert "tables/transport_instantiation_validity.tex" in staged
+    assert "figures/transport_table_original_validity.tex" in staged
     assert "figures/transport_instantiation_bound_D-1.csv" in staged
     assert len(staged) == len(set(staged))
 
@@ -5707,6 +5710,29 @@ def test_uncompiled_explanatory_csv_requires_pins_and_authenticated_reconstructi
     assert not marker.exists()
 
 
+@pytest.mark.parametrize("relative", [
+    "paper/tables/transport_instantiation_performance.tex",
+    "paper/tables/transport_followup_outcomes.tex",
+])
+def test_uncompiled_numerical_lookup_tables_reject_self_rehashed_changes(
+        packaged_tree, tmp_path, relative):
+    root = _closure_tree(tmp_path)
+    evidence = _followup_ledger_tree(packaged_tree, tmp_path / "evidence")
+    for source in evidence.rglob("*"):
+        if source.is_file():
+            _materialize(source, root / source.relative_to(evidence))
+    _materialize(REPO_ROOT / "submissions/tmlr_2026/supplement_README.md", root / "README.md")
+    for source in ledger_tool.GENERATED_ARTIFACT_SOURCES:
+        _materialize(REPO_ROOT / f"{source}.sha256", root / f"{source}.sha256")
+    assert _closure_failures(root, require=True) == []
+    path = root / relative
+    path.write_text(path.read_text() + "% unauthorized lookup change\n")
+    Path(str(path) + ".sha256").write_text(
+        hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name + "\n")
+    assert any("pinned numerical lookup table" in name
+               for name in _closure_failures(root, require=True))
+
+
 def _mandatory_failures(root: Path) -> str:
     return " ".join(c.detail for c in ledger_tool.closure_manifest_checks(root)
                     if c.status == ledger_tool.STATUS_FAIL
@@ -5737,7 +5763,7 @@ def test_a_partial_manifest_is_not_held_to_the_mandatory_list(tmp_path):
 @pytest.mark.parametrize("staged, why", [
     ("transport_experiment.tex", "ordinary manuscript source"),
     ("figures/transport_instantiation_bound_D-1.csv", "sidecarred figure data"),
-    ("tables/transport_instantiation_validity.tex", "sidecarred generated table"),
+    ("figures/transport_table_original_validity.tex", "pinned generated chart"),
     ("pgfplots.sty", "vendored package"),
     ("tmlr.sty", "venue template"),
     ("main.bbl", "generated, in neither archive"),
@@ -6383,3 +6409,29 @@ def test_rotating_is_documented_with_the_package_that_supplies_it():
     assert "texlive-latex-base" in readme
     entry = (REPO_ROOT / packager.ENTRY_POINT).read_text(encoding="utf-8")
     assert r"\usepackage{rotating}" in entry
+
+
+def test_large_pinned_inventory_does_not_fail_with_pipefail(tmp_path):
+    """Early grep exit must not turn a recognized pinned file into a failure."""
+    script = (REPO_ROOT / "submissions/tmlr_2026/supplement_verify.sh").read_text()
+    start = script.index("check_evidence_sidecars() {")
+    end = script.index('\necho "python:', start)
+    function = script[start:end]
+    pinned = tmp_path / "paper/figures/pinned.tex"
+    pinned.parent.mkdir(parents=True)
+    pinned.write_text("verified by the independent package contract\n")
+    ordinary = tmp_path / "paper/tables/ordinary.tex"
+    ordinary.parent.mkdir(parents=True)
+    ordinary.write_text("sidecarred data\n")
+    Path(str(ordinary) + ".sha256").write_text(
+        hashlib.sha256(ordinary.read_bytes()).hexdigest() + "  ordinary.tex\n")
+    fake = tmp_path / "inventory.py"
+    fake.write_text("#!/usr/bin/env python3\nprint('paper/figures/pinned.tex\\n' * 25000)\n")
+    fake.chmod(0o755)
+    import shlex
+    command = "set -euo pipefail\n" + function + "\npython=" + shlex.quote(str(fake)) + "\ncheck_evidence_sidecars\n"
+    done = subprocess.run(["bash", "-c", command], cwd=tmp_path, text=True,
+                          capture_output=True, timeout=30)
+    assert done.returncode == 0, done.stdout + done.stderr
+    assert "1 further shipped evidence files" in done.stdout
+    assert "Broken pipe" not in done.stderr

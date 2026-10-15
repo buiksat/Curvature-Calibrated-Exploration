@@ -72,6 +72,7 @@ FOLLOWUP_ANALYSIS = Path("review/post_full_fable/independent/analysis.json")
 FOLLOWUP_TEX = Path("paper/transport_followup.tex")
 FOLLOWUP_APPENDIX_TEX = Path("paper/transport_followup_appendix.tex")
 FOLLOWUP_GENERATOR = Path("tools/make_transport_followup_paper.py")
+TABLE_CHART_GENERATOR = Path("tools/make_transport_table_charts.py")
 EXPLANATORY_GENERATOR = Path("tools/make_transport_explanatory_figures.py")
 FOLLOWUP_EXPORT_VERIFIER = Path("tools/verify_review_experiment_export.py")
 FOLLOWUP_PACKAGE_CONTRACT = Path("tools/followup_anonymous_contract.py")
@@ -79,6 +80,7 @@ RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
 RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
 RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
 FOLLOWUP_SOURCE_HASHES = {
+    TABLE_CHART_GENERATOR: 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
     EXPLANATORY_GENERATOR: '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
     FOLLOWUP_CONFIG: "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
     FOLLOWUP_AGGREGATE: "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
@@ -986,13 +988,15 @@ EXPLANATORY_GENERATED_SOURCES = (
     "paper/figures/transport_explanatory_bounds.tex",
     "paper/figures/transport_explanatory_bounds.csv",
 )
+TABLE_CHART_GENERATED_SOURCES = ('paper/figures/transport_table_drift.tex', 'paper/figures/transport_table_mechanism.tex', 'paper/figures/transport_table_original_bound_ratios.tex', 'paper/figures/transport_table_original_components.tex', 'paper/figures/transport_table_original_distribution.tex', 'paper/figures/transport_table_original_path_ratios.tex', 'paper/figures/transport_table_original_performance.tex', 'paper/figures/transport_table_original_validity.tex', 'paper/figures/transport_table_relative.tex', 'paper/figures/transport_table_same_history.tex')
+TABLE_CHART_PROVENANCE = 'paper/figures/transport_table_provenance.json'
 EXPLANATORY_PROVENANCE = "paper/figures/transport_explanatory_provenance.json"
 ANALYTICAL_SCHEMATIC_SOURCES = (
     "paper/figures/transport_conceptual_interfaces.tex",
     "paper/figures/transport_conceptual_geometry.tex",
 )
 ALL_GENERATED_SOURCES = (GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
-                         + EXPLANATORY_GENERATED_SOURCES)
+                         + EXPLANATORY_GENERATED_SOURCES + TABLE_CHART_GENERATED_SOURCES)
 
 #: Two sources that are neither ledger-covered nor per-literal classified.  They
 #: used to be whole-file exemptions, which meant an empirical value dropped into
@@ -2313,9 +2317,35 @@ def closure_manifest_checks(root: Path, *,
                 compiled_shipped.add(relative.as_posix())
             elif path.suffix in DATA_SHIPPED_SUFFIXES:
                 data_shipped.add(relative.as_posix())
-    extra = sorted(compiled_shipped - recorded)
-    expect("every shipped manuscript source is a recorded compiled input",
-           not extra, f"shipped but not recorded as compiled: {extra}")
+    # The former numeric tables are supplementary lookup data, not compiled
+    # prose. Admit only the eight reviewed tables after authenticating the
+    # chart generator and anonymous contract and matching immutable byte pins.
+    # A new TeX file or a self-rehashed table never earns this exception.
+    lookup_tables: set[str] = set()
+    lookup_problem = ""
+    retained_tables = set(FOLLOWUP_GENERATED_SOURCES) | {
+        name for name in GENERATED_ARTIFACT_SOURCES if name.startswith("paper/tables/")}
+    if (compiled_shipped - recorded) & retained_tables:
+        try:
+            _validated_followup_packaged_sources(root, require_package=require_manifest)
+            helper = contract.load_followup_contract(root)
+            generator = _load_reviewed_tool(root, TABLE_CHART_GENERATOR)
+            expected = {"paper/tables/" + name + ".tex": digest
+                        for name, digest in generator.INPUT_HASHES.items()}
+            outcomes = "paper/tables/transport_followup_outcomes.tex"
+            expected[outcomes] = helper.ARTIFACT_PINS[outcomes]["sha256"]
+            if set(expected) != retained_tables or len(expected) != 8:
+                raise LedgerError("numeric lookup-table inventory differs")
+            for name, digest in expected.items():
+                path = root / name
+                if (path.is_file() and not path.is_symlink()
+                        and sha256_file(path) == digest):
+                    lookup_tables.add(name)
+        except Exception as error:
+            lookup_problem = f"; numeric lookup verification failed: {error}"
+    extra = sorted(compiled_shipped - recorded - lookup_tables)
+    expect("every shipped manuscript source is a recorded compiled input or a pinned numerical lookup table",
+           not extra, f"shipped but neither compiled nor pinned lookup data: {extra}{lookup_problem}")
 
     # The explanatory TeX embeds its coordinates, so its reviewer-facing CSV
     # exports are not compiler inputs. Admit only the exact reviewed CSV paths
@@ -2772,6 +2802,28 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
                    "from fixed source inputs")
     except Exception as exc:
         expect("explanatory charts can be regenerated from reviewed sources", False, repr(exc))
+
+    # Charts have their own exact output inventory and reviewed generator. They
+    # share only fixed evidence inputs with the tables; a new drawing does not
+    # earn a blanket numerical exemption merely by living in figures/.
+    try:
+        generator = _load_reviewed_tool(root, TABLE_CHART_GENERATOR)
+        expected_outputs = generator.build(root)
+        expected_paths = {Path(p) for p in TABLE_CHART_GENERATED_SOURCES}
+        expected_paths.add(Path(TABLE_CHART_PROVENANCE))
+        expect("table-conversion generator produces exactly the reviewed artifact set",
+               set(expected_outputs) == expected_paths,
+               f"got {sorted(str(p) for p in expected_outputs)}")
+        for relative in sorted(expected_paths):
+            path = root / relative
+            expected = expected_outputs.get(relative)
+            expect(f"table-conversion generated bytes agree: {relative}",
+                   isinstance(expected, str) and path.is_file()
+                   and path.read_bytes() == expected.encode("utf-8"),
+                   "compared with deterministic plotting data and rendering "
+                   "from fixed source inputs")
+    except Exception as exc:
+        expect("table-conversion charts can be regenerated from reviewed sources", False, repr(exc))
 
     checks.extend(macro_file_checks(root))
 

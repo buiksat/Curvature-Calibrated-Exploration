@@ -150,6 +150,7 @@ SUPPLEMENT_EXPLANATORY_ARTIFACTS = (
     "paper/figures/transport_explanatory_bounds.csv",
     "paper/figures/transport_explanatory_provenance.json",
 )
+SUPPLEMENT_TABLE_CHART_ARTIFACTS = ('paper/figures/transport_table_drift.tex', 'paper/figures/transport_table_mechanism.tex', 'paper/figures/transport_table_original_bound_ratios.tex', 'paper/figures/transport_table_original_components.tex', 'paper/figures/transport_table_original_distribution.tex', 'paper/figures/transport_table_original_path_ratios.tex', 'paper/figures/transport_table_original_performance.tex', 'paper/figures/transport_table_original_validity.tex', 'paper/figures/transport_table_relative.tex', 'paper/figures/transport_table_same_history.tex', 'paper/figures/transport_table_provenance.json')
 SUPPLEMENT_SCHEMATIC_ARTIFACTS = (
     "paper/figures/transport_conceptual_interfaces.tex",
     "paper/figures/transport_conceptual_geometry.tex",
@@ -163,6 +164,7 @@ SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "tools/followup_anonymous_contract.py",
     "tools/make_transport_followup_paper.py",
     "tools/make_transport_explanatory_figures.py",
+    "tools/make_transport_table_charts.py",
     "tools/verify_review_experiment_export.py",
     "tools/analyze_relative_transport.py",
     "tools/check_python_environment.py",
@@ -215,6 +217,7 @@ def supplement_artifact_inventory(repo: Path) -> list[str]:
         repo, list(SUPPLEMENT_GENERATED_ARTIFACTS)
         + list(SUPPLEMENT_FOLLOWUP_ARTIFACTS)
         + list(SUPPLEMENT_EXPLANATORY_ARTIFACTS)
+        + list(SUPPLEMENT_TABLE_CHART_ARTIFACTS)
         + list(SUPPLEMENT_SCHEMATIC_ARTIFACTS)
         + list(SUPPLEMENT_SYMBOLIC_ARTIFACTS))
     excluded = _with_companions(repo, list(SUPPLEMENT_EXCLUDED_LEGACY))
@@ -459,15 +462,11 @@ SHRINK_MECHANISMS = (
     (r"\\catcode\b", "unreadable construct"),
 )
 
-#: Every generated evidence table, and the wrapper each one must be reached
-#: through.  \evidencetabular substitutes a column preamble and nothing else;
-#: it cannot change a font size or scale a box.
-EVIDENCE_TABLE_INPUTS = (
-    "tables/transport_instantiation_validity.tex",
-    "tables/transport_instantiation_performance.tex",
-    "tables/transport_instantiation_tightness.tex",
-)
-EVIDENCE_TABLE_WRAPPER = r"\evidencetabular"
+#: The numerical charts must remain visible at native size inside figure floats.
+#: Input scanning also rejects shrink commands inside every chart source.
+EVIDENCE_CHART_INPUTS = tuple(path.removeprefix("paper/")
+    for path in SUPPLEMENT_TABLE_CHART_ARTIFACTS if path.endswith(".tex"))
+EVIDENCE_CHART_WRAPPER = r"\begin{figure}"
 
 
 def strip_tex_comments(text: str) -> str:
@@ -803,23 +802,22 @@ def check_layout_rules(repo: Path) -> list[str]:
                         f"{arcname}:{number}: {kind} via {match.group(0)!r} in "
                         f"{line.strip()[:100]!r}")
 
-    # Each generated evidence table must still be reached through the wrapper
-    # that can only restate column widths, so the shrink path cannot come back
-    # by routing the \input through something else.
+    # Every replacement chart must be typeset in a native-size figure. The
+    # source scan above also rejects size changes in and around these inputs.
     seen: dict[str, str] = {}
     for arcname, compiled in compiled_sources:
-        for table in EVIDENCE_TABLE_INPUTS:
+        for table in EVIDENCE_CHART_INPUTS:
             marker = "\\input{" + table + "}"
             index = compiled.find(marker)
             if index < 0:
                 continue
             seen[table] = arcname
             window = compiled[max(0, index - 1200):index]
-            if EVIDENCE_TABLE_WRAPPER not in window:
+            if EVIDENCE_CHART_WRAPPER not in window:
                 findings.append(
                     f"{arcname}: {table} is not typeset through "
-                    f"{EVIDENCE_TABLE_WRAPPER}")
-    for table in EVIDENCE_TABLE_INPUTS:
+                    f"{EVIDENCE_CHART_WRAPPER}")
+    for table in EVIDENCE_CHART_INPUTS:
         if table not in seen:
             findings.append(f"{table} is no longer typeset by the submission")
     return findings
@@ -3532,7 +3530,8 @@ def followup_supplement_preflight(repo: Path) -> list[str]:
     # An artifact may be covered by an exact typed contract or an ordinary
     # sidecar. An unvalidated collective provenance record is never an exemption.
     uncovered = [path for path in (*SUPPLEMENT_FOLLOWUP_ARTIFACTS,
-                                   *SUPPLEMENT_EXPLANATORY_ARTIFACTS)
+                                   *SUPPLEMENT_EXPLANATORY_ARTIFACTS,
+                                   *SUPPLEMENT_TABLE_CHART_ARTIFACTS)
                  if path not in followup_contract.ARTIFACT_PINS
                  and f"{path}.sha256" not in members]
     if uncovered:

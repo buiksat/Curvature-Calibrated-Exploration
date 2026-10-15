@@ -51,7 +51,7 @@ check_evidence_sidecars() {
   }
   while IFS= read -r file; do
     case "$file" in *.sha256) continue ;; esac
-    if printf '%s\n' "$pinned" | grep -qxF "$file"; then
+    if grep -xF -- "$file" <<< "$pinned" >/dev/null; then
       pinned_count=$((pinned_count + 1))
       continue
     fi
@@ -125,6 +125,9 @@ run "follow-up table regeneration with original-source attribution (writes nothi
 
 run "explanatory chart regeneration from the packaged follow-up summaries (writes nothing)" \
   "$python" tools/make_transport_explanatory_figures.py --check
+
+run "table-to-chart regeneration from reviewed numerical values (writes nothing)" \
+  "$python" tools/make_transport_table_charts.py --check
 
 run "SHA-256 sidecars for every shipped evidence file" check_evidence_sidecars
 

@@ -31,7 +31,7 @@ def documents(path):
 
 def test_original_closure_transforms_without_changing_scientific_json(staged):
     assert len(contract.INPUT_PATHS) == len(contract.FOLLOWUP_CONTRACT) == 20
-    assert len(contract.ARTIFACT_PINS) == 12
+    assert len(contract.ARTIFACT_PINS) == 23
     assert len(contract.SCHEMATIC_PINS) == 2
     assert not contract.validate_original(ROOT)
     assert not contract.validate_packaged(staged)

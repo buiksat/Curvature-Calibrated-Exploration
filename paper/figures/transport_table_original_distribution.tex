@@ -1,0 +1,44 @@
+% Generated from reviewed numerical tables; no experiments rerun.
+\definecolor{tcOrange}{HTML}{D55E00}
+\definecolor{tcBlue}{HTML}{0072B2}
+\definecolor{tcGreen}{HTML}{009E73}
+\definecolor{tcPurple}{HTML}{CC79A7}
+\begin{tikzpicture}\begin{groupplot}[group style={group size=2 by 1,horizontal sep=0.48in,vertical sep=0.62in},scale only axis,width=2.25in,height=2.2in,/tikz/font=\normalsize,tick label style={font=\normalsize},label style={font=\normalsize},title style={font=\normalsize,align=center},axis lines=left,tick align=outside,clip=false,xmajorgrids,grid style={black!12}]
+\nextgroupplot[title={Median regret},xlabel={Median regret},ymin=-0.55,ymax=3.55,ytick={0,1,2,3},yticklabels={$D_{\rm target}=2$,$D_{\rm target}=1$,$D_{\rm target}=0.5$,$D_{\rm target}=0.25$},xmin=75,xmax=98]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(80.7,3.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(79.7,3.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(79.6,2.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(79.7,2.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(82.5,2.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(78.9,2.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(79.2,1.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(78.9,1.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(87.4,1.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(79.9,1.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(80.7,0.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(79.3,0.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(93.4,0.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(81.6,0.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(81.6,-0.1)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(81.6,-0.3)};
+\nextgroupplot[title={Interquartile range},xlabel={Interquartile range},ymin=-0.55,ymax=3.55,ytick={0,1,2,3},yticklabels={,,,},xmin=0,xmax=10]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(7.28,3.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(6.87,3.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(6.36,2.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(6.87,2.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(7.11,2.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(7,2.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(7.82,1.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(7,1.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(7.67,1.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(5.55,1.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(6.46,0.9)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(5.89,0.7)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(5.23,0.3)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(8.69,0.1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(6.56,-0.1)};
+\addplot[only marks,mark=diamond*,mark size=2.6pt,color=tcPurple] coordinates {(8.69,-0.3)};
+\end{groupplot}\end{tikzpicture}\par\medskip
+\tikz[baseline=-0.5ex]\draw[color=tcOrange,mark=*] plot coordinates {(0,0)}; Hessian\quad \tikz[baseline=-0.5ex]\draw[color=tcBlue,mark=triangle*] plot coordinates {(0,0)}; Endpoint\quad \par\smallskip
+\tikz[baseline=-0.5ex]\draw[color=tcGreen,mark=square*] plot coordinates {(0,0)}; Frozen reference\quad \tikz[baseline=-0.5ex]\draw[color=tcPurple,mark=diamond*] plot coordinates {(0,0)}; Naive current\quad \par\medskip
+\noindent\begin{minipage}{\linewidth}\raggedright $T=1000$; descriptive summaries over 50 runs per cell, without uncertainty intervals. IQR is shown directly: separate quartiles are not available. Every policy retains optimism in 50/50 runs per condition (pointwise exact 95\% CI: [92.9\%,100\%]).\end{minipage}
