@@ -64,34 +64,23 @@ $[92.9\%,100\%]$.  Reusing base seeds across cells supports paired comparisons
 within a condition, not a pooled sample of 600 independent runs.  The strict aggregate accepted all 2400 policy
 trajectories with no deterministic algebra or certificate-check failure, and
 the primary policy had no bound violation on the joint confidence event
-(\Cref{tab:transport-instantiation-validity}).  This finite-sample observation
+(\Cref{fig:transport-instantiation-validity}).  This finite-sample observation
 does not prove or empirically validate the theorem.  In particular, ordinary
 float64 Cholesky, eigenvalue, and quadrature checks are not verified
 enclosures.
 
-\begin{ccewidefloat}
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_validity.tex}
   \caption{Original near-linear audit for the transport-Hessian policy.
   Coverage is run-level simultaneous coverage with exact Clopper--Pearson
-  intervals.  The two median-maximum columns first maximize within each
-  trajectory, then take the median over 50 runs per cell.  ``Event viol.'' counts
-  theorem-bound violations only when the joint confidence premise holds.  All
+  intervals.  The left panel first maximizes each distance within a
+  trajectory, then takes the median over 50 runs per cell; the right panel
+  shows terminal medians.  Event violations count theorem-bound failures only
+  when the joint confidence premise holds.  All
   values come from the full evaluation; smoke and tuning runs are excluded.}
-  \label{tab:transport-instantiation-validity}
-\evidencetabular{@{}%
-    >{\raggedleft\arraybackslash}p{32pt}%
-    >{\raggedleft\arraybackslash}p{22pt}%
-    >{\raggedleft\arraybackslash}p{12pt}%
-    >{\raggedleft\arraybackslash}p{104pt}%
-    >{\raggedleft\arraybackslash}p{88pt}%
-    >{\raggedleft\arraybackslash}p{24pt}%
-    >{\raggedleft\arraybackslash}p{28pt}%
-    >{\raggedleft\arraybackslash}p{40pt}%
-    >{\raggedleft\arraybackslash}p{42pt}%
-    >{\raggedleft\arraybackslash}p{52pt}%
-    >{\raggedleft\arraybackslash}p{32pt}@{}}{%
-    \input{tables/transport_instantiation_validity.tex}}
-
-\end{ccewidefloat}
+  \label{fig:transport-instantiation-validity}
+\end{figure}
 
 \paragraph{Certificate tightness.}
 At $T=1000$, the median of each trajectory's maximum realized $\bar D_t^Q$
@@ -137,12 +126,12 @@ on this original near-linear grid is present before path inflation is added.
 This dominance statement does not describe the nonlinear follow-up.  This is a
 decomposition along transport-Hessian histories, not a bound evaluated on
 the frozen-reference policy's different histories.  The appendix defines
-the components and reports the complete tightness table.
+the components and reports the complete tightness charts.
 
 \paragraph{Policy outcomes.}
 At $T=1000$, mean regret for the operational Hessian-certificate policy rises
 from $81.0$ to $94.0$ across the four target conditions
-(\Cref{tab:transport-instantiation-performance}).  All three comparison
+(\Cref{fig:transport-instantiation-performance}).  All three comparison
 policies have lower sample-mean pseudo-regret than transport Hessian in every
 reported condition at this horizon.  These are matched-stream
 total-policy comparisons: the policies share contexts and potential outcomes,
@@ -157,22 +146,17 @@ Read in the intended direction, these outcomes do not show a causal or uniform
 advantage for full curvature, and the reverse ordering they record is specific
 to this environment, this certificate, and this horizon.
 
-\begin{ccewidefloat}
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_performance.tex}
   \caption{Original-study policy outcomes at the primary horizon $T=1000$.  Mean-regret and
   paired-difference intervals are comparisonwise deterministic paired-bootstrap
   95\% intervals over the same 50 evaluation seeds.  Each difference is the row
   method minus transport Hessian, so negative values favor the row method.
   Transport endpoint is a dense diagnostic comparator; naive current is an
   uncertified negative control.}
-  \label{tab:transport-instantiation-performance}
-\evidencetabular{@{}%
-    >{\raggedleft\arraybackslash}p{32pt}%
-    >{\raggedright\arraybackslash}p{150pt}%
-    >{\raggedright\arraybackslash}p{110pt}%
-    >{\raggedleft\arraybackslash}p{34pt}%
-    >{\raggedleft\arraybackslash}p{22pt}%
-    >{\raggedleft\arraybackslash}p{105pt}%
-    >{\raggedleft\arraybackslash}p{88pt}@{}}{%
-    \input{tables/transport_instantiation_performance.tex}}
+  \label{fig:transport-instantiation-performance}
+\end{figure}
 
-\end{ccewidefloat}
+Descriptive median and interquartile-range comparisons appear in
+\Cref{fig:transport-original-distribution}.

@@ -23,7 +23,7 @@ readability advice: a notation table, a chronological protocol guide, simpler
 abstract and policy explanations, explicit mean bound magnitudes, and a clearer
 chart comparator label. A final local pass clarifies the empirical certificate
 notation and threshold conventions, fixes grammar and score punctuation, and
-removes an unused equation number. The draft has 47 pages.
+removes an unused equation number. The numerical tables have now been replaced with charts; the draft has 52 pages.
 
 Four explanatory figures guide the reader through the argument:
 
@@ -35,8 +35,9 @@ Four explanatory figures guide the reader through the argument:
 | Bound scale | 21 | Compare mean own-history bounds with the deterministic regret caps |
 
 The charts are generated from retained evidence. The analytic illustration is
-explicitly distinguished from observed experimental behavior. The numerical
-outcomes table remains available in the appendix. All figures use native
+explicitly distinguished from observed experimental behavior. Ten additional charts replace the numerical tables, with point-and-interval
+comparisons, seed ranges and logarithmic diagnostics. The original tables
+remain in the research supplement for exact numerical lookup. All figures use native
 body-size text without resizing; no new experiments were run.
 
 ## Format and provenance
@@ -47,8 +48,8 @@ are unchanged upstream files; `STYLE_SHA256SUMS` records their hashes.
 
 The manuscript uses a 10pt article, the default anonymous TMLR mode, native
 single-column layout and fonts, author/year citations, and appendices after
-references. The wide evidence tables retain body-size text on landscape
-floats. Captions appear above tables, and the first page discloses the
+references. Result charts use portrait figures with native body-size labels;
+compact notation and assumption tables remain as text references. The first page discloses the
 Codex and Claude assistance. The availability statement describes the compact
 anonymous evidence supplement and separately states its raw-data limitations.
 The anonymous PDF contains no author contact details or identifying metadata.

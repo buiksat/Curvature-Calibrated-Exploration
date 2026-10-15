@@ -1,0 +1,35 @@
+% Generated from reviewed numerical tables; no experiments rerun.
+\definecolor{tcOrange}{HTML}{D55E00}
+\definecolor{tcBlue}{HTML}{0072B2}
+\definecolor{tcGreen}{HTML}{009E73}
+\definecolor{tcPurple}{HTML}{CC79A7}
+\begin{tikzpicture}\begin{groupplot}[group style={group size=2 by 1,horizontal sep=0.48in,vertical sep=0.62in},scale only axis,width=2.25in,height=2.1in,/tikz/font=\normalsize,tick label style={font=\normalsize},label style={font=\normalsize},title style={font=\normalsize,align=center},axis lines=left,tick align=outside,clip=false,xmajorgrids,grid style={black!12}]
+\nextgroupplot[title={Width / potential},xlabel={Median terminal ratio},ymin=-0.55,ymax=3.55,ytick={0,1,2,3},yticklabels={$D_{\rm target}=2$,$D_{\rm target}=1$,$D_{\rm target}=0.5$,$D_{\rm target}=0.25$},xmin=0,xmax=1.05,xtick={0,0.5,1}]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.167,3.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.154,3)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.144,2.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.167,2.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.154,2)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.144,1.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.167,1.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.154,1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.144,0.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.167,0.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.154,0)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.143,-0.23)};
+\nextgroupplot[title={Sharp / simple bound},xlabel={Median terminal ratio},ymin=-0.55,ymax=3.55,ytick={0,1,2,3},yticklabels={,,,},xmin=0,xmax=1.05,xtick={0,0.5,1}]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.973,3.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.977,3)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.98,2.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.947,2.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.954,2)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.961,1.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.899,1.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.913,1)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.925,0.77)};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.816,0.23)};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0.837,0)};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.859,-0.23)};
+\end{groupplot}\end{tikzpicture}\par\medskip
+\tikz[baseline=-0.5ex]\draw[color=tcOrange,mark=*] plot coordinates {(0,0)}; $T=250$\quad \tikz[baseline=-0.5ex]\draw[color=tcBlue,mark=triangle*] plot coordinates {(0,0)}; $T=500$\quad \tikz[baseline=-0.5ex]\draw[color=tcGreen,mark=square*] plot coordinates {(0,0)}; $T=1000$\quad \par\medskip
+\noindent\begin{minipage}{\linewidth}\raggedright Each point is a median over 50 terminal runs. Width/potential compares the frozen squared-width sum with its elliptic-potential bound; sharp/simple compares cumulative right-hand sides. No uncertainty intervals.\end{minipage}

@@ -1,0 +1,35 @@
+% Generated from reviewed numerical tables; no experiments rerun.
+\definecolor{tcOrange}{HTML}{D55E00}
+\definecolor{tcBlue}{HTML}{0072B2}
+\definecolor{tcGreen}{HTML}{009E73}
+\definecolor{tcPurple}{HTML}{CC79A7}
+\begin{tikzpicture}\begin{groupplot}[group style={group size=1 by 2,horizontal sep=0.48in,vertical sep=0.85in},scale only axis,width=4.8in,height=1.55in,/tikz/font=\normalsize,tick label style={font=\normalsize},label style={font=\normalsize},title style={font=\normalsize,align=center},axis lines=left,tick align=outside,clip=false,xmajorgrids,grid style={black!12}]
+\nextgroupplot[title={Largest recorded endpoint distance},xlabel={Maximum $d_{\rm Th}$},ymin=-0.55,ymax=2.55,ytick={0,1,2},yticklabels={$W=0.25$,$W=1$,$W=16$},xmin=0,xmax=1.85]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.045,2)};
+\node[anchor=west,xshift=5pt] at (axis cs:0.045,2) {0.045};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(0.627,1)};
+\node[anchor=west,xshift=5pt] at (axis cs:0.627,1) {0.627};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(1.581,0)};
+\node[anchor=west,xshift=5pt] at (axis cs:1.581,0) {1.581};
+\nextgroupplot[title={How often each threshold is reached},xlabel={Percentage of rounds},ymin=-0.55,ymax=2.55,ytick={0,1,2},yticklabels={$W=0.25$,$W=1$,$W=16$},xmin=0,xmax=118,xtick={0,25,50,75,100}]
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(2.99,2.28)};
+\node[anchor=west,xshift=5pt] at (axis cs:2.99,2.28) {1495};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(0,2)};
+\node[anchor=west,xshift=5pt] at (axis cs:0,2) {0};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0,1.72)};
+\node[anchor=west,xshift=5pt] at (axis cs:0,1.72) {0};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(99.578,1.28)};
+\node[anchor=west,xshift=5pt] at (axis cs:99.578,1.28) {49789};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(7.608,1)};
+\node[anchor=west,xshift=5pt] at (axis cs:7.608,1) {3804};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0,0.72)};
+\node[anchor=west,xshift=5pt] at (axis cs:0,0.72) {0};
+\addplot[only marks,mark=*,mark size=2.6pt,color=tcOrange] coordinates {(99.726,0.28)};
+\node[anchor=west,xshift=5pt] at (axis cs:99.726,0.28) {49863};
+\addplot[only marks,mark=triangle*,mark size=2.6pt,color=tcBlue] coordinates {(91.246,0)};
+\node[anchor=west,xshift=5pt] at (axis cs:91.246,0) {45623};
+\addplot[only marks,mark=square*,mark size=2.6pt,color=tcGreen] coordinates {(0.572,-0.28)};
+\node[anchor=west,xshift=5pt] at (axis cs:0.572,-0.28) {286};
+\end{groupplot}\end{tikzpicture}\par\medskip
+\tikz[baseline=-0.5ex]\draw[color=tcOrange,mark=*] plot coordinates {(0,0)}; $d_{\rm Th}\ge0.01$\quad \tikz[baseline=-0.5ex]\draw[color=tcBlue,mark=triangle*] plot coordinates {(0,0)}; $d_{\rm Th}\ge0.1$\quad \tikz[baseline=-0.5ex]\draw[color=tcGreen,mark=square*] plot coordinates {(0,0)}; $d_{\rm Th}\ge1$\quad \par\medskip
+\noindent\begin{minipage}{\linewidth}\raggedright Hessian histories: 50 seeds $\times$ 1000 rounds per condition. Labels in the lower panel are counts out of 50,000. Thresholds are nested; rounds are dependent. No uncertainty intervals.\end{minipage}

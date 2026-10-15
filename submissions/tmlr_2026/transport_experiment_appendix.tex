@@ -35,35 +35,22 @@ corresponding mean sharp right-hand side gives base shares
 $97.33\%,94.66\%,89.39\%,79.39\%$ and path shares
 $2.01\%,4.04\%,8.16\%,16.27\%$ for
 $D_{\rm target}=0.25,0.5,1,2$, respectively.
+The remaining tightness summaries appear in
+\Cref{fig:transport-original-components,fig:transport-original-bound-ratios}.
 These joint cumulative quantities establish the decomposition;
 marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
 
-\begin{ccewidefloatappendix}
-  \caption{Original-study certificate and bound tightness for the transport-Hessian policy.
-  The reported summary statistics are medians over the following populations.
-  Terminal historical-radius and cumulative current-bias entries, and terminal
-  width/bound ratios summarize 50 runs per cell.  Path ratios pool eligible
-  seed--round or seed--checkpoint observations, while $e^{\bar D_t^Q/2}$ pools
-  all seed--round values.
-  $n_0$ counts denominators at or below the preregistered ratio tolerance that
-  are excluded from that ratio.  ``Width/potential'' is the frozen squared-width
-  sum divided by its elliptic-potential upper bound; ``Sharp/simple'' is the
-  sharp cumulative right-hand side divided by the simpler right-hand side.}
-  \label{tab:transport-instantiation-tightness}
-\evidencetabular{@{}%
-    >{\raggedleft\arraybackslash}p{32pt}%
-    >{\raggedleft\arraybackslash}p{22pt}%
-    >{\raggedleft\arraybackslash}p{86pt}%
-    >{\raggedleft\arraybackslash}p{82pt}%
-    >{\raggedleft\arraybackslash}p{60pt}%
-    >{\raggedleft\arraybackslash}p{27pt}%
-    >{\raggedleft\arraybackslash}p{30pt}%
-    >{\raggedleft\arraybackslash}p{34pt}%
-    >{\raggedleft\arraybackslash}p{74pt}%
-    >{\raggedleft\arraybackslash}p{60pt}@{}}{%
-    \input{tables/transport_instantiation_tightness.tex}}
-
-\end{ccewidefloatappendix}
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_path_ratios.tex}
+  \caption{Original-study path-certificate tightness for the transport-Hessian
+  policy. Ratios pool eligible seed--round or seed--checkpoint observations;
+  points are medians. $n_0$ counts denominators at or below the preregistered
+  ratio tolerance excluded from the path-certificate/endpoint ratio.
+  The selected-path quadrature diagnostic stays close to the endpoint distance,
+  while the analytic path certificate is much larger than either.}
+  \label{fig:transport-original-path-ratios}
+\end{figure}
 \clearpage
 
 \begin{figure}[p]
@@ -89,7 +76,7 @@ marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
   dashed line is equality.  Values at or below the
   preregistered $10^{-12}$ ratio tolerance, including round-one zeros, are
   omitted from the log axes and counted in
-  \Cref{tab:transport-instantiation-tightness}.  Quadrature and
+  \Cref{fig:transport-original-path-ratios}.  Quadrature and
   generalized-eigenvalue calculations are dense float64 diagnostics, not
   verified certificates.}
   \label{fig:transport-instantiation-tightness}
@@ -107,3 +94,32 @@ marginal medians of $e^{\bar D_t^Q/2}$ do not determine it.
   \label{fig:transport-instantiation-bound}
 \end{figure}
 \clearpage
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_distribution.tex}
+  \caption{Original-study regret distributions at the primary horizon.
+  Medians and interquartile ranges summarize each policy's own histories;
+  neither panel represents uncertainty in the mean.}
+  \label{fig:transport-original-distribution}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_components.tex}
+  \caption{Original-study transport multipliers and error summaries.
+  Multipliers pool all seed--round values; terminal historical radii and
+  cumulative current biases summarize 50 runs per cell. These different
+  populations must not be combined into an additive median decomposition.}
+  \label{fig:transport-original-components}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_original_bound_ratios.tex}
+  \caption{Original-study terminal width and bound ratios, summarized by
+  medians over 50 runs per cell. ``Width/potential'' is the frozen squared-width
+  sum divided by its elliptic-potential upper bound; ``Sharp/simple'' is the
+  sharp cumulative right-hand side divided by the simpler right-hand side.}
+  \label{fig:transport-original-bound-ratios}
+\end{figure}
