@@ -1,0 +1,272 @@
+{
+  "revision": "abstract-revision",
+  "date": "2026-10-15",
+  "timezone": "America/Los_Angeles",
+  "tested_research_commit": "189e9ce21d54241e432b0409ca7e027d4541413a",
+  "source_and_tool_sha256": {
+    "paper/body_intro.tex": "6c4ee1a35124e81ad8abd0c4ff168e841a8980a9dd3ae888eabcdd7d40ea403b",
+    "paper/main.tex": "02350981ca5983ba53cc385464eedef8fdad03ed4b2cd31e11d7f5399a142730",
+    "submissions/tmlr_2026/main.tex": "5ae23779a03ac4d595eee894261edc29c3c9ab59db8a0218f194fcccb35f2946",
+    "submissions/tmlr_2026/package.py": "78d2b15e32064e6a04f9fc253968fcb9e77295282807bf63a1fb109f0187cf30",
+    "tests/test_tmlr_release_package.py": "f1d6accb3eecf05531dcb56a6177d3c172e2f467b6a390385e7877539151528c",
+    "tests/test_transport_github_review_bundle.py": "02c1869ae3a56b07ccb383ecb61e2b3bbc089db6a5a3eb2cee90709b51d75e73",
+    "tools/anonymous_package_contract.py": "b7d911dd45ff79fd75856a920139c54546f6d828b1c8523ff4343a132046255a",
+    "tools/numeric_context_pins.py": "e8541ea06b0ca7a36290c5a5eddaa3d461e4e97bc9ef18ad56934357392dd01e",
+    "tools/verify_tmlr_submission_numbers.py": "024bf2d0bb7faeed7dcfd05403139ae271432143d9f4956dad3692d7539fed76",
+    "tools/verify_transport_committed_evidence.py": "623c3a35a9ecebf37bc38e16dd27f768d7a51fec00c4f1ea298bc556b4f41767"
+  },
+  "initial_checkout_clean": true,
+  "initial_main": "341e191",
+  "initial_research": "50fee83",
+  "scientific_mirrors": {
+    "matched_active_scientific_files": [
+      "availability.tex",
+      "body_conclusion.tex",
+      "body_intro.tex",
+      "body_related.tex",
+      "broader_impact.tex",
+      "figures/transport_conceptual_geometry.tex",
+      "figures/transport_conceptual_interfaces.tex",
+      "figures/transport_explanatory_bounds.tex",
+      "figures/transport_explanatory_outcomes.tex",
+      "figures/transport_instantiation_bound.tex",
+      "figures/transport_instantiation_bound_D-0p25.csv",
+      "figures/transport_instantiation_bound_D-0p5.csv",
+      "figures/transport_instantiation_bound_D-1.csv",
+      "figures/transport_instantiation_bound_D-2.csv",
+      "figures/transport_instantiation_regret.tex",
+      "figures/transport_instantiation_regret_D-0p25.csv",
+      "figures/transport_instantiation_regret_D-0p5.csv",
+      "figures/transport_instantiation_regret_D-1.csv",
+      "figures/transport_instantiation_regret_D-2.csv",
+      "figures/transport_instantiation_tightness.tex",
+      "figures/transport_instantiation_tightness_D-0p25.csv",
+      "figures/transport_instantiation_tightness_D-0p5.csv",
+      "figures/transport_instantiation_tightness_D-1.csv",
+      "figures/transport_instantiation_tightness_D-2.csv",
+      "figures/transport_table_drift.tex",
+      "figures/transport_table_mechanism.tex",
+      "figures/transport_table_original_bound_ratios.tex",
+      "figures/transport_table_original_components.tex",
+      "figures/transport_table_original_distribution.tex",
+      "figures/transport_table_original_path_ratios.tex",
+      "figures/transport_table_original_performance.tex",
+      "figures/transport_table_original_validity.tex",
+      "figures/transport_table_relative.tex",
+      "figures/transport_table_same_history.tex",
+      "legacy_scope.tex",
+      "macros.tex",
+      "notation.tex",
+      "references.bib",
+      "transport_experiment.tex",
+      "transport_experiment_appendix.tex",
+      "transport_followup.tex",
+      "transport_followup_appendix.tex",
+      "transport_proofs.tex",
+      "transport_theory.tex"
+    ],
+    "count": 44,
+    "abstract_copies": 3,
+    "word_count": 250,
+    "scope": "Project scientific inputs actually read by final TMLR compiler plus bibliography; inactive legacy appendices excluded."
+  },
+  "science_preservation": {
+    "checked_files": 270,
+    "unchanged": true,
+    "detail": "work/abstract-preserved-science.json"
+  },
+  "ledger_preservation": {
+    "baseline_commit": "50fee83b88594e267351195528c789c5f342bba2",
+    "old_entries": 218,
+    "new_entries": 219,
+    "all_218_previous_entries_unchanged_including_recomputed_values": true,
+    "added_entries": [
+      {
+        "manuscript": "submissions/tmlr_2026/main.tex",
+        "literal": "pointwise paired 95\\% confidence intervals",
+        "display": "95",
+        "source": "review/transport_review_followup/full-cce-full-local/execution_config.json",
+        "selector": "100 * statistics.paired_bootstrap_level",
+        "units": "percent",
+        "aggregation": "declared confidence level",
+        "population": "completed follow-up pointwise paired bootstrap intervals",
+        "unrounded": 95.0
+      }
+    ]
+  },
+  "archives": {
+    "release_directory": "/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release",
+    "research_checkout": "/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/research",
+    "main_checkout": "/home/bahram/Curvature-Calibrated-Exploration",
+    "toolchain": {
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "latexmk": "/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/build-env/latexmk-root/usr/bin/latexmk"
+    },
+    "scope": "Independent fresh archive rebuild and shipped supplement checks; no new experiments, raw replay, or external review.",
+    "source": {
+      "archive_sha256": "a2d69ef63f44920be07fe6b26720308a47f41d53993f1734bb9d1bcbde33f652",
+      "archive_bytes": 3459637,
+      "members": 103,
+      "compile_exit_code": 0,
+      "elapsed_seconds": 26.798629880999215,
+      "pdf_sha256": "a586d20810255d42f320bd1f8f346e881f41d095d134b0456d7a051ec388caef",
+      "release_pdf_sha256": "a586d20810255d42f320bd1f8f346e881f41d095d134b0456d7a051ec388caef",
+      "pdf_byte_identical": true,
+      "recorded_input_count": 336,
+      "checkout_inputs": [],
+      "validated_local_recorded_inputs": 95,
+      "compiled_reference_findings": [],
+      "final_latex_warnings": [
+        "LaTeX hooks Warning: Generic hook 'package/after/fontspec' is deprecated.",
+        "LaTeX Warning: Command \\showhyphens   has changed."
+      ],
+      "pages": 52
+    },
+    "supplement": {
+      "archive_sha256": "c90bed4eeafd18c707bbff18b2832f55ff4d242ae7cd2841e9a7633505ad701e",
+      "archive_bytes": 93902070,
+      "members": 190,
+      "verify_exit_code": 0,
+      "elapsed_seconds": 5.858952615002636,
+      "python": "/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/build-env/venv/bin/python",
+      "inherited_pythonpath_removed": true,
+      "step_exit_statuses": [
+        [
+          "anonymous-package contract",
+          "0"
+        ],
+        [
+          "numerical-provenance ledger",
+          "0"
+        ],
+        [
+          "artifact regeneration from the packaged aggregate (writes nothing)",
+          "0"
+        ],
+        [
+          "follow-up paired terminal intervals from all per-seed summaries",
+          "0"
+        ],
+        [
+          "follow-up table regeneration with original-source attribution (writes nothing)",
+          "0"
+        ],
+        [
+          "explanatory chart regeneration from the packaged follow-up summaries (writes nothing)",
+          "0"
+        ],
+        [
+          "table-to-chart regeneration from reviewed numerical values (writes nothing)",
+          "0"
+        ],
+        [
+          "SHA-256 sidecars for every shipped evidence file",
+          "0"
+        ],
+        [
+          "study tests",
+          "0"
+        ]
+      ],
+      "not_executed_lines": [
+        "NOT_EXECUTED  follow-up: raw trajectories and upstream floating-point operations",
+        "NOT_EXECUTED  paired bootstrap intervals recomputed from per-seed values",
+        "NOT_EXECUTED  raw per-run trajectory bytes verified against the aggregate inventory",
+        "summary: 3 NOT_EXECUTED, 616 PASS, 38 PASS_ANON"
+      ],
+      "test_summary_lines": [
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:945: 156 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:948: 155 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:1058: 80 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:1060: 80 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:809: 480 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:919: 82 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:921: 83 warnings",
+        "../../build-env/venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:933: 84 warnings",
+        "23 passed, 1202 warnings in 0.45s"
+      ],
+      "all_checks_passed_message": true
+    },
+    "pass": true
+  },
+  "strict_release_manifest_sha256": "5b20c7ce975d9fd52ede0eb296757161a8ae91f932c28f97d94c37a545ad9b30",
+  "visual_review": {
+    "first_pages_at_reading_resolution": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_pages_contact_sheets": 52,
+    "main_and_strict_pdf_byte_identical": true,
+    "no_clipping_overlap_missing_glyph_or_overfull_box_found": true,
+    "warnings_retained": [
+      "fontspec generic hook deprecation",
+      "showhyphens changed",
+      "underfull boxes"
+    ]
+  },
+  "tests": {
+    "detached_evidence": {
+      "passed": 67
+    },
+    "provenance_selection_before_release": {
+      "passed": 85,
+      "skipped": 5,
+      "deselected": 482
+    },
+    "scanner_selection_before_release": {
+      "passed": 64,
+      "skipped": 2,
+      "deselected": 507
+    },
+    "final_archive_integration": {
+      "passed": 4,
+      "skipped": 0,
+      "deselected": 569
+    },
+    "full_initial": {
+      "passed": 738,
+      "failed": 1,
+      "skipped": 3,
+      "reason": "prior committed handoff EOF blank line; corrected by 189e9ce"
+    },
+    "full_final": {
+      "passed": 739,
+      "skipped": 3,
+      "failed": 0,
+      "warnings": 2,
+      "elapsed_seconds": 187.33,
+      "commit": "189e9ce21d54241e432b0409ca7e027d4541413a",
+      "skip_reasons": [
+        "no user TEXMFVAR on this host",
+        "TEXMFSYSVAR is not a symlink on this host",
+        "historical hard-coded clean-rebuild path absent; independently validated fresh source ZIP"
+      ]
+    },
+    "final_record_checks": {
+      "passed": 3,
+      "deselected": 570,
+      "scope": "README current artifact facts and both current collection-count guards"
+    }
+  },
+  "collection": {
+    "package": 573,
+    "repository": 742
+  },
+  "repository_ledger": {
+    "PASS": 607,
+    "NOT_EXECUTED": 4,
+    "FAIL": 0,
+    "entries": 219
+  },
+  "new_experiments": false,
+  "new_external_model_review": false,
+  "submitted_to_tmlr": false,
+  "toolchain": {
+    "python": "3.12.14",
+    "pdftex": "1.40.28 / TeX Live 2025 (Debian)",
+    "latexmk": "4.87",
+    "bibtex": "0.99d"
+  }
+}

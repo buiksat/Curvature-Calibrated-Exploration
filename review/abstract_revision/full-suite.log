@@ -1,0 +1,26 @@
+........................................................................ [  9%]
+........................................................................ [ 19%]
+........................................................................ [ 29%]
+........................................................................ [ 38%]
+........................................................................ [ 48%]
+........................................................................ [ 58%]
+...........................................s..s......................... [ 67%]
+...................................s.................................... [ 77%]
+........................................................................ [ 87%]
+........................................................................ [ 97%]
+......................                                                   [100%]
+=============================== warnings summary ===============================
+tests/test_tmlr_release_package.py::test_a_duplicate_archive_member_is_rejected[source.zip]
+  /home/bahram/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py:1625: UserWarning: Duplicate name: 'LICENSE-gpl-3-0'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/test_tmlr_release_package.py::test_a_duplicate_archive_member_is_rejected[supplement.zip]
+  /home/bahram/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py:1625: UserWarning: Duplicate name: 'ANONYMIZATION.json'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_tmlr_release_package.py:5398: this host reports no user TEXMFVAR
+SKIPPED [1] tests/test_tmlr_release_package.py:5444: TEXMFSYSVAR is not a symlink on this host
+SKIPPED [1] tests/test_tmlr_release_package.py:5890: no clean source.zip rebuild present
+739 passed, 3 skipped, 2 warnings in 187.33s (0:03:07)

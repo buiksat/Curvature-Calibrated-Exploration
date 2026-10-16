@@ -1,10 +1,11 @@
 # Review-revision validation
 
-This record covers the research revisions through 2026-10-15 (UTC).
+This record covers the research revisions through the local abstract revision
+on 2026-10-15 (America/Los_Angeles).
 `FINALIZATION_REPORT.md` remains the historical release
 record. A collected test has not necessarily run or passed.
 
-**Current chart revision (2026-10-15):** all eight numerical tables are
+**Earlier chart revision (2026-10-15 UTC):** all eight numerical tables are
 replaced or consolidated into charts, with exact tables retained as supplemental
 lookup data. The main and strict PDFs both have 52 pages and reproduce byte for
 byte from clean source archives. Final chart/package regression results appear
@@ -1019,3 +1020,39 @@ The final fresh supplement extraction passes every advertised check, and the
 final source archive remains byte-bound to the independently rebuilt PDF.
 Current collection is 572 package cases and 741 repository cases. These
 collection counts are separate from the execution results above.
+
+## Local abstract revision: final validation
+
+The abstract is now 250 words, in one paragraph, with contextual-bandit scope
+in the first sentence, an explicit conditional theorem, a limited synthetic
+study and the adverse findings. The title remains aligned and the introduction
+has small matching clarifications. Online guidance actually read is cited in
+`ABSTRACT_REVISION.md`.
+
+The final full suite on `189e9ce` reports **739 passed, 3 skipped, 0 failed, 2 warnings in 187.33s**. The initial full
+run had 738 passed, 3 skipped and 1 failed: its baseline-to-HEAD whitespace
+guard found a blank line at EOF in the previous handoff commit. Committing the
+corrected handoff resolved that state-dependent failure. The test was not changed.
+The final three skips are host-conditional TeX-path cases and a historical
+hard-coded rebuild path; independent fresh archive validation covers the latter.
+
+The strict release passes all gates. Its 52-page PDF is byte-identical to the
+main-branch build and to an independent clean source-archive rebuild. The latter
+uses no input from either checkout. All 44 active scientific mirrors and three
+abstract copies match. All 270 checked scientific/evidence files and all 218
+previous numerical entries remain unchanged. The explicit 95% level adds one
+source-derived ledger entry, bringing the total to 219.
+
+The fresh supplement passes all advertised steps, 25 anonymous-contract checks,
+23 study tests, and its ledger (616 PASS, 38 PASS_ANON, 3 NOT_EXECUTED, 0 FAIL).
+Raw-trajectory limitations remain. A necessary identifier-scanner correction
+removes a numeric-prefix false positive while retaining real revision detection;
+one regression was added. Current collection is 573 package and 742 repository
+cases. Existing scientific checks and tolerances were not weakened.
+
+The release manifest is refreshed for the local protected TeX inputs. The final
+PDF/source/supplement hashes, initial failure history, warning details, exact
+scope and validation commands are recorded in
+[the implementation report](../../review/abstract_revision/IMPLEMENTATION_REPORT.md)
+and [verification data](../../review/abstract_revision/VERIFICATION.json).
+No new experiment, external model review or TMLR submission was performed.
