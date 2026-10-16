@@ -901,6 +901,10 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
             "len(seed_sets.evaluation)", "seeds", "count",
             "completed follow-up evaluation seeds within each condition",
             lambda a, c: float(len(a["seed_sets"]["evaluation"])))
+    add(ABSTRACT_TEX, r"pointwise paired 95\% confidence intervals", "95", FOLLOWUP_CONFIG,
+        "100 * statistics.paired_bootstrap_level", "percent", "declared confidence level",
+        "completed follow-up pointwise paired bootstrap intervals",
+        lambda a, c: 100 * a["statistics"]["paired_bootstrap_level"])
     add(LEGACY_SCOPE_TEX, "29-parameter", "29", C,
         "base.environment.feature_dimension", "parameters", "declared constant",
         "configuration",
@@ -1374,6 +1378,7 @@ PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
     ("paper/transport_theory.tex", "\\xi_t=0"): 3,
     ("submissions/tmlr_2026/main.tex", "29-parameter"): 1,
     ("submissions/tmlr_2026/main.tex", "50 paired seeds"): 1,
+    ("submissions/tmlr_2026/main.tex", r"pointwise paired 95\% confidence intervals"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "2,400 trajectories"): 1,
     ("submissions/tmlr_2026/supplement_README.md", "21 artifacts"): 1,
     ("submissions/tmlr_2026/supplement_README.md",

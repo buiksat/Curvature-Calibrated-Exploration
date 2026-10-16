@@ -95,6 +95,7 @@ UNITS: tuple[str, ...] = (
     'Bandit exploration also connects to classical D-optimal and A-optimal design through objectives such as maximizing $\\log\\det(\\bVbar_t)$ or minimizing the trace of $\\bVbar_t^{-1}$ \\citep{valko2013finite}. Stochastic trace and log-determinant estimators offer related matrix-free tools \\citep{ubaru2017fast}. Here the frozen log-determinant enters the regret analysis. The audited policy chooses actions by its UCB score and does not implement those estimators.',
     'Certified path-length envelope $\\bar D_t$.}; \\node[anchor=north west,align=left] at (5.5,-2.2) {\\textbf{B\\quad Operator comparison}',
     'Consequently, $W=\\Omega(T)$ with a sufficiently large problem-dependent constant keeps $D_{T,W}=O(1)$. For fixed $d$ and fixed problem constants, \\[ R_T=O(d\\sqrt T\\log T)+O(\\sqrt T). \\] This conclusion requires no $D_t<1$ condition. Here $W$ is an abstract near-linearity scale, not generic network width or parameter count, and the result is not an unrestricted neural-training theorem. No optimizer-residual rate is required because the corrected center is used.',
+    "Contextual-bandit policies use confidence estimates to balance exploration and reward. For nonlinear predictors, retraining can change gradient-based estimates without adding observations, but standard sequential confidence arguments do not automatically justify confidence bands based on recomputed gradients. We develop confidence transport to connect a valid reference confidence band, built from gradients fixed before each reward, to scores based on recomputed gradients. The approach uses certified bounds on matrix changes and numerical error. Under explicit statistical and computational conditions, it yields an upper confidence bound policy with a regret guarantee. The conversion has a limit: with the same history, center, radius and bias, the certified uncertainty width cannot be smaller than the reference width. Exact actionwise transport recovers that width; this comparison does not order regret across policies with different adaptive histories. A prespecified study compares four policies in three conditions using one synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition. Hessian transport, which bounds matrix changes using prediction Hessians, has higher mean pseudo-regret than every comparator in each condition; all nine pointwise paired 95\\% confidence intervals for regret differences exclude zero. Transport inflation dominates its regret bounds. Both these bounds and the reference policy's own bounds exceed a deterministic regret cap. All policies, including an uncertified control, pass the recorded floating-point confidence and optimism checks. These checks establish neither universal validity nor a practical advantage. The results separate three questions for exploration with relinearized gradients: whether confidence is conditionally valid, whether regret bounds are informative, and whether decisions improve.",
     'Each term records the contribution of the action actually chosen. This identity is why the regret proof returns to the frozen matrix even when the policy scores actions using the current matrix. Set $\\gamma_0=0$, and define regret as the mean reward lost relative to the best available action:',
     'Exact current curvature has $\\kappa_{-,t}=\\kappa_{+,t}=1$. More generally, the operational relative-error certificate',
     'For completeness, an exact scalar endpoint distance does not generally give the actionwise equality. Set $\\bVbar=I_2$, $\\bV=\\operatorname{diag}(e^D,e^{-D})$ with $D>0$, and $\\bq=(0,1)^\\top$. Then $d_{\\rm Th}(\\bVbar,\\bV)=D$ and $\\bar s=1$, whereas the scalar corrected width is $e^{D/2}s=e^D>1$.',
@@ -109,7 +110,6 @@ UNITS: tuple[str, ...] = (
     'Let $c_t=\\beta_t[1+\\alpha_te^{\\bar D_t} \\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}]$. Summation and one Cauchy--Schwarz application give \\[ R_T-2\\sum_tb_t(a_t)-\\sum_t\\xi_t \\le\\sqrt{\\sum_tc_t^2}\\sqrt{\\sum_t\\bar s_t^2(a_t)}. \\] Since $\\bar s_t^2(a_t)\\le G^2/\\lambda$, the scalar inequality $x\\le(1+M)\\log(1+x)$ for $0\\le x\\le M$, with $x=\\sigma^{-2}\\bar s_t^2(a_t)$ and $M=G^2/(\\lambda\\sigma^2)$, yields',
     'More generally, fix an action and $m_t(a)$, $b_t(a)$, $\\beta_t>0$, and $\\bar s_t(a)$. If the only restriction on its mean is the full interval \\eqref{eq:abstract-confidence-new}, a score $m_t(a)+\\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that interval if and only if $w_t(a)\\ge\\bar s_t(a)$.',
     'More generally, suppose there is a measurable function $\\nu_t:[0,1]\\to[0,\\infty)$ with $\\nu_t\\in L^1([0,1])$ such that \\[ \\dot\\Bmat(\\tau)^\\top\\dot\\Bmat(\\tau) \\preceq\\nu_t(\\tau)^2\\bV(\\tau) \\] almost everywhere. Then $\\mathcal D(\\bV)\\le2\\int_0^1\\nu_t(\\tau)d\\tau$. For nonnegative $\\nu_t$, the displayed PSD premise is equivalently the norm condition $\\|\\dot\\Bmat(\\tau)\\bV(\\tau)^{-1/2}\\|_{\\rm op}\\le\\nu_t(\\tau)$ almost everywhere.',
-    "Retraining a model can change its uncertainty estimates even when no new data are added. In a contextual bandit, we ask when recomputing past gradients at the current model preserves the confidence guarantee used to choose actions. We give a conditional upper confidence bound (UCB) theorem that starts from features fixed before each reward and accounts for changing the uncertainty matrix, approximating it, and computing its widths. A width gives the geometric scale of the uncertainty bonus. For squared loss, a correction based on stored features adjusts the prediction at the center of the confidence band. The resulting confidence guarantee does not require the nonlinear optimizer to converge. It does require predictable parameter paths in a certified region, together with explicit Taylor and misspecification error bounds. The conversion has a basic limit: with the same history, center, radius and bias, its certified width cannot be smaller than the direct reference width. Exact actionwise transport recovers that width; the result leaves the regret ordering of policies with different histories open. A prespecified study tests four policies in three conditions using a 29-parameter scaled-tanh model and 50 paired seeds per condition. Hessian transport, which bounds matrix changes using prediction Hessians, has higher mean pseudo-regret than every comparator in each condition; all nine pointwise paired confidence intervals for regret differences exclude zero. Transport inflation dominates its regret bounds, which give no improvement over a deterministic regret cap. The reference policy's own bounds are also vacuous. All policies, including an uncertified control, pass the recorded floating-point confidence and optimism checks. The study illustrates why a conditionally valid confidence score, a tight regret bound and a useful decision rule must be assessed separately.",
     'Set $\\hat s=\\sqrt{U}$. If $L>0$, the observable factor $\\alpha=\\sqrt{U/L}$ verifies played-action sharpness. If $L\\le0<U$, the interval supplies no finite positive multiplicative sharpness factor; the solve must continue or an additive-width theorem must be used. If $U=0$, the exact inverse quadratic form is zero and the solver returns $\\hat s=0$. For $\\bq=0$, skip the solve and return zero.',
     'Since $\\sup_u|2\\operatorname{sech}^2(u)\\tanh(u)|=4/(3\\sqrt3)$, \\Cref{cor:global-near-linear-new} applies with \\[ G=B_\\phi,\\qquad c_\\mu=c_g=c_h:=\\frac{4B_\\phi^2}{3\\sqrt3}. \\] The symbol $W$ is a smoothness scale here; it is not identified with hidden width or parameter count.',
     'The category certificate uses only scalar sums and current projections. After collecting category $c$ at time $t$, its count increases by one and its collection sum increases by $\\omega_{\\btheta_t}(z_t)^2$; other category sums are unchanged. These are sufficient statistics for this comparison, although the category factors need not be the tight spectral factors when feature outer products are linearly dependent.',
@@ -460,7 +460,7 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '$W=0.25$'):
         (1, _u((66, 150))),
     ('paper/transport_followup.tex', '$W=16,1,0.25$'):
-        (3, _u((40, 116), (33, 3), (211, 371))),
+        (3, _u((41, 116), (33, 3), (211, 371))),
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'):
         (1, _u((63, 161))),
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'):
@@ -528,9 +528,9 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', 'pointwise 95\\% paired'):
         (1, _u((197, 208))),
     ('paper/transport_followup.tex', 'regrets 180.01, 177.97, and 171.84'):
-        (1, _u((40, 189))),
+        (1, _u((41, 189))),
     ('paper/transport_followup.tex', 'regrets 185.26, 183.06, and 176.67'):
-        (1, _u((40, 78))),
+        (1, _u((41, 78))),
     ('paper/transport_followup.tex', 'same 600 recorded histories'):
         (1, _u((31, 64))),
     ('paper/transport_followup.tex', 'standard deviation $0.25$'):
@@ -639,14 +639,16 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_theory.tex', '\\alpha_t=1'):
         (1, _u((77, 696))),
     ('paper/transport_theory.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (2, _u((38, 29), (77, 710))),
+        (2, _u((39, 29), (77, 710))),
     ('paper/transport_theory.tex', '\\xi_t=0'):
         (3, _u((81, 439), (73, 270), (77, 745))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '29-parameter'):
-        (1, _u((51, 1185))),
+        (1, _u((37, 1049))),
     ('submissions/tmlr_2026/main.tex', '50 paired seeds'):
-        (1, _u((51, 1220))),
+        (1, _u((37, 1084))),
+    ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% confidence intervals'):
+        (1, _u((37, 1269))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'):
         (1, _u((9, 41))),
@@ -664,7 +666,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
     ('README.md', '2.2.3'):
         ('environment-version', 0, _u()),
     ('README.md', '3.12'):
-        ('environment-version', 1, _u((45, 25))),
+        ('environment-version', 1, _u((46, 25))),
     # paper/availability.tex
     ('paper/availability.tex', '1.13.1'):
         ('historical-dependency-version', 1, _u((190, 661))),
@@ -885,30 +887,30 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
         ('math-constant', 1, _u((215, 140))),
     # paper/transport_proofs.tex
     ('paper/transport_proofs.tex', '0'):
-        ('math-constant', 16, _u((48, 304), (42, 162), (42, 213), (39, 165), (91, 554), (91, 609), (41, 80), (41, 101), (176, 174), (176, 232), (176, 742), (79, 172), (52, 29), (52, 270), (52, 346), (52, 359))),
+        ('math-constant', 16, _u((49, 304), (43, 162), (43, 213), (40, 165), (91, 554), (91, 609), (42, 80), (42, 101), (176, 174), (176, 232), (176, 742), (79, 172), (52, 29), (52, 270), (52, 346), (52, 359))),
     ('paper/transport_proofs.tex', '0,1'):
-        ('interval-endpoint', 1, _u((39, 179))),
+        ('interval-endpoint', 1, _u((40, 179))),
     ('paper/transport_proofs.tex', '1'):
-        ('math-constant', 80, _u((123, 114), (141, 18), (48, 17), (48, 284), (48, 293), (113, 42), (69, 127), (92, 546), (39, 235), (39, 291), (84, 121), (91, 383), (91, 455), (91, 485), (91, 572), (90, 130), (90, 154), (90, 175), (90, 192), (90, 248), (90, 273), (90, 296), (90, 507), (90, 539), (90, 566), (90, 599), (90, 707), (90, 772), (86, 86), (93, 299), (93, 464), (93, 491), (88, 181), (144, 16), (172, 48), (172, 56), (172, 150), (172, 179), (172, 188), (172, 349), (172, 424), (83, 68), (83, 207), (83, 305), (85, 134), (85, 549), (85, 556), (89, 521), (89, 599), (13, 2), (14, 4), (60, 18), (60, 398), (60, 428), (176, 107), (176, 368), (176, 531), (176, 573), (176, 627), (87, 108), (87, 141), (87, 153), (87, 421), (87, 431), (117, 58), (117, 118), (118, 99), (57, 31), (57, 55), (57, 178), (82, 234), (82, 247), (82, 298), (82, 374), (82, 417), (82, 432), (46, 17), (46, 342), (47, 529), (47, 670))),
+        ('math-constant', 80, _u((123, 114), (141, 18), (49, 17), (49, 284), (49, 293), (113, 42), (69, 127), (92, 546), (40, 235), (40, 291), (84, 121), (91, 383), (91, 455), (91, 485), (91, 572), (90, 130), (90, 154), (90, 175), (90, 192), (90, 248), (90, 273), (90, 296), (90, 507), (90, 539), (90, 566), (90, 599), (90, 707), (90, 772), (86, 86), (93, 299), (93, 464), (93, 491), (88, 181), (144, 16), (172, 48), (172, 56), (172, 150), (172, 179), (172, 188), (172, 349), (172, 424), (83, 68), (83, 207), (83, 305), (85, 134), (85, 549), (85, 556), (89, 521), (89, 599), (13, 2), (14, 4), (60, 18), (60, 398), (60, 428), (176, 107), (176, 368), (176, 531), (176, 573), (176, 627), (87, 108), (87, 141), (87, 153), (87, 421), (87, 431), (117, 58), (117, 118), (118, 99), (57, 31), (57, 55), (57, 178), (82, 234), (82, 247), (82, 298), (82, 374), (82, 417), (82, 432), (47, 17), (47, 342), (48, 529), (48, 670))),
     ('paper/transport_proofs.tex', '2'):
-        ('math-constant', 110, _u((124, 55), (124, 93), (123, 116), (143, 44), (143, 80), (141, 103), (48, 134), (48, 181), (48, 204), (48, 232), (48, 244), (48, 335), (48, 346), (48, 363), (48, 380), (113, 55), (113, 78), (113, 88), (92, 226), (92, 251), (39, 283), (91, 385), (91, 457), (91, 487), (90, 132), (90, 156), (90, 177), (90, 194), (90, 250), (90, 275), (90, 385), (90, 509), (90, 541), (90, 555), (90, 568), (90, 601), (90, 630), (90, 709), (86, 109), (86, 230), (86, 239), (86, 251), (86, 353), (86, 366), (93, 99), (93, 123), (93, 139), (93, 168), (93, 222), (93, 253), (93, 277), (93, 305), (93, 466), (93, 493), (88, 183), (142, 73), (144, 103), (172, 182), (172, 532), (83, 58), (83, 167), (83, 176), (83, 316), (83, 336), (85, 122), (85, 130), (85, 327), (85, 336), (85, 438), (85, 477), (85, 486), (89, 248), (89, 258), (89, 281), (89, 293), (89, 304), (89, 368), (89, 504), (89, 528), (89, 564), (89, 596), (89, 632), (41, 141), (41, 209), (13, 26), (14, 26), (60, 155), (60, 166), (60, 193), (60, 221), (60, 251), (54, 203), (176, 210), (176, 288), (176, 295), (176, 499), (176, 525), (176, 575), (176, 667), (176, 703), (176, 725), (176, 732), (118, 127), (57, 225), (82, 271), (82, 322), (46, 42), (46, 72), (46, 113), (46, 245))),
+        ('math-constant', 110, _u((124, 55), (124, 93), (123, 116), (143, 44), (143, 80), (141, 103), (49, 134), (49, 181), (49, 204), (49, 232), (49, 244), (49, 335), (49, 346), (49, 363), (49, 380), (113, 55), (113, 78), (113, 88), (92, 226), (92, 251), (40, 283), (91, 385), (91, 457), (91, 487), (90, 132), (90, 156), (90, 177), (90, 194), (90, 250), (90, 275), (90, 385), (90, 509), (90, 541), (90, 555), (90, 568), (90, 601), (90, 630), (90, 709), (86, 109), (86, 230), (86, 239), (86, 251), (86, 353), (86, 366), (93, 99), (93, 123), (93, 139), (93, 168), (93, 222), (93, 253), (93, 277), (93, 305), (93, 466), (93, 493), (88, 183), (142, 73), (144, 103), (172, 182), (172, 532), (83, 58), (83, 167), (83, 176), (83, 316), (83, 336), (85, 122), (85, 130), (85, 327), (85, 336), (85, 438), (85, 477), (85, 486), (89, 248), (89, 258), (89, 281), (89, 293), (89, 304), (89, 368), (89, 504), (89, 528), (89, 564), (89, 596), (89, 632), (42, 141), (42, 209), (13, 26), (14, 26), (60, 155), (60, 166), (60, 193), (60, 221), (60, 251), (54, 203), (176, 210), (176, 288), (176, 295), (176, 499), (176, 525), (176, 575), (176, 667), (176, 703), (176, 725), (176, 732), (118, 127), (57, 225), (82, 271), (82, 322), (47, 42), (47, 72), (47, 113), (47, 245))),
     ('paper/transport_proofs.tex', '4'):
         ('math-constant', 4, _u((85, 431), (85, 441), (89, 642), (176, 522))),
     # paper/transport_theory.tex
     ('paper/transport_theory.tex', '0'):
-        ('math-constant', 33, _u((43, 14), (43, 57), (37, 209), (122, 33), (76, 121), (76, 136), (104, 9), (49, 63), (96, 158), (96, 249), (96, 260), (217, 212), (120, 57), (120, 104), (166, 15), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (94, 200), (50, 71), (70, 81), (127, 38), (187, 45), (73, 71), (77, 516), (95, 113), (95, 327), (130, 73), (130, 154), (6, 10))),
+        ('math-constant', 33, _u((44, 14), (44, 57), (38, 209), (122, 33), (76, 121), (76, 136), (104, 9), (50, 63), (96, 158), (96, 249), (96, 260), (217, 212), (120, 57), (120, 104), (166, 15), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (94, 200), (51, 71), (70, 81), (127, 38), (187, 45), (73, 71), (77, 516), (95, 113), (95, 327), (130, 73), (130, 154), (6, 10))),
     ('paper/transport_theory.tex', '0,1'):
-        ('interval-endpoint', 5, _u((80, 78), (94, 78), (50, 63), (50, 102), (175, 71))),
+        ('interval-endpoint', 5, _u((80, 78), (94, 78), (51, 63), (51, 102), (175, 71))),
     ('paper/transport_theory.tex', '1'):
-        ('math-constant', 100, _u((102, 10), (23, 25), (22, 22), (21, 24), (112, 63), (112, 90), (112, 106), (126, 116), (12, 9), (12, 34), (12, 67), (116, 78), (136, 68), (136, 88), (157, 15), (157, 36), (139, 68), (155, 15), (155, 36), (168, 134), (168, 202), (168, 269), (134, 69), (134, 94), (134, 115), (32, 203), (11, 0), (96, 296), (100, 92), (217, 226), (217, 256), (217, 284), (81, 241), (74, 1), (114, 58), (114, 74), (114, 103), (120, 70), (97, 356), (97, 365), (166, 22), (101, 23), (101, 52), (7, 80), (7, 189), (218, 378), (110, 59), (110, 90), (50, 99), (50, 242), (50, 378), (129, 43), (70, 46), (138, 31), (128, 55), (128, 82), (128, 115), (167, 20), (167, 55), (165, 204), (145, 67), (145, 97), (145, 118), (20, 12), (28, 17), (28, 26), (75, 120), (59, 103), (59, 162), (59, 191), (59, 207), (111, 71), (30, 9), (162, 45), (154, 29), (73, 195), (73, 231), (77, 793), (77, 858), (164, 25), (36, 98), (130, 55), (130, 136), (173, 11), (173, 19), (173, 22), (174, 225), (119, 31), (119, 71), (171, 103), (146, 67), (146, 87), (146, 103), (146, 113), (156, 15), (156, 36), (0, 2), (0, 13), (5, 8), (1, 1))),
+        ('math-constant', 100, _u((102, 10), (23, 25), (22, 22), (21, 24), (112, 63), (112, 90), (112, 106), (126, 116), (12, 9), (12, 34), (12, 67), (116, 78), (136, 68), (136, 88), (157, 15), (157, 36), (139, 68), (155, 15), (155, 36), (168, 134), (168, 202), (168, 269), (134, 69), (134, 94), (134, 115), (32, 203), (11, 0), (96, 296), (100, 92), (217, 226), (217, 256), (217, 284), (81, 241), (74, 1), (114, 58), (114, 74), (114, 103), (120, 70), (97, 356), (97, 365), (166, 22), (101, 23), (101, 52), (7, 80), (7, 189), (218, 378), (110, 59), (110, 90), (51, 99), (51, 242), (51, 378), (129, 43), (70, 46), (138, 31), (128, 55), (128, 82), (128, 115), (167, 20), (167, 55), (165, 204), (145, 67), (145, 97), (145, 118), (20, 12), (28, 17), (28, 26), (75, 120), (59, 103), (59, 162), (59, 191), (59, 207), (111, 71), (30, 9), (162, 45), (154, 29), (73, 195), (73, 231), (77, 793), (77, 858), (164, 25), (36, 98), (130, 55), (130, 136), (173, 11), (173, 19), (173, 22), (174, 225), (119, 31), (119, 71), (171, 103), (146, 67), (146, 87), (146, 103), (146, 113), (156, 15), (156, 36), (0, 2), (0, 13), (5, 8), (1, 1))),
     ('paper/transport_theory.tex', '1,0'):
         ('math-constant', 1, _u((96, 227))),
     ('paper/transport_theory.tex', '2'):
-        ('math-constant', 113, _u((206, 529), (206, 623), (19, 19), (103, 9), (169, 4), (170, 12), (112, 117), (112, 128), (184, 200), (12, 36), (12, 69), (132, 68), (116, 164), (136, 23), (136, 33), (136, 80), (136, 160), (157, 6), (139, 23), (139, 33), (139, 81), (139, 90), (139, 94), (155, 6), (202, 247), (133, 4), (133, 26), (134, 4), (134, 24), (134, 34), (134, 81), (134, 85), (125, 62), (96, 312), (96, 378), (217, 286), (217, 337), (114, 76), (114, 105), (97, 358), (97, 367), (101, 25), (101, 54), (7, 101), (7, 122), (7, 168), (7, 204), (218, 380), (110, 92), (50, 177), (50, 380), (78, 116), (109, 58), (115, 122), (103, 9), (137, 40), (170, 12), (138, 42), (128, 57), (128, 84), (140, 28), (145, 22), (145, 32), (145, 79), (145, 84), (145, 88), (121, 78), (121, 86), (121, 88), (20, 23), (28, 20), (158, 81), (59, 216), (111, 82), (111, 102), (29, 57), (162, 39), (163, 33), (163, 43), (154, 6), (135, 4), (164, 19), (159, 12), (159, 21), (161, 25), (161, 35), (160, 21), (26, 21), (147, 14), (15, 8), (15, 39), (53, 14), (53, 35), (53, 158), (95, 246), (95, 307), (24, 21), (24, 58), (25, 21), (25, 58), (131, 38), (131, 73), (44, 164), (173, 108), (173, 145), (119, 41), (119, 81), (171, 93), (146, 22), (146, 32), (146, 79), (146, 171), (156, 6))),
+        ('math-constant', 113, _u((206, 529), (206, 623), (19, 19), (103, 9), (169, 4), (170, 12), (112, 117), (112, 128), (184, 200), (12, 36), (12, 69), (132, 68), (116, 164), (136, 23), (136, 33), (136, 80), (136, 160), (157, 6), (139, 23), (139, 33), (139, 81), (139, 90), (139, 94), (155, 6), (202, 247), (133, 4), (133, 26), (134, 4), (134, 24), (134, 34), (134, 81), (134, 85), (125, 62), (96, 312), (96, 378), (217, 286), (217, 337), (114, 76), (114, 105), (97, 358), (97, 367), (101, 25), (101, 54), (7, 101), (7, 122), (7, 168), (7, 204), (218, 380), (110, 92), (51, 177), (51, 380), (78, 116), (109, 58), (115, 122), (103, 9), (137, 40), (170, 12), (138, 42), (128, 57), (128, 84), (140, 28), (145, 22), (145, 32), (145, 79), (145, 84), (145, 88), (121, 78), (121, 86), (121, 88), (20, 23), (28, 20), (158, 81), (59, 216), (111, 82), (111, 102), (29, 57), (162, 39), (163, 33), (163, 43), (154, 6), (135, 4), (164, 19), (159, 12), (159, 21), (161, 25), (161, 35), (160, 21), (26, 21), (147, 14), (15, 8), (15, 39), (53, 14), (53, 35), (53, 158), (95, 246), (95, 307), (24, 21), (24, 58), (25, 21), (25, 58), (131, 38), (131, 73), (45, 164), (173, 108), (173, 145), (119, 41), (119, 81), (171, 93), (146, 22), (146, 32), (146, 79), (146, 171), (156, 6))),
     ('paper/transport_theory.tex', '3'):
         ('math-constant', 2, _u((53, 52), (53, 161))),
     ('paper/transport_theory.tex', '4'):
-        ('math-constant', 6, _u((100, 78), (77, 780), (160, 12), (53, 49), (53, 150), (44, 212))),
+        ('math-constant', 6, _u((100, 78), (77, 780), (160, 12), (53, 49), (53, 150), (45, 212))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '1.15.2'):
         ('environment-version', 1, _u((72, 43))),
@@ -927,7 +929,7 @@ FILE_PINS: dict[str, str] = {
     'paper/body_conclusion.tex':
         'b372a84d535cb5d1fbf67e740f8c9470b8163fb98ddd1973d33f6330a368133a',
     'paper/body_intro.tex':
-        '91616090202a9795e186b678f47d4ffe77845a10373aa8687ee9ba24025c0a4e',
+        'd7fafa9a62a4c56d79ab42a34c529ba7dc8d8545b6f14c1ebe365119307777f6',
     'paper/body_related.tex':
         '5dcba40a66d2d6892ee07e4f3dc5679e54c5a9c77a16c70a4fad3bfc2886c02f',
     'paper/broader_impact.tex':
@@ -955,7 +957,7 @@ FILE_PINS: dict[str, str] = {
     'paper/transport_theory.tex':
         '966350070de33b27119fe8f1f9a682cb0af0b9dbc53fc792e97fe0e0ddfe6019',
     'submissions/tmlr_2026/main.tex':
-        '43470533f05a3304baa0509e1715b4bf151bbecf1e70dec348c1e31e6ff98868',
+        'c68dbeaa82f8d83e4d06ab2c9fd83066d877ea6940c03aa8fe2e46a534a0fdb7',
     'submissions/tmlr_2026/supplement_README.md':
         '6dfcdf200d422579113cdf732e34ce98bc1b2f72f3d1a1997a7aafd6d2a9f9b0',
 }

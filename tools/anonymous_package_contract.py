@@ -174,10 +174,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
                          'role': 'manuscript-source',
                          'sha256': '2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0',
                          'ships_in': 'supplement'},
- 'body_intro.tex': {'bytes': 10179,
+ 'body_intro.tex': {'bytes': 10240,
                     'repository': 'paper/body_intro.tex',
                     'role': 'manuscript-source',
-                    'sha256': '3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6',
+                    'sha256': '6c4ee1a35124e81ad8abd0c4ff168e841a8980a9dd3ae888eabcdd7d40ea403b',
                     'ships_in': 'supplement'},
  'body_related.tex': {'bytes': 9713,
                       'repository': 'paper/body_related.tex',
@@ -359,10 +359,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
               'role': 'bibliography-output',
               'sha256': '1bbce20259b3899c10c4362274ee17636d7ee1d9056c59873bf3d8423d734c78',
               'ships_in': 'neither'},
- 'main.tex': {'bytes': 5831,
+ 'main.tex': {'bytes': 5807,
               'repository': 'submissions/tmlr_2026/main.tex',
               'role': 'entry-point',
-              'sha256': 'aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a',
+              'sha256': '5ae23779a03ac4d595eee894261edc29c3c9ab59db8a0218f194fcccb35f2946',
               'ships_in': 'supplement'},
  'mathtools.sty': {'bytes': 56225,
                    'repository': 'paper/texmf_vendor/mathtools.sty',
@@ -659,9 +659,9 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/make_transport_explanatory_figures.py': '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
- 'tools/numeric_context_pins.py': '983c2638202eeb6c9df4b2f6be4466058f75948922cd7f6a44a49d898a022933',
+ 'tools/numeric_context_pins.py': 'e8541ea06b0ca7a36290c5a5eddaa3d461e4e97bc9ef18ad56934357392dd01e',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': 'a9d77db04e64f51f28a8f3e1363d81e477bf1b004c862e77b7bfeee3a60b3002'}
+ 'tools/verify_tmlr_submission_numbers.py': '024bf2d0bb7faeed7dcfd05403139ae271432143d9f4956dad3692d7539fed76'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({

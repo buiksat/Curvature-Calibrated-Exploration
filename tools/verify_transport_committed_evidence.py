@@ -961,15 +961,15 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
     "submissions/tmlr_2026/main.tex": (
         ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
         (
-            "four policies in three conditions using a 29-parameter scaled-tanh model and 50 paired seeds per condition",
+            "four policies in three conditions using one synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition",
             "abstract states the follow-up evaluation grid",
         ),
         (
-            "Transport inflation dominates its regret bounds, which give no improvement over a deterministic regret cap",
+            "Transport inflation dominates its regret bounds. Both these bounds and the reference policy's own bounds exceed a deterministic regret cap",
             "abstract keeps the conservative-certificate finding",
         ),
         (
-            "reference policy's own bounds are also vacuous",
+            "Both these bounds and the reference policy's own bounds exceed a deterministic regret cap",
             "abstract keeps the vacuous-bound finding",
         ),
         (
@@ -977,15 +977,15 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
             "abstract keeps the adverse regret comparison",
         ),
         (
-            "a conditionally valid confidence score, a tight regret bound and a useful decision rule must be assessed separately",
+            "The results separate three questions for exploration with relinearized gradients: whether confidence is conditionally valid, whether regret bounds are informative, and whether decisions improve",
             "abstract separates certificate validity from usefulness",
         ),
         (
-            "the result leaves the regret ordering of policies with different histories open",
+            "this comparison does not order regret across policies with different adaptive histories",
             "abstract refuses adaptive regret ordering from same-history widths",
         ),
         (
-            "all nine pointwise paired confidence intervals for regret differences exclude zero",
+            r"all nine pointwise paired 95\% confidence intervals for regret differences exclude zero",
             "abstract keeps pointwise paired uncertainty",
         ),
     ),

@@ -675,14 +675,14 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "are also vacuous",
-        "are informative",
+        "bounds exceed a deterministic regret cap",
+        "bounds improve on a deterministic regret cap",
         "abstract keeps the vacuous-bound finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "must be assessed separately",
-        "can be treated as equivalent",
+        "The results separate three questions",
+        "The results equate three questions",
         "abstract separates certificate validity from usefulness",
     ),
     (

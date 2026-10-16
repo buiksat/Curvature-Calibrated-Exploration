@@ -3442,9 +3442,17 @@ def scan_for_identifiers(entries: Iterable[tuple[Path, str]],
                     f"{arcname}:{number}: version-control identifier in a "
                     f"revision field: {match.group(1)!r}")
             for match in abbreviated.finditer(line):
+                candidate = match.group(0)
+                # The seven-character prefix is only a search accelerator.
+                # A longer hex token must still be an actual prefix of a
+                # known revision: numeric evidence and content digests can
+                # share seven characters and then diverge.
+                if not any(revision.lower().startswith(candidate.lower())
+                           for revision in revisions):
+                    continue
                 findings.append(
                     f"{arcname}:{number}: known project revision "
-                    f"{match.group(0)!r}")
+                    f"{candidate!r}")
             for match in identity.finditer(line):
                 if citation_exempt(arcname, match, line):
                     continue

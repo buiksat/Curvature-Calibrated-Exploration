@@ -80,33 +80,31 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-We study gradient-based confidence estimates for exploration in contextual
-bandits. Further training on the same observations can change these estimates
-without adding new data. We ask when recomputing past gradients at
-the current model preserves the confidence guarantee used to choose actions.
-We give a conditional upper confidence bound (UCB) theorem that starts from
-features fixed before each reward and accounts for changing the uncertainty
-matrix, approximating it, and computing its widths. A width gives the geometric
-scale of the uncertainty bonus. For squared loss, a correction based on stored
-features adjusts the prediction at the center of the confidence band. The
-resulting confidence guarantee does not require the nonlinear optimizer to
-converge. It does require predictable parameter paths in a certified region,
-together with explicit Taylor and misspecification error bounds.
-The conversion has a basic limit: with the same history, center,
-radius and bias, its certified width cannot be smaller than the direct
-reference width. Exact actionwise transport recovers that width; the result
-leaves the regret ordering of policies with different histories open.
-A prespecified study tests four policies in three conditions using a
-29-parameter scaled-tanh model and 50 paired seeds per condition.
+Contextual-bandit policies use confidence estimates to balance exploration and
+reward. For nonlinear predictors, retraining can change gradient-based estimates
+without adding observations, but standard sequential confidence arguments do not
+automatically justify confidence bands based on recomputed gradients. We develop
+confidence transport
+to connect a valid reference confidence band, built from gradients fixed before
+each reward, to scores based on recomputed gradients. The approach uses certified
+bounds on matrix changes and numerical error. Under explicit statistical and
+computational conditions, it yields an upper confidence bound policy with a regret
+guarantee. The conversion has a limit: with the same history, center, radius and
+bias, the certified uncertainty width cannot be smaller than the reference width.
+Exact actionwise transport recovers that width; this comparison does not order
+regret across policies with different adaptive histories.
+A prespecified study compares four policies in three conditions using one
+synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition.
 Hessian transport, which bounds matrix changes using prediction Hessians, has
 higher mean pseudo-regret than every comparator in each condition; all nine
-pointwise paired confidence intervals for regret differences exclude zero.
-Transport inflation dominates its regret bounds, which give no
-improvement over a deterministic regret cap. The reference policy's own bounds
-are also vacuous. All policies, including an uncertified control, pass the
-recorded floating-point confidence and optimism checks. The study illustrates
-why a conditionally valid confidence score, a tight regret bound and a useful
-decision rule must be assessed separately.
+pointwise paired 95\% confidence intervals for regret differences exclude zero.
+Transport inflation dominates its regret bounds. Both these bounds and the
+reference policy's own bounds exceed a deterministic regret cap.
+All policies, including an uncertified control, pass the recorded floating-point
+confidence and optimism checks. These checks establish neither universal validity
+nor a practical advantage. The results separate three questions for exploration
+with relinearized gradients: whether confidence is conditionally valid, whether
+regret bounds are informative, and whether decisions improve.
 \end{abstract}
 
 % --- body -----------------------------------------------------------------

@@ -2,7 +2,12 @@
 
 **Status: revised anonymous manuscript and compact evidence package built; not submitted.**
 
-The current revision replaces all eight numerical result tables with focused
+The latest revision rewrites the abstract as a 250-word narrative with explicit
+contextual-bandit scope, theorem conditions, a limited synthetic study, and
+negative findings. The title remains aligned, and small introduction edits
+clarify the same scope. See the [online guidance and editorial rationale](ABSTRACT_REVISION.md).
+
+The preceding chart revision replaces all eight numerical result tables with focused
 charts, retaining the original numerical tables in the reproducibility
 supplement. Ten new figures show policy intervals, fixed-history comparisons,
 seed ranges, drift frequencies and certificate diagnostics at native text size.
@@ -32,9 +37,9 @@ follow-up evidence, with separate original and packaged digests.
 From the prepared research checkout:
 
 ```bash
-cd /workspace/cce-research
-PYTHON=/workspace/cce-research-env/bin/python \
-  TMLR_OUT=/workspace/cce-build/tmlr-charts-release \
+cd /path/to/Curvature-Calibrated-Exploration
+PYTHON=/path/to/pinned-python312/bin/python \
+  TMLR_OUT=/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release \
   bash submissions/tmlr_2026/build.sh
 ```
 
@@ -52,33 +57,33 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/workspace/cce-build/tmlr-charts-release`.
+Final build directory: `/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release`.
 The PDF has **52 pages**, in anonymous official TMLR style. All eight numerical
 tables have chart replacements; all pages are portrait. The compact notation
 table remains on page 5. The chart revision record maps each result to its page.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 728,019 | — | — |
-| `source.zip` | 3,459,600 | 103 | 3,445,908 |
-| `supplement.zip` | 93,901,527 | 190 | 93,866,743 |
-| `release_manifest.json` | 116,522 | — | — |
+| `main.pdf` | 722,007 | — | — |
+| `source.zip` | 3,459,637 | 103 | 3,445,945 |
+| `supplement.zip` | 93,902,070 | 190 | 93,867,286 |
+| `release_manifest.json` | 115,720 | — | — |
 
 The supplement occupies 93.9% of the 100,000,000-byte limit, leaving
-6,098,473 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
+6,097,930 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
 (`ZIP_STORED`) entries. The size gate remains enforced.
 
 The compiled closure contains 95 entries: 44 whose bytes the supplement
 carries, 50 in `source.zip`, and `main.bbl` in neither archive. BibTeX
 regenerates the latter from the shipped bibliography and style. The manifest
-also records 243 protected external TeX inputs by distribution variable and
+also records 239 protected external TeX inputs by distribution variable and
 content hash under `external_tex_inputs`. Those distribution files are
 recorded, not redistributed.
 
 ## Dependencies and trust
 
-The current cloud build uses pdfTeX 1.40.26 / TeX Live 2025-dev (Debian),
-latexmk 4.86 and BibTeX 0.99d. Evidence validation uses CPython 3.12 with the
+The current local build uses pdfTeX 1.40.28 / TeX Live 2025 (Debian),
+latexmk 4.87 and BibTeX 0.99d. Evidence validation uses CPython 3.12 with the
 hash-pinned wheel environment in `experiments/requirements-python312.lock`.
 Run `tools/check_python_environment.py` to check installed package versions.
 
@@ -112,13 +117,13 @@ identity.
 ## Verification
 
 ```bash
-/workspace/cce-research-env/bin/python tools/verify_tmlr_submission_numbers.py
-/workspace/cce-research-env/bin/python tools/transport_artifact_expectations.py --root .
-/workspace/cce-research-env/bin/python tools/make_transport_explanatory_figures.py --check
-/workspace/cce-research-env/bin/python tools/verify_transport_committed_evidence.py
+/path/to/pinned-python312/bin/python tools/verify_tmlr_submission_numbers.py
+/path/to/pinned-python312/bin/python tools/transport_artifact_expectations.py --root .
+/path/to/pinned-python312/bin/python tools/make_transport_explanatory_figures.py --check
+/path/to/pinned-python312/bin/python tools/verify_transport_committed_evidence.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/workspace/cce-build/tmlr-charts-release \
-  /workspace/cce-research-env/bin/python -m pytest -q tests experiments/tests
+  TMLR_OUT=/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release \
+  /path/to/pinned-python312/bin/python -m pytest -q tests experiments/tests
 ```
 
 After extracting `supplement.zip`, run `PYTHON=/path/to/supported/python bash

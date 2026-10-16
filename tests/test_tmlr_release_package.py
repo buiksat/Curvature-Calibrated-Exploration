@@ -4712,6 +4712,31 @@ def test_a_benign_forty_hex_digest_is_not_a_finding(tmp_path):
     assert scan([(path, "digests.txt")]) == []
 
 
+def test_a_shared_revision_prefix_does_not_turn_evidence_into_an_identifier(tmp_path):
+    """The eighth character distinguishes recorded numeric evidence from Git."""
+
+    revision = "09485745a189492f0bdc71795acddf8f5cbcaeb7"
+    numeric_tail = "09485744750460248"
+    assert numeric_tail[:7] == revision[:7]
+    assert not revision.startswith(numeric_tail)
+    path = tmp_path / "evidence.json"
+    path.write_text(f'{{"D_Q": 0.{numeric_tail}}}\n', encoding="utf-8")
+    assert packager.scan_for_identifiers([(path, "evidence.json")], [revision]) == []
+
+    # Genuine abbreviations, including the shared seven characters, and the
+    # complete identifier remain findings in either case.
+    for length in (7, 8, 12, 40):
+        for rendered in (revision[:length], revision[:length].upper()):
+            path.write_text(f"built at {rendered}\n", encoding="utf-8")
+            findings = packager.scan_for_identifiers([(path, "evidence.json")], [revision])
+            assert any("known project revision" in finding for finding in findings), rendered
+
+    # The independent revision-field rule still rejects an unknown identifier.
+    path.write_text(f'{{"git_revision": "{numeric_tail}"}}\n', encoding="utf-8")
+    findings = packager.scan_for_identifiers([(path, "evidence.json")], [revision])
+    assert any("revision field" in finding for finding in findings), findings
+
+
 def test_a_forty_hex_value_in_a_revision_field_is_still_a_finding(tmp_path):
     """Unknown or not, a value called a revision names a repository."""
 

@@ -13,8 +13,8 @@ historical records of their respective snapshots.
 
 | Collection scope | Current collected cases |
 | --- | --- |
-| Release-package test collection | 572 collected |
-| Repository suite collection | 741 collected |
+| Release-package test collection | 573 collected |
+| Repository suite collection | 742 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the

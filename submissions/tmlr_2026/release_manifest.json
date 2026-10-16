@@ -204,23 +204,23 @@
   },
   "deliverables": {
     "main.pdf": {
-      "bytes": 691514,
-      "sha256": "56bb4aa967ddfc98643add811b70813626e5c79a40254ecb2a03aa7108b6124a"
+      "bytes": 722007,
+      "sha256": "a586d20810255d42f320bd1f8f346e881f41d095d134b0456d7a051ec388caef"
     },
     "source.zip": {
-      "bytes": 3412745,
-      "sha256": "890aafc6579081d4d750ca36bd54decfcbeadbfa5d17a885a59c681283cf17bf"
+      "bytes": 3459637,
+      "sha256": "a2d69ef63f44920be07fe6b26720308a47f41d53993f1734bb9d1bcbde33f652"
     },
     "supplement.zip": {
-      "bytes": 93812230,
-      "sha256": "cfec83f2cb6e20f769a7123e71d1008d60d37286bd21f98e926b787ca83d77ac"
+      "bytes": 93902070,
+      "sha256": "c90bed4eeafd18c707bbff18b2832f55ff4d242ae7cd2841e9a7633505ad701e"
     }
   },
   "external_tex_inputs": [
     {
-      "bytes": 41538,
+      "bytes": 41603,
       "name": "TEXMFCNF:texmf.cnf",
-      "sha256": "a4eb49fa3d2e312dd08daf8289d90229f2dd0e3a6a9068b8be8965b50d1f280c",
+      "sha256": "7cd9dcb52a32a52aa6538feb9fae419493a9c8da52713b14f50f638abb8f3be4",
       "trusted": true
     },
     {
@@ -251,6 +251,12 @@
       "bytes": 2327,
       "name": "TEXMFDEBIAN:fonts/enc/dvips/lm/lm-rm.enc",
       "sha256": "8bf8f9bd48d49aa3f3c597716908854e4d9207b009c109e6d9c5887feb856844",
+      "trusted": true
+    },
+    {
+      "bytes": 3031,
+      "name": "TEXMFDEBIAN:fonts/enc/dvips/lm/lm-ts1.enc",
+      "sha256": "c6e18df2fc30431ddebe5e4e3f7abebeef2d355bd97b81b574a685f8ded408c4",
       "trusted": true
     },
     {
@@ -548,6 +554,12 @@
       "trusted": true
     },
     {
+      "bytes": 1556,
+      "name": "TEXMFDEBIAN:fonts/tfm/public/lm/ts1-lmr10.tfm",
+      "sha256": "080be3dc1bf1bac9eb612e44718ea630d2bd2ebf4d8e8e00333a78b5332ca6b3",
+      "trusted": true
+    },
+    {
       "bytes": 121021,
       "name": "TEXMFDEBIAN:fonts/type1/public/lm/lmbx10.pfb",
       "sha256": "4acd67f9ece59a12e073aa863dbb1d5cea194f7f7b88ecce4659184d8275aa42",
@@ -746,6 +758,12 @@
       "trusted": true
     },
     {
+      "bytes": 1914,
+      "name": "TEXMFDEBIAN:tex/latex/lm/ts1lmr.fd",
+      "sha256": "ecda20924242346d91d241e19c89a9a36c7423dc76b1c94e4a3d4d8b51d235d7",
+      "trusted": true
+    },
+    {
       "bytes": 3584,
       "name": "TEXMFDIST:fonts/tfm/jknappen/ec/ecrm1000.tfm",
       "sha256": "6538d396bf70b360a36c6af2ba424f1f25ecb1700fda4a22462a3044e1bce5b4",
@@ -797,12 +815,6 @@
       "bytes": 71627,
       "name": "TEXMFDIST:tex/context/base/mkii/supp-pdf.mkii",
       "sha256": "5dd3675b88c7b61d3703e6bf35ed75623acc6b163dff7b1477b485cee8ad71cb",
-      "trusted": true
-    },
-    {
-      "bytes": 24708,
-      "name": "TEXMFDIST:tex/generic/atbegshi/atbegshi.sty",
-      "sha256": "a73003b4bb2dc8a814533ddbd31600e6626827799c2a465d03ef42e7a33fa71b",
       "trusted": true
     },
     {
@@ -872,9 +884,9 @@
       "trusted": true
     },
     {
-      "bytes": 43820,
+      "bytes": 43906,
       "name": "TEXMFDIST:tex/generic/pgf/basiclayer/pgfcorearrows.code.tex",
-      "sha256": "1668608078204a627d6e67a853f8a904e6149b901607ae177741c650b143a94e",
+      "sha256": "ffabc47530ac7058f6dff74bf3325ab114049dcedc51b2d8556f578b03311799",
       "trusted": true
     },
     {
@@ -916,7 +928,7 @@
     {
       "bytes": 17311,
       "name": "TEXMFDIST:tex/generic/pgf/basiclayer/pgfcorepathprocessing.code.tex",
-      "sha256": "ebcf9d5dec1714b575ffef09be6cdf03eaf1501f511204d7efae5d73b07b2221",
+      "sha256": "359d413e7bb9d37f0fddc6ea5827415f6c73db584e781f6b2e2521059b595285",
       "trusted": true
     },
     {
@@ -956,9 +968,9 @@
       "trusted": true
     },
     {
-      "bytes": 35249,
+      "bytes": 35251,
       "name": "TEXMFDIST:tex/generic/pgf/basiclayer/pgfcoreshade.code.tex",
-      "sha256": "b111efaa8b7c0905870b1ce9bcf400cd59c8db3cfa8d7ae91e7d63c1bac747cc",
+      "sha256": "42ff3f6524037f73b44d16fe0abeae93a72407950b6a9b176f4d6a2a3f6e9fdb",
       "trusted": true
     },
     {
@@ -980,9 +992,9 @@
       "trusted": true
     },
     {
-      "bytes": 5628,
+      "bytes": 5650,
       "name": "TEXMFDIST:tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarydecorations.code.tex",
-      "sha256": "f4884f0c48ab319d25f2fb0889b8881f15ad7999842054718b15e32de8325773",
+      "sha256": "eb08f70bacc87cf840512c98a45c3ed1fab04410f4228501cd2b3a833ecd6de6",
       "trusted": true
     },
     {
@@ -998,9 +1010,9 @@
       "trusted": true
     },
     {
-      "bytes": 5286,
+      "bytes": 5287,
       "name": "TEXMFDIST:tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryintersections.code.tex",
-      "sha256": "24a99d1f4d6090bf318d948562dce3194e0d599d77ae9282c1344e2488e10470",
+      "sha256": "f2fbf8f471e9defeea1f03633a5f551e96f782b3a65eaa3e83ea5b0649c7aa58",
       "trusted": true
     },
     {
@@ -1016,9 +1028,9 @@
       "trusted": true
     },
     {
-      "bytes": 186782,
+      "bytes": 186859,
       "name": "TEXMFDIST:tex/generic/pgf/frontendlayer/tikz/tikz.code.tex",
-      "sha256": "e7c6e44b8fb9fe8fab049144fbe3e430dbc2b441148d72999e309cd5fc3a83c5",
+      "sha256": "5cf22e53ee27e044a06a4aebdd77924101a491915021428a61cd6ff3ff2c8e0e",
       "trusted": true
     },
     {
@@ -1034,9 +1046,9 @@
       "trusted": true
     },
     {
-      "bytes": 85938,
+      "bytes": 85937,
       "name": "TEXMFDIST:tex/generic/pgf/libraries/pgflibraryfpu.code.tex",
-      "sha256": "8c1897e7e28685c9c01964981ec450119bd223ccf93e9367e9f959048dc59e8d",
+      "sha256": "97d1eab390dd0611f3749ff18d293687a85b28f322b1a367b74bc3767177ab45",
       "trusted": true
     },
     {
@@ -1070,9 +1082,9 @@
       "trusted": true
     },
     {
-      "bytes": 13270,
+      "bytes": 13272,
       "name": "TEXMFDIST:tex/generic/pgf/math/pgfmathcalc.code.tex",
-      "sha256": "14bf1941381e7eb35dce4850d0aa819360f1db9ba9752c81cff19920f2c4c7b7",
+      "sha256": "58fcc94547646458470315a6d10953a9729e7962e3def5273633b06fb444a5aa",
       "trusted": true
     },
     {
@@ -1118,9 +1130,9 @@
       "trusted": true
     },
     {
-      "bytes": 7890,
+      "bytes": 7889,
       "name": "TEXMFDIST:tex/generic/pgf/math/pgfmathfunctions.random.code.tex",
-      "sha256": "c10a26a167c06b16e2d80ee4b119f77818ba2357ece3e5bc3cf7470c5dfb09f9",
+      "sha256": "968308d364b4f31f2a787adf32c3df7d87959a519c4eb5c8b47bedde4311ab95",
       "trusted": true
     },
     {
@@ -1136,9 +1148,9 @@
       "trusted": true
     },
     {
-      "bytes": 37466,
+      "bytes": 37733,
       "name": "TEXMFDIST:tex/generic/pgf/math/pgfmathparser.code.tex",
-      "sha256": "8986f92b517f94415ae5642fc03eb9a8998fdaab446ab2e10f97985d5a9589da",
+      "sha256": "317b4a8059ee9afd04b052dd2974c1c9a059d1b8e301f9578efa9ac0b9984990",
       "trusted": true
     },
     {
@@ -1160,21 +1172,21 @@
       "trusted": true
     },
     {
-      "bytes": 16121,
+      "bytes": 16218,
       "name": "TEXMFDIST:tex/generic/pgf/modules/pgfmoduleplot.code.tex",
-      "sha256": "f5454a5037c902bf21166d9592d5d15790f4b70c00a636d2b2fc47b76c8ccb21",
+      "sha256": "58a2c1ff27de97cb32b19ce95a4182d85369304980da9f1b21e4a1fddf4d666d",
       "trusted": true
     },
     {
       "bytes": 44792,
       "name": "TEXMFDIST:tex/generic/pgf/modules/pgfmoduleshapes.code.tex",
-      "sha256": "da529b71510425e3a42b242f71ae849f74c09fd8197f7c18e3abb723b67ef958",
+      "sha256": "01dd81e3f2c56a8db7864916ada1a5036964aff2e8176aafd4773244e236bb27",
       "trusted": true
     },
     {
-      "bytes": 114,
+      "bytes": 116,
       "name": "TEXMFDIST:tex/generic/pgf/pgf.revision.tex",
-      "sha256": "ac54ea0a31097f28b4e37b09fa17985728d589c10640cf220d7e959f63b9e731",
+      "sha256": "8c056cfd919cca2dc5e398c776865e1af6a8605ab9d715f452aa68327164b52d",
       "trusted": true
     },
     {
@@ -1190,9 +1202,9 @@
       "trusted": true
     },
     {
-      "bytes": 13255,
+      "bytes": 13367,
       "name": "TEXMFDIST:tex/generic/pgf/systemlayer/pgfsys-luatex.def",
-      "sha256": "886838765f41bdbb8a97700bdf958330abbb0ab8e7d713a9cb60fdaca78d09b4",
+      "sha256": "6b950cad5613b1b8bad260abf397eba070f01ebbe73e4c4f9ac0986b6b5597ec",
       "trusted": true
     },
     {
@@ -1202,9 +1214,9 @@
       "trusted": true
     },
     {
-      "bytes": 61351,
+      "bytes": 61355,
       "name": "TEXMFDIST:tex/generic/pgf/systemlayer/pgfsys.code.tex",
-      "sha256": "aa771cadef59f480af688c690c5de28e23636ef4890842b9758b7d8943ede4ac",
+      "sha256": "97d841d782de156f192fb9866c76ec65d28dabdf186cb4700094d0a5a13eadab",
       "trusted": true
     },
     {
@@ -1232,9 +1244,9 @@
       "trusted": true
     },
     {
-      "bytes": 37433,
+      "bytes": 37436,
       "name": "TEXMFDIST:tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex",
-      "sha256": "b3d57e19c1893ef33eb240cb7da4286418481b44f7b0ab1677fbc190d6a85201",
+      "sha256": "68cd7046c23f0c5d5775e5f481d14577f1d62bfe1dce1605387d46490edf7e5c",
       "trusted": true
     },
     {
@@ -1244,15 +1256,15 @@
       "trusted": true
     },
     {
-      "bytes": 29239,
+      "bytes": 30029,
       "name": "TEXMFDIST:tex/generic/pgf/utilities/pgfutil-common.tex",
-      "sha256": "7e25bd0bcb3399a5b1ee01c882d0bd51b455fcd1798edf4ecbde4bfc5c2198e1",
+      "sha256": "ff576d97434040185004b8be9b40804b9e9f95ae225719583c4376d8718e9f06",
       "trusted": true
     },
     {
-      "bytes": 6950,
+      "bytes": 7067,
       "name": "TEXMFDIST:tex/generic/pgf/utilities/pgfutil-latex.def",
-      "sha256": "6afcd415b6831a153969f66e8b06e9045fe5a5a40239ef51d76de757105396a2",
+      "sha256": "72036598130f2477df66608d26ab7008eb87a18b09fbe0c7eed9c63188720c77",
       "trusted": true
     },
     {
@@ -1306,73 +1318,55 @@
     {
       "bytes": 2222,
       "name": "TEXMFDIST:tex/latex/amsmath/amsbsy.sty",
-      "sha256": "ba6ab1d66a795b46adb26b1b5e329b608a6f459ce23c8194e78125254469e31e",
+      "sha256": "c09b1b14dfe8a81b6791673b3bc5a7fd8b794fb063b6e8b5ce79fc28c7e59c8c",
       "trusted": true
     },
     {
       "bytes": 4173,
       "name": "TEXMFDIST:tex/latex/amsmath/amsgen.sty",
-      "sha256": "07ba0cd2c6aeea861c19fa03ca676a1db6e6d573d49286fc1e76bba83a6ea86e",
+      "sha256": "e7ef677a56e22d8da915e613c65fe2d4c2fe8744ffb283c2ccfdfc066e45e158",
       "trusted": true
     },
     {
-      "bytes": 88370,
+      "bytes": 88471,
       "name": "TEXMFDIST:tex/latex/amsmath/amsmath.sty",
-      "sha256": "bcb034eb1b9ba90d62b9c33bb3d20ce3c906d00ae74a9f9baef81ddf14168458",
+      "sha256": "4c0bfd7d67ea18214810a21244f8426da40d04af5bb90ed201b85cc5e211d321",
       "trusted": true
     },
     {
       "bytes": 4474,
       "name": "TEXMFDIST:tex/latex/amsmath/amsopn.sty",
-      "sha256": "fd329928672a106e9263159548380aa46c463c6bb33841ff1fdbe13a504976e9",
+      "sha256": "c50239a5acc1037ff4df482878e5546be3cd9b8ac725151bc14748a103d800a8",
       "trusted": true
     },
     {
       "bytes": 2444,
       "name": "TEXMFDIST:tex/latex/amsmath/amstext.sty",
-      "sha256": "75fb45a2bc94a2f383abd95220465053f0693b9331854680079a6eb015f328dc",
-      "trusted": true
-    },
-    {
-      "bytes": 1695,
-      "name": "TEXMFDIST:tex/latex/atveryend/atveryend.sty",
-      "sha256": "2e84f857c2b0aa670d1d11588b14740bfed4a9f3dd816997e5da3372874e9eaa",
+      "sha256": "7a6d33e95e168f90cec6d4172aeae7da885924a8f587ccc11817e1dab4d50ba9",
       "trusted": true
     },
     {
       "bytes": 20144,
       "name": "TEXMFDIST:tex/latex/base/article.cls",
-      "sha256": "44171ebeb4bbfd734a0fff29351073a0b51ed7407cd09dbd7a4530c669d3f833",
-      "trusted": true
-    },
-    {
-      "bytes": 2963,
-      "name": "TEXMFDIST:tex/latex/base/atbegshi-ltx.sty",
-      "sha256": "27c4c97014158dbab3e6c5ddbdae9953ead40da7158e83a6d9aff571a6391577",
-      "trusted": true
-    },
-    {
-      "bytes": 2378,
-      "name": "TEXMFDIST:tex/latex/base/atveryend-ltx.sty",
-      "sha256": "848443ae8cd053c59629e5869d39edad1957ffa6ebc7901b4d3cccb3b7f7de6a",
+      "sha256": "f9c8770a909e5b6526eb72284e457cd379b9bedbf3b508a96bd7f922d4cb24ec",
       "trusted": true
     },
     {
       "bytes": 5275,
       "name": "TEXMFDIST:tex/latex/base/fontenc.sty",
-      "sha256": "f8b9641d944c90852c6721e2c0fa5991cf7b483141acd1e556088ba55de19bd8",
+      "sha256": "9ac0a88ddda40526aa1ec403c27a6325d3723c14fa9f02918011a79f93a72ef0",
       "trusted": true
     },
     {
       "bytes": 5525,
       "name": "TEXMFDIST:tex/latex/base/ifthen.sty",
-      "sha256": "699c509ebe73440e0555ae2b0ab02e26277529db5e37ec4b96729782dacb2112",
+      "sha256": "5cf8d0558b78d60e2fac171d6e3486f44d500974214ab9ad95e33ffb47fbb717",
       "trusted": true
     },
     {
       "bytes": 8448,
       "name": "TEXMFDIST:tex/latex/base/size10.clo",
-      "sha256": "ae73585b23be32320e6dba47659ebc7300922fd87abdc50eb1eb81cf7faaac4e",
+      "sha256": "2896162dd5ed894689ca1f336fe2e084007114dc07f8ab17203281911479548f",
       "trusted": true
     },
     {
@@ -1394,15 +1388,15 @@
       "trusted": true
     },
     {
-      "bytes": 11876,
+      "bytes": 11838,
       "name": "TEXMFDIST:tex/latex/eso-pic/eso-pic.sty",
-      "sha256": "8554cb0a5449a031f5d78cc67c824d23afb4b1a4dd11ca9946447185bb274464",
+      "sha256": "5e99778acb16d1284a98a0cf5a6eec4cbf2add0727dbc541c1d19438aaa50f39",
       "trusted": true
     },
     {
-      "bytes": 46850,
+      "bytes": 46885,
       "name": "TEXMFDIST:tex/latex/etoolbox/etoolbox.sty",
-      "sha256": "23e5277f81dc963963081c91b1f674055914bd2ab1b479c522ed3e747fa9d10e",
+      "sha256": "e48026fcea59b4906d1fd47bde658cb5caf0a7928c45a45ea563b18d5b40ebd4",
       "trusted": true
     },
     {
@@ -1424,27 +1418,27 @@
       "trusted": true
     },
     {
-      "bytes": 19440,
+      "bytes": 19626,
       "name": "TEXMFDIST:tex/latex/graphics-def/pdftex.def",
-      "sha256": "dd2fe3917cb44106daffe644902b149a57b88553f80f0df358af809b75338220",
+      "sha256": "38361aed5c3534a46d63cd3cfd5cbb6367645c1d9b095cd2e45fd922ce821853",
       "trusted": true
     },
     {
       "bytes": 18363,
       "name": "TEXMFDIST:tex/latex/graphics/graphics.sty",
-      "sha256": "36f90e32faa7c4971823c90c1c8a522c7b6cacb54c9fbd5d3449b74bc4f6f076",
+      "sha256": "979abfd05c3f5453ebdc2683f2e2e1a24600255c7246e3708b5670168c7259c4",
       "trusted": true
     },
     {
-      "bytes": 8010,
+      "bytes": 8118,
       "name": "TEXMFDIST:tex/latex/graphics/graphicx.sty",
-      "sha256": "054ee1ff8f09c98c43d4d7198ef167b0d42331e10e9d3f9668bec99280fd99c8",
+      "sha256": "90ffc59f1718ff399539023d15a5a2b14ce7d227b101c35ed64abcc7186c9338",
       "trusted": true
     },
     {
       "bytes": 2671,
       "name": "TEXMFDIST:tex/latex/graphics/keyval.sty",
-      "sha256": "011ba643109d799f8a475cbfc27618e160a998635df36f2def55f819342deda9",
+      "sha256": "d3faa310a1e4485b8efb1ed3ae8b11f9552e70b630dc35290a7aabdcd064b09a",
       "trusted": true
     },
     {
@@ -1454,15 +1448,15 @@
       "trusted": true
     },
     {
-      "bytes": 7060,
+      "bytes": 7280,
       "name": "TEXMFDIST:tex/latex/graphics/rotating.sty",
-      "sha256": "9373438b106ff925673812ab3e4721c238293115b542583ef00523f73ce98e3a",
+      "sha256": "c7f1a882d3c587ffdc09aa9ec08d36e73552cf02a8502352bf0cc699848431ce",
       "trusted": true
     },
     {
       "bytes": 4023,
       "name": "TEXMFDIST:tex/latex/graphics/trig.sty",
-      "sha256": "6630b4fad51c0f1fbdc2d067622852c8014631ab4634fe8b49a2c228a4253005",
+      "sha256": "3c1add9bf649d1bee7db64bae800afb3dfac21b793afbbe2263553e0de66c450",
       "trusted": true
     },
     {
@@ -1472,33 +1466,33 @@
       "trusted": true
     },
     {
-      "bytes": 48154,
+      "bytes": 48140,
       "name": "TEXMFDIST:tex/latex/hyperref/hpdftex.def",
-      "sha256": "c5d4e2194b20ce6e01f9032fe69d82687491c6073d9a69a0c086e25922109fcf",
+      "sha256": "4dae00598fa3efa206c90e5638c71b77788c7044867afe161d7ddecd84386d8c",
       "trusted": true
     },
     {
-      "bytes": 222112,
+      "bytes": 223112,
       "name": "TEXMFDIST:tex/latex/hyperref/hyperref.sty",
-      "sha256": "cc2605545116df536759dc2fba3ce8bbe9ae02d08ebf4789a970e1ec2ae3b082",
+      "sha256": "2f4e273fd02a736d3b4c9479fa5e535ac8dc77ababc7747b2ad85ecfccf09f76",
       "trusted": true
     },
     {
-      "bytes": 11026,
+      "bytes": 11027,
       "name": "TEXMFDIST:tex/latex/hyperref/nameref.sty",
-      "sha256": "1bd958ef4ce46f3d15f7c77f6c2d084289e0e6d6017d5a3a341d83f0998b99a7",
+      "sha256": "5dfa44a8a8a9eabe2c8e72a46e6997d3825d28fe65daea99b03b8b059a6a1a68",
       "trusted": true
     },
     {
       "bytes": 14249,
       "name": "TEXMFDIST:tex/latex/hyperref/pd1enc.def",
-      "sha256": "3b47a1e216203e0b112465081c6ea7e67511b3c3fcebf02643e1163d34aa231b",
+      "sha256": "49d7a97f9830087e38633177297d3f2f6a2177c266e0f4771015f07fa30f0bbe",
       "trusted": true
     },
     {
-      "bytes": 117112,
+      "bytes": 117118,
       "name": "TEXMFDIST:tex/latex/hyperref/puenc.def",
-      "sha256": "37a0c2c0243bd66a85893d804cbfb5b434c3f1478cdee588a898ca75c1059665",
+      "sha256": "fcf7ee9957bc5a3e0d4fb0e92ea1ec56bd5a191666512b1cbb9d051288db5108",
       "trusted": true
     },
     {
@@ -1514,9 +1508,9 @@
       "trusted": true
     },
     {
-      "bytes": 29785,
+      "bytes": 30662,
       "name": "TEXMFDIST:tex/latex/l3backend/l3backend-pdftex.def",
-      "sha256": "4cf193b7fa14aec9b936abc740bc6a54066feedadc6fbd6adfaf43a3fd9b6d29",
+      "sha256": "24c194c31928335f4e29eee52bd200efac11263d4b69ef7350ef989e55ffe111",
       "trusted": true
     },
     {
@@ -1610,27 +1604,27 @@
       "trusted": true
     },
     {
-      "bytes": 9714,
+      "bytes": 9684,
       "name": "TEXMFDIST:tex/latex/rerunfilecheck/rerunfilecheck.sty",
-      "sha256": "7e22b1ca949259c61d3721bca0a56bcccf7e47cfc776027c5863941635c07aa1",
+      "sha256": "7771d8fb8f76147d1d6fc5b205c8989feb270bafccd6021570cd7e5152ead1d6",
       "trusted": true
     },
     {
-      "bytes": 14552,
+      "bytes": 15651,
       "name": "TEXMFDIST:tex/latex/tools/array.sty",
-      "sha256": "1d146b31e2e9db49dd1c70c0dafb26b044b8ff885622a9a735f198cca55b90ae",
+      "sha256": "537013de60c6606caecfc2eee9b81cd95f093ebb0f99b43277775073f00d9160",
       "trusted": true
     },
     {
-      "bytes": 10214,
+      "bytes": 10374,
       "name": "TEXMFDIST:tex/latex/tools/calc.sty",
-      "sha256": "5af5f4960d4390f41a43dcc46bb32a3694de7c24dc8da850c6d30852de3418b8",
+      "sha256": "662f4630feb4206cfd75524b46875f58bc247d1e7df6d242424fb3977b70a5ea",
       "trusted": true
     },
     {
       "bytes": 7243,
       "name": "TEXMFDIST:tex/latex/tools/tabularx.sty",
-      "sha256": "7a6071ca52d181766fbfaa002602f12d69eb7ace6304f32e3837d34bdd441669",
+      "sha256": "c90c0340ee1ad578be7adcebf7d15f5d435349bb66a2349f0151aad0b4f45e64",
       "trusted": true
     },
     {
@@ -1646,15 +1640,15 @@
       "trusted": true
     },
     {
-      "bytes": 87635,
+      "bytes": 85320,
       "name": "TEXMFSYSVAR:fonts/map/pdftex/updmap/pdftex.map",
-      "sha256": "74297a696ab6fe8c54b32689c891725af323eb96594fe7d3f905363d41781622",
+      "sha256": "8ef6a1c0e5223f6f9cd845a032297568ba1564ad538ce332a4035d11b22e3c26",
       "trusted": true
     },
     {
-      "bytes": 1928189,
+      "bytes": 2236298,
       "name": "TEXMFSYSVAR:web2c/pdftex/pdflatex.fmt",
-      "sha256": "35b3bed11f5ba769660890998f0ea79bbffe4df27e5ef24a1601d7768e62f89e",
+      "sha256": "37ffe319df60e2eedbc189ea58b96d74c14a476c8819f8ae2c30fbdcb77abd64",
       "trusted": true
     }
   ],
@@ -1663,12 +1657,13 @@
     "review/post_full_fable/independent/symmetric_scan.py": "82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21",
     "tools/analyze_relative_transport.py": "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56",
     "tools/check_python_environment.py": "77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e",
-    "tools/followup_anonymous_contract.py": "c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd",
+    "tools/followup_anonymous_contract.py": "6fd4d5d6af7b066fc61245e9686dbe8ea39edb222b7fc87eb655b6b9f90472eb",
     "tools/make_transport_explanatory_figures.py": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150",
     "tools/make_transport_followup_paper.py": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
-    "tools/numeric_context_pins.py": "bf5ab83abed8d5941e6e27b92fc7239cf38b780207672a7672e053f0188be471",
+    "tools/make_transport_table_charts.py": "ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479",
+    "tools/numeric_context_pins.py": "e8541ea06b0ca7a36290c5a5eddaa3d461e4e97bc9ef18ad56934357392dd01e",
     "tools/verify_review_experiment_export.py": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
-    "tools/verify_tmlr_submission_numbers.py": "b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43"
+    "tools/verify_tmlr_submission_numbers.py": "024bf2d0bb7faeed7dcfd05403139ae271432143d9f4956dad3692d7539fed76"
   },
   "source_zip_contents": [
     {
@@ -1727,9 +1722,9 @@
       "sha256": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0"
     },
     {
-      "bytes": 10179,
+      "bytes": 10240,
       "path": "body_intro.tex",
-      "sha256": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6"
+      "sha256": "6c4ee1a35124e81ad8abd0c4ff168e841a8980a9dd3ae888eabcdd7d40ea403b"
     },
     {
       "bytes": 9713,
@@ -1847,6 +1842,56 @@
       "sha256": "c57502cf62d3a8deb53c4bb1d6a0e6eff1fb71ce604c124e1be204ff884e0db8"
     },
     {
+      "bytes": 3341,
+      "path": "figures/transport_table_drift.tex",
+      "sha256": "3698341c06b17ff36f817d2208d86fb84826ba8ff3fd9699b14e8d79c70449a6"
+    },
+    {
+      "bytes": 9534,
+      "path": "figures/transport_table_mechanism.tex",
+      "sha256": "93105c1ff803f4cfcb14a1cd8a943b761dc5df05077d8f59d4df348669bb236e"
+    },
+    {
+      "bytes": 3750,
+      "path": "figures/transport_table_original_bound_ratios.tex",
+      "sha256": "a03b7e64641f3dc78680181caad1f903c318d02ef874ffac93979ae9b40469ac"
+    },
+    {
+      "bytes": 5104,
+      "path": "figures/transport_table_original_components.tex",
+      "sha256": "d3fd174043f4953f683f9dcb1e011de35a06e271f5c4560c023a021e6ccbac82"
+    },
+    {
+      "bytes": 4572,
+      "path": "figures/transport_table_original_distribution.tex",
+      "sha256": "8cfe7cfff742229e3a2e45f26645b0c628a24e148df61f3b10d8010f1a2f7c48"
+    },
+    {
+      "bytes": 6299,
+      "path": "figures/transport_table_original_path_ratios.tex",
+      "sha256": "266975d0e808119e7590443ba4696d16ddce58a4b9a97f06f5f022a8e9fa5d81"
+    },
+    {
+      "bytes": 12590,
+      "path": "figures/transport_table_original_performance.tex",
+      "sha256": "c8562163804e9fd3c47589037485692ed3e9e81c785206c56275505dda9acd06"
+    },
+    {
+      "bytes": 6417,
+      "path": "figures/transport_table_original_validity.tex",
+      "sha256": "16f8890b8758cfd6b8574648843d92a07386cf61fc0555db51e1cc8ebcef5e3c"
+    },
+    {
+      "bytes": 4119,
+      "path": "figures/transport_table_relative.tex",
+      "sha256": "f5f77ead8dd87ac4048f0421fe138a0ea091916e85c7c57c22dde0b453698170"
+    },
+    {
+      "bytes": 7465,
+      "path": "figures/transport_table_same_history.tex",
+      "sha256": "80b867341dc4d08edef1322eb6c8f44abaf27c060c74635ee3e17ad885b20417"
+    },
+    {
       "bytes": 1056,
       "path": "legacy_scope.tex",
       "sha256": "0c9576bc046ab88eebdc5f33ee0d47995608b32cda0c408f2fa2a301549b3da8"
@@ -1857,9 +1902,9 @@
       "sha256": "0161bd1793fee89289ab990a267f89ba2e2d159ef997e649e032f6c304829f9d"
     },
     {
-      "bytes": 5831,
+      "bytes": 5807,
       "path": "main.tex",
-      "sha256": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a"
+      "sha256": "5ae23779a03ac4d595eee894261edc29c3c9ab59db8a0218f194fcccb35f2946"
     },
     {
       "bytes": 56225,
@@ -2072,46 +2117,6 @@
       "sha256": "0162ff684fc7f1c3a8ae36332e3716aa359f342aced4d1d9b519b388802713a6"
     },
     {
-      "bytes": 1884,
-      "path": "tables/transport_followup_drift_bounds.tex",
-      "sha256": "6130e0e66e34c6117f5e6d4bc0d1b4a574394a1b00dbf4b363b50062530bac2c"
-    },
-    {
-      "bytes": 2402,
-      "path": "tables/transport_followup_mechanism_variation.tex",
-      "sha256": "2725e1b7940683b696b5f93c90a1abbf7ba4c001915ce13cf43cf9dfadd8c851"
-    },
-    {
-      "bytes": 2219,
-      "path": "tables/transport_followup_outcomes.tex",
-      "sha256": "cb87dee8d0d4ceb3bf9c64f7b9c86643cfa69d6176493428bd92177c06cfc288"
-    },
-    {
-      "bytes": 2035,
-      "path": "tables/transport_followup_relative_audit.tex",
-      "sha256": "b7ff2a9c5d3fec423bf6811f0f444ea035c6115b7f91c36d6faca11b7a6626aa"
-    },
-    {
-      "bytes": 2471,
-      "path": "tables/transport_followup_same_history.tex",
-      "sha256": "e3cbe9e68cf611f0ccf296fcee0e5c7adc34ff50b594933710be97e47d33105e"
-    },
-    {
-      "bytes": 2269,
-      "path": "tables/transport_instantiation_performance.tex",
-      "sha256": "5b2ea6000bfc123d9f52b38f37ddbb5aafb7eeb55139c8876a29d33879ee13ad"
-    },
-    {
-      "bytes": 1761,
-      "path": "tables/transport_instantiation_tightness.tex",
-      "sha256": "940106f9f33decab26a9033277c5bc354c6c2e8d09dc629b5b3b6954deb45311"
-    },
-    {
-      "bytes": 1765,
-      "path": "tables/transport_instantiation_validity.tex",
-      "sha256": "0ec0451563890ea9373a0710bbcbc33b2db28a14e405a798e6033062fab7634a"
-    },
-    {
       "bytes": 15939,
       "path": "tikzlibrarydecorations.softclip.code.tex",
       "sha256": "dc56593a617f4a7512dce6c5ab16a80a5f53b164e93419937c9e249d61239739"
@@ -2147,24 +2152,24 @@
       "sha256": "816214ff5919aa457b6b443bee52b15d9561421417b7f8a50cc84651519f0002"
     },
     {
-      "bytes": 10469,
+      "bytes": 9805,
       "path": "transport_experiment.tex",
-      "sha256": "9cfe71dbd8a549eb46a5ababc9dea37747c1c7d1cb575532388558d1dc88ada7"
+      "sha256": "86ddb8cd37ad6d947bccaf991995594a25e823db8a336c55bb88688ccdd344bb"
     },
     {
-      "bytes": 5310,
+      "bytes": 5917,
       "path": "transport_experiment_appendix.tex",
-      "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
+      "sha256": "0259edc7ec4a849bf5e494cc8127dea84dfc043ebb433de6d3f78e641f730b15"
     },
     {
-      "bytes": 14135,
+      "bytes": 14191,
       "path": "transport_followup.tex",
-      "sha256": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
+      "sha256": "80ba70bfb14ac4e9ab2a7586660e91b75e419b4e0839db81964471e2b73fb910"
     },
     {
-      "bytes": 14340,
+      "bytes": 14491,
       "path": "transport_followup_appendix.tex",
-      "sha256": "335dd0bc4e3988b80a03ce5e58df42c3fcbeb618837b7781833c0bd90cc509e6"
+      "sha256": "8441ccaf43663da5ce225632817e8b5a71d3b9b59b42c4255531682e3d2d85cd"
     },
     {
       "bytes": 23888,
@@ -2194,9 +2199,9 @@
       "sha256": "c6f5e3ee3a238f1218909f54866e9a813038aae3d6aeac7d379532cc11c9320d"
     },
     {
-      "bytes": 28203,
+      "bytes": 28841,
       "path": "SOURCE_CLOSURE.json",
-      "sha256": "ecb1759c92fa02a3c24fbb1745679b4d9823e168afccfa6483ceaeded4357d37"
+      "sha256": "aa4cff50cb92cedfb6588c650f8364f6820f1eba6469e341affe0dafd679cc71"
     },
     {
       "bytes": 29252,
@@ -2314,9 +2319,9 @@
       "sha256": "2fb079ec41be24f7cb5f0e76cec72e6a1436a8135cedce16768adcc7173513e0"
     },
     {
-      "bytes": 10179,
+      "bytes": 10240,
       "path": "paper/body_intro.tex",
-      "sha256": "3105cce5618ca33d7eab9e52f0368c52b7c3a7634fc5fc56d90de41904008ce6"
+      "sha256": "6c4ee1a35124e81ad8abd0c4ff168e841a8980a9dd3ae888eabcdd7d40ea403b"
     },
     {
       "bytes": 9713,
@@ -2729,6 +2734,61 @@
       "sha256": "2081e2cc18cfbfcbd48efb67d882db8bc660d4a691ea87b743a996dae12bf572"
     },
     {
+      "bytes": 3341,
+      "path": "paper/figures/transport_table_drift.tex",
+      "sha256": "3698341c06b17ff36f817d2208d86fb84826ba8ff3fd9699b14e8d79c70449a6"
+    },
+    {
+      "bytes": 9534,
+      "path": "paper/figures/transport_table_mechanism.tex",
+      "sha256": "93105c1ff803f4cfcb14a1cd8a943b761dc5df05077d8f59d4df348669bb236e"
+    },
+    {
+      "bytes": 3750,
+      "path": "paper/figures/transport_table_original_bound_ratios.tex",
+      "sha256": "a03b7e64641f3dc78680181caad1f903c318d02ef874ffac93979ae9b40469ac"
+    },
+    {
+      "bytes": 5104,
+      "path": "paper/figures/transport_table_original_components.tex",
+      "sha256": "d3fd174043f4953f683f9dcb1e011de35a06e271f5c4560c023a021e6ccbac82"
+    },
+    {
+      "bytes": 4572,
+      "path": "paper/figures/transport_table_original_distribution.tex",
+      "sha256": "8cfe7cfff742229e3a2e45f26645b0c628a24e148df61f3b10d8010f1a2f7c48"
+    },
+    {
+      "bytes": 6299,
+      "path": "paper/figures/transport_table_original_path_ratios.tex",
+      "sha256": "266975d0e808119e7590443ba4696d16ddce58a4b9a97f06f5f022a8e9fa5d81"
+    },
+    {
+      "bytes": 12590,
+      "path": "paper/figures/transport_table_original_performance.tex",
+      "sha256": "c8562163804e9fd3c47589037485692ed3e9e81c785206c56275505dda9acd06"
+    },
+    {
+      "bytes": 6417,
+      "path": "paper/figures/transport_table_original_validity.tex",
+      "sha256": "16f8890b8758cfd6b8574648843d92a07386cf61fc0555db51e1cc8ebcef5e3c"
+    },
+    {
+      "bytes": 2386,
+      "path": "paper/figures/transport_table_provenance.json",
+      "sha256": "ab834344dd57663b671f2c1dc9f283e36aef28a53c8a0a7b290514ecd309766f"
+    },
+    {
+      "bytes": 4119,
+      "path": "paper/figures/transport_table_relative.tex",
+      "sha256": "f5f77ead8dd87ac4048f0421fe138a0ea091916e85c7c57c22dde0b453698170"
+    },
+    {
+      "bytes": 7465,
+      "path": "paper/figures/transport_table_same_history.tex",
+      "sha256": "80b867341dc4d08edef1322eb6c8f44abaf27c060c74635ee3e17ad885b20417"
+    },
+    {
       "bytes": 1056,
       "path": "paper/legacy_scope.tex",
       "sha256": "0c9576bc046ab88eebdc5f33ee0d47995608b32cda0c408f2fa2a301549b3da8"
@@ -2839,24 +2899,24 @@
       "sha256": "7fa4faeaa3f31b3a65b20fb41bf9a830cafc0d2f30b4c893915d5e342c168855"
     },
     {
-      "bytes": 10469,
+      "bytes": 9805,
       "path": "paper/transport_experiment.tex",
-      "sha256": "9cfe71dbd8a549eb46a5ababc9dea37747c1c7d1cb575532388558d1dc88ada7"
+      "sha256": "86ddb8cd37ad6d947bccaf991995594a25e823db8a336c55bb88688ccdd344bb"
     },
     {
-      "bytes": 5310,
+      "bytes": 5917,
       "path": "paper/transport_experiment_appendix.tex",
-      "sha256": "202f6cb5a46f1ffe22fb6a0c976331f1b3ee079adf08f03e4f97631669ff345d"
+      "sha256": "0259edc7ec4a849bf5e494cc8127dea84dfc043ebb433de6d3f78e641f730b15"
     },
     {
-      "bytes": 14135,
+      "bytes": 14191,
       "path": "paper/transport_followup.tex",
-      "sha256": "5b8170224157926093e545e1422c907b7d46e8cd27ea8d248e92b10f6ab40113"
+      "sha256": "80ba70bfb14ac4e9ab2a7586660e91b75e419b4e0839db81964471e2b73fb910"
     },
     {
-      "bytes": 14340,
+      "bytes": 14491,
       "path": "paper/transport_followup_appendix.tex",
-      "sha256": "335dd0bc4e3988b80a03ce5e58df42c3fcbeb618837b7781833c0bd90cc509e6"
+      "sha256": "8441ccaf43663da5ce225632817e8b5a71d3b9b59b42c4255531682e3d2d85cd"
     },
     {
       "bytes": 23888,
@@ -3004,9 +3064,9 @@
       "sha256": "dd17ab420a4b394864fbbd4d25efc66177e505e0dfc2a87a1d4512bf59cfaf44"
     },
     {
-      "bytes": 5831,
+      "bytes": 5807,
       "path": "submissions/tmlr_2026/main.tex",
-      "sha256": "aaf79424ed38eda3435c13818dd0ea200c6ed5ee560dcfaca89dd8f92010255a"
+      "sha256": "5ae23779a03ac4d595eee894261edc29c3c9ab59db8a0218f194fcccb35f2946"
     },
     {
       "bytes": 28190,
@@ -3014,9 +3074,9 @@
       "sha256": "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56"
     },
     {
-      "bytes": 63574,
+      "bytes": 64500,
       "path": "tools/anonymous_package_contract.py",
-      "sha256": "cdba81658cc0c6c5d8236a4e9d52de58ed708d8a7965310866147b4375d1090e"
+      "sha256": "b7d911dd45ff79fd75856a920139c54546f6d828b1c8523ff4343a132046255a"
     },
     {
       "bytes": 3269,
@@ -3024,9 +3084,9 @@
       "sha256": "77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e"
     },
     {
-      "bytes": 34045,
+      "bytes": 36286,
       "path": "tools/followup_anonymous_contract.py",
-      "sha256": "c35e5ecd1ddd4823d24fd96287a895b1c779a1dabc102345b2fff9e1a641dbcd"
+      "sha256": "6fd4d5d6af7b066fc61245e9686dbe8ea39edb222b7fc87eb655b6b9f90472eb"
     },
     {
       "bytes": 14909,
@@ -3039,9 +3099,14 @@
       "sha256": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496"
     },
     {
-      "bytes": 132028,
+      "bytes": 15265,
+      "path": "tools/make_transport_table_charts.py",
+      "sha256": "ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479"
+    },
+    {
+      "bytes": 130614,
       "path": "tools/numeric_context_pins.py",
-      "sha256": "bf5ab83abed8d5941e6e27b92fc7239cf38b780207672a7672e053f0188be471"
+      "sha256": "e8541ea06b0ca7a36290c5a5eddaa3d461e4e97bc9ef18ad56934357392dd01e"
     },
     {
       "bytes": 5170,
@@ -3059,14 +3124,14 @@
       "sha256": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0"
     },
     {
-      "bytes": 185731,
+      "bytes": 189950,
       "path": "tools/verify_tmlr_submission_numbers.py",
-      "sha256": "b8d16d92570b4eead2ff75bd7d28b8d9a90e5390d6a86b6c74a2fbb8112e8b43"
+      "sha256": "024bf2d0bb7faeed7dcfd05403139ae271432143d9f4956dad3692d7539fed76"
     },
     {
-      "bytes": 5833,
+      "bytes": 5976,
       "path": "verify.sh",
-      "sha256": "e9f43c494ea5206d18afc9645e18fe4bb28b796f63ea226f4ccf267872654e74"
+      "sha256": "8fe30c26d7a209b34fe157ff78a5cf13825540dc5398da1b57e84cf4ed818d09"
     }
   ],
   "target_venue": "TMLR"
