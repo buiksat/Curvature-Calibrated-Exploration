@@ -67,7 +67,7 @@
 \newif\iflegacyextras \legacyextrasfalse
 \input{notation}
 
-\title{Confidence Transport under Relinearization:\\Guarantees, Conservatism, and Policy Behavior\thanks{OpenAI Codex and Anthropic Claude assisted with manuscript editing, code preparation, and review.}}
+\title{Confidence Transport in Contextual Bandits:\\Guarantees and Limits under Relinearization\thanks{OpenAI Codex and Anthropic Claude assisted with manuscript editing, code preparation, and review.}}
 
 % Authors must not appear in the submitted version.  tmlr.sty hides this block
 % as long as the package is loaded without [accepted] or [preprint].
@@ -78,8 +78,9 @@
 \maketitle
 
 \begin{abstract}
-Retraining a model can change its uncertainty estimates even when no new data
-are added. In a contextual bandit, we ask when recomputing past gradients at
+We study gradient-based confidence estimates for exploration in contextual
+bandits. Further training on the same observations can change these estimates
+without adding new data. We ask when recomputing past gradients at
 the current model preserves the confidence guarantee used to choose actions.
 We give a conditional upper confidence bound (UCB) theorem that starts from
 features fixed before each reward and accounts for changing the uncertainty

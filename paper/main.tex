@@ -62,7 +62,7 @@
 %  format and must be inserted after the references.)
 
 % --- title ----------------------------------------------------------------
-\title{Confidence Transport under Relinearization: Guarantees, Conservatism, and Policy Behavior}
+\title{Confidence Transport in Contextual Bandits: Guarantees and Limits under Relinearization}
 \author{Anonymous Author(s)}
 
 \begin{document}
@@ -72,7 +72,7 @@
   \maketitle
 \else
   \twocolumn[%
-    \aistatstitle{Confidence Transport under Relinearization: Guarantees, Conservatism, and Policy Behavior}%
+    \aistatstitle{Confidence Transport in Contextual Bandits: Guarantees and Limits under Relinearization}%
     \aistatsauthor{Anonymous Author(s)}%
     \aistatsaddress{Anonymous Institution(s)}%
   ]%
@@ -80,8 +80,9 @@
 
 % --- abstract -------------------------------------------------------------
 \begin{abstract}
-Retraining a model can change its uncertainty estimates even when no new data
-are added. In a contextual bandit, we ask when recomputing past gradients at
+We study gradient-based confidence estimates for exploration in contextual
+bandits. Further training on the same observations can change these estimates
+without adding new data. We ask when recomputing past gradients at
 the current model preserves the confidence guarantee used to choose actions.
 We give a conditional upper confidence bound (UCB) theorem that starts from
 features fixed before each reward and accounts for changing the uncertainty
