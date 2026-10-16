@@ -1,107 +1,55 @@
-# Local Codex handoff — 2026-10-16
+# Local Codex handoff — abstract revision
 
-## Current goal
+Updated 2026-10-15 (America/Los_Angeles).
 
-Improve the TMLR manuscript's abstract and readability. The user wants the
-title and first sentence to make the contextual-bandit scope explicit, and
-wants published guidance on writing scientific abstracts consulted before a
-full rewrite. The user approved saving and pushing these changes before
-continuing in local Codex.
+## Current state
 
-## Repository state
+The requested abstract rewrite is complete. It is a 250-word, single-paragraph
+narrative that states contextual-bandit scope in its first sentence. It keeps
+the conditional theorem, the same-history width limitation, the one-model
+experimental scope, all adverse regret comparisons, vacuous bounds and the
+limits of floating-point checks. The title already matched; small introduction
+edits make the valid reference band and empirical scope explicit.
 
-Repository: https://github.com/buiksat/Curvature-Calibrated-Exploration
+Online access succeeded locally. The authoritative guidance actually read,
+current TMLR requirements and editorial decisions are in
+`submissions/tmlr_2026/ABSTRACT_REVISION.md` on both branches.
 
-- `main`: submission-facing manuscript under `submissions/tmlr_2026/`.
-- `cce-review-revisions`: research code, experiments, validation tools, and
-  canonical scientific sources under `paper/`, plus the TMLR entry point.
-- This handoff and the latest scope edits are being committed to both branches.
-  Use ordinary fetch/pull in a clean local checkout; preserve any local work.
+## Branches and artifacts
 
-## Changes made in this voice session
+- `main` contains the self-contained submission-facing manuscript in
+  `submissions/tmlr_2026/` and its current `REVISION_STATUS.md`.
+- `cce-review-revisions` contains canonical scientific sources in `paper/`,
+  research/evidence tools and the strict release packager. Its current detailed
+  results are in `review/abstract_revision/IMPLEMENTATION_REPORT.md`,
+  `review/abstract_revision/VERIFICATION.json` and
+  `submissions/tmlr_2026/REVISION_VALIDATION.md`.
+- Three active abstract copies and 44 active scientific source files match.
+  Historical venue-specific sources and `paper/main.pdf` remain separate.
+- The new main and strict PDFs are byte-identical, have 52 pages, and incorporate
+  the latest title/abstract/introduction. A fresh source-archive rebuild reproduces
+  those bytes. The strict supplement passes fresh-extraction verification.
+- The matching PDF, source ZIP and supplement ZIP are copied to the local chat's
+  `outputs/` directory. Artifact hashes and exact checks are in the records above.
 
-Title: **Confidence Transport in Contextual Bandits: Guarantees and Limits
-under Relinearization**.
+The original checkout was clean. Fetch confirmed the handoff tips `341e191`
+(main) and `50fee83` (research); no user edits were discarded.
 
-The abstract now starts:
+## Validation boundary
 
-> We study gradient-based confidence estimates for exploration in contextual
-> bandits. Further training on the same observations can change these estimates
-> without adding new data. We ask when recomputing past gradients at the current
-> model preserves the confidence guarantee used to choose actions.
+Source and tool provenance, semantic pins, the numerical ledger and release
+manifest are refreshed. The explicit 95% interval level adds one ledger entry;
+all 218 previous entries and numerical values remain unchanged. A necessary
+scanner fix rejects actual Git revision prefixes rather than unrelated measured
+numbers that happen to share seven initial digits. Its regression preserves
+real identifier detection. No experimental evidence was changed for packaging.
 
-The TMLR entry point is updated on both branches. The research entry point
-`paper/main.tex` is updated on the research branch as well.
-The remainder of the abstract has not yet been rewritten.
+All 270 checked scientific/evidence files remain byte-identical to the research
+baseline. No new experiments or external model review were run. The original
+study's raw-data limitations and the follow-up raw-archive limitations remain;
+compact verification does not imply raw-trajectory replay. Consult the final
+validation record for exact passed/skipped counts, warnings and NOT_EXECUTED
+items instead of reusing an earlier release's results.
 
-## Next work
-
-1. Consult authoritative scientific-abstract guidance and current TMLR rules.
-   Candidate references, not successfully retrieved in the cloud:
-   - https://mitcommlab.mit.edu/eecs/commkit/abstract/
-   - https://writingcenter.unc.edu/tips-and-tools/abstracts/
-   - https://www.nature.com/documents/nature-summary-paragraph.pdf
-   - https://jmlr.org/tmlr/author-guide.html
-2. Rewrite the abstract as a coherent, self-contained narrative:
-   problem and scope → research gap → contribution → principal results →
-   interpretation. Around 180–220 words is an editorial suggestion, not a
-   verified TMLR requirement.
-3. Keep the conditional assumptions and empirical limitations accurate,
-   while moving unnecessary technical inventory into the main text.
-4. Synchronize the manuscript entry points. Rebuild and inspect the PDF.
-   Use the existing validation/release tooling to refresh affected provenance
-   and packaging records; do not treat earlier release verification as applying
-   to newly edited sources.
-
-## Scientific facts that must survive editing
-
-- This is a contextual-bandit study of gradient-based confidence estimates,
-  not a claim about uncertainty estimation for every model.
-- Confidence transport starts from a valid reference confidence statement and
-  requires explicit conditions/error controls. It is not an unconditional
-  guarantee for arbitrary retraining.
-- With the same history, center, radius, and bias, the certified transported
-  width cannot be smaller than the direct reference width. Exact actionwise
-  transport recovers the reference width.
-- This does not establish regret ordering across policies with different
-  adaptive histories.
-- The prespecified study uses a 29-parameter scaled-tanh model, four policies,
-  three conditions, and 50 paired seeds per condition.
-- Hessian transport has higher mean pseudo-regret than every comparator in
-  each condition; all nine pointwise paired confidence intervals exclude zero.
-- Transport regret bounds and the reference policy's own bounds are vacuous
-  in the study. Passing recorded floating-point confidence/optimism checks
-  does not prove universal validity or practical usefulness.
-- Preserve these negative results rather than making the paper sound stronger.
-
-## Previous completed work and validation boundary
-
-All eight numerical tables were replaced or consolidated into charts; exact
-tables remain supplemental lookup data. Ten new chart files were added.
-The chart revision was committed and pushed before this voice session.
-
-Prior validated chart commits:
-- main: `39c6d16eb68e55232a63da54e1873beb834891f6`
-- research: `0982b19254fc2d481bdde72d3b74ecb8c360bb1b`
-
-The prior PDF had 52 pages. Its release validation is recorded in
-`submissions/tmlr_2026/REVISION_VALIDATION.md` and, on the research branch,
-`review/table_chart_revision/IMPLEMENTATION_REPORT.md` and
-`review/table_chart_revision/VERIFICATION.json`.
-
-This voice session changed source text only. Whitespace/diff checks and
-manuscript synchronization checks are performed before committing.
-No new PDF, release archive, experiments, full regression run, or external
-Claude review has been produced for these title/abstract edits.
-Older PDF/archive artifacts therefore do not contain the latest wording.
-
-## Cloud access limitation
-
-Direct attempts to retrieve the sources above failed at the managed network
-proxy with HTTP 403 while opening the connection. The precise proxy policy
-was not established. Network access was declared enabled. Local network access
-may resolve this, but that has not been verified.
-
-No local desktop session has been opened or automatically transferred.
-This committed document carries the task context to the local checkout.
-
+No TMLR submission has been made. Author review, eligibility and OpenReview
+declarations remain the authors' responsibilities before submission.

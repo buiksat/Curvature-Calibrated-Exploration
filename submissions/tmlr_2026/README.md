@@ -7,7 +7,14 @@ synchronized with `paper/` on `cce-review-revisions`; research code and evaluati
 artifacts live on that branch. The historical AISTATS and CODE sources on main
 remain separate from this submission.
 
-The current revision makes the completed nonlinear-regime follow-up the main
+The latest abstract revision makes contextual-bandit scope explicit from its
+first sentence and follows the problem, gap, approach, results and interpretation.
+Its 250-word paragraph preserves the conditional theorem, the one-model study,
+and the adverse regret and vacuous-bound findings. The title remains aligned;
+small introduction edits clarify the same scope. See
+[the sources read and editorial rationale](ABSTRACT_REVISION.md).
+
+The preceding revision makes the completed nonlinear-regime follow-up the main
 empirical section and retains the original near-linear study in the appendix.
 It adds the precise same-history width comparison, direct endpoint and
 scaled-tanh relative-weight certificates, and exploratory diagnostics from the
@@ -43,7 +50,7 @@ body-size text without resizing; no new experiments were run.
 ## Format and provenance
 
 The official [TMLR template](https://github.com/JmlrOrg/tmlr-style-file/tree/7bf90efe3a0debbba703c05c43f3ff7e4d4a2992)
-was checked on 2026-10-13. `tmlr.sty`, `tmlr.bst`, `fancyhdr.sty`, and `LICENSE`
+was checked directly online again on 2026-10-15 (America/Los_Angeles). `tmlr.sty`, `tmlr.bst`, `fancyhdr.sty`, and `LICENSE`
 are unchanged upstream files; `STYLE_SHA256SUMS` records their hashes.
 
 The manuscript uses a 10pt article, the default anonymous TMLR mode, native
@@ -54,15 +61,19 @@ Codex and Claude assistance. The availability statement describes the compact
 anonymous evidence supplement and separately states its raw-data limitations.
 The anonymous PDF contains no author contact details or identifying metadata.
 
-TMLR is a journal with rolling submissions and no fixed page limit. Manuscripts
-over 12 main-text pages have longer review timelines. Policies were checked in
-the journal's official website-source revision
-`ac4daa6a6d170eb16bcdab0368a02fb0cfbe58c2`, because direct website access was
-blocked by this environment's network policy:
+TMLR has rolling submissions and no fixed page limit. Manuscripts over 12
+main-text pages may have longer review timelines. Current requirements were
+read directly on 2026-10-15; the official template requires a one-paragraph
+abstract, without a stated word limit. The existing first-page assistance
+footnote and anonymous formatting are retained.
 
-- [Author guidelines](https://github.com/JmlrOrg/tmlr/blob/ac4daa6a6d170eb16bcdab0368a02fb0cfbe58c2/templates/author-guide.html)
-- [Editorial policies](https://github.com/JmlrOrg/tmlr/blob/ac4daa6a6d170eb16bcdab0368a02fb0cfbe58c2/templates/editorial-policies.html)
-- [FAQ, including first-page LLM disclosure](https://github.com/JmlrOrg/tmlr/blob/ac4daa6a6d170eb16bcdab0368a02fb0cfbe58c2/templates/faq.html)
+- [Author guidelines](https://jmlr.org/tmlr/author-guide.html)
+- [Official template](https://github.com/JmlrOrg/tmlr-style-file/blob/main/main.tex)
+- [Editorial policies](https://jmlr.org/tmlr/editorial-policies.html)
+- [FAQ, including first-page LLM disclosure](https://jmlr.org/tmlr/faq.html)
+
+The [abstract revision record](ABSTRACT_REVISION.md) also cites the MIT and
+Nature writing guidance and the other TMLR documents actually read.
 
 ## Build
 

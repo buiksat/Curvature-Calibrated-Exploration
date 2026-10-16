@@ -9,7 +9,7 @@ then choosing an action with a large resulting score. The bonus matters: a
 policy that understates uncertainty can stop exploring too soon, while an
 excessively large bonus can overwhelm differences in predicted rewards.
 
-With a nonlinear predictor, retraining changes how the model represents past
+With a nonlinear predictor, retraining can change how the model represents past
 observations. For example, a recommender may refit its reward predictor after
 each interaction, then recompute the gradients of all previously recommended
 items. Their recorded rewards stay the same, but the matrix built from their
@@ -49,7 +49,7 @@ parameter.
 
 \paragraph{The central result: valid transport can still be unhelpful.}
 \emph{Confidence transport} means using a justified comparison between the
-reference and current matrices to convert a reference confidence band into a
+reference and current matrices to convert a valid reference confidence band into a
 score based on current curvature. A \emph{certificate} is a bound that makes
 such a comparison valid. The \emph{width} is the geometric part of the
 uncertainty bonus; a confidence radius scales it, and a separate term covers
@@ -67,9 +67,10 @@ An exact actionwise correction recovers that reference width
 adaptive regret open: different bonuses can change actions, which changes the
 data on which subsequent decisions are based.
 
-Our controlled study makes the cost concrete. The evaluated Hessian-transport
-policy uses bounds on prediction Hessians to certify the change of matrix. It
-has higher mean regret than every comparator in every condition. Its
+Our controlled study uses one synthetic scaled-tanh model in three prespecified
+conditions. The evaluated Hessian-transport policy uses bounds on prediction
+Hessians to certify the change of matrix. It has higher mean pseudo-regret than
+every comparator in each condition. Its
 recorded optimism checks pass, but its regret bounds are larger than a simple
 deterministic cap. Thus a confidence construction can be valid under its
 assumptions, conservative in its bound, and poor as a decision rule. These are
