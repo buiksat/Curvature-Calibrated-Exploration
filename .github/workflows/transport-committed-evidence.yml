@@ -332,6 +332,14 @@ jobs:
             | tee "${RUNNER_TEMP}/supplement-tree-state.log"
           [ ! -s "${RUNNER_TEMP}/supplement-tree-state.log" ]
 
+      - name: Full retained repository suite
+        run: |
+          set -euo pipefail
+          OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+            TMLR_OUT="${RUNNER_TEMP}/tmlr" \
+            python -m pytest -q -ra tests experiments/tests \
+            | tee "${RUNNER_TEMP}/repository-suite.log"
+
       # actions/upload-artifact v4.4.3
       - name: Upload verifier and PDF logs
         if: always()

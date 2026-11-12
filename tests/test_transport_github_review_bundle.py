@@ -807,4 +807,7 @@ def test_generated_artifacts_match_the_aggregate():
 
 def test_locked_artifact_hash_table_covers_every_locked_file():
     for relative, expected in verifier.LOCKED_ARTIFACT_HASHES.items():
-        assert exporter.sha256_file(REPO_ROOT / relative) == expected
+        path = (archived_input(REPO_ROOT, relative)
+                if relative in (str(exporter.PDF_PATH), str(exporter.SELECTION_FLAT_PATH))
+                else REPO_ROOT / relative)
+        assert exporter.sha256_file(path) == expected

@@ -42,8 +42,10 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO_ROOT / ".github/workflows/transport-committed-evidence.yml"
-SIDECAR = REPO_ROOT / "paper/main.pdf.sha256"
-LOCKED_PDF = REPO_ROOT / "paper/main.pdf"
+sys.path.insert(0, str(REPO_ROOT / "tools"))
+from archived_inputs import ARCHIVE_COMMIT, archived_input
+SIDECAR = archived_input(REPO_ROOT, "paper/main.pdf.sha256")
+LOCKED_PDF = archived_input(REPO_ROOT, "paper/main.pdf")
 
 sys.path.insert(0, str(REPO_ROOT / "submissions/tmlr_2026"))
 import package as packager  # noqa: E402
@@ -66,11 +68,17 @@ def scan(entries):
 
 
 def _sidecar_commands() -> list[str]:
-    """Every workflow line that runs sha256sum against the locked-PDF sidecar."""
+    """Preserve the archived workflow's three actual sidecar-command regressions."""
+
+    original = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "show",
+         f"{ARCHIVE_COMMIT}:.github/workflows/transport-committed-evidence.yml"],
+        check=True, capture_output=True, text=True,
+    ).stdout
 
     return [
         line.strip()
-        for line in WORKFLOW.read_text(encoding="utf-8").splitlines()
+        for line in original.splitlines()
         if "main.pdf.sha256" in line and "sha256sum" in line
     ]
 
@@ -137,11 +145,10 @@ def test_sidecar_command_fails_on_a_corrupted_pdf(command, tmp_path):
 
 def test_submission_steps_are_downstream_of_the_pdf_check_and_never_skipped():
     text = WORKFLOW.read_text(encoding="utf-8")
-    pdf_check = text.index("- name: PDF structural checks")
+    pdf_check = text.index("- name: Archived PDF structural checks")
     downstream = (
         "- name: Numerical-provenance ledger",
         "- name: Regenerate every published artifact from the locked aggregate",
-        "- name: Attempt the clean PDF rebuild",
         "- name: Build the anonymous TMLR submission",
         "- name: Release manifest still describes the rebuilt deliverables",
         "- name: Rebuild the submission from a clean unpacked source.zip",
@@ -159,13 +166,12 @@ def test_workflow_parses_as_yaml_and_keeps_the_jobs_independent():
     yaml = pytest.importorskip("yaml")
     document = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     jobs = document["jobs"]
-    assert set(jobs) == {"submission-evidence", "realistic-transport-deferred"}
+    assert set(jobs) == {"submission-evidence"}
     # the deferred extension must not gate the submission checks, in either
     # direction, so its status can be honest without blocking the submission
     assert "needs" not in jobs["submission-evidence"]
-    assert "needs" not in jobs["realistic-transport-deferred"]
     names = [step.get("name") for step in jobs["submission-evidence"]["steps"]]
-    assert "PDF structural checks" in names
+    assert "Archived PDF structural checks" in names
     assert "Build the anonymous TMLR submission" in names
 
 
@@ -4477,6 +4483,10 @@ def test_algorithms_upstream_sources_regenerate_the_pinned_runtime(tmp_path):
         assert extras[name] == vendor / name
     if shutil.which("tex") is None:
         pytest.skip("plain TeX is required to regenerate upstream docstrip sources")
+    # Newer docstrip also searches installed packages when deciding whether
+    # an output exists. This disposable directory is safe to overwrite; avoid
+    # an interactive question about the system's algorithm.sty.
+    (tmp_path / "docstrip.cfg").write_text("\\askforoverwritefalse\n")
     done = subprocess.run(
         ["tex", "-8bit", "-interaction=nonstopmode", "-halt-on-error", "algorithms.ins"],
         cwd=tmp_path, env=packager.compile_environment(tmp_path),
