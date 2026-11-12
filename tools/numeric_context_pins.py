@@ -923,7 +923,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
 #: path -> SHA-256 of the whole normalized auditable text
 FILE_PINS: dict[str, str] = {
     'README.md':
-        '3dc113e7d7f09f873d1b4a1eace023794e616f2268421206ec39f377253f8801',
+        '9986a58b030c883a2cc2245929968cf6b6afe329ea03300c8e891451120fc64e',
     'paper/availability.tex':
         '805154682b8991ec58161e9dc13f66b017aacb39e35312513cccc87332964ca3',
     'paper/body_conclusion.tex':

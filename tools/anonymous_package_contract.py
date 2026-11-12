@@ -659,7 +659,7 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/make_transport_explanatory_figures.py': '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
- 'tools/numeric_context_pins.py': 'e8541ea06b0ca7a36290c5a5eddaa3d461e4e97bc9ef18ad56934357392dd01e',
+ 'tools/numeric_context_pins.py': '4193c325171855728c8168d0765a3230fdf13cde918523d909ef4cf28bd7e558',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
  'tools/verify_tmlr_submission_numbers.py': '024bf2d0bb7faeed7dcfd05403139ae271432143d9f4956dad3692d7539fed76'}
 

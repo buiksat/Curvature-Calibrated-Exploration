@@ -57,7 +57,7 @@ inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release
 
 ## Current release
 
-Final build directory: `/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release`.
+Current cleanup build directory: `/tmp/cce-research-cleanup-release`.
 The PDF has **52 pages**, in anonymous official TMLR style. All eight numerical
 tables have chart replacements; all pages are portrait. The compact notation
 table remains on page 5. The chart revision record maps each result to its page.
@@ -67,7 +67,7 @@ table remains on page 5. The chart revision record maps each result to its page.
 | `main.pdf` | 722,007 | — | — |
 | `source.zip` | 3,459,637 | 103 | 3,445,945 |
 | `supplement.zip` | 93,902,070 | 190 | 93,867,286 |
-| `release_manifest.json` | 115,720 | — | — |
+| `release_manifest.json` | 115,741 | — | — |
 
 The supplement occupies 93.9% of the 100,000,000-byte limit, leaving
 6,097,930 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
@@ -155,3 +155,31 @@ open evidence-integrity issues.
 The authors still need to review the final materials and supply the required
 OpenReview declarations. A successful build and evidence verification establish
 neither acceptance nor an actual submission.
+
+## Cleanup verification (2026-11-12)
+
+Historical venue sources and deferred experiments are archived as described in
+`../../ARCHIVE.md`. The numerical context module's top-level README file binding
+and its authenticated module digest were refreshed for the new branch guidance.
+All numerical units, classifications, occurrence pins, and scientific file pins
+remain unchanged. The current manifest records the matching refreshed package.
+
+The PDF and source ZIP remain byte-identical to the prior release. The supplement
+changed only to carry the refreshed context binding and authentication metadata;
+its scientific inputs and measured values remain unchanged. Both source archives
+rebuilt their PDFs byte for byte in fresh directories before that metadata-only
+refresh, which does not alter any source ZIP input.
+
+The full local cleanup run on the preceding snapshot reported 737 passed,
+3 skipped and 6 failed. Two documentation/manifest bookkeeping failures were
+subsequently corrected and checked separately. The remaining failures concern
+histogram artifact regeneration: five CSV files differ in 20 plotted bin-center
+coordinate entries by one floating-point ULP; counts, marker sizes, aggregate
+hashes and measured results match. Linux CI reproduced these differences
+(64 review-bundle tests passed, 3 failed). Original artifacts and byte-equality
+checks are retained; this is not a fully passing evidence verification.
+
+The extracted supplement's numerical ledger, follow-up interval reconstruction,
+table/chart checks, checksum sweep and 23 study tests passed. Its historical
+artifact-regeneration check failed on those same five CSVs. No full experimental
+study was rerun and no numerical threshold was relaxed.
