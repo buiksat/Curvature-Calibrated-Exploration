@@ -5,12 +5,15 @@ current paper. Historical benchmark drivers and their generated artifacts were
 removed from the working tree. They remain available in Git history.
 
 All checked-in `.yaml` files contain JSON, which is valid YAML and can be read
-without PyYAML. Run repository commands through Buck2 from the repository root.
+without PyYAML. Use the supported direct-Python environment from
+`../PYTHON_SETUP.md` and run commands from the repository root.
+Keep all new outputs outside the checkout. Historical Buck commands remain
+available at the pre-cleanup archive tag; they are not an active build path.
 
 ## Tests
 
 ```bash
-buck2 test //experiments/tests:tests -- --timeout=1200
+"$CCE_VENV/bin/python" -m pytest -q experiments/tests
 ```
 
 ## Nonlinear confidence-transport instantiation
@@ -25,20 +28,20 @@ current-width method is intentionally uncertified.
 Resolve and run the smoke protocol first:
 
 ```bash
-buck2 run //experiments:config -- \
+"$CCE_VENV/bin/python" -m experiments.config \
   experiments/configs/transport_instantiation.yaml \
   --profile smoke --seed-set development --print
-buck2 run //experiments:run_transport_instantiation_study -- \
+"$CCE_VENV/bin/python" -m experiments.run_transport_instantiation_study \
   --config experiments/configs/transport_instantiation.yaml \
   --profile smoke --phase development \
   --output-root results/raw/transport_instantiation/smoke --overwrite
-buck2 run //experiments:run_transport_instantiation_study -- \
+"$CCE_VENV/bin/python" -m experiments.run_transport_instantiation_study \
   --config experiments/configs/transport_instantiation.yaml \
   --profile smoke --phase tuning \
   --output-root results/raw/transport_instantiation/smoke \
   --selection-output results/derived/transport_instantiation/smoke_selection.json \
   --overwrite
-buck2 run //experiments:run_transport_instantiation_study -- \
+"$CCE_VENV/bin/python" -m experiments.run_transport_instantiation_study \
   --config experiments/configs/transport_instantiation.yaml \
   --profile smoke --phase evaluation \
   --selection results/derived/transport_instantiation/smoke_selection.json \
@@ -50,7 +53,7 @@ committed, run the full tuning and evaluation phases, then invoke the strict
 aggregator:
 
 ```bash
-buck2 run //experiments:aggregate_transport_instantiation -- \
+"$CCE_VENV/bin/python" -m experiments.aggregate_transport_instantiation \
   --config experiments/configs/transport_instantiation.yaml \
   --profile full \
   --selection results/derived/transport_instantiation/selection.json \
@@ -72,9 +75,9 @@ on evaluation seeds.
 Resolve the configuration and run a bounded smoke audit:
 
 ```bash
-buck2 run //experiments:config -- \
+"$CCE_VENV/bin/python" -m experiments.config \
   experiments/configs/linear_audit.yaml --profile smoke --seed-set tuning
-buck2 run //experiments:run_linear_audit -- \
+"$CCE_VENV/bin/python" -m experiments.run_linear_audit \
   --config experiments/configs/linear_audit.yaml \
   --profile smoke --seed-set tuning --rounds 16 \
   --output-dir results/raw/linear_audit/smoke --overwrite
@@ -83,7 +86,7 @@ buck2 run //experiments:run_linear_audit -- \
 Run the frozen tuning/evaluation protocol:
 
 ```bash
-buck2 run //experiments:run_linear_study -- \
+"$CCE_VENV/bin/python" -m experiments.run_linear_study \
   --config experiments/configs/linear_audit.yaml \
   --profile full --output-root results/raw/linear_audit --overwrite
 ```
@@ -92,12 +95,12 @@ Build the strict seed-level aggregate, then generate the certification and
 bound artifacts:
 
 ```bash
-buck2 run //experiments:aggregate_linear_audit -- \
+"$CCE_VENV/bin/python" -m experiments.aggregate_linear_audit \
   --config experiments/configs/linear_audit.yaml \
   --profile full --raw-root results/raw/linear_audit \
   --output results/derived/linear_audit_full.json
-buck2 run //experiments:make_certification_audit
-buck2 run //experiments:make_linear_bound_artifact
+"$CCE_VENV/bin/python" -m experiments.make_certification_audit
+"$CCE_VENV/bin/python" -m experiments.make_linear_bound_artifact
 ```
 
 The aggregator rechecks every tuning result and selected hyperparameter before
@@ -113,7 +116,7 @@ This deterministic generator converts the checked-in rational exponents into
 JSON and a LaTeX table. It performs no empirical estimation.
 
 ```bash
-buck2 run //experiments:make_closed_rate_artifact -- \
+"$CCE_VENV/bin/python" -m experiments.make_closed_rate_artifact \
   --config experiments/configs/closed_rate_predictions.json
 ```
 
@@ -121,11 +124,11 @@ buck2 run //experiments:make_closed_rate_artifact -- \
 
 The benchmark applies a real squared-loss GGN with `torch.func.jvp` and
 `torch.func.vjp`. Small models include an explicit dense reference. Large
-models remain matrix-free. PyTorch is provided by the Buck-managed Conda
-runtime rather than the base Python dependencies.
+models remain matrix-free. This optional historical benchmark requires a separate PyTorch environment;
+PyTorch is outside the supported transport-study dependency lock.
 
 ```bash
-buck2 run //experiments:run_autodiff_ggn_benchmark_conda -- \
+"$CCE_VENV/bin/python" -m experiments.run_autodiff_ggn_benchmark \
   --config experiments/configs/autodiff_ggn_benchmark.yaml \
   --profile smoke --seed-set evaluation \
   --output-root results/raw/autodiff_ggn --overwrite
@@ -134,7 +137,7 @@ buck2 run //experiments:run_autodiff_ggn_benchmark_conda -- \
 After a complete raw grid, regenerate the checked-in aggregate and paper table:
 
 ```bash
-buck2 run //experiments:make_autodiff_ggn_artifacts -- \
+"$CCE_VENV/bin/python" -m experiments.make_autodiff_ggn_artifacts \
   --config experiments/configs/autodiff_ggn_benchmark.yaml \
   --profile full --raw-root results/raw/autodiff_ggn \
   --aggregate results/derived/autodiff_ggn_benchmark/full/aggregate.json \

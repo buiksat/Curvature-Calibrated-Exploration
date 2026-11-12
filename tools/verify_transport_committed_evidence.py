@@ -74,6 +74,8 @@ from export_transport_github_review_bundle import (  # noqa: E402
     sha256_file,
 )
 
+from archived_inputs import archived_input
+
 import transport_artifact_expectations as expectations  # noqa: E402
 
 LOCKED_ARTIFACT_HASHES: Mapping[str, str] = {
@@ -136,6 +138,13 @@ CURRENT_STUDY_SOURCE_COMPATIBILITY: Mapping[str, Mapping[str, str]] = {
         ),
     }
 }
+CURRENT_STUDY_SOURCE_COMPATIBILITY["experiments/README.md"] = {
+    "selection_inventory_sha256": "e52a9e90cdcbc74962d86e280859be1dee733a80f540e59bc7246116f6c2fbcc",
+    "expected_head_sha256": "9e53c9124655297040c785bcb34e44c58d4c84179ad872524f00e2c7a1ea5920",
+    "diverged_in_commit": "TMLR-only cleanup on 2026-11-12",
+    "reason": "Documentation-only replacement of retired Buck commands with direct Python commands; scientific implementation, configuration and measured evidence are unchanged.",
+}
+
 
 STATUS_PASS = "PASS"
 STATUS_RECOMPUTED = "PASS_RECOMPUTED"
@@ -194,7 +203,9 @@ class Report:
 
 def check_locked_hashes(report: Report, root: Path) -> None:
     for relative, expected in sorted(LOCKED_ARTIFACT_HASHES.items()):
-        path = root / relative
+        path = (archived_input(root, relative)
+                if relative in (str(SELECTION_FLAT_PATH), str(PDF_PATH))
+                else root / relative)
         if not path.is_file():
             report.add("locked", relative, STATUS_FAIL, "file is missing")
             continue
@@ -214,7 +225,9 @@ def check_locked_hashes(report: Report, root: Path) -> None:
         "paper/main.pdf.sha256",
     ]
     for relative in sidecars:
-        path = root / relative
+        path = (archived_input(root, relative)
+                if relative in ("results/derived/transport_instantiation_selection.json.sha256",
+                                "paper/main.pdf.sha256") else root / relative)
         artifact = path.with_name(path.name[: -len(".sha256")])
         if not path.is_file():
             report.add("locked", relative, STATUS_FAIL, "sidecar is missing")
@@ -289,7 +302,8 @@ def check_selection(report: Report, root: Path, selection: Mapping[str, Any]) ->
     diverged: list[str] = []          # pinned in the frozen review bundle
     acknowledged: list[str] = []      # pinned only in this verifier
     for item in selection["study_source_inputs"]:
-        path = root / item["path"]
+        path = (archived_input(root, item["path"])
+                if item["path"] == "experiments/BUCK" else root / item["path"])
         if not path.is_file():
             report.add(
                 section, f"study source {item['path']}", STATUS_FAIL, "file is missing"
@@ -1211,7 +1225,7 @@ def check_review_bundle(report: Report, root: Path, bundle: Path) -> None:
 
 def check_pdf(report: Report, root: Path) -> None:
     section = "pdf"
-    pdf = root / PDF_PATH
+    pdf = archived_input(root, PDF_PATH)
     report.expect(
         section,
         "PDF hash matches the locked value",
@@ -1232,7 +1246,7 @@ def check_pdf(report: Report, root: Path) -> None:
         pdf.stat().st_size == 933908,
         status=STATUS_PASS,
     )
-    audit = root / "review/transport_instantiation/pdf/pdf_manifest.json"
+    audit = archived_input(root, "review/transport_instantiation/pdf/pdf_manifest.json")
     if not audit.is_file():
         report.add(
             section,
@@ -1279,7 +1293,7 @@ def run(root: Path, bundle: Path, *, skip_bundle: bool) -> Report:
     report = Report()
     check_locked_hashes(report, root)
     selection = load_json_strict(root / SELECTION_PATH)
-    flat = load_json_strict(root / SELECTION_FLAT_PATH)
+    flat = load_json_strict(archived_input(root, SELECTION_FLAT_PATH))
     report.expect(
         "selection",
         "flat and nested selection copies are identical",

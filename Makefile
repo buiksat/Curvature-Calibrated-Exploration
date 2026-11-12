@@ -1,24 +1,7 @@
-TEX      := pdflatex
-BIB      := bibtex
-TEXFLAGS := -interaction=nonstopmode -halt-on-error
+# Build the active TMLR release outside the checkout.
+TMLR_OUT ?= /tmp/cce-tmlr-release
 
-PAPERDIR := paper
-MAIN     := main
-
-.PHONY: all pdf clean cleanall
-
+.PHONY: all pdf
 all: pdf
-
 pdf:
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
-	cd $(PAPERDIR) && $(BIB) $(MAIN)
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
-	cd $(PAPERDIR) && $(TEX) $(TEXFLAGS) $(MAIN)
-
-clean:
-	cd $(PAPERDIR) && rm -f *.aux *.bbl *.blg *.log *.out *.fdb_latexmk \
-		*.fls *.synctex.gz *.toc *.lof *.lot *.nav *.snm *.vrb \
-		*.run.xml *-blx.bib *.bcf
-
-cleanall: clean
-	cd $(PAPERDIR) && rm -f $(MAIN).pdf
+	TMLR_OUT="$(TMLR_OUT)" bash submissions/tmlr_2026/build.sh

@@ -7,8 +7,8 @@ import sys
 
 PAPER_DIR = Path(__file__).resolve().parent
 
-# The entry point to validate.  Defaults to the historical AISTATS one, which is
-# what `python paper/validate.py` has always meant.  Passing a path validates
+# The entry point to validate. Defaults to the active TMLR manuscript.
+# Passing a path validates
 # that entry point and its transitive \input closure instead, which is how the
 # packaging step checks the staged TMLR tree: validating one entry point says
 # nothing about a sibling that \inputs a different set of files, and an
@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
     MAIN = Path(sys.argv[1]).resolve()
     PAPER_DIR = MAIN.parent
 else:
-    MAIN = PAPER_DIR / "main.tex"
+    MAIN = PAPER_DIR.parent / "submissions/tmlr_2026/main.tex"
 MACROS = PAPER_DIR / "macros.tex"
 print(f"[entry] {MAIN}")
 
@@ -42,9 +42,14 @@ def read_with_inputs(path, stack=()):
         if not target.suffix:
             target = target.with_suffix(".tex")
         target = (path.parent / target).resolve()
-        # Conditional target-year style/checklist inputs may not exist yet.
+        # The research entry point is staged beside paper/ sources for release.
+        # Resolve its shared inputs here too when validating the checkout.
+        if not target.is_file() and MAIN == PAPER_DIR.parent / "submissions/tmlr_2026/main.tex":
+            target = (PAPER_DIR / match.group(1)).resolve()
+            if not target.suffix:
+                target = target.with_suffix(".tex")
         if not target.is_file():
-            return match.group(0)
+            raise RuntimeError(f"missing manuscript input: {target}")
         return read_with_inputs(target, (*stack, path))
 
     return INPUT_RE.sub(replace, source)

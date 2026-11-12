@@ -18,6 +18,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import export_transport_github_review_bundle as exporter  # noqa: E402
+from archived_inputs import archived_input
 import verify_transport_committed_evidence as verifier  # noqa: E402
 
 
@@ -777,17 +778,17 @@ def test_artifact_expectations_write_nothing(tmp_path):
 
 
 def test_pdf_sidecar_validates_against_the_locked_pdf():
-    sidecar = REPO_ROOT / "paper/main.pdf.sha256"
+    sidecar = archived_input(REPO_ROOT, "paper/main.pdf.sha256")
     assert sidecar.is_file()
     fields = sidecar.read_text(encoding="ascii").strip().split()
     assert len(fields) == 2
     assert fields[1] == "main.pdf"
     assert fields[0] == exporter.LOCKED_PDF_SHA256
-    assert fields[0] == exporter.sha256_file(REPO_ROOT / exporter.PDF_PATH)
+    assert fields[0] == exporter.sha256_file(archived_input(REPO_ROOT, exporter.PDF_PATH))
 
 
 def test_pdf_page_count_uses_object_stream_inflation():
-    assert exporter.pdf_page_count(REPO_ROOT / exporter.PDF_PATH) == 63
+    assert exporter.pdf_page_count(archived_input(REPO_ROOT, exporter.PDF_PATH)) == 63
 
 
 def test_generated_artifacts_match_the_aggregate():

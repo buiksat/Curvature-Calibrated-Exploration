@@ -32,6 +32,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from archived_inputs import archived_input
+
 SCHEMA_VERSION = 1
 GENERATION_FORMAT = "transport-github-review-bundle/1"
 
@@ -1554,7 +1556,8 @@ def verify_locked_inputs(repo_root: Path) -> dict[str, str]:
     }
     observed: dict[str, str] = {}
     for relative, want in expected.items():
-        path = repo_root / relative
+        path = (archived_input(repo_root, relative)
+                if relative in (SELECTION_FLAT_PATH, PDF_PATH) else repo_root / relative)
         if not path.is_file():
             raise ReviewBundleError(f"locked input is missing: {relative}")
         got = sha256_file(path)
@@ -1592,7 +1595,7 @@ def export_bundle(repo_root: Path, output: Path) -> dict[str, Any]:
         "locked_claims.json", claims, semantic_source="recomputed from locked evidence"
     )
 
-    pdf_path = repo_root / PDF_PATH
+    pdf_path = archived_input(repo_root, PDF_PATH)
     pdf_pages = pdf_page_count(pdf_path)
     pdf_bytes = pdf_path.stat().st_size
 

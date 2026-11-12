@@ -1,3 +1,12 @@
+# Current archive location
+
+Historical branch links and the frozen PDF audit described below refer to the
+pre-cleanup snapshot at `archive/research-before-tmlr-cleanup-2026-11-12`.
+The canonical research branch is now `cce-review-revisions`. Use `ARCHIVE.md`
+for retrieval. The current detached verifier authenticates the archived PDF and
+flat selection while reading current TMLR sources and retained experiment
+artifacts. The original aggregate is retained; these extracts do not replace it.
+
 # Reviewing the transport instantiation from GitHub alone
 
 This is the entry point for a reviewer who has GitHub access, no local checkout,

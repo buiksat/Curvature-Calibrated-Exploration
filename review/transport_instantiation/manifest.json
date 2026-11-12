@@ -1,5 +1,5 @@
 {
-  "bundle_inventory_digest": "604d6fce00cc6e614fbff02ebb499100cdee327844c6a534f7338713450f5faf",
+  "bundle_inventory_digest": "ebbcc15ab621ba7d0677f3fc9b7aecafb076aa655b2414fcd1b6e3d564a92676",
   "generated_artifacts": [
     {
       "path": "paper/tables/transport_instantiation_validity.tex",
@@ -89,7 +89,7 @@
   "generation_format": "transport-github-review-bundle/1",
   "generator": {
     "path": "tools/export_transport_github_review_bundle.py",
-    "sha256": "e7763bdee7eea368aa9dc348a798c43268948bcb188e7323afca52f69ce256eb"
+    "sha256": "3522ab02791e2e71efb5863695bd7a63e4c3396a271a4996ecde55a2e6b27431"
   },
   "implementation_commit": "93eaa537d2702d5d18b05905913b0b879e3d608f",
   "indexes": {
@@ -170,7 +170,7 @@
       "path": "README.md",
       "record_count": 1,
       "semantic_source": "generator template",
-      "sha256": "d5d16b6a79e4ad1f4475a1dcf345f8f2a67ed11a71d984c908091f4cd5f947b2"
+      "sha256": "8c0894c843c1e12487db45b9f215947d0a04b87449705110fa08f594acdf7fc9"
     },
     {
       "bytes": 1132,

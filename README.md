@@ -14,10 +14,9 @@ the mathematics exists in exactly one copy:
 
 | Entry point | Venue | State |
 |---|---|---|
-| [`paper/main.tex`](paper/main.tex) | AISTATS | historical, two-column |
 | [`submissions/tmlr_2026/main.tex`](submissions/tmlr_2026/main.tex) | TMLR | current submission candidate, anonymous, **not submitted** |
 
-Both are thin shells. The shared sources are:
+The entry point reads the shared scientific sources under `paper/`:
 
 - `paper/macros.tex` and `paper/notation.tex` for notation;
 - `paper/body_intro.tex`, `paper/body_related.tex`, `paper/body_conclusion.tex`
@@ -26,11 +25,6 @@ Both are thin shells. The shared sources are:
 - `paper/transport_proofs.tex` for complete proofs;
 - `paper/transport_experiment.tex` and `paper/transport_experiment_appendix.tex`
   for the controlled study;
-- `paper/appendix_*.tex` for the deferred derivations, protocol, and the
-  one-sided proofs;
-- `paper/legacy_dynamic.tex` for the older one-sided result;
-- `paper/legacy_experiments.tex` for the limited scope of retained diagnostics
-  (AISTATS entry point only);
 - `paper/references.bib` for bibliography data;
 - `paper/tmlr_style/` for the official, unmodified TMLR stylefile bundle.
 
@@ -48,9 +42,9 @@ utilities needed by those paths, and their artifact generators.  See
 [`experiments/README.md`](experiments/README.md) for exact commands and output
 semantics.
 
-The checked-in empirical artifacts predate the current confidence-transport
-theorem.  They are legacy diagnostics and reproducibility records, not
-validation of the headline result.
+The original near-linear study and the stronger-drift follow-up are controlled
+audits of the transported policies. Auxiliary linear and autodiff artifacts
+remain diagnostics, not validation of the headline theorem.
 
 ## Validation
 
@@ -64,12 +58,9 @@ validation directly:
 "$CCE_VENV/bin/python" paper/validate.py
 ```
 
-Buck2 is **not** a verified path right now.  `buck2 test` and `buck2 run` fail
-during prelude evaluation with an unresolved `root_values` block on the declared
-host setup, as [`BUCK2_SETUP.md`](BUCK2_SETUP.md) records; the `BUCK` targets are
-kept for the Meta host checkout but must not be reported as passing until that
-block is fixed.  Generated Buck output is written under `buck-out/` and ignored
-by Git.
+The active build uses direct Python and TeX Live. Historical Buck infrastructure
+and the deferred realistic-transport extension are archived; see
+[ARCHIVE.md](ARCHIVE.md).
 
 ### Building the manuscript
 
@@ -85,15 +76,16 @@ protected path.  See
 [`submissions/tmlr_2026/README.md`](submissions/tmlr_2026/README.md) for what it
 produces and how to verify it.
 
-`paper/main.pdf` is a frozen pre-rewrite snapshot, pinned by
-`paper/main.pdf.sha256` and verified by CI.  The historical AISTATS entry point
-`paper/main.tex`, `make pdf`, and any other command that can overwrite that file
-may be run **only in a disposable copy of the repository**, for example:
+## Archives and evidence
 
-```bash
-work=$(mktemp -d) && git archive HEAD | tar -x -C "$work"
-( cd "$work/paper" && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex )
-```
+Historical AISTATS and CODE@MIT manuscripts, the frozen pre-rewrite PDF and its
+rendered audit, the duplicate selection export, and the deferred Covertype
+workstream are preserved at `archive/research-before-tmlr-cleanup-2026-11-12`.
+[ARCHIVE.md](ARCHIVE.md) explains retrieval and the checks retained against
+that immutable snapshot. Current theory, experiment configurations, measured
+results, and the strict TMLR source/evidence closure are retained.
 
-Refreshing `paper/main.pdf` in place would break the sidecar and the committed
-evidence checks, so do not do it as part of ordinary work.
+The original near-linear aggregate and its provenance remain current TMLR
+appendix evidence. The smaller GitHub review bundle is an inspection aid, not
+replacement raw data. The current follow-up summaries and numerical tables
+remain available for verification and exact numerical lookup.

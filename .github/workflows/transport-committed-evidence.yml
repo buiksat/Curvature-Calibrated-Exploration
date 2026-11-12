@@ -110,15 +110,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install the declared experiment dependency set
+      - name: Install and verify the supported Python environment
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r experiments/requirements.txt
-          # CI-only: PyYAML is not a scientific dependency and is deliberately
-          # not added to experiments/requirements.txt.  It is installed here so
-          # the workflow-structure regression test can parse this file rather
-          # than pattern-match it.
-          python -m pip install "pyyaml==6.0.2"
+          python -m pip install --only-binary=:all: --require-hashes \
+            -r experiments/requirements-python312.lock
+          python tools/check_python_environment.py
 
       - name: Show tool versions
         run: |
@@ -160,7 +157,6 @@ jobs:
           done
           echo "checked ${#sidecars[@]} SHA-256 sidecars"
           echo "checked ${#review_sidecars[@]} review SHA-256 sidecars"
-          ( cd submissions/code_mit_2026 && sha256sum -c SHA256SUMS )
           exit $status
 
       - name: Transport unit, aggregate and artifact tests
@@ -194,21 +190,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends poppler-utils qpdf ghostscript
 
-      - name: PDF structural checks
+      - name: Archived PDF structural checks
         run: |
           set -euo pipefail
-          # The sidecar names the file as bare `main.pdf`, so sha256sum -c has to
-          # run from paper/.  Called from the repository root it reports
-          # "main.pdf: FAILED open or read" and exits 1, which used to abort this
-          # job before any submission check ran.
-          ( cd paper && sha256sum -c main.pdf.sha256 )
-          qpdf --check paper/main.pdf | tee pdf-check.log
-          pdfinfo paper/main.pdf | tee -a pdf-check.log
-          pdffonts paper/main.pdf | tee -a pdf-check.log
-          pdftotext -layout paper/main.pdf "${RUNNER_TEMP}/main.txt"
-          wc -c "${RUNNER_TEMP}/main.txt" | tee -a pdf-check.log
-          # the PDF must be untouched by the checks above
-          ( cd paper && sha256sum -c main.pdf.sha256 )
+          python tools/archived_inputs.py
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess, sys
+          sys.path.insert(0, 'tools')
+          from archived_inputs import archived_input
+          pdf = archived_input(Path.cwd(), 'paper/main.pdf')
+          subprocess.run(['qpdf', '--check', str(pdf)], check=True)
+          subprocess.run(['pdfinfo', str(pdf)], check=True)
+          subprocess.run(['pdffonts', str(pdf)], check=True)
+          PY
 
       - name: Static TeX validation
         run: python paper/validate.py
@@ -233,52 +228,6 @@ jobs:
             | tee artifact-regeneration.log
           # the check runs in memory; prove it wrote nothing
           git diff --quiet --exit-code -- paper/tables paper/figures
-
-      - name: Attempt the clean PDF rebuild
-        run: |
-          set -euo pipefail
-          # Two different questions, kept apart.
-          #
-          # (1) Does the current source compile cleanly?  That must pass, and a
-          #     build failure or an unresolved reference fails this step.
-          # (2) Do the resulting bytes equal paper/main.pdf?  They are not
-          #     expected to: that file is a deliberately frozen pre-rewrite
-          #     snapshot, and its hash and provenance are verified separately by
-          #     "PDF structural checks" above.  A difference is therefore
-          #     reported as a classification, not as a failure.  Treating (2) as
-          #     a hard gate is what previously stopped this job before the
-          #     submission checks below ever ran.
-          SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)
-          export SOURCE_DATE_EPOCH FORCE_SOURCE_DATE=1
-          work="${RUNNER_TEMP}/aistats"
-          mkdir -p "$work"
-          git archive HEAD | tar -x -C "$work"
-          cp paper/main.pdf "${RUNNER_TEMP}/locked.pdf"
-          ( cd "$work/paper" && latexmk -pdf -interaction=nonstopmode \
-              -halt-on-error main.tex ) > aistats-build.log 2>&1 || {
-            echo "classification: current sources do not compile" >&2
-            tail -80 aistats-build.log >&2
-            exit 1
-          }
-          log="$work/paper/main.log"
-          if grep -qE 'LaTeX Warning: (Reference|Citation|Label)' "$log"; then
-            echo "unresolved references, citations or labels in the build" >&2
-            grep -E 'LaTeX Warning: (Reference|Citation|Label)' "$log" >&2
-            exit 1
-          fi
-          pages=$(pdfinfo "$work/paper/main.pdf" | awk '/^Pages:/{print $2}')
-          echo "current AISTATS entry point compiles: ${pages} pages"
-          if cmp -s "$work/paper/main.pdf" "${RUNNER_TEMP}/locked.pdf"; then
-            echo "classification: byte-identical to the frozen snapshot"
-          else
-            locked_pages=$(pdfinfo "${RUNNER_TEMP}/locked.pdf" \
-              | awk '/^Pages:/{print $2}')
-            echo "classification: current sources differ from the frozen" \
-                 "pre-rewrite snapshot (${pages} pages now, ${locked_pages}" \
-                 "pages frozen); expected, not a failure"
-          fi
-          # the frozen snapshot must still be untouched by any of the above
-          ( cd paper && sha256sum -c main.pdf.sha256 )
 
       - name: Build the anonymous TMLR submission
         run: |
@@ -396,62 +345,9 @@ jobs:
             ledger.json
             ledger.log
             artifact-regeneration.log
-            aistats-build.log
             tmlr-build.log
             source-zip-build.log
             ${{ runner.temp }}/release-package-suite.log
             ${{ runner.temp }}/supplement-verify.log
-          if-no-files-found: warn
-          retention-days: 30
-
-  # The deferred realistic Covertype/Nystrom extension.  It is NOT part of the
-  # submission and is NOT cleared: an independent review of this revision left
-  # its evidence-integrity blockers open, and raw-grid discovery still collapses
-  # the physical seed-100 and seed-0100 directories into one integer-keyed cell.
-  # This job runs it anyway and reports its true status; it is deliberately not
-  # a dependency of submission-evidence, and a failure here must never be read
-  # as clearance or as a submission blocker.
-  realistic-transport-deferred:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    steps:
-      # actions/checkout v4.2.2
-      - name: Check out at full depth
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          fetch-depth: 0
-
-      # actions/setup-python v5.3.0
-      - name: Set up Python 3.12
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
-        with:
-          python-version: "3.12"
-
-      - name: Install the declared experiment dependency set
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r experiments/requirements.txt
-
-      - name: Collect realistic trust-boundary tests
-        run: |
-          set -euo pipefail
-          python -m pytest --collect-only -q experiments/realistic_transport \
-            | tee realistic-transport-collection.log
-
-      - name: Run realistic trust-boundary tests
-        run: |
-          set -euo pipefail
-          python -m pytest -q experiments/realistic_transport \
-            | tee realistic-transport-tests.log
-
-      # actions/upload-artifact v4.4.3
-      - name: Upload realistic-transport logs
-        if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
-        with:
-          name: realistic-transport-logs
-          path: |
-            realistic-transport-collection.log
-            realistic-transport-tests.log
           if-no-files-found: warn
           retention-days: 30

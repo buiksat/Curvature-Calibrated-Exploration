@@ -1800,17 +1800,23 @@ def test_dropping_either_ci_gate_is_detected(needle):
     assert _workflow_gate_findings(pruned), needle
 
 
-def test_ci_keeps_the_deferred_realistic_job_and_its_real_status():
+def test_ci_archives_the_deferred_job_without_hiding_its_original_status():
     import yaml
-    data = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    from archived_inputs import ARCHIVE_COMMIT
+    current = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    assert "realistic-transport-deferred" not in current["jobs"]
+    original = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "show",
+         f"{ARCHIVE_COMMIT}:.github/workflows/transport-committed-evidence.yml"],
+        check=True, capture_output=True, text=True,
+    ).stdout
+    data = yaml.safe_load(original)
     job = data["jobs"]["realistic-transport-deferred"]
     runs = " ".join(step.get("run", "") or "" for step in job["steps"])
     assert "experiments/realistic_transport" in runs
     assert "--collect-only" in runs
-    # it must not be a dependency of, or depended on by, the submission job
     assert "needs" not in job
     assert "needs" not in data["jobs"]["submission-evidence"]
-    # and no step may swallow its status
     for step in job["steps"]:
         assert step.get("continue-on-error") is not True
 

@@ -59,21 +59,13 @@ the optional Conda shell wrapper. Use fresh external paths for `--output-root`,
 Full experiments must pass the dependency preflight before launching workers.
 Keep new evidence separate from the locked historical aggregate and sidecars.
 
-## Historical Buck discrepancy
+## Archived host setup
 
-`experiments/requirements.txt` declares SciPy **1.15.2**. The historical
-`third_party:scipy` Buck target instead selects a path named
-`scipy-1.13.1-cp312-cp312-manylinux_x86_64.whl`. That path is a symlink to
-`/data/repos/fbsource/third-party/pypi/scipy/1.13.1/`, not a self-contained
-vendored wheel. It is dangling when the external host checkout is absent.
-The tracked NumPy wheel is a regular file; the SciPy entry is different.
-
-The legacy `third_party/BUCK`, symlink, and `SHA256SUMS` remain historical inputs.
-Their checksums have not been rewritten to suggest that SciPy 1.15.2 produced
-the old evidence. The active direct-Python path installs the locked 1.15.2 wheel
-from PyPI and never follows the SciPy 1.13.1 link. Buck remains unsupported for
-new reproducible runs until its host-cell, Prelude, and dependency problems
-are independently repaired and tested; see [BUCK2_SETUP.md](BUCK2_SETUP.md).
+The former Buck configuration and NumPy/SciPy wheel resources are preserved in
+`archive/research-before-tmlr-cleanup-2026-11-12`; see [ARCHIVE.md](ARCHIVE.md).
+The archived SciPy path selected 1.13.1 and was an external-host symlink. It
+must not be interpreted as evidence that the active SciPy 1.15.2 lock produced
+historical results. New runs use the direct Python installation above.
 
 Final-horizon paired bootstrap intervals can be recomputed from exact, ordered
 per-seed regret totals, the pairing keys, and the recorded bootstrap seed,
