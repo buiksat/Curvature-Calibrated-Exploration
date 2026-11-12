@@ -15,7 +15,7 @@ historical records of their respective snapshots.
 | Collection scope | Current collected cases |
 | --- | --- |
 | Release-package test collection | 573 collected |
-| Repository suite collection | 742 collected |
+| Repository suite collection | 746 collected |
 
 The counts come from `python -m pytest -q --no-header -p no:cacheprovider
 --collect-only -q tests experiments/tests`; the package count is the
@@ -1056,3 +1056,11 @@ scope and validation commands are recorded in
 [the implementation report](../../review/abstract_revision/IMPLEMENTATION_REPORT.md)
 and [verification data](../../review/abstract_revision/VERIFICATION.json).
 No new experiment, external model review or TMLR submission was performed.
+
+## TMLR cleanup collection update (2026-11-12)
+
+The current repository collection is 746 cases after adding four archive-integrity
+regressions. The release-package collection remains 573 cases; the archived
+PDF sidecar commands retain their original success and corruption regressions.
+Earlier execution results in this document describe their recorded snapshots.
+Current cleanup verification is recorded separately; collection is not execution.
