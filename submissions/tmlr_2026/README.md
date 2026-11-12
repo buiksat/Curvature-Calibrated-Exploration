@@ -4,8 +4,8 @@
 
 `main.tex` is the self-contained TMLR entry point. Scientific sources are
 synchronized with `paper/` on `cce-review-revisions`; research code and evaluation
-artifacts live on that branch. The historical AISTATS and CODE sources on main
-remain separate from this submission.
+artifacts live on that branch. Historical AISTATS and CODE sources are preserved at archive tag
+`archive/main-before-tmlr-cleanup-2026-11-12` and are outside the active tree.
 
 The latest abstract revision makes contextual-bandit scope explicit from its
 first sentence and follows the problem, gap, approach, results and interpretation.

@@ -40,9 +40,9 @@ The explicit fetch destinations also create the required remote-tracking refs
 in checkouts configured to fetch only `main`.
 
 `cce-review-revisions` carries the implementation follow-up to the revised
-manuscript. The earlier `cce-experiments` branch retains the historical study;
-review it only when explicitly requested with
-`--implementation-ref origin/cce-experiments`. A missing revision branch causes
+manuscript. Historical study snapshots remain in the research branch history and its
+`archive/research-before-tmlr-cleanup-2026-11-12` tag. Select an immutable
+archived commit with `--implementation-ref` for a historical review. A missing revision branch causes
 an error rather than a fallback to historical code. The saved manifest records
 the exact requested refs and resolved commits for either choice.
 
