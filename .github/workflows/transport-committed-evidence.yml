@@ -212,7 +212,7 @@ jobs:
         run: |
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended texlive-fonts-extra texlive-science \
+            texlive-fonts-recommended lmodern texlive-science \
             texlive-pictures texlive-plain-generic cm-super biber latexmk unzip
 
       - name: Numerical-provenance ledger
