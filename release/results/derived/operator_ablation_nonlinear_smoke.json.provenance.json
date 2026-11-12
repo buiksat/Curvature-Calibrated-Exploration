@@ -1,0 +1,175 @@
+{
+  "artifact": "results/derived/operator_ablation_nonlinear_smoke.json",
+  "artifact_sha256": "56030842227e704da83c25a039e411a5fc226d0a826349c38ef7e41c2095a01f",
+  "inputs": [
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/diagonal/seed-120/manifest.jsonl",
+      "sha256": "9ab4797d047644dcd3266f9d8780e527645d024689854c9e27014a3e4d6341f8"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/diagonal/seed-120/raw.jsonl.zst",
+      "sha256": "4109fe8355925368eb48b8c1d3d00b24b0bdd182fa1d4df935c629f1b8d37dbd"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/diagonal/seed-120/summary.jsonl",
+      "sha256": "860148962f45144ee825268d73e15bedb2183a2e099d45602670913ac4acf3d2"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/frozen/seed-120/manifest.jsonl",
+      "sha256": "c0724fce7575c12eff7596a84d036a536741fee7391307ff0251344c960aed26"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/frozen/seed-120/raw.jsonl.zst",
+      "sha256": "3f56d4bae91d8a465158e962c4f608c962a6cd26a1bdb43a7cc61d8dc2f6b6d7"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/frozen/seed-120/summary.jsonl",
+      "sha256": "11de1c8a13dfe54e8b8f71ad04ff465ed03b5fefc1c8d83d49a73c9355d5819b"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/full_relinearized/seed-120/manifest.jsonl",
+      "sha256": "370ecd453d16403789801854a860ba420e09a31625fe32682f2d593cd6293ec5"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/full_relinearized/seed-120/raw.jsonl.zst",
+      "sha256": "0da0c40699299e1761e7da68fd5b8a6bb747e79491eb143245c8af01a06b169c"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/full_relinearized/seed-120/summary.jsonl",
+      "sha256": "96fb03531f502634dd29f689302a882c8af18f75951c140ca8646908f9a12468"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/lanczos_rank4/seed-120/manifest.jsonl",
+      "sha256": "51946cb7504e1450d5f95ee76ae7a054237334d4a3985bf5a151916f799915ad"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/lanczos_rank4/seed-120/raw.jsonl.zst",
+      "sha256": "b9d2c5b649e6d756c02d2f586c30b388416a3b06f301d4657d35fb7aeae5ba06"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/lanczos_rank4/seed-120/summary.jsonl",
+      "sha256": "e215ebfbbd404afd8662a88cbbcad763f7230db0cd3fe3559ca997d39a47dd5b"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/diagonal/seed-120/manifest.jsonl",
+      "sha256": "6096abcbd88fc19ba3ae194ea3dc43d58b479797b2f5a8a7f8bcbd58021429fe"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/diagonal/seed-120/raw.jsonl.zst",
+      "sha256": "bc474aee7b05b3f89f38a62c3051a41a4f25facab51593b7e1cb20814a984338"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/diagonal/seed-120/summary.jsonl",
+      "sha256": "7a5d3b386fb58c9ce3dc60c4df9ce07cf534e07feec3a5a132c2ed32acb92906"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/frozen/seed-120/manifest.jsonl",
+      "sha256": "97e757f44b42796c4f3aa414a08f811456a6bed75cbf5f9df8dfd82033e7b452"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/frozen/seed-120/raw.jsonl.zst",
+      "sha256": "e2eb3fe7fefcd7bb5d1afe2b5a2ce4715fa56caa12e8d4ac487373f1c1fa0f07"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/frozen/seed-120/summary.jsonl",
+      "sha256": "5d662276b9f9700960c994e1ebdd4af7448cec9acc0583cb1ee5bbc85e3c29bb"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/full_relinearized/seed-120/manifest.jsonl",
+      "sha256": "4f1e07e7d2c7cc7b38e159ce28189b94a72bfa2f0c4d4848a528c1ea557af469"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/full_relinearized/seed-120/raw.jsonl.zst",
+      "sha256": "3abaf591971d59e98d98bade7c881ef7b8368f84b87ca3c33f5cddcc0d1dd5a1"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/full_relinearized/seed-120/summary.jsonl",
+      "sha256": "011c0eff1736a19e00c7948bf15d948022f38aaadaca4921c85970d2894dc7ee"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/lanczos_rank4/seed-120/manifest.jsonl",
+      "sha256": "8087d35d0d1cd09e40db6a993bb53063cd261c37caa10b24c3607bbd83c13a46"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/lanczos_rank4/seed-120/raw.jsonl.zst",
+      "sha256": "67f2182a40da634bb09b5690de5de42b8baaa5d37689900908eeb1ce0a5ebbd1"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/lanczos_rank4/seed-120/summary.jsonl",
+      "sha256": "f72e9e499a2181de26e4f611780072bb284803021dbb6fefd9019b5c896e129c"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/stale3/seed-120/manifest.jsonl",
+      "sha256": "a9c06669f008bc99b52675c58e251a2af299ddbe3056550d58b2d30aa28b3e95"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/stale3/seed-120/raw.jsonl.zst",
+      "sha256": "ce3948225673fbc7fc983b1ed7361203f626ffbf2bfbf5c039c788143f1dc11b"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/stale3/seed-120/summary.jsonl",
+      "sha256": "6d6f1229867dc192778004674a58f1123ba4f928ffe2c8f6f2c37c1d8c5184f9"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/subsample4/seed-120/manifest.jsonl",
+      "sha256": "c3e24c7b640f4f002729aced8800550ee95beb2672a8cc47f751d3497e181eb0"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/subsample4/seed-120/raw.jsonl.zst",
+      "sha256": "32bce37c8e414fe9c32ab60d851edec476d8c1ad72426620f37c800fa94c93e3"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/subsample4/seed-120/summary.jsonl",
+      "sha256": "822ac2ec406d505f1647b32855d043cc4920cc2c928b705c5474900c09674946"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/window4/seed-120/manifest.jsonl",
+      "sha256": "4a771133b06160f1e6245d065d5f396c2cd82811f015798ba72bd71de4bfd7a6"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/window4/seed-120/raw.jsonl.zst",
+      "sha256": "49d010e6b0281b7fca245ba35f3e575364ecb30f1620d9947839edbd177bab41"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/offline_common_trajectory/window4/seed-120/summary.jsonl",
+      "sha256": "a3ac7745521ecd48261f3291520111e9fd8cbfc00f31f943f53b21b70ab1e6ca"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/stale3/seed-120/manifest.jsonl",
+      "sha256": "01f146320cd223b86e6118b10d1a5f586054c0f8e67f18965d92ce73b7e1367f"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/stale3/seed-120/raw.jsonl.zst",
+      "sha256": "87fb8d569dc18472d9c6d3a132c6153b8f33ad792cb79779a8f847f9a0db8706"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/stale3/seed-120/summary.jsonl",
+      "sha256": "66bc00c1c3af81493a3a1c1101087d8b095b0e1f659312a77f0e9cf7210bf58e"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/subsample4/seed-120/manifest.jsonl",
+      "sha256": "0fc5cdbd82a9d4d377d627f740a4bd02ab6c7420a482c3ee1cbca1d5c4ce84e6"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/subsample4/seed-120/raw.jsonl.zst",
+      "sha256": "c6739387a0512bab76bf1898431008e7c8f56771e5b8ede73de68a2679b095f2"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/subsample4/seed-120/summary.jsonl",
+      "sha256": "77937cae9a602f2e1c404be72ba0596aa89e7184b113366446a9eb879fcfdfdb"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/window4/seed-120/manifest.jsonl",
+      "sha256": "c6da0414e4764516fd6c19f36cd885a5ef580c784acf285ce39eb7fa7c2d3740"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/window4/seed-120/raw.jsonl.zst",
+      "sha256": "eb5c9b6886eb5d920e37f3b6f36713b0e8f4aa286edd23fbdee4e196122bc935"
+    },
+    {
+      "path": "results/raw/operator_ablation/smoke/evaluation/nonlinear/medium/corrected/window4/seed-120/summary.jsonl",
+      "sha256": "85f9fae3c271346f916d34ee0444f539aa0a17713285bafbc9626f49e8ce10d5"
+    }
+  ],
+  "schema_version": 1
+}

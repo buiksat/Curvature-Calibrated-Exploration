@@ -1,0 +1,80 @@
+{
+  "cell_count": 8,
+  "common_trajectory_run_count": 1680,
+  "config_sha256": "91d4a447a957f031d7052b0c1361a53e777bf2cbfce275ab44bbef6552220b3e",
+  "driver_sha256": "4be2536b92afb2effe18f938391d83e1440a3b079a5e8a9799bb0f4616448854",
+  "elapsed_seconds": 26.55757620796794,
+  "evaluation_cell_selection": "none",
+  "evaluation_seed_count": 30,
+  "execution_phase": "evaluation",
+  "expected_full_runtime_seconds": 180,
+  "full_win_search": false,
+  "interpretation": {
+    "common_trajectory": "offline diagnostic; no causal regret claim",
+    "online": "independently executed adaptive policies",
+    "paired_intervals": "descriptive 95% Student-t on preregistered cells",
+    "representation_drift": "not run; fixed zero in bounded linear model"
+  },
+  "online_run_count": 1680,
+  "outputs": {
+    "aggregates.jsonl": {
+      "bytes": 1209316,
+      "sha256": "843bf1edf447186541c1005557460595615673814e1d0891a93613e378abcc1f"
+    },
+    "common_trajectory_rounds.jsonl": {
+      "bytes": 136938808,
+      "sha256": "91d5a000931be8837106d1203f4d02912666ff0346789ca7a9d4931dd0452ec4"
+    },
+    "common_trajectory_summaries.jsonl": {
+      "bytes": 4458915,
+      "sha256": "8b0603cdc59f6c972b5decf7f2032db2c7a1c24c1ffc4cb3e7f5b8db798cfb43"
+    },
+    "online_rounds.jsonl": {
+      "bytes": 144505741,
+      "sha256": "98a3d2f4449e91441908f65cf48e6ad31c992ad8ad3fd8ca4628fa5c8a253093"
+    },
+    "online_summaries.jsonl": {
+      "bytes": 4122225,
+      "sha256": "7bcfffa68c2baa7ad64321d3c78ce4ad6a3f3d43be0365787b022f32ef85abc0"
+    },
+    "paired_full_comparisons.jsonl": {
+      "bytes": 51237,
+      "sha256": "529cde8f9fced49913a471795f4127b70d386abb93322d9ad7267f10fa59a33d"
+    },
+    "preregistered_grid.json": {
+      "bytes": 3063,
+      "sha256": "547a257bf8a57b34738498ca18c8385c6186bcd49bdc6fe101c24983888b5cea"
+    }
+  },
+  "paired_comparison_count": 48,
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "preregistered_grid_sha256": "a7a2c6d9b0f625aacd444a8b085d8f84b27687fef557c68602840966ed70eeb5",
+  "provenance": {
+    "git_dirty": false,
+    "git_revision": "df93d7794dc36706bccf861a1ade9f9ae172e2423eccaece031c727424e6adc3",
+    "git_root": ".",
+    "hardware": {
+      "cuda_visible_devices": null,
+      "logical_cpu_count": 16,
+      "machine": "arm64",
+      "nvidia_gpus": [],
+      "physical_memory_bytes": 68719476736,
+      "processor": "arm",
+      "release": "25.5.0",
+      "system": "Darwin"
+    },
+    "package_versions": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    },
+    "python": {
+      "executable": "/opt/homebrew/opt/python@3.11/bin/python3.11",
+      "implementation": "CPython",
+      "version": "3.11.14"
+    }
+  },
+  "round_records_written": true,
+  "schema_version": 1,
+  "study": "curvature_mechanism_phase_diagram",
+  "tuning_enabled": false
+}

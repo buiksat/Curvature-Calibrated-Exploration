@@ -1,0 +1,48 @@
+{
+  "artifact": "results/derived/curvature_phase_diagram_report.json",
+  "artifact_bytes": 1844602,
+  "artifact_sha256": "78bb67fc7970175317f8d231938e169899f7fe8a4d81adca3c83a81fdfe77f6d",
+  "binding": "SHA-256 binds config, raw manifest, preregistered grid, summaries, aggregates, paired comparisons, and round records.",
+  "input_count": 9,
+  "input_set_sha256": "f56a0574edce12a7f1b166fd3f356d5c20dcf44a033201a45b846453d297e69a",
+  "inputs": [
+    {
+      "path": "experiments/configs/curvature_phase_diagram.yaml",
+      "sha256": "714f97569f43982d374246178aeb0402490d26ca7e23228ce27febc9709f5ae9"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/aggregates.jsonl.zst",
+      "sha256": "dadb876002f7919c8b1f96666da62db84884111cd16a45766e9e5551bc533e8e"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/common_trajectory_rounds.jsonl.zst",
+      "sha256": "6026bff0a21594636812401020814ceb82c64054a15144a02fc1ce155a8954da"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/common_trajectory_summaries.jsonl.zst",
+      "sha256": "ccc0af35a9fd3d38cc03231fae9e400bc7927b00788167d427aaf09f709129b8"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/manifest.json",
+      "sha256": "67fb6faf5675efc86fe52df042fccd7feb5d3fc6291f1eb09ed86bed1df0d0c8"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/online_rounds.jsonl.zst",
+      "sha256": "b5a82f9fdebc3d062cb1aa5ba824330f30b9ee4621e5c7274de1ce9638268e3b"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/online_summaries.jsonl.zst",
+      "sha256": "dd82dd69b27db75a21e527912d0deff48469236e40a6a7b37cb363a0684d3555"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/paired_full_comparisons.jsonl.zst",
+      "sha256": "8a5998d95ef0874ccb1040d1d77b432ddcf1ec6582e2ee396a68981bbdcdabb6"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/preregistered_grid.json",
+      "sha256": "19d715d110a42110596f658f1fcd3c98c6f8251f0b00eb7955ffff9741b8319a"
+    }
+  ],
+  "round_files_included": true,
+  "schema_version": 1
+}

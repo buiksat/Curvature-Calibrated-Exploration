@@ -1,0 +1,134 @@
+{
+  "base": {
+    "accelerator": "none_cpu_only",
+    "action_counts": [
+      5,
+      10
+    ],
+    "advanced_cpu_grid": {
+      "action_counts": [
+        4
+      ],
+      "dimensions": [
+        512,
+        2048,
+        8192
+      ],
+      "enabled": false,
+      "iteration_budgets": [
+        16
+      ],
+      "methods": [
+        "batched_cg",
+        "batched_jacobi_cg"
+      ],
+      "sample_counts": [
+        32
+      ]
+    },
+    "buffer_sizes": [
+      32,
+      128,
+      512
+    ],
+    "cg_iteration_budgets": [
+      5,
+      15,
+      30
+    ],
+    "cg_relative_tolerance": 1e-10,
+    "dimensions": [
+      32,
+      64,
+      128
+    ],
+    "lanczos_rank": 16,
+    "last_layer_fraction": 0.25,
+    "measurements": [
+      "wall_time_seconds",
+      "peak_host_memory_bytes",
+      "peak_accelerator_memory_bytes",
+      "curvature_vector_products",
+      "batch_operator_call_count",
+      "equivalent_sample_cvp_count",
+      "per_action_explicit_relative_residual",
+      "cg_iterations",
+      "predictive_width_relative_error"
+    ],
+    "methods": [
+      "dense_exact",
+      "full_ggn_cg",
+      "diagonal",
+      "last_layer_block",
+      "lanczos_ritz",
+      "batched_cg",
+      "batched_jacobi_cg"
+    ],
+    "noise_std": 1.0,
+    "output_root": "results/raw/systems_scaling",
+    "provenance": {
+      "packages": [
+        "numpy",
+        "scipy",
+        "psutil"
+      ]
+    },
+    "ridge": 1.0,
+    "rounds": 5,
+    "task": "synthetic_cpu_float64_parameter_vector_operator_benchmark",
+    "timing_repetitions": 3,
+    "warmup_repetitions": 1
+  },
+  "description": "Synthetic CPU parameter-vector/operator scaling audit; no accelerator or foundation-model claim.",
+  "name": "systems_scaling",
+  "profiles": {
+    "full": {
+      "advanced_cpu_grid": {
+        "enabled": true
+      },
+      "seed_sets": {
+        "evaluation": [
+          140,
+          141,
+          142,
+          143,
+          144
+        ],
+        "tuning": [
+          40,
+          41,
+          42
+        ]
+      }
+    },
+    "smoke": {
+      "action_counts": [
+        3,
+        5
+      ],
+      "buffer_sizes": [
+        16,
+        64
+      ],
+      "cg_iteration_budgets": [
+        5,
+        15
+      ],
+      "dimensions": [
+        32,
+        64
+      ],
+      "rounds": 2,
+      "seed_sets": {
+        "evaluation": [
+          140
+        ],
+        "tuning": [
+          40
+        ]
+      },
+      "timing_repetitions": 1
+    }
+  },
+  "schema_version": 1
+}

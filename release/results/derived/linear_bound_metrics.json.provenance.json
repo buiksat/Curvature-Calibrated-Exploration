@@ -1,0 +1,16 @@
+{
+  "artifact": "results/derived/linear_bound_metrics.json",
+  "artifact_sha256": "8717bf30894db86cb41589509dfc7c789b43e7161363b814321a4af24ceae730",
+  "input_set_sha256": "f77918c1affb986927a2b5e434f80af5540d438e94da4bce6ee0af8eec98dbe0",
+  "inputs": [
+    {
+      "path": "results/derived/certification_audit.json",
+      "sha256": "ee8cdd26090a641642609712e68c1147d5d862164aeed197841a6be2dd45a821"
+    },
+    {
+      "path": "results/derived/linear_audit_full.json",
+      "sha256": "ddcb2a3b83a9f2a6e5724aa747b7bb24170b7cf5b5fff75e91314599360901d0"
+    }
+  ],
+  "schema_version": 1
+}

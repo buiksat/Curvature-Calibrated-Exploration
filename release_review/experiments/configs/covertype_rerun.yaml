@@ -1,0 +1,152 @@
+{
+  "base": {
+    "bonus_grid": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "cg": {
+      "max_iterations": 80,
+      "operator_fixed_within_solve": true,
+      "relative_residual_tolerance": 0.001
+    },
+    "damping_grid": [
+      1.0,
+      10.0
+    ],
+    "dataset": {
+      "binary_columns_unchanged": true,
+      "class_count": 7,
+      "continuous_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "data_home": "experiments/data/sklearn",
+      "evaluation_environment_split": "test",
+      "feature_count": 54,
+      "loader": "sklearn.datasets.fetch_covtype",
+      "source": "UCI Covertype DOI 10.24432/C50K5N",
+      "split_fractions": [
+        0.6,
+        0.2,
+        0.2
+      ],
+      "split_seed": 20260717,
+      "standardize_from_training_only": true,
+      "tuning_environment_split": "validation"
+    },
+    "methods": [
+      "full_network_ggn_cg",
+      "frozen_full_gram",
+      "diagonal_full_network",
+      "last_layer_full",
+      "last_layer_diagonal",
+      "greedy_full_network",
+      "ucb1",
+      "thompson_sampling"
+    ],
+    "model": {
+      "architecture": "one_hidden_layer_tanh",
+      "dtype": "float64",
+      "hidden_width": 4,
+      "initialization": "seeded_normal_fan_in",
+      "learning_rate": 0.01,
+      "optimizer": "online_sgd",
+      "ridge": 1.0,
+      "updates_per_round": 1
+    },
+    "output_root": "results/raw/covertype_rerun_1500",
+    "provenance": {
+      "packages": [
+        "numpy",
+        "scipy",
+        "scikit-learn",
+        "psutil"
+      ]
+    },
+    "reward": {
+      "kind": "one_if_selected_class_matches_label",
+      "likelihood_used_for_curvature": "gaussian_squared_loss"
+    },
+    "rounds": 500,
+    "selection": {
+      "common_random_numbers_within_evaluation_seed": true,
+      "criterion": "mean_cumulative_pseudo_regret",
+      "evaluation_policies_rerun_from_scratch": true,
+      "hyperparameters_selected_on": "tuning_seeds_only"
+    },
+    "task": "covertype_classes_as_arms_executed_policy"
+  },
+  "description": "Documented Covertype classes-as-arms rerun with contextual methods and deployable noncontextual Bernoulli bandit baselines.",
+  "name": "covertype_rerun",
+  "profiles": {
+    "full": {
+      "horizons": [
+        200,
+        500,
+        1000,
+        1500
+      ],
+      "rounds": 1500,
+      "seed_sets": {
+        "evaluation": [
+          150,
+          151,
+          152,
+          153,
+          154,
+          155,
+          156,
+          157,
+          158,
+          159
+        ],
+        "tuning": [
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59
+        ]
+      },
+      "tuning_rounds": 200
+    },
+    "smoke": {
+      "bonus_grid": [
+        2.0
+      ],
+      "damping_grid": [
+        1.0
+      ],
+      "methods": [
+        "full_network_ggn_cg",
+        "diagonal_full_network",
+        "last_layer_full",
+        "greedy_full_network"
+      ],
+      "rounds": 12,
+      "seed_sets": {
+        "evaluation": [
+          150
+        ],
+        "tuning": [
+          50
+        ]
+      }
+    }
+  },
+  "schema_version": 1
+}

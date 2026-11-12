@@ -39,3 +39,6 @@ results/raw/
 
 # Personal working notes are not repository inputs.
 notes/
+
+# Generated submission archives.
+/anonymous_*_supplement.zip

@@ -1,0 +1,1506 @@
+{
+  "base_config_digest": "071317bc9a5d3d72b34af98cc3a6c8e8fc1d2fb2565f486c95a6d155ac37b3e0",
+  "candidates": {
+    "cg_full": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 40.709987232663096,
+        "regret_by_seed": {
+          "0": 42.478076426365405,
+          "1": 41.945736239207775,
+          "2": 39.95548191282609,
+          "3": 41.44345701859419,
+          "4": 42.63506650456639,
+          "5": 38.389877477487744,
+          "6": 39.59752249736592,
+          "7": 38.00301456247755,
+          "8": 39.26757823380741,
+          "9": 43.384061453932524
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 46.46378870430685,
+        "regret_by_seed": {
+          "0": 48.72410852485622,
+          "1": 46.220447994138944,
+          "2": 48.67689027078676,
+          "3": 50.1023475198675,
+          "4": 44.76117869532435,
+          "5": 43.720457557000415,
+          "6": 47.489839226041695,
+          "7": 43.38004125139699,
+          "8": 42.070502833236596,
+          "9": 49.49207317041903
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 40.29211046557896,
+        "regret_by_seed": {
+          "0": 40.582025202151584,
+          "1": 41.50543663658991,
+          "2": 43.400482810169834,
+          "3": 39.71684230251932,
+          "4": 43.064508242807975,
+          "5": 37.82191283192492,
+          "6": 40.37962927855244,
+          "7": 39.19914677630228,
+          "8": 38.25023281654706,
+          "9": 39.00088775822425
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 45.87670073609378,
+        "regret_by_seed": {
+          "0": 42.302071375731565,
+          "1": 45.22721422923029,
+          "2": 50.39666732502087,
+          "3": 47.87584950677816,
+          "4": 48.23029124501973,
+          "5": 42.584411562889215,
+          "6": 44.19043230383101,
+          "7": 46.35216895299403,
+          "8": 41.85558905295017,
+          "9": 49.75231180649282
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 40.230681010380565,
+        "regret_by_seed": {
+          "0": 41.14253295757114,
+          "1": 40.83318266914574,
+          "2": 40.96892383053645,
+          "3": 43.51628493810465,
+          "4": 38.61224814791748,
+          "5": 38.890532419164906,
+          "6": 37.48617167053422,
+          "7": 38.519319215729304,
+          "8": 40.073177439043114,
+          "9": 42.26443681605866
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 44.958636541753734,
+        "regret_by_seed": {
+          "0": 44.45318356648947,
+          "1": 43.433558928615646,
+          "2": 46.327904884282155,
+          "3": 48.744199974672355,
+          "4": 44.59665073736923,
+          "5": 42.690477580067174,
+          "6": 44.09093482914795,
+          "7": 44.246884143340345,
+          "8": 44.05986881196995,
+          "9": 46.942701961583026
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "dense_full": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 40.43689325753001,
+        "regret_by_seed": {
+          "0": 38.57183184231403,
+          "1": 40.3985632613745,
+          "2": 42.80840651225534,
+          "3": 40.19427393949314,
+          "4": 43.35063522653005,
+          "5": 37.07137459323328,
+          "6": 40.64025373695761,
+          "7": 37.30498895037065,
+          "8": 37.71283166284532,
+          "9": 46.31577284992619
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 44.41190391260001,
+        "regret_by_seed": {
+          "0": 43.517020869392724,
+          "1": 44.660137931315816,
+          "2": 47.886824074140016,
+          "3": 45.74506217180753,
+          "4": 45.95707750317792,
+          "5": 43.541401641090175,
+          "6": 43.92362512526234,
+          "7": 39.935426176384624,
+          "8": 41.78487837483148,
+          "9": 47.16758525859749
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 40.927776121268565,
+        "regret_by_seed": {
+          "0": 39.855096090494705,
+          "1": 42.6405942830528,
+          "2": 40.95806596616018,
+          "3": 44.665970542522665,
+          "4": 42.28340651225531,
+          "5": 37.968511857691915,
+          "6": 38.23520233327503,
+          "7": 38.721984258674276,
+          "8": 42.3845282658748,
+          "9": 41.56440110268394
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 44.952616249483825,
+        "regret_by_seed": {
+          "0": 42.962076605834184,
+          "1": 43.21941679299188,
+          "2": 46.99687458047884,
+          "3": 48.1133673634655,
+          "4": 46.29030603798388,
+          "5": 42.22378710448408,
+          "6": 44.99603150906673,
+          "7": 44.90360510219555,
+          "8": 40.06421297294905,
+          "9": 49.756484425388585
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 40.63763441892071,
+        "regret_by_seed": {
+          "0": 40.53063432918631,
+          "1": 41.760883425465394,
+          "2": 41.63600012845095,
+          "3": 43.905696193074164,
+          "4": 39.706253557488836,
+          "5": 38.34934446889874,
+          "6": 39.31997415740653,
+          "7": 39.120745802069266,
+          "8": 40.79821315241776,
+          "9": 41.248598974749136
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 44.941778154367206,
+        "regret_by_seed": {
+          "0": 45.89378800182784,
+          "1": 44.827447635201416,
+          "2": 45.51005694170492,
+          "3": 50.03302771471409,
+          "4": 45.288224509966795,
+          "5": 43.07571621614095,
+          "6": 43.518680861703785,
+          "7": 43.86454395618269,
+          "8": 42.337426714790865,
+          "9": 45.06886899143872
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "diagonal": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 29.560397528704964,
+        "regret_by_seed": {
+          "0": 28.598961184638753,
+          "1": 25.334407076170507,
+          "2": 23.181132367784567,
+          "3": 27.211407614576753,
+          "4": 34.88907968231183,
+          "5": 33.83332806071586,
+          "6": 21.157685219971597,
+          "7": 35.17520666603387,
+          "8": 31.862276836502033,
+          "9": 34.36049057834388
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 32.09811493161865,
+        "regret_by_seed": {
+          "0": 30.059387950447455,
+          "1": 29.64068737359657,
+          "2": 26.292402205005388,
+          "3": 27.49235692876916,
+          "4": 42.53290398693843,
+          "5": 37.64981128084101,
+          "6": 24.07096515846016,
+          "7": 35.225206666033884,
+          "8": 36.54332372795695,
+          "9": 31.474104038137504
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 25.196474572644902,
+        "regret_by_seed": {
+          "0": 26.660097731222358,
+          "1": 24.13611234471779,
+          "2": 18.9172784772297,
+          "3": 21.688903653509808,
+          "4": 29.35432698390339,
+          "5": 28.441890116826908,
+          "6": 19.970248352895133,
+          "7": 29.16479902594825,
+          "8": 28.7349714653753,
+          "9": 24.896117574820387
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 27.25382687877301,
+        "regret_by_seed": {
+          "0": 25.63997056803153,
+          "1": 27.028179079770744,
+          "2": 20.635547955513005,
+          "3": 28.001473811223484,
+          "4": 29.14737261907709,
+          "5": 31.44380966562229,
+          "6": 20.38883222676046,
+          "7": 31.222479759201104,
+          "8": 27.52442799658105,
+          "9": 31.50617510594936
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 23.7165386618546,
+        "regret_by_seed": {
+          "0": 23.651107114615144,
+          "1": 28.03605750562008,
+          "2": 17.032085117392118,
+          "3": 21.53851783117843,
+          "4": 30.30702774022303,
+          "5": 27.397265478953038,
+          "6": 16.19379561604202,
+          "7": 23.679543802222838,
+          "8": 25.586452890812957,
+          "9": 23.74353352148634
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 25.266806571107118,
+        "regret_by_seed": {
+          "0": 25.639970568031536,
+          "1": 27.87152954766495,
+          "2": 21.369045609664813,
+          "3": 24.78603135510689,
+          "4": 31.422363056215556,
+          "5": 26.90936179993431,
+          "6": 16.703415023813267,
+          "7": 26.064387053103708,
+          "8": 27.978367209505702,
+          "9": 23.92359448803044
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "lanczos_ritz": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 83.33858448970471,
+        "regret_by_seed": {
+          "0": 76.46541512675532,
+          "1": 82.82168586131985,
+          "2": 82.86523402181052,
+          "3": 83.89586894042093,
+          "4": 79.8581725168602,
+          "5": 81.99247752904947,
+          "6": 88.19936749191645,
+          "7": 86.9164890660672,
+          "8": 81.5727719015646,
+          "9": 88.79836244128262
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 86.10118518963283,
+        "regret_by_seed": {
+          "0": 83.22257420896821,
+          "1": 84.85220407694464,
+          "2": 88.08028109273421,
+          "3": 91.082083938544,
+          "4": 85.74647860586188,
+          "5": 84.97418892504311,
+          "6": 90.65642899686678,
+          "7": 86.9164890660672,
+          "8": 81.18614239252561,
+          "9": 84.29498059277259
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 83.31013064788868,
+        "regret_by_seed": {
+          "0": 80.97536551776027,
+          "1": 81.47969055301624,
+          "2": 86.30695064790679,
+          "3": 88.32324573829709,
+          "4": 82.70514780209702,
+          "5": 86.43032636897043,
+          "6": 81.60785812127811,
+          "7": 83.58852875326329,
+          "8": 76.17577046581462,
+          "9": 85.50842251048294
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 85.49024493068765,
+        "regret_by_seed": {
+          "0": 88.70833195801053,
+          "1": 88.925910781242,
+          "2": 82.57052839432572,
+          "3": 89.53529678304213,
+          "4": 82.90958954033863,
+          "5": 87.05787470892979,
+          "6": 81.84537597796547,
+          "7": 90.18672336938205,
+          "8": 79.16760379489646,
+          "9": 83.99521399874376
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 80.46074515370285,
+        "regret_by_seed": {
+          "0": 78.83750711497773,
+          "1": 76.07600387178576,
+          "2": 81.31705599334339,
+          "3": 84.55548834819217,
+          "4": 82.81577226050216,
+          "5": 82.02883791874268,
+          "6": 81.67099520626797,
+          "7": 77.3796286891285,
+          "8": 84.51294523833538,
+          "9": 75.41321689575263
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 83.15151437817899,
+        "regret_by_seed": {
+          "0": 82.40700548700447,
+          "1": 82.79073654712745,
+          "2": 80.98950765338397,
+          "3": 86.14786947882716,
+          "4": 86.13310811490095,
+          "5": 77.93407042736997,
+          "6": 81.01705599334338,
+          "7": 84.1066101018117,
+          "8": 86.48438228488061,
+          "9": 83.50479769314029
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "rescaled_subsample": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 81.91790646123752,
+        "regret_by_seed": {
+          "0": 80.75983250917119,
+          "1": 85.78736172340751,
+          "2": 84.13323438074801,
+          "3": 82.46233557289443,
+          "4": 84.79516872250751,
+          "5": 85.79671201183304,
+          "6": 80.76300007743312,
+          "7": 74.85046563309416,
+          "8": 81.02551793412042,
+          "9": 78.80543604716583
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 82.90203310141808,
+        "regret_by_seed": {
+          "0": 82.54224412307822,
+          "1": 83.58107186311993,
+          "2": 85.74493531653637,
+          "3": 83.63095516013446,
+          "4": 84.76561028128037,
+          "5": 87.03932654843913,
+          "6": 81.12134531522467,
+          "7": 80.36412183105256,
+          "8": 81.24232511268912,
+          "9": 78.988395462626
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 80.99353665735957,
+        "regret_by_seed": {
+          "0": 77.04953200920964,
+          "1": 82.04626432561376,
+          "2": 86.14910793543214,
+          "3": 86.85625042999342,
+          "4": 82.54807673428509,
+          "5": 88.78020010312333,
+          "6": 73.99231808789902,
+          "7": 80.37876649199322,
+          "8": 75.2093133962026,
+          "9": 76.9255370598435
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 82.48643198361006,
+        "regret_by_seed": {
+          "0": 82.49363499604355,
+          "1": 84.15811767776236,
+          "2": 84.958655916454,
+          "3": 89.9242055126947,
+          "4": 82.7253559548987,
+          "5": 87.02846868406291,
+          "6": 76.38651162720537,
+          "7": 73.80166837632443,
+          "8": 80.49746706884409,
+          "9": 82.8902340218105
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 79.52376674580039,
+        "regret_by_seed": {
+          "0": 80.2182587365737,
+          "1": 81.28081230663568,
+          "2": 78.76111624201246,
+          "3": 85.28179823154657,
+          "4": 69.88885524977815,
+          "5": 82.7156198441419,
+          "6": 82.67736605616653,
+          "7": 79.86763950827115,
+          "8": 79.33843117600068,
+          "9": 75.2077701068771
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 80.08547603435701,
+        "regret_by_seed": {
+          "0": 80.81790862761693,
+          "1": 83.26526973518521,
+          "2": 84.01542215154547,
+          "3": 80.2716954241814,
+          "4": 74.88203417558903,
+          "5": 82.61990916602325,
+          "6": 77.83090285910812,
+          "7": 81.01176162082808,
+          "8": 76.99361840839187,
+          "9": 79.14623817510069
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "stale_refresh": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 48.207803871604476,
+        "regret_by_seed": {
+          "0": 50.65501256281245,
+          "1": 48.96919997467241,
+          "2": 49.978083451155534,
+          "3": 49.87178402800645,
+          "4": 47.60363125270868,
+          "5": 50.18152013876325,
+          "6": 46.25012313835162,
+          "7": 45.54228042587701,
+          "8": 46.940189334998365,
+          "9": 46.08621440869902
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 52.57228317685065,
+        "regret_by_seed": {
+          "0": 51.826916421299885,
+          "1": 53.97412511250789,
+          "2": 56.38157243978956,
+          "3": 53.55720123095363,
+          "4": 55.46627283717173,
+          "5": 54.433125291976616,
+          "6": 49.400920933527544,
+          "7": 52.666129983673,
+          "8": 47.90981397287224,
+          "9": 50.10675354473438
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 48.606105999539295,
+        "regret_by_seed": {
+          "0": 49.4463624923004,
+          "1": 50.073677426288654,
+          "2": 46.3040266379016,
+          "3": 50.17344402031752,
+          "4": 51.3529214719338,
+          "5": 47.7995753367985,
+          "6": 46.884123317820396,
+          "7": 48.58751472919188,
+          "8": 44.577950160518405,
+          "9": 50.8614644023218
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 51.53243061691542,
+        "regret_by_seed": {
+          "0": 53.92095754424596,
+          "1": 52.27328204109574,
+          "2": 51.80910419209734,
+          "3": 52.05156631234323,
+          "4": 52.65527211929671,
+          "5": 51.87907893892794,
+          "6": 49.5178448150818,
+          "7": 50.43306342808878,
+          "8": 48.41325066048001,
+          "9": 52.37088611749661
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 46.63049180647467,
+        "regret_by_seed": {
+          "0": 47.18551419078566,
+          "1": 47.98203222694176,
+          "2": 46.73713846972202,
+          "3": 47.35537223463066,
+          "4": 46.17199128346438,
+          "5": 54.11353636747739,
+          "6": 42.754619715690936,
+          "7": 42.947081835936814,
+          "8": 42.334025740557855,
+          "9": 48.72360599953929
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 50.53686285123789,
+        "regret_by_seed": {
+          "0": 49.61417472150298,
+          "1": 48.634966389232524,
+          "2": 50.12897179880389,
+          "3": 52.3758303810551,
+          "4": 54.89730314097503,
+          "5": 54.66318625852072,
+          "6": 47.73682407414002,
+          "7": 46.75093049638905,
+          "8": 47.91649921835273,
+          "9": 52.64994203340683
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ],
+    "unrescaled_window": [
+      {
+        "candidate_id": "candidate-000",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 77.15264836865367,
+        "regret_by_seed": {
+          "0": 76.20378561771624,
+          "1": 77.3043595697826,
+          "2": 79.69878651506002,
+          "3": 77.89214654581573,
+          "4": 75.60996833787982,
+          "5": 73.05086101828707,
+          "6": 80.56551270401786,
+          "7": 73.80634352053718,
+          "8": 73.11299305264298,
+          "9": 84.2817268047972
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-001",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 0.5
+        },
+        "mean_cumulative_pseudo_regret": 78.18329329879748,
+        "regret_by_seed": {
+          "0": 78.00261858786067,
+          "1": 84.00305671121838,
+          "2": 78.27421761362758,
+          "3": 79.45724845583719,
+          "4": 77.58329878270722,
+          "5": 77.57684694319794,
+          "6": 73.55808450245915,
+          "7": 74.22732331800162,
+          "8": 73.41515557027097,
+          "9": 85.73508250279409
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-002",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 75.15473161437838,
+        "regret_by_seed": {
+          "0": 74.47326740209141,
+          "1": 69.34751488315173,
+          "2": 78.0507251895784,
+          "3": 78.73827875964048,
+          "4": 72.31573908519886,
+          "5": 78.0264968342412,
+          "6": 69.05709857754833,
+          "7": 76.7380549165309,
+          "8": 73.45240430761248,
+          "9": 81.34773618818996
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-003",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 1.0
+        },
+        "mean_cumulative_pseudo_regret": 77.94016431276873,
+        "regret_by_seed": {
+          "0": 80.06597951596008,
+          "1": 73.78536372307273,
+          "2": 78.83750711497771,
+          "3": 83.9124069996438,
+          "4": 79.85539077092966,
+          "5": 75.63659261681629,
+          "6": 78.85609098884304,
+          "7": 70.41084009787652,
+          "8": 76.40621725469013,
+          "9": 81.63525404487733
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-004",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.0,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 74.06849175281533,
+        "regret_by_seed": {
+          "0": 72.67999792380812,
+          "1": 70.85554572536128,
+          "2": 75.50602912495515,
+          "3": 76.83426811996637,
+          "4": 72.42230762769375,
+          "5": 77.78557800332086,
+          "6": 71.87277443963605,
+          "7": 74.02693749567025,
+          "8": 70.92324125157829,
+          "9": 77.77823781616317
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      },
+      {
+        "candidate_id": "candidate-005",
+        "eligible": true,
+        "hyperparameters": {
+          "bonus_scale": 1.25,
+          "ridge": 2.0
+        },
+        "mean_cumulative_pseudo_regret": 76.95727421662086,
+        "regret_by_seed": {
+          "0": 77.86637490115295,
+          "1": 75.68836931211291,
+          "2": 76.71379084781887,
+          "3": 80.53761425510174,
+          "4": 74.29185127595679,
+          "5": 77.78708557927168,
+          "6": 77.17796869681733,
+          "7": 78.03016692782005,
+          "8": 73.93045517288888,
+          "9": 77.5490651972674
+        },
+        "valid_by_seed": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true
+        }
+      }
+    ]
+  },
+  "eligibility": "executed policy with realized confidence and valid predictable certificates",
+  "evaluation_rounds": 1000,
+  "evaluation_seed_set": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119
+  ],
+  "event": "linear_study_selection",
+  "experiment": "linear_audit",
+  "profile": "full",
+  "schema_version": 1,
+  "seed_sets_disjoint": true,
+  "selected": {
+    "cg_full": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 40.230681010380565
+    },
+    "dense_full": {
+      "candidate_id": "candidate-000",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 0.5
+      },
+      "mean_cumulative_pseudo_regret": 40.43689325753001
+    },
+    "diagonal": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 23.7165386618546
+    },
+    "lanczos_ritz": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 80.46074515370285
+    },
+    "rescaled_subsample": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 79.52376674580039
+    },
+    "stale_refresh": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 46.63049180647467
+    },
+    "unrescaled_window": {
+      "candidate_id": "candidate-004",
+      "hyperparameters": {
+        "bonus_scale": 1.0,
+        "ridge": 2.0
+      },
+      "mean_cumulative_pseudo_regret": 74.06849175281533
+    }
+  },
+  "selection_metric": "mean_cumulative_pseudo_regret",
+  "tuning_rounds": 250,
+  "tuning_seed_set": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}

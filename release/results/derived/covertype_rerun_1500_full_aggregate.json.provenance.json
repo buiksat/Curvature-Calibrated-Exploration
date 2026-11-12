@@ -1,0 +1,968 @@
+{
+  "artifact": "results/derived/covertype_rerun_1500_full_aggregate.json",
+  "artifact_sha256": "b23df9fc19f71f2c4019e4da4a9517dfae0003ac1186dc18408538bb0f954711",
+  "input_set_sha256": "8652eed8d1ee255421a7eaa9eb409c791a007315ad0059582f143e4da9d50eac",
+  "inputs": [
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-150/manifest.jsonl",
+      "sha256": "6fde5fb6324bc3ae0b8b09ec4eab36ae9a33e8ff95577b33761b4b83f10d5322"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-150/raw.jsonl.zst",
+      "sha256": "31d4aed0e5e32001f5cf436f908f249eb823afd3a4284dbbeac3db54e072025b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-150/summary.jsonl",
+      "sha256": "8b9cd521c9d8fdadf53a86591fe99a430e72ac46b49ae60cd20a75a135807ffe"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-151/manifest.jsonl",
+      "sha256": "27dde697d2d1d2c68c015f8e54fcb5ee9589de015a02f541f6396cd7e407600b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-151/raw.jsonl.zst",
+      "sha256": "5e90ce14a4164d7261ea0fde5f53e21f393085a045a3aee591f0c8ba5862fcc4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-151/summary.jsonl",
+      "sha256": "5a3822bf04afc444fc4ffba4b4a01345df92ff15ee358d48580f660690113ed8"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-152/manifest.jsonl",
+      "sha256": "8634f9b6fc9a4fbf92894b8c52713c900d988d0b1d246fea26c9c9754e6c5706"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-152/raw.jsonl.zst",
+      "sha256": "13ee8683ea8e4490c3c6fcb900e94a7d3683333fd3c69b743e2b066522abd245"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-152/summary.jsonl",
+      "sha256": "7a280fc9f61ba530366612d98a05d7e81d6725a1777a780c7f0d5d4cab052e2e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-153/manifest.jsonl",
+      "sha256": "1a9bb06863dbe167f14f4618d7d2d42f328a4c3b4cc51530d95f7f0f2a6cacf2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-153/raw.jsonl.zst",
+      "sha256": "77e703636b3f4bad639297fdbff96a8cbeeb4d81ccee3b4a6b8cdd3e20311f06"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-153/summary.jsonl",
+      "sha256": "4349bbe1a84734031f35766d1f0017fe6657a26efcbe23cff43964d7ed3d34ff"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-154/manifest.jsonl",
+      "sha256": "6da0e3e60f92e1a68e35354999cc65ff2057a123c448bb7a0120dbe1ff5866d9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-154/raw.jsonl.zst",
+      "sha256": "35ab9d34cdadb7a81f8ba8cf804e738f85aac1e1ea1d869750f0939e84be26aa"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-154/summary.jsonl",
+      "sha256": "fcf0f851f2419df02749dc9cbc77de19e4f36529bf21e26d2c444c2b9af8dff2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-155/manifest.jsonl",
+      "sha256": "3618bb1419cdbccdd0cc545a2f3bd1b2b9439518ae85a5b0a08018135a26b436"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-155/raw.jsonl.zst",
+      "sha256": "e4bc40d3fa478f24ad8032ca186bb790d305c13dd98362658b547547565bc07b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-155/summary.jsonl",
+      "sha256": "9687c13a8c1f40cbe3999b92794847379c9f484f580c35c577aeffa9a0dc54fc"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-156/manifest.jsonl",
+      "sha256": "71984b3453660e696150b27cef7e06c6fef0cdb1dd9c841a09dbfba8b58245e2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-156/raw.jsonl.zst",
+      "sha256": "04b91859de9686f66759c4aeadca0340065f9ed6b59749c5e73caccdfe70da4d"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-156/summary.jsonl",
+      "sha256": "14de659da04154212162219f2ea8a57336a298b44c31fe50949ba4957c65b5b9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-157/manifest.jsonl",
+      "sha256": "78075bfcf40977827ed23bc28fd88bfdca25607a46fb4572ece473c11e4a6b01"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-157/raw.jsonl.zst",
+      "sha256": "ae4f98a55f49db39efd233d384eaea6b4a0217930f184f1295dc72e04c64381e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-157/summary.jsonl",
+      "sha256": "65c26a9f1c94301a0e6a2f01b393780c2eb757290318a4405f779124fd9bf6e3"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-158/manifest.jsonl",
+      "sha256": "b3c4d6e707d440637dae9261b655338e2ee976eee509930d4380df6f3a97f7c8"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-158/raw.jsonl.zst",
+      "sha256": "d153ecee3e00a96eb2712767d39d8c9fe2328fe05dc69b9c1d5faf166d100a63"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-158/summary.jsonl",
+      "sha256": "0c9ff37482d83df6e66afbd7738227788deb55d73287e6aafc8183deec2cd60b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-159/manifest.jsonl",
+      "sha256": "b9c65b5bcf28013afb9b510d6f55bda28bda546d88aab63530d9f394222fc56a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-159/raw.jsonl.zst",
+      "sha256": "24b4ac6a2c02bcbd43feb28e7bac10e5ca9522f2b07bd267e85f0d28e2edaeb5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/diagonal_full_network/damping-10_bonus-1/seed-159/summary.jsonl",
+      "sha256": "a273f4b870cf74dfc368751b96eb46014ce711eec07b69efc4a29d6f5729f73b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-150/manifest.jsonl",
+      "sha256": "88667f6eb2339dee844df66cae93646a07130aa65500aeecfcfaf4c07fbe6266"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-150/raw.jsonl.zst",
+      "sha256": "749dcccfa74bacd4569f805fcc1f75f860a920c2bb451120b94e936aa470102c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-150/summary.jsonl",
+      "sha256": "1de0aa7488880cc88d41ba7cb7aed1b0ebfd2ed0815b2608412e9fc8f951c118"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-151/manifest.jsonl",
+      "sha256": "2a0156846157e15555b6814ce95602caf0a2729aaf32574f076a98eaf489497a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-151/raw.jsonl.zst",
+      "sha256": "1286496713a0a363a36e5e9c96e34226bd3aedeeec1530f90a66fe4f9bb5ad9d"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-151/summary.jsonl",
+      "sha256": "e2ad6327746b2e88b8c23d71aa200f58b3bac796ead1d74a20f9520233ae3173"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-152/manifest.jsonl",
+      "sha256": "4c6301434335ad3a80adbf846c6f231388bc36af5b9a4f0969b7fb3cf84cca60"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-152/raw.jsonl.zst",
+      "sha256": "dacd870ff5a663db5118f1e05b2ca7ffc637480ec2c63016b8b1eda4981eb376"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-152/summary.jsonl",
+      "sha256": "c3ffc08681e5b06830dbf3ee4a62822aa7572739010c5985117e336828fc6ad0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-153/manifest.jsonl",
+      "sha256": "a0b247490f6c02ad925e07a6b2f216f4c707ba20038ea7eb583eebe4a9b67eb4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-153/raw.jsonl.zst",
+      "sha256": "e7ce09e57d4fc2324fc9c81bc8e7a6ba57b9d1c6ab7bf7f1e8591a8ed279290a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-153/summary.jsonl",
+      "sha256": "aea808cb47fb507b3e943ad7bb8ee45fecd107a850b5f4f0210cdf35aaab03a1"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-154/manifest.jsonl",
+      "sha256": "5d52dd04a0048688b28a8b698aff7fadd0a954b8ae58dcdb0e670551c718b203"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-154/raw.jsonl.zst",
+      "sha256": "a2727f43c248098f06c39cd40a92252bbe9cf28886915d418f32a52660ad3663"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-154/summary.jsonl",
+      "sha256": "4da381382c70d48c06125f530bd3a9269938b61d369b62fef0abfbd3a7d26a1c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-155/manifest.jsonl",
+      "sha256": "6ecdbd299ad2519c7560f6b17ffeae98dbc4e29d37b6d439b3eb3dd2f170ec6e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-155/raw.jsonl.zst",
+      "sha256": "0e4aa19f4d1d95582aa329cbc35187ed815d87021b1050097e566853373a4da5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-155/summary.jsonl",
+      "sha256": "6417dc44c2589b4546c140f5679e2cb75d3318ffa3a4302d04158b4e3ea4c5aa"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-156/manifest.jsonl",
+      "sha256": "1dbda19f5336ff735ec08ae0354342bebbfe7f4e54f9ac74c111d9eb6c6b9f37"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-156/raw.jsonl.zst",
+      "sha256": "815bbd8a17522c77ebd41a4f770ce078bf711519c5a96da78b419ae871383808"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-156/summary.jsonl",
+      "sha256": "6f85c501120ada4c9eda8bb948e0b306ec38075d80e2d865b955b055f5b2fe4e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-157/manifest.jsonl",
+      "sha256": "13b8f80f4fcfe26c22d7e372c1e374935af9bb1759968744e59e0d1ac4f06798"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-157/raw.jsonl.zst",
+      "sha256": "7e020f929c0c9ac7b13471d3c567a180647e5e2fb63a1719de73224d8a2f06f5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-157/summary.jsonl",
+      "sha256": "977b7e79684cc62afe2add7e9d8c9b6163957503513908d37681117b2eaefb7b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-158/manifest.jsonl",
+      "sha256": "52717dd7a8e179a584f9413487e9a77b93018e1228357000468dc55d31ed009c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-158/raw.jsonl.zst",
+      "sha256": "6ac693050272a402cbb66f6a1bbd98e77c7bc94971db3398d02cf1fc04b288be"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-158/summary.jsonl",
+      "sha256": "39045ff1ee051c7d917a84e2cb5ace549a99badf0af24afc8026102518540bfe"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-159/manifest.jsonl",
+      "sha256": "fa7df9e11e7e5fb42571096840ac5d3ec1686584ce19e97093ea9087e7c83fec"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-159/raw.jsonl.zst",
+      "sha256": "baa5ee39d90023c5d6c0db7ed9b1e5a0a28ee6d2a548e87f1d4ef1f0387519ff"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/frozen_full_gram/damping-10_bonus-1/seed-159/summary.jsonl",
+      "sha256": "1aa25b77e96959d7c44b682b04f145b6a3cf9bc86545198e1e75b6f879371fd7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-150/manifest.jsonl",
+      "sha256": "377ee577060403ade95e169375938f2e501265cdf71454ae54905ecffdf7ca0d"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-150/raw.jsonl.zst",
+      "sha256": "7ef8032fb30bc1f6f9b60dcb5a885bab68e47acf391cc7c26bbadbc906804151"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-150/summary.jsonl",
+      "sha256": "e897faa921b4871306f29102eb89418a03e54debb34e9949e06d87165652c6b3"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-151/manifest.jsonl",
+      "sha256": "5a4f9a0266c6697dddb56e78fddec42eba64b9c1a0fbf10dd7eb9fc0a072e881"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-151/raw.jsonl.zst",
+      "sha256": "153ce9c86374dee86e338a610fc154994bb6c160fc88e93cfa80ea09423c616c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-151/summary.jsonl",
+      "sha256": "9e188a9a49190b13eaca70e272c8068f7e251409038dd435204ef0fcf595e9a9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-152/manifest.jsonl",
+      "sha256": "3d01fc01fd30073d8c8fcfcecb32a7469281f7a2ccd60d6622baedd81696ca0f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-152/raw.jsonl.zst",
+      "sha256": "8a639b34e151b422945675b53efb15d644916397361d1b9233171210a5951578"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-152/summary.jsonl",
+      "sha256": "8dab681e84b9a6495518f0632ec67704b4dd3e56d0d780515de29016c6a74509"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-153/manifest.jsonl",
+      "sha256": "e34d959f166095e040a3e7584392add6dd6893fa0933a7a0b9ec7d98797efc3c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-153/raw.jsonl.zst",
+      "sha256": "491314f719f36bc7eab0644625a3bbb264b7dc1381981334b3c149ff60281159"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-153/summary.jsonl",
+      "sha256": "04b7eed415b83138124692d163013ee35f7a5f391b6b0277af1a389c7fcf2eb9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-154/manifest.jsonl",
+      "sha256": "7e31133b721f15e267880ef6aab6fe18553392ae9ce2cb428daa26ce3647a129"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-154/raw.jsonl.zst",
+      "sha256": "1f251ffe9b3ea8e2a25e99a9c9ce198ddf67e856801d87baef27154be527f0de"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-154/summary.jsonl",
+      "sha256": "ce5d3664127de471ac8c0870478246c296e90d5e0d060b0f5a16d44250a92ce4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-155/manifest.jsonl",
+      "sha256": "8afaa0b5c75136b1e0521a348611c34ad72eecd6907ffa713b784311c6654699"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-155/raw.jsonl.zst",
+      "sha256": "2725c35317e4e04be64c910c91d651d381f30bd9521baac1d759142ecd103ef4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-155/summary.jsonl",
+      "sha256": "4ceda3a06757831fdf518e1a368a14aad2e39682c248de3b4dafa6abc4010fd3"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-156/manifest.jsonl",
+      "sha256": "f4765ed7435453651501efa8436658b25351d38bc974dbb29efb4e939bb97bc1"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-156/raw.jsonl.zst",
+      "sha256": "0eec7d27da668111f29770e55703ea9ccf2b1b64133a1c32194da7ce4a40dbc0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-156/summary.jsonl",
+      "sha256": "369083c1c681c42c49d330e3d84a86fb54f813f56fe2d2133f58d68fa70690a6"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-157/manifest.jsonl",
+      "sha256": "7e3dd16767ab336272ed9a0b702d93dd8496efade536c87283ee31bfb87b8aeb"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-157/raw.jsonl.zst",
+      "sha256": "7a7ccaebc3eda3f41bd7d3b033adda634235503868c7da03a8f5c5fc0c8d2fb9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-157/summary.jsonl",
+      "sha256": "e8e21039d3e391d5a38e036b3d44fccdff34e00717b08c64e28cce002b040504"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-158/manifest.jsonl",
+      "sha256": "3a204b8ee13edd597668b8c86a6730a7101634a6f274ac05080e231b1e90ce95"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-158/raw.jsonl.zst",
+      "sha256": "f0d3d4aeb4b532cc63e342b2cd23e14d822388c6fdb4d2ff014f86cbf85e3b01"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-158/summary.jsonl",
+      "sha256": "2c7a1b29dd303445ea6b0cdce3b9bc1b492f86671dfc8d10fe9bba2304506309"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-159/manifest.jsonl",
+      "sha256": "8bec3c56c9e1cece24f98fff174451c78661735d9980157398fab7866dc449f0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-159/raw.jsonl.zst",
+      "sha256": "fc0482cbfadc050d77319279182102757fc8f401cf0aacb781155e0a472f575d"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/full_network_ggn_cg/damping-10_bonus-1/seed-159/summary.jsonl",
+      "sha256": "87586d3ea97b8c2b111970ea47a3dd3f71d193b1f6dd00f00e283e859932f2b2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-150/manifest.jsonl",
+      "sha256": "d699dd23d46eb5096479f23499174c89d8ef3f2abd100ccf8cfbb3e53c72a295"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-150/raw.jsonl.zst",
+      "sha256": "f6363b77876466a0df5ab680c7b7653febd2cef5fe97ceb3a712af6c7266eb8c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-150/summary.jsonl",
+      "sha256": "2c4168fc28e395795379e5fb2a4eec9da8ecabd60db5616817a3528e8deb8bab"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-151/manifest.jsonl",
+      "sha256": "1bf85acbd68bf0dcd8c7bbaa95da0b66db786e5e3ad2cea8c60358ad7e2c850f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-151/raw.jsonl.zst",
+      "sha256": "915cc4ce3b39a6a47f18514457fafb7b94797a34b7989763023e3191d2f96f04"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-151/summary.jsonl",
+      "sha256": "798a0cb6cdcc301c174db368be62b85f5c943f7e7c45bb6618bfb237b40f303a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-152/manifest.jsonl",
+      "sha256": "517a5d8510d1190e838335710edbdb8ff227f7702616b515904ac7afc41de894"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-152/raw.jsonl.zst",
+      "sha256": "0a39e58e579d592bd8a38597be1105b8299500a7924d9e3467c4f9d63937e4ac"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-152/summary.jsonl",
+      "sha256": "3c947c06cf84acde6680da6c715a2216605f5b8f7eb5a3918950e408ca959d81"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-153/manifest.jsonl",
+      "sha256": "f802ed2d09da5146ec86dd47f9a6730d3b3701b9e28187686608e9319ba3778f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-153/raw.jsonl.zst",
+      "sha256": "db08635af7d196fcdd2f2338f4eef6f5ddb541cd487b56e89a13199c981b66b5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-153/summary.jsonl",
+      "sha256": "e3fc5a5f0a7d6ccbdd96d1b4e70cbdc4266a6b33a531e7b52ef02eb669392ec0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-154/manifest.jsonl",
+      "sha256": "d907139944c071d47358268a1da6c44ba8c6756b770090ab569cb8b9f8c3c109"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-154/raw.jsonl.zst",
+      "sha256": "e79cf63713de57b467da09f1836cf66a58686a9c9d0c506b075c5448aba86bb5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-154/summary.jsonl",
+      "sha256": "d7080112ba420a173ede3a961221bbe6cb425edf276957e9e05ea1f56f4e7bb0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-155/manifest.jsonl",
+      "sha256": "1b9f6f8bc18324a8cb1677778ca7fb6bdeee1c12707eae930ac907f963ed0e60"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-155/raw.jsonl.zst",
+      "sha256": "3a7d3e1a8808471646a0d552560b5515bb6ab6efc1615a58601185e86916db68"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-155/summary.jsonl",
+      "sha256": "1dd59c8f65c551f8095a2e8ebc0f346a039d7f6483a3e3bb53639e7296eeeee2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-156/manifest.jsonl",
+      "sha256": "30c24dac3dc647e7ca63b57339e27d74019cf354e0bbe7d1ad2293495c92822f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-156/raw.jsonl.zst",
+      "sha256": "da71d24a264d0d260237c593b28130b4d36266f95569ee097d158cefdf60a936"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-156/summary.jsonl",
+      "sha256": "f5da8bc39caa0bde469b7c982d70d024f771c78a68d985df2804a5a71696b12b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-157/manifest.jsonl",
+      "sha256": "b1a5204d603e036c79dbf90a28488f676f8a52499ca633085facdb76634a3fa0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-157/raw.jsonl.zst",
+      "sha256": "c1c0f8ab52c8a4750a994a2ba728d796dca52327139de5ab7d1bc690cb08c8d1"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-157/summary.jsonl",
+      "sha256": "3b2b5c3a3b9d5fe0c514b87ec0c6e6f2e28bf51debc653bd5032fdc4646718fa"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-158/manifest.jsonl",
+      "sha256": "864cb946bbea34fee773f12736d044db24c1e57d8024c96b155903df958dc35e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-158/raw.jsonl.zst",
+      "sha256": "0c7147e33d57c91e8b19d488edd586d930966a9f9523890e5586cf4a250bcc63"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-158/summary.jsonl",
+      "sha256": "34aa7c8cfb3e46c786fc5c128818929c9e0d5840c85b6975a95f130e8fec2404"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-159/manifest.jsonl",
+      "sha256": "77b3268c6d013e5a78bfffad34cdda784e6a24beff9342bc2762cd8ea80d8c94"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-159/raw.jsonl.zst",
+      "sha256": "4291b9d727d2893ebd293885877d3f1fbd716f74257798fb4cd4813d6f4d174b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/greedy_full_network/damping-1_bonus-0/seed-159/summary.jsonl",
+      "sha256": "1a7375c11941d2aee1f709a6def8fdded19005a20db2c10aac44855892b391b4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-150/manifest.jsonl",
+      "sha256": "49ae72ff8f977c308486ca5a2af6a4a8f70995a13476fc6b695212a7537ee65e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-150/raw.jsonl.zst",
+      "sha256": "d295106ff005607bb32b9cfc9276f5f8085dbad30fc439eb7b3a37832e0c6a49"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-150/summary.jsonl",
+      "sha256": "deca2eef2c1c99f340c0e5fcf81ff48e262b48fe3a02bbc2b0bcdaa821854c92"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-151/manifest.jsonl",
+      "sha256": "a1cd0e89da50c4257a3e71a3fde6ddea1a744d21c3f102065953806f767a1160"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-151/raw.jsonl.zst",
+      "sha256": "88ac66efd47af64b637d98b78fd3fe76a018175468824d2cb26a6677317fe235"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-151/summary.jsonl",
+      "sha256": "dd48d1ee35f6aca204388e944f61b5bbbf24cae758a948ec45584acd9cd5c61e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-152/manifest.jsonl",
+      "sha256": "f0d800d7df58839737a02fd4f2ec47fd9f2bdc262d5e1298e39ed49cb7683cf4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-152/raw.jsonl.zst",
+      "sha256": "c2516aa3b6ae77064d875daffe13aef5bbb9353822f43fd2c5571cfdde029cd8"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-152/summary.jsonl",
+      "sha256": "308f2d2de6da3ed6c13c9847e6f1adbb636beca13bbe196c01da3dc9aabefbeb"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-153/manifest.jsonl",
+      "sha256": "6099b97598738097ffa3ebd653a49d93144048560c04fedf15d5874b04bb179c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-153/raw.jsonl.zst",
+      "sha256": "165811a6fce9b1944e91e1e90dfd152adf4cc30b32350784f5254143f493ab85"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-153/summary.jsonl",
+      "sha256": "e4fdf00f114d8ee8f4c5239c1624510d6490fb8703d56fb66bd592fa1e3c0392"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-154/manifest.jsonl",
+      "sha256": "1acf1bbfde6a35f6301848b314f73bda5f39b47f6b59cbf847ea9906363eed7a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-154/raw.jsonl.zst",
+      "sha256": "0ee5517d19d874b26b662f1bf6e97a94b7a4074d5786c16fd4dd136e5d065c08"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-154/summary.jsonl",
+      "sha256": "dbf7950387863f4ef02b17c7cea662a9a27fb1eb4ca65195ad0f48cf5445ad18"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-155/manifest.jsonl",
+      "sha256": "dad0efe8725fa7b2dce682f6e0e1e736c7ae7f74479d9763d167a7737cc8ce6b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-155/raw.jsonl.zst",
+      "sha256": "611eb506e094148b946f257eeb3b728bfd566b5c8e373a94059ce8637e17f048"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-155/summary.jsonl",
+      "sha256": "f66ee27046c10dbfca109118b4a6cf24057afc1a3e1db933f080296b75f32d0f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-156/manifest.jsonl",
+      "sha256": "042ed0516bdaf101fe8c75cb99399cf6d22eccae98f1665c429e9262092090a0"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-156/raw.jsonl.zst",
+      "sha256": "bc0b3581583dc5f51806f96443ca1bef5d4185f199e13483cdda64729eb012ab"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-156/summary.jsonl",
+      "sha256": "81efe508bdbe2aec31056931975411e37ccdfec1759f6af95b394331c878c395"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-157/manifest.jsonl",
+      "sha256": "ba561c705c69080992e6c973ab56d55a67426f63ca01fc05dfe061b93f92aba7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-157/raw.jsonl.zst",
+      "sha256": "f00761b2fdc3ad3230f1fe526f0c8ac8d8f03eb6701091d3ff14d9501e76f6c9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-157/summary.jsonl",
+      "sha256": "d0ff18c6fd902f32273fa5c6539cca1a9689020a498dcccdeef8de27d00a6b75"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-158/manifest.jsonl",
+      "sha256": "de963ff7994c6ee66ff5e7cd9d3ca9041726a476183bc78c84823288a3ce5583"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-158/raw.jsonl.zst",
+      "sha256": "1b17278929a00aebc6cf899c34541703e550a2543959840c80a8d56ee391e152"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-158/summary.jsonl",
+      "sha256": "201dc6830d7458bf88aebca12ec2981b2f3574f58f1be8bbea3e8828094df2be"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-159/manifest.jsonl",
+      "sha256": "ed46598e91972de7379e8106811010877c25089964f40d95fa6a099b92aec497"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-159/raw.jsonl.zst",
+      "sha256": "d04aea37491f16b8f14c54fc88a094355f469a71fbf1d6b9bb5eaf3543a9deb7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_diagonal/damping-1_bonus-1/seed-159/summary.jsonl",
+      "sha256": "c123d00e76d5cb494b52924d465937379c71c99fffc9ed02eb7a4aeeea0df354"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-150/manifest.jsonl",
+      "sha256": "ebfad366447c42e7e6b2cf048dd464e00703070c036ca782f844958f62262f95"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-150/raw.jsonl.zst",
+      "sha256": "80edd4a036fa427eb218c6cc6981a8c062aee2bd8fac638dacf3ab21a6e177d1"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-150/summary.jsonl",
+      "sha256": "428049bee56b4d18bca3a2f617f1e135b320241bec14f959594725189862da72"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-151/manifest.jsonl",
+      "sha256": "16b0ce908d895fbe0ec93ad3a8a6e7d4651b5434b2c388f1d0d27b1d72077b2f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-151/raw.jsonl.zst",
+      "sha256": "d69e7ef0d99700830b7f2716711a8f6fba435e837e69cda84af123d14fce08b6"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-151/summary.jsonl",
+      "sha256": "d96f553a9dc5002e57ad373a81687896e6f412c57aba54a1ad653f8465251a1f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-152/manifest.jsonl",
+      "sha256": "687dc27ddeab8d87d840bd126873a2fb3fb696d386dddf6764811aa5d89a8b47"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-152/raw.jsonl.zst",
+      "sha256": "e5fc56261050a402a392b6febb5e012af6ace28d542070838ba3f30cbbf4fbca"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-152/summary.jsonl",
+      "sha256": "4720b7b345a0dcbf363ec4069f770bb6d0cecbc3f92b3832997f7ac44d9a1829"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-153/manifest.jsonl",
+      "sha256": "3a21db6c722d78aae78a63ea13dd1e5674aa3a337a204497308e89ca516c793b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-153/raw.jsonl.zst",
+      "sha256": "32d059732bb19b8cac5b47f9127c6773b444dddfd15ebb4918dcad1a10ccd917"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-153/summary.jsonl",
+      "sha256": "52ac0ec158c42ed0c629787ea099934fce05cabf82883367ab40a728db68cfba"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-154/manifest.jsonl",
+      "sha256": "8311611ccf602ee1526764a41d876e53f0acc52698ea502473f8eac16df51e73"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-154/raw.jsonl.zst",
+      "sha256": "55b66d23d29c1fe83f4a15464cbf6fde5c591fe838e8e327bd23b9b5501d0a40"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-154/summary.jsonl",
+      "sha256": "6c70a851f1a95d7f5a322d146942d2dd3125b08d6fa3161696fe5e33847a2318"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-155/manifest.jsonl",
+      "sha256": "fc958031178c322fb25a5bb98d9685a3ac01afc1e9e4f64ef6799f1402d727c4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-155/raw.jsonl.zst",
+      "sha256": "992f53372e02510880a70d2d434f05b68c42c16d91b297fcd209c16ec4bec045"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-155/summary.jsonl",
+      "sha256": "0e58b179c218dee379266767f607c858089d921ffef9f6fac74866f06880beb9"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-156/manifest.jsonl",
+      "sha256": "34af84b7d273c23daf77aa20b6f3273d350ac67d67539ca34059f59e6df5d975"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-156/raw.jsonl.zst",
+      "sha256": "563d8651cbffe109e2fc15f5a14ff160318abd274eda523649518b70ef4835c8"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-156/summary.jsonl",
+      "sha256": "c22449bb0abce12a8579960a78ecd4c8c1bdc25f9426664fcc2c3775e8774864"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-157/manifest.jsonl",
+      "sha256": "387e77a828c2c16112b41dad4010dbcfd63a70a5315469603e963ff53b0336a2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-157/raw.jsonl.zst",
+      "sha256": "02358e439e10837da1560d8423cef2e9f1cf4c04a5d3f65670667e34a73cb203"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-157/summary.jsonl",
+      "sha256": "34536410a1f8a75eb4cb677ed09048bca325e00dc5590a1f55a403309e03fcbd"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-158/manifest.jsonl",
+      "sha256": "cbfd892972b92f4ed19f62808f3888e4491676d620c91484ce069e3c578f22fd"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-158/raw.jsonl.zst",
+      "sha256": "c6b71817be30bf6c0b1975e972f2c333a593f8ac57425811bbe1b75e4fa213ac"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-158/summary.jsonl",
+      "sha256": "19f0cacda8c08f194e6cb1047313a048c501037811d5bfe6d6d7735a1b8180da"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-159/manifest.jsonl",
+      "sha256": "83c84bb4a4369fd091247cb47489288271e267d0291c29350ba45377fd81d085"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-159/raw.jsonl.zst",
+      "sha256": "d773d856f7da932b3a2f8063b988765389dce856fcd9e7560c6ff3da91c58233"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/last_layer_full/damping-10_bonus-4/seed-159/summary.jsonl",
+      "sha256": "93f546058adaa9ebb6241c5b5fe691cf80e5072ec01f4c10a08249a5369f2d95"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-150/manifest.jsonl",
+      "sha256": "6eb4930f1f4f6d90eb417c9e54ac628ffa647cdba587427538d9449ef81a143c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-150/raw.jsonl.zst",
+      "sha256": "b7ecd49379621e39d9c6526b94423b97cc60a5820ffaae9fe657e9e1688ee313"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-150/summary.jsonl",
+      "sha256": "83b3a92f44d073571c5d07c99283b5932b45e91ab7ba51544301f4790abfd75a"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-151/manifest.jsonl",
+      "sha256": "78f39f2d5a7ebeaf7de1c11555ac75499c36403a5583463d5dc83dbbeef8af87"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-151/raw.jsonl.zst",
+      "sha256": "948096be6d07f23f59c660da6c2d4540fcf08892a20637fa3101f905cb84e80c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-151/summary.jsonl",
+      "sha256": "745d96ea14b0ac263a02d4814759a647202394d29723706c542d4481da75776f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-152/manifest.jsonl",
+      "sha256": "ecde8f8dc236902e10572e2e682bdeb0d84640fc4fe68be67c7b95b0fbc0e36e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-152/raw.jsonl.zst",
+      "sha256": "bf046a1a2e5295fa97bef4203ba7f570cc2f78d7ae632b802273d5e8333b3e71"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-152/summary.jsonl",
+      "sha256": "cd82d1018aa44b6c7a117a88640811f746422a3767b5c53b384b1eed3068a0e5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-153/manifest.jsonl",
+      "sha256": "8b5e3832e19ee2517f7bd23cb0cda103edbd53e1bdc545c868a132edf4748774"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-153/raw.jsonl.zst",
+      "sha256": "66f9f0aa1e3c96032a0d3182f0bcd4d2b71f774929377435449cc51e0ba8b7f3"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-153/summary.jsonl",
+      "sha256": "68459d73a6c7fa7e79519166c0602f179ab0effdba728675a471a8304962e394"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-154/manifest.jsonl",
+      "sha256": "4d12326b958f94ba82a24bf4a069b6da02f159825ee7d5d14f060312451284d6"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-154/raw.jsonl.zst",
+      "sha256": "b2ec26669f7d1f9b20ba665ff8775db033ffbc15fc06deaab10ccc96f3a7aeb3"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-154/summary.jsonl",
+      "sha256": "1f2c82a3881e56ce59aaef06aecac26a648676b9c8681049f937984efa571953"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-155/manifest.jsonl",
+      "sha256": "b6fc50390e9ac7ac44414e0261691e0ccad29153b9efd4ea617a1a204ff62ea2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-155/raw.jsonl.zst",
+      "sha256": "9a2674574d9460d10126efbc706cf762ebe1feb229f2924c154273fbe6ec0246"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-155/summary.jsonl",
+      "sha256": "af73a66b1ee8484a5251ca1b78d7677cdec0c33c537ad0478c858abd1a8b7dc1"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-156/manifest.jsonl",
+      "sha256": "df919921e4f1969d9392f90ac549142618e39f9442bb32be923325bd96e22160"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-156/raw.jsonl.zst",
+      "sha256": "043f97d0785ba55e6e3fc83571cd28bdd72b720821fcc05ab7d27292f1128305"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-156/summary.jsonl",
+      "sha256": "43fa0a0c5f58e8ed4434a3251482b61c11f7799034a702b34a5fb30cd557d6bd"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-157/manifest.jsonl",
+      "sha256": "0638ca9b3868ab99244686c364ffa2b52fe5e2267737168dd4ba0fb98d54231f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-157/raw.jsonl.zst",
+      "sha256": "80787c2cd4b995fd41ead0b0cd1417f6c435a0d25dc748e488b50d03f803277c"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-157/summary.jsonl",
+      "sha256": "62ecbd732a113768aff9b1f21082527ac5068e2931a7b065b959c093d70274a6"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-158/manifest.jsonl",
+      "sha256": "7ba7578a2420af2eec47386aa302124693a8c1bad82c3c0d191d0313183275ee"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-158/raw.jsonl.zst",
+      "sha256": "d676b20c6414a840ed8581073acd6d9f14795fa3e3e876e0491d86fb3725568d"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-158/summary.jsonl",
+      "sha256": "cc7be33beaeeb2cc6f36f157fa3c6f42f5d63457f10892c56e9d1363a8ab8cda"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-159/manifest.jsonl",
+      "sha256": "ae5a47b1e71a5ad7ab482d2bce5919567f4c1674669c90058edad00bf7e7fb66"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-159/raw.jsonl.zst",
+      "sha256": "0116d8e3f00441c34066d98e86713c63d0dd1260f64d02f4751e795448d67eb4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/thompson_sampling/damping-0_bonus-0/seed-159/summary.jsonl",
+      "sha256": "5b90c74aff6683e96ef158c126b2fb85c5698e19a0fde719fb856bc505c29dd5"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-150/manifest.jsonl",
+      "sha256": "0d0de31e6b7420363aded81ebcd70ddfcdf3bf3f7cd182e9e4c57a70ecaffe7b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-150/raw.jsonl.zst",
+      "sha256": "b63fc8af4e664807bb9674a1c846af7d219c7f5d2a614b63ba09b214a335aa80"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-150/summary.jsonl",
+      "sha256": "d1f243b4e8c177962bee9714916397de7edaffb9cfc5203dfe417c5da5465ac7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-151/manifest.jsonl",
+      "sha256": "06ce16cb90dadf188a76ed544ad5b2c30fd3662ca598d6d925860d6a9e8884ca"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-151/raw.jsonl.zst",
+      "sha256": "50c45a1c579045e86b7f003ac5d238a94fe22789371740dfdbd8d9e2da1b4f08"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-151/summary.jsonl",
+      "sha256": "08b427ea63be236f4b51db70326d5e7b329e0bba6088087b9bd095ef10b7aaa7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-152/manifest.jsonl",
+      "sha256": "c6b748f5a1aadf6dc46e1b2ac7f0df12d8504fd0dce237db6cbce7eedd311db4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-152/raw.jsonl.zst",
+      "sha256": "0b604adf979f747e2fa56f087840de8185c6b9cead1515d3e643abedd2eb5324"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-152/summary.jsonl",
+      "sha256": "c238f0461e1b448c019c2ca33b08efb8672cea94d813e6de2e91111a462df2be"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-153/manifest.jsonl",
+      "sha256": "40c89dc04765297eb53c3c107ed20a4e2752c1384408424abb98523aab10f07f"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-153/raw.jsonl.zst",
+      "sha256": "a84a7f485f458faf22b956e102922519050f687105a15967ce5baad7f8181bfb"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-153/summary.jsonl",
+      "sha256": "0027948baaa324cb21a131b40f1e08a4a66fd5b43c03af4322c1b52070e89e7e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-154/manifest.jsonl",
+      "sha256": "5af9da6de07d37596ff0f725952e518ac5b07bc9b86f20f422e3497161b826a7"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-154/raw.jsonl.zst",
+      "sha256": "945d95e0c42cd3ae4eff7678351c0e6c83c5379fca205627669af89a769274f8"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-154/summary.jsonl",
+      "sha256": "bf12f588589af81fbba80dc1eb2327fae2c5411faa35eeb3547e4f1ba54dfdda"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-155/manifest.jsonl",
+      "sha256": "2ffa5319b4947f3082021f7f020327b2088115c623a2e8a1a1ff3a5817213878"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-155/raw.jsonl.zst",
+      "sha256": "73c202efec7b60e8f8c621bb58ec421068b9a526877a83dd68bec1584b90356e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-155/summary.jsonl",
+      "sha256": "4d4936ada70ed38d80d1dda64bdb9e79b15c5875f063b85ac5971422b8e4fbda"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-156/manifest.jsonl",
+      "sha256": "f1dbad984050f50c2033e822b8079d6e99f7d50aac39fda9657f51fb0abf9736"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-156/raw.jsonl.zst",
+      "sha256": "7ebe3987ea16f712f287b49add921bd754c96ffd2c867c4578b929795b5fa38b"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-156/summary.jsonl",
+      "sha256": "01091a2efb0dd119c94dce717da0192b964a1befbec9ea65af9c7213f9f0cb0e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-157/manifest.jsonl",
+      "sha256": "90192d34b2da1f5cc67d95b375c11f0991f52ccb12d819a4c525b1e0afe80495"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-157/raw.jsonl.zst",
+      "sha256": "5c6b1d8ff0ac67c3dbfd05934fb21d4fe5395ebb732ac0efa4e7cd17345efb9e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-157/summary.jsonl",
+      "sha256": "94cf9d51290b6d10dd20133c0a675b4ca713a66cba495bad15a6c56477a5bef6"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-158/manifest.jsonl",
+      "sha256": "cbb95b931ee24a404ade9c03ff2e4d469fae7607c2cd3a111b63e6ff09525dd2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-158/raw.jsonl.zst",
+      "sha256": "3b8097b697dc9a5dad1b1ad4e25215c35e02b0897bf7291cf1fb9bb6c6c0e0f4"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-158/summary.jsonl",
+      "sha256": "bb6a4d4c0389f0e51f0689b4cf4e96a715392afc667326e73d95270ddb19b35e"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-159/manifest.jsonl",
+      "sha256": "98389148cd64a0492321f4d499466bdeba1305c67e42ff2d1f5fd6df29129b12"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-159/raw.jsonl.zst",
+      "sha256": "27c2122427690306a9321f845ac9bb8ba9b479511bb80315e72cd4cd8101ec93"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/evaluation/ucb1/damping-0_bonus-0/seed-159/summary.jsonl",
+      "sha256": "4d25db68e1497f07932e8eae15dbee540153c80627255f55af59ea0636f1c55b"
+    }
+  ],
+  "schema_version": 1
+}

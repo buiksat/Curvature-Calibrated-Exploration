@@ -1,0 +1,20 @@
+{
+  "artifact": "results/derived/covertype_test_class_counts.json",
+  "artifact_sha256": "2eeca825d84b6a7531a71989fabfe21fb2be75a25d055557b0e2c8c2ebc11a26",
+  "input_set_sha256": "01dad26d97f6637939b90a146955462c11b9c3013eca415725a83d6cbbe340fa",
+  "inputs": [
+    {
+      "path": "experiments/data/sklearn/covertype/samples_py3",
+      "sha256": "57934b5deb3276ff5ffb9fad89918c440d6e1c750b27968f9795060494432c14"
+    },
+    {
+      "path": "experiments/data/sklearn/covertype/targets_py3",
+      "sha256": "50f777bc80e1e3a74bcfeb058b42e892e1778a7775118817fd61129ff63382d2"
+    },
+    {
+      "path": "results/raw/covertype_rerun_1500/full/dataset_splits/test_indices.npy",
+      "sha256": "0a2dd3fc88ad259ec7c4d46c660b45c77a0137970a52d5a7104e47f6c1896a10"
+    }
+  ],
+  "schema_version": 1
+}

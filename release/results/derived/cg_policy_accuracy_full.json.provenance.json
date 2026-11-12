@@ -1,0 +1,127 @@
+{
+  "artifact": "results/derived/cg_policy_accuracy_full.json",
+  "artifact_sha256": "49c98870549d494be9a911e65578842f619830696a1259c35c8c22d98e290945",
+  "inputs": [
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-130/manifest.jsonl",
+      "sha256": "d89b1ab05511a4f0d8fe85308a71fd936d1fc72c6491d11700317f7d6104907e"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-130/raw.jsonl.zst",
+      "sha256": "5277af5d75fee6e7889434a84d58dbc78c97774c449203140bb746aaa0bb5968"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-130/summary.jsonl",
+      "sha256": "14bf34a29b2af1eea2cba33b3cf0cd9c7db99fc6923abc281b064cc627ed72fd"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-131/manifest.jsonl",
+      "sha256": "28fc6fee4700edbd225ea5dcae4b09b43ffdaac0667ad4490d9bffe8f976b435"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-131/raw.jsonl.zst",
+      "sha256": "14929dfc5ae9372a47c9fe15b0e295614748c39b38fe8d2e3c40d91f3b713eec"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-131/summary.jsonl",
+      "sha256": "4f459324cd0607c746762b986881ae13b82e7f592797664d8cff96104d8793a4"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-132/manifest.jsonl",
+      "sha256": "72441ba1d5384b0c181e8f3b5cf38e2ac52c21bcdbbf59f0af0ca5e07dac75f3"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-132/raw.jsonl.zst",
+      "sha256": "74937397738e47cce05254a557eb033e571a529836c7b5312f8be4da5f8abed7"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-132/summary.jsonl",
+      "sha256": "4f1d6de73bc013926d200c8adccf79ee367ea7f6fde5001ad7daaf066e7b1c26"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-133/manifest.jsonl",
+      "sha256": "26f3e63f7455d97f96dc8cfdef372ab34528877a685682f128f797efa0a14b94"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-133/raw.jsonl.zst",
+      "sha256": "a64ad7fab269b4612cc1ea50e6e7cfbaa6ffcf9737e84259f8316fd32c435bd8"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-133/summary.jsonl",
+      "sha256": "631bbc12d1ffbc2f6736a06b4c059ac774c3036f04e22e39946960f1c4b45617"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-134/manifest.jsonl",
+      "sha256": "658422881dc10ae2eb8f3b3e346f7bfefb8e5d2ad6aba3942d4486f01fef0dff"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-134/raw.jsonl.zst",
+      "sha256": "69a303243d2c2a6175de95729b8146b2dfd15e877c76e63f2e144ec63012291f"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-134/summary.jsonl",
+      "sha256": "26648268606af396237bcc66db9d1617018e2c189cb38ae47ae4ad27b5c3603b"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-135/manifest.jsonl",
+      "sha256": "a544e85f5f1075bce9f70536543c951ddc0783bb183cb4c5f07659da4c519fda"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-135/raw.jsonl.zst",
+      "sha256": "2bf716006cbd373b715faa0260fc7fa111144b506aa9d780e32a7486cf2d7d52"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-135/summary.jsonl",
+      "sha256": "5beee03c11b0bcc3376fce5b392687098134c78e808cdaf6291bee6d89029577"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-136/manifest.jsonl",
+      "sha256": "dc67a52aa0a8ae753cbbf5bdbb8370d4f1fa6580e3bf1f47160209e07b2fdd2e"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-136/raw.jsonl.zst",
+      "sha256": "2ba16dddeaadffcc347761b801edf951b803cf38ecf12add566a0aeb67f2128c"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-136/summary.jsonl",
+      "sha256": "7fb0dbc6cf96bad3d7d7f3cbbc26326e9b06f14c13c8def177f25970db7a3271"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-137/manifest.jsonl",
+      "sha256": "ba4cc935e9bbfd85cc15c1abf253b5841a470abd05fb9b89f3206adaf7a13a94"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-137/raw.jsonl.zst",
+      "sha256": "aaf6a31bdecf35a6ade7eda96131b4f45f0ba157c7ccd77579642a8b25c199e1"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-137/summary.jsonl",
+      "sha256": "cdb40ba99698d40c40072110b35a28ea9f74cf285a8880c7921569e375c22b88"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-138/manifest.jsonl",
+      "sha256": "7a61544a3a4e51d52774d77b82b4b5fcb981dd877b6f51488162887294586e0c"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-138/raw.jsonl.zst",
+      "sha256": "b256a14870e321db2427f4995164bb99861c2335887e599e90786bcf434cd791"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-138/summary.jsonl",
+      "sha256": "478a32ec718491add5e55b38d8b9f6f1f7e3d8cc496fe78f23d1934da9a88b52"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-139/manifest.jsonl",
+      "sha256": "76f33e1f4135f756fd27749a9e57f75978e0564d3621a6a762d9af28da43014a"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-139/raw.jsonl.zst",
+      "sha256": "67464e98b6e4ea70f71351b5bff041cb579394d7d2f583d56fcebc50e78a372d"
+    },
+    {
+      "path": "results/raw/cg_policy_accuracy/full/evaluation/seed-139/summary.jsonl",
+      "sha256": "24b01839a59b27588a5ba969be034cabfad0dc047922a6dffc31a9885d562124"
+    }
+  ],
+  "schema_version": 1
+}

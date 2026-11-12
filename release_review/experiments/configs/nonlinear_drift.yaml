@@ -1,0 +1,158 @@
+{
+  "base": {
+    "centers": [
+      "original",
+      "corrected_exact_frozen_feature"
+    ],
+    "confidence": {
+      "delta": 0.05,
+      "policy_certification": "posthoc_audit_unless_all_predictable_schedules_are_supplied",
+      "policy_schedule": "predetermined_linear_radius_without_posthoc_certificate_inflation"
+    },
+    "curvature": {
+      "audit_every": 1,
+      "cg_max_iterations": 128,
+      "cg_residual_tolerance": 1e-10,
+      "operator": "full_relinearized_ggn",
+      "solver": "cg"
+    },
+    "drift_ladder": [
+      {
+        "exact_head_ridge": true,
+        "name": "frozen_head",
+        "step_cap": 0.0,
+        "trainable": "head"
+      },
+      {
+        "learning_rate": 0.002,
+        "name": "mild",
+        "step_cap": 0.005,
+        "trainable": "full",
+        "updates_per_round": 2
+      },
+      {
+        "learning_rate": 0.004,
+        "name": "medium",
+        "step_cap": 0.02,
+        "trainable": "full",
+        "updates_per_round": 3
+      },
+      {
+        "learning_rate": 0.008,
+        "name": "aggressive",
+        "step_cap": 0.08,
+        "trainable": "full",
+        "updates_per_round": 4
+      }
+    ],
+    "environment": {
+      "action_count": 5,
+      "context_dependent_ranking": true,
+      "context_dimension": 4,
+      "context_distribution": "normalized_rademacher",
+      "noise_std": 0.1,
+      "teacher_known_to_evaluator_only": true
+    },
+    "model": {
+      "architecture": "one_hidden_layer_tanh",
+      "dtype": "float64",
+      "hidden_width": 4,
+      "student_matches_teacher": true
+    },
+    "output_root": "results/raw/nonlinear_drift",
+    "primary_outputs": [
+      "E_T",
+      "F_T",
+      "psi_t",
+      "chi_t",
+      "u_t",
+      "Lambda_alg_T",
+      "V_alg_T",
+      "Gamma_dynamic_T",
+      "cumulative_pseudo_regret",
+      "theorem_rhs_posthoc",
+      "optimism_violation_rate",
+      "runtime_seconds",
+      "peak_host_memory_bytes"
+    ],
+    "provenance": {
+      "packages": [
+        "numpy",
+        "scipy",
+        "psutil"
+      ]
+    },
+    "ridge": 1.0,
+    "rounds": 250,
+    "task": "realizable_smooth_nonlinear_contextual_bandit"
+  },
+  "description": "Executed small tanh-network policies with exact post-hoc audits of linearization, centering, feature drift, and dynamic width complexity.",
+  "name": "nonlinear_drift",
+  "profiles": {
+    "full": {
+      "rounds": 100,
+      "seed_sets": {
+        "evaluation": [
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127,
+          128,
+          129
+        ],
+        "tuning": [
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      }
+    },
+    "smoke": {
+      "drift_ladder": [
+        {
+          "exact_head_ridge": true,
+          "name": "frozen_head",
+          "step_cap": 0.0,
+          "trainable": "head"
+        },
+        {
+          "learning_rate": 0.05,
+          "name": "aggressive",
+          "step_cap": 0.05,
+          "trainable": "full"
+        }
+      ],
+      "rounds": 8,
+      "seed_sets": {
+        "evaluation": [
+          110
+        ],
+        "tuning": [
+          10
+        ]
+      }
+    }
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,71 @@
+{
+  "artifact": "results/derived/systems_scaling_results.csv",
+  "artifact_sha256": "e22ec6766b2f935f6990d0d9609b3eb158de3198e0b84a611f34b894bb446075",
+  "inputs": [
+    {
+      "path": "results/derived/systems_scaling_full.json",
+      "sha256": "e21940f6be730b843b9180fcbe29e70957fa4d6f40309d071db40984eabf9ed3"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-140/manifest.jsonl",
+      "sha256": "5e67fbc410863cb514c541afdc5330ef7343f9aa3c40dd5b629216a56fba99e1"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-140/raw.jsonl.zst",
+      "sha256": "21fbd48a55cfeea391c39cc4ecc77f9bfac2ab06d173e004f77bc3e8d529ad5f"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-140/summary.jsonl",
+      "sha256": "93b85d272557913d1bac756d0e839b0d7f26cd044882dc7a7fa3aa65c3d35f90"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-141/manifest.jsonl",
+      "sha256": "23905b0c450b26fad5cf9226f15e3532f3fba79b1b51ce5b0084ee3df8f3140c"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-141/raw.jsonl.zst",
+      "sha256": "743dad271c0c38393f5661973d63123cd1a69d15cd13843752128d8c32dbd24e"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-141/summary.jsonl",
+      "sha256": "50b3170810cc6a56d6be4a6699d0e9280f5f0d9ffd24425bfb7233a97d353c89"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-142/manifest.jsonl",
+      "sha256": "fa0417900bf6ce668d2f2b328d06c492257d538110fce299aec3d591eea44011"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-142/raw.jsonl.zst",
+      "sha256": "a581859e4794253bb25a4bed0f3d3b8a8f849836ff05b92e7b8ed7dbb89c783d"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-142/summary.jsonl",
+      "sha256": "fdb287bcc1058b72161cd9a768cfa5c0eadba3e433fc31fa5f24611493f3608a"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-143/manifest.jsonl",
+      "sha256": "719c8eb9fdc4bb55821d933fd1c989b375742245905f5a98774b4f1bc19715c4"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-143/raw.jsonl.zst",
+      "sha256": "7135df60139b5bcc15b3f3d998aa9b09cf8f4cda7cf142e43b76782fde3d1339"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-143/summary.jsonl",
+      "sha256": "45ecab694f8a77b23e2748b7333780d4bc3c761692fb114ddf66ca40dc9524b2"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-144/manifest.jsonl",
+      "sha256": "6a3f518c0cdcf2279697c303d55466077723f230872d9d994fb98368ee55e309"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-144/raw.jsonl.zst",
+      "sha256": "66a8a7f662c2872ac6eee2531dae9a70ad764fe19aa114c556343ea4d68d7912"
+    },
+    {
+      "path": "results/raw/systems_scaling/systems_scaling/full/evaluation/seed-144/summary.jsonl",
+      "sha256": "821d917ebf4d433bad64d959e7679ae4515abe3a20058c945f73c4bbb66a7d76"
+    }
+  ],
+  "schema_version": 1
+}

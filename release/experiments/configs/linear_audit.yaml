@@ -1,0 +1,151 @@
+{
+  "base": {
+    "cg": {
+      "initialization": "zero",
+      "max_iterations": 106,
+      "operator_fixed_within_solve": true,
+      "tolerance": 0.05
+    },
+    "comparisons": [
+      "fixed_reference",
+      "validation_tuned"
+    ],
+    "confidence": {
+      "bonus_scale": 1.0,
+      "delta": 0.05,
+      "schedule": "deterministic_linear_ucb_dimension_upper_bound"
+    },
+    "curvature": {
+      "lanczos_rank": 16,
+      "refresh_period": 20,
+      "subsample_size": 64,
+      "window_size": 64
+    },
+    "environment": {
+      "action_count": 5,
+      "context_dimension": 8,
+      "context_distribution": "normalized_rademacher",
+      "feature_dimension": 53,
+      "feature_map": "[x, one_hot(a), kron(x, one_hot(a))]",
+      "known_theta_star": true,
+      "noise_std": 0.25
+    },
+    "horizons": [
+      250,
+      500,
+      1000,
+      2000
+    ],
+    "methods": [
+      "dense_full",
+      "cg_full",
+      "diagonal",
+      "unrescaled_window",
+      "rescaled_subsample",
+      "lanczos_ritz",
+      "stale_refresh"
+    ],
+    "output_root": "results/raw/linear_audit",
+    "primary_outputs": [
+      "cumulative_pseudo_regret",
+      "theorem_rhs",
+      "Lambda_alg_T",
+      "S_T",
+      "optimism_violation_rate",
+      "cg_iterations",
+      "runtime_seconds"
+    ],
+    "provenance": {
+      "packages": [
+        "numpy",
+        "scipy",
+        "psutil"
+      ]
+    },
+    "ridge": 1.0,
+    "rounds": 1000,
+    "task": "bounded_context_dependent_linear_bandit",
+    "tuning_grid": {
+      "bonus_scale": [
+        1.0,
+        1.25
+      ],
+      "ridge": [
+        0.5,
+        1.0,
+        2.0
+      ]
+    },
+    "tuning_rounds": 250
+  },
+  "description": "Executed-policy, fully certified bounded linear audit of every term in the CC-UCB regret reduction.",
+  "name": "linear_audit",
+  "profiles": {
+    "full": {
+      "seed_sets": {
+        "evaluation": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119
+        ],
+        "tuning": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    },
+    "smoke": {
+      "curvature": {
+        "lanczos_rank": 4,
+        "refresh_period": 3,
+        "subsample_size": 4,
+        "window_size": 4
+      },
+      "horizons": [
+        6,
+        12
+      ],
+      "methods": [
+        "dense_full",
+        "cg_full",
+        "diagonal",
+        "unrescaled_window"
+      ],
+      "rounds": 12,
+      "seed_sets": {
+        "evaluation": [
+          100
+        ],
+        "tuning": [
+          0
+        ]
+      }
+    }
+  },
+  "schema_version": 1
+}

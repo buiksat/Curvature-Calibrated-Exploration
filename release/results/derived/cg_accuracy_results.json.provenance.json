@@ -1,0 +1,131 @@
+{
+  "artifact": "results/derived/cg_accuracy_results.json",
+  "artifact_sha256": "a58607ed994bbbc2795b225eb4355bef90c97bc26a71a509b37b2c02e67db665",
+  "inputs": [
+    {
+      "path": "results/derived/cg_accuracy_full.json",
+      "sha256": "a58607ed994bbbc2795b225eb4355bef90c97bc26a71a509b37b2c02e67db665"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-130/manifest.jsonl",
+      "sha256": "44a2330d41c5c975a69d39873347d9ad3b916d474f631d864a7b050200a0a1ad"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-130/raw.jsonl.zst",
+      "sha256": "f24e3c0721ad836bb68a90679177e53c3dd91b48e4db96aeacb82ca7f5b109dc"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-130/summary.jsonl",
+      "sha256": "5f79cacadddbf3abc370608059be8c5c342f73d8c8eea68eb39daa51f903a40c"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-131/manifest.jsonl",
+      "sha256": "ded3f5f40addedfd8adfba54b500afbe674f24323c4b952158719758fce46e1c"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-131/raw.jsonl.zst",
+      "sha256": "71fe0b3b0184c2e2ac19944f3f96ff0c5db45cea691a87943bc130171272a001"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-131/summary.jsonl",
+      "sha256": "229d90fb9665dad03ed0fb604f89ab071adff4e35d6cd65b5926ca820a8b9ec5"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-132/manifest.jsonl",
+      "sha256": "4673eaa88e47ff9b621a21221dbd9fbb3f9623ac8a10ec58dd8d7968462881d5"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-132/raw.jsonl.zst",
+      "sha256": "4382ed7e96d06ae7c681f904459e4a359ca3d4de2abe1fdf7ef0ae742cccae1d"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-132/summary.jsonl",
+      "sha256": "c00a3bb84ac0e2435122b93b0fac0a5e32b9b135d84fb8643df14f2082287d90"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-133/manifest.jsonl",
+      "sha256": "a491fa1ce929e14b2a09867e7306d7d43efe4b59fc83d30143b094fa543e8d2a"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-133/raw.jsonl.zst",
+      "sha256": "c6118f88be53f53f936c7cd03527319d62be208f5ec266013ce61b1e73732664"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-133/summary.jsonl",
+      "sha256": "5e15a350c210b3149e519d10d48a3356810795d012dc37e2cc87c0e5d838b20c"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-134/manifest.jsonl",
+      "sha256": "d21b9df7a92102bf22e29ddd508ba6fcb318704898ea9faff679e18b251b4ce4"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-134/raw.jsonl.zst",
+      "sha256": "97fdf0d0641e66ca9234254552d02d478a02e5d85a2623082ba3b4d3e0198023"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-134/summary.jsonl",
+      "sha256": "8bb8b272c34ccb332c5a4a2ead503e87aa2bfcdb73bfc0a9891048cc49dacdb9"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-135/manifest.jsonl",
+      "sha256": "49571765ce58eba49d1b78d0c18ede261288b4f6dbbd5fb579453769afb19afd"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-135/raw.jsonl.zst",
+      "sha256": "e3e1c8f146f3eb90a4eeb984c365a3bc26987bd0abe1d980fabb2c0a3539aa70"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-135/summary.jsonl",
+      "sha256": "b3a8874d1b429c16b44c4c507dcb90910b22f5e6b231653dd396ba62c5da0718"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-136/manifest.jsonl",
+      "sha256": "0f9fb63cd2c185055f4bfd0af566304948983852b178056524c6814fd898e594"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-136/raw.jsonl.zst",
+      "sha256": "d4a35b8627cdfc82dba2ab30972b9a872a83f1383b5ec4f7176fc2d7cab67c9e"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-136/summary.jsonl",
+      "sha256": "fe0df035d74f6e799f5303aed6612717e673c9d3c7879d62401f71ee1f35c012"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-137/manifest.jsonl",
+      "sha256": "10d064f9572984df6cf12ab54fc1dc1d8c8c4e84eb51eea9e74e44fe97cb7b7f"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-137/raw.jsonl.zst",
+      "sha256": "97357e45647e952b02aa62654821b6f9fc634b2373f12c192e6d603531589dc7"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-137/summary.jsonl",
+      "sha256": "f4d6df1b08c039232f89377a752e22d1558fcb222b99dfa0130bc7265c039d1d"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-138/manifest.jsonl",
+      "sha256": "227f77b7286bfc2d690105a99320d40783efb87dc8701df8758c3ed6c1f0bc9c"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-138/raw.jsonl.zst",
+      "sha256": "12f6524327ebbb953bed5ae1a80ac0bbf10dbde28b5c1c94857ecc89eb6f5d42"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-138/summary.jsonl",
+      "sha256": "4fb491850e11580921dc9d57289a47dbccb6484aed487ab18f2447f952b31cda"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-139/manifest.jsonl",
+      "sha256": "3f264247e0114b202823071d03a538eb314681b003b6327e978d9915f26481b1"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-139/raw.jsonl.zst",
+      "sha256": "fa089342d05080355c20997410544984b8f27b1342ba0af53bdc9cc6c497975c"
+    },
+    {
+      "path": "results/raw/cg_accuracy/cg_accuracy/full/evaluation/seed-139/summary.jsonl",
+      "sha256": "66908d2820556029e935672be7f3f8d515465bcc67d5480f2d2dddb885df425c"
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,160 @@
+{
+  "cell_count": 8,
+  "cell_selection": "none_preregistered_all_cells",
+  "cells": [
+    {
+      "action_gap": 0.15,
+      "active_spectrum_condition_number": 3.0,
+      "cell_id": "ffd_000",
+      "damping": 2.0,
+      "effective_rank": 8,
+      "nuisance_strength": 1.2,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 0.0
+    },
+    {
+      "action_gap": 0.5,
+      "active_spectrum_condition_number": 3.0,
+      "cell_id": "ffd_001",
+      "damping": 0.5,
+      "effective_rank": 3,
+      "nuisance_strength": 1.2,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 0.0
+    },
+    {
+      "action_gap": 0.15,
+      "active_spectrum_condition_number": 3.0,
+      "cell_id": "ffd_010",
+      "damping": 0.5,
+      "effective_rank": 8,
+      "nuisance_strength": 0.4,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 60.0
+    },
+    {
+      "action_gap": 0.5,
+      "active_spectrum_condition_number": 3.0,
+      "cell_id": "ffd_011",
+      "damping": 2.0,
+      "effective_rank": 3,
+      "nuisance_strength": 0.4,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 60.0
+    },
+    {
+      "action_gap": 0.15,
+      "active_spectrum_condition_number": 50.0,
+      "cell_id": "ffd_100",
+      "damping": 2.0,
+      "effective_rank": 3,
+      "nuisance_strength": 0.4,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 0.0
+    },
+    {
+      "action_gap": 0.5,
+      "active_spectrum_condition_number": 50.0,
+      "cell_id": "ffd_101",
+      "damping": 0.5,
+      "effective_rank": 8,
+      "nuisance_strength": 0.4,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 0.0
+    },
+    {
+      "action_gap": 0.15,
+      "active_spectrum_condition_number": 50.0,
+      "cell_id": "ffd_110",
+      "damping": 0.5,
+      "effective_rank": 3,
+      "nuisance_strength": 1.2,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 60.0
+    },
+    {
+      "action_gap": 0.5,
+      "active_spectrum_condition_number": 50.0,
+      "cell_id": "ffd_111",
+      "damping": 2.0,
+      "effective_rank": 8,
+      "nuisance_strength": 1.2,
+      "representation_drift": 0.0,
+      "representation_drift_status": "not_run_fixed_zero",
+      "rotation_degrees": 60.0
+    }
+  ],
+  "design": {
+    "active_spectrum_condition_definition": "largest_over_smallest_nonzero_population_covariance_eigenvalue",
+    "aliased_interactions": true,
+    "base_factors": [
+      "active_spectrum_condition_number",
+      "rotation_degrees",
+      "action_gap"
+    ],
+    "estimand": "descriptive_main_effect_mechanism_map",
+    "evaluation_cell_search": false,
+    "full_population_covariance_condition": "infinite_when_effective_rank_is_below_dimension",
+    "full_win_selection": false,
+    "generators": {
+      "damping": "rotation_x_gap",
+      "effective_rank": "active_condition_x_gap",
+      "nuisance_strength": "active_condition_x_rotation"
+    },
+    "kind": "balanced_eight_cell_two_level_fractional_factorial"
+  },
+  "evaluation_seed_count": 30,
+  "evaluation_seeds": [
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228,
+    229
+  ],
+  "methods": [
+    "exact_full",
+    "full_cg",
+    "diagonal",
+    "block_diagonal",
+    "low_rank_lanczos",
+    "unrescaled_window",
+    "stale_refresh"
+  ],
+  "phase": "evaluation",
+  "representation_drift": "not_run_fixed_zero",
+  "schema_version": 1,
+  "sha256": "a7a2c6d9b0f625aacd444a8b085d8f84b27687fef557c68602840966ed70eeb5",
+  "tuning_enabled": false
+}

@@ -1,0 +1,73 @@
+{
+  "artifact": "results/derived/curvature_phase_diagram_report.json",
+  "artifact_bytes": 1844602,
+  "artifact_sha256": "287e7bf438d1e724bae60f40b5be251675a53414c64faebba1da06b9d539d94f",
+  "binding": "SHA-256 binds config, raw manifest, preregistered grid, summaries, aggregates, paired comparisons, and round records.",
+  "input_count": 9,
+  "input_set_sha256": "d895e30883069feac5aa086b8a3ca08852d3342567c2dc4c2addfe10d63c5cac",
+  "inputs": [
+    {
+      "path": "experiments/configs/curvature_phase_diagram.yaml",
+      "sha256": "714f97569f43982d374246178aeb0402490d26ca7e23228ce27febc9709f5ae9"
+    },
+    {
+      "availability": "indexed_not_released",
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/aggregates.jsonl",
+      "sha256": "843bf1edf447186541c1005557460595615673814e1d0891a93613e378abcc1f"
+    },
+    {
+      "availability": "indexed_not_released",
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/common_trajectory_rounds.jsonl",
+      "sha256": "91d5a000931be8837106d1203f4d02912666ff0346789ca7a9d4931dd0452ec4"
+    },
+    {
+      "availability": "indexed_not_released",
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/common_trajectory_summaries.jsonl",
+      "sha256": "8b0603cdc59f6c972b5decf7f2032db2c7a1c24c1ffc4cb3e7f5b8db798cfb43"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/manifest.json",
+      "sha256": "67fb6faf5675efc86fe52df042fccd7feb5d3fc6291f1eb09ed86bed1df0d0c8"
+    },
+    {
+      "availability": "indexed_not_released",
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/online_rounds.jsonl",
+      "sha256": "98a3d2f4449e91441908f65cf48e6ad31c992ad8ad3fd8ca4628fa5c8a253093"
+    },
+    {
+      "availability": "indexed_not_released",
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/online_summaries.jsonl",
+      "sha256": "7bcfffa68c2baa7ad64321d3c78ce4ad6a3f3d43be0365787b022f32ef85abc0"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/paired_full_comparisons.jsonl.zst",
+      "sha256": "8a5998d95ef0874ccb1040d1d77b432ddcf1ec6582e2ee396a68981bbdcdabb6"
+    },
+    {
+      "path": "results/raw/curvature_phase_diagram/full/evaluation/preregistered_grid.json",
+      "sha256": "19d715d110a42110596f658f1fcd3c98c6f8251f0b00eb7955ffff9741b8319a"
+    }
+  ],
+  "round_files_included": true,
+  "schema_version": 1
+}

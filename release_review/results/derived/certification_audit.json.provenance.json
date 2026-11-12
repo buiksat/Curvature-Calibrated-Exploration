@@ -1,0 +1,82 @@
+{
+  "artifact": "results/derived/certification_audit.json",
+  "artifact_sha256": "08535104085f37fce41c604b3084f7cf7cca22eb5ef37db5da16accacffe7bb0",
+  "category_vocabulary": [
+    "ex_ante_theorem_certified",
+    "posthoc_theorem_event_verified",
+    "cg_solver_certified",
+    "uncertified_diagnostic"
+  ],
+  "evaluation_run_count": 280,
+  "event": "linear_policy_certification_audit_provenance",
+  "generator": {
+    "path": "experiments/make_certification_audit.py",
+    "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8"
+  },
+  "input_groups": {
+    "aggregate": {
+      "path": "results/derived/linear_audit_full.json",
+      "raw_input_set_sha256": "21a056d7d9c57706cb1594974f731bfcdb98d56d370827222218288f2f2f5774",
+      "sha256": "52e4e719f5993c06a8754a264ce551b436fef672288c1319c0bba079e2ba7b6d"
+    },
+    "config": {
+      "path": "experiments/configs/linear_audit.yaml",
+      "sha256": "7835965e035f37a1b9b26f61ba6c156f65c4fea3a701a0e78d613e13a9c0607a"
+    },
+    "evaluation_manifests": {
+      "availability": "indexed_source_inputs",
+      "file_count": 280,
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "sha256": "c9eabbe4a0deb8275cdeb0e37370d5617f80570749a9c87f3abe1e077c8bd49a"
+    },
+    "evaluation_summaries": {
+      "availability": "indexed_source_inputs",
+      "file_count": 280,
+      "index": {
+        "path": "manifests/full-raw-index.json",
+        "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+      },
+      "sha256": "9be86f94bbbd30a84176e78113378d6be4285b6d406d819cadf9fc43984d9c5b"
+    },
+    "selection": {
+      "path": "results/raw/linear_audit/full/selection.json",
+      "sha256": "c0b3df6ca3f1d4266535fafd1321fdee100ed2d8bab84b1df6ae9fa0ce1cd25a"
+    }
+  },
+  "input_set_sha256": "37e5f01722d05fb1077b732fc2d733c4a7070a844483a09aa7bbbafc81ef6188",
+  "inputs": [
+    {
+      "path": "experiments/configs/linear_audit.yaml",
+      "sha256": "7835965e035f37a1b9b26f61ba6c156f65c4fea3a701a0e78d613e13a9c0607a"
+    },
+    {
+      "path": "experiments/make_certification_audit.py",
+      "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8"
+    },
+    {
+      "path": "manifests/full-raw-index.json",
+      "sha256": "5aaa804474a73afb3f0c812b1b7d7ac0f77eb40f113c6d1113c6bafa8286b380"
+    },
+    {
+      "path": "results/derived/linear_audit_full.json",
+      "sha256": "52e4e719f5993c06a8754a264ce551b436fef672288c1319c0bba079e2ba7b6d"
+    },
+    {
+      "path": "results/raw/linear_audit/full/evaluation/fixed_reference/cg_full/seed-100/manifest.jsonl",
+      "sha256": "96bbd08f6fcbb5e03da95b410197ce6d0e8fd0c15ee46057837f17cf0b4812d0"
+    },
+    {
+      "path": "results/raw/linear_audit/full/evaluation/fixed_reference/cg_full/seed-100/summary.jsonl",
+      "sha256": "bb99522c0d8d866976325c286deb3d96f2e54c3c7c2bcb116d3f812c3fae49a9"
+    },
+    {
+      "path": "results/raw/linear_audit/full/selection.json",
+      "sha256": "c0b3df6ca3f1d4266535fafd1321fdee100ed2d8bab84b1df6ae9fa0ce1cd25a"
+    }
+  ],
+  "primary_policy_count": 14,
+  "schema_version": 1
+}

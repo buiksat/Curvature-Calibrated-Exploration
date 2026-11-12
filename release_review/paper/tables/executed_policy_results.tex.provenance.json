@@ -1,0 +1,43 @@
+{
+  "artifact": "paper/tables/executed_policy_results.tex",
+  "artifact_sha256": "a64036966652bb40ac88aa007d9d42612be53c3d7d2a83e8c3d34386822eb8b1",
+  "generation_parameters": {
+    "balanced_configuration": "validation_tuned_on_disjoint_tuning_seeds",
+    "balanced_methods": [
+      "cc_ucb_full_ggn_cg",
+      "diagonal_full_network_ucb",
+      "linucb",
+      "linear_ts",
+      "neural_linear",
+      "neural_ucb",
+      "neural_ts",
+      "frozen_last_layer_ucb",
+      "greedy_full_network",
+      "gaussian_ucb1",
+      "gaussian_context_free_ts"
+    ],
+    "regret_interval": "mean_and_two_sided_95_percent_student_t_interval",
+    "runtime_definition": "seconds_per_complete_run",
+    "tanh_configuration": "fixed_schedule_evaluation"
+  },
+  "input_set_sha256": "6c54e04e549121bf79dccdeaa153b94ed2b1bb49f67470c2f33ecfc743caf3a5",
+  "inputs": [
+    {
+      "path": "results/derived/balanced_benchmark_full.json",
+      "sha256": "7daf7c26a33b095bd6c2635e3f97f726e15339b2c71345460477fd39ed75f2bf"
+    },
+    {
+      "path": "results/derived/balanced_benchmark_full.json.provenance.json",
+      "sha256": "22037d4a9c4581554beedd0e0fac4c49c0deefc9e5252d9ccfab577d74c7424b"
+    },
+    {
+      "path": "results/derived/certified_tanh_report.json",
+      "sha256": "fcb2da073542467f8e1e6cef7db314b320c23a50a4c58edf5734cdf5e7b236b3"
+    },
+    {
+      "path": "results/derived/certified_tanh_report.json.provenance.json",
+      "sha256": "56d64fae352720542ea924c01a2f035fad2d68ed067b4f8bcf170255dbb63b12"
+    }
+  ],
+  "schema_version": 1
+}

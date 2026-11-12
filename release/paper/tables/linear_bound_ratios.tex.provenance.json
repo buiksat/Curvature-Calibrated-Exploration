@@ -1,0 +1,12 @@
+{
+  "artifact": "paper/tables/linear_bound_ratios.tex",
+  "artifact_sha256": "ad331c7b05e3fa9c233f6c60c10161ad4f258b160e01ecb573bf1b9826ad2fa6",
+  "input_set_sha256": "11952977ef9b795a7845cfa5d1fbe3c3e8c1bc4f6cff5bae99eba88aa2b6af42",
+  "inputs": [
+    {
+      "path": "results/derived/linear_bound_metrics.json",
+      "sha256": "8717bf30894db86cb41589509dfc7c789b43e7161363b814321a4af24ceae730"
+    }
+  ],
+  "schema_version": 1
+}

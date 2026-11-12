@@ -1,0 +1,285 @@
+{
+  "base": {
+    "design": {
+      "active_spectrum_condition_definition": "largest_over_smallest_nonzero_population_covariance_eigenvalue",
+      "aliased_interactions": true,
+      "base_factors": [
+        "active_spectrum_condition_number",
+        "rotation_degrees",
+        "action_gap"
+      ],
+      "estimand": "descriptive_main_effect_mechanism_map",
+      "evaluation_cell_search": false,
+      "full_population_covariance_condition": "infinite_when_effective_rank_is_below_dimension",
+      "full_win_selection": false,
+      "generators": {
+        "damping": "rotation_x_gap",
+        "effective_rank": "active_condition_x_gap",
+        "nuisance_strength": "active_condition_x_rotation"
+      },
+      "kind": "balanced_eight_cell_two_level_fractional_factorial"
+    },
+    "environment": {
+      "action_count": 4,
+      "context_distribution": "normalized_rotated_rademacher",
+      "dimension": 10,
+      "kind": "bounded_linear_common_context_action_offsets",
+      "noise_std": 0.2,
+      "optimal_action_structure": "arm_0_fixed_by_design",
+      "representation_drift": {
+        "reason": "fixed bounded linear representation",
+        "status": "not_run_fixed_zero",
+        "supported": false
+      },
+      "rounds": 30,
+      "scope": "curvature_mechanism_isolation_not_general_contextual_benchmark",
+      "true_parameter": "unit_first_coordinate"
+    },
+    "method_options": {
+      "block_size": 2,
+      "cg": {
+        "max_iterations": 20,
+        "relative_residual": 1e-10
+      },
+      "lanczos_rank": 3,
+      "stale_period": 5,
+      "window_size": 8
+    },
+    "methods": [
+      "exact_full",
+      "full_cg",
+      "diagonal",
+      "block_diagonal",
+      "low_rank_lanczos",
+      "unrescaled_window",
+      "stale_refresh"
+    ],
+    "output": {
+      "aggregation_ready_jsonl": true,
+      "expected_full_runtime_seconds": 180,
+      "paired_difference": "method_minus_full_cumulative_pseudo_regret",
+      "paired_interval": "two_sided_95_percent_student_t",
+      "paired_reference": "exact_full",
+      "write_round_records": false
+    },
+    "policy": {
+      "bonus_scale": 1.0,
+      "delta": 0.05,
+      "full_action_enumeration": true,
+      "hyperparameter_tuning": "none",
+      "tie_breaking": "lowest_index"
+    },
+    "preregistered_cells": [
+      {
+        "action_gap": 0.15,
+        "active_spectrum_condition_number": 3.0,
+        "cell_id": "ffd_000",
+        "damping": 2.0,
+        "effective_rank": 8,
+        "nuisance_strength": 1.2,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 0.0
+      },
+      {
+        "action_gap": 0.5,
+        "active_spectrum_condition_number": 3.0,
+        "cell_id": "ffd_001",
+        "damping": 0.5,
+        "effective_rank": 3,
+        "nuisance_strength": 1.2,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 0.0
+      },
+      {
+        "action_gap": 0.15,
+        "active_spectrum_condition_number": 3.0,
+        "cell_id": "ffd_010",
+        "damping": 0.5,
+        "effective_rank": 8,
+        "nuisance_strength": 0.4,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 60.0
+      },
+      {
+        "action_gap": 0.5,
+        "active_spectrum_condition_number": 3.0,
+        "cell_id": "ffd_011",
+        "damping": 2.0,
+        "effective_rank": 3,
+        "nuisance_strength": 0.4,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 60.0
+      },
+      {
+        "action_gap": 0.15,
+        "active_spectrum_condition_number": 50.0,
+        "cell_id": "ffd_100",
+        "damping": 2.0,
+        "effective_rank": 3,
+        "nuisance_strength": 0.4,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 0.0
+      },
+      {
+        "action_gap": 0.5,
+        "active_spectrum_condition_number": 50.0,
+        "cell_id": "ffd_101",
+        "damping": 0.5,
+        "effective_rank": 8,
+        "nuisance_strength": 0.4,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 0.0
+      },
+      {
+        "action_gap": 0.15,
+        "active_spectrum_condition_number": 50.0,
+        "cell_id": "ffd_110",
+        "damping": 0.5,
+        "effective_rank": 3,
+        "nuisance_strength": 1.2,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 60.0
+      },
+      {
+        "action_gap": 0.5,
+        "active_spectrum_condition_number": 50.0,
+        "cell_id": "ffd_111",
+        "damping": 2.0,
+        "effective_rank": 8,
+        "nuisance_strength": 1.2,
+        "representation_drift": 0.0,
+        "representation_drift_status": "not_run_fixed_zero",
+        "rotation_degrees": 60.0
+      }
+    ],
+    "provenance": {
+      "packages": [
+        "numpy",
+        "scipy"
+      ],
+      "posthoc_cell_filtering": false,
+      "raw_cell_and_seed_retention": true
+    },
+    "rounds": 30,
+    "seed_sets": {
+      "evaluation": [
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229
+      ],
+      "tuning": [
+        100
+      ]
+    },
+    "study": {
+      "cell_selection": "none_preregistered_all_cells",
+      "evaluation_seeds": [
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229
+      ],
+      "phase": "evaluation",
+      "tuning_enabled": false,
+      "tuning_seed_set_status": "schema_required_but_not_run"
+    }
+  },
+  "description": "Preregistered bounded-linear fixed-gap mechanism map; arm 0 is deliberately optimal in every context.",
+  "name": "curvature_mechanism_phase_diagram",
+  "profiles": {
+    "full": {},
+    "smoke": {
+      "environment": {
+        "rounds": 2
+      },
+      "preregistered_cells": [
+        {
+          "action_gap": 0.15,
+          "active_spectrum_condition_number": 3.0,
+          "cell_id": "ffd_000",
+          "damping": 2.0,
+          "effective_rank": 8,
+          "nuisance_strength": 1.2,
+          "representation_drift": 0.0,
+          "representation_drift_status": "not_run_fixed_zero",
+          "rotation_degrees": 0.0
+        }
+      ],
+      "rounds": 2,
+      "seed_sets": {
+        "evaluation": [
+          200
+        ],
+        "tuning": [
+          100
+        ]
+      },
+      "study": {
+        "evaluation_seeds": [
+          200
+        ]
+      }
+    }
+  },
+  "schema_version": 1
+}

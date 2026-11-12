@@ -1,0 +1,346 @@
+{
+  "anonymous_source_tree_sha256": "df93d7794dc36706bccf861a1ade9f9ae172e2423eccaece031c727424e6adc3",
+  "files": [
+    {
+      "path": "Makefile",
+      "sha256": "3360dcd491e7b9c0c6b8bc14766ecfd0080b04151083c1fe10ea770e7029423e",
+      "size_bytes": 568
+    },
+    {
+      "path": "experiments/README.md",
+      "sha256": "64f65a75cd82068e8ca0470b44cd9f79e9d9e9c012b1bcf747521275ca91a9ad",
+      "size_bytes": 13082
+    },
+    {
+      "path": "experiments/__init__.py",
+      "sha256": "c539b544fa3ed7b353fe2c70ccfe6139aa8d3bc35b5eca782758dd804dcdeeaf",
+      "size_bytes": 687
+    },
+    {
+      "path": "experiments/aggregate_cg_policy.py",
+      "sha256": "54860369d9144c8bfb0f5751680909a1128a44b456972bb70d933ef120001abd",
+      "size_bytes": 20890
+    },
+    {
+      "path": "experiments/aggregate_results.py",
+      "sha256": "b0126ae30f636bef027c4667c80517989c5e4e35b18c6b3034aebca9d08b4384",
+      "size_bytes": 90781
+    },
+    {
+      "path": "experiments/config.py",
+      "sha256": "453576f24eecb2a3cb33b9ba1ae3f9d13675f2ea918ffc54fea6b63e54c541c8",
+      "size_bytes": 7689
+    },
+    {
+      "path": "experiments/configs/balanced_benchmark.yaml",
+      "sha256": "4903cbe4ea589c7b760db936521d1442fad6ae3c116d31d4516b95bb772f456a",
+      "size_bytes": 4356
+    },
+    {
+      "path": "experiments/configs/certified_tanh.yaml",
+      "sha256": "dcdc4915863394fa5780381cc93e2d792b8d05883d4f7198566de167998c469a",
+      "size_bytes": 6302
+    },
+    {
+      "path": "experiments/configs/cg_accuracy.yaml",
+      "sha256": "fa167668673896bc7b593704bb7de038c689197bf60c586b780b3deeb26dfac0",
+      "size_bytes": 2603
+    },
+    {
+      "path": "experiments/configs/covertype_rerun.yaml",
+      "sha256": "1e504b2193c4c392345d269125dddd6dea565a05cb62cf653bdabcf2a5eb1c57",
+      "size_bytes": 3230
+    },
+    {
+      "path": "experiments/configs/curvature_phase_diagram.yaml",
+      "sha256": "714f97569f43982d374246178aeb0402490d26ca7e23228ce27febc9709f5ae9",
+      "size_bytes": 7271
+    },
+    {
+      "path": "experiments/configs/linear_audit.yaml",
+      "sha256": "7835965e035f37a1b9b26f61ba6c156f65c4fea3a701a0e78d613e13a9c0607a",
+      "size_bytes": 2876
+    },
+    {
+      "path": "experiments/configs/nonlinear_drift.yaml",
+      "sha256": "3a287aa524699e69c3ad53b92149343af4d33854d380edf5c0cc6914533aac46",
+      "size_bytes": 3434
+    },
+    {
+      "path": "experiments/configs/operator_ablation.yaml",
+      "sha256": "5883a1eb653e8dd6f8f8e63abd49f2ee11e950ecc7ce21abe29401b9801d50a7",
+      "size_bytes": 4114
+    },
+    {
+      "path": "experiments/configs/systems_scaling.yaml",
+      "sha256": "18513120b4baed8f2ab9ab34630a0c8e273910d7758f1d45022b8fff6c865ef8",
+      "size_bytes": 2490
+    },
+    {
+      "path": "experiments/curvature_operators.py",
+      "sha256": "341b06a9b339cd0a4f90123e8df4764ff66d9a886a6d578bf0560e92535ba94d",
+      "size_bytes": 18287
+    },
+    {
+      "path": "experiments/curvature_phase_diagram.py",
+      "sha256": "4be2536b92afb2effe18f938391d83e1440a3b079a5e8a9799bb0f4616448854",
+      "size_bytes": 55795
+    },
+    {
+      "path": "experiments/linear_environment.py",
+      "sha256": "12056a15c493c7cbc6b4cf8f7e9d7fa05b5b34f6b57a5fe213e06cfe78fed5c3",
+      "size_bytes": 7181
+    },
+    {
+      "path": "experiments/logging_utils.py",
+      "sha256": "126e62bdd8f057eab9b9284d63468dc7453b1df41685197c208d4599f87406fc",
+      "size_bytes": 15147
+    },
+    {
+      "path": "experiments/make_balanced_benchmark_artifact.py",
+      "sha256": "6fe8ac50dd99208bc544f40edba5523a6c79fe64f9348e4b78261615bd62a753",
+      "size_bytes": 17592
+    },
+    {
+      "path": "experiments/make_certification_audit.py",
+      "sha256": "3fef5bff28f0337852487485acd12904d7a66ce54da41be98f6f5f4cd35d7ab8",
+      "size_bytes": 40495
+    },
+    {
+      "path": "experiments/make_certified_tanh_artifact.py",
+      "sha256": "8e2f1ab088bda42fb4526ac127f55dea1cfb587d670adc9167c70ccf753467ac",
+      "size_bytes": 8368
+    },
+    {
+      "path": "experiments/make_covertype_horizon_artifact.py",
+      "sha256": "04db1233bf0b81bf2b4bcd56d1e057e4e287d40b788d58aee39e2b64ced35666",
+      "size_bytes": 11945
+    },
+    {
+      "path": "experiments/make_curvature_phase_diagram_artifact.py",
+      "sha256": "a8d2e7edc915210c1e3aeb5c0835ff912f9bf3885e75d52b1292136188a6306c",
+      "size_bytes": 5183
+    },
+    {
+      "path": "experiments/make_linear_bound_artifact.py",
+      "sha256": "7b9194ca5ce116a34e175e97b07f67ea9483a532335f846e020ed3618c8e0d5a",
+      "size_bytes": 12420
+    },
+    {
+      "path": "experiments/make_paper_artifacts.py",
+      "sha256": "730080c4ecca5aa6da0faada3d07ab77cf28b889a0d1a6abc9742c4f8057efc3",
+      "size_bytes": 60594
+    },
+    {
+      "path": "experiments/make_primary_table.py",
+      "sha256": "e60442bd1105e1990ab8c3ac24dee8c1b7677d66e49fa86c2878e7ed076de1fe",
+      "size_bytes": 8184
+    },
+    {
+      "path": "experiments/make_revision_paper_artifacts.py",
+      "sha256": "1795cba57320ffd07260b41dffec004d553ef923cb9ef6904441777001803508",
+      "size_bytes": 22923
+    },
+    {
+      "path": "experiments/nonlinear_environment.py",
+      "sha256": "8deeb863f07ba3176da5a5b30e6584455d24b9f6cc9f42a0f1c7d490693daac9",
+      "size_bytes": 16495
+    },
+    {
+      "path": "experiments/nonlinear_operator_ablation.py",
+      "sha256": "6eb5c0321a649f9be2854f180eab67e9e0f58ec6fb51b849e6a318dc027833cf",
+      "size_bytes": 51742
+    },
+    {
+      "path": "experiments/path_certificates.py",
+      "sha256": "12e83c28da2c0d9721b59312ecb0a7b738957e8a83590a0670b4dec011b59e20",
+      "size_bytes": 26468
+    },
+    {
+      "path": "experiments/requirements.txt",
+      "sha256": "d5b5c1dcaae58a3199b6658145905772420993bb9b709135afaf0099d8925d35",
+      "size_bytes": 122
+    },
+    {
+      "path": "experiments/run_balanced_benchmark.py",
+      "sha256": "0a7aad5196ce24808a6f5d120577a810027954682482f490b40b236c7b6b0655",
+      "size_bytes": 43667
+    },
+    {
+      "path": "experiments/run_certified_tanh.py",
+      "sha256": "aba9b2782d65717d6fbbac93265dcf8b4632b9d67a8fca2792bdd55c54a472b4",
+      "size_bytes": 44429
+    },
+    {
+      "path": "experiments/run_cg_accuracy.py",
+      "sha256": "04c0db6dbf7a0ef8f615099a58b109d122b9406b87b47bada848b6bcfb557101",
+      "size_bytes": 64515
+    },
+    {
+      "path": "experiments/run_covertype.py",
+      "sha256": "b6946fbe334f2d17341bba235f4123577aa665bd7d2618fa4ba388f05d80f397",
+      "size_bytes": 104886
+    },
+    {
+      "path": "experiments/run_linear_audit.py",
+      "sha256": "c98655c17da3d4669d3a17843fca9e5dbe61f2ae7cd4db39417bab041220eacb",
+      "size_bytes": 54714
+    },
+    {
+      "path": "experiments/run_linear_study.py",
+      "sha256": "f1f9ef9b162bf37a68c5eb0fd4840606e843499d150eb5ee44e911d30fd855a8",
+      "size_bytes": 15301
+    },
+    {
+      "path": "experiments/run_nonlinear_audit.py",
+      "sha256": "6684af2f1fc2cef17337fe11fc3d7f166be06a4ca7bd263b37ff4192c35d4aa0",
+      "size_bytes": 58681
+    },
+    {
+      "path": "experiments/run_operator_ablation.py",
+      "sha256": "a9d6149c661d905992cec8799556101ba3f948edc40775bff46e5816b5990749",
+      "size_bytes": 57529
+    },
+    {
+      "path": "experiments/run_systems_scaling.py",
+      "sha256": "cbb410a50c400c277d900e41e54916b4bf97ad065404e365fab5750273b71f1d",
+      "size_bytes": 48881
+    },
+    {
+      "path": "experiments/tests/test_certification_audit.py",
+      "sha256": "62ed53d39b6957fea88108c13562a3d3a512dbc220473a25f080491073a1e05a",
+      "size_bytes": 13463
+    },
+    {
+      "path": "experiments/tests/test_cg_accuracy.py",
+      "sha256": "75060a6d56ca6027e749220cc4cea21b2bc5b6eae5d2cb71a0c1aa74be3e77db",
+      "size_bytes": 11077
+    },
+    {
+      "path": "experiments/tests/test_covertype.py",
+      "sha256": "4a989b4f892e6e3709a4353a6c8bf89e27550d5dc9ea8382835b5b339124895e",
+      "size_bytes": 23053
+    },
+    {
+      "path": "experiments/tests/test_curvature_phase_diagram.py",
+      "sha256": "c9594bffadc20e9b1404cd8cf72c2a8720399093f6ae800f48a00fa33a3204f0",
+      "size_bytes": 8442
+    },
+    {
+      "path": "experiments/tests/test_linear_audit.py",
+      "sha256": "e2ec55028faacd337e65f3a8e1fe9ab5f1514a0ae3af763ceb99e46bd2eddf0a",
+      "size_bytes": 7943
+    },
+    {
+      "path": "experiments/tests/test_operator_ablation.py",
+      "sha256": "62d7408b49046554ce15adb648af1aa29de03138d29b22303656c5d939ba528a",
+      "size_bytes": 8868
+    },
+    {
+      "path": "experiments/tests/test_results_reporting.py",
+      "sha256": "7098f14d1fb7648865c6c6caa4d94e055fc97331c1aa910cb780edbbeb424449",
+      "size_bytes": 28133
+    },
+    {
+      "path": "experiments/tests/test_systems_scaling.py",
+      "sha256": "a18de74f8589604aae1d86d5beb16d013a827293c1e85442f9d4c2e77835f195",
+      "size_bytes": 10815
+    },
+    {
+      "path": "experiments/theory_metrics.py",
+      "sha256": "5333e200e5f4c338603519a0a35ec5d1c5b43132d052a59ff054ce7c8fa42d74",
+      "size_bytes": 31373
+    },
+    {
+      "path": "paper/aistats2026.sty",
+      "sha256": "4c95c0442152f17d460c0402080efd56334c1265bc0d809460eb2e23ee17696d",
+      "size_bytes": 18252
+    },
+    {
+      "path": "paper/macros.tex",
+      "sha256": "487ab8a6b93f96b8f7409cffba835a4d0d5a4bb4105cc9729678b78e33d8316f",
+      "size_bytes": 2016
+    },
+    {
+      "path": "paper/main.tex",
+      "sha256": "ac8cc5f018a28ebdc39a321ec6993002383bef5fcbfd66d0b3cdcd3b9b657f7b",
+      "size_bytes": 183132
+    },
+    {
+      "path": "paper/references.bib",
+      "sha256": "3b37701697cf84c8626c786f29b9e89d02d1c00ba9d6ebecca8c50e738c42e68",
+      "size_bytes": 10142
+    },
+    {
+      "path": "paper/validate.py",
+      "sha256": "fc58035172187caaed4a0553d3abc0abffa47f65a5e2c8329ae3c9c257ba66c0",
+      "size_bytes": 5435
+    },
+    {
+      "path": "pytest.ini",
+      "sha256": "21fdbfd86eb3376a7d89ab1a1637b33212ade29654359883343601fb1fec2ee6",
+      "size_bytes": 160
+    },
+    {
+      "path": "tests/test_anonymous_supplement.py",
+      "sha256": "84f7c6873039f903981bab7353c39bdfe4d1ef5251c2506cffe2eda5bb688112",
+      "size_bytes": 23059
+    },
+    {
+      "path": "tests/test_balanced_benchmark.py",
+      "sha256": "523e6e6cbae029244df54c097452ab7fd91ac3111bce3a5945ba0585cc5914be",
+      "size_bytes": 10839
+    },
+    {
+      "path": "tests/test_certified_tanh.py",
+      "sha256": "a69f6dff527cf9d71c580a8a2c200cf98199ea5aae79a755db536f0409718f57",
+      "size_bytes": 7707
+    },
+    {
+      "path": "tests/test_covertype_horizon_artifact.py",
+      "sha256": "a4aae66d9a54bf3dc9a8433692e4d0e054f6c68028e99329beda3a510be1340c",
+      "size_bytes": 557
+    },
+    {
+      "path": "tests/test_curvature_operators.py",
+      "sha256": "89416f6fc9e719f8260ab5bf4eaaffe98e1971f30d1c8688a91e7bed8f0e1711",
+      "size_bytes": 2325
+    },
+    {
+      "path": "tests/test_experiment_pipeline.py",
+      "sha256": "4ee8cf0ad25eb21b6349e68c17c0c95252d81029c85ab49dfc4278209beb8d0f",
+      "size_bytes": 5029
+    },
+    {
+      "path": "tests/test_linear_bound_artifact.py",
+      "sha256": "dfc6a7e810e23620aa494e1526209db36eb1f887b2592930745408df332cbe1a",
+      "size_bytes": 2581
+    },
+    {
+      "path": "tests/test_nonlinear_audit.py",
+      "sha256": "93d9288ed377cdd8cd4e2e1d6abfb26dcf1ef8771acce5477c6253a6c5055df8",
+      "size_bytes": 6233
+    },
+    {
+      "path": "tests/test_path_certificates.py",
+      "sha256": "cd76b3a8253e36e02ae2c2b3d4ea43fc55d48d00b3d5aa1de9e5141eed7b3c6f",
+      "size_bytes": 20050
+    },
+    {
+      "path": "tests/test_revision_paper_artifacts.py",
+      "sha256": "028a5a1a26057c7775e0aa861e7cd7671699790643202db976e2d3e0c192ce89",
+      "size_bytes": 9115
+    },
+    {
+      "path": "tests/test_theory_metrics.py",
+      "sha256": "9ea37ebd1efc4447dcf4979fc30d44ea03954d98f1bc73625fd7c489ffd5c620",
+      "size_bytes": 11470
+    },
+    {
+      "path": "tools/build_anonymous_supplement.py",
+      "sha256": "72614a4d0050dfa3002621d5b8c9bd99d5d93607482ef4736b1ab8a0ff8b2bfe",
+      "size_bytes": 75166
+    }
+  ],
+  "schema_version": 1
+}

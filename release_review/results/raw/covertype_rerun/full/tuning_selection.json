@@ -1,0 +1,677 @@
+{
+  "candidates": [
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 165.2,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 175.0,
+        "51": 174.0,
+        "52": 167.0,
+        "53": 158.0,
+        "54": 162.0,
+        "55": 164.0,
+        "56": 172.0,
+        "57": 146.0,
+        "58": 177.0,
+        "59": 157.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 1.0,
+      "grid_order": 1,
+      "mean_cumulative_pseudo_regret": 169.4,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 180.0,
+        "52": 168.0,
+        "53": 168.0,
+        "54": 160.0,
+        "55": 173.0,
+        "56": 181.0,
+        "57": 153.0,
+        "58": 174.0,
+        "59": 166.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 1.0,
+      "grid_order": 2,
+      "mean_cumulative_pseudo_regret": 171.3,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 174.0,
+        "51": 170.0,
+        "52": 173.0,
+        "53": 173.0,
+        "54": 165.0,
+        "55": 173.0,
+        "56": 180.0,
+        "57": 158.0,
+        "58": 178.0,
+        "59": 169.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "grid_order": 3,
+      "mean_cumulative_pseudo_regret": 162.1,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 168.0,
+        "51": 170.0,
+        "52": 163.0,
+        "53": 152.0,
+        "54": 156.0,
+        "55": 167.0,
+        "56": 189.0,
+        "57": 127.0,
+        "58": 180.0,
+        "59": 149.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 10.0,
+      "grid_order": 4,
+      "mean_cumulative_pseudo_regret": 164.1,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 170.0,
+        "51": 170.0,
+        "52": 162.0,
+        "53": 164.0,
+        "54": 155.0,
+        "55": 170.0,
+        "56": 187.0,
+        "57": 128.0,
+        "58": 184.0,
+        "59": 151.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "grid_order": 5,
+      "mean_cumulative_pseudo_regret": 166.1,
+      "method": "full_network_ggn_cg",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 173.0,
+        "51": 172.0,
+        "52": 171.0,
+        "53": 167.0,
+        "54": 148.0,
+        "55": 164.0,
+        "56": 184.0,
+        "57": 144.0,
+        "58": 179.0,
+        "59": 159.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 165.6,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 175.0,
+        "51": 172.0,
+        "52": 167.0,
+        "53": 156.0,
+        "54": 164.0,
+        "55": 164.0,
+        "56": 175.0,
+        "57": 143.0,
+        "58": 182.0,
+        "59": 158.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 1.0,
+      "grid_order": 1,
+      "mean_cumulative_pseudo_regret": 170.0,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 175.0,
+        "51": 180.0,
+        "52": 165.0,
+        "53": 168.0,
+        "54": 161.0,
+        "55": 175.0,
+        "56": 180.0,
+        "57": 153.0,
+        "58": 176.0,
+        "59": 167.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 1.0,
+      "grid_order": 2,
+      "mean_cumulative_pseudo_regret": 169.5,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 170.0,
+        "52": 181.0,
+        "53": 167.0,
+        "54": 157.0,
+        "55": 169.0,
+        "56": 180.0,
+        "57": 157.0,
+        "58": 177.0,
+        "59": 166.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "grid_order": 3,
+      "mean_cumulative_pseudo_regret": 161.2,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 168.0,
+        "51": 169.0,
+        "52": 160.0,
+        "53": 151.0,
+        "54": 157.0,
+        "55": 167.0,
+        "56": 189.0,
+        "57": 121.0,
+        "58": 182.0,
+        "59": 148.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 10.0,
+      "grid_order": 4,
+      "mean_cumulative_pseudo_regret": 164.9,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 172.0,
+        "51": 169.0,
+        "52": 160.0,
+        "53": 163.0,
+        "54": 160.0,
+        "55": 172.0,
+        "56": 190.0,
+        "57": 128.0,
+        "58": 183.0,
+        "59": 152.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "grid_order": 5,
+      "mean_cumulative_pseudo_regret": 168.1,
+      "method": "frozen_full_gram",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 177.0,
+        "51": 173.0,
+        "52": 172.0,
+        "53": 169.0,
+        "54": 159.0,
+        "55": 168.0,
+        "56": 182.0,
+        "57": 147.0,
+        "58": 176.0,
+        "59": 158.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 163.1,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 168.0,
+        "51": 170.0,
+        "52": 163.0,
+        "53": 161.0,
+        "54": 159.0,
+        "55": 175.0,
+        "56": 185.0,
+        "57": 132.0,
+        "58": 179.0,
+        "59": 139.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 1.0,
+      "grid_order": 1,
+      "mean_cumulative_pseudo_regret": 165.4,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 164.0,
+        "51": 170.0,
+        "52": 166.0,
+        "53": 169.0,
+        "54": 170.0,
+        "55": 174.0,
+        "56": 188.0,
+        "57": 132.0,
+        "58": 178.0,
+        "59": 143.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 1.0,
+      "grid_order": 2,
+      "mean_cumulative_pseudo_regret": 167.2,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 166.0,
+        "51": 172.0,
+        "52": 164.0,
+        "53": 173.0,
+        "54": 177.0,
+        "55": 174.0,
+        "56": 185.0,
+        "57": 137.0,
+        "58": 176.0,
+        "59": 148.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "grid_order": 3,
+      "mean_cumulative_pseudo_regret": 161.4,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 165.0,
+        "51": 170.0,
+        "52": 158.0,
+        "53": 155.0,
+        "54": 151.0,
+        "55": 176.0,
+        "56": 194.0,
+        "57": 122.0,
+        "58": 184.0,
+        "59": 139.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 10.0,
+      "grid_order": 4,
+      "mean_cumulative_pseudo_regret": 164.1,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 169.0,
+        "51": 168.0,
+        "52": 164.0,
+        "53": 172.0,
+        "54": 162.0,
+        "55": 175.0,
+        "56": 190.0,
+        "57": 118.0,
+        "58": 181.0,
+        "59": 142.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "grid_order": 5,
+      "mean_cumulative_pseudo_regret": 166.5,
+      "method": "diagonal_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 169.0,
+        "51": 165.0,
+        "52": 167.0,
+        "53": 178.0,
+        "54": 171.0,
+        "55": 173.0,
+        "56": 191.0,
+        "57": 124.0,
+        "58": 181.0,
+        "59": 146.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 169.6,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 167.0,
+        "51": 181.0,
+        "52": 173.0,
+        "53": 157.0,
+        "54": 167.0,
+        "55": 176.0,
+        "56": 181.0,
+        "57": 158.0,
+        "58": 181.0,
+        "59": 155.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 1.0,
+      "grid_order": 1,
+      "mean_cumulative_pseudo_regret": 169.0,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 174.0,
+        "51": 181.0,
+        "52": 179.0,
+        "53": 163.0,
+        "54": 163.0,
+        "55": 170.0,
+        "56": 172.0,
+        "57": 159.0,
+        "58": 171.0,
+        "59": 158.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 1.0,
+      "grid_order": 2,
+      "mean_cumulative_pseudo_regret": 169.3,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 169.0,
+        "51": 166.0,
+        "52": 173.0,
+        "53": 172.0,
+        "54": 170.0,
+        "55": 166.0,
+        "56": 178.0,
+        "57": 161.0,
+        "58": 169.0,
+        "59": 169.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "grid_order": 3,
+      "mean_cumulative_pseudo_regret": 169.4,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 182.0,
+        "52": 171.0,
+        "53": 151.0,
+        "54": 170.0,
+        "55": 179.0,
+        "56": 185.0,
+        "57": 154.0,
+        "58": 180.0,
+        "59": 151.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 10.0,
+      "grid_order": 4,
+      "mean_cumulative_pseudo_regret": 169.0,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 167.0,
+        "51": 181.0,
+        "52": 171.0,
+        "53": 157.0,
+        "54": 172.0,
+        "55": 179.0,
+        "56": 177.0,
+        "57": 159.0,
+        "58": 175.0,
+        "59": 152.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "grid_order": 5,
+      "mean_cumulative_pseudo_regret": 168.4,
+      "method": "last_layer_full",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 168.0,
+        "51": 175.0,
+        "52": 176.0,
+        "53": 159.0,
+        "54": 172.0,
+        "55": 174.0,
+        "56": 176.0,
+        "57": 166.0,
+        "58": 169.0,
+        "59": 149.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 169.9,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 170.0,
+        "51": 181.0,
+        "52": 171.0,
+        "53": 161.0,
+        "54": 168.0,
+        "55": 180.0,
+        "56": 176.0,
+        "57": 164.0,
+        "58": 179.0,
+        "59": 149.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 1.0,
+      "grid_order": 1,
+      "mean_cumulative_pseudo_regret": 170.8,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 170.0,
+        "51": 176.0,
+        "52": 171.0,
+        "53": 165.0,
+        "54": 170.0,
+        "55": 181.0,
+        "56": 173.0,
+        "57": 171.0,
+        "58": 178.0,
+        "59": 153.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 1.0,
+      "grid_order": 2,
+      "mean_cumulative_pseudo_regret": 172.1,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 173.0,
+        "51": 177.0,
+        "52": 174.0,
+        "53": 174.0,
+        "54": 172.0,
+        "55": 179.0,
+        "56": 166.0,
+        "57": 181.0,
+        "58": 170.0,
+        "59": 155.0
+      }
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "grid_order": 3,
+      "mean_cumulative_pseudo_regret": 170.0,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 181.0,
+        "52": 170.0,
+        "53": 153.0,
+        "54": 170.0,
+        "55": 180.0,
+        "56": 185.0,
+        "57": 159.0,
+        "58": 179.0,
+        "59": 152.0
+      }
+    },
+    {
+      "bonus_scale": 2.0,
+      "damping": 10.0,
+      "grid_order": 4,
+      "mean_cumulative_pseudo_regret": 170.7,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 184.0,
+        "52": 170.0,
+        "53": 156.0,
+        "54": 171.0,
+        "55": 182.0,
+        "56": 179.0,
+        "57": 161.0,
+        "58": 181.0,
+        "59": 152.0
+      }
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "grid_order": 5,
+      "mean_cumulative_pseudo_regret": 170.5,
+      "method": "last_layer_diagonal",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 171.0,
+        "51": 178.0,
+        "52": 170.0,
+        "53": 162.0,
+        "54": 168.0,
+        "55": 185.0,
+        "56": 174.0,
+        "57": 168.0,
+        "58": 178.0,
+        "59": 151.0
+      }
+    },
+    {
+      "bonus_scale": 0.0,
+      "damping": 1.0,
+      "grid_order": 0,
+      "mean_cumulative_pseudo_regret": 161.2,
+      "method": "greedy_full_network",
+      "per_seed_cumulative_pseudo_regret": {
+        "50": 158.0,
+        "51": 180.0,
+        "52": 162.0,
+        "53": 131.0,
+        "54": 172.0,
+        "55": 176.0,
+        "56": 186.0,
+        "57": 120.0,
+        "58": 184.0,
+        "59": 143.0
+      }
+    }
+  ],
+  "created_at_utc": "2026-07-17T23:36:57.269888Z",
+  "criterion": "mean_cumulative_pseudo_regret",
+  "dataset_checksum_sha256": "eeab5db05bb3a9c00c62ced4c7d13112a00cd3487f59ac1943aaf5983d7c3ddf",
+  "evaluation_labels_used": false,
+  "evaluation_policies_must_rerun_from_scratch": true,
+  "evaluation_seeds": [
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159
+  ],
+  "event": "covertype_tuning_selection",
+  "experiment": "covertype_rerun",
+  "profile": "full",
+  "resolved_config_digest": "bdae23e62ece52e29d749bd658ba28e9541db2068379805516f539ddf3797288",
+  "schema_version": 1,
+  "selected": [
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "mean_tuning_cumulative_pseudo_regret": 162.1,
+      "method": "full_network_ggn_cg",
+      "tie_break_grid_order": 3
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "mean_tuning_cumulative_pseudo_regret": 161.2,
+      "method": "frozen_full_gram",
+      "tie_break_grid_order": 3
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 10.0,
+      "mean_tuning_cumulative_pseudo_regret": 161.4,
+      "method": "diagonal_full_network",
+      "tie_break_grid_order": 3
+    },
+    {
+      "bonus_scale": 4.0,
+      "damping": 10.0,
+      "mean_tuning_cumulative_pseudo_regret": 168.4,
+      "method": "last_layer_full",
+      "tie_break_grid_order": 5
+    },
+    {
+      "bonus_scale": 1.0,
+      "damping": 1.0,
+      "mean_tuning_cumulative_pseudo_regret": 169.9,
+      "method": "last_layer_diagonal",
+      "tie_break_grid_order": 0
+    },
+    {
+      "bonus_scale": 0.0,
+      "damping": 1.0,
+      "mean_tuning_cumulative_pseudo_regret": 161.2,
+      "method": "greedy_full_network",
+      "tie_break_grid_order": 0
+    }
+  ],
+  "selected_on_environment_split": "validation",
+  "selected_on_seed_set": "tuning",
+  "split_seed": 20260717,
+  "test_label_used_for_hyperparameter_selection": false,
+  "tie_break": "lowest_configured_grid_order",
+  "tuning_seeds": [
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59
+  ],
+  "validation_indices_sha256": "77e57226a4d3c1788d77905f558076998bfbf288564edde3d8bd3ecdbdba2642"
+}
