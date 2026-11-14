@@ -1,7 +1,7 @@
 {
   "editorial_tool": {
     "path": "tools/prepare_tmlr_figures.py",
-    "sha256": "a53b1944cb1473d700da9c5fba7a76860f2a79d7f53fe1a622027304e74ed6b7"
+    "sha256": "53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8"
   },
   "figures": [
     {
@@ -145,6 +145,20 @@
       ]
     }
   ],
+  "generators": [
+    {
+      "current_generator": "tools/make_transport_explanatory_figures.py",
+      "current_generator_sha256": "c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657",
+      "original_generator_sha256": "464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150",
+      "original_source": "tools/editorial_originals/make_transport_explanatory_figures.py"
+    },
+    {
+      "current_generator": "tools/make_transport_table_charts.py",
+      "current_generator_sha256": "a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80",
+      "original_generator_sha256": "ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479",
+      "original_source": "tools/editorial_originals/make_transport_table_charts.py"
+    }
+  ],
   "original_generation_records": [
     {
       "path": "paper/figures/transport_explanatory_provenance.json",
@@ -157,6 +171,6 @@
       "status": "original generation, unchanged"
     }
   ],
-  "schema_version": 2,
+  "schema_version": 3,
   "scope": "Approved post-generation editorial transforms; no experiments or new plotted data."
 }

@@ -159,6 +159,13 @@ of alternative adaptive policy trajectories.
 
 ## Editorial source checks
 
+The exact original generator Python sources are included under
+`tools/editorial_originals/`. Their independent digest pins are checked before
+their bytes are loaded and executed. Original generation records keep their
+original source hashes; the current editorial record separately identifies
+original generator sources, current adapter hashes and the editorial tool hash.
+Missing or changed original sources fail verification.
+
 The original empirical generators reconstruct their original outputs before the
 approved figure transforms. The transforms remove specified repeated annotations
 and source comment payloads while preserving plotted values and coordinates.

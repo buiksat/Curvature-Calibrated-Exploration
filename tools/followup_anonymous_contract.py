@@ -118,8 +118,8 @@ FOLLOWUP_CONTRACT: dict[str, dict[str, Any]] = {'review/post_full_fable/independ
 # PINNED_CONTRACT_END
 
 # PINNED_ARTIFACTS_START
-ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_provenance.json': {'bytes': 7543,
-                                                       'sha256': '9f0b71bf3c53fd2078c11e1e51f7543bf500753e9e69d4f53217e4e96451bedc'},
+ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_provenance.json': {'bytes': 8317,
+                                                       'sha256': 'b4c89e0e9610c40ab4eab8f6bb1bc0e3c4b38b3f40ba04985bb33b8bab92c674'},
  'paper/figures/transport_explanatory_bounds.csv': {'bytes': 787,
                                                     'sha256': '523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1'},
  'paper/figures/transport_explanatory_bounds.tex': {'bytes': 1335,

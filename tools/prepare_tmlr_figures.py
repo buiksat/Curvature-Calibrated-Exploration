@@ -110,7 +110,8 @@ def build(root=ROOT):
     for name, pin in ORIGINAL_RECORD_PINS.items():
         if digest((root / FIGURES / name).read_bytes()) != pin or digest(original[FIGURES / name].encode()) != pin:
             raise ValueError(f"Original generation record changed: {name}")
-    record={"schema_version": 2,
+    record={"schema_version": 3,
+            "generators": [explanatory.generator_provenance(), charts.generator_provenance()],
             "scope": "Approved post-generation editorial transforms; no experiments or new plotted data.",
             "original_generation_records": [{"path": str(FIGURES / name), "sha256": pin,
                  "status": "original generation, unchanged"} for name,pin in sorted(ORIGINAL_RECORD_PINS.items())],

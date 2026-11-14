@@ -938,5 +938,5 @@ FILE_PINS: dict[str, str] = {
     'submissions/tmlr_2026/main.tex':
         'ceba78f4cf5fe568e2ef082bb72cfe77a7ef1d94002ad86321c87f7596c794df',
     'submissions/tmlr_2026/supplement_README.md':
-        'ab77924f5ab8f1262aa744dd580db11f9ed260cd772266f05eac99e128c9f984',
+        '1cba3d6c507d65a291e3dec4a68b0ee7bd6212c7d118ae4ed3c771a7054f88dc',
 }

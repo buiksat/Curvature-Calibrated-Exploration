@@ -1374,10 +1374,13 @@ def test_followup_package_ledger_rejects_untrusted_contract_before_import(
         hashlib.sha256(module.read_bytes()).hexdigest() if module.is_file() else None)
     _rewrite(declaration_path, json.dumps(declaration, sort_keys=True).encode())
     checks, _entries = ledger_tool.run(root, check_manuscript=False, require_package=True)
-    assert any(check.name == "follow-up anonymous source contract"
+    expected_detail = ("follow-up contract module is missing or differs from its independent pin"
+                       if mutation == "missing" else "tools/followup_anonymous_contract.py")
+    assert any(check.name == "ledger scope and original declaration identities"
                and check.status == ledger_tool.STATUS_FAIL
-               and "unreviewed or missing follow-up package contract" in check.detail
+               and expected_detail in check.detail
                for check in checks)
+    assert not any("untrusted contract was executed" in check.detail for check in checks)
 
 
 @pytest.mark.parametrize("source, before, after", [

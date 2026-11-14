@@ -141,9 +141,11 @@ def anonymous_figures(tmp_path):
     (tmp_path / package_contract.DECLARATION_NAME).write_text("{}\n")
     for relative in ("tools/anonymous_package_contract.py",
                      "tools/followup_anonymous_contract.py",
-                     "tools/make_transport_explanatory_figures.py"):
+                     "tools/make_transport_explanatory_figures.py",
+                     "tools/editorial_generator_sources.py",
+                     "tools/editorial_originals/make_transport_explanatory_figures.py"):
         path = tmp_path / relative
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, path)
     return tmp_path
 

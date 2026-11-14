@@ -555,18 +555,21 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symmetric_scan.py': '82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21',
  'tools/analyze_relative_transport.py': 'd226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56',
  'tools/check_python_environment.py': '77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e',
+ 'tools/editorial_generator_sources.py': 'e36441c29cd366cd7e420b709362a07924004929e5bfc88f9f3a1dfbd1dc9edb',
+ 'tools/editorial_originals/make_transport_explanatory_figures.py': '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
+ 'tools/editorial_originals/make_transport_table_charts.py': 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
  'tools/editorial_originals/transport_conceptual_geometry.tex': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b',
  'tools/editorial_originals/transport_conceptual_interfaces.tex': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4',
- 'tools/followup_anonymous_contract.py': 'a1c564951969fd6f9a37324dd66b46ad83782e2e8694aa1d482e399ed0924cca',
+ 'tools/followup_anonymous_contract.py': '5652dcdcfdd8f7c14b4462673d161ac6d4658221550f1be2e5af62e871105e1f',
  'tools/make_tmlr_outcomes.py': '65626c9c0113737520f3c97c97b2a4e90a05878cd8d421accff0e75da8a817f3',
- 'tools/make_transport_explanatory_figures.py': 'be50a83ed06e81f842675ebdb1987b9573a89ed8e9e459ebfe211f28e11ceb76',
+ 'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
- 'tools/make_transport_table_charts.py': '87f3585583979e0dc4b0ecd4c5e4f1502a1ddbb41672f15f3885e38a0f3010c8',
- 'tools/numeric_context_pins.py': '0211c8f6cd4d6ebee536ae2fe890586e64818040575763fd109f1ae42e71bbd4',
- 'tools/prepare_tmlr_figures.py': 'a53b1944cb1473d700da9c5fba7a76860f2a79d7f53fe1a622027304e74ed6b7',
+ 'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
+ 'tools/numeric_context_pins.py': '7d09fb9b9965f383d44f85f38990ec0b9f09a36f1ae0dad5ecb19877eb922e98',
+ 'tools/prepare_tmlr_figures.py': '53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '745c2a165e6e1ccfa33c791110eb66dd14f9fcf5db41ddb092db0bad07e78b81'}
+ 'tools/verify_tmlr_submission_numbers.py': '43cc56bc012bb186d2045c06802643a8ceb62e0b9640c318bbeb27af3cf57547'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({

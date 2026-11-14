@@ -39,13 +39,17 @@ report for the particular commit; this document does not certify later builds.
 tree is needed. Its check replays terminal paired-bootstrap intervals.
 
 The original artifact generators retain their scientific calculations.
+Their exact original Python source preimages are shipped under
+`tools/editorial_originals/` and authenticated before loading. Current outer
+adapters have separate hashes from those original generator sources.
 `tools/prepare_tmlr_figures.py` authenticates original generated sources and the
 approved editorial transforms. Original generation records retain their
 original hashes and attribution; a separate editorial record binds current
 figure sources. CSV values and scientific exports remain unchanged.
 
 The older near-linear manuscript sources are retained for historical ledger
-checks in the repository. They are excluded from the current source and
+checks in the repository and must be present there. Only a validated anonymous
+package omits those nonshipped historical sources. They are excluded from the current source and
 supplement manuscript inventories. The original aggregate, numerical tables
 and provenance remain reproducibility material. Historical reports describe
 their own source states and do not verify this revision.
