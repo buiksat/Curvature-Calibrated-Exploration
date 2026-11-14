@@ -41,7 +41,7 @@ import re
 import sys
 from collections import Counter
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -79,23 +79,23 @@ FOLLOWUP_PACKAGE_CONTRACT = Path("tools/followup_anonymous_contract.py")
 RELATIVE_ROOT = Path("review/transport_relative_diagnostics/full")
 RELATIVE_ANALYSIS = RELATIVE_ROOT / "analysis.json"
 RELATIVE_SEEDS = RELATIVE_ROOT / "per_seed.jsonl"
-FOLLOWUP_SOURCE_HASHES = {
-    TABLE_CHART_GENERATOR: 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
-    EXPLANATORY_GENERATOR: '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
-    FOLLOWUP_CONFIG: "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3",
-    FOLLOWUP_AGGREGATE: "f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658",
-    FOLLOWUP_SEEDS: "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60",
-    FOLLOWUP_ROUNDS: "9b6bda78c88074e46e1ff3c4253b9623bb95f467f068b6339bee9d83e4e4fce1",
-    FOLLOWUP_DIAGNOSTICS: "fb3293daacba3511ca5f3269d67e9aa0f0aca2708ad9876661ca062e197a59a4",
-    FOLLOWUP_DECOMPOSITION: "b1a6e9c5d8cfe70d3c3e3bb7cbd818502c21bb3b2f276426702cb016db323ecc",
-    FOLLOWUP_ANALYSIS: "914013bf6436e82a50865d5ce3570b4195e7cdc2e4f25b436eb5b28a9b99ece3",
-    FOLLOWUP_ROOT / "export_manifest.json": "adbf7ab8d401fa057999d4f98582a52f8ca5af71362efd05632345be4984eaca",
-    FOLLOWUP_EXPORT_VERIFIER: "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
-    FOLLOWUP_GENERATOR: "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
-    RELATIVE_ANALYSIS: "fd67cdc031c02876ed1e18ea0444a35348b4cb80bdd261b3fd3d75e6e920b29e",
-    RELATIVE_SEEDS: "9d7939364bfd7737df5daaf80d43c0673828505466ede181fe31f42fe2f98bea",
-    RELATIVE_ROOT / "input_inventory.jsonl": "c905bdcd58aa9c827a141ac024c49cccdba1d97bf5ad8908889b15d3f471190a",
-}
+FOLLOWUP_SOURCE_HASHES = {Path('review/post_full_fable/independent/analysis.json'): '914013bf6436e82a50865d5ce3570b4195e7cdc2e4f25b436eb5b28a9b99ece3',
+ Path('review/transport_relative_diagnostics/full/analysis.json'): 'fd67cdc031c02876ed1e18ea0444a35348b4cb80bdd261b3fd3d75e6e920b29e',
+ Path('review/transport_relative_diagnostics/full/input_inventory.jsonl'): 'c905bdcd58aa9c827a141ac024c49cccdba1d97bf5ad8908889b15d3f471190a',
+ Path('review/transport_relative_diagnostics/full/per_seed.jsonl'): '9d7939364bfd7737df5daaf80d43c0673828505466ede181fe31f42fe2f98bea',
+ Path('review/transport_review_followup/full-cce-full-local/aggregate_compact.json'): 'f28acc2d601d7524f5b30a55f396c5408a7f37a26fd36bde49a3477024bc6658',
+ Path('review/transport_review_followup/full-cce-full-local/drift_and_reference_diagnostics.json'): 'fb3293daacba3511ca5f3269d67e9aa0f0aca2708ad9876661ca062e197a59a4',
+ Path('review/transport_review_followup/full-cce-full-local/execution_config.json'): 'be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3',
+ Path('review/transport_review_followup/full-cce-full-local/export_manifest.json'): 'adbf7ab8d401fa057999d4f98582a52f8ca5af71362efd05632345be4984eaca',
+ Path('review/transport_review_followup/full-cce-full-local/round_drift_summaries.jsonl'): '9b6bda78c88074e46e1ff3c4253b9623bb95f467f068b6339bee9d83e4e4fce1',
+ Path('review/transport_review_followup/full-cce-full-local/seed_summaries.jsonl'): 'e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60',
+ Path('review/transport_review_followup/full-cce-full-local/terminal_bound_decomposition.json'): 'b1a6e9c5d8cfe70d3c3e3bb7cbd818502c21bb3b2f276426702cb016db323ecc',
+ Path('tools/make_tmlr_outcomes.py'): '65626c9c0113737520f3c97c97b2a4e90a05878cd8d421accff0e75da8a817f3',
+ Path('tools/make_transport_explanatory_figures.py'): 'be50a83ed06e81f842675ebdb1987b9573a89ed8e9e459ebfe211f28e11ceb76',
+ Path('tools/make_transport_followup_paper.py'): '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
+ Path('tools/make_transport_table_charts.py'): '87f3585583979e0dc4b0ecd4c5e4f1502a1ddbb41672f15f3885e38a0f3010c8',
+ Path('tools/prepare_tmlr_figures.py'): 'a53b1944cb1473d700da9c5fba7a76860f2a79d7f53fe1a622027304e74ed6b7',
+ Path('tools/verify_review_experiment_export.py'): 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0'}
 
 # An anonymous supplement ships modified copies of some evidence files with one
 # metadata string replaced.  The shipped ANONYMIZATION.json is a reviewer-visible
@@ -524,7 +524,7 @@ def followup_ledger() -> list[Entry]:
     return entries
 
 
-def build_ledger(root: Path | None = None) -> list[Entry]:
+def historical_and_prior_ledger(root: Path | None = None) -> list[Entry]:
     A, C = AGGREGATE, CONFIG
     e: list[Entry] = []
 
@@ -934,6 +934,146 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
     return e
 
 
+# Reviewed editorial mapping. Original numerical selectors remain above, with
+# unchanged displays, rounding tolerances, units, aggregation and populations.
+# Retained historical prose is audited only where its source files are present;
+# it is outside the current manuscript and anonymous supplement closures.
+EDITORIAL_LEDGER_SPECS = [(83, 'submissions/tmlr_2026/main.tex', '29-parameter'),
+ (84, 'submissions/tmlr_2026/main.tex', '50 paired'),
+ (89, 'submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'),
+ (90, 'submissions/tmlr_2026/supplement_README.md', '21 artifacts'),
+ (91, 'submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'),
+ (92, 'paper/transport_followup.tex', '9.51, 37.19 and 80.91'),
+ (93, 'paper/transport_followup.tex', '19, 60 and 231'),
+ (94, 'paper/transport_followup.tex', '9.51, 37.19 and 80.91'),
+ (95, 'paper/transport_followup.tex', '19, 60 and 231'),
+ (96, 'paper/transport_followup.tex', '9.51, 37.19 and 80.91'),
+ (97, 'paper/transport_followup.tex', '19, 60 and 231'),
+ (98, 'paper/transport_followup.tex', '600 trajectories'),
+ (99, 'paper/transport_followup.tex', 'All 600 trajectories'),
+ (100, 'paper/transport_followup.tex', 'all 600 histories'),
+ (101, 'paper/transport_followup_appendix.tex', '600 trajectories'),
+ (104, 'paper/transport_followup_appendix.tex', 'The 294'),
+ (107, 'paper/transport_followup.tex', '$T=1000$'),
+ (109, 'paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'),
+ (110, 'paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'),
+ (111, 'paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'),
+ (112, 'paper/transport_followup.tex', '$W=16,1,0.25$'),
+ (113, 'paper/transport_followup.tex', '$W=16,1,0.25$'),
+ (114, 'paper/transport_followup.tex', '$W=16,1,0.25$'),
+ (115, 'paper/transport_followup.tex', '$W=0.25$'),
+ (116, 'paper/transport_followup.tex', '185.26,\n183.06 and 176.67'),
+ (117, 'paper/transport_followup.tex', '180.01,\n177.97 and 171.84'),
+ (118, 'paper/transport_followup.tex', '185.26,\n183.06 and 176.67'),
+ (119, 'paper/transport_followup.tex', '180.01,\n177.97 and 171.84'),
+ (120, 'paper/transport_followup.tex', '185.26,\n183.06 and 176.67'),
+ (121, 'paper/transport_followup.tex', '180.01,\n177.97 and 171.84'),
+ (122, 'paper/transport_followup.tex', '50 paired'),
+ (123, 'paper/transport_followup.tex', '50 seeds per condition'),
+ (124, 'paper/transport_followup.tex', '50/50 successes'),
+ (126, 'paper/transport_followup_appendix.tex', '50 evaluation seeds'),
+ (130, 'paper/transport_followup.tex', '10,000'),
+ (131, 'paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'),
+ (132, 'paper/transport_followup_appendix.tex', '20 steps'),
+ (133, 'paper/transport_followup_appendix.tex', '10,000'),
+ (134, 'paper/transport_followup.tex', '95\\% intervals'),
+ (135, 'paper/transport_followup.tex', 'pointwise 95\\% paired'),
+ (136, 'paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'),
+ (138, 'paper/transport_followup.tex', '$[92.9\\%,100\\%]$'),
+ (139, 'paper/transport_followup.tex', '$[92.9\\%,100\\%]$'),
+ (140, 'paper/transport_followup.tex', '16/50 seeds'),
+ (141, 'paper/transport_followup.tex', '16/50 seeds'),
+ (142, 'paper/transport_followup.tex', '286/50,000'),
+ (143, 'paper/transport_followup.tex', '286/50,000'),
+ (144, 'paper/transport_followup_appendix.tex', '50,000 seed--round observations per condition'),
+ (145, 'paper/transport_followup_appendix.tex', '50,000 dependent states'),
+ (146, 'paper/transport_followup.tex', '2000, 2000 and 1000'),
+ (147, 'paper/transport_followup.tex', '2000, 2000 and 1000'),
+ (148, 'paper/transport_followup.tex', '2000, 2000 and 1000'),
+ (149, 'paper/transport_followup.tex', 'all 150 frozen-policy'),
+ (150, 'paper/transport_followup.tex', '99.382\\%'),
+ (151, 'paper/transport_followup.tex', '97.104\\%'),
+ (152, 'paper/transport_followup.tex', '99.962\\%'),
+ (153, 'paper/transport_followup.tex', '99.372\\%'),
+ (154, 'paper/transport_followup.tex', '99.982\\%'),
+ (155, 'paper/transport_followup.tex', '99.508\\%'),
+ (156, 'paper/transport_followup_appendix.tex', 'teacher seed 1729'),
+ (157, 'paper/transport_followup_appendix.tex', '30000--30001'),
+ (158, 'paper/transport_followup_appendix.tex', '30000--30001'),
+ (159, 'paper/transport_followup_appendix.tex', '30100--30109'),
+ (160, 'paper/transport_followup_appendix.tex', '30100--30109'),
+ (161, 'paper/transport_followup_appendix.tex', '30200--30249'),
+ (162, 'paper/transport_followup_appendix.tex', '30200--30249'),
+ (163, 'paper/transport_followup_appendix.tex', '24 development trajectories'),
+ (164, 'paper/transport_followup_appendix.tex', '24 declared trajectories'),
+ (165, 'paper/transport_followup_appendix.tex', '270 tuning\ntrajectories'),
+ (166, 'paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'),
+ (167, 'paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'),
+ (168, 'paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'),
+ (169, 'paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'),
+ (170, 'paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'),
+ (171, 'paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'),
+ (172, 'paper/transport_followup_appendix.tex', 'Candidate 008'),
+ (173, 'paper/transport_followup_appendix.tex', '30 tuning'),
+ (174, 'paper/transport_followup_appendix.tex', '$0.00392155$'),
+ (175, 'paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'),
+ (176, 'paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'),
+ (177, 'paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'),
+ (178, 'paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'),
+ (179, 'paper/transport_followup_appendix.tex', '1024'),
+ (180, 'paper/transport_followup_appendix.tex', '2048'),
+ (181, 'paper/transport_followup_appendix.tex', '4096'),
+ (182, 'paper/transport_followup_appendix.tex', '12 combinations'),
+ (183, 'paper/transport_followup_appendix.tex', 'divided by 1000'),
+ (184, 'paper/transport_followup_appendix.tex', '250-digit'),
+ (185, 'paper/transport_followup_appendix.tex', 'at 16 states'),
+ (186, 'paper/transport_followup_appendix.tex', '65 changes'),
+ (187, 'paper/transport_followup_appendix.tex', '600,000 states'),
+ (188, 'paper/transport_followup_appendix.tex', '2--10'),
+ (189, 'paper/transport_followup_appendix.tex', '2--10'),
+ (190, 'paper/transport_followup_appendix.tex', 'below 0.629'),
+ (192, 'paper/transport_followup_appendix.tex', 'standard deviation $0.25$'),
+ (193, 'paper/transport_followup_appendix.tex', '$\\delta=0.05$'),
+ (194, 'paper/transport_followup.tex', 'all 600 histories'),
+ (195, 'paper/transport_followup_appendix.tex', '$4+5+20=29$'),
+ (196, 'paper/transport_followup_appendix.tex', '$4+5+20=29$'),
+ (197, 'paper/transport_followup_appendix.tex', '$4+5+20=29$'),
+ (198, 'paper/transport_followup_appendix.tex', '$4+5+20=29$'),
+ (199, 'paper/transport_followup_appendix.tex', '1000 rounds in its denominator'),
+ (200, 'paper/transport_followup_appendix.tex', 'and 1000 rounds'),
+ (201, 'paper/transport_followup_appendix.tex', 'summarize 50 seeds'),
+ (202, 'paper/transport_followup_appendix.tex', 'across 50 seeds'),
+ (203, 'paper/transport_followup_appendix.tex', '50 seeds per condition'),
+ (204, 'paper/transport_followup_appendix.tex', '$0.124$'),
+ (205, 'paper/transport_followup_appendix.tex', '$1.735$'),
+ (206, 'paper/transport_followup_appendix.tex', '$5.300$'),
+ (207, 'paper/transport_followup_appendix.tex', 'all 600 trajectories'),
+ (208, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (209, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (210, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (211, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (212, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (213, 'paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'),
+ (214, 'paper/transport_followup.tex', '$0.28\\%$'),
+ (215, 'paper/transport_followup.tex', '$12.68\\%$'),
+ (216, 'paper/transport_followup.tex', '$0.16\\%$'),
+ (217, 'paper/transport_followup.tex', '$12.13\\%$'),
+ (218, 'paper/transport_followup_appendix.tex', '$0.005$'),
+ (123, 'paper/transport_followup_appendix.tex', '50 histories'),
+ (87, 'submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% intervals')]
+HISTORICAL_LEDGER_SOURCES = {"paper/transport_experiment.tex", "paper/transport_experiment_appendix.tex", "paper/legacy_scope.tex"}
+
+def build_ledger(root: Path | None = None) -> list[Entry]:
+    original = historical_and_prior_ledger(root)
+    entries = [replace(original[index], manuscript=Path(path), literal=phrase)
+               for index,path,phrase in EDITORIAL_LEDGER_SPECS]
+    if root is None or not contract.is_packaged_tree(root):
+        entries.extend(entry for entry in original
+                       if str(entry.manuscript) in HISTORICAL_LEDGER_SOURCES
+                       and (root is None or (root / entry.manuscript).is_file()))
+    return entries
+
+
 # --------------------------------------------------------------------------
 # the literal-coverage audit
 # --------------------------------------------------------------------------
@@ -999,7 +1139,8 @@ ANALYTICAL_SCHEMATIC_SOURCES = (
     "paper/figures/transport_conceptual_interfaces.tex",
     "paper/figures/transport_conceptual_geometry.tex",
 )
-ALL_GENERATED_SOURCES = (GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
+EDITORIAL_GENERATED_SOURCES = ("paper/figures/transport_followup_outcomes.tex",)
+ALL_GENERATED_SOURCES = (EDITORIAL_GENERATED_SOURCES + GENERATED_ARTIFACT_SOURCES + FOLLOWUP_GENERATED_SOURCES
                          + EXPLANATORY_GENERATED_SOURCES + TABLE_CHART_GENERATED_SOURCES)
 
 #: Two sources that are neither ledger-covered nor per-literal classified.  They
@@ -1122,364 +1263,294 @@ _CATEGORY_REASON = {
 # re-declared rather than absorbed.
 
 #: (path, literal) -> (category, exact occurrence count)
-CLASSIFIED_LITERALS: dict[tuple[str, str], tuple[str, int]] = {}
+# Fixed editorial declarations; values and contexts are separately authenticated.
+CLASSIFIED_LITERALS = {('paper/figures/transport_conceptual_geometry.tex', '.25'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '.55'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '.65'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '.82'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '0'): ('analytic-schematic', 7),
+ ('paper/figures/transport_conceptual_geometry.tex', '0,0'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '0,13'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '1'): ('analytic-schematic', 6),
+ ('paper/figures/transport_conceptual_geometry.tex', '1,0'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '1,10'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '1.05'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '1.25'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '1.8'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '1.95'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '10'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '11.5'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_geometry.tex', '13'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '14.5'): ('analytic-schematic', 13),
+ ('paper/figures/transport_conceptual_geometry.tex', '14.72'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '14.85'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '16.2'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '2'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.1'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.25'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.35'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.73'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.85'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '2.97'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '3'): ('analytic-schematic', 5),
+ ('paper/figures/transport_conceptual_geometry.tex', '3.02'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '3.525'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '3.55'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '3.6'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_geometry.tex', '3.75'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '30'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '4'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.05'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.2'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.23'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.32'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.35'): ('analytic-schematic', 12),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.37'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.4'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.47'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.53'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '4.6'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '40'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '5.2'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '5.25'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '5.73'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '5.85'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '5.97'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '50'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '55'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '6'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '6.35'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_geometry.tex', '6.64'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '6.7'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '6.76'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '6.86'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '65'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_geometry.tex', '7'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_geometry.tex', '7.15'): ('analytic-schematic', 6),
+ ('paper/figures/transport_conceptual_geometry.tex', '7.4'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '7.85'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '70'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '8.15'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '8.35'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_geometry.tex', '8.5'): ('analytic-schematic', 7),
+ ('paper/figures/transport_conceptual_geometry.tex', '80'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_interfaces.tex', '.3'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '0'): ('analytic-schematic', 7),
+ ('paper/figures/transport_conceptual_interfaces.tex', '0,0'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '1.15'): ('analytic-schematic', 4),
+ ('paper/figures/transport_conceptual_interfaces.tex', '1.8'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '10.2'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '11'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '14.4'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '16.2'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_interfaces.tex', '2'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_interfaces.tex', '2.2'): ('analytic-schematic', 3),
+ ('paper/figures/transport_conceptual_interfaces.tex', '28'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_interfaces.tex', '4.6'): ('analytic-schematic', 2),
+ ('paper/figures/transport_conceptual_interfaces.tex', '4.95'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '5.5'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '5.57'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '55'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '6'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '6.11'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '6.65'): ('analytic-schematic', 1),
+ ('paper/figures/transport_conceptual_interfaces.tex', '6.8'): ('analytic-schematic', 1),
+ ('paper/transport_experiment_appendix.tex', '1'): ('math-constant', 7),
+ ('paper/transport_experiment_appendix.tex', '2'): ('math-constant', 10),
+ ('paper/transport_followup.tex', '1'): ('math-constant', 1),
+ ('paper/transport_followup.tex', '2'): ('math-constant', 1),
+ ('paper/transport_followup_appendix.tex', '1'): ('math-constant', 5),
+ ('paper/transport_followup_appendix.tex', '2'): ('math-constant', 6),
+ ('paper/transport_followup_appendix.tex', '4'): ('math-constant', 1),
+ ('paper/transport_proofs.tex', '0'): ('math-constant', 18),
+ ('paper/transport_proofs.tex', '0,1'): ('interval-endpoint', 1),
+ ('paper/transport_proofs.tex', '1'): ('math-constant', 80),
+ ('paper/transport_proofs.tex', '2'): ('math-constant', 110),
+ ('paper/transport_proofs.tex', '4'): ('math-constant', 4),
+ ('paper/transport_protocol_appendix.tex', '2'): ('math-constant', 1),
+ ('paper/transport_support_appendix.tex', '0'): ('math-constant', 4),
+ ('paper/transport_support_appendix.tex', '1'): ('math-constant', 20),
+ ('paper/transport_support_appendix.tex', '2'): ('math-constant', 13),
+ ('paper/transport_theory.tex', '0'): ('math-constant', 32),
+ ('paper/transport_theory.tex', '0,1'): ('interval-endpoint', 5),
+ ('paper/transport_theory.tex', '1'): ('math-constant', 83),
+ ('paper/transport_theory.tex', '1,0'): ('math-constant', 1),
+ ('paper/transport_theory.tex', '2'): ('math-constant', 94),
+ ('paper/transport_theory.tex', '3'): ('math-constant', 2),
+ ('paper/transport_theory.tex', '4'): ('math-constant', 5),
+ ('submissions/tmlr_2026/supplement_README.md', '1.15.2'): ('environment-version', 1),
+ ('submissions/tmlr_2026/supplement_README.md', '2.2.3'): ('environment-version', 1),
+ ('submissions/tmlr_2026/supplement_README.md', '3.12'): ('environment-version', 1)}
+PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
+ ('paper/transport_experiment.tex', '$1.20$--$1.22$ times the endpoint distance'): 1,
+ ('paper/transport_experiment.tex', '$1.88\\times10^6$'): 1,
+ ('paper/transport_experiment.tex', '$126.7$--$135.0$ at $T=1000$'): 1,
+ ('paper/transport_experiment.tex', '$2.0\\%$--$16.3\\%$'): 1,
+ ('paper/transport_experiment.tex', '$2.24\\times10^6$'): 1,
+ ('paper/transport_experiment.tex', '$2.51\\times10^5$'): 1,
+ ('paper/transport_experiment.tex', '$3{,}989$--$12{,}607$'): 1,
+ ('paper/transport_experiment.tex', '$79.4\\%$--$97.3\\%$'): 1,
+ ('paper/transport_experiment.tex', '$8.74\\times10^{-6}$'): 1,
+ ('paper/transport_experiment.tex', '$9{,}948$--$10{,}010$'): 1,
+ ('paper/transport_experiment.tex', '$T=1000$'): 8,
+ ('paper/transport_experiment.tex', '$[92.9\\%,100\\%]$'): 1,
+ ('paper/transport_experiment.tex', '$\\log 5\\approx1.609$'): 1,
+ ('paper/transport_experiment.tex', '$e^{\\bar D_t^Q/2}$'): 1,
+ ('paper/transport_experiment.tex', '100 declared checkpoints per trajectory'): 1,
+ ('paper/transport_experiment.tex', '20 full-batch steps'): 1,
+ ('paper/transport_experiment.tex', '5,000\neligible seed--checkpoint ratios'): 1,
+ ('paper/transport_experiment.tex', '50 evaluation seeds'): 2,
+ ('paper/transport_experiment.tex', '50 runs per cell'): 1,
+ ('paper/transport_experiment.tex', '50 trajectory-level observations per cell'): 1,
+ ('paper/transport_experiment.tex', '50 transport-Hessian trajectories'): 1,
+ ('paper/transport_experiment.tex', '600 independent runs'): 1,
+ ('paper/transport_experiment.tex', 'All five actions are optimal somewhere in every'): 1,
+ ('paper/transport_experiment.tex', 'Contexts have dimension $4$'): 1,
+ ('paper/transport_experiment.tex', 'No run has zero regret'): 1,
+ ('paper/transport_experiment.tex', 'Ten disjoint tuning seeds'): 1,
+ ('paper/transport_experiment.tex', '\\alpha_t=1'): 1,
+ ('paper/transport_experiment.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'): 1,
+ ('paper/transport_experiment.tex', '\\xi_t=0'): 1,
+ ('paper/transport_experiment.tex', 'all 2400 policy\ntrajectories'): 1,
+ ('paper/transport_experiment.tex', 'best-fixed-action regret $180.4$'): 1,
+ ('paper/transport_experiment.tex', 'cap $2{,}000$'): 1,
+ ('paper/transport_experiment.tex', 'deterministic cap $2T$'): 1,
+ ('paper/transport_experiment.tex', 'each of the 12\nhorizon--target cells'): 1,
+ ('paper/transport_experiment.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
+ ('paper/transport_experiment.tex', 'feature map has dimension $29$'): 1,
+ ('paper/transport_experiment.tex', 'horizons $T\\in\\{250,500,1000\\}$'): 1,
+ ('paper/transport_experiment.tex', 'is $126.7$--$155.7$ over the'): 1,
+ ('paper/transport_experiment.tex', 'is $3.07\\times10^5$'): 1,
+ ('paper/transport_experiment.tex', 'learning rate $3\\times10^{-4}$'): 1,
+ ('paper/transport_experiment.tex', 'mean-only regret $185.4$'): 1,
+ ('paper/transport_experiment.tex', 'no bound violation on the joint confidence event'): 1,
+ ('paper/transport_experiment.tex', 'no deterministic algebra or certificate-check failure'): 1,
+ ('paper/transport_experiment.tex', 'optimal-action\nentropy $1.579$'): 1,
+ ('paper/transport_experiment.tex', 'optimality\ngap $0.123$'): 1,
+ ('paper/transport_experiment.tex', 'paired-bootstrap 95\\%'): 1,
+ ('paper/transport_experiment.tex', 'pools all 50,000 seed--round values'): 1,
+ ('paper/transport_experiment.tex', 'ranges from\n$1.02$'): 1,
+ ('paper/transport_experiment.tex', 'ranges from $0.0486$'): 1,
+ ('paper/transport_experiment.tex', 'ranges from $1.31\\times10^{-7}$'): 1,
+ ('paper/transport_experiment.tex', 'rises\nfrom $81.0$'): 1,
+ ('paper/transport_experiment.tex', 'target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$'): 1,
+ ('paper/transport_experiment.tex', 'the 50-seed means'): 1,
+ ('paper/transport_experiment.tex', 'the same 50 base seeds'): 1,
+ ('paper/transport_experiment.tex', 'there are five actions'): 1,
+ ('paper/transport_experiment.tex', 'to $0.384$'): 1,
+ ('paper/transport_experiment.tex', 'to $1.18$'): 1,
+ ('paper/transport_experiment.tex', 'to $94.0$'): 1,
+ ('paper/transport_experiment.tex', 'versus caps of $500$--$2{,}000$'): 1,
+ ('paper/transport_experiment_appendix.tex', '$2.01\\%,4.04\\%,8.16\\%,16.27\\%$'): 1,
+ ('paper/transport_experiment_appendix.tex', '$97.33\\%,94.66\\%,89.39\\%,79.39\\%$'): 1,
+ ('paper/transport_experiment_appendix.tex', '$D_{\\rm target}=0.25,0.5,1,2$'): 1,
+ ('paper/transport_experiment_appendix.tex', '$T=1000$'): 3,
+ ('paper/transport_experiment_appendix.tex', '$e^{\\bar D_t^Q/2}$'): 2,
+ ('paper/transport_experiment_appendix.tex', '50 evaluation seeds'): 2,
+ ('paper/transport_experiment_appendix.tex', '50 primary-policy trajectories'): 1,
+ ('paper/transport_experiment_appendix.tex', '50 runs per cell'): 1,
+ ('paper/transport_experiment_appendix.tex', '50 transport-Hessian trajectories'): 1,
+ ('paper/transport_experiment_appendix.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'): 1,
+ ('paper/transport_experiment_appendix.tex', '\\xi_t=0'): 1,
+ ('paper/transport_experiment_appendix.tex', 'paired-bootstrap 95\\%'): 1,
+ ('paper/transport_experiment_appendix.tex', 'preregistered $10^{-12}$ ratio tolerance'): 1,
+ ('paper/transport_followup.tex', '$0.16\\%$'): 1,
+ ('paper/transport_followup.tex', '$0.28\\%$'): 1,
+ ('paper/transport_followup.tex', '$12.13\\%$'): 1,
+ ('paper/transport_followup.tex', '$12.68\\%$'): 1,
+ ('paper/transport_followup.tex', '$T=1000$'): 3,
+ ('paper/transport_followup.tex', '$W=0.25$'): 1,
+ ('paper/transport_followup.tex', '$W=16,1,0.25$'): 2,
+ ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
+ ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
+ ('paper/transport_followup.tex', '10,000'): 2,
+ ('paper/transport_followup.tex', '16/50 seeds'): 1,
+ ('paper/transport_followup.tex', '180.01,\n177.97 and 171.84'): 1,
+ ('paper/transport_followup.tex', '185.26,\n183.06 and 176.67'): 1,
+ ('paper/transport_followup.tex', '19, 60 and 231'): 1,
+ ('paper/transport_followup.tex', '2000, 2000 and 1000'): 1,
+ ('paper/transport_followup.tex', '286/50,000'): 1,
+ ('paper/transport_followup.tex', '50 paired'): 1,
+ ('paper/transport_followup.tex', '50 seeds per condition'): 1,
+ ('paper/transport_followup.tex', '50/50 successes'): 1,
+ ('paper/transport_followup.tex', '600 trajectories'): 2,
+ ('paper/transport_followup.tex', '9.51, 37.19 and 80.91'): 1,
+ ('paper/transport_followup.tex', '95\\% intervals'): 1,
+ ('paper/transport_followup.tex', '97.104\\%'): 1,
+ ('paper/transport_followup.tex', '99.372\\%'): 1,
+ ('paper/transport_followup.tex', '99.382\\%'): 1,
+ ('paper/transport_followup.tex', '99.508\\%'): 1,
+ ('paper/transport_followup.tex', '99.962\\%'): 1,
+ ('paper/transport_followup.tex', '99.982\\%'): 1,
+ ('paper/transport_followup.tex', 'All 600 trajectories'): 1,
+ ('paper/transport_followup.tex', 'all 150 frozen-policy'): 1,
+ ('paper/transport_followup.tex', 'all 600 histories'): 1,
+ ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
+ ('paper/transport_followup.tex', 'pointwise 95\\% paired'): 2,
+ ('paper/transport_followup_appendix.tex', '$0.00392155$'): 1,
+ ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
+ ('paper/transport_followup_appendix.tex', '$0.124$'): 1,
+ ('paper/transport_followup_appendix.tex', '$1.735$'): 1,
+ ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'): 1,
+ ('paper/transport_followup_appendix.tex', '$4+5+20=29$'): 1,
+ ('paper/transport_followup_appendix.tex', '$5.300$'): 1,
+ ('paper/transport_followup_appendix.tex', '$\\delta=0.05$'): 1,
+ ('paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'): 1,
+ ('paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'): 1,
+ ('paper/transport_followup_appendix.tex', '10,000'): 1,
+ ('paper/transport_followup_appendix.tex', '1000 rounds in its denominator'): 1,
+ ('paper/transport_followup_appendix.tex', '1024'): 1,
+ ('paper/transport_followup_appendix.tex', '12 combinations'): 1,
+ ('paper/transport_followup_appendix.tex', '2--10'): 1,
+ ('paper/transport_followup_appendix.tex', '20 steps'): 1,
+ ('paper/transport_followup_appendix.tex', '2048'): 3,
+ ('paper/transport_followup_appendix.tex', '24 declared trajectories'): 1,
+ ('paper/transport_followup_appendix.tex', '24 development trajectories'): 1,
+ ('paper/transport_followup_appendix.tex', '250-digit'): 1,
+ ('paper/transport_followup_appendix.tex', '270 tuning\ntrajectories'): 1,
+ ('paper/transport_followup_appendix.tex', '30 tuning'): 1,
+ ('paper/transport_followup_appendix.tex', '30000--30001'): 1,
+ ('paper/transport_followup_appendix.tex', '30100--30109'): 1,
+ ('paper/transport_followup_appendix.tex', '30200--30249'): 1,
+ ('paper/transport_followup_appendix.tex', '4096'): 1,
+ ('paper/transport_followup_appendix.tex', '50 evaluation seeds'): 1,
+ ('paper/transport_followup_appendix.tex', '50 histories'): 1,
+ ('paper/transport_followup_appendix.tex', '50 seeds per condition'): 1,
+ ('paper/transport_followup_appendix.tex', '50,000 dependent states'): 1,
+ ('paper/transport_followup_appendix.tex', '50,000 seed--round observations per condition'): 1,
+ ('paper/transport_followup_appendix.tex', '600 trajectories'): 1,
+ ('paper/transport_followup_appendix.tex', '600,000 states'): 1,
+ ('paper/transport_followup_appendix.tex', '65 changes'): 1,
+ ('paper/transport_followup_appendix.tex', 'Candidate 008'): 1,
+ ('paper/transport_followup_appendix.tex', 'The 294'): 1,
+ ('paper/transport_followup_appendix.tex', 'across 50 seeds'): 1,
+ ('paper/transport_followup_appendix.tex', 'all 600 trajectories'): 1,
+ ('paper/transport_followup_appendix.tex', 'and 1000 rounds'): 1,
+ ('paper/transport_followup_appendix.tex', 'at 16 states'): 1,
+ ('paper/transport_followup_appendix.tex', 'below 0.629'): 1,
+ ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
+ ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'): 1,
+ ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'): 1,
+ ('paper/transport_followup_appendix.tex', 'standard deviation $0.25$'): 1,
+ ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'): 1,
+ ('paper/transport_followup_appendix.tex', 'teacher seed 1729'): 1,
+ ('submissions/tmlr_2026/main.tex', '29-parameter'): 1,
+ ('submissions/tmlr_2026/main.tex', '50 paired'): 1,
+ ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% intervals'): 1,
+ ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'): 1,
+ ('submissions/tmlr_2026/supplement_README.md', '21 artifacts'): 1,
+ ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'): 1}
 
 
-def _classify(path: str, category: str, counts: dict[str, int]) -> None:
-    for literal, count in counts.items():
-        CLASSIFIED_LITERALS[(path, literal)] = (category, count)
-
-
-_classify("paper/availability.tex", "historical-dependency-version",
-          {"1.13.1": 1, "1.15.2": 1})
-_classify("paper/body_related.tex", "math-constant", {"1": 3, "2": 2})
-_classify("paper/notation.tex", "math-constant", {"1": 2, "2": 3})
-_classify("paper/transport_experiment_appendix.tex", "math-constant",
-          {"1": 7, "2": 10})
-_classify("paper/transport_proofs.tex", "math-constant",
-          {"0": 16, "1": 80, "2": 110, "4": 4})
-_classify("paper/transport_proofs.tex", "interval-endpoint", {"0,1": 1})
-_classify("paper/transport_theory.tex", "math-constant",
-          {"0": 33, "1": 100, "1,0": 1, "2": 113, "3": 2, "4": 6})
-_classify("paper/transport_theory.tex", "interval-endpoint", {"0,1": 5})
-_classify("paper/transport_followup.tex", "math-constant", {"1": 2, "2": 2})
-_classify("paper/transport_followup_appendix.tex", "math-constant",
-          {"1": 4, "2": 5, "4": 1})
-for _readme in (str(SUPPLEMENT_README_REPO), str(SUPPLEMENT_README_PACKAGED)):
-    _classify(_readme, "environment-version",
-              {"3.12": 1, "2.2.3": 1, "1.15.2": 1})
-
-_classify('paper/figures/transport_conceptual_interfaces.tex', "analytic-schematic",
-          {'.3': 1,
-           '0': 7,
-           '0,0': 1,
-           '1.15': 4,
-           '1.8': 1,
-           '10.2': 1,
-           '11': 1,
-           '14.4': 1,
-           '16.2': 2,
-           '2': 2,
-           '2.2': 3,
-           '28': 2,
-           '4.6': 2,
-           '4.95': 1,
-           '5.5': 1,
-           '5.57': 1,
-           '55': 1,
-           '6': 1,
-           '6.11': 1,
-           '6.65': 1,
-           '6.8': 1})
-_classify('paper/figures/transport_conceptual_geometry.tex', "analytic-schematic",
-          {'.25': 1,
-           '.55': 2,
-           '.65': 1,
-           '.82': 1,
-           '0': 8,
-           '0,0': 1,
-           '0,13': 1,
-           '1': 6,
-           '1,0': 1,
-           '1,10': 1,
-           '1.05': 1,
-           '1.25': 2,
-           '1.8': 2,
-           '1.95': 1,
-           '10': 3,
-           '11.5': 4,
-           '13': 3,
-           '14.5': 13,
-           '14.72': 1,
-           '14.85': 1,
-           '16.2': 1,
-           '2': 4,
-           '2.1': 1,
-           '2.25': 1,
-           '2.35': 1,
-           '2.73': 2,
-           '2.85': 3,
-           '2.97': 2,
-           '3': 5,
-           '3.02': 3,
-           '3.525': 3,
-           '3.55': 1,
-           '3.6': 4,
-           '3.75': 1,
-           '30': 1,
-           '4': 2,
-           '4.05': 3,
-           '4.2': 1,
-           '4.23': 2,
-           '4.32': 2,
-           '4.35': 12,
-           '4.37': 1,
-           '4.4': 2,
-           '4.47': 4,
-           '4.53': 1,
-           '4.6': 2,
-           '40': 2,
-           '5.2': 1,
-           '5.25': 1,
-           '5.73': 2,
-           '5.85': 3,
-           '5.97': 2,
-           '50': 2,
-           '55': 1,
-           '6': 1,
-           '6.35': 2,
-           '6.64': 1,
-           '6.7': 3,
-           '6.76': 1,
-           '6.86': 1,
-           '65': 3,
-           '7': 4,
-           '7.15': 6,
-           '7.4': 1,
-           '7.85': 1,
-           '70': 1,
-           '8.15': 1,
-           '8.32': 1,
-           '8.35': 1,
-           '8.5': 7,
-           '80': 3})
-
-#: Literals that are definitions or mathematics rather than measurements, and
-#: that are easier to read as a phrase than as a bare token.  Each is masked
-#: wherever it occurs, with the reason recorded so the classification is
-#: reviewable rather than implicit.
-NON_EMPIRICAL_LITERALS = (
-    (r"\alpha_t=1",
-     "declared exact-instantiation interface: the dense exact operator makes "
-     "the theorem's approximation factor identically one by definition"),
-    (r"\kappa_{-,t}=\kappa_{+,t}=1",
-     "declared exact-instantiation interface: exact current curvature, so the "
-     "two-sided comparison factors are one by definition"),
-    (r"\xi_t=0",
-     "declared exact-instantiation interface: finite enumeration with a fixed "
-     "tie rule, so the selector slack is zero by definition"),
-    (r"deterministic cap $2T$",
-     "mathematical consequence of |mu*| <= 1, which the structural check "
-     "'the deterministic pseudo-regret cap 2T is implied by the configuration' "
-     "verifies against the configuration"),
-    (r"$e^{\bar D_t^Q/2}$",
-     "mathematical expression; the 2 is the exponent in the transport factor, "
-     "not a measured quantity"),
-    (r"$D_t<1$",
-     "mathematical condition from the prior one-sided theorem, not a "
-     "measurement"),
-)
-
-# Where each ledger literal and each non-empirical phrase is allowed to occur,
-# and how many times.  Masking used to be global: a phrase declared for one file
-# was blanked wherever it appeared, so copying `best-fixed-action regret $180.4$`
-# into a theory source made the copy invisible to the audit.  Now a phrase is
-# masked only in the files listed here, an occurrence anywhere else is an
-# unclassified literal, and a count that does not match is a failure -- which is
-# what catches a missing, duplicated or moved occurrence.
-#
-# `$T=1000$` and `\xi_t=0` legitimately recur; the count records how often.
-PHRASE_OCCURRENCES: dict[tuple[str, str], int] = {
-    ("paper/body_intro.tex", "29-parameter"): 1,
-    ("paper/body_intro.tex", "50 paired seeds"): 1,
-    ("paper/legacy_scope.tex", "29-parameter"): 1,
-    ("paper/transport_experiment.tex",
-     "$1.20$--$1.22$ times the endpoint distance"): 1,
-    ("paper/transport_experiment.tex", "$1.88\\times10^6$"): 1,
-    ("paper/transport_experiment.tex", "$126.7$--$135.0$ at $T=1000$"): 1,
-    ("paper/transport_experiment.tex", "$2.24\\times10^6$"): 1,
-    ("paper/transport_experiment.tex", "$2.51\\times10^5$"): 1,
-    ("paper/transport_experiment.tex", "$3{,}989$--$12{,}607$"): 1,
-    ("paper/transport_experiment.tex", "$8.74\\times10^{-6}$"): 1,
-    ("paper/transport_experiment.tex", "$T=1000$"): 8,
-    ("paper/transport_experiment.tex", r"$\log 5\approx1.609$"): 1,
-    ("paper/transport_experiment.tex", r"$79.4\%$--$97.3\%$"): 1,
-    ("paper/transport_experiment.tex", r"$2.0\%$--$16.3\%$"): 1,
-    ("paper/transport_experiment.tex", r"$9{,}948$--$10{,}010$"): 1,
-    ("paper/transport_experiment.tex", r"cap $2{,}000$"): 1,
-    ("paper/transport_experiment.tex", "50 transport-Hessian trajectories"): 1,
-    ("paper/transport_experiment.tex", "$[92.9\\%,100\\%]$"): 1,
-    ("paper/transport_experiment.tex", "$e^{\\bar D_t^Q/2}$"): 1,
-    ("paper/transport_experiment.tex",
-     "100 declared checkpoints per trajectory"): 1,
-    ("paper/transport_experiment.tex", "20 full-batch steps"): 1,
-    ("paper/transport_experiment.tex",
-     "5,000\neligible seed--checkpoint ratios"): 1,
-    ("paper/transport_experiment.tex", "50 evaluation seeds"): 2,
-    ("paper/transport_experiment.tex", "50 runs per cell"): 1,
-    ("paper/transport_experiment.tex",
-     "50 trajectory-level observations per cell"): 1,
-    ("paper/transport_experiment.tex", "600 independent runs"): 1,
-    ("paper/transport_experiment.tex",
-     "All five actions are optimal somewhere in every"): 1,
-    ("paper/transport_experiment.tex", "Contexts have dimension $4$"): 1,
-    ("paper/transport_experiment.tex", "No run has zero regret"): 1,
-    ("paper/transport_experiment.tex", "Ten disjoint tuning seeds"): 1,
-    ("paper/transport_experiment.tex", "\\alpha_t=1"): 1,
-    ("paper/transport_experiment.tex", "\\kappa_{-,t}=\\kappa_{+,t}=1"): 1,
-    ("paper/transport_experiment.tex", "\\xi_t=0"): 1,
-    ("paper/transport_experiment.tex", "all 2400 policy\ntrajectories"): 1,
-    ("paper/transport_experiment.tex",
-     "best-fixed-action regret $180.4$"): 1,
-    ("paper/transport_experiment.tex", "deterministic cap $2T$"): 1,
-    ("paper/transport_experiment.tex",
-     "each of the 12\nhorizon--target cells"): 1,
-    ("paper/transport_experiment.tex",
-     "exact 95\\% Clopper--Pearson interval"): 1,
-    ("paper/transport_experiment.tex", "feature map has dimension $29$"): 1,
-    ("paper/transport_experiment.tex",
-     "horizons $T\\in\\{250,500,1000\\}$"): 1,
-    ("paper/transport_experiment.tex", "is $126.7$--$155.7$ over the"): 1,
-    ("paper/transport_experiment.tex", "is $3.07\\times10^5$"): 1,
-    ("paper/transport_experiment.tex", "learning rate $3\\times10^{-4}$"): 1,
-    ("paper/transport_experiment.tex", "mean-only regret $185.4$"): 1,
-    ("paper/transport_experiment.tex",
-     "no bound violation on the joint confidence event"): 1,
-    ("paper/transport_experiment.tex",
-     "no deterministic algebra or certificate-check failure"): 1,
-    ("paper/transport_experiment.tex", "optimal-action\nentropy $1.579$"): 1,
-    ("paper/transport_experiment.tex", "optimality\ngap $0.123$"): 1,
-    ("paper/transport_experiment.tex", "paired-bootstrap 95\\%"): 1,
-    ("paper/transport_experiment.tex",
-     "pools all 50,000 seed--round values"): 1,
-    ("paper/transport_experiment.tex", "ranges from\n$1.02$"): 1,
-    ("paper/transport_experiment.tex", "ranges from $0.0486$"): 1,
-    ("paper/transport_experiment.tex",
-     "ranges from $1.31\\times10^{-7}$"): 1,
-    ("paper/transport_experiment.tex", "rises\nfrom $81.0$"): 1,
-    ("paper/transport_experiment.tex",
-     "target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$"): 1,
-    ("paper/transport_experiment.tex", "the 50-seed means"): 1,
-    ("paper/transport_experiment.tex", "the same 50 base seeds"): 1,
-    ("paper/transport_experiment.tex", "there are five actions"): 1,
-    ("paper/transport_experiment.tex", "to $0.384$"): 1,
-    ("paper/transport_experiment.tex", "to $1.18$"): 1,
-    ("paper/transport_experiment.tex", "to $94.0$"): 1,
-    ("paper/transport_experiment.tex", "versus caps of $500$--$2{,}000$"): 1,
-    ("paper/transport_experiment_appendix.tex", "$T=1000$"): 3,
-    ("paper/transport_experiment_appendix.tex", "$e^{\\bar D_t^Q/2}$"): 2,
-    ("paper/transport_experiment_appendix.tex", "50 primary-policy trajectories"): 1,
-    ("paper/transport_experiment_appendix.tex", r"$97.33\%,94.66\%,89.39\%,79.39\%$"): 1,
-    ("paper/transport_experiment_appendix.tex", r"$2.01\%,4.04\%,8.16\%,16.27\%$"): 1,
-    ("paper/transport_experiment_appendix.tex", r"$D_{\rm target}=0.25,0.5,1,2$"): 1,
-    ("paper/transport_experiment_appendix.tex", r"\kappa_{-,t}=\kappa_{+,t}=1"): 1,
-    ("paper/transport_experiment_appendix.tex", r"\xi_t=0"): 1,
-    ("paper/transport_experiment_appendix.tex", "50 evaluation seeds"): 2,
-    ("paper/transport_experiment_appendix.tex", "50 runs per cell"): 1,
-    ("paper/transport_experiment_appendix.tex",
-     "50 transport-Hessian trajectories"): 1,
-    ("paper/transport_experiment_appendix.tex", "paired-bootstrap 95\\%"): 1,
-    ("paper/transport_experiment_appendix.tex",
-     "preregistered $10^{-12}$ ratio tolerance"): 1,
-    ("paper/transport_proofs.tex", "\\xi_t=0"): 2,
-    ("paper/transport_theory.tex", "$D_t<1$"): 1,
-    ("paper/transport_theory.tex", "\\alpha_t=1"): 1,
-    ("paper/transport_theory.tex", "\\kappa_{-,t}=\\kappa_{+,t}=1"): 2,
-    ("paper/transport_theory.tex", "\\xi_t=0"): 3,
-    ("submissions/tmlr_2026/main.tex", "29-parameter"): 1,
-    ("submissions/tmlr_2026/main.tex", "50 paired seeds"): 1,
-    ("submissions/tmlr_2026/main.tex", r"pointwise paired 95\% confidence intervals"): 1,
-    ("submissions/tmlr_2026/supplement_README.md", "2,400 trajectories"): 1,
-    ("submissions/tmlr_2026/supplement_README.md", "21 artifacts"): 1,
-    ("submissions/tmlr_2026/supplement_README.md",
-     "all 21 published tables, figures and CSVs"): 1,
-}
-
-
-# Reviewed follow-up prose: exact file, phrase and occurrence count.
-PHRASE_OCCURRENCES.update({
-    ('paper/availability.tex', '600 evaluation seed summaries'): 1,
-    ('paper/transport_followup.tex', '$0.16\\%$'): 1,
-    ('paper/transport_followup.tex', '$0.28\\%$'): 1,
-    ('paper/transport_followup.tex', '$12.13\\%$'): 1,
-    ('paper/transport_followup.tex', '$12.68\\%$'): 1,
-    ('paper/transport_followup.tex', '$T=1000$'): 2,
-    ('paper/transport_followup.tex', '$W=0.25$'): 1,
-    ('paper/transport_followup.tex', '$W=16,1,0.25$'): 3,
-    ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
-    ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
-    ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
-    ('paper/transport_followup.tex', '10,000'): 2,
-    ('paper/transport_followup.tex', '16 of 50 seeds'): 1,
-    ('paper/transport_followup.tex', '20 full-batch steps'): 1,
-    ('paper/transport_followup.tex', '2000, 2000, and 1000'): 1,
-    ('paper/transport_followup.tex', '286 of 50,000'): 1,
-    ('paper/transport_followup.tex', '29-parameter'): 1,
-    ('paper/transport_followup.tex', '294 development and tuning trajectories'): 1,
-    ('paper/transport_followup.tex', '50 common evaluation seeds'): 1,
-    ('paper/transport_followup.tex', '50 histories'): 3,
-    ('paper/transport_followup.tex', '50 seeds per condition'): 1,
-    ('paper/transport_followup.tex', '50 successes out of 50'): 1,
-    ('paper/transport_followup.tex', '50,000 seed--round observations per condition'): 1,
-    ('paper/transport_followup.tex', '600 policy trajectories'): 1,
-    ('paper/transport_followup.tex', '97.104\\%'): 1,
-    ('paper/transport_followup.tex', '99.372\\%'): 1,
-    ('paper/transport_followup.tex', '99.382\\%'): 1,
-    ('paper/transport_followup.tex', '99.508\\%'): 1,
-    ('paper/transport_followup.tex', '99.962\\%'): 1,
-    ('paper/transport_followup.tex', '99.982\\%'): 1,
-    ('paper/transport_followup.tex', 'All 600 evaluation trajectories'): 1,
-    ('paper/transport_followup.tex', 'all 150 of its trajectories'): 1,
-    ('paper/transport_followup.tex', 'all 600 preserved trajectories'): 1,
-    ('paper/transport_followup.tex', 'approximately 9.51, 37.19, and 80.91'): 1,
-    ('paper/transport_followup.tex', 'approximately 19, 60, and 231'): 1,
-    ('paper/transport_followup.tex', 'dimension 29'): 1,
-    ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
-    ('paper/transport_followup.tex', 'learning rate $3\\times10^{-4}$'): 1,
-    ('paper/transport_followup.tex', 'of 50,000 seed--round observations'): 1,
-    ('paper/transport_followup.tex', 'paired 95\\% intervals'): 1,
-    ('paper/transport_followup.tex', 'pointwise 95\\% paired'): 1,
-    ('paper/transport_followup.tex', 'regrets 180.01, 177.97, and 171.84'): 1,
-    ('paper/transport_followup.tex', 'regrets 185.26, 183.06, and 176.67'): 1,
-    ('paper/transport_followup.tex', 'same 600 recorded histories'): 1,
-    ('paper/transport_followup.tex', 'standard deviation $0.25$'): 1,
-    ('paper/transport_followup.tex', 'there are five actions'): 1,
-    ('paper/transport_followup_appendix.tex', '$0.00392155$'): 1,
-    ('paper/transport_followup_appendix.tex', '$T=1000$'): 1,
-    ('paper/transport_followup_appendix.tex', '50 paired evaluation seeds'): 1,
-    ('paper/transport_followup_appendix.tex', 'pointwise 95\\% paired'): 1,
-    ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
-    ('paper/transport_followup_appendix.tex', '$0.124$'): 1,
-    ('paper/transport_followup_appendix.tex', '$1.735$'): 1,
-    ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'): 1,
-    ('paper/transport_followup_appendix.tex', '$4+5+20=29$'): 1,
-    ('paper/transport_followup_appendix.tex', '$5.300$'): 1,
-    ('paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'): 1,
-    ('paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'): 1,
-    ('paper/transport_followup_appendix.tex', '10,000'): 1,
-    ('paper/transport_followup_appendix.tex', '1000 rounds in its denominator'): 1,
-    ('paper/transport_followup_appendix.tex', '1024'): 1,
-    ('paper/transport_followup_appendix.tex', '12 combinations'): 1,
-    ('paper/transport_followup_appendix.tex', '2--10'): 1,
-    ('paper/transport_followup_appendix.tex', '20 steps'): 1,
-    ('paper/transport_followup_appendix.tex', '2048'): 3,
-    ('paper/transport_followup_appendix.tex', '24 declared trajectories'): 1,
-    ('paper/transport_followup_appendix.tex', '24 development trajectories'): 1,
-    ('paper/transport_followup_appendix.tex', '250-digit'): 1,
-    ('paper/transport_followup_appendix.tex', '270 tuning trajectories'): 1,
-    ('paper/transport_followup_appendix.tex', '294 development and tuning trajectories'): 1,
-    ('paper/transport_followup_appendix.tex', '30 tuning'): 1,
-    ('paper/transport_followup_appendix.tex', '30000--30001'): 1,
-    ('paper/transport_followup_appendix.tex', '30100--30109'): 1,
-    ('paper/transport_followup_appendix.tex', '30200--30249'): 1,
-    ('paper/transport_followup_appendix.tex', '4096'): 1,
-    ('paper/transport_followup_appendix.tex', '50 evaluation seeds'): 1,
-    ('paper/transport_followup_appendix.tex', '50 seeds per condition'): 1,
-    ('paper/transport_followup_appendix.tex', '50,000 dependent states'): 1,
-    ('paper/transport_followup_appendix.tex', '600,000 states'): 1,
-    ('paper/transport_followup_appendix.tex', '65 changes'): 1,
-    ('paper/transport_followup_appendix.tex', 'Candidate 008'): 1,
-    ('paper/transport_followup_appendix.tex', 'across 50 seeds'): 1,
-    ('paper/transport_followup_appendix.tex', 'all 600 trajectories'): 1,
-    ('paper/transport_followup_appendix.tex', 'and 1000 rounds'): 1,
-    ('paper/transport_followup_appendix.tex', 'at 16 states'): 1,
-    ('paper/transport_followup_appendix.tex', 'below 0.629'): 1,
-    ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
-    ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'): 1,
-    ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'): 1,
-    ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'): 1,
-    ('paper/transport_followup_appendix.tex', 'teacher seed 1729'): 1,
-    ('paper/transport_followup_appendix.tex', 'the 600\ntrajectories'): 1,
+CLASSIFIED_LITERALS.update({
+    ("paper/transport_experiment_appendix.tex", "1.15.2"): ("historical-dependency-version", 1),
+    ("paper/transport_experiment_appendix.tex", "1.13.1"): ("historical-dependency-version", 1),
+    ("paper/transport_support_appendix.tex", "13"): ("document-structure", 1),
+    ("paper/transport_support_appendix.tex", "16"): ("document-structure", 2),
+    ("paper/transport_support_appendix.tex", "10"): ("document-structure", 1),
+    ("paper/transport_theory.tex", "11"): ("document-structure", 1),
+    ("submissions/tmlr_2026/main.tex", "14"): ("document-structure", 1),
+    ("submissions/tmlr_2026/main.tex", "3"): ("document-structure", 1),
 })
 
 
@@ -1494,17 +1565,45 @@ def _mirror_readme(table: dict) -> dict:
     return mirrored
 
 
+def scoped_declarations(table: dict, root: Path) -> dict:
+    """Only the explicitly retained historical prose is outside package scope.
+
+    Repository checks still require and audit these sources. The anonymous
+    supplement has the compiler closure of the current manuscript and does not
+    ship these superseded sources; its historical numerical evidence is still
+    authenticated and regenerated independently.
+    """
+    if contract.is_packaged_tree(root):
+        return {key: value for key, value in table.items()
+                if key[0] not in HISTORICAL_LEDGER_SOURCES}
+    return dict(table)
+
+
+CLASSIFIED_LITERALS = _mirror_readme(CLASSIFIED_LITERALS)
+PHRASE_OCCURRENCES.update({
+    ("paper/transport_experiment.tex", r"95\% intervals"): 1,
+    ("paper/transport_experiment_appendix.tex", r"95\% intervals"): 1,
+    ("paper/transport_proofs.tex", r"\xi_t=0"): 1,
+    ("paper/transport_support_appendix.tex", r"\xi_t=0"): 2,
+    ("paper/transport_theory.tex", r"\alpha_t=1"): 1,
+    ("paper/transport_theory.tex", r"\kappa_{-,t}=\kappa_{+,t}=1"): 1,
+    ("paper/transport_theory.tex", r"\xi_t=0"): 3,
+    ("submissions/tmlr_2026/main.tex", r"95\% intervals"): 1,
+})
+
+
+
 def phrase_occurrences(root: Path) -> dict[tuple[str, str], int]:
     """(file, phrase) -> allowed occurrence count, from the pinned record."""
 
-    return {key: value[0] for key, value in _mirror_readme(pins.PHRASE_PINS).items()}
+    return {key: value[0] for key, value in scoped_declarations(_mirror_readme(pins.PHRASE_PINS), root).items()}
 
 
 def phrase_pins(root: Path
                 ) -> dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]]:
     """(file, phrase) -> (count, the complete semantic unit of each occurrence)."""
 
-    return _mirror_readme(pins.PHRASE_PINS)
+    return scoped_declarations(_mirror_readme(pins.PHRASE_PINS), root)
 
 
 def classified_pins(
@@ -1512,7 +1611,7 @@ def classified_pins(
 ) -> dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ...]]]:
     """(file, literal) -> (category, count, the unit of each occurrence)."""
 
-    return _mirror_readme(pins.CLASSIFIED_PINS)
+    return scoped_declarations(_mirror_readme(pins.CLASSIFIED_PINS), root)
 
 
 def file_pins(root: Path) -> dict[str, str]:
@@ -2424,6 +2523,8 @@ def audited_sources(root: Path) -> list[Path]:
                    if entry.get("repository")
                    and entry.get("role") in AUDITED_CLOSURE_ROLES]
         sources.sort(key=str)
+    if not contract.is_packaged_tree(root):
+        sources = sorted(set(sources) | {Path(name) for name in HISTORICAL_LEDGER_SOURCES}, key=str)
     return sources + list(readme_sources(root))
 
 
@@ -2603,7 +2704,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # The pinned record and the reviewable category table have to describe the
     # same set: a pin without a category is unexplained, and a category without
     # a pin is unenforced.
-    declared = set(CLASSIFIED_LITERALS)
+    declared = set(scoped_declarations(CLASSIFIED_LITERALS, root))
     pinned = set(classified_pinned)
     expect("every pinned classification has a declared category and rationale",
            pinned <= declared, f"unexplained: {sorted(pinned - declared)[:6]}")
@@ -2835,6 +2936,22 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
     # Typeset generated artifacts are bound by byte-identical regeneration, not
     # by per-literal entries.  Anything else \input from tables/ or figures/
     # must be declared symbolic.
+    try:
+        editorial = _load_reviewed_tool(root, Path("tools/prepare_tmlr_figures.py"))
+        for relative, content in editorial.build(root).items():
+            path = root / relative
+            expect(f"authenticated editorial regeneration: {relative}",
+                   path.is_file() and path.read_bytes() == content.encode(),
+                   "Original generated and approved transformed hashes both required")
+        outcomes = _load_reviewed_tool(root, Path("tools/make_tmlr_outcomes.py"))
+        for name, content in outcomes.build(check_bootstrap=True, root=root).items():
+            path = root / "paper/figures" / name
+            expect(f"seed-derived outcome regeneration: {name}",
+                   path.is_file() and path.read_bytes() == content.encode(),
+                   "All terminal means and paired intervals independently reconstructed")
+    except Exception as error:
+        expect("editorial and outcome regeneration", False, repr(error))
+
     known = {Path(name).name for name in ALL_GENERATED_SOURCES}
     known |= {Path(name).name for name in SYMBOLIC_TABLE_INPUTS}
     known |= {Path(name).name for name in ANALYTICAL_SCHEMATIC_SOURCES}
@@ -2874,7 +2991,7 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
                   | {MACRO_SOURCE, SYMBOLIC_TABLE_SOURCE}
                   | {str(SUPPLEMENT_README_REPO),
                      str(SUPPLEMENT_README_PACKAGED)})
-    stale = sorted({path for path, _ in CLASSIFIED_LITERALS
+    stale = sorted({path for path, _ in scoped_declarations(CLASSIFIED_LITERALS, root)
                     if path not in in_closure}
                    | {path for path, _ in phrases if path not in in_closure})
     expect("no classification names a source outside the submitted closure",
@@ -3003,9 +3120,11 @@ def structural_checks(root: Path, aggregate, config) -> list[Check]:
                f"declared {wanted}; {wrong}")
         availability = root / AVAILABILITY_TEX
         if availability.is_file():
-            expect("availability names the declared SciPy requirement",
+            expect("availability points to the supplement's declared pinned runtime",
                    declared.get("scipy") == "1.15.2"
-                   and "SciPy 1.15.2" in availability.read_text(encoding="utf-8"))
+                   and "pinned Python environment" in normalize_prose(availability.read_text(encoding="utf-8"))
+                   and "anonymous supplement" in availability.read_text(encoding="utf-8")
+                   and "SciPy 1.15.2" in prose)
     # The historical wheel inventory is retained in the repository, but is not
     # a required supplement input.  Its version is dependency provenance, not
     # an inferred runtime for the study; the availability statement remains
@@ -3491,16 +3610,20 @@ def regenerated_pin_module(root: Path) -> str:
     file_rows: list[tuple[str, str]] = []
 
     declared_phrases: dict[str, list[str]] = {}
-    for relative, phrase in pins.PHRASE_PINS:
+    for relative, phrase in PHRASE_OCCURRENCES:
+        if relative == str(SUPPLEMENT_README_PACKAGED):
+            continue
         declared_phrases.setdefault(relative, []).append(phrase)
     declared_literals: dict[str, list[tuple[str, str]]] = {}
-    for (relative, literal), value in pins.CLASSIFIED_PINS.items():
+    for (relative, literal), value in CLASSIFIED_LITERALS.items():
+        if relative == str(SUPPLEMENT_README_PACKAGED):
+            continue
         declared_literals.setdefault(relative, []).append((literal, value[0]))
 
     # Every audited source gets a whole-file pin, including the ones that state
     # no number at all: `paper/availability.tex` has nothing to classify and can
     # still be rewritten to say something false.
-    covered = set(declared_phrases) | set(declared_literals)
+    covered = set(declared_phrases) | set(declared_literals) | set(pins.FILE_PINS)
     covered |= {str(p) for p in audited_sources(root)
                 if (root / p).is_file()
                 and str(p) not in ALL_GENERATED_SOURCES}

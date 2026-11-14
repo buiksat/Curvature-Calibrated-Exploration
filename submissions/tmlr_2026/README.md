@@ -1,185 +1,56 @@
-# TMLR submission candidate
+# TMLR manuscript and research package
 
-**Status: revised anonymous manuscript and compact evidence package built; not submitted.**
+The current manuscript is the approved editorial revision, mapped into the
+canonical `paper/` layout on `cce-review-revisions`. `main.tex` is the thin venue
+entry point. The `main` branch carries the Overleaf mirror. No submission has
+been made.
 
-The latest revision rewrites the abstract as a 250-word narrative with explicit
-contextual-bandit scope, theorem conditions, a limited synthetic study, and
-negative findings. The title remains aligned, and small introduction edits
-clarify the same scope. See the [online guidance and editorial rationale](ABSTRACT_REVISION.md).
+## Build and verify
 
-The preceding chart revision replaces all eight numerical result tables with focused
-charts, retaining the original numerical tables in the reproducibility
-supplement. Ten new figures show policy intervals, fixed-history comparisons,
-seed ranges, drift frequencies and certificate diagnostics at native text size.
-The outcome table is consolidated into the existing outcome chart. See the
-[chart revision record](../../review/table_chart_revision/IMPLEMENTATION_REPORT.md).
-
-The preceding revision applied the checked Fable readability advice: a notation
-table and chronological protocol guide, clearer abstract and policy descriptions,
-explicit own-history mean bound magnitudes, and an unambiguous chart comparator
-label. A further local pass defines the empirical certificate notation by
-cross-reference, separates strict seed thresholds from non-strict round thresholds,
-and fixes grammar, score punctuation and an unused equation number. It builds on
-the earlier problem-first rewrite. Existing formal results, proofs and
-experimental evidence are preserved. See
-[the local-fix record](../../review/readability_polish/IMPLEMENTATION_REPORT.md),
-[the checked Fable advice](../../review/readability_followup_fable/CHECKED_ADVICE.md)
-and [the earlier readability rewrite](../../review/readability_revision/IMPLEMENTATION_REPORT.md).
-
-This entry point uses canonical scientific sources under `paper/`. The main
-branch carries a self-contained LaTeX mirror. The historical `paper/main.pdf`,
-original experiment sources, locked configurations and evidence exports remain
-unchanged. The current supplement includes metadata-anonymized copies of the
-follow-up evidence, with separate original and packaged digests.
-
-## Build
-
-From the prepared research checkout:
+Use the direct CPython environment in [PYTHON_SETUP.md](../../PYTHON_SETUP.md).
+Keep the output outside the checkout:
 
 ```bash
-cd /path/to/Curvature-Calibrated-Exploration
-PYTHON=/path/to/pinned-python312/bin/python \
-  TMLR_OUT=/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release \
-  bash submissions/tmlr_2026/build.sh
+openout_any=a PYTHON=/path/to/pinned-python/bin/python \
+  TMLR_OUT=/tmp/cce-current-release bash submissions/tmlr_2026/build.sh
+/path/to/pinned-python/bin/python tools/prepare_tmlr_figures.py --check
+/path/to/pinned-python/bin/python tools/make_tmlr_outcomes.py --check
+/path/to/pinned-python/bin/python tools/verify_tmlr_submission_numbers.py
+/path/to/pinned-python/bin/python submissions/tmlr_2026/package.py \
+  --compare-manifest /tmp/cce-current-release/release_manifest.json
 ```
 
-`TMLR_OUT` must be outside the repository. The build stages, compiles, checks
-references and layout, validates the evidence inventory, anonymizes metadata,
-checks identity strings and archive size, and publishes the local deliverables
-only after their manifest and member checks pass. It uploads nothing.
+The strict build stages exact source bytes, checks the compiler's actual input
+closure, rejects unresolved references and citations, authenticates the anonymous
+contracts, checks containment and archive inventories, and publishes local
+deliverables only after its gates pass. `source.zip` can be rebuilt in a clean
+directory. Extract `supplement.zip` separately and run its own `verify.sh` with
+the pinned Python environment. The internal `release_manifest.json` is not
+anonymous upload material.
 
-The source ZIP contains the project-local compiler inputs and required BibTeX,
-style, source and licence extras. The supplement contains compact evidence and
-verification tools. `release_manifest.json` is an internal release record and
-must not be uploaded as anonymous material. The staged `src/` is retained for
-inspection. The historical `FINALIZATION_REPORT.md` describes an earlier release;
-[REVISION_VALIDATION.md](REVISION_VALIDATION.md) records the current checks.
+The current PDF has 34 pages in the recorded TeX environment. Build results,
+including PDF comparisons and exact test counts, belong to the verification
+report for the particular commit; this document does not certify later builds.
 
-## Current release
+## Scientific provenance
 
-Current cleanup build directory: `/tmp/cce-research-cleanup-release`.
-The PDF has **52 pages**, in anonymous official TMLR style. All eight numerical
-tables have chart replacements; all pages are portrait. The compact notation
-table remains on page 5. The chart revision record maps each result to its page.
+`tools/make_tmlr_outcomes.py` reads the existing unchanged per-seed export at
+`review/transport_review_followup/full-cce-full-local/`. No duplicate `evidence/`
+tree is needed. Its check replays terminal paired-bootstrap intervals.
 
-| Artifact | Bytes | Members | Unpacked bytes |
-|---|---:|---:|---:|
-| `main.pdf` | 722,007 | — | — |
-| `source.zip` | 3,459,637 | 103 | 3,445,945 |
-| `supplement.zip` | 93,902,070 | 190 | 93,867,286 |
-| `release_manifest.json` | 115,741 | — | — |
+The original artifact generators retain their scientific calculations.
+`tools/prepare_tmlr_figures.py` authenticates original generated sources and the
+approved editorial transforms. Original generation records retain their
+original hashes and attribution; a separate editorial record binds current
+figure sources. CSV values and scientific exports remain unchanged.
 
-The supplement occupies 93.9% of the 100,000,000-byte limit, leaving
-6,097,930 bytes. Both ZIPs use fixed-order, fixed-time uncompressed
-(`ZIP_STORED`) entries. The size gate remains enforced.
+The older near-linear manuscript sources are retained for historical ledger
+checks in the repository. They are excluded from the current source and
+supplement manuscript inventories. The original aggregate, numerical tables
+and provenance remain reproducibility material. Historical reports describe
+their own source states and do not verify this revision.
 
-The compiled closure contains 95 entries: 44 whose bytes the supplement
-carries, 50 in `source.zip`, and `main.bbl` in neither archive. BibTeX
-regenerates the latter from the shipped bibliography and style. The manifest
-also records 239 protected external TeX inputs by distribution variable and
-content hash under `external_tex_inputs`. Those distribution files are
-recorded, not redistributed.
-
-## Dependencies and trust
-
-The current local build uses pdfTeX 1.40.28 / TeX Live 2025 (Debian),
-latexmk 4.87 and BibTeX 0.99d. Evidence validation uses CPython 3.12 with the
-hash-pinned wheel environment in `experiments/requirements-python312.lock`.
-Run `tools/check_python_environment.py` to check installed package versions.
-
-The project vendors exact copies of pgfplots, microtype, mathtools/mhsetup,
-cleveref and the algorithms bundle. The latter includes both runtime styles,
-the source files needed to regenerate them, and its LGPL text. These packages
-contribute 50 runtime/source files and four licence texts, separate from the
-venue template. Source/archive copies are bound to exact digests; see
-[the vendoring record](../../paper/texmf_vendor/VENDORED-PACKAGES.md).
-
-| Package | In `source.zip`? | Role or external dependency |
-|---|---|---|
-| Venue template | **bundled** | Official `tmlr.sty`, `tmlr.bst`, `fancyhdr.sty` and licence |
-| `mathtools` | **bundled** | Includes `mhsetup` |
-| `cleveref` | **bundled** | Cross-reference formatting |
-| `pgfplots` | **bundled** | Plotting inputs |
-| `microtype` | **bundled** | Typography inputs |
-| `algorithms` | **bundled** | `algorithm.sty`, `algorithmic.sty`, regeneration sources and LGPL text |
-| `rotating` | external | Supplies `sidewaystable`; `texlive-latex-base` owns `rotating.sty` in the recorded Debian installation |
-| `cm-super` | external | Not bundled; its font package is not used by this recorded build |
-
-No font is vendored. Remaining TeX inputs must be canonical, unlinked and
-write-protected at every path component. Debian's `TEXMFDEBIAN` tree is subject
-to these same checks. Writable user TeX trees are excluded from the strict build.
-
-Clean source rebuilds are checked against the recorded toolchain. Different
-TeX distributions can produce different PDF bytes; the recorded closure and
-external hashes expose that difference rather than claiming universal byte
-identity.
-
-## Verification
-
-```bash
-/path/to/pinned-python312/bin/python tools/verify_tmlr_submission_numbers.py
-/path/to/pinned-python312/bin/python tools/transport_artifact_expectations.py --root .
-/path/to/pinned-python312/bin/python tools/make_transport_explanatory_figures.py --check
-/path/to/pinned-python312/bin/python tools/verify_transport_committed_evidence.py
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-  TMLR_OUT=/home/bahram/Documents/Codex/2026-10-15/continue-work-on-buiksat-curvature-calibrated/work/abstract-release \
-  /path/to/pinned-python312/bin/python -m pytest -q tests experiments/tests
-```
-
-After extracting `supplement.zip`, run `PYTHON=/path/to/supported/python bash
-verify.sh` with the supported Python environment. Its mandatory anonymous-package gates authenticate
-both contracts before the ledger, artifact regeneration, terminal interval
-reconstruction, evidence coverage and shipped study tests. The follow-up
-contract requires all 20 compact evidence files, the six original follow-up
-table/provenance artifacts, six explanatory chart artifacts, and two separately
-pinned schematic sources. Chart regeneration is distinct from checking the
-manually authored schematics. Scientific values are unchanged. Metadata transforms and dependent hash updates
-are explicit, and original external-input hashes continue to describe original,
-unshipped raw files. The 14-file compact export reconstructs the reported
-terminal intervals from all 600 evaluation summaries.
-
-## Remaining limits
-
-The original near-linear study lacks its raw trajectories and per-seed bootstrap
-inputs. The follow-up raw tree is retained locally, but is not in the compact
-supplement, has not been transformed into an anonymous raw archive, and has no
-verified durable anonymous download location. Raw-dependent scans and optimizer
-replay therefore remain separate from compact evidence verification. See
-[the raw archive status](../../review/post_fable_revision/RAW_ARCHIVE_STATUS.md).
-
-The Buck2/host-monorepo runtime remains an unverified historical route. The
-commands above use the supported portable Python environment. The separate
-Covertype/Nyström extension is outside this submission and retains its own
-open evidence-integrity issues.
-
-The authors still need to review the final materials and supply the required
-OpenReview declarations. A successful build and evidence verification establish
-neither acceptance nor an actual submission.
-
-## Cleanup verification (2026-11-12)
-
-Historical venue sources and deferred experiments are archived as described in
-`../../ARCHIVE.md`. The numerical context module's top-level README file binding
-and its authenticated module digest were refreshed for the new branch guidance.
-All numerical units, classifications, occurrence pins, and scientific file pins
-remain unchanged. The current manifest records the matching refreshed package.
-
-The PDF and source ZIP remain byte-identical to the prior release. The supplement
-changed only to carry the refreshed context binding and authentication metadata;
-its scientific inputs and measured values remain unchanged. Both source archives
-rebuilt their PDFs byte for byte in fresh directories before that metadata-only
-refresh, which does not alter any source ZIP input.
-
-The full local cleanup run on the preceding snapshot reported 737 passed,
-3 skipped and 6 failed. Two documentation/manifest bookkeeping failures were
-subsequently corrected and checked separately. The remaining failures concern
-histogram artifact regeneration: five CSV files differ in 20 plotted bin-center
-coordinate entries by one floating-point ULP; counts, marker sizes, aggregate
-hashes and measured results match. Linux CI reproduced these differences
-(64 review-bundle tests passed, 3 failed). Original artifacts and byte-equality
-checks are retained; this is not a fully passing evidence verification.
-
-The extracted supplement's numerical ledger, follow-up interval reconstruction,
-table/chart checks, checksum sweep and 23 study tests passed. Its historical
-artifact-regeneration check failed on those same five CSVs. No full experimental
-study was rerun and no numerical threshold was relaxed.
+Raw trajectories are absent from the compact supplement. Terminal summaries
+support the checks described in the manuscript; they do not reconstruct missing
+roundwise raw data or establish universal floating-point certificates. No new
+adaptive experiments or Phase 2 implementation are part of this port.

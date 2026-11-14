@@ -107,7 +107,7 @@ def finish(scope, legend=()):
     return text + r'\noindent\begin{minipage}{\linewidth}\raggedright '+scope+r'\end{minipage}'+'\n'
 
 
-def build(root=None):
+def build_original(root=None):
     root = ROOT if root is None else Path(root).resolve()
     tables = read_rows(root)
     output = {}
@@ -202,11 +202,16 @@ def build(root=None):
     s += finish(r'Each point is a median over 50 terminal runs. Width/potential compares the frozen squared-width sum with its elliptic-potential bound; sharp/simple compares cumulative right-hand sides. No uncertainty intervals.',('$T=250$','$T=500$','$T=1000$'))
     save('original_bound_ratios',s)
     provenance = {'schema_version':1,'precision':'Published numerical-table precision; exact table cells retained in supplement.',
-        'generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'generator_sha256':'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
         'inputs':{'paper/tables/'+k+'.tex':v for k,v in INPUT_HASHES.items()},
         'outputs':{str(p):hashlib.sha256(t.encode()).hexdigest() for p,t in sorted(output.items())}}
     output[DESTINATION/'transport_table_provenance.json'] = json.dumps(provenance,indent=2,sort_keys=True)+'\n'
     return output
+
+
+def build(root=ROOT):
+    from prepare_tmlr_figures import apply
+    return apply(build_original(root))
 
 
 def main():

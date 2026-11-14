@@ -52,7 +52,7 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def expected_artifact_text(root: Path) -> tuple[dict[Path, str], str]:
+def expected_original_artifact_text(root: Path) -> tuple[dict[Path, str], str]:
     """Return {absolute path: expected text} and the aggregate SHA-256."""
 
     try:
@@ -193,6 +193,12 @@ def expected_artifact_text(root: Path) -> tuple[dict[Path, str], str]:
     return expected, aggregate_sha
 
 
+def expected_artifact_text(root):
+    from prepare_tmlr_figures import apply
+    outputs, aggregate_sha = expected_original_artifact_text(root)
+    return apply(outputs), aggregate_sha
+
+
 def check(root: Path, *, require_package: bool | None = None
           ) -> list[tuple[str, bool, str]]:
     """Compare every expected artifact against disk, its sidecar and its provenance.
@@ -239,6 +245,15 @@ def check(root: Path, *, require_package: bool | None = None
                 and i.get("path") == str(AGGREGATE_PATH)
                 for i in record.get("inputs", [])
             )
+            if path.suffix == ".tex" and path.parent.name == "figures" and "original_artifact_sha256" in record:
+                from prepare_tmlr_figures import FIGURE_PINS
+                pin = FIGURE_PINS[path.name]
+                bound_ok = bound_ok and record.get("original_artifact_sha256") == pin["original_sha256"]
+                bound_ok = bound_ok and record.get("editorial_transform") == {
+                    "tool": "tools/prepare_tmlr_figures.py",
+                    "record": "paper/figures/transport_editorial_provenance.json",
+                    "scope": "Comment payloads neutralized; generated scientific values and plotting coordinates unchanged.",
+                }
         results.append((
             relative,
             want == got == sidecar_value and bound_ok,

@@ -118,22 +118,28 @@ FOLLOWUP_CONTRACT: dict[str, dict[str, Any]] = {'review/post_full_fable/independ
 # PINNED_CONTRACT_END
 
 # PINNED_ARTIFACTS_START
-ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_explanatory_bounds.csv': {'bytes': 787,
+ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_provenance.json': {'bytes': 7543,
+                                                       'sha256': '9f0b71bf3c53fd2078c11e1e51f7543bf500753e9e69d4f53217e4e96451bedc'},
+ 'paper/figures/transport_explanatory_bounds.csv': {'bytes': 787,
                                                     'sha256': '523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1'},
- 'paper/figures/transport_explanatory_bounds.tex': {'bytes': 2297,
-                                                    'sha256': 'bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324'},
+ 'paper/figures/transport_explanatory_bounds.tex': {'bytes': 1335,
+                                                    'sha256': '3fb25e8ee6e2e0ed3894bc5d7e26cae1fa79ce06fce61eb0c27714672d84c554'},
  'paper/figures/transport_explanatory_outcomes.csv': {'bytes': 841,
                                                       'sha256': '0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe'},
- 'paper/figures/transport_explanatory_outcomes.tex': {'bytes': 8626,
-                                                      'sha256': 'a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339'},
+ 'paper/figures/transport_explanatory_outcomes.tex': {'bytes': 7666,
+                                                      'sha256': '9b3bc251a8901b20cb79b417c3745fdbdf897b2235d98e3e34bbbde54cea230c'},
  'paper/figures/transport_explanatory_paired.csv': {'bytes': 1124,
                                                     'sha256': 'c5e92e0c7158419edfacc2b4b51576aa9c7197ba87958261d37beec44a032266'},
  'paper/figures/transport_explanatory_provenance.json': {'bytes': 3014,
                                                          'sha256': '7e8294965356fa113e7c8c67f8e0ceda6c21c85dcc44b14d5ef79489032067ea'},
- 'paper/figures/transport_table_drift.tex': {'bytes': 3341,
-                                             'sha256': '3698341c06b17ff36f817d2208d86fb84826ba8ff3fd9699b14e8d79c70449a6'},
- 'paper/figures/transport_table_mechanism.tex': {'bytes': 9534,
-                                                 'sha256': '93105c1ff803f4cfcb14a1cd8a943b761dc5df05077d8f59d4df348669bb236e'},
+ 'paper/figures/transport_followup_outcomes.tex': {'bytes': 861,
+                                                   'sha256': '527726ec7baf327eb9f60b855383dadd37d6f8a00715ee07278b0e61ffe0731f'},
+ 'paper/figures/transport_outcomes_provenance.json': {'bytes': 1109,
+                                                      'sha256': 'aa5e39d6e84752db5dd402811128f7c4deabbbd39afa0191bb0e2e750416b705'},
+ 'paper/figures/transport_table_drift.tex': {'bytes': 3026,
+                                             'sha256': '249442e06853424c9e73cfeb017e7ebc520df333270e06bbabc379bddb589e5b'},
+ 'paper/figures/transport_table_mechanism.tex': {'bytes': 9470,
+                                                 'sha256': '221d6e46ca925cc9452472838490528f14d0301f9380e1f2e03ad1fe9a154650'},
  'paper/figures/transport_table_original_bound_ratios.tex': {'bytes': 3750,
                                                              'sha256': 'a03b7e64641f3dc78680181caad1f903c318d02ef874ffac93979ae9b40469ac'},
  'paper/figures/transport_table_original_components.tex': {'bytes': 5104,
@@ -148,10 +154,10 @@ ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_explanatory
                                                          'sha256': '16f8890b8758cfd6b8574648843d92a07386cf61fc0555db51e1cc8ebcef5e3c'},
  'paper/figures/transport_table_provenance.json': {'bytes': 2386,
                                                    'sha256': 'ab834344dd57663b671f2c1dc9f283e36aef28a53c8a0a7b290514ecd309766f'},
- 'paper/figures/transport_table_relative.tex': {'bytes': 4119,
-                                                'sha256': 'f5f77ead8dd87ac4048f0421fe138a0ea091916e85c7c57c22dde0b453698170'},
- 'paper/figures/transport_table_same_history.tex': {'bytes': 7465,
-                                                    'sha256': '80b867341dc4d08edef1322eb6c8f44abaf27c060c74635ee3e17ad885b20417'},
+ 'paper/figures/transport_table_relative.tex': {'bytes': 4055,
+                                                'sha256': 'c8d5475da9ad8ef926bfe1003b1a717ca73746c1028f5747c14f3502e8c2c6c2'},
+ 'paper/figures/transport_table_same_history.tex': {'bytes': 7401,
+                                                    'sha256': '4ba36ea94863d8a0b07b8319061382abda31acb8a2bec6128470d3866522260d'},
  'paper/tables/transport_followup_drift_bounds.tex': {'bytes': 1884,
                                                       'sha256': '6130e0e66e34c6117f5e6d4bc0d1b4a574394a1b00dbf4b363b50062530bac2c'},
  'paper/tables/transport_followup_mechanism_variation.tex': {'bytes': 2402,
@@ -168,10 +174,10 @@ ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_explanatory
 
 # Analytical illustrations are reviewed source material, not empirical outputs
 # reconstructed from the experiment. Keep their provenance class explicit.
-SCHEMATIC_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_conceptual_geometry.tex': {'bytes': 4104,
-                                                     'sha256': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b'},
- 'paper/figures/transport_conceptual_interfaces.tex': {'bytes': 2650,
-                                                       'sha256': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4'}}
+SCHEMATIC_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_conceptual_geometry.tex': {'bytes': 3418,
+                                                     'sha256': 'ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0'},
+ 'paper/figures/transport_conceptual_interfaces.tex': {'bytes': 2366,
+                                                       'sha256': '2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3'}}
 
 README = """# Anonymous compact follow-up evidence
 

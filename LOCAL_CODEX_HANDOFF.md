@@ -1,3 +1,7 @@
+> Historical record of a superseded manuscript state. The current editorial
+> manuscript and release workflow are described in submissions/tmlr_2026/README.md.
+> Results below apply to their recorded source states, not the current port.
+
 # Local Codex handoff — abstract revision
 
 Updated 2026-10-15 (America/Los_Angeles).

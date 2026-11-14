@@ -1098,7 +1098,9 @@ def _submitted_tex_tree(tmp_path: Path) -> Path:
     # from separately pinned follow-up evidence. A clean fixture must carry
     # those inputs and the reviewed generator; old paper-only fixtures cannot
     # truthfully establish a clean numerical-audit baseline any longer.
-    for relative in ledger_tool.FOLLOWUP_SOURCE_HASHES:
+    for relative in (*ledger_tool.FOLLOWUP_SOURCE_HASHES,
+                     *packager.contract.SHIPPED_TOOL_DIGESTS,
+                     *packager.SUPPLEMENT_EVIDENCE):
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO_ROOT / relative, target)

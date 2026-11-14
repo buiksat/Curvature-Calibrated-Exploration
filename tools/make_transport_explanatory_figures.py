@@ -168,7 +168,7 @@ at $W=16,1,0.25$, respectively. No uncertainty intervals are plotted.
     return text
 
 
-def build(root: Path | None = None) -> dict[Path, str]:
+def build_original(root: Path | None = None) -> dict[Path, str]:
     root = ROOT if root is None else Path(root).resolve()
     inputs = []
     for relative, expected in sorted(INPUT_HASHES.items()):
@@ -233,7 +233,7 @@ def build(root: Path | None = None) -> dict[Path, str]:
         "scope": "Prespecified T=1000 follow-up only; all three W conditions; no new experiments.",
         "inputs": inputs,
         "generator": {"path": "tools/make_transport_explanatory_figures.py",
-                      "sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
+                      "sha256": '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150'},
         "outcomes": {
             "population": "Four policies, three W conditions, 50 paired evaluation seeds per cell.",
             "mean_selector": "policy_outcomes[horizon=1000,target_D,method].cumulative_pseudo_regret.mean",
@@ -253,6 +253,11 @@ def build(root: Path | None = None) -> dict[Path, str]:
     }
     outputs["transport_explanatory_provenance.json"] = json.dumps(provenance, indent=2, sort_keys=True) + "\n"
     return {DESTINATION / name: content for name, content in outputs.items()}
+
+
+def build(root=ROOT):
+    from prepare_tmlr_figures import apply
+    return apply(build_original(root))
 
 
 def main():

@@ -129,6 +129,12 @@ run "explanatory chart regeneration from the packaged follow-up summaries (write
 run "table-to-chart regeneration from reviewed numerical values (writes nothing)" \
   "$python" tools/make_transport_table_charts.py --check
 
+run "authenticated original and editorial figure sources (writes nothing)" \
+  "$python" tools/prepare_tmlr_figures.py --check
+
+run "current terminal outcome table and paired interval reconstruction (writes nothing)" \
+  "$python" tools/make_tmlr_outcomes.py --check
+
 run "SHA-256 sidecars for every shipped evidence file" check_evidence_sidecars
 
 run "study tests" \

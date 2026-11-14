@@ -89,50 +89,44 @@ UNITS: tuple[str, ...] = (
     '=\\sqrt{\\gamma_{t-1}+2\\log(1/\\delta)}+\\sqrt\\lambda S',
     '=\\sum_{s<T}[\\epsilon_{\\rm lin}(s)+\\epsilon_{\\rm mis}(s)]^2,',
     '=\\sum_{t=1}^T [\\epsilon_{\\rm lin,t}(a_t)+\\epsilon_{\\rm mis,t}(a_t)].',
-    "After observing the outcomes, we audit these comparisons on the same 600 recorded histories, replaying representation updates with the recorded actions and rewards. On Hessian's histories, the category-specific outward factor gives mean effective-width overheads of $0.28\\%$--$12.68\\%$ relative to the direct reference width, versus $0.16\\%$--$12.13\\%$ for the dense endpoint factor across conditions (\\Cref{app:transport-followup}). These are means of actionwise ratios, not ratios of mean widths: for each candidate action at each recorded state, we divide its effective width by its reference width, then average over actions, rounds, and seeds.",
+    'Algorithm~\\ref{alg:transported-ucb} allows a pre-reward $\\xi_t$-approximate selector. The main finite-action rule uses the smallest-index exact maximizer, so $\\xi_t=0$ as in \\Cref{cor:finite-enumeration-new}.',
     "All quantities are evaluated on this policy's own selected history. No path, current-metric, or operator certificate is needed for this score. If its reference-confidence event has probability at least $1-\\delta$, so does this guarantee.",
-    "At $W=16,1,0.25$, the base-ten logarithms of Hessian's mean terminal RHS divided by the cap are approximately 9.51, 37.19, and 80.91. The frozen policy's corresponding mean ratios, without taking logarithms, are approximately 19, 60, and 231. Each mean uses the named policy's own 50 histories. These summarize mean bound magnitudes; the statement that every individual bound exceeds its cap is a separate check.",
-    'Bandit exploration also connects to classical D-optimal and A-optimal design through objectives such as maximizing $\\log\\det(\\bVbar_t)$ or minimizing the trace of $\\bVbar_t^{-1}$ \\citep{valko2013finite}. Stochastic trace and log-determinant estimators offer related matrix-free tools \\citep{ubaru2017fast}. Here the frozen log-determinant enters the regret analysis. The audited policy chooses actions by its UCB score and does not implement those estimators.',
     'Certified path-length envelope $\\bar D_t$.}; \\node[anchor=north west,align=left] at (5.5,-2.2) {\\textbf{B\\quad Operator comparison}',
     'Consequently, $W=\\Omega(T)$ with a sufficiently large problem-dependent constant keeps $D_{T,W}=O(1)$. For fixed $d$ and fixed problem constants, \\[ R_T=O(d\\sqrt T\\log T)+O(\\sqrt T). \\] This conclusion requires no $D_t<1$ condition. Here $W$ is an abstract near-linearity scale, not generic network width or parameter count, and the result is not an unrestricted neural-training theorem. No optimizer-residual rate is required because the corrected center is used.',
-    "Contextual-bandit policies use confidence estimates to balance exploration and reward. For nonlinear predictors, retraining can change gradient-based estimates without adding observations, but standard sequential confidence arguments do not automatically justify confidence bands based on recomputed gradients. We develop confidence transport to connect a valid reference confidence band, built from gradients fixed before each reward, to scores based on recomputed gradients. The approach uses certified bounds on matrix changes and numerical error. Under explicit statistical and computational conditions, it yields an upper confidence bound policy with a regret guarantee. The conversion has a limit: with the same history, center, radius and bias, the certified uncertainty width cannot be smaller than the reference width. Exact actionwise transport recovers that width; this comparison does not order regret across policies with different adaptive histories. A prespecified study compares four policies in three conditions using one synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition. Hessian transport, which bounds matrix changes using prediction Hessians, has higher mean pseudo-regret than every comparator in each condition; all nine pointwise paired 95\\% confidence intervals for regret differences exclude zero. Transport inflation dominates its regret bounds. Both these bounds and the reference policy's own bounds exceed a deterministic regret cap. All policies, including an uncertified control, pass the recorded floating-point confidence and optimism checks. These checks establish neither universal validity nor a practical advantage. The results separate three questions for exploration with relinearized gradients: whether confidence is conditionally valid, whether regret bounds are informative, and whether decisions improve.",
-    'Each term records the contribution of the action actually chosen. This identity is why the regret proof returns to the frozen matrix even when the policy scores actions using the current matrix. Set $\\gamma_0=0$, and define regret as the mean reward lost relative to the best available action:',
     'Exact current curvature has $\\kappa_{-,t}=\\kappa_{+,t}=1$. More generally, the operational relative-error certificate',
+    'Fix $\\delta\\in(0,1)$. Let $\\rho_s^\\circ$ be the Taylor remainder of $\\mu_{\\btheta^\\circ}$ around $\\btheta_s$. Supply historical Taylor and misspecification envelopes',
     'For completeness, an exact scalar endpoint distance does not generally give the actionwise equality. Set $\\bVbar=I_2$, $\\bV=\\operatorname{diag}(e^D,e^{-D})$ with $D>0$, and $\\bq=(0,1)^\\top$. Then $d_{\\rm Th}(\\bVbar,\\bV)=D$ and $\\bar s=1$, whereas the scalar corrected width is $e^{D/2}s=e^D>1$.',
-    "For descriptive context, the online context-free mean-only benchmark has mean regrets 185.26, 183.06, and 176.67 at $W=16,1,0.25$, respectively; the best fixed action in hindsight has mean regrets 180.01, 177.97, and 171.84. These means use the same evaluation streams. Hessian's sample means are close to the context-free benchmark's, but no equivalence test was performed. Similar regret does not imply matching actions or identical use of context, and these benchmarks do not bound the benefit available to another context-dependent policy. \\Cref{app:transport-followup} defines both benchmarks.",
     'For the category certificate, finite positive collection weights imply $f_{t,c}>0$ whenever $n_{t,c}>0$, and \\[ \\bVbar_t=\\lambda\\bI+\\sigma^{-2}\\sum_c f_{t,c}\\phi_c\\phi_c^\\top, \\qquad \\bV_t=\\lambda\\bI+\\sigma^{-2}\\sum_c g_{t,c}\\phi_c\\phi_c^\\top. \\] For $m=c_{-,t}$ and $M=c_{+,t}$, the definitions give',
     'For the fixed-band statement, the largest admissible mean is $m_t(a)+\\beta_t\\bar s_t(a)+b_t(a)$. Comparing this endpoint to the proposed score and using $\\beta_t>0$ proves necessity and sufficiency. When $\\beta_t=0$, this comparison imposes no restriction on the candidate width. It makes no assertion about uncertainty sets constrained by additional information or about distinct adaptive histories.',
-    'Here $\\lambda>0$ is the ridge regularization and $\\sigma>0$ sets the scale of the updates; it is the noise scale in the squared-loss specialization. The reference update keeps each query as it was at collection time. For the same current query, the matrices can give different widths:',
+    'Here $\\lambda>0$ is ridge regularization and $\\sigma>0$ is the update scale (the noise scale for squared loss). For the same query, define',
     'If the observed feature vectors belong to a finite set $\\{\\phi_c\\}$, let $n_{t,c}$ be their counts, let $f_{t,c}=\\sum_{s<t:\\phi(z_s)=\\phi_c}\\omega_{\\btheta_s}(z_s)^2$, and put $g_{t,c}=n_{t,c}\\operatorname{sech}^4(\\phi_c^\\top\\btheta_t/\\sqrt W)$. The sharper category certificate is',
-    'Install the exact Python 3.12 package lock using [`PYTHON_SETUP.md`](PYTHON_SETUP.md), then run the tests and the static manuscript validation directly:',
     'Let $\\bu=\\Calg^{-1}\\bq$. Since $s_{\\Calg}^2=\\bq^\\top\\bu=\\|\\bu\\|_{\\Calg}^2$, \\[ \\left|\\bq^\\top\\tilde\\bu-s_{\\Calg}^2\\right| =\\left|\\langle\\bu,\\tilde\\bu-\\bu\\rangle_{\\Calg}\\right| \\le\\|\\bu\\|_{\\Calg}\\|\\tilde\\bu-\\bu\\|_{\\Calg} \\le\\varepsilon s_{\\Calg}^2. \\] This proves the pointwise two-sided quadratic-form comparison. Dividing its lower side by $1-\\varepsilon$ gives upper validity for this query, while combining both sides gives the displayed sharpness factor. Applying the lower inequality actionwise on the simultaneous family event gives the all-domain upper condition; only the played query uses the upper inequality for sharpness. For PCG the argument is unchanged once the certificate is expressed in the original $\\Calg$-energy norm.',
     'Let $\\mathcal J$ be a finite or countable certificate-source index set. For $j\\in\\mathcal J$, choose an $\\cHist_t^-$-measurable failure budget $\\delta_{j,t}$ before drawing its random object. Let $\\mathcal P_{j,t}$ be the pre-reward sigma-algebra immediately before that draw. It may equal $\\cHist_t^-$ for a round-start draw or include the selected action and earlier randomness for a post-selection check. It is sufficient that \\[ \\Pr(\\mathcal E_{j,t}^c\\mid\\mathcal P_{j,t})\\le\\delta_{j,t}, \\qquad \\sum_{j\\in\\mathcal J}\\sum_{t=1}^T\\delta_{j,t} \\le\\delta_{\\rm cert}\\quad\\text{almost surely}. \\] The tower property and a union bound give simultaneous validity at least $1-\\delta_{\\rm cert}$ without independence. Countability makes the joint event measurable, the nonnegative double sum well-defined, and the union bound valid. On an uncountable score domain, the solver upper event must already be simultaneous. A pointwise certificate cannot be union-bounded after adaptive selection unless it is separately verified at the selected action with the correct conditioning. Realized terminal spectral quantities may be used for post-hoc analysis, but they cannot be inserted into an earlier action-time radius unless a predictable prefix envelope was supplied at that time.',
     'Let $c_t=\\beta_t[1+\\alpha_te^{\\bar D_t} \\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}]$. Summation and one Cauchy--Schwarz application give \\[ R_T-2\\sum_tb_t(a_t)-\\sum_t\\xi_t \\le\\sqrt{\\sum_tc_t^2}\\sqrt{\\sum_t\\bar s_t^2(a_t)}. \\] Since $\\bar s_t^2(a_t)\\le G^2/\\lambda$, the scalar inequality $x\\le(1+M)\\log(1+x)$ for $0\\le x\\le M$, with $x=\\sigma^{-2}\\bar s_t^2(a_t)$ and $M=G^2/(\\lambda\\sigma^2)$, yields',
     'More generally, fix an action and $m_t(a)$, $b_t(a)$, $\\beta_t>0$, and $\\bar s_t(a)$. If the only restriction on its mean is the full interval \\eqref{eq:abstract-confidence-new}, a score $m_t(a)+\\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that interval if and only if $w_t(a)\\ge\\bar s_t(a)$.',
     'More generally, suppose there is a measurable function $\\nu_t:[0,1]\\to[0,\\infty)$ with $\\nu_t\\in L^1([0,1])$ such that \\[ \\dot\\Bmat(\\tau)^\\top\\dot\\Bmat(\\tau) \\preceq\\nu_t(\\tau)^2\\bV(\\tau) \\] almost everywhere. Then $\\mathcal D(\\bV)\\le2\\int_0^1\\nu_t(\\tau)d\\tau$. For nonnegative $\\nu_t$, the displayed PSD premise is equivalently the norm condition $\\|\\dot\\Bmat(\\tau)\\bV(\\tau)^{-1/2}\\|_{\\rm op}\\le\\nu_t(\\tau)$ almost everywhere.',
+    "Post-outcome score diagnostics show that the Hessian policy's bonus determines its action by current width alone on almost all rounds: the gap between the two largest width bonuses exceeds the full center range on 97.104\\%, 99.372\\% and 99.508\\% of rounds at $W=16,1,0.25$. Its action agrees with the current-width argmax on 99.382\\%, 99.962\\% and 99.982\\% of rounds. Its mean pseudo-regret is close to the context-free benchmark's 185.26, 183.06 and 176.67. Endpoint, frozen reference and naive current are not separated by this study: their mean regrets are within about one unit in each condition (\\Cref{tab:transport-followup-outcomes}). No equivalence test was performed. All nine pointwise paired comparisons favor these comparators over Hessian. Both Hessian's bounds and the frozen policy's own bounds exceed the deterministic cap, while every recorded confidence and optimism check passes.",
+    "Relinearizing historical gradients changes a contextual-bandit uncertainty matrix without adding observations. For squared loss, we construct a corrected-center confidence band along predictable parameter paths in a certified region, with supplied approximation-error bounds and no optimizer convergence requirement. We establish a reference-width floor on fixed histories and sharp symmetric exponential transport factors. For scaled tanh, relative gradient weights give a horizon-independent endpoint certificate. A transported-UCB theorem connects these results through explicit statistical, matrix and solver conditions. A prespecified study compares four policies in three conditions of a synthetic 29-parameter scaled-tanh model, with 50 paired seeds per condition. Hessian transport has higher mean pseudo-regret than every comparator; all nine pointwise paired 95\\% intervals exclude zero. Its bonus usually determines its action, and its bounds and the frozen policy's own bounds exceed the deterministic cap. All four policies pass the recorded confidence and optimism checks.",
+    'Set $\\gamma_0=0$. The determinant identity follows from the frozen rank-one update and uses the actions actually selected.',
     'Set $\\hat s=\\sqrt{U}$. If $L>0$, the observable factor $\\alpha=\\sqrt{U/L}$ verifies played-action sharpness. If $L\\le0<U$, the interval supplies no finite positive multiplicative sharpness factor; the solve must continue or an additive-width theorem must be used. If $U=0$, the exact inverse quadratic form is zero and the solver returns $\\hat s=0$. For $\\bq=0$, skip the solve and return zero.',
     'Since $\\sup_u|2\\operatorname{sech}^2(u)\\tanh(u)|=4/(3\\sqrt3)$, \\Cref{cor:global-near-linear-new} applies with \\[ G=B_\\phi,\\qquad c_\\mu=c_g=c_h:=\\frac{4B_\\phi^2}{3\\sqrt3}. \\] The symbol $W$ is a smoothness scale here; it is not identified with hidden width or parameter count.',
     'The category certificate uses only scalar sums and current projections. After collecting category $c$ at time $t$, its count increases by one and its collection sum increases by $\\omega_{\\btheta_t}(z_t)^2$; other category sums are unchanged. These are sufficient statistics for this comparison, although the category factors need not be the tight spectral factors when feature outer products are linearly dependent.',
-    'The earlier audit contributes 21 artifacts, each with its original provenance record and checksum sidecar. The follow-up contributes separately generated tables and explanatory charts with separate collective provenance records, all independently pinned in code. The conceptual diagrams are reviewed analytical schematics with separate source pins, not measured study outcomes. The excluded legacy appendix, symbolic rate table, autodiff-GGN benchmark and linear-bound benchmark are not evidence for the active manuscript and are not included.',
+    'The earlier audit contributes 21 artifacts. Its tables, CSVs and inactive figure sources retain their original bytes, provenance records and checksum sidecars. The follow-up contributes separately generated tables and explanatory charts with separate collective provenance records, all independently pinned in code. The conceptual diagrams are reviewed analytical schematics with separate source pins, not measured study outcomes. The excluded legacy appendix, symbolic rate table, autodiff-GGN benchmark and linear-bound benchmark are not evidence for the active manuscript and are not included.',
     'The earlier experiments did not execute the transported score or record its path, operator, and solver certificates. They therefore provide no evidence for the current theorem or its numerical performance. The present paper makes no empirical claim for a large neural model, an approximate operator, or an iterative solver: its reported study uses a 29-parameter model and dense Cholesky solves. These exclusions do not change the conditional operator and solver interfaces proved in the theorem.',
     'The exact solution is $\\Calg^{-1}\\bq=\\tilde\\bu+\\Calg^{-1}\\br$. Substitute this expression and $\\bq=\\Calg\\tilde\\bu+\\br$ into the quadratic form. The remainder is $\\br^\\top\\Calg^{-1}\\br$, which lies between zero and $\\|\\br\\|_2^2/\\lambda_{\\Calg}$.',
     "The existing cumulative decomposition in \\Cref{fig:transport-instantiation-bound} separates base confidence, historical linearization, path inflation, and current bias. At $T=1000$, the base component accounts for $79.4\\%$--$97.3\\%$ of the mean terminal sharp right-hand side across target cells; path inflation accounts for $2.0\\%$--$16.3\\%$. Each percentage divides a component's mean over the 50 transport-Hessian trajectories by the mean sharp right-hand side over those same trajectories. These are ratios of means, not medians of runwise shares. The base component alone has cell means of about $9{,}948$--$10{,}010$, already above the cap $2{,}000$. It includes the statistical and regularization/norm-bound terms together with the determinant-potential and Cauchy--Schwarz factors; its size cannot be attributed to the confidence radius alone. Thus most of the bound's size on this original near-linear grid is present before path inflation is added. This dominance statement does not describe the nonlinear follow-up. This is a decomposition along transport-Hessian histories, not a bound evaluated on the frozen-reference policy's different histories. The appendix defines the components and reports the complete tightness charts.",
-    'The historical deterministic term in \\eqref{eq:beta-corrected-new} follows from $\\Phi_t^\\top\\bVbar_t^{-1}\\Phi_t\\preceq I$ for $\\Phi_t=[\\bq_1/\\sigma,\\ldots,\\bq_{t-1}/\\sigma]$. Its scaling is $1/\\sigma$, not $1/\\sigma^2$. Fixed nonvanishing misspecification generally creates a linear current-bias term and can also make the historical radius vacuous. This is a graceful-degradation statement, not a robust misspecified-bandit guarantee.',
+    'The historical deterministic term follows from $\\Phi_t^\\top\\bVbar_t^{-1}\\Phi_t\\preceq I$, with $\\Phi_t=[\\bq_1/\\sigma,\\ldots,\\bq_{t-1}/\\sigma]$; its scale is $1/\\sigma$.',
     'The inclusion of $1$ in the minimum and maximum accounts for the ridge. Each category ratio is a weighted average of sample ratios $r_s=\\widetilde\\omega_s^2/\\omega_s^2$, with weights $\\omega_s^2/f_{t,c}$. Therefore $\\ell^2\\le g_{t,c}/f_{t,c}\\le\\ell^{-2}$, which gives the asserted uniform bounds on $m,M$. It also shows that the category factors are no looser than the direct sample factors $\\min\\{1,\\min_{s<t}r_s\\}$ and $\\max\\{1,\\max_{s<t}r_s\\}$. For an empty history both metrics equal $\\lambda\\bI$.',
     "The locked grid contains horizons $T\\in\\{250,500,1000\\}$, 50 evaluation seeds, and target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$. Each $(T,D_{\\rm target})$ cell is a separately executed model condition because both quantities enter the rule for $W$. The target label is neither realized transport distance nor generic network width, so trends across targets are not a dose response to certificate inflation. The four policies share contexts and potential-noise tables. The primary \\emph{transport Hessian} policy uses $\\bar D_t^Q$ in the score. The \\emph{transport endpoint} policy replaces it by the dense endpoint Thompson distance computed from the learner-known matrices $\\bVbar_t$ and $\\bV_t$ before the reward is observed; it is a dense diagnostic comparator. The \\emph{frozen reference} policy uses the frozen width directly. The \\emph{naive current} policy omits transport and is intentionally uncertified. Each policy has its own selected history and representation path; the frozen-reference policy also updates its representation. ``Frozen'' refers to its collection-time metric. Ten disjoint tuning seeds selected learning rate $3\\times10^{-4}$ and 20 full-batch steps followed by projection each round by preregistered all-action prediction MSE; evaluation seeds never entered that selection. The environment was not filtered after generation. Within each $T=1000$ target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality gap $0.123$, best-fixed-action regret $180.4$, and online context-free mean-only regret $185.4$. All five actions are optimal somewhere in every evaluation stream. Entropy is measured in nats; its maximum for five actions is $\\log 5\\approx1.609$, so the mean entropy is close to its uniform-action maximum. These diagnostics were reported after the grid was fixed; they were not used to select seeds.",
-    'The numerical values underlying the outcome chart at $T=1000$, with 50 paired evaluation seeds per condition, remain in the supplementary reproducibility files. All nine intervals are pointwise 95\\% paired bootstrap intervals; no simultaneous coverage is asserted.',
-    'The prespecified follow-up evaluates 600 policy trajectories. A separate set of 294 development and tuning trajectories precedes evaluation. We fix $T=1000$ and $W\\in\\{16,1,0.25\\}$, with 50 common evaluation seeds per condition and four policies. The model parameter $W$ changes both the reward function and its curvature, so comparisons across conditions do not isolate an effect of metric drift. The original near-linear study appears separately in \\Cref{sec:transport-instantiation}; its evidence is not pooled with this study.',
-    'The shared optimizer uses learning rate $3\\times10^{-4}$ with 20 full-batch steps followed by projection each round. It was selected from nine candidates by prediction MSE on uniform-random tuning histories. This fixes one implementation choice across policies; it does not establish policy-specific regret-optimal tuning. Dense float64 matrices and Cholesky solves implement the exact-operator abstraction. Actions are enumerated, with ties resolved by the smallest action index. This 29-parameter study therefore examines dense numerical implementations. It does not test approximate solvers, large-model scalability, or real-data performance. \\Cref{app:transport-followup} records the protocol and provenance.',
     "Their sum equals the sharp right-hand side in \\eqref{eq:sharp-transport-regret-new} for the experiment's $\\alpha_t=\\kappa_{-,t}=\\kappa_{+,t}=1$ and $\\xi_t=0$. The differences retain the same trajectory and the same potential factor; they do not rerun a policy with a component removed. The committed figure CSVs report the mean of each component over 50 primary-policy trajectories at each round. At $T=1000$, dividing those terminal component means by the corresponding mean sharp right-hand side gives base shares $97.33\\%,94.66\\%,89.39\\%,79.39\\%$ and path shares $2.01\\%,4.04\\%,8.16\\%,16.27\\%$ for $D_{\\rm target}=0.25,0.5,1,2$, respectively. The remaining tightness summaries appear in \\Cref{fig:transport-original-components,fig:transport-original-bound-ratios}. These joint cumulative quantities establish the decomposition; marginal medians of $e^{\\bar D_t^Q/2}$ do not determine it.",
-    'There is measurable movement between the reference and current matrices. The Hessian policy reaches endpoint distances above one in 16 of 50 seeds at $W=0.25$. In that condition, distances are at least one in 286 of 50,000 seed--round observations (\\Cref{fig:transport-followup-drift-bounds}). These round counts describe dependent observations, not additional independent replications. The target labels used to encode $W$ are not measured endpoint distances.',
-    "This analysis asks what different scores recommend when given the same information. For each logged state, we evaluate all four original score rules using that state's matrices, centers, and radii, without changing its history. \\Cref{fig:transport-followup-same-history} includes all 12 combinations of condition and behavior policy. Each point averages one-step pseudo-regret over 50,000 dependent states; the black-ringed points equal the actual mean cumulative pseudo-regret divided by 1000. The other points are recommendations on states visited by the row policy. They describe a recommendation at a recorded state, not the subsequent trajectory of an alternative policy. Taking a different action would generally change future observations, parameters, matrices, and decisions. The analysis was specified after the full-study outcomes were observed.",
+    "This analysis asks what different scores recommend when given the same information. For each logged state, we evaluate all four original score rules using that state's matrices, centers, and radii, without changing its history. \\Cref{fig:transport-followup-same-history} includes all 12 combinations of condition and behavior policy. Each point averages one-step pseudo-regret over 50,000 dependent states; the black-ringed points equal the actual mean cumulative pseudo-regret divided by 1000. The other points are recommendations on states visited by the row policy. The analysis was specified after the full-study outcomes were observed.",
     'This appendix expands the original locked full aggregate summarized in \\Cref{sec:transport-instantiation}. The experiment protocol, configuration, selection record, aggregate, and every generated artifact carry provenance and         hashes. The figures use only the 50 evaluation seeds. Smoke and tuning results are absent. The original raw trajectories were unavailable for this revision; recorded hashes bind the retained artifacts but do not replace those missing inputs or establish an independent raw-data reproduction.',
     'This proves \\eqref{eq:sharp-transport-regret-new}. Finally, $\\alpha_te^{\\bar D_t}\\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}\\ge1$, hence $1+x\\le2x$ gives \\eqref{eq:simple-transport-regret-new}. The probability statement follows by a union bound; independence is not required.',
     'This remains valid when $\\bar D_t\\ge1$. At $t=1$, the factor has zero rows, $Q_1=0$, and both metrics equal $\\lambda\\bI$.',
     'Two-sided SPD comparison.}; \\node[anchor=north west,align=left] at (11,-2.2) {\\textbf{C\\quad Solver certificate}',
     'Use Python 3.12 with NumPy 2.2.3 and SciPy 1.15.2. These are the declared versions in `experiments/requirements.txt`. The supplied `experiments/requirements-python312.lock` additionally pins the portable Linux x86_64 wheel environment, including the test dependencies. A separate online installation may use `pip install --require-hashes --only-binary=:all: -r experiments/requirements-python312.lock`. The verification commands themselves do not install or download anything.',
     'With exact realizability and a frozen linear model, $B_T=E_T^{\\rm cur}=0$. For fixed $d$ and problem constants, the leading term is then $O(e^D\\sqrt K\\,d\\sqrt T\\log T)$. Exact solves set $\\alpha=1$, exact current curvature sets $K=1$, and exact score maximization sets $\\xi_t=0$, recovering the standard LinUCB determinant-potential rate up to displayed constants.',
-    '[1] \\STATE Observe the context and graph-measurable action correspondence $\\cA_t$; this defines $\\cHist_t^-$. \\STATE Take the prefix-determined $\\btheta_t$, $\\bVbar_t$, and $\\bV_t$; using the observed context, form $\\bq_t(a)$, $m_t^{\\rm corr}(a)$, and $b_t(a)$. \\STATE Choose $\\cHist_t^-$-measurable failure budgets before their corresponding draws; reveal the pre-reward randomness $\\Omega_t$. \\STATE Construct $\\Calg_t$ and obtain pre-reward certificates $\\bar D_t$, $\\kappa_{-,t}$, and $\\kappa_{+,t}$. \\STATE Obtain one jointly measurable solver upper-width map $\\hat s_t(a)$ over the score domain. \\STATE Return a $\\cHist_t$-measurable $\\xi_t$-approximate selector for the score in \\eqref{eq:transported-score-new}. \\STATE Observe the reward; update the frozen ridge estimator and \\eqref{eq:reference-update-new}.',
+    '[1] \\STATE Observe the context and measurably enumerated finite action list $\\cA_t$; this defines $\\cHist_t^-$. \\STATE Take the prefix-determined $\\btheta_t$, $\\bVbar_t$, and $\\bV_t$; using the observed context, form $\\bq_t(a)$, $m_t^{\\rm corr}(a)$, and $b_t(a)$. \\STATE Choose $\\cHist_t^-$-measurable failure budgets before their corresponding draws; reveal the pre-reward randomness $\\Omega_t$. \\STATE Construct $\\Calg_t$ and obtain pre-reward certificates $\\bar D_t$, $\\kappa_{-,t}$, and $\\kappa_{+,t}$. \\STATE Obtain one jointly measurable solver upper-width map $\\hat s_t(a)$ over the score domain. \\STATE Return a $\\cHist_t$-measurable $\\xi_t$-approximate selector for the score in \\eqref{eq:transported-score-new}. \\STATE Observe the reward; update the frozen ridge estimator and \\eqref{eq:reference-update-new}.',
     '[Corrected-center confidence without optimizer assumptions] \\label{cor:corrected-center-new} With probability at least $1-\\delta$, simultaneously over rounds and actions,',
     '[Estimator- and solver-agnostic confidence transport] \\label{thm:transported-ucb} Under the protocol above with $\\lambda>0$ and $\\sigma>0$, suppose \\Cref{asm:abstract-transport} holds, the score obeys \\eqref{eq:transported-score-new}--\\eqref{eq:approx-score-oracle-new}, and $\\|\\bq_t(a)\\|_2\\le G$. On the joint confidence and certificate event, the instantaneous regret satisfies',
     '[Global near-linearity under exponential transport] \\label{cor:global-near-linear-new} Assume exact realizability, $\\mu^*(z)=\\mu_{\\btheta^\\circ}(z)$, and suppose $\\|\\btheta^\\circ\\|_2\\le R$ and $\\|\\btheta_t\\|_2\\le R$ for every $t$. On the certified convex radius-$R$ region, assume the prediction gradient is $L_\\mu$-Lipschitz for the Taylor envelopes and satisfies the replay-path Hessian bound $L_g$ in \\Cref{cor:hessian-path-new}, with \\[ L_\\mu\\le\\frac{c_\\mu}{\\sqrt W},\\qquad L_g\\le\\frac{c_g}{\\sqrt W}, \\] with $W>0$. Use the corrected center, exact current curvature, exact dense solves, and exact score maximization in finite parameter dimension $d$, and suppose $\\|\\bq_t(a)\\|_2\\le G$. Thus $\\alpha_t=1$, $\\kappa_{-,t}=\\kappa_{+,t}=1$, and $\\xi_t=0$. Define \\[ D_{T,W}:=\\frac{4c_gR\\sqrt{T-1}}{\\sigma\\sqrt{\\lambda W}}. \\] Then, with probability at least $1-\\delta$,',
@@ -158,7 +152,7 @@ UNITS: tuple[str, ...] = (
     '[Thompson distance and selected-path length] The integrand in \\eqref{eq:generic-path-length-new} is the classical Thompson Finsler norm on the positive-definite cone \\citep{thompson1963certain,nussbaum1994finsler}. Its endpoint metric is \\[ d_{\\rm Th}(A,B) :=\\inf\\{r\\ge0:e^{-r}A\\preceq B\\preceq e^rA\\}. \\] Equivalently, \\[ d_{\\rm Th}(A,B) =\\left\\|\\log(A^{-1/2}BA^{-1/2})\\right\\|_{\\rm op}. \\] Therefore \\Cref{lem:log-spd-path} gives',
     '[x=   ,y=   , every node/.style={font=\\normalsize,inner sep=   }, cert/.style={draw=blue!55!black,line width=     ,->}, object/.style={draw=black!28,fill=black!2,rounded corners=   , minimum width=     ,minimum height=      ,align=center}] \\path[use as bounding box] (0,-6.8) rectangle (16.2,.3); \\node[anchor=west] at (0,0) {\\textbf{Before the reward: conditional certificate comparisons}};',
     '[x=   ,y=   , every node/.style={font=\\normalsize,inner sep=   }, reference/.style={blue!65!black,line width=   }, current/.style={orange!80!black,line width=   ,dashed}, transported/.style={teal!70!black,line width=   }] \\path[use as bounding box] (0,-8.35) rectangle (16.2,.25); \\node[anchor=west] at (0,0) {\\textbf{Abstract illustration}\\quad $\\bVbar=\\bI_2$, $\\bV=\\operatorname{diag}(e^D,e^{-D})$, $\\bq=(1,0)^\\top$, $m=b=0$.}; \\node[anchor=west] at (0,-.55) {Illustrative slice: $D=\\log 4$, $\\beta=1$; choose the allowed mean $\\mu^*=\\beta=1$.};',
-    '\\Cref{fig:transport-confidence-geometry} shows the illustrative slice $D=\\log 4$ and $\\beta=1$. The support of a metric unit ball in direction $\\bq$ is the corresponding inverse-metric width. Here that support shrinks under the current metric even though the reference confidence band still allows its original upper endpoint.',
+    '\\Cref{fig:transport-confidence-geometry} illustrates the slice $D=\\log4$, $\\beta=1$: support in the query direction is the inverse-metric width.',
     '\\] Then \\[ \\bV(\\tau)^{-1/2}\\dot\\bV(\\tau)\\bV(\\tau)^{-1/2} =',
     '\\bVbar_{t+1}',
     '\\bar s_t^2(a)',
@@ -166,7 +160,7 @@ UNITS: tuple[str, ...] = (
     '\\draw[black!28,line width=    ] (0,-4.6) -- (16.2,-4.6); \\node[anchor=west] at (0,-4.95) {Selection and sharpness use the \\textbf{same realized width map} $\\hat s_t(\\cdot)$.}; \\node[anchor=west] at (0,-5.57) {\\textbf{Direct reference comparison}\\quad Same history, center, radius, and bias.}; \\node[anchor=west] at (0,-6.11) {$w_t^{\\rm tr}(a)=e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a) \\ge\\bar s_t(a)$;\\quad exact actionwise correction gives $c_t(a)s_t(a)=\\bar s_t(a)$.}; \\node[anchor=west] at (0,-6.65) {These comparisons do not order the regret of policies with different adaptive histories.};',
     '\\draw[black!30,line width=     ] (11.5,-2.1) -- (11.5,-6.35); \\draw[black!55,densely dotted,line width=     ] (14.5,-1.95) -- (14.5,-6.35); \\node[anchor=south] at (14.5,-1.8) {$\\mu^*=1$};',
     '\\draw[black!40,->,line width=     ] (1.05,-4.35) -- (5.2,-4.35) node[right=   ] {$z_1$}; \\draw[black!40,->,line width=     ] (3,-6.7) -- (3,-2); \\node[anchor=west] at (3.6,-2.35) {$z_2$}; \\draw[reference,fill=blue!4] (3,-4.35) circle[radius=      ]; \\draw[current,fill=orange!6,fill opacity=.55] (3,-4.35) ellipse[x radius=      ,y radius=     ]; \\draw[black,->,line width=    ] (3,-4.35) -- (4.6,-4.35); \\node[anchor=north] at (4.6,-4.53) {$\\bq=\\mathbf e_1$}; \\fill[orange!80!black] (3.525,-4.35) circle[radius=   ]; \\fill[blue!65!black] (4.05,-4.35) circle[radius=   ]; \\draw[orange!80!black,line width=     ] (3.525,-4.32) -- (3.525,-3.6) -- (4.4,-3.6); \\node[anchor=west] at (4.47,-3.6) {$s=\\tfrac12$}; \\draw[blue!65!black,line width=     ] (4.05,-4.32) -- (4.05,-3.02) -- (4.4,-3.02); \\node[anchor=west] at (4.47,-3.02) {$\\bar s=1$}; \\draw[reference] (0,-7.15) -- (.65,-7.15); \\node[anchor=west] at (.82,-7.15) {Reference $E(\\bVbar)$}; \\draw[current] (3.55,-7.15) -- (4.2,-7.15); \\node[anchor=west] at (4.37,-7.15) {Current $E(\\bV)$};',
-    '\\draw[black!50,line width=     ] (8.15,-6.7) -- (14.85,-6.7); \\foreach \\x/\\lab in {8.5/-1,10/-\\frac12,11.5/0,13/\\frac12,14.5/1}{ \\draw[black!50,line width=     ] (\\x,-6.64) -- (\\x,-6.76); \\node[anchor=north] at (\\x,-6.86) {$\\lab$}; } \\node[anchor=north] at (11.5,-7.4) {Mean / score value}; \\node[anchor=west] at (0,-7.85) {$\\bar s=1$, $s=e^{-D/2}$; transport restores $e^{D/2}s=\\bar s$ in this direction.}; \\node[anchor=west] at (0,-8.32) {This is not a realized learning trajectory or an observed policy failure.};',
+    '\\draw[black!50,line width=     ] (8.15,-6.7) -- (14.85,-6.7); \\foreach \\x/\\lab in {8.5/-1,10/-\\frac12,11.5/0,13/\\frac12,14.5/1}{ \\draw[black!50,line width=     ] (\\x,-6.64) -- (\\x,-6.76); \\node[anchor=north] at (\\x,-6.86) {$\\lab$}; } \\node[anchor=north] at (11.5,-7.4) {Mean / score value}; \\node[anchor=west] at (0,-7.85) {$\\bar s=1$, $s=e^{-D/2}$; transport restores $e^{D/2}s=\\bar s$ in this direction.};',
     '\\label{eq:Qt-new} Q_t=\\sum_{s<t}\\|\\btheta_t-\\btheta_s\\|_2^2,',
     '\\label{eq:factor-path-bound-new} \\mathcal D(\\bV)\\le2\\int_0^1 \\|\\dot\\Bmat(\\tau)\\bV(\\tau)^{-1/2}\\|_{\\rm op}\\,d\\tau.',
     '\\label{eq:finite-d-gamma-new} \\gamma_T\\le\\Gamma_{T,d}:= r_T\\log\\!\\left(1+\\frac{TG^2}{r_T\\lambda\\sigma^2}\\right).',
@@ -222,62 +216,61 @@ UNITS: tuple[str, ...] = (
     '\\quad\\times \\sqrt{\\sigma^2+\\frac{G^2}{\\lambda}}\\, \\sqrt{T\\Gamma_{T,d}}\\nonumber',
     '\\quad{}\\times \\left[\\sqrt{\\Gamma_{T,d}+2\\log(1/\\delta)}+\\sqrt\\lambda S +\\frac{\\sqrt{B_T}}{\\sigma}\\right]\\nonumber',
     '\\quad{}\\times \\sqrt{\\left(\\sigma^2+\\frac{G^2}{\\lambda}\\right)T\\Gamma_{T,d}} \\nonumber',
+    '\\setcounter{section}{3} \\input{transport_followup_appendix}',
+    '\\setcounter{theorem}{10}',
+    '\\setcounter{theorem}{11}',
+    '\\setcounter{theorem}{13}',
+    '\\setcounter{theorem}{14} \\input{transport_proofs}',
+    '\\setcounter{theorem}{16}',
     '\\sqrt{\\Gamma_{T,d}+2\\log(1/\\delta)}+\\sqrt\\lambda R',
     'and require the same finite measurable supremum and approximate-selector condition for this score. Keep every other hypothesis of that theorem. On the joint confidence and certificate event, writing $h_t=1+\\alpha_t\\sqrt{c_{+,t}\\kappa_{+,t}/(c_{-,t}\\kappa_{-,t})}$,',
     'd_{\\rm Th}(\\bV(0),\\bV(1))',
     'gives $\\kappa_{-,t}=1-\\varepsilon_t$ and $\\kappa_{+,t}=1+\\varepsilon_t$. An upper comparison alone does not imply a lower factor.',
     'holds. The bias envelope enters twice and the approximate-oracle error enters once. If the confidence event has probability at least $1-\\delta$ and the joint certificate event has probability at least $1-\\delta_{\\rm cert}$, these bounds hold with probability at least $1-\\delta-\\delta_{\\rm cert}$.',
+    'replace $e^{\\bar D_t/2}$ by $1+\\chi_t$ in \\eqref{eq:transported-score-new}.',
     's_t^2(a)',
     's_{\\Calg,t}^2(a)',
-    'use the local score obtained from \\eqref{eq:transported-score-new} by replacing $e^{\\bar D_t/2}$ with $1+\\chi_t$.',
     'where $\\Phi_t=[\\bq_1(a_1)/\\sigma,\\ldots, \\bq_{t-1}(a_{t-1})/\\sigma]$. The self-normalized martingale inequality bounds the middle term in $\\bVbar_t^{-1}$ norm by $\\sqrt{\\gamma_{t-1}+2\\log(1/\\delta)}$ simultaneously over $t$. The ridge term is at most $\\sqrt\\lambda S$. Finally, $\\bVbar_t=\\lambda\\bI+\\Phi_t\\Phi_t^\\top$ implies $\\Phi_t^\\top\\bVbar_t^{-1}\\Phi_t\\preceq\\bI$, so \\[ \\left\\|\\frac1\\sigma\\Phi_t e\\right\\|_{\\bVbar_t^{-1}} \\le\\frac{\\|e\\|_2}{\\sigma} \\le\\frac1\\sigma\\sqrt{\\sum_{s<t} [\\epsilon_{\\rm lin}(s)+\\epsilon_{\\rm mis}(s)]^2}. \\] Cauchy--Schwarz in the $\\bVbar_t$ metric bounds $|\\bq_t(a)^\\top(\\btheta^\\circ-\\hat\\btheta_t^{\\rm lin})|$ by $\\beta_t^{\\rm corr}\\bar s_t(a)$.',
     'with $c_{-,1}=c_{+,1}=1$ for an empty history. It satisfies \\eqref{eq:relative-endpoint-sandwich} and $\\ell^2\\le c_{-,t}\\le1\\le c_{+,t}\\le\\ell^{-2}$. Either certificate can be used in \\Cref{cor:relative-endpoint-ucb}.',
-    '{A local comparison when changes are small.} A local two-sided comparison gives another way to relate the same matrices. It replaces the exponential factors by a local sandwich that requires a smallness condition. If $\\chi_t<1$ and',
-    '{Account for historical and current errors separately.} Fix $\\delta\\in(0,1)$. Let $\\rho_s^\\circ$ be the Taylor remainder of $\\mu_{\\btheta^\\circ}$ around $\\btheta_s$, and supply envelopes',
     '{An endpoint certificate need not bound the synthetic path.} Consider one sample with scalar feature $\\phi=1$, collection parameter $-R$, and current parameter $R$, where $R>0$. Write $\\ell=\\operatorname{sech}^2(R/\\sqrt W)$ with $W>0$. The endpoint metrics are equal to $\\lambda+\\sigma^{-2}\\ell^2$, so their Thompson distance is zero and the category factors are $m=M=1$. Along the synthetic interpolation \\eqref{eq:scalar-factor-path-new}, however, the scalar metric is \\[ V(\\tau)=\\lambda+\\sigma^{-2} \\operatorname{sech}^4((2\\tau-1)R/\\sqrt W). \\] It increases up to $\\tau=1/2$ and then decreases, giving path length \\[ \\int_0^1\\frac{|\\dot V(\\tau)|}{V(\\tau)}\\,d\\tau =2\\log\\!\\left(\\frac{\\lambda+\\sigma^{-2}} {\\lambda+\\sigma^{-2}\\ell^2}\\right)>0. \\] Thus \\Cref{cor:tanh-relative-weights} controls endpoint comparison, not the length used by the original synthetic-path certificate.',
-    "{Both policies' mean regret bounds exceed the deterministic cap. Each point is the base-ten logarithm of the mean terminal theorem RHS divided by $2T\\min(1,\\sqrt W)$, using the named policy's own 50 histories. The zero line represents equality with the cap; positive values indicate that the mean bound is larger. These are descriptive means without uncertainty intervals. Every individual bound also exceeds its cap, as checked in the retained diagnostics. The comparison is not a decomposition of one policy's bound on another policy's history.} \\label{fig:transport-followup-bound-scale}",
     '{Bound nonvacuity.} The cumulative guarantee is vacuous in every original-study cell. The median of the per-trajectory terminal sharp-RHS/regret ratios is $126.7$--$155.7$ over the full grid and $126.7$--$135.0$ at $T=1000$. No run has zero regret. Since $|\\mu^*(z)|\\le\\|\\phi(z)\\|\\|\\btheta^\\circ\\|\\le1$, cumulative pseudo-regret has the deterministic cap $2T$. In every cell the theorem bound also exceeds this cap: the median right-hand sides are $3{,}989$--$12{,}607$, versus caps of $500$--$2{,}000$.',
+    "{Bounds relative to the reward cap.} The reward range gives the deterministic cap $2T\\min(1,\\sqrt W)$, equal to 2000, 2000 and 1000. A bound above it is \\emph{vacuous}. Every Hessian bound and all 150 frozen-policy own-history bounds exceed their caps. The base-ten logarithms of Hessian's mean terminal RHS/cap are approximately 9.51, 37.19 and 80.91; the frozen policy's mean ratios are approximately 19, 60 and 231 (\\Cref{fig:transport-followup-bound-scale}). Path inflation is Hessian's largest bound contribution in all three conditions.",
     "{Certificate tightness.} At $T=1000$, the median of each trajectory's maximum realized $\\bar D_t^Q$ ranges from $0.0486$ to $0.384$ across target cells. The corresponding median of trajectory-maximum endpoint distances ranges from $1.31\\times10^{-7}$ to $8.74\\times10^{-6}$; both summaries have 50 trajectory-level observations per cell. At the 100 declared checkpoints per trajectory, pooling the 5,000 eligible seed--checkpoint ratios gives a median selected factor-path length only $1.20$--$1.22$ times the endpoint distance, while $\\bar D_t^Q$ is $2.51\\times10^5$--$1.88\\times10^6$ times the selected-path diagnostic. The large ratio accompanies extremely small realized metric motion. Measured directly against the endpoint distance rather than against the selected path, the median $\\bar D_t^Q/d_{\\rm Th}$ ratio is $3.07\\times10^5$--$2.24\\times10^6$ at $T=1000$, so the analytic certificate is conservative by five to six orders of magnitude on this grid. The reported median $e^{\\bar D_t^Q/2}$, by contrast, pools all 50,000 seed--round values in a $T=1000$ cell and ranges from $1.02$ to $1.18$ across the four target cells at that horizon; it is not a terminal or run-maximum summary.",
-    "{Do the regret bounds give useful information?} We judge these regret bounds by whether they improve on what the reward range already guarantees. That range gives the deterministic regret cap $2T\\min(1,\\sqrt W)$, which is 2000, 2000, and 1000 for the three conditions. We call a larger bound \\emph{vacuous}: it adds no information beyond the cap. Every Hessian-policy bound is vacuous. The frozen policy's own reference-geometry bounds also exceed the caps in all 150 of its trajectories. \\Cref{fig:transport-followup-bound-scale} shows the size of their mean right-hand sides relative to the cap. The frozen policy's mean bounds are much smaller than Hessian's, but neither provides a useful regret upper bound in this study.",
-    "{Environment and data splits.} The full study fixes teacher seed 1729, development seeds 30000--30001, tuning seeds 30100--30109, and evaluation seeds 30200--30249. Contexts are normalized Rademacher vectors. The feature map concatenates the context, action indicator, and their tensor product, then normalizes it to unit norm; its dimension is $4+5+20=29$. The teacher has unit norm and a fixed regular-simplex construction in the interaction block. The learner starts at zero, uses training ridge one, and receives only the selected action's reward. The potential-noise table couples methods without revealing unselected rewards. The 24 development trajectories cover three conditions and four policies at both development seeds.",
+    '{Confidence and drift checks.} All 600 trajectories, including naive current, pass simultaneous reference confidence, method optimism and deterministic diagnostics: each policy--condition cell has 50/50 successes, with an exact 95\\% Clopper--Pearson interval of approximately $[92.9\\%,100\\%]$. Hessian reaches endpoint distance above one in 16/50 seeds at $W=0.25$; distances are at least one in 286/50,000 seed--round observations (\\Cref{fig:transport-followup-drift-bounds}).',
+    "{Environment and data splits.} The full study fixes teacher seed 1729, development seeds 30000--30001, tuning seeds 30100--30109, and evaluation seeds 30200--30249. Contexts are normalized Rademacher vectors. The feature map concatenates the context, action indicator, and their tensor product, then normalizes it to unit norm; its dimension is $4+5+20=29$. The teacher has unit norm and a fixed regular-simplex construction in the interaction block. The learner starts at zero, uses training ridge one, and receives only the selected action's reward. Rewards are Gaussian with scaled-tanh mean, $\\|\\phi(z)\\|_2\\le1$, projected $\\|\\btheta\\|_2\\le1$, noise standard deviation $0.25$, metric ridge one and $\\delta=0.05$. Dense float64 Cholesky solves implement exact-current operators; action ties use the smallest index. The potential-noise table couples methods without revealing unselected rewards. The 24 development trajectories cover three conditions and four policies at both development seeds.",
+    "{Exploratory endpoint audit.} The relative-weight certificate of \\Cref{cor:tanh-relative-weights} compares collection-time and current squared gradient multipliers within fixed feature categories. After outcomes were observed, replay with the recorded actions and rewards audits all 600 histories. On Hessian's histories, the category-specific outward factor has mean effective-width overheads $0.28\\%$--$12.68\\%$ relative to the reference width, versus $0.16\\%$--$12.13\\%$ for dense endpoint across conditions (Appendix~\\ref{app:transport-followup}).",
     '{Exploratory per-seed variation in Hessian-score recommendations on all four behavior histories. Every row evaluates the Hessian score; row labels identify the history-generating policy. Dots mark the median percentage of rounds; whiskers show the minimum--maximum range across 50 seeds. Width argmax uses the exact smallest-index tie rule; the strict condition is the bonus-gap inequality above.} \\label{fig:transport-followup-mechanism-variation}',
-    "{Exploratory relative certificates on Hessian's recorded histories. The upper panel averages effective-width/reference-width ratios over all five candidate actions and 1000 rounds, then over 50 seeds per condition; the direct reference ratio is identically one. The lower panel averages one-step pseudo-regret of recommendations on these same states. Uniform uses $D_0$; the category methods use symmetric and separate outward factors. These are fixed-history diagnostics, not adaptive policy outcomes.} \\label{fig:transport-followup-relative-audit}",
+    "{Exploratory relative certificates on Hessian's recorded histories. The upper panel averages effective-width/reference-width ratios over all five candidate actions and 1000 rounds, then over 50 seeds per condition; the direct reference ratio is identically one. The lower panel averages one-step pseudo-regret of recommendations on these same states. Uniform uses $D_0$; the category methods use symmetric and separate outward factors. } \\label{fig:transport-followup-relative-audit}",
+    "{Finite-action protocol and timing.} At round $t$, observe the context and a nonempty measurably enumerated list $\\cA_t=\\{a_{t,1},\\ldots,a_{t,K_t}\\}$, as in \\Cref{cor:finite-enumeration-new}; this defines the prefix history $\\cHist_t^-$. The representation $\\btheta_t$, reference matrix and exact current matrix are $\\cHist_t^-$-measurable. Reveal fresh pre-reward randomness $\\Omega_t$ and set $\\cHist_t=\\cHist_t^-\\vee\\sigma(\\Omega_t)$. At each enumerated action, $\\mu_t^*(a_{t,k})$, $\\bq_t(a_{t,k})$, centers, allowances, numerical widths and scores are $\\cHist_t$-measurable. Certificates, the applied operator and selector may use this randomness and are $\\cHist_t$-measurable. Choose the smallest index attaining the score maximum, then observe only its reward and update the frozen statistics. ``Predictable'' means $\\cHist_t^-$-measurable; ``pre-reward measurable'' permits $\\Omega_t$. Sections~\\ref{sec:abstract-transport}--\\ref{sec:closed-rates-new} also hold under the general standard-Borel protocol and measurability requirements in \\Cref{app:general-protocol}.",
     '{General protocol and timing.} Let $(\\mathsf A,\\mathcal B)$ be a standard Borel action space. At round $t$, the learner observes a context and a nonempty random action correspondence $\\cA_t:\\Omega\\to 2^{\\mathsf A}$ whose graph \\[ \\operatorname{Gr}(\\cA_t) :=\\{(\\omega,a):a\\in\\cA_t(\\omega)\\} \\in\\cHist_t^-\\otimes\\mathcal B. \\] Here $\\cHist_t^-$ is the history after the context and action correspondence are observed but before fresh round-$t$ algorithmic randomization. The variable $\\Omega_t$ records all round-$t$ pre-reward randomization, which may be revealed in sequential stages, and $\\cHist_t=\\cHist_t^-\\vee\\sigma(\\Omega_t)$ contains that randomization but not the reward. The restrictions to $\\operatorname{Gr}(\\cA_t)$ of $(\\omega,a)\\mapsto\\mu_t^*(a),\\bq_t(a),m_t(a),b_t(a),\\hat s_t(a)$, and, once defined below, $U_t(a)$ are assumed jointly measurable with respect to $\\cHist_t\\otimes\\mathcal B$. We also assume explicitly that $\\sup_{a\\in\\cA_t}\\mu_t^*(a)$ and $\\sup_{a\\in\\cA_t}U_t(a)$ are finite $\\cHist_t$-measurable random variables, that the oracle below returns a $\\cHist_t$-measurable selector in $\\cA_t$, and that the simultaneous confidence and all certificate events below, including path, operator, all-domain solver-upper, and played-action sharpness validity, are measurable. These are substantive assumptions; standard-Borel structure and graph measurability alone do not make every supremum or selector measurable.',
+    '{Local small-drift comparison.} If $\\chi_t<1$ and',
+    '{Mean cumulative pseudo-regret at $T=1000$ and comparator-minus-Hessian paired differences. Intervals are pointwise 95\\% paired seed-bootstrap intervals from 10,000 resamples of 50 seeds per condition.} \\label{tab:transport-followup-outcomes} \\input{figures/transport_followup_outcomes.tex}',
+    "{Mean terminal theorem RHS relative to the deterministic cap $2T\\min(1,\\sqrt W)$, on each named policy's own 50 histories. Points plot the base-ten logarithm of the mean RHS/cap; zero is equality with the cap.} \\label{fig:transport-followup-bound-scale}",
     '{Meaning of the cumulative bound decomposition.} For a transport-Hessian trajectory, write $P_T=(\\sigma^2+G^2/\\lambda)\\gamma_T$ and $\\beta_t^{\\rm stat}=\\sqrt{\\gamma_{t-1}+2\\log(1/\\delta)}+\\sqrt\\lambda S$. The reported components are',
-    '{Model and implementation details.} The observations are Gaussian with mean $\\mu_{\\btheta}(z)=\\sqrt W\\tanh(\\phi(z)^\\top\\btheta/\\sqrt W)$, with $\\|\\phi(z)\\|_2\\le1$ and projected parameters $\\|\\btheta\\|_2\\le1$. Contexts have dimension four, there are five actions, and the context--action feature map has dimension 29. Noise has standard deviation $0.25$, the metric ridge is one, and the confidence parameter is $\\delta=0.05$. A fixed teacher generates the rewards. The conditions were specified before their evaluation outcomes were observed. Development, tuning, and evaluation use disjoint seed sets.',
-    '{Noise and the reference model.} Let $\\sigma>0$ and let the reward obey $r_t=\\mu_t^*(a_t)+\\eta_t$, where, for every $u\\in\\R$,',
-    '{Numerical checks before evaluation.} A documented development-only numerical refinement froze Gauss--Legendre quadrature order 2048 before tuning and evaluation. The full development gate compared orders 1024 and 2048 on all 24 declared trajectories; a separate development check also compared 2048 and 4096. No failed development check was reclassified as a passing evaluation. Quadrature checks, dense eigenvalue comparisons, and confidence/optimism checks remain floating-point diagnostics. They do not supply rigorous numerical enclosures for theorem assumptions.',
+    '{Numerical checks before evaluation.} A documented development-only numerical refinement froze Gauss--Legendre quadrature order 2048 before tuning and evaluation. The full development gate compared orders 1024 and 2048 on all 24 declared trajectories; a separate development check also compared 2048 and 4096. No failed development check was reclassified as a passing evaluation.',
     '{Original near-linear audit for the transport-Hessian policy. Coverage is run-level simultaneous coverage with exact Clopper--Pearson intervals. The left panel first maximizes each distance within a trajectory, then takes the median over 50 runs per cell; the right panel shows terminal medians. Event violations count theorem-bound failures only when the joint confidence premise holds. All values come from the full evaluation; smoke and tuning runs are excluded.} \\label{fig:transport-instantiation-validity}',
-    '{Original near-linear study.} For \\Cref{sec:transport-instantiation}, the retained full aggregate, generated tables and figures, provenance sidecars, and detached verifier support aggregate-derived checks. The original per-run trajectories and per-seed observations remain unavailable. Their inventory digests do not establish access to or integrity of the missing raw bytes. In particular, the original paired bootstrap cannot be recomputed from the aggregate alone; no per-seed values have been synthesized to replace it. The historical dependency records also disagree: requirements specify SciPy 1.15.2 while a retained host-specific wheel link names SciPy 1.13.1. Two selection-time sources, the artifact renderer and Buck build declaration, differ from their recorded digests. The verifier reports these gaps explicitly. Fresh runs and dependency locks do not repair the historical runtime or source provenance.',
+    '{Original near-linear study.} For \\Cref{sec:transport-instantiation}, the retained full aggregate, generated tables and figures, provenance sidecars, and detached verifier support aggregate-derived checks. The original per-run trajectories and per-seed observations remain unavailable. Their inventory digests do not establish access to or integrity of the missing raw bytes. In particular, the original paired bootstrap cannot be recomputed from the aggregate alone; no per-seed values have been synthesized to replace it. The historical dependency records also disagree: requirements specify SciPy 1.15.2 while a retained host-specific wheel link names SciPy 1.13.1. Two selection-time sources, the artifact renderer and recorded build declaration, differ from their recorded digests. The verifier reports these gaps explicitly. Fresh runs and dependency locks do not repair the historical runtime or source provenance.',
     '{Original-study mean cumulative pseudo-regret at $T=1000$. Shaded bands are pointwise paired-bootstrap 95\\% intervals over the 50 evaluation seeds, not simultaneous confidence bands. All four methods are plotted; curves can coincide where their selected actions agree.} \\label{fig:transport-instantiation-regret}',
     '{Original-study path-certificate conservatism on log--log axes. Blue circles bin the per-round Hessian/$Q_t$ certificate $\\bar D_t^Q$ against endpoint Thompson distance. Orange triangles bin the numerical selected factor-path length at preregistered checkpoints. Each target panel pools eligible observations from the three independently executed horizons. Markers are plotted at geometric bin centers, marker size encodes bin count, and the dashed line is equality. Values at or below the preregistered $10^{-12}$ ratio tolerance, including round-one zeros, are omitted from the log axes and counted in \\Cref{fig:transport-original-path-ratios}. Quadrature and generalized-eigenvalue calculations are dense float64 diagnostics, not verified certificates.} \\label{fig:transport-instantiation-tightness}',
     '{Original-study per-round mean cumulative decomposition over 50 transport-Hessian trajectories at $T=1000$. On this near-linear grid, the base confidence component, which includes the regularization/norm-bound term, dominates; historical linearization, path inflation, and current bias are shown separately. The red sharp right-hand side remains far above realized regret in every target condition.} \\label{fig:transport-instantiation-bound}',
     '{Original-study policy outcomes at the primary horizon $T=1000$. Mean-regret and paired-difference intervals are comparisonwise deterministic paired-bootstrap 95\\% intervals over the same 50 evaluation seeds. Each difference is the row method minus transport Hessian, so negative values favor the row method. Transport endpoint is a dense diagnostic comparator; naive current is an uncertified negative control.} \\label{fig:transport-instantiation-performance}',
     "{Original-study terminal width and bound ratios, summarized by medians over 50 runs per cell. ``Width/potential'' is the frozen squared-width sum divided by its elliptic-potential upper bound; ``Sharp/simple'' is the sharp cumulative right-hand side divided by the simpler right-hand side.} \\label{fig:transport-original-bound-ratios}",
     '{Original-study transport multipliers and error summaries. Multipliers pool all seed--round values; terminal historical radii and cumulative current biases summarize 50 runs per cell. These different populations must not be combined into an additive median decomposition.} \\label{fig:transport-original-components}',
-    "{Policy outcomes and paired comparisons in every prespecified condition. Left: descriptive mean cumulative pseudo-regret at $T=1000$, without error bars. Right: each comparator's regret minus Hessian's, with pointwise 95\\% paired seed-bootstrap intervals from 10,000 resamples of 50 seeds per condition. Negative differences favor the comparator. The intervals condition on the fixed teacher, design and selected optimizer; they are not multiplicity-adjusted. Each policy follows its own adaptive history on matched exogenous streams. Changing $W$ changes the reward task as well as curvature, so the rows do not isolate an effect of drift.} \\label{fig:transport-followup-outcomes}",
+    '{Policy outcomes at $T=1000$. Left: mean cumulative pseudo-regret. Right: comparator-minus-Hessian differences with pointwise 95\\% paired seed-bootstrap intervals. Negative differences favor the comparator.} \\label{fig:transport-followup-outcomes}',
     "{Policy outcomes.} At $T=1000$, mean regret for the operational Hessian-certificate policy rises from $81.0$ to $94.0$ across the four target conditions (\\Cref{fig:transport-instantiation-performance}). All three comparison policies have lower sample-mean pseudo-regret than transport Hessian in every reported condition at this horizon. These are matched-stream total-policy comparisons: the policies share contexts and potential outcomes, but their actions, fitted parameters, centers, radii, and widths may diverge after the first disagreement. The endpoint comparison is consistent with conservatism in the analytic envelope, but it does not isolate a fixed-history mechanism and does not provide a scalable policy certificate; it is a dense diagnostic comparator rather than a deployable policy. The naive score's observed optimism does not make it theoretically valid. Since $D_{\\rm target}$ also changes $W$, the cross-condition pattern is not a causal dose response. Read in the intended direction, these outcomes do not show a causal or uniform advantage for full curvature, and the reverse ordering they record is specific to this environment, this certificate, and this horizon.",
-    "{Prespecified drift diagnostics; bound scales appear in \\Cref{fig:transport-followup-bound-scale}. The maximum and threshold frequencies use Hessian's 50,000 seed--round observations per condition; thresholds use $\\ge$. Mean terminal right-hand sides (RHS) use each named policy's own 50 histories. All individual primary and frozen-policy bounds exceed the corresponding deterministic regret cap.} \\label{fig:transport-followup-drift-bounds}",
-    '{Prespecified follow-up.} For \\Cref{sec:transport-followup}, the retained portable export contains all 600 evaluation seed summaries, the development and tuning summaries, selected optimizer, exact source and execution configurations, run provenance, terminal bound decompositions, drift summaries, and a raw-input hash inventory. An independent verifier reconstructs the reported terminal intervals from the seed summaries. The pinned Python environment and scientific source digests are recorded. Identifying metadata is redacted in packaged copies without changing scientific values; the declarations record their original and packaged digests. Full raw trajectories are retained outside Git and are not included in the compact supplement. The portable export alone does not reproduce every roundwise audit or regret-curve interval. A durable public raw-bundle URL is not provided.',
+    "{Prespecified drift diagnostics. The maximum and threshold frequencies use Hessian's 50,000 seed--round observations per condition; thresholds use $\\ge$. Bound scales appear in \\Cref{fig:transport-followup-bound-scale}.} \\label{fig:transport-followup-drift-bounds}",
+    '{Protocol and policies.} The prespecified study fixes $T=1000$, $W\\in\\{16,1,0.25\\}$ and 50 paired seeds per policy--condition cell (600 trajectories). A fixed teacher generates Gaussian scaled-tanh rewards. The shared projected optimizer was selected by prediction MSE before evaluation; the implementation uses dense float64 Cholesky solves. Appendix~\\ref{app:transport-followup} gives the full model, protocol, splits and checks.',
     '{Protocol.} We use the finite-dimensional scaled-tanh Gaussian specialization of \\Cref{cor:global-near-linear-new}. Contexts have dimension $4$, there are five actions, and the normalized context--action feature map has dimension $29$. The frozen and current matrices are formed densely, all widths use float64 Cholesky solves, and finite enumeration uses the smallest-index tie rule. Thus the intended theorem interface has \\[ \\alpha_t=1,\\qquad \\kappa_{-,t}=\\kappa_{+,t}=1,\\qquad \\xi_t=0. \\] These equalities describe the exact operator, solve, and selection abstractions. The recorded floating-point checks are diagnostics, not verified numerical certificates.',
-    '{Reading the bound.} The instantaneous bound has a statistical radius $\\beta_t$, a frozen width $\\bar s_t(a_t)$, and a factor accounting for transport and computation. The exponential $e^{\\bar D_t}$ reflects two comparisons: a factor $e^{\\bar D_t/2}$ makes the current-width score optimistic, and another compares the selected current width back to the frozen width for the regret proof. The ratio $\\kappa_{+,t}/\\kappa_{-,t}$ accounts for operator distortion, and $\\alpha_t$ accounts for excess width from the solver. The additive terms charge current bias and approximate score maximization.',
-    '{Replay and numerical checks.} The post-outcome audit replays the original representation optimizer with fixed logged actions and rewards for all 600 trajectories; it never replaces a behavior action or generates a new observation. It reconstructs collection-time category weights and compares the resulting sandwich, effective widths, and recommendations at the stored states. Matrix, center, and endpoint reconstruction are checked at rounds 1, 2, 10, 100, 500, and 1000; the original float64 tolerances are retained. These computations check an implementation of the mathematical construction, without converting floating-point residuals into verified certificates. All declared checks passed; the largest residual divided by its original tolerance was below $0.005$. The per-seed variation in the preceding figure was reproduced by this separate fixed-action replay.',
+    '{Reference and current metric unit balls in the abstract instance following \\Cref{prop:reference-width-floor}. With $D=\\log4$, $m=b=0$ and $\\beta=1$, the permitted mean $\\mu^*=1$ exceeds the naive score $1/2$; the multiplier $e^{D/2}$ recovers the reference width.} \\label{fig:transport-confidence-geometry}',
+    "{Regret outcomes.} \\Cref{fig:transport-followup-outcomes} plots the policy outcomes; \\Cref{tab:transport-followup-outcomes} gives the numerical values. Each paired difference is a comparator's cumulative pseudo-regret minus Hessian's on the same evaluation seed. All nine 95\\% intervals exclude zero in the comparator's favor; they use 10,000 paired seed-bootstrap resamples. For descriptive context, the best-fixed-action-in-hindsight means are 180.01, 177.97 and 171.84 at $W=16,1,0.25$, using the same streams as the context-free benchmark defined in the appendix.",
+    '{Replay and numerical checks.} The post-outcome audit replays the original representation optimizer with fixed logged actions and rewards for all 600 trajectories; it never replaces a behavior action or generates a new observation. It reconstructs collection-time category weights and compares the resulting sandwich, effective widths, and recommendations at the stored states. Matrix, center, and endpoint reconstruction are checked at rounds 1, 2, 10, 100, 500, and 1000; the original float64 tolerances are retained. All declared checks passed; the largest residual divided by its original tolerance was below $0.005$. The per-seed variation in the preceding figure was reproduced by this separate fixed-action replay.',
     "{Selecting a shared optimizer.} We select the optimizer by prediction accuracy, using histories generated independently of the study policies' evaluation decisions. The 270 tuning trajectories cover nine optimizer candidates, three conditions, and ten tuning seeds, using uniform-random actions. The nine candidates combine learning rates $\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$ with $\\{1,5,20\\}$ full-batch steps. All were eligible. Candidate 008, learning rate $3\\times10^{-4}$ and 20 steps, minimized equally weighted all-action prediction MSE over the 30 tuning seed--condition cells, with selected MSE $0.00392155$. Evaluation consists of $3\\times4\\times50=600$ further trajectories. The 294 development and tuning trajectories are not evaluation replicates.",
-    "{Sensitivity to score rounding.} We distinguish recomputing the final score from recomputing the quantities that enter it. This matters when two actions have nearly equal scores. The numerical scan reconstructs the recorded selected scores exactly and finds no nonfinite coefficients or scores and no zero widths. A separate 250-digit decimal calculation evaluates the final score arithmetic from the exact stored binary64 centers, widths, offsets, and \\emph{already rounded} coefficient $B_t$. It changes the primary recommendation at 16 states: five, five, and six in the respective conditions. Across all behavior histories there are 65 changes among 600,000 states. All occur at rounds 2--10, with score differences below 0.629 of a binary64 score ULP (the spacing of representable numbers at the score's magnitude). The decimal calculation does not recompute upstream matrix solves, exponentials, coefficients, or fitted parameters. An early changed action could affect subsequent adaptive history; that effect has not been measured. Likewise, equality between the full score vector and its bonus-plus-offset part in binary64 arithmetic includes initially zero centers and is not, by itself, evidence that the selected action was corrupted.",
-    "{Start with an exact current matrix and exact widths.} For the moment, suppose the learner computes the current matrix and its width $s_t(a)$ exactly. Suppose also that a statistical argument bounds the absolute prediction error by $\\beta_t\\bar s_t(a)+b_t(a)$ in the frozen matrix. A \\emph{path certificate} bounds change along an auxiliary matrix path joining the frozen and current matrices; this need not be the learner's training trajectory. A valid certificate $\\bar D_t$ supplies the comparison $\\bar s_t(a)\\le e^{\\bar D_t/2}s_t(a)$ for every action. Thus the exact-case score is \\[ U_t(a)=m_t(a)+\\beta_t e^{\\bar D_t/2}s_t(a)+b_t(a). \\] On the joint confidence and certificate event, this score upper-bounds the mean reward. The multiplier enlarges the current width enough to retain the supplied reference confidence. The center must be the one justified by that confidence argument; it need not be the raw nonlinear prediction. \\Cref{sec:corrected-center} shows how to construct it.",
-    '{The geometric and operator comparisons.} The metric geometry is established. \\citet{thompson1963certain} introduced the part metric now called the Thompson metric on ordered cones, and \\citet{nussbaum1994finsler} developed its Finsler structure and applications. On the positive-definite cone, the tangent norm is $\\|V^{-1/2}\\dot V V^{-1/2}\\|_{\\rm op}$. We use the resulting comparison between a path and its endpoints to connect frozen bandit confidence, current replayed GGN/Fisher curvature, approximate operators, and certified solver widths. The geometry and the path-to-endpoint comparison themselves are not contributions of this paper.',
+    "{Sensitivity to score rounding.} We distinguish recomputing the final score from recomputing the quantities that enter it. This matters when two actions have nearly equal scores. The numerical scan reconstructs the recorded selected scores exactly and finds no nonfinite coefficients or scores and no zero widths. A separate 250-digit decimal calculation evaluates the final score arithmetic from the exact stored binary64 centers, widths, offsets, and \\emph{already rounded} coefficient $B_t$. It changes the primary recommendation at 16 states: five, five, and six in the respective conditions. Across all behavior histories there are 65 changes among 600,000 states. All occur at rounds 2--10, with score differences below 0.629 of a binary64 score ULP (the spacing of representable numbers at the score's magnitude).",
     '{Validity audit.} For the primary policy, every one of the same 50 base seeds in each of the 12 horizon--target cells retained simultaneous reference confidence and transported optimism. The cellwise exact 95\\% Clopper--Pearson interval is $[92.9\\%,100\\%]$. Reusing base seeds across cells supports paired comparisons within a condition, not a pooled sample of 600 independent runs. The strict aggregate accepted all 2400 policy trajectories with no deterministic algebra or certificate-check failure, and the primary policy had no bound violation on the joint confidence event (\\Cref{fig:transport-instantiation-validity}). This finite-sample observation does not prove or empirically validate the theorem. In particular, ordinary float64 Cholesky, eigenvalue, and quadrature checks are not verified enclosures.',
-    "{Variation across seeds and history-generating policies.} \\Cref{fig:transport-followup-mechanism-variation} reports per-seed variation instead of treating the pooled rounds as independent. The row label tells us which policy generated the history; the score being diagnosed is always Hessian's. Thus only Hessian rows describe the behavior policy's own score. The other rows ask what Hessian would recommend on states visited by endpoint, frozen reference, or naive current. They do not diagnose width dominance in those policies' own scores. Each fraction has 1000 rounds in its denominator, and the reported median and range summarize 50 seeds. These descriptive summaries are not confidence intervals.",
-    "{What did the confidence and drift checks show?} The unfavorable policy outcomes did not coincide with a recorded failure of the confidence or optimism checks. The former check whether the reference bands contain the true mean rewards; the latter check whether the action scores upper-bound those means. All 600 evaluation trajectories, including naive current, pass the simultaneous reference-confidence, method-optimism, and deterministic diagnostics. Each policy--condition cell has 50 successes out of 50, with an exact 95\\% Clopper--Pearson interval of approximately $[92.9\\%,100\\%]$. These are observed checks, not proof of population coverage or of the need for transport. Float64 checks and converged quadrature are numerical diagnostics; they do not verify the theorem's assumptions through rigorous numerical enclosures.",
-    "{What do the recorded decisions reveal?} After observing the policy outcomes, we examined how the Hessian score's width bonus related to its recommendations. We independently recomputed score diagnostics from all 600 preserved trajectories. On Hessian's own histories, its selected action equals the current-width argmax on 99.382\\%, 99.962\\%, and 99.982\\% of rounds for $W=16,1,0.25$. A stronger sufficient condition---the bonus gap between the two largest widths exceeding the entire range of prediction centers---holds on 97.104\\%, 99.372\\%, and 99.508\\% of rounds. Under this condition, differences in predicted reward cannot overturn the largest-width action's bonus advantage. Argmax agreement means that the policy chooses the action ranked first by current width under the same tie rule. The stronger condition identifies states where the bonus gap alone forces that choice. The rounds are dependent, and this retrospective calculation does not identify an adaptive causal mechanism.",
-    "{What the experiments establish.} The main study uses a 29-parameter scaled-tanh model with dense matrices and direct Cholesky solves in float64 (\\Cref{sec:transport-followup}). It compares four policies in three prespecified conditions, with 50 paired seeds per condition. All nine pointwise paired intervals favor the comparators over Hessian transport. Transport inflation dominates Hessian's bound; the reference policy's own-trajectory bounds also remain vacuous. All policies, including the uncertified naive control, pass the recorded optimism diagnostics. These floating-point checks neither certify numerical enclosures nor establish that the correction was necessary in the observed runs.",
-    '{What the intervals measure.} Pairing compares policies exposed to the same underlying context and potential-noise stream. It does not force them to select the same actions. The paired-bootstrap intervals resample the 50 evaluation seeds within a condition, preserving the pairing between policies, with 10,000 resamples and the recorded deterministic bootstrap seed. The nine intervals in \\Cref{fig:transport-followup-outcomes} are comparisonwise rather than multiplicity-adjusted. Shared seeds across conditions do not make the 600 trajectories independent observations from one common population. The teacher, conditions, and shared optimizer are fixed in this uncertainty calculation.',
+    "{Variation across seeds and history-generating policies.} \\Cref{fig:transport-followup-mechanism-variation} reports per-seed variation instead of treating the pooled rounds as independent. The row label tells us which policy generated the history; the score being diagnosed is always Hessian's. Thus only Hessian rows describe the behavior policy's own score. The other rows evaluate Hessian on states visited by endpoint, frozen reference or naive current. Each fraction has 1000 rounds in its denominator, and the reported median and range summarize 50 seeds.",
+    '{What the intervals measure.} Pairing compares policies exposed to the same underlying context and potential-noise stream. The paired-bootstrap intervals resample the 50 evaluation seeds within a condition, preserving the pairing between policies, with 10,000 resamples and the recorded deterministic bootstrap seed.',
     '{When the width bonus determines the action.} A large bonus can make the widest action win even when its predicted reward is lower. A sufficient check is that its bonus advantage exceeds the largest possible difference between prediction centers on the recorded state. Write the primary score on a recorded state as $m_t(a)+B_t s_t(a)+b_t$, where $b_t$ is action independent and $B_t=\\beta_t^{\\rm corr}\\exp(\\bar D_t^Q/2)$. Let $s_{t,(1)}\\ge s_{t,(2)}$ be the largest two current widths. The strict condition \\[ B_t\\bigl(s_{t,(1)}-s_{t,(2)}\\bigr) >\\max_a m_t(a)-\\min_a m_t(a) \\] is sufficient for the unique largest-width action to maximize the score. Width-argmax agreement alone is weaker: prediction centers might favor the same action. The exact tie rule is the smallest action index.',
-    '{Which factors are compared?} For unit feature and parameter bounds, \\Cref{cor:tanh-relative-weights} gives the uniform endpoint bound $D_0=4\\log\\cosh(1/\\sqrt W)$, approximately $0.124$, $1.735$, and $5.300$ at the three conditions. The category-specific sandwich $c_{-,t}\\bVbar_t\\preceq\\bV_t\\preceq c_{+,t}\\bVbar_t$ gives a symmetric coefficient $\\exp(D_{{\\rm cat},t}/2)$, where $D_{{\\rm cat},t}=\\max\\{-\\log c_{-,t},\\log c_{+,t}\\}$, or the separate outward coefficient $\\sqrt{c_{+,t}}$ of \\Cref{cor:relative-endpoint-ucb}. The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the cumulative bound. Neither category construction is an upper bound on the length of the original interpolated factor path.',
-    "{Which policies incur less regret?} \\Cref{fig:transport-followup-outcomes} shows the higher mean regret of Hessian transport in each condition; \\Cref{fig:transport-followup-outcomes} gives the numerical values. The paired comparisons ask how much a comparator's regret differs from Hessian's on the same evaluation seed. All nine paired 95\\% intervals for this difference exclude zero in the comparator's favor. These are pointwise intervals from 10,000 paired seed-bootstrap resamples per comparison, without multiplicity adjustment. They describe evaluation-seed variation for the fixed teacher, design, and selected optimizer; they do not include uncertainty from choosing the environment or tuning the optimizer. Because policies follow their own adaptive histories, this comparison measures the outcome of each complete policy. It does not isolate the effect of changing only a certificate at a fixed state or establish a universal policy ordering.",
-    '{Why the reference band alone does not justify a smaller current width. In this abstract instance, the reference and current metric unit balls have different supports in the query direction. With $D=\\log4$, $m=b=0$ and $\\beta=1$, the permitted mean $\\mu^*=1$ exceeds the naive score $1/2$, whereas multiplying the current width by $e^{D/2}$ recovers the reference width. The unit balls illustrate metric geometry; the current ball is not asserted to be a valid statistical confidence set. This is an analytic illustration, not an observed failure in the scaled-tanh study.} \\label{fig:transport-confidence-geometry}',
-    '{Work with the gradients that form the matrix.} A replay matrix is a ridge term plus a Gram matrix of gradient features. Stack those features as rows of $\\Bmat$. It is often easier to bound how these rows change than to analyze the full SPD path directly. The next lemma turns a bound on the changing factor into a bound on matrix path length. Its normalization by $\\bV(\\tau)^{-1/2}$ retains information about which directions the data have already constrained.',
-    '} \\newcommand{\\ccetablesize}{} \\newcommand{\\evidencetabular}[2]{ \\begingroup \\let\\ccerealtabular\\tabular \\renewcommand{\\tabular}[2][c]{\\ccerealtabular[##1]{#1}} #2 \\endgroup}',
+    '{Which factors are compared?} For unit feature and parameter bounds, \\Cref{cor:tanh-relative-weights} gives the uniform endpoint bound $D_0=4\\log\\cosh(1/\\sqrt W)$, approximately $0.124$, $1.735$, and $5.300$ at the three conditions. The category-specific sandwich $c_{-,t}\\bVbar_t\\preceq\\bV_t\\preceq c_{+,t}\\bVbar_t$ gives a symmetric coefficient $\\exp(D_{{\\rm cat},t}/2)$, where $D_{{\\rm cat},t}=\\max\\{-\\log c_{-,t},\\log c_{+,t}\\}$, or the separate outward coefficient $\\sqrt{c_{+,t}}$ of \\Cref{cor:relative-endpoint-ucb}. The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the cumulative bound.',
 )
 
 
@@ -289,653 +282,633 @@ def _u(*cited: tuple[int, int]) -> tuple[tuple[str, int], ...]:
 
 #: (path, phrase) -> (occurrences, ((unit, offset-in-unit), ...))
 PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
-    # paper/availability.tex
-    ('paper/availability.tex', '600 evaluation seed summaries'):
-        (1, _u((200, 103))),
-    # paper/body_intro.tex
-    ('paper/body_intro.tex', '29-parameter'):
-        (1, _u((212, 56))),
-    ('paper/body_intro.tex', '50 paired seeds'):
-        (1, _u((212, 243))),
     # paper/legacy_scope.tex
     ('paper/legacy_scope.tex', '29-parameter'):
-        (1, _u((56, 350))),
+        (1, _u((54, 350))),
     # paper/transport_experiment.tex
     ('paper/transport_experiment.tex', '$1.20$--$1.22$ times the endpoint distance'):
-        (1, _u((179, 485))),
+        (1, _u((177, 485))),
     ('paper/transport_experiment.tex', '$1.88\\times10^6$'):
-        (1, _u((179, 569))),
+        (1, _u((177, 569))),
     ('paper/transport_experiment.tex', '$126.7$--$135.0$ at $T=1000$'):
-        (1, _u((178, 195))),
+        (1, _u((175, 195))),
     ('paper/transport_experiment.tex', '$2.0\\%$--$16.3\\%$'):
-        (1, _u((58, 325))),
+        (1, _u((56, 325))),
     ('paper/transport_experiment.tex', '$2.24\\times10^6$'):
-        (1, _u((179, 839))),
+        (1, _u((177, 839))),
     ('paper/transport_experiment.tex', '$2.51\\times10^5$'):
-        (1, _u((179, 551))),
+        (1, _u((177, 551))),
     ('paper/transport_experiment.tex', '$3{,}989$--$12{,}607$'):
-        (1, _u((178, 448))),
+        (1, _u((175, 448))),
     ('paper/transport_experiment.tex', '$79.4\\%$--$97.3\\%$'):
-        (1, _u((58, 214))),
+        (1, _u((56, 214))),
     ('paper/transport_experiment.tex', '$8.74\\times10^{-6}$'):
-        (1, _u((179, 254))),
+        (1, _u((177, 254))),
     ('paper/transport_experiment.tex', '$9{,}948$--$10{,}010$'):
-        (1, _u((58, 601))),
+        (1, _u((56, 601))),
     ('paper/transport_experiment.tex', '$T=1000$'):
-        (8, _u((61, 1373), (179, 28), (179, 859), (179, 1056), (178, 215), (58, 172), (198, 22), (194, 55))),
+        (8, _u((59, 1373), (177, 28), (177, 859), (177, 1056), (175, 215), (56, 172), (199, 22), (195, 55))),
     ('paper/transport_experiment.tex', '$[92.9\\%,100\\%]$'):
         (1, _u((208, 240))),
     ('paper/transport_experiment.tex', '$\\log 5\\approx1.609$'):
-        (1, _u((61, 1690))),
+        (1, _u((59, 1690))),
     ('paper/transport_experiment.tex', '$e^{\\bar D_t^Q/2}$'):
-        (1, _u((179, 982))),
+        (1, _u((177, 982))),
     ('paper/transport_experiment.tex', '100 declared checkpoints per trajectory'):
-        (1, _u((179, 345))),
+        (1, _u((177, 345))),
     ('paper/transport_experiment.tex', '20 full-batch steps'):
-        (1, _u((61, 1165))),
+        (1, _u((59, 1165))),
     ('paper/transport_experiment.tex', '5,000\neligible seed--checkpoint ratios'):
-        (1, _u((179, 398))),
+        (1, _u((177, 398))),
     ('paper/transport_experiment.tex', '50 evaluation seeds'):
-        (2, _u((61, 58), (194, 188))),
+        (2, _u((59, 58), (195, 188))),
     ('paper/transport_experiment.tex', '50 runs per cell'):
-        (1, _u((189, 238))),
+        (1, _u((190, 238))),
     ('paper/transport_experiment.tex', '50 trajectory-level observations per cell'):
-        (1, _u((179, 295))),
+        (1, _u((177, 295))),
     ('paper/transport_experiment.tex', '50 transport-Hessian trajectories'):
-        (1, _u((58, 396))),
+        (1, _u((56, 396))),
     ('paper/transport_experiment.tex', '600 independent runs'):
         (1, _u((208, 361))),
+    ('paper/transport_experiment.tex', '95\\% intervals'):
+        (1, _u((195, 159))),
     ('paper/transport_experiment.tex', 'All five actions are optimal somewhere in every'):
-        (1, _u((61, 1562))),
+        (1, _u((59, 1562))),
     ('paper/transport_experiment.tex', 'Contexts have dimension $4$'):
-        (1, _u((201, 116))),
+        (1, _u((202, 116))),
     ('paper/transport_experiment.tex', 'No run has zero regret'):
-        (1, _u((178, 225))),
+        (1, _u((175, 225))),
     ('paper/transport_experiment.tex', 'Ten disjoint tuning seeds'):
-        (1, _u((61, 1095))),
+        (1, _u((59, 1095))),
     ('paper/transport_experiment.tex', '\\alpha_t=1'):
-        (1, _u((201, 428))),
+        (1, _u((202, 428))),
     ('paper/transport_experiment.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (1, _u((201, 446))),
+        (1, _u((202, 446))),
     ('paper/transport_experiment.tex', '\\xi_t=0'):
-        (1, _u((201, 481))),
+        (1, _u((202, 481))),
     ('paper/transport_experiment.tex', 'all 2400 policy\ntrajectories'):
         (1, _u((208, 413))),
     ('paper/transport_experiment.tex', 'best-fixed-action regret $180.4$'):
-        (1, _u((61, 1478))),
+        (1, _u((59, 1478))),
     ('paper/transport_experiment.tex', 'cap $2{,}000$'):
-        (1, _u((58, 642))),
+        (1, _u((56, 642))),
     ('paper/transport_experiment.tex', 'deterministic cap $2T$'):
-        (1, _u((178, 337))),
+        (1, _u((175, 337))),
     ('paper/transport_experiment.tex', 'each of the 12\nhorizon--target cells'):
         (1, _u((208, 81))),
     ('paper/transport_experiment.tex', 'exact 95\\% Clopper--Pearson interval'):
         (1, _u((208, 200))),
     ('paper/transport_experiment.tex', 'feature map has dimension $29$'):
-        (1, _u((201, 204))),
+        (1, _u((202, 204))),
     ('paper/transport_experiment.tex', 'horizons $T\\in\\{250,500,1000\\}$'):
-        (1, _u((61, 25))),
+        (1, _u((59, 25))),
     ('paper/transport_experiment.tex', 'is $126.7$--$155.7$ over the'):
-        (1, _u((178, 152))),
+        (1, _u((175, 152))),
     ('paper/transport_experiment.tex', 'is $3.07\\times10^5$'):
-        (1, _u((179, 818))),
+        (1, _u((177, 818))),
     ('paper/transport_experiment.tex', 'learning rate $3\\times10^{-4}$'):
-        (1, _u((61, 1130))),
+        (1, _u((59, 1130))),
     ('paper/transport_experiment.tex', 'mean-only regret $185.4$'):
-        (1, _u((61, 1536))),
+        (1, _u((59, 1536))),
     ('paper/transport_experiment.tex', 'no bound violation on the joint confidence event'):
         (1, _u((208, 529))),
     ('paper/transport_experiment.tex', 'no deterministic algebra or certificate-check failure'):
         (1, _u((208, 447))),
     ('paper/transport_experiment.tex', 'optimal-action\nentropy $1.579$'):
-        (1, _u((61, 1422))),
+        (1, _u((59, 1422))),
     ('paper/transport_experiment.tex', 'optimality\ngap $0.123$'):
-        (1, _u((61, 1454))),
+        (1, _u((59, 1454))),
     ('paper/transport_experiment.tex', 'paired-bootstrap 95\\%'):
-        (1, _u((194, 142))),
+        (1, _u((195, 142))),
     ('paper/transport_experiment.tex', 'pools all 50,000 seed--round values'):
-        (1, _u((179, 1015))),
+        (1, _u((177, 1015))),
     ('paper/transport_experiment.tex', 'ranges from\n$1.02$'):
-        (1, _u((179, 1074))),
+        (1, _u((177, 1074))),
     ('paper/transport_experiment.tex', 'ranges from $0.0486$'):
-        (1, _u((179, 100))),
+        (1, _u((177, 100))),
     ('paper/transport_experiment.tex', 'ranges from $1.31\\times10^{-7}$'):
-        (1, _u((179, 219))),
+        (1, _u((177, 219))),
     ('paper/transport_experiment.tex', 'rises\nfrom $81.0$'):
-        (1, _u((198, 91))),
+        (1, _u((199, 91))),
     ('paper/transport_experiment.tex', 'target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$'):
-        (1, _u((61, 83))),
+        (1, _u((59, 83))),
     ('paper/transport_experiment.tex', 'the 50-seed means'):
-        (1, _u((61, 1395))),
+        (1, _u((59, 1395))),
     ('paper/transport_experiment.tex', 'the same 50 base seeds'):
         (1, _u((208, 55))),
     ('paper/transport_experiment.tex', 'there are five actions'):
-        (1, _u((201, 145))),
+        (1, _u((202, 145))),
     ('paper/transport_experiment.tex', 'to $0.384$'):
-        (1, _u((179, 121))),
+        (1, _u((177, 121))),
     ('paper/transport_experiment.tex', 'to $1.18$'):
-        (1, _u((179, 1093))),
+        (1, _u((177, 1093))),
     ('paper/transport_experiment.tex', 'to $94.0$'):
-        (1, _u((198, 109))),
+        (1, _u((199, 109))),
     ('paper/transport_experiment.tex', 'versus caps of $500$--$2{,}000$'):
-        (1, _u((178, 471))),
+        (1, _u((175, 471))),
     # paper/transport_experiment_appendix.tex
     ('paper/transport_experiment_appendix.tex', '$2.01\\%,4.04\\%,8.16\\%,16.27\\%$'):
-        (1, _u((65, 566))),
+        (1, _u((60, 566))),
     ('paper/transport_experiment_appendix.tex', '$97.33\\%,94.66\\%,89.39\\%,79.39\\%$'):
-        (1, _u((65, 516))),
+        (1, _u((60, 516))),
     ('paper/transport_experiment_appendix.tex', '$D_{\\rm target}=0.25,0.5,1,2$'):
-        (1, _u((65, 601))),
+        (1, _u((60, 601))),
     ('paper/transport_experiment_appendix.tex', '$T=1000$'):
-        (3, _u((65, 400), (191, 49), (193, 98))),
+        (3, _u((60, 400), (192, 49), (194, 98))),
     ('paper/transport_experiment_appendix.tex', '$e^{\\bar D_t^Q/2}$'):
-        (1, _u((65, 851))),
+        (1, _u((60, 851))),
     ('paper/transport_experiment_appendix.tex', '50 evaluation seeds'):
-        (2, _u((68, 267), (191, 127))),
+        (2, _u((62, 267), (192, 127))),
     ('paper/transport_experiment_appendix.tex', '50 primary-policy trajectories'):
-        (1, _u((65, 351))),
+        (1, _u((60, 351))),
     ('paper/transport_experiment_appendix.tex', '50 runs per cell'):
-        (2, _u((196, 166), (195, 76))),
+        (2, _u((197, 166), (196, 76))),
     ('paper/transport_experiment_appendix.tex', '50 transport-Hessian trajectories'):
-        (1, _u((193, 61))),
+        (1, _u((194, 61))),
+    ('paper/transport_experiment_appendix.tex', '95\\% intervals'):
+        (1, _u((192, 103))),
     ('paper/transport_experiment_appendix.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (1, _u((65, 115))),
+        (1, _u((60, 115))),
     ('paper/transport_experiment_appendix.tex', '\\xi_t=0'):
-        (1, _u((65, 149))),
+        (1, _u((60, 149))),
     ('paper/transport_experiment_appendix.tex', 'paired-bootstrap 95\\%'):
-        (1, _u((191, 86))),
+        (1, _u((192, 86))),
     ('paper/transport_experiment_appendix.tex', 'preregistered $10^{-12}$ ratio tolerance'):
-        (1, _u((192, 490))),
+        (1, _u((193, 490))),
     # paper/transport_followup.tex
     ('paper/transport_followup.tex', '$0.16\\%$'):
-        (1, _u((31, 333))),
+        (1, _u((180, 454))),
     ('paper/transport_followup.tex', '$0.28\\%$'):
-        (1, _u((31, 266))),
+        (1, _u((180, 394))),
     ('paper/transport_followup.tex', '$12.13\\%$'):
-        (1, _u((31, 343))),
+        (1, _u((180, 464))),
     ('paper/transport_followup.tex', '$12.68\\%$'):
-        (1, _u((31, 276))),
+        (1, _u((180, 404))),
     ('paper/transport_followup.tex', '$T=1000$'):
-        (2, _u((63, 148), (197, 124))),
+        (3, _u((201, 54), (186, 34), (198, 20))),
     ('paper/transport_followup.tex', '$W=0.25$'):
-        (1, _u((66, 150))),
+        (1, _u((178, 356))),
     ('paper/transport_followup.tex', '$W=16,1,0.25$'):
-        (3, _u((41, 116), (33, 3), (211, 371))),
+        (2, _u((47, 259), (204, 475))),
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'):
-        (1, _u((63, 161))),
+        (1, _u((201, 64))),
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'):
-        (1, _u((210, 572))),
-    ('paper/transport_followup.tex', '$\\delta=0.05$'):
-        (1, _u((186, 411))),
+        (1, _u((178, 276))),
     ('paper/transport_followup.tex', '10,000'):
-        (2, _u((216, 447), (197, 260))),
-    ('paper/transport_followup.tex', '16 of 50 seeds'):
-        (1, _u((66, 132))),
-    ('paper/transport_followup.tex', '20 full-batch steps'):
-        (1, _u((64, 62))),
-    ('paper/transport_followup.tex', '2000, 2000, and 1000'):
-        (1, _u((180, 222))),
-    ('paper/transport_followup.tex', '286 of 50,000'):
-        (1, _u((66, 209))),
-    ('paper/transport_followup.tex', '29-parameter'):
-        (1, _u((64, 486))),
-    ('paper/transport_followup.tex', '294 development and tuning trajectories'):
-        (1, _u((63, 80))),
-    ('paper/transport_followup.tex', '50 common evaluation seeds'):
-        (1, _u((63, 187))),
-    ('paper/transport_followup.tex', '50 histories'):
-        (3, _u((33, 281), (177, 196), (199, 285))),
+        (2, _u((204, 336), (186, 158))),
+    ('paper/transport_followup.tex', '16/50 seeds'):
+        (1, _u((178, 341))),
+    ('paper/transport_followup.tex', '180.01,\n177.97 and 171.84'):
+        (1, _u((204, 446))),
+    ('paper/transport_followup.tex', '185.26,\n183.06 and 176.67'):
+        (1, _u((47, 432))),
+    ('paper/transport_followup.tex', '19, 60 and 231'):
+        (1, _u((176, 403))),
+    ('paper/transport_followup.tex', '2000, 2000 and 1000'):
+        (1, _u((176, 112))),
+    ('paper/transport_followup.tex', '286/50,000'):
+        (1, _u((178, 396))),
+    ('paper/transport_followup.tex', '50 paired'):
+        (1, _u((201, 88))),
     ('paper/transport_followup.tex', '50 seeds per condition'):
-        (1, _u((197, 280))),
-    ('paper/transport_followup.tex', '50 successes out of 50'):
-        (1, _u((210, 486))),
-    ('paper/transport_followup.tex', '50,000 seed--round observations per condition'):
-        (1, _u((199, 151))),
-    ('paper/transport_followup.tex', '600 policy trajectories'):
-        (1, _u((63, 37))),
+        (1, _u((186, 178))),
+    ('paper/transport_followup.tex', '50/50 successes'):
+        (1, _u((178, 197))),
+    ('paper/transport_followup.tex', '600 trajectories'):
+        (2, _u((201, 132), (178, 35))),
+    ('paper/transport_followup.tex', '9.51, 37.19 and 80.91'):
+        (1, _u((176, 330))),
+    ('paper/transport_followup.tex', '95\\% intervals'):
+        (1, _u((204, 272))),
     ('paper/transport_followup.tex', '97.104\\%'):
-        (1, _u((211, 525))),
+        (1, _u((47, 214))),
     ('paper/transport_followup.tex', '99.372\\%'):
-        (1, _u((211, 535))),
+        (1, _u((47, 224))),
     ('paper/transport_followup.tex', '99.382\\%'):
-        (1, _u((211, 324))),
+        (1, _u((47, 325))),
     ('paper/transport_followup.tex', '99.508\\%'):
-        (1, _u((211, 549))),
+        (1, _u((47, 237))),
     ('paper/transport_followup.tex', '99.962\\%'):
-        (1, _u((211, 334))),
+        (1, _u((47, 335))),
     ('paper/transport_followup.tex', '99.982\\%'):
-        (1, _u((211, 348))),
-    ('paper/transport_followup.tex', 'All 600 evaluation trajectories'):
-        (1, _u((210, 304))),
-    ('paper/transport_followup.tex', 'all 150 of its trajectories'):
-        (1, _u((180, 460))),
-    ('paper/transport_followup.tex', 'all 600 preserved trajectories'):
-        (1, _u((211, 209))),
-    ('paper/transport_followup.tex', 'approximately 19, 60, and 231'):
-        (1, _u((33, 212))),
-    ('paper/transport_followup.tex', 'approximately 9.51, 37.19, and 80.91'):
-        (1, _u((33, 96))),
-    ('paper/transport_followup.tex', 'dimension 29'):
-        (1, _u((186, 303))),
+        (1, _u((47, 348))),
+    ('paper/transport_followup.tex', 'All 600 trajectories'):
+        (1, _u((178, 31))),
+    ('paper/transport_followup.tex', 'all 150 frozen-policy'):
+        (1, _u((176, 193))),
+    ('paper/transport_followup.tex', 'all 600 histories'):
+        (1, _u((180, 279))),
     ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'):
-        (1, _u((210, 518))),
-    ('paper/transport_followup.tex', 'learning rate $3\\times10^{-4}$'):
-        (1, _u((64, 26))),
-    ('paper/transport_followup.tex', 'of 50,000 seed--round observations'):
-        (1, _u((66, 213))),
-    ('paper/transport_followup.tex', 'paired 95\\% intervals'):
-        (1, _u((216, 330))),
+        (1, _u((178, 222))),
     ('paper/transport_followup.tex', 'pointwise 95\\% paired'):
-        (1, _u((197, 208))),
-    ('paper/transport_followup.tex', 'regrets 180.01, 177.97, and 171.84'):
-        (1, _u((41, 189))),
-    ('paper/transport_followup.tex', 'regrets 185.26, 183.06, and 176.67'):
-        (1, _u((41, 78))),
-    ('paper/transport_followup.tex', 'same 600 recorded histories'):
-        (1, _u((31, 64))),
-    ('paper/transport_followup.tex', 'standard deviation $0.25$'):
-        (1, _u((186, 327))),
-    ('paper/transport_followup.tex', 'there are five actions'):
-        (1, _u((186, 239))),
+        (2, _u((186, 106), (198, 116))),
     # paper/transport_followup_appendix.tex
     ('paper/transport_followup_appendix.tex', '$0.00392155$'):
-        (1, _u((204, 611))),
+        (1, _u((206, 611))),
     ('paper/transport_followup_appendix.tex', '$0.005$'):
-        (1, _u((203, 762))),
+        (1, _u((205, 613))),
     ('paper/transport_followup_appendix.tex', '$0.124$'):
-        (1, _u((215, 178))),
+        (1, _u((212, 178))),
     ('paper/transport_followup_appendix.tex', '$1.735$'):
-        (1, _u((215, 187))),
+        (1, _u((212, 187))),
     ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'):
-        (1, _u((204, 648))),
+        (1, _u((206, 648))),
     ('paper/transport_followup_appendix.tex', '$4+5+20=29$'):
-        (1, _u((181, 345))),
+        (1, _u((179, 345))),
     ('paper/transport_followup_appendix.tex', '$5.300$'):
-        (1, _u((215, 200))),
-    ('paper/transport_followup_appendix.tex', '$T=1000$'):
-        (1, _u((62, 53))),
+        (1, _u((212, 200))),
+    ('paper/transport_followup_appendix.tex', '$\\delta=0.05$'):
+        (1, _u((179, 702))),
     ('paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'):
-        (1, _u((204, 388))),
+        (1, _u((206, 388))),
     ('paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'):
-        (1, _u((204, 339))),
+        (1, _u((206, 339))),
     ('paper/transport_followup_appendix.tex', '10,000'):
-        (1, _u((213, 304))),
+        (1, _u((210, 253))),
     ('paper/transport_followup_appendix.tex', '1000 rounds in its denominator'):
-        (1, _u((209, 561))),
+        (1, _u((209, 476))),
     ('paper/transport_followup_appendix.tex', '1024'):
-        (1, _u((188, 205))),
+        (1, _u((189, 205))),
     ('paper/transport_followup_appendix.tex', '12 combinations'):
-        (1, _u((67, 284))),
+        (1, _u((61, 284))),
     ('paper/transport_followup_appendix.tex', '2--10'):
-        (1, _u((205, 690))),
+        (1, _u((207, 690))),
     ('paper/transport_followup_appendix.tex', '20 steps'):
-        (1, _u((204, 488))),
+        (1, _u((206, 488))),
     ('paper/transport_followup_appendix.tex', '2048'):
-        (3, _u((188, 128), (188, 214), (188, 295))),
+        (3, _u((189, 128), (189, 214), (189, 295))),
     ('paper/transport_followup_appendix.tex', '24 declared trajectories'):
-        (1, _u((188, 226))),
+        (1, _u((189, 226))),
     ('paper/transport_followup_appendix.tex', '24 development trajectories'):
-        (1, _u((181, 636))),
+        (1, _u((179, 902))),
     ('paper/transport_followup_appendix.tex', '250-digit'):
-        (1, _u((205, 325))),
-    ('paper/transport_followup_appendix.tex', '270 tuning trajectories'):
-        (1, _u((204, 169))),
-    ('paper/transport_followup_appendix.tex', '294 development and tuning trajectories'):
-        (1, _u((204, 697))),
+        (1, _u((207, 325))),
+    ('paper/transport_followup_appendix.tex', '270 tuning\ntrajectories'):
+        (1, _u((206, 169))),
     ('paper/transport_followup_appendix.tex', '30 tuning'):
-        (1, _u((204, 560))),
+        (1, _u((206, 560))),
     ('paper/transport_followup_appendix.tex', '30000--30001'):
-        (1, _u((181, 89))),
+        (1, _u((179, 89))),
     ('paper/transport_followup_appendix.tex', '30100--30109'):
-        (1, _u((181, 116))),
+        (1, _u((179, 116))),
     ('paper/transport_followup_appendix.tex', '30200--30249'):
-        (1, _u((181, 151))),
+        (1, _u((179, 151))),
     ('paper/transport_followup_appendix.tex', '4096'):
-        (1, _u((188, 304))),
+        (1, _u((189, 304))),
     ('paper/transport_followup_appendix.tex', '50 evaluation seeds'):
-        (1, _u((213, 218))),
-    ('paper/transport_followup_appendix.tex', '50 paired evaluation seeds'):
-        (1, _u((62, 68))),
+        (1, _u((210, 167))),
+    ('paper/transport_followup_appendix.tex', '50 histories'):
+        (1, _u((187, 109))),
     ('paper/transport_followup_appendix.tex', '50 seeds per condition'):
-        (1, _u((183, 191))),
+        (1, _u((182, 191))),
     ('paper/transport_followup_appendix.tex', '50,000 dependent states'):
-        (1, _u((67, 382))),
+        (1, _u((61, 382))),
+    ('paper/transport_followup_appendix.tex', '50,000 seed--round observations per condition'):
+        (1, _u((200, 85))),
+    ('paper/transport_followup_appendix.tex', '600 trajectories'):
+        (1, _u((205, 146))),
     ('paper/transport_followup_appendix.tex', '600,000 states'):
-        (1, _u((205, 654))),
+        (1, _u((207, 654))),
     ('paper/transport_followup_appendix.tex', '65 changes'):
-        (1, _u((205, 637))),
+        (1, _u((207, 637))),
     ('paper/transport_followup_appendix.tex', 'Candidate 008'):
-        (1, _u((204, 438))),
+        (1, _u((206, 438))),
+    ('paper/transport_followup_appendix.tex', 'The 294'):
+        (1, _u((206, 693))),
     ('paper/transport_followup_appendix.tex', 'across 50 seeds'):
-        (1, _u((182, 271))),
+        (1, _u((181, 271))),
     ('paper/transport_followup_appendix.tex', 'all 600 trajectories'):
-        (1, _u((203, 142))),
+        (1, _u((205, 142))),
     ('paper/transport_followup_appendix.tex', 'and 1000 rounds'):
-        (1, _u((183, 164))),
+        (1, _u((182, 164))),
     ('paper/transport_followup_appendix.tex', 'at 16 states'):
-        (1, _u((205, 533))),
+        (1, _u((207, 533))),
     ('paper/transport_followup_appendix.tex', 'below 0.629'):
-        (1, _u((205, 720))),
+        (1, _u((207, 720))),
     ('paper/transport_followup_appendix.tex', 'divided by 1000'):
-        (1, _u((67, 478))),
+        (1, _u((61, 478))),
     ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'):
-        (1, _u((204, 453))),
-    ('paper/transport_followup_appendix.tex', 'pointwise 95\\% paired'):
-        (1, _u((62, 184))),
+        (1, _u((206, 453))),
     ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'):
-        (1, _u((203, 437))),
+        (1, _u((205, 437))),
+    ('paper/transport_followup_appendix.tex', 'standard deviation $0.25$'):
+        (1, _u((179, 654))),
     ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'):
-        (1, _u((209, 627))),
+        (1, _u((209, 542))),
     ('paper/transport_followup_appendix.tex', 'teacher seed 1729'):
-        (1, _u((181, 52))),
-    ('paper/transport_followup_appendix.tex', 'the 600\ntrajectories'):
-        (1, _u((213, 526))),
+        (1, _u((179, 52))),
     # paper/transport_proofs.tex
     ('paper/transport_proofs.tex', '\\xi_t=0'):
-        (2, _u((84, 414), (85, 565))),
+        (2, _u((78, 414), (79, 565))),
+    # paper/transport_support_appendix.tex
+    ('paper/transport_support_appendix.tex', '\\xi_t=0'):
+        (2, _u((31, 159), (67, 270))),
     # paper/transport_theory.tex
-    ('paper/transport_theory.tex', '$D_t<1$'):
-        (1, _u((36, 214))),
     ('paper/transport_theory.tex', '\\alpha_t=1'):
-        (1, _u((77, 696))),
+        (1, _u((71, 696))),
     ('paper/transport_theory.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (2, _u((39, 29), (77, 710))),
+        (2, _u((35, 29), (71, 710))),
     ('paper/transport_theory.tex', '\\xi_t=0'):
-        (3, _u((81, 439), (73, 270), (77, 745))),
+        (2, _u((75, 439), (71, 745))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '29-parameter'):
-        (1, _u((37, 1049))),
-    ('submissions/tmlr_2026/main.tex', '50 paired seeds'):
-        (1, _u((37, 1084))),
-    ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% confidence intervals'):
-        (1, _u((37, 1269))),
+        (1, _u((48, 704))),
+    ('submissions/tmlr_2026/main.tex', '50 paired'):
+        (1, _u((48, 741))),
+    ('submissions/tmlr_2026/main.tex', '95\\% intervals'):
+        (1, _u((48, 869))),
+    ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% intervals'):
+        (1, _u((48, 852))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'):
         (1, _u((9, 41))),
     ('submissions/tmlr_2026/supplement_README.md', '21 artifacts'):
-        (1, _u((55, 30))),
+        (1, _u((53, 30))),
     ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'):
         (1, _u((8, 386))),
 }
 
 #: (path, literal) -> (category, occurrences, ((unit, offset-in-unit), ...))
 CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ...]]] = {
-    # README.md
-    ('README.md', '1.15.2'):
-        ('environment-version', 0, _u()),
-    ('README.md', '2.2.3'):
-        ('environment-version', 0, _u()),
-    ('README.md', '3.12'):
-        ('environment-version', 1, _u((46, 25))),
-    # paper/availability.tex
-    ('paper/availability.tex', '1.13.1'):
-        ('historical-dependency-version', 1, _u((190, 661))),
-    ('paper/availability.tex', '1.15.2'):
-        ('historical-dependency-version', 1, _u((190, 600))),
-    # paper/body_related.tex
-    ('paper/body_related.tex', '1'):
-        ('math-constant', 3, _u((207, 322), (207, 337), (34, 175))),
-    ('paper/body_related.tex', '2'):
-        ('math-constant', 2, _u((207, 324), (207, 339))),
     # paper/figures/transport_conceptual_geometry.tex
     ('paper/figures/transport_conceptual_geometry.tex', '.25'):
-        ('analytic-schematic', 1, _u((99, 275))),
+        ('analytic-schematic', 1, _u((93, 275))),
     ('paper/figures/transport_conceptual_geometry.tex', '.55'):
-        ('analytic-schematic', 2, _u((99, 456), (107, 291))),
+        ('analytic-schematic', 2, _u((93, 456), (101, 291))),
     ('paper/figures/transport_conceptual_geometry.tex', '.65'):
-        ('analytic-schematic', 1, _u((107, 870))),
+        ('analytic-schematic', 1, _u((101, 870))),
     ('paper/figures/transport_conceptual_geometry.tex', '.82'):
-        ('analytic-schematic', 1, _u((107, 905))),
+        ('analytic-schematic', 1, _u((101, 905))),
     ('paper/figures/transport_conceptual_geometry.tex', '0'):
-        ('analytic-schematic', 8, _u((99, 250), (99, 424), (99, 453), (149, 23), (149, 85), (107, 857), (108, 314), (108, 431))),
+        ('analytic-schematic', 7, _u((93, 250), (93, 424), (93, 453), (143, 23), (143, 85), (101, 857), (102, 314))),
     ('paper/figures/transport_conceptual_geometry.tex', '0,0'):
-        ('analytic-schematic', 1, _u((99, 304))),
+        ('analytic-schematic', 1, _u((93, 304))),
     ('paper/figures/transport_conceptual_geometry.tex', '0,13'):
-        ('analytic-schematic', 1, _u((108, 107))),
+        ('analytic-schematic', 1, _u((102, 107))),
     ('paper/figures/transport_conceptual_geometry.tex', '1'):
-        ('analytic-schematic', 6, _u((99, 501), (99, 542), (107, 834), (106, 183), (108, 125), (108, 332))),
+        ('analytic-schematic', 6, _u((93, 501), (93, 542), (101, 834), (100, 183), (102, 125), (102, 332))),
     ('paper/figures/transport_conceptual_geometry.tex', '1,0'):
-        ('analytic-schematic', 1, _u((99, 407))),
+        ('analytic-schematic', 1, _u((93, 407))),
     ('paper/figures/transport_conceptual_geometry.tex', '1,10'):
-        ('analytic-schematic', 1, _u((108, 88))),
+        ('analytic-schematic', 1, _u((102, 88))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.05'):
-        ('analytic-schematic', 1, _u((107, 37))),
+        ('analytic-schematic', 1, _u((101, 37))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.25'):
-        ('analytic-schematic', 2, _u((149, 26), (149, 149))),
+        ('analytic-schematic', 2, _u((143, 26), (143, 149))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.8'):
-        ('analytic-schematic', 2, _u((149, 88), (106, 170))),
+        ('analytic-schematic', 2, _u((143, 88), (100, 170))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.95'):
-        ('analytic-schematic', 1, _u((106, 117))),
+        ('analytic-schematic', 1, _u((100, 117))),
     ('paper/figures/transport_conceptual_geometry.tex', '10'):
-        ('analytic-schematic', 3, _u((151, 91), (151, 132), (151, 146))),
+        ('analytic-schematic', 3, _u((145, 91), (145, 132), (145, 146))),
     ('paper/figures/transport_conceptual_geometry.tex', '11.5'):
-        ('analytic-schematic', 4, _u((106, 34), (106, 49), (108, 102), (108, 258))),
+        ('analytic-schematic', 4, _u((100, 34), (100, 49), (102, 102), (102, 258))),
     ('paper/figures/transport_conceptual_geometry.tex', '13'):
-        ('analytic-schematic', 3, _u((151, 105), (151, 173), (151, 187))),
+        ('analytic-schematic', 3, _u((145, 105), (145, 173), (145, 187))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.5'):
-        ('analytic-schematic', 13, _u((106, 111), (106, 127), (106, 164), (150, 97), (150, 173), (150, 189), (150, 216), (151, 212), (152, 104), (152, 184), (152, 200), (152, 227), (108, 120))),
+        ('analytic-schematic', 13, _u((100, 111), (100, 127), (100, 164), (144, 97), (144, 173), (144, 189), (144, 216), (145, 212), (146, 104), (146, 184), (146, 200), (146, 227), (102, 120))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.72'):
-        ('analytic-schematic', 1, _u((151, 269))),
+        ('analytic-schematic', 1, _u((145, 269))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.85'):
-        ('analytic-schematic', 1, _u((108, 49))),
+        ('analytic-schematic', 1, _u((102, 49))),
     ('paper/figures/transport_conceptual_geometry.tex', '16.2'):
-        ('analytic-schematic', 1, _u((99, 270))),
+        ('analytic-schematic', 1, _u((93, 270))),
     ('paper/figures/transport_conceptual_geometry.tex', '2'):
-        ('analytic-schematic', 4, _u((107, 141), (152, 62), (108, 345), (108, 375))),
+        ('analytic-schematic', 4, _u((101, 141), (146, 62), (102, 345), (102, 375))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.1'):
-        ('analytic-schematic', 1, _u((106, 40))),
+        ('analytic-schematic', 1, _u((100, 40))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.25'):
-        ('analytic-schematic', 1, _u((150, 26))),
+        ('analytic-schematic', 1, _u((144, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.35'):
-        ('analytic-schematic', 1, _u((107, 173))),
+        ('analytic-schematic', 1, _u((101, 173))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.73'):
-        ('analytic-schematic', 2, _u((150, 133), (150, 179))),
+        ('analytic-schematic', 2, _u((144, 133), (144, 179))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.85'):
-        ('analytic-schematic', 3, _u((150, 87), (150, 103), (150, 222))),
+        ('analytic-schematic', 3, _u((144, 87), (144, 103), (144, 222))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.97'):
-        ('analytic-schematic', 2, _u((150, 148), (150, 195))),
+        ('analytic-schematic', 2, _u((144, 148), (144, 195))),
     ('paper/figures/transport_conceptual_geometry.tex', '3'):
-        ('analytic-schematic', 5, _u((107, 126), (107, 138), (107, 218), (107, 297), (107, 380))),
+        ('analytic-schematic', 5, _u((101, 126), (101, 138), (101, 218), (101, 297), (101, 380))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.02'):
-        ('analytic-schematic', 3, _u((107, 768), (107, 783), (107, 819))),
+        ('analytic-schematic', 3, _u((101, 768), (101, 783), (101, 819))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.525'):
-        ('analytic-schematic', 3, _u((107, 485), (107, 613), (107, 630))),
+        ('analytic-schematic', 3, _u((101, 485), (101, 613), (101, 630))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.55'):
-        ('analytic-schematic', 1, _u((107, 957))),
+        ('analytic-schematic', 1, _u((101, 957))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.6'):
-        ('analytic-schematic', 4, _u((107, 168), (107, 637), (107, 651), (107, 686))),
+        ('analytic-schematic', 4, _u((101, 168), (101, 637), (101, 651), (101, 686))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.75'):
-        ('analytic-schematic', 1, _u((151, 26))),
+        ('analytic-schematic', 1, _u((145, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '30'):
-        ('analytic-schematic', 1, _u((106, 12))),
+        ('analytic-schematic', 1, _u((100, 12))),
     ('paper/figures/transport_conceptual_geometry.tex', '4'):
-        ('analytic-schematic', 2, _u((99, 490), (107, 214))),
+        ('analytic-schematic', 2, _u((93, 490), (101, 214))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.05'):
-        ('analytic-schematic', 3, _u((107, 540), (107, 746), (107, 762))),
+        ('analytic-schematic', 3, _u((101, 540), (101, 746), (101, 762))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.2'):
-        ('analytic-schematic', 1, _u((107, 973))),
+        ('analytic-schematic', 1, _u((101, 973))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.23'):
-        ('analytic-schematic', 2, _u((151, 136), (151, 177))),
+        ('analytic-schematic', 2, _u((145, 136), (145, 177))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.32'):
-        ('analytic-schematic', 2, _u((107, 620), (107, 752))),
+        ('analytic-schematic', 2, _u((101, 620), (101, 752))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.35'):
-        ('analytic-schematic', 12, _u((107, 43), (107, 58), (107, 221), (107, 300), (107, 383), (107, 398), (107, 492), (107, 546), (151, 95), (151, 109), (151, 218), (151, 276))),
+        ('analytic-schematic', 12, _u((101, 43), (101, 58), (101, 221), (101, 300), (101, 383), (101, 398), (101, 492), (101, 546), (145, 95), (145, 109), (145, 218), (145, 276))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.37'):
-        ('analytic-schematic', 1, _u((107, 1008))),
+        ('analytic-schematic', 1, _u((101, 1008))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.4'):
-        ('analytic-schematic', 2, _u((107, 646), (107, 778))),
+        ('analytic-schematic', 2, _u((101, 646), (101, 778))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.47'):
-        ('analytic-schematic', 4, _u((107, 680), (107, 813), (151, 150), (151, 191))),
+        ('analytic-schematic', 4, _u((101, 680), (101, 813), (145, 150), (145, 191))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.53'):
-        ('analytic-schematic', 1, _u((107, 434))),
+        ('analytic-schematic', 1, _u((101, 434))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.6'):
-        ('analytic-schematic', 2, _u((107, 393), (107, 429))),
+        ('analytic-schematic', 2, _u((101, 393), (101, 429))),
     ('paper/figures/transport_conceptual_geometry.tex', '40'):
-        ('analytic-schematic', 2, _u((107, 12), (107, 101))),
+        ('analytic-schematic', 2, _u((101, 12), (101, 101))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.2'):
-        ('analytic-schematic', 1, _u((107, 53))),
+        ('analytic-schematic', 1, _u((101, 53))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.25'):
-        ('analytic-schematic', 1, _u((152, 26))),
+        ('analytic-schematic', 1, _u((146, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.73'):
-        ('analytic-schematic', 2, _u((152, 142), (152, 190))),
+        ('analytic-schematic', 2, _u((146, 142), (146, 190))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.85'):
-        ('analytic-schematic', 3, _u((152, 94), (152, 110), (152, 233))),
+        ('analytic-schematic', 3, _u((146, 94), (146, 110), (146, 233))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.97'):
-        ('analytic-schematic', 2, _u((152, 157), (152, 206))),
+        ('analytic-schematic', 2, _u((146, 157), (146, 206))),
     ('paper/figures/transport_conceptual_geometry.tex', '50'):
-        ('analytic-schematic', 2, _u((108, 12), (108, 141))),
+        ('analytic-schematic', 2, _u((102, 12), (102, 141))),
     ('paper/figures/transport_conceptual_geometry.tex', '55'):
-        ('analytic-schematic', 1, _u((106, 74))),
+        ('analytic-schematic', 1, _u((100, 74))),
     ('paper/figures/transport_conceptual_geometry.tex', '6'):
-        ('analytic-schematic', 1, _u((107, 276))),
+        ('analytic-schematic', 1, _u((101, 276))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.35'):
-        ('analytic-schematic', 2, _u((106, 55), (106, 133))),
+        ('analytic-schematic', 2, _u((100, 55), (100, 133))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.64'):
-        ('analytic-schematic', 1, _u((108, 167))),
+        ('analytic-schematic', 1, _u((102, 167))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.7'):
-        ('analytic-schematic', 3, _u((107, 129), (108, 40), (108, 56))),
+        ('analytic-schematic', 3, _u((101, 129), (102, 40), (102, 56))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.76'):
-        ('analytic-schematic', 1, _u((108, 181))),
+        ('analytic-schematic', 1, _u((102, 181))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.86'):
-        ('analytic-schematic', 1, _u((108, 216))),
+        ('analytic-schematic', 1, _u((102, 216))),
     ('paper/figures/transport_conceptual_geometry.tex', '65'):
-        ('analytic-schematic', 3, _u((99, 89), (107, 529), (107, 718))),
+        ('analytic-schematic', 3, _u((93, 89), (101, 529), (101, 718))),
     ('paper/figures/transport_conceptual_geometry.tex', '7'):
-        ('analytic-schematic', 4, _u((149, 146), (150, 23), (151, 23), (152, 23))),
+        ('analytic-schematic', 4, _u((143, 146), (144, 23), (145, 23), (146, 23))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.15'):
-        ('analytic-schematic', 6, _u((107, 860), (107, 875), (107, 910), (107, 963), (107, 978), (107, 1014))),
+        ('analytic-schematic', 6, _u((101, 860), (101, 875), (101, 910), (101, 963), (101, 978), (101, 1014))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.4'):
-        ('analytic-schematic', 1, _u((108, 264))),
+        ('analytic-schematic', 1, _u((102, 264))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.85'):
-        ('analytic-schematic', 1, _u((108, 317))),
+        ('analytic-schematic', 1, _u((102, 317))),
     ('paper/figures/transport_conceptual_geometry.tex', '70'):
-        ('analytic-schematic', 1, _u((99, 196))),
+        ('analytic-schematic', 1, _u((93, 196))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.15'):
-        ('analytic-schematic', 1, _u((108, 34))),
-    ('paper/figures/transport_conceptual_geometry.tex', '8.32'):
-        ('analytic-schematic', 1, _u((108, 434))),
+        ('analytic-schematic', 1, _u((102, 34))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.35'):
-        ('analytic-schematic', 1, _u((99, 253))),
+        ('analytic-schematic', 1, _u((93, 253))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.5'):
-        ('analytic-schematic', 7, _u((150, 82), (150, 128), (150, 143), (152, 89), (152, 137), (152, 152), (108, 83))),
+        ('analytic-schematic', 7, _u((144, 82), (144, 128), (144, 143), (146, 89), (146, 137), (146, 152), (102, 83))),
     ('paper/figures/transport_conceptual_geometry.tex', '80'):
-        ('analytic-schematic', 3, _u((99, 138), (107, 474), (107, 585))),
+        ('analytic-schematic', 3, _u((93, 138), (101, 474), (101, 585))),
     # paper/figures/transport_conceptual_interfaces.tex
     ('paper/figures/transport_conceptual_interfaces.tex', '.3'):
-        ('analytic-schematic', 1, _u((98, 292))),
+        ('analytic-schematic', 1, _u((92, 292))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0'):
-        ('analytic-schematic', 7, _u((98, 268), (148, 40), (105, 33), (105, 80), (105, 199), (105, 316), (105, 499))),
+        ('analytic-schematic', 7, _u((92, 268), (142, 40), (99, 33), (99, 80), (99, 199), (99, 316), (99, 499))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0,0'):
-        ('analytic-schematic', 1, _u((98, 320))),
+        ('analytic-schematic', 1, _u((92, 320))),
     ('paper/figures/transport_conceptual_interfaces.tex', '1.15'):
-        ('analytic-schematic', 4, _u((153, 35), (4, 58), (3, 54), (2, 61))),
+        ('analytic-schematic', 4, _u((147, 35), (4, 58), (3, 54), (2, 61))),
     ('paper/figures/transport_conceptual_interfaces.tex', '1.8'):
-        ('analytic-schematic', 1, _u((153, 30))),
+        ('analytic-schematic', 1, _u((147, 30))),
     ('paper/figures/transport_conceptual_interfaces.tex', '10.2'):
         ('analytic-schematic', 1, _u((3, 48))),
     ('paper/figures/transport_conceptual_interfaces.tex', '11'):
-        ('analytic-schematic', 1, _u((71, 68))),
+        ('analytic-schematic', 1, _u((65, 68))),
     ('paper/figures/transport_conceptual_interfaces.tex', '14.4'):
         ('analytic-schematic', 1, _u((2, 55))),
     ('paper/figures/transport_conceptual_interfaces.tex', '16.2'):
-        ('analytic-schematic', 2, _u((98, 287), (105, 45))),
+        ('analytic-schematic', 2, _u((92, 287), (99, 45))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2'):
-        ('analytic-schematic', 2, _u((98, 160), (105, 355))),
+        ('analytic-schematic', 2, _u((92, 160), (99, 355))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2.2'):
-        ('analytic-schematic', 3, _u((148, 43), (35, 90), (71, 72))),
+        ('analytic-schematic', 3, _u((142, 43), (33, 90), (65, 72))),
     ('paper/figures/transport_conceptual_interfaces.tex', '28'):
-        ('analytic-schematic', 2, _u((98, 146), (105, 12))),
+        ('analytic-schematic', 2, _u((92, 146), (99, 12))),
     ('paper/figures/transport_conceptual_interfaces.tex', '4.6'):
-        ('analytic-schematic', 2, _u((105, 36), (105, 51))),
+        ('analytic-schematic', 2, _u((99, 36), (99, 51))),
     ('paper/figures/transport_conceptual_interfaces.tex', '4.95'):
-        ('analytic-schematic', 1, _u((105, 83))),
+        ('analytic-schematic', 1, _u((99, 83))),
     ('paper/figures/transport_conceptual_interfaces.tex', '5.5'):
-        ('analytic-schematic', 1, _u((35, 85))),
+        ('analytic-schematic', 1, _u((33, 85))),
     ('paper/figures/transport_conceptual_interfaces.tex', '5.57'):
-        ('analytic-schematic', 1, _u((105, 202))),
+        ('analytic-schematic', 1, _u((99, 202))),
     ('paper/figures/transport_conceptual_interfaces.tex', '55'):
-        ('analytic-schematic', 1, _u((98, 89))),
+        ('analytic-schematic', 1, _u((92, 89))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6'):
         ('analytic-schematic', 1, _u((4, 55))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.11'):
-        ('analytic-schematic', 1, _u((105, 319))),
+        ('analytic-schematic', 1, _u((99, 319))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.65'):
-        ('analytic-schematic', 1, _u((105, 502))),
+        ('analytic-schematic', 1, _u((99, 502))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.8'):
-        ('analytic-schematic', 1, _u((98, 271))),
-    # paper/notation.tex
-    ('paper/notation.tex', '1'):
-        ('math-constant', 2, _u((219, 153), (219, 157))),
-    ('paper/notation.tex', '2'):
-        ('math-constant', 3, _u((219, 61), (219, 129), (219, 162))),
+        ('analytic-schematic', 1, _u((92, 271))),
     # paper/transport_experiment_appendix.tex
     ('paper/transport_experiment_appendix.tex', '1'):
-        ('math-constant', 7, _u((185, 168), (185, 177), (17, 19), (16, 19), (27, 18), (27, 46), (18, 10))),
+        ('math-constant', 7, _u((188, 168), (188, 177), (17, 19), (16, 19), (27, 18), (27, 46), (18, 10))),
+    ('paper/transport_experiment_appendix.tex', '1.13.1'):
+        ('historical-dependency-version', 1, _u((191, 661))),
+    ('paper/transport_experiment_appendix.tex', '1.15.2'):
+        ('historical-dependency-version', 1, _u((191, 600))),
     ('paper/transport_experiment_appendix.tex', '2'):
-        ('math-constant', 10, _u((185, 104), (185, 108), (185, 171), (17, 1), (17, 44), (16, 1), (16, 44), (27, 43), (27, 64), (18, 1))),
+        ('math-constant', 10, _u((188, 104), (188, 108), (188, 171), (17, 1), (17, 44), (16, 1), (16, 44), (27, 43), (27, 64), (18, 1))),
     # paper/transport_followup.tex
     ('paper/transport_followup.tex', '1'):
-        ('math-constant', 2, _u((180, 200), (177, 154))),
+        ('math-constant', 1, _u((176, 90))),
     ('paper/transport_followup.tex', '2'):
-        ('math-constant', 2, _u((180, 193), (177, 147))),
+        ('math-constant', 1, _u((176, 83))),
     # paper/transport_followup_appendix.tex
     ('paper/transport_followup_appendix.tex', '1'):
-        ('math-constant', 4, _u((214, 434), (214, 526), (215, 151), (215, 581))),
+        ('math-constant', 5, _u((187, 69), (211, 434), (211, 526), (212, 151), (212, 581))),
     ('paper/transport_followup_appendix.tex', '2'):
-        ('math-constant', 5, _u((214, 418), (214, 447), (214, 536), (215, 369), (215, 583))),
+        ('math-constant', 6, _u((187, 62), (211, 418), (211, 447), (211, 536), (212, 369), (212, 583))),
     ('paper/transport_followup_appendix.tex', '4'):
-        ('math-constant', 1, _u((215, 140))),
+        ('math-constant', 1, _u((212, 140))),
     # paper/transport_proofs.tex
     ('paper/transport_proofs.tex', '0'):
-        ('math-constant', 16, _u((49, 304), (43, 162), (43, 213), (40, 165), (91, 554), (91, 609), (42, 80), (42, 101), (176, 174), (176, 232), (176, 742), (79, 172), (52, 29), (52, 270), (52, 346), (52, 359))),
+        ('math-constant', 16, _u((44, 304), (39, 162), (39, 213), (37, 165), (85, 554), (85, 609), (38, 80), (38, 101), (174, 174), (174, 232), (174, 742), (73, 172), (50, 29), (50, 270), (50, 346), (50, 359))),
     ('paper/transport_proofs.tex', '0,1'):
-        ('interval-endpoint', 1, _u((40, 179))),
+        ('interval-endpoint', 1, _u((37, 179))),
     ('paper/transport_proofs.tex', '1'):
-        ('math-constant', 80, _u((123, 114), (141, 18), (49, 17), (49, 284), (49, 293), (113, 42), (69, 127), (92, 546), (40, 235), (40, 291), (84, 121), (91, 383), (91, 455), (91, 485), (91, 572), (90, 130), (90, 154), (90, 175), (90, 192), (90, 248), (90, 273), (90, 296), (90, 507), (90, 539), (90, 566), (90, 599), (90, 707), (90, 772), (86, 86), (93, 299), (93, 464), (93, 491), (88, 181), (144, 16), (172, 48), (172, 56), (172, 150), (172, 179), (172, 188), (172, 349), (172, 424), (83, 68), (83, 207), (83, 305), (85, 134), (85, 549), (85, 556), (89, 521), (89, 599), (13, 2), (14, 4), (60, 18), (60, 398), (60, 428), (176, 107), (176, 368), (176, 531), (176, 573), (176, 627), (87, 108), (87, 141), (87, 153), (87, 421), (87, 431), (117, 58), (117, 118), (118, 99), (57, 31), (57, 55), (57, 178), (82, 234), (82, 247), (82, 298), (82, 374), (82, 417), (82, 432), (47, 17), (47, 342), (48, 529), (48, 670))),
+        ('math-constant', 80, _u((117, 114), (135, 18), (44, 17), (44, 284), (44, 293), (107, 42), (63, 127), (86, 546), (37, 235), (37, 291), (78, 121), (85, 383), (85, 455), (85, 485), (85, 572), (84, 130), (84, 154), (84, 175), (84, 192), (84, 248), (84, 273), (84, 296), (84, 507), (84, 539), (84, 566), (84, 599), (84, 707), (84, 772), (80, 86), (87, 299), (87, 464), (87, 491), (82, 181), (138, 16), (172, 48), (172, 56), (172, 150), (172, 179), (172, 188), (172, 349), (172, 424), (77, 68), (77, 207), (77, 305), (79, 134), (79, 549), (79, 556), (83, 521), (83, 599), (13, 2), (14, 4), (58, 18), (58, 398), (58, 428), (174, 107), (174, 368), (174, 531), (174, 573), (174, 627), (81, 108), (81, 141), (81, 153), (81, 421), (81, 431), (111, 58), (111, 118), (112, 99), (55, 31), (55, 55), (55, 178), (76, 234), (76, 247), (76, 298), (76, 374), (76, 417), (76, 432), (42, 17), (42, 342), (43, 529), (43, 670))),
     ('paper/transport_proofs.tex', '2'):
-        ('math-constant', 110, _u((124, 55), (124, 93), (123, 116), (143, 44), (143, 80), (141, 103), (49, 134), (49, 181), (49, 204), (49, 232), (49, 244), (49, 335), (49, 346), (49, 363), (49, 380), (113, 55), (113, 78), (113, 88), (92, 226), (92, 251), (40, 283), (91, 385), (91, 457), (91, 487), (90, 132), (90, 156), (90, 177), (90, 194), (90, 250), (90, 275), (90, 385), (90, 509), (90, 541), (90, 555), (90, 568), (90, 601), (90, 630), (90, 709), (86, 109), (86, 230), (86, 239), (86, 251), (86, 353), (86, 366), (93, 99), (93, 123), (93, 139), (93, 168), (93, 222), (93, 253), (93, 277), (93, 305), (93, 466), (93, 493), (88, 183), (142, 73), (144, 103), (172, 182), (172, 532), (83, 58), (83, 167), (83, 176), (83, 316), (83, 336), (85, 122), (85, 130), (85, 327), (85, 336), (85, 438), (85, 477), (85, 486), (89, 248), (89, 258), (89, 281), (89, 293), (89, 304), (89, 368), (89, 504), (89, 528), (89, 564), (89, 596), (89, 632), (42, 141), (42, 209), (13, 26), (14, 26), (60, 155), (60, 166), (60, 193), (60, 221), (60, 251), (54, 203), (176, 210), (176, 288), (176, 295), (176, 499), (176, 525), (176, 575), (176, 667), (176, 703), (176, 725), (176, 732), (118, 127), (57, 225), (82, 271), (82, 322), (47, 42), (47, 72), (47, 113), (47, 245))),
+        ('math-constant', 110, _u((118, 55), (118, 93), (117, 116), (137, 44), (137, 80), (135, 103), (44, 134), (44, 181), (44, 204), (44, 232), (44, 244), (44, 335), (44, 346), (44, 363), (44, 380), (107, 55), (107, 78), (107, 88), (86, 226), (86, 251), (37, 283), (85, 385), (85, 457), (85, 487), (84, 132), (84, 156), (84, 177), (84, 194), (84, 250), (84, 275), (84, 385), (84, 509), (84, 541), (84, 555), (84, 568), (84, 601), (84, 630), (84, 709), (80, 109), (80, 230), (80, 239), (80, 251), (80, 353), (80, 366), (87, 99), (87, 123), (87, 139), (87, 168), (87, 222), (87, 253), (87, 277), (87, 305), (87, 466), (87, 493), (82, 183), (136, 73), (138, 103), (172, 182), (172, 532), (77, 58), (77, 167), (77, 176), (77, 316), (77, 336), (79, 122), (79, 130), (79, 327), (79, 336), (79, 438), (79, 477), (79, 486), (83, 248), (83, 258), (83, 281), (83, 293), (83, 304), (83, 368), (83, 504), (83, 528), (83, 564), (83, 596), (83, 632), (38, 141), (38, 209), (13, 26), (14, 26), (58, 155), (58, 166), (58, 193), (58, 221), (58, 251), (52, 203), (174, 210), (174, 288), (174, 295), (174, 499), (174, 525), (174, 575), (174, 667), (174, 703), (174, 725), (174, 732), (112, 127), (55, 225), (76, 271), (76, 322), (42, 42), (42, 72), (42, 113), (42, 245))),
     ('paper/transport_proofs.tex', '4'):
-        ('math-constant', 4, _u((85, 431), (85, 441), (89, 642), (176, 522))),
+        ('math-constant', 4, _u((79, 431), (79, 441), (83, 642), (174, 522))),
+    # paper/transport_protocol_appendix.tex
+    ('paper/transport_protocol_appendix.tex', '2'):
+        ('math-constant', 1, _u((184, 200))),
+    # paper/transport_support_appendix.tex
+    ('paper/transport_support_appendix.tex', '0'):
+        ('math-constant', 2, _u((6, 10), (67, 71))),
+    ('paper/transport_support_appendix.tex', '1'):
+        ('math-constant', 20, _u((0, 2), (0, 13), (5, 8), (1, 1), (68, 1), (185, 43), (113, 31), (113, 71), (169, 29), (140, 67), (140, 87), (140, 103), (140, 113), (150, 15), (150, 36), (30, 9), (156, 45), (148, 29), (67, 195), (67, 231))),
+    ('paper/transport_support_appendix.tex', '10'):
+        ('document-structure', 1, _u((159, 21))),
+    ('paper/transport_support_appendix.tex', '13'):
+        ('document-structure', 1, _u((161, 21))),
+    ('paper/transport_support_appendix.tex', '16'):
+        ('document-structure', 2, _u((163, 21), (163, 21))),
+    ('paper/transport_support_appendix.tex', '2'):
+        ('math-constant', 13, _u((113, 41), (113, 81), (169, 21), (140, 22), (140, 32), (140, 79), (140, 171), (150, 6), (29, 57), (156, 39), (157, 33), (157, 43), (148, 6))),
     # paper/transport_theory.tex
     ('paper/transport_theory.tex', '0'):
-        ('math-constant', 33, _u((44, 14), (44, 57), (38, 209), (122, 33), (76, 121), (76, 136), (104, 9), (50, 63), (96, 158), (96, 249), (96, 260), (217, 212), (120, 57), (120, 104), (166, 15), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (94, 200), (51, 71), (70, 81), (127, 38), (187, 45), (73, 71), (77, 516), (95, 113), (95, 327), (130, 73), (130, 154), (6, 10))),
+        ('math-constant', 30, _u((40, 14), (40, 53), (49, 14), (116, 33), (70, 121), (70, 136), (98, 9), (45, 63), (90, 158), (90, 249), (90, 260), (203, 132), (114, 57), (114, 104), (166, 15), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (10, 0), (88, 200), (46, 71), (64, 81), (121, 38), (71, 516), (89, 113), (89, 327), (124, 73), (124, 154))),
     ('paper/transport_theory.tex', '0,1'):
-        ('interval-endpoint', 5, _u((80, 78), (94, 78), (51, 63), (51, 102), (175, 71))),
+        ('interval-endpoint', 5, _u((74, 78), (88, 78), (46, 63), (46, 102), (36, 15))),
     ('paper/transport_theory.tex', '1'):
-        ('math-constant', 100, _u((102, 10), (23, 25), (22, 22), (21, 24), (112, 63), (112, 90), (112, 106), (126, 116), (12, 9), (12, 34), (12, 67), (116, 78), (136, 68), (136, 88), (157, 15), (157, 36), (139, 68), (155, 15), (155, 36), (168, 134), (168, 202), (168, 269), (134, 69), (134, 94), (134, 115), (32, 203), (11, 0), (96, 296), (100, 92), (217, 226), (217, 256), (217, 284), (81, 241), (74, 1), (114, 58), (114, 74), (114, 103), (120, 70), (97, 356), (97, 365), (166, 22), (101, 23), (101, 52), (7, 80), (7, 189), (218, 378), (110, 59), (110, 90), (51, 99), (51, 242), (51, 378), (129, 43), (70, 46), (138, 31), (128, 55), (128, 82), (128, 115), (167, 20), (167, 55), (165, 204), (145, 67), (145, 97), (145, 118), (20, 12), (28, 17), (28, 26), (75, 120), (59, 103), (59, 162), (59, 191), (59, 207), (111, 71), (30, 9), (162, 45), (154, 29), (73, 195), (73, 231), (77, 793), (77, 858), (164, 25), (36, 98), (130, 55), (130, 136), (173, 11), (173, 19), (173, 22), (174, 225), (119, 31), (119, 71), (171, 103), (146, 67), (146, 87), (146, 103), (146, 113), (156, 15), (156, 36), (0, 2), (0, 13), (5, 8), (1, 1))),
+        ('math-constant', 80, _u((96, 10), (23, 25), (22, 22), (21, 24), (106, 63), (106, 90), (106, 106), (120, 116), (183, 127), (12, 9), (12, 34), (12, 67), (110, 78), (130, 68), (130, 88), (151, 15), (151, 36), (133, 68), (149, 15), (149, 36), (168, 134), (168, 202), (168, 269), (128, 69), (128, 94), (128, 115), (32, 203), (11, 0), (90, 296), (94, 81), (203, 146), (203, 176), (203, 204), (75, 241), (108, 58), (108, 74), (108, 103), (114, 70), (91, 356), (91, 365), (166, 22), (95, 23), (95, 52), (7, 80), (7, 189), (104, 59), (104, 90), (46, 99), (46, 242), (46, 378), (123, 43), (64, 46), (132, 31), (122, 55), (122, 82), (122, 115), (167, 20), (167, 55), (165, 204), (139, 67), (139, 97), (139, 118), (20, 12), (28, 17), (28, 26), (69, 120), (57, 70), (57, 131), (57, 158), (105, 71), (71, 793), (71, 858), (164, 25), (34, 98), (34, 219), (124, 55), (124, 136), (173, 11), (173, 19), (173, 22))),
     ('paper/transport_theory.tex', '1,0'):
-        ('math-constant', 1, _u((96, 227))),
+        ('math-constant', 1, _u((90, 227))),
+    ('paper/transport_theory.tex', '11'):
+        ('document-structure', 1, _u((160, 21))),
     ('paper/transport_theory.tex', '2'):
-        ('math-constant', 113, _u((206, 529), (206, 623), (19, 19), (103, 9), (169, 4), (170, 12), (112, 117), (112, 128), (184, 200), (12, 36), (12, 69), (132, 68), (116, 164), (136, 23), (136, 33), (136, 80), (136, 160), (157, 6), (139, 23), (139, 33), (139, 81), (139, 90), (139, 94), (155, 6), (202, 247), (133, 4), (133, 26), (134, 4), (134, 24), (134, 34), (134, 81), (134, 85), (125, 62), (96, 312), (96, 378), (217, 286), (217, 337), (114, 76), (114, 105), (97, 358), (97, 367), (101, 25), (101, 54), (7, 101), (7, 122), (7, 168), (7, 204), (218, 380), (110, 92), (51, 177), (51, 380), (78, 116), (109, 58), (115, 122), (103, 9), (137, 40), (170, 12), (138, 42), (128, 57), (128, 84), (140, 28), (145, 22), (145, 32), (145, 79), (145, 84), (145, 88), (121, 78), (121, 86), (121, 88), (20, 23), (28, 20), (158, 81), (59, 216), (111, 82), (111, 102), (29, 57), (162, 39), (163, 33), (163, 43), (154, 6), (135, 4), (164, 19), (159, 12), (159, 21), (161, 25), (161, 35), (160, 21), (26, 21), (147, 14), (15, 8), (15, 39), (53, 14), (53, 35), (53, 158), (95, 246), (95, 307), (24, 21), (24, 58), (25, 21), (25, 58), (131, 38), (131, 73), (45, 164), (173, 108), (173, 145), (119, 41), (119, 81), (171, 93), (146, 22), (146, 32), (146, 79), (146, 171), (156, 6))),
+        ('math-constant', 94, _u((19, 19), (97, 9), (170, 4), (171, 12), (106, 117), (106, 128), (12, 36), (12, 69), (126, 68), (110, 164), (130, 23), (130, 33), (130, 80), (130, 160), (151, 6), (133, 23), (133, 33), (133, 81), (133, 90), (133, 94), (149, 6), (127, 4), (127, 26), (128, 4), (128, 24), (128, 34), (128, 81), (128, 85), (119, 62), (90, 312), (90, 378), (203, 206), (203, 231), (108, 76), (108, 105), (91, 358), (91, 367), (95, 25), (95, 54), (7, 101), (7, 122), (7, 168), (7, 204), (104, 92), (46, 177), (46, 380), (72, 116), (103, 58), (109, 122), (97, 9), (131, 40), (171, 12), (132, 42), (122, 57), (122, 84), (134, 28), (139, 22), (139, 32), (139, 79), (139, 84), (139, 88), (115, 78), (115, 86), (115, 88), (20, 23), (28, 20), (152, 81), (105, 82), (105, 102), (129, 4), (164, 19), (153, 12), (153, 21), (155, 25), (155, 35), (154, 21), (26, 21), (141, 14), (15, 8), (15, 39), (51, 14), (51, 35), (51, 158), (89, 246), (89, 307), (24, 21), (24, 58), (25, 21), (25, 58), (125, 38), (125, 73), (41, 164), (173, 108), (173, 145))),
     ('paper/transport_theory.tex', '3'):
-        ('math-constant', 2, _u((53, 52), (53, 161))),
+        ('math-constant', 2, _u((51, 52), (51, 161))),
     ('paper/transport_theory.tex', '4'):
-        ('math-constant', 6, _u((100, 78), (77, 780), (160, 12), (53, 49), (53, 150), (45, 212))),
+        ('math-constant', 5, _u((71, 780), (154, 12), (51, 49), (51, 150), (41, 212))),
+    # submissions/tmlr_2026/main.tex
+    ('submissions/tmlr_2026/main.tex', '14'):
+        ('document-structure', 1, _u((162, 21))),
+    ('submissions/tmlr_2026/main.tex', '3'):
+        ('document-structure', 1, _u((158, 21))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '1.15.2'):
-        ('environment-version', 1, _u((72, 43))),
+        ('environment-version', 1, _u((66, 43))),
     ('submissions/tmlr_2026/supplement_README.md', '2.2.3'):
-        ('environment-version', 1, _u((72, 27))),
+        ('environment-version', 1, _u((66, 27))),
     ('submissions/tmlr_2026/supplement_README.md', '3.12'):
-        ('environment-version', 1, _u((72, 11))),
+        ('environment-version', 1, _u((66, 11))),
 }
 
 #: path -> SHA-256 of the whole normalized auditable text
 FILE_PINS: dict[str, str] = {
     'README.md':
-        '9986a58b030c883a2cc2245929968cf6b6afe329ea03300c8e891451120fc64e',
+        '27d3ebdcbb6837d77545890cee27ec7a87442c415987e9a4f6723279176ecb47',
     'paper/availability.tex':
-        '805154682b8991ec58161e9dc13f66b017aacb39e35312513cccc87332964ca3',
+        'fcdeea9603d0e7c3673a0200597824f8403f4d03f026f42836349cf6547245b2',
     'paper/body_conclusion.tex':
-        'b372a84d535cb5d1fbf67e740f8c9470b8163fb98ddd1973d33f6330a368133a',
+        '926cf8a6be8509c96b10c05b6a03ae1b85a815d0cbceffb4fe29a43ae493eaac',
     'paper/body_intro.tex':
-        'd7fafa9a62a4c56d79ab42a34c529ba7dc8d8545b6f14c1ebe365119307777f6',
+        'c9373c931b1d51c05d08e023df150fe8734c064fab7390e323bcae10aeff5e01',
     'paper/body_related.tex':
-        '5dcba40a66d2d6892ee07e4f3dc5679e54c5a9c77a16c70a4fad3bfc2886c02f',
+        '9798c8962ae487058ef7a24783a6d8e4e0dc5e4a8325612411c595e06b7f917b',
     'paper/broader_impact.tex':
         '41c44900a31c1d4274da9f69facd14255cfc61108c1ec592805208be3b8c0605',
     'paper/figures/transport_conceptual_geometry.tex':
-        'ebff661954675d0d3732faf1e655b302dd934d6b6a60628a5fe4c0ce00d3218e',
+        '8939eab6c15a186346f16afd231a52d1a2f7ec32c160e064663477339f138066',
     'paper/figures/transport_conceptual_interfaces.tex':
         '8887badd9f997fd3ac84d6affc65f0e44150b46bbedc3c9d45c66dec57e2a2c4',
     'paper/legacy_scope.tex':
@@ -943,21 +916,27 @@ FILE_PINS: dict[str, str] = {
     'paper/macros.tex':
         '1129bd91c4ad4afdfb620e562fea7a496deca6dd9f9aab3900eda0855380323f',
     'paper/notation.tex':
-        'bb6d009986893a068603fbaa0ae76ed5f0bd2ce6554b41db939ac7e0098bd727',
+        '147f3df725e99301e703b0f5e248534c0b5d08b52b8b287434c43c2b0917bc0c',
+    'paper/scope_limitations.tex':
+        '009640d17b96d8adc4de0e4371a571bc7e72d621b94afe32b600eeafcfc292eb',
     'paper/transport_experiment.tex':
         'ef99c6d6e08deb5c15b76b4a2dcfd0e1aed5050d73eb43e84add0eba4c0cdd1f',
     'paper/transport_experiment_appendix.tex':
-        'ab4521a9fcfe3a89009485305199ca4eae86ebb724cbca55b9924e6c5f659738',
+        'f399e3e3a5f7fb00e4d2fe5bb046203d8e00b397908dc643f5ef95edb91e8bf4',
     'paper/transport_followup.tex':
-        'c9b0dcad0fdc155348862eeaea3e0b0e38741078d48bc3ffbd27a75f37a41f51',
+        '948b754f83f4941967caa71ed50e34787c3e8b949ca526bc44584c05eb4be1bf',
     'paper/transport_followup_appendix.tex':
-        '81de5c8058305ad5492755bd437406dc143ee77498e428b0f696d0631fffc2a1',
+        'f66d4f6735d6d8ddbae86dd21ac26e980a1ad7bb6c2afaf04bd9484432054960',
     'paper/transport_proofs.tex':
-        'd9ff00e05381876fd7a5a3adac2fafc0ec0cc2556feaef8ba32d6dfa3f750558',
+        '0562d3031bcd1cd9f449a5811fb721b8e984737123e45dbcc944503e143d9a1f',
+    'paper/transport_protocol_appendix.tex':
+        'e7407e79bdd23ce3fdbac777de2ced313717f42a4b5e9bc9c06f34e524ef7897',
+    'paper/transport_support_appendix.tex':
+        'a45e254291aad64c00c8fef95652e4a8a2497cc2648a0d5a3cf09c36e68b044f',
     'paper/transport_theory.tex':
-        '966350070de33b27119fe8f1f9a682cb0af0b9dbc53fc792e97fe0e0ddfe6019',
+        '3b84e676d602b1ea6d46c49aadc371549a7d80ec18e5ab2f05307983711da760',
     'submissions/tmlr_2026/main.tex':
-        'c68dbeaa82f8d83e4d06ab2c9fd83066d877ea6940c03aa8fe2e46a534a0fdb7',
+        'ceba78f4cf5fe568e2ef082bb72cfe77a7ef1d94002ad86321c87f7596c794df',
     'submissions/tmlr_2026/supplement_README.md':
-        '6dfcdf200d422579113cdf732e34ce98bc1b2f72f3d1a1997a7aafd6d2a9f9b0',
+        'ab77924f5ab8f1262aa744dd580db11f9ed260cd772266f05eac99e128c9f984',
 }

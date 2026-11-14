@@ -1,3 +1,7 @@
+> Historical record of a superseded manuscript state. The current editorial
+> manuscript and release workflow are described in submissions/tmlr_2026/README.md.
+> Results below apply to their recorded source states, not the current port.
+
 # Exposition revision, 2026-09-11
 
 This note records the prose-only AISTATS manuscript rewrite based on

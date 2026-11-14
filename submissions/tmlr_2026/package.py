@@ -58,6 +58,7 @@ SOURCE_CLOSURE_NAME = "SOURCE_CLOSURE.json"
 # inactive legacy file cannot quietly enlarge the review surface.
 STAGE_TEX_EXCLUDE = {
     "main.tex", "legacy_experiments.tex", "legacy_dynamic.tex",
+    "transport_experiment.tex", "transport_experiment_appendix.tex", "legacy_scope.tex",
     "appendix_rates.tex", "appendix_deferred.tex", "appendix_protocol.tex",
     "appendix_onesided_proof.tex", "appendix_cg.tex", "appendix_twosided.tex",
     "appendix_ggn.tex", "appendix_expfam.tex",
@@ -151,6 +152,11 @@ SUPPLEMENT_EXPLANATORY_ARTIFACTS = (
     "paper/figures/transport_explanatory_provenance.json",
 )
 SUPPLEMENT_TABLE_CHART_ARTIFACTS = ('paper/figures/transport_table_drift.tex', 'paper/figures/transport_table_mechanism.tex', 'paper/figures/transport_table_original_bound_ratios.tex', 'paper/figures/transport_table_original_components.tex', 'paper/figures/transport_table_original_distribution.tex', 'paper/figures/transport_table_original_path_ratios.tex', 'paper/figures/transport_table_original_performance.tex', 'paper/figures/transport_table_original_validity.tex', 'paper/figures/transport_table_relative.tex', 'paper/figures/transport_table_same_history.tex', 'paper/figures/transport_table_provenance.json')
+SUPPLEMENT_EDITORIAL_ARTIFACTS = (
+    "paper/figures/transport_followup_outcomes.tex",
+    "paper/figures/transport_outcomes_provenance.json",
+    "paper/figures/transport_editorial_provenance.json",
+)
 SUPPLEMENT_SCHEMATIC_ARTIFACTS = (
     "paper/figures/transport_conceptual_interfaces.tex",
     "paper/figures/transport_conceptual_geometry.tex",
@@ -168,6 +174,10 @@ SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "tools/verify_review_experiment_export.py",
     "tools/analyze_relative_transport.py",
     "tools/check_python_environment.py",
+    "tools/prepare_tmlr_figures.py",
+    "tools/make_tmlr_outcomes.py",
+    "tools/editorial_originals/transport_conceptual_geometry.tex",
+    "tools/editorial_originals/transport_conceptual_interfaces.tex",
     "review/post_full_fable/independent/symmetric_scan.py",
     "experiments/requirements-python312.lock",
     "experiments/configs/transport_review_followup.yaml",
@@ -218,6 +228,7 @@ def supplement_artifact_inventory(repo: Path) -> list[str]:
         + list(SUPPLEMENT_FOLLOWUP_ARTIFACTS)
         + list(SUPPLEMENT_EXPLANATORY_ARTIFACTS)
         + list(SUPPLEMENT_TABLE_CHART_ARTIFACTS)
+        + list(SUPPLEMENT_EDITORIAL_ARTIFACTS)
         + list(SUPPLEMENT_SCHEMATIC_ARTIFACTS)
         + list(SUPPLEMENT_SYMBOLIC_ARTIFACTS))
     excluded = _with_companions(repo, list(SUPPLEMENT_EXCLUDED_LEGACY))
@@ -464,8 +475,14 @@ SHRINK_MECHANISMS = (
 
 #: The numerical charts must remain visible at native size inside figure floats.
 #: Input scanning also rejects shrink commands inside every chart source.
-EVIDENCE_CHART_INPUTS = tuple(path.removeprefix("paper/")
-    for path in SUPPLEMENT_TABLE_CHART_ARTIFACTS if path.endswith(".tex"))
+EVIDENCE_CHART_INPUTS = (
+    "figures/transport_table_drift.tex",
+    "figures/transport_table_mechanism.tex",
+    "figures/transport_table_relative.tex",
+    "figures/transport_table_same_history.tex",
+    "figures/transport_explanatory_outcomes.tex",
+    "figures/transport_explanatory_bounds.tex",
+)
 EVIDENCE_CHART_WRAPPER = r"\begin{figure}"
 
 
@@ -681,14 +698,9 @@ VENDORED_SOURCE_FILES = ('algorithms.dtx', 'algorithms.ins')
 #: `tools/transport_artifact_expectations.py` regenerates from the aggregate.
 #: Edit one byte and the digest stops matching, the file is scanned like any
 #: other compiled input, and the edit fails.
-GENERATED_FIGURE_DIGESTS = {
-    "figures/transport_instantiation_bound.tex":
-        "9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c",
-    "figures/transport_instantiation_regret.tex":
-        "239ae5e923801ed1a2f9eafa75ba6a642e8bd2bb14ec2875c8d080f22ea5ec98",
-    "figures/transport_instantiation_tightness.tex":
-        "828590d0cab45e2621677474acec4ae1216857191d54e816d4f4b24a2fd276c2",
-}
+GENERATED_FIGURE_DIGESTS = {'figures/transport_instantiation_bound.tex': '9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c',
+ 'figures/transport_instantiation_regret.tex': '239ae5e923801ed1a2f9eafa75ba6a642e8bd2bb14ec2875c8d080f22ea5ec98',
+ 'figures/transport_instantiation_tightness.tex': '828590d0cab45e2621677474acec4ae1216857191d54e816d4f4b24a2fd276c2'}
 
 #: `main.bbl` is written by the pinned `tmlr.bst`, and every natbib-family style
 #: emits this preamble verbatim.  Exempting the exact block rather than the file

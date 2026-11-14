@@ -2,7 +2,8 @@
 
 This anonymous compact supplement contains the evidence behind the manuscript's
 full nonlinear follow-up, its exploratory fixed-history diagnostics, and the
-earlier controlled audit. It supports numerical verification and table
+historical earlier controlled audit. The current manuscript uses the nonlinear
+follow-up. It supports numerical verification and table
 and chart regeneration. It does not contain the raw trajectory archive.
 
 ## Contents
@@ -31,8 +32,8 @@ and chart regeneration. It does not contain the raw trajectory archive.
 - `SOURCE_CLOSURE.json` records the inputs read by the compiler. `verify.sh`
   runs the checks described below without executing new experiments.
 
-The earlier audit contributes 21 artifacts, each with its original provenance
-record and checksum sidecar. The follow-up contributes separately generated
+The earlier audit contributes 21 artifacts. Its tables, CSVs and inactive figure sources retain their original bytes,
+provenance records and checksum sidecars. The follow-up contributes separately generated
 tables and explanatory charts with separate collective provenance records,
 all independently pinned in code. The conceptual diagrams are reviewed
 analytical schematics with separate source pins, not measured study outcomes.
@@ -155,3 +156,19 @@ check fails:
 All floating-point audit results are tolerance-based diagnostics, not verified
 numerical enclosures. Fixed-history alternative recommendations are not outcomes
 of alternative adaptive policy trajectories.
+
+## Editorial source checks
+
+The original empirical generators reconstruct their original outputs before the
+approved figure transforms. The transforms remove specified repeated annotations
+and source comment payloads while preserving plotted values and coordinates.
+Separate authenticated pins bind original and current figure bytes.
+`tools/prepare_tmlr_figures.py --check` verifies those transforms and the separate
+editorial provenance record. `tools/make_tmlr_outcomes.py --check` reconstructs the
+current outcome table from the retained seed export and replays its paired
+terminal intervals. Neither command runs a new adaptive study.
+
+The historical manuscript prose is outside this archive's source closure. The
+historical numerical evidence and its value/coordinate/hash checks remain here.
+The ledger's current prose mappings retain selectors, units, populations and
+rounding rules; semantic-unit pins bind the revised contexts.

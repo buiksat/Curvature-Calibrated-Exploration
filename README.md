@@ -9,8 +9,8 @@ score-maximization oracle.
 
 ## Manuscript
 
-The manuscript sources under `paper/` are shared by two venue entry points, so
-the mathematics exists in exactly one copy:
+The current manuscript is canonical under `paper/` on `cce-review-revisions`.
+The `main` branch carries the LaTeX mirror for Overleaf.
 
 | Entry point | Venue | State |
 |---|---|---|
@@ -23,8 +23,11 @@ The entry point reads the shared scientific sources under `paper/`:
   for the narrative sections;
 - `paper/transport_theory.tex` for the headline theorem stack;
 - `paper/transport_proofs.tex` for complete proofs;
-- `paper/transport_experiment.tex` and `paper/transport_experiment_appendix.tex`
-  for the controlled study;
+- `paper/transport_followup.tex` and `paper/transport_followup_appendix.tex`
+  for the prespecified nonlinear study and its supporting diagnostics;
+- `paper/scope_limitations.tex` for scope and evidence limits;
+- `paper/transport_protocol_appendix.tex` and `paper/transport_support_appendix.tex`
+  for the protocol and certificate comparisons;
 - `paper/references.bib` for bibliography data;
 - `paper/tmlr_style/` for the official, unmodified TMLR stylefile bundle.
 
@@ -42,9 +45,11 @@ utilities needed by those paths, and their artifact generators.  See
 [`experiments/README.md`](experiments/README.md) for exact commands and output
 semantics.
 
-The original near-linear study and the stronger-drift follow-up are controlled
-audits of the transported policies. Auxiliary linear and autodiff artifacts
-remain diagnostics, not validation of the headline theorem.
+The current manuscript uses the stronger-drift follow-up. The original near-linear
+study remains historical evidence, with unchanged aggregates, numerical tables,
+and exports. Its prose sources remain available for explicitly scoped historical
+ledger checks, outside the current manuscript and supplement source closures.
+Auxiliary linear and autodiff artifacts remain separate diagnostics.
 
 ## Validation
 
