@@ -1201,7 +1201,7 @@ def test_only_the_legacy_branch_may_still_scale(tmp_path):
     notation = root / "paper/notation.tex"
     original = notation.read_text(encoding="utf-8")
     # the legacy definition really is present, and really is exempt
-    assert r"\resizebox" in original
+    assert r"\scriptsize" in original
     assert r"\iflegacyextras" in original
     assert packager.check_layout_rules(root) == []
 
@@ -1327,7 +1327,11 @@ def _followup_ledger_tree(packaged_tree, tmp_path):
     """Complete evidence-only fixture; compiled-source closure is tested elsewhere."""
     tree, _records = packaged_tree
     root = _clone(tree, tmp_path / "followup-ledger")
-    for relative in (*ledger_tool.FOLLOWUP_SOURCE_HASHES, ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
+    for relative in (*ledger_tool.FOLLOWUP_SOURCE_HASHES,
+                     *packager.contract.SHIPPED_TOOL_DIGESTS,
+                     *packager.SUPPLEMENT_FOLLOWUP_SUPPORT,
+                     *packager.supplement_artifact_inventory(REPO_ROOT),
+                     ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
                      ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER,
                      ledger_tool.EXPLANATORY_GENERATOR, ledger_tool.TABLE_CHART_GENERATOR):
         if not (root / relative).is_file():
@@ -1570,7 +1574,21 @@ def test_explanatory_figures_and_analytical_schematics_have_distinct_exact_inven
     assert {row["path"] for row in record["outputs"]} == set(ledger_tool.EXPLANATORY_GENERATED_SOURCES)
     for row in record["inputs"]:
         assert row["original_sha256"] == ledger_tool.FOLLOWUP_SOURCE_HASHES[Path(row["path"])]
-    assert record["generator"]["sha256"] == ledger_tool.FOLLOWUP_SOURCE_HASHES[ledger_tool.EXPLANATORY_GENERATOR]
+    # This is the original generation record, retained unchanged. Authenticate
+    # its historical source separately from the current editorial adapter.
+    original_tool = subprocess.check_output([
+        "git", "-C", str(REPO_ROOT), "show",
+        "a5fb603777b8187071ba1fc0a054ff84e473fd4b:tools/make_transport_explanatory_figures.py",
+    ])
+    assert record["generator"]["sha256"] == hashlib.sha256(original_tool).hexdigest()
+    assert hashlib.sha256((REPO_ROOT / ledger_tool.EXPLANATORY_GENERATOR).read_bytes()).hexdigest() == \
+        ledger_tool.FOLLOWUP_SOURCE_HASHES[ledger_tool.EXPLANATORY_GENERATOR]
+    import prepare_tmlr_figures as editorial
+    assert hashlib.sha256((REPO_ROOT / ledger_tool.EXPLANATORY_PROVENANCE).read_bytes()).hexdigest() == \
+        editorial.ORIGINAL_RECORD_PINS[Path(ledger_tool.EXPLANATORY_PROVENANCE).name]
+    current = json.loads((REPO_ROOT / "paper/figures/transport_editorial_provenance.json").read_text())
+    assert current["editorial_tool"]["sha256"] == hashlib.sha256(
+        (REPO_ROOT / "tools/prepare_tmlr_figures.py").read_bytes()).hexdigest()
 
 
 def test_followup_collective_provenance_binds_exact_outputs_and_reviewed_inputs():
@@ -1595,7 +1613,8 @@ def test_followup_supplement_preflight_requires_the_complete_pinned_evidence_inv
     assert set(packager.followup_contract.INPUT_PATHS) <= proposed
     assert (set(packager.SUPPLEMENT_FOLLOWUP_ARTIFACTS)
             | set(packager.SUPPLEMENT_EXPLANATORY_ARTIFACTS)
-            | set(packager.SUPPLEMENT_TABLE_CHART_ARTIFACTS)) == set(packager.followup_contract.ARTIFACT_PINS)
+            | set(packager.SUPPLEMENT_TABLE_CHART_ARTIFACTS)
+            | set(packager.SUPPLEMENT_EDITORIAL_ARTIFACTS)) == set(packager.followup_contract.ARTIFACT_PINS)
     assert set(packager.SUPPLEMENT_SCHEMATIC_ARTIFACTS) == set(packager.followup_contract.SCHEMATIC_PINS)
     assert packager.followup_supplement_preflight(REPO_ROOT) == []
 
@@ -1892,9 +1911,10 @@ def test_a_shrink_hidden_inside_the_compiled_legacy_branch_is_caught(tmp_path):
 def test_an_explicit_or_obfuscated_size_change_is_caught(
         tmp_path, injected, expected):
     root = _submitted_tex_tree(tmp_path)
-    anchor = "\\input{figures/transport_table_original_validity.tex}"
-    path = root / "paper/transport_experiment.tex"
+    anchor = "\\input{figures/transport_explanatory_outcomes.tex}"
+    path = root / "paper/transport_followup.tex"
     text = path.read_text(encoding="utf-8")
+    assert anchor in text
     path.write_text(text.replace(anchor, injected + " " + anchor, 1),
                     encoding="utf-8")
     findings = packager.check_layout_rules(root)
@@ -2817,7 +2837,7 @@ def test_a_mutated_staged_source_fails_the_mandatory_gate(tmp_path):
     records = _regenerate_caller_artifacts(src, pending)
     assert packager.check_pending_release(REPO_ROOT, src, pending, records) == []
 
-    victim = "transport_experiment.tex"
+    victim = "transport_followup.tex"
     staged = src / victim
     original = staged.read_bytes()
     assert hashlib.sha256(original).hexdigest() == \
@@ -2838,7 +2858,7 @@ def test_a_compiled_source_that_is_not_the_pinned_file_is_rejected(tmp_path,
     """Missing, renamed and symlinked staged sources, each caught by name."""
 
     src, pending = _staged_release_from_build(tmp_path)
-    victim = "transport_experiment.tex"
+    victim = "transport_followup.tex"
     staged = src / victim
     body = staged.read_bytes()
 
@@ -4873,7 +4893,7 @@ def test_a_classified_literal_is_scoped_to_its_own_file():
     for (path, literal) in ledger_tool.CLASSIFIED_LITERALS:
         assert path and literal
     # A metadata token classified in one source is not authorized in another.
-    assert ("paper/availability.tex", "1.13.1") in \
+    assert ("paper/transport_experiment_appendix.tex", "1.13.1") in \
         ledger_tool.CLASSIFIED_LITERALS
     assert ("paper/transport_theory.tex", "1.13.1") not in \
         ledger_tool.CLASSIFIED_LITERALS
@@ -5040,8 +5060,13 @@ def test_the_supplement_ships_the_source_closure_manifest():
         assert packager.SOURCE_CLOSURE_NAME in archive.namelist()
         manifest = json.loads(archive.read(packager.SOURCE_CLOSURE_NAME))
     staged = [entry["staged"] for entry in manifest["entries"]]
-    assert "figures/transport_table_original_validity.tex" in staged
-    assert "figures/transport_instantiation_bound_D-1.csv" in staged
+    assert "figures/transport_table_drift.tex" in staged
+    assert "figures/transport_explanatory_outcomes.tex" in staged
+    assert "scope_limitations.tex" in staged
+    assert "transport_protocol_appendix.tex" in staged
+    assert "transport_support_appendix.tex" in staged
+    assert "transport_experiment.tex" not in staged
+    assert not any(path.endswith(".csv") for path in staged)
     assert len(staged) == len(set(staged))
 
 
@@ -5776,7 +5801,7 @@ def test_uncompiled_numerical_lookup_tables_reject_self_rehashed_changes(
     path.write_text(path.read_text() + "% unauthorized lookup change\n")
     Path(str(path) + ".sha256").write_text(
         hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name + "\n")
-    assert any("pinned numerical lookup table" in name
+    assert any("pinned regenerated lookup evidence" in name
                for name in _closure_failures(root, require=True))
 
 
@@ -5808,9 +5833,9 @@ def test_a_partial_manifest_is_not_held_to_the_mandatory_list(tmp_path):
 
 
 @pytest.mark.parametrize("staged, why", [
-    ("transport_experiment.tex", "ordinary manuscript source"),
-    ("figures/transport_instantiation_bound_D-1.csv", "sidecarred figure data"),
-    ("figures/transport_table_original_validity.tex", "pinned generated chart"),
+    ("transport_followup.tex", "ordinary manuscript source"),
+    ("figures/transport_explanatory_outcomes.tex", "embedded figure coordinates"),
+    ("figures/transport_table_drift.tex", "pinned generated chart"),
     ("pgfplots.sty", "vendored package"),
     ("tmlr.sty", "venue template"),
     ("main.bbl", "generated, in neither archive"),
@@ -5866,7 +5891,7 @@ def test_a_remapped_closure_entry_fails(tmp_path, field, value):
 def test_a_sidecar_cannot_stand_in_for_closure_membership(tmp_path):
     """The exact reviewer reproduction, end to end, against the real tree."""
 
-    target = "figures/transport_instantiation_bound_D-1.csv"
+    target = "figures/transport_explanatory_outcomes.tex"
     repository = contract.COMPILED_CLOSURE[target]["repository"]
 
     def edit(root, manifest):
@@ -6457,7 +6482,10 @@ def test_rotating_is_documented_with_the_package_that_supplies_it():
     # texlive-latex-base (verified with dpkg-query -S), not the older provider.
     assert "texlive-latex-base" in readme
     entry = (REPO_ROOT / packager.ENTRY_POINT).read_text(encoding="utf-8")
-    assert r"\usepackage{rotating}" in entry
+    # The approved revision removed landscape floats and this package load.
+    # Keep the historical provider record and verify the current compile scope.
+    assert r"\usepackage{rotating}" not in entry
+    assert not any(name.endswith("rotating.sty") for name in contract.COMPILED_CLOSURE)
 
 
 def test_large_pinned_inventory_does_not_fail_with_pipefail(tmp_path):

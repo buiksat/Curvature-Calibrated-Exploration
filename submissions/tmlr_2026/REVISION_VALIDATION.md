@@ -21,3 +21,14 @@ Use README.md for commands. Preserve full logs and exact pass/fail/skip counts
 outside the checkout. The pre-existing CI failure requires its own evidence;
 a red status alone does not establish a cause. No build constitutes an upload,
 push, independent review, acceptance or submission.
+
+## Current test inventory
+
+These counts were obtained by collection in an external source-archive sandbox.
+Collection is not evidence that a test ran or passed. Execution results belong
+to the verification report for the exact source state.
+
+| Inventory | Count |
+|---|---|
+| Release-package test collection | 565 collected |
+| Repository suite collection | 740 collected |

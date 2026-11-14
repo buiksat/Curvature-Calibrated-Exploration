@@ -54,3 +54,45 @@ Raw trajectories are absent from the compact supplement. Terminal summaries
 support the checks described in the manuscript; they do not reconstruct missing
 roundwise raw data or establish universal floating-point certificates. No new
 adaptive experiments or Phase 2 implementation are part of this port.
+
+## Current release
+
+The release inventory below describes the recorded local package. It does not
+claim universal PDF byte identity across TeX distributions or a test-suite pass.
+Verification results and limits must be read from the report for the exact source
+state. No material has been uploaded or submitted.
+
+| Artifact | Bytes | Members | Unpacked bytes |
+|---|---:|---:|---:|
+| `main.pdf` | 475,088 | n/a | n/a |
+| `source.zip` | 2,953,750 | 83 | 2,943,460 |
+| `supplement.zip` | 93,864,028 | 197 | 93,828,058 |
+| `release_manifest.json` | 112,524 | n/a | n/a |
+
+The supplement uses 93.9% of the 100,000,000-byte limit,
+leaving 6,135,972 bytes. Both ZIPs use deterministic `ZIP_STORED`
+entries; the strict size and inventory gates remain required.
+
+The compiled closure has 75 entries: 24 whose bytes the supplement
+carries, 50 in `source.zip`, and 1 generated BibTeX output in neither
+archive. `main.bbl` is recreated from the required bibliography and style.
+
+`source.zip` contains the project-local compiler inputs and required BibTeX,
+style, source and licence extras. `external_tex_inputs` records protected
+distribution inputs and their content hashes; those inputs are not redistributed.
+
+| Package | In source.zip? | Role |
+|---|---|---|
+| Venue template | **bundled** | Official TMLR styles and licence |
+| `mathtools` | **bundled** | Includes mhsetup |
+| `cleveref` | **bundled** | Cross references |
+| `pgfplots` | **bundled** | Plotting runtime and required sources |
+| `microtype` | **bundled** | Typography runtime |
+| `algorithms` | **bundled** | Runtime styles, regeneration sources and licence |
+| `rotating` | external | Historical dependency; unused by the current manuscript |
+| `cm-super` | external | No font is vendored |
+
+The vendor inventory contains 50 runtime/source files, plus the separate
+licence texts. The historical Debian packaging record identifies `rotating.sty`
+as supplied by `texlive-latex-base`; the current build records the installed
+external bytes independently. See `paper/texmf_vendor/VENDORED-PACKAGES.md`.
