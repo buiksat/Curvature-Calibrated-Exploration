@@ -53,7 +53,7 @@ ENTRY_POINT = Path("submissions/tmlr_2026/main.tex")
 SOURCE_CLOSURE_NAME = "SOURCE_CLOSURE.json"
 
 # Required flat-source build documentation, independent of compiler inputs.
-SOURCE_ARCHIVE_DOCUMENT_DIGESTS = {"BUILD.md": '58f517b3ad36bf82e01d898ed9d9e48dff0e11de40edcc21042e9226208c852c'}
+SOURCE_ARCHIVE_DOCUMENT_DIGESTS = {"BUILD.md": 'a67ec08ac8fefb99cfd99366d77c7523f1738c446b4ffc1ae4e357fda8775124'}
 
 # Shared manuscript sources. Historical AISTATS and one-sided material stays
 # in Git; the current TMLR paper contains the transport theorem and its audit.
@@ -2000,6 +2000,10 @@ def expected_supplement_members(repo: Path,
     packaged = {record["path"]: record for record in records}
     expected: dict[str, tuple[str, int]] = {}
     for source, arcname in supplement_entries(repo):
+        if arcname in contract.SHIPPED_DOCUMENT_PINS:
+            document = contract.SHIPPED_DOCUMENT_PINS[arcname]
+            expected[arcname] = (document["sha256"], document["bytes"])
+            continue
         if arcname in followup_contract.FOLLOWUP_CONTRACT:
             pinned_followup = followup_contract.FOLLOWUP_CONTRACT[arcname]
             expected[arcname] = (pinned_followup["packaged_sha256"],
@@ -3543,6 +3547,11 @@ def supplement_entries(repo: Path) -> list[tuple[Path, str]]:
 
     # reviewer-facing entry points, written for the supplement
     add(repo / "submissions/tmlr_2026/supplement_README.md", "README.md")
+    for name, digest in SOURCE_ARCHIVE_DOCUMENT_DIGESTS.items():
+        origin = repo / ENTRY_POINT.parent / name
+        if not origin.is_file() or sha256_file(origin) != digest:
+            raise RuntimeError(f"Required supplement build document missing or differs from its pin: {name}")
+        add(origin, name)
     add(repo / "submissions/tmlr_2026/supplement_verify.sh", "verify.sh")
     return entries
 

@@ -552,6 +552,9 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
 #: This is a binding, not a signature: an offline archive has no cryptographic
 #: root, and a reviewer who wants certainty compares these bytes against the
 #: release manifest, which never ships.
+SHIPPED_DOCUMENT_PINS = {'BUILD.md': {'bytes': 3551,
+              'sha256': 'a67ec08ac8fefb99cfd99366d77c7523f1738c446b4ffc1ae4e357fda8775124'}}
+
 SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symmetric_scan.py': '82581a51354c17a8c953b539b6f821bf434058faafc63655f07881320f291a21',
  'tools/analyze_relative_transport.py': 'd226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56',
  'tools/check_python_environment.py': '77c64121cc5d9dcd21dc6b3f7cc6b736567edb8d185f9b8ec6b147ed8fda810e',
@@ -744,6 +747,20 @@ def check_provenance(root: Path) -> list[tuple[str, bool, str]]:
     return results
 
 
+def check_shipped_documents(root: Path) -> list[tuple[str, bool, str]]:
+    """Require exact, independently pinned documentation in anonymous packages."""
+    results = []
+    for name, pin in sorted(SHIPPED_DOCUMENT_PINS.items()):
+        path = root / name
+        regular = path.is_file() and not path.is_symlink()
+        actual = sha256_file(path) if regular else None
+        size = path.stat().st_size if regular else None
+        results.append((f"required shipped document matches independent pin: {name}",
+                        regular and actual == pin["sha256"] and size == pin["bytes"],
+                        f"observed {actual} ({size} bytes), expected {pin['sha256']} ({pin['bytes']} bytes)"))
+    return results
+
+
 def check(root: Path, *, require_package: bool | None = None
           ) -> list[tuple[str, bool, str]]:
     """Validate a packaged tree against the pinned contract.
@@ -771,6 +788,8 @@ def check(root: Path, *, require_package: bool | None = None
         if package_required(require_package):
             results.append(missing_declaration_result(root))
         return results
+
+    results.extend(check_shipped_documents(root))
 
     # The follow-up has a separate typed metadata contract; retaining the older
     # declaration cannot downgrade a supplement to the historical evidence set.

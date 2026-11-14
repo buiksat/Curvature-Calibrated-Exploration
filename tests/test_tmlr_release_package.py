@@ -515,7 +515,7 @@ def packaged_tree(tmp_path_factory):
     by_arcname = {arc: path for path, arc in transformed}
 
     tree = out / "tree"
-    wanted = [contract.DECLARATION_NAME]
+    wanted = [contract.DECLARATION_NAME, *contract.SHIPPED_DOCUMENT_PINS]
     wanted += [name for name in packager.SUPPLEMENT_GENERATED_ARTIFACTS
                if name.startswith("paper/tables/")]
     for relative in contract.CONTRACT:
@@ -4563,6 +4563,33 @@ def test_source_zip_ships_the_required_flat_build_note():
     assert b"latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex" in note
     assert b"supplement.zip" in note and b"tools/make_tmlr_outcomes.py --check" in note
     assert b"no experiment code" in note
+    with zipfile.ZipFile(release / "supplement.zip") as archive:
+        assert archive.read("BUILD.md") == note
+    assert contract.SHIPPED_DOCUMENT_PINS["BUILD.md"] == {
+        "sha256": hashlib.sha256(note).hexdigest(), "bytes": len(note)}
+
+
+@pytest.mark.parametrize("state", ["missing", "modified"])
+def test_required_supplement_build_note_cannot_be_missing_or_rehashed(tmp_path, state):
+    if state == "modified":
+        (tmp_path / "BUILD.md").write_bytes((REPO_ROOT / "submissions/tmlr_2026/BUILD.md").read_bytes() + b"\nUnapproved replacement instructions.\n")
+    checks = contract.check_shipped_documents(tmp_path)
+    assert checks and all(not ok and "BUILD.md" in name for name, ok, _detail in checks)
+
+
+def test_build_note_names_actual_external_tex_prerequisites():
+    release = _release_dir()
+    if release is None:
+        pytest.skip("no built release directory; run submissions/tmlr_2026/build.sh")
+    manifest = json.loads((release / "release_manifest.json").read_text())
+    names = [item["name"] for item in manifest["external_tex_inputs"]]
+    note = (REPO_ROOT / "submissions/tmlr_2026/BUILD.md").read_text()
+    for name in ("hyperref", "natbib", "url", "xcolor", "eso-pic"):
+        assert any(item.endswith(name + ".sty") for item in names), name
+        assert name in note, name
+    assert any("pgf" in name for name in names) and any("tikz" in name for name in names)
+    assert "PGFPlots is bundled, but PGF/TikZ itself is external" in note
+    assert "source ZIP directory" in note and "not the supplement root" in note
 
 
 @pytest.mark.parametrize("state", ["missing", "modified"])

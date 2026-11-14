@@ -1,19 +1,30 @@
 # Build the anonymous manuscript
 
-This is a flat LaTeX source archive. It contains the manuscript, rendered figures,
-bibliography inputs, venue styles and required bundled package sources/licences.
-It contains no experiment code, per-seed data or raw trajectories. Compiling the
-manuscript does not require the separate Python experiment environment.
+This note is shipped in both `source.zip` and `supplement.zip`. To compile,
+unpack the companion `source.zip` into a separate directory containing `main.tex`.
+That flat LaTeX archive contains the manuscript, rendered figures, bibliography
+inputs, venue styles and required bundled package sources/licences. It contains
+no experiment code, per-seed data or raw trajectories. Compiling does not require
+the separate Python experiment environment. The supplement root is not a flat
+LaTeX project: it does not contain `main.tex` or the venue styles at its root.
 
-## Compile from this directory
+## Compile from the unpacked source ZIP directory
 
-Install latexmk, pdfLaTeX and BibTeX with a TeX distribution providing the AMS,
-graphics, booktabs, tabularx, enumitem, float, placeins and aliascnt packages and
-Latin Modern fonts. The archive bundles the required TMLR styles, algorithms,
-mathtools/mhsetup, cleveref, microtype and PGFPlots sources. Keep those bytes and
-the anonymous manuscript mode unchanged.
+Install latexmk, pdfLaTeX and BibTeX with the usual TeX Live base/recommended,
+LaTeX-extra, science, pictures and recommended-fonts collections, plus Latin
+Modern fonts. Typical package names are `texlive-latex-base`,
+`texlive-latex-recommended`, `texlive-latex-extra`, `texlive-science`,
+`texlive-pictures`, `texlive-fonts-recommended` and `lmodern`.
 
-Run from the directory containing this note and `main.tex`:
+The non-vendored dependencies include AMS, graphics, booktabs, tabularx, enumitem,
+float, placeins, aliascnt, hyperref, natbib, url, xcolor, eso-pic, PGF/TikZ and Latin
+Modern fonts. PGFPlots is bundled, but PGF/TikZ itself is external and must be
+provided by the TeX distribution. The source archive also bundles the required
+TMLR styles, algorithms, mathtools/mhsetup, cleveref and microtype sources. Keep
+those bytes and the anonymous manuscript mode unchanged. This is a supported
+collection-based prerequisite list, not a claim about a minimal installation.
+
+Run from the source ZIP directory containing `main.tex`, not the supplement root:
 
 ```bash
 SOURCE_DATE_EPOCH=1609459200 FORCE_SOURCE_DATE=1 openout_any=a \
@@ -27,8 +38,8 @@ bytes. In an online LaTeX editor, select `main.tex` and pdfLaTeX.
 
 ## Regenerate or check the terminal outcomes table
 
-The rendered `figures/transport_followup_outcomes.tex` is already included here.
-Its numeric regeneration requires the separately supplied `supplement.zip`.
+The source ZIP already includes the rendered `figures/transport_followup_outcomes.tex`.
+Its numeric regeneration uses the separately supplied `supplement.zip`.
 Unpack that archive into a different empty directory and change to its root.
 Use its supported hash-locked Python environment, described in its own `README.md`
 and `experiments/requirements-python312.lock`, then run:
@@ -41,7 +52,8 @@ PYTHON=/path/to/supported-python/bin/python bash verify.sh
 These commands check the supplied evidence and replay the terminal paired
 intervals; they do not run new experiments. To regenerate the existing terminal
 table in that separate supplement, run the same Python command without `--check`.
-It writes `paper/figures/transport_followup_outcomes.tex` there. That file must
+It writes both `paper/figures/transport_followup_outcomes.tex` and the current
+`paper/figures/transport_outcomes_provenance.json` there. The table file must
 match the rendered `figures/transport_followup_outcomes.tex` in this source archive
 byte for byte. The separate supplement's `verify.sh` also checks the original and
 current figure generators, source pins, numerical ledger and scientific tests.
