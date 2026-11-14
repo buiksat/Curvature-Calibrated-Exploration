@@ -95,6 +95,7 @@ FOLLOWUP_SOURCE_HASHES = {Path('review/post_full_fable/independent/analysis.json
  Path('tools/make_transport_followup_paper.py'): '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  Path('tools/make_transport_table_charts.py'): '87f3585583979e0dc4b0ecd4c5e4f1502a1ddbb41672f15f3885e38a0f3010c8',
  Path('tools/prepare_tmlr_figures.py'): 'a53b1944cb1473d700da9c5fba7a76860f2a79d7f53fe1a622027304e74ed6b7',
+ Path('tools/transport_artifact_expectations.py'): 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  Path('tools/verify_review_experiment_export.py'): 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0'}
 
 # An anonymous supplement ships modified copies of some evidence files with one
@@ -1065,7 +1066,9 @@ HISTORICAL_LEDGER_SOURCES = {"paper/transport_experiment.tex", "paper/transport_
 
 def build_ledger(root: Path | None = None) -> list[Entry]:
     original = historical_and_prior_ledger(root)
-    entries = [replace(original[index], manuscript=Path(path), literal=phrase)
+    entries = [replace(original[index], manuscript=(SUPPLEMENT_README_PACKAGED
+                       if root is not None and contract.is_packaged_tree(root)
+                       and path == str(SUPPLEMENT_README_REPO) else Path(path)), literal=phrase)
                for index,path,phrase in EDITORIAL_LEDGER_SPECS]
     if root is None or not contract.is_packaged_tree(root):
         entries.extend(entry for entry in original
@@ -2447,8 +2450,47 @@ def closure_manifest_checks(root: Path, *,
                     lookup_tables.add(name)
         except Exception as error:
             lookup_problem = f"; numeric lookup verification failed: {error}"
-    extra = sorted(compiled_shipped - recorded - lookup_tables)
-    expect("every shipped manuscript source is a recorded compiled input or a pinned numerical lookup table",
+    # The revised manuscript retains exactly these historical figure sources as
+    # supplementary lookup evidence. Their admission requires complete source
+    # contracts, authenticated generators, independent pins and exact regenerated
+    # bytes. No extra .tex file or self-rehashed drawing earns this status.
+    historical_figures = {
+        "paper/figures/transport_instantiation_bound.tex",
+        "paper/figures/transport_instantiation_regret.tex",
+        "paper/figures/transport_instantiation_tightness.tex",
+        "paper/figures/transport_table_original_bound_ratios.tex",
+        "paper/figures/transport_table_original_components.tex",
+        "paper/figures/transport_table_original_distribution.tex",
+        "paper/figures/transport_table_original_path_ratios.tex",
+        "paper/figures/transport_table_original_performance.tex",
+        "paper/figures/transport_table_original_validity.tex",
+    }
+    lookup_figures: set[str] = set()
+    if (compiled_shipped - recorded) & historical_figures:
+        try:
+            _validated_followup_packaged_sources(root, require_package=require_manifest)
+            helper = contract.load_followup_contract(root)
+            charts = _load_reviewed_tool(root, TABLE_CHART_GENERATOR)
+            historical = _load_reviewed_tool(root, Path("tools/transport_artifact_expectations.py"))
+            adapter = _load_reviewed_tool(root, Path("tools/prepare_tmlr_figures.py"))
+            regenerated, _digest = historical.expected_artifact_text(root)
+            expected = {path.relative_to(root).as_posix(): text
+                        for path, text in regenerated.items() if path.suffix == ".tex"}
+            expected.update({str(path): text for path, text in charts.build(root).items()
+                             if str(path) in historical_figures})
+            for name in historical_figures:
+                path = root / name
+                pin = helper.ARTIFACT_PINS.get(name)
+                independent = (pin["sha256"] if pin else
+                               adapter.FIGURE_PINS[path.name]["original_sha256"])
+                text = expected.get(name)
+                if (path.is_file() and not path.is_symlink() and isinstance(text, str)
+                        and path.read_bytes() == text.encode() and sha256_file(path) == independent):
+                    lookup_figures.add(name)
+        except Exception as error:
+            lookup_problem += f"; historical figure lookup verification failed: {error}"
+    extra = sorted(compiled_shipped - recorded - lookup_tables - lookup_figures)
+    expect("every shipped manuscript source is a recorded compiled input or pinned regenerated lookup evidence",
            not extra, f"shipped but neither compiled nor pinned lookup data: {extra}{lookup_problem}")
 
     # The explanatory TeX embeds its coordinates, so its reviewer-facing CSV
