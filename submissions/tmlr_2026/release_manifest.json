@@ -208,12 +208,12 @@
       "sha256": "8186ee39897e6a8eff0076e3c600e053cae6e5b2c141b601ff1c62802bf8f2e5"
     },
     "source.zip": {
-      "bytes": 2956478,
-      "sha256": "333f1008d29dab4766c5b8b3b0914e8d469775615223fc5a4877cb86501e6bf3"
+      "bytes": 2957393,
+      "sha256": "84d9c43c6dcb103a334e62d5b644e8b65d42abd86690615fe45cfd9e7a6b444f"
     },
     "supplement.zip": {
-      "bytes": 93918533,
-      "sha256": "b4d392db424940d23c44bef141614a519ebb029befe2ad6bba2aba9be4d657bf"
+      "bytes": 93923108,
+      "sha256": "f80ef0953eada1aff0cc1d7e067ff86c5022c1b83d5ade733d0f343a4bdd3be6"
     }
   },
   "external_tex_inputs": [
@@ -1639,9 +1639,9 @@
   },
   "source_zip_contents": [
     {
-      "bytes": 2636,
+      "bytes": 3551,
       "path": "BUILD.md",
-      "sha256": "58f517b3ad36bf82e01d898ed9d9e48dff0e11de40edcc21042e9226208c852c"
+      "sha256": "a67ec08ac8fefb99cfd99366d77c7523f1738c446b4ffc1ae4e357fda8775124"
     },
     {
       "bytes": 35147,
@@ -2064,6 +2064,11 @@
       "bytes": 2468,
       "path": "ANONYMIZATION.json",
       "sha256": "7745be05306396c3bbf98e6dd3ac6897e966222b74a880664083bc5eaeebcf20"
+    },
+    {
+      "bytes": 3551,
+      "path": "BUILD.md",
+      "sha256": "a67ec08ac8fefb99cfd99366d77c7523f1738c446b4ffc1ae4e357fda8775124"
     },
     {
       "bytes": 9005,
@@ -2966,9 +2971,9 @@
       "sha256": "d226b98c4a10f6f1905c2c23556540ab41e062eb27c58ab67efe417f7daccf56"
     },
     {
-      "bytes": 55793,
+      "bytes": 56725,
       "path": "tools/anonymous_package_contract.py",
-      "sha256": "292943217ce50701fc31957f705fad613a0e25c0008ba79c20c0dc717230da05"
+      "sha256": "aa59c0442914009b6eb4b47a062712cc3b303dbd935f5f062686e82cbe75b164"
     },
     {
       "bytes": 3269,
