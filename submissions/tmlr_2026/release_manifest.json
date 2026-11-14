@@ -208,8 +208,8 @@
       "sha256": "8186ee39897e6a8eff0076e3c600e053cae6e5b2c141b601ff1c62802bf8f2e5"
     },
     "source.zip": {
-      "bytes": 2953750,
-      "sha256": "1777b5bc78479913e803662246f9ccb1b174f0a2c5f5c2f8ba5646ae6583e042"
+      "bytes": 2956478,
+      "sha256": "333f1008d29dab4766c5b8b3b0914e8d469775615223fc5a4877cb86501e6bf3"
     },
     "supplement.zip": {
       "bytes": 93918533,
@@ -1638,6 +1638,11 @@
     "tools/verify_tmlr_submission_numbers.py": "43cc56bc012bb186d2045c06802643a8ceb62e0b9640c318bbeb27af3cf57547"
   },
   "source_zip_contents": [
+    {
+      "bytes": 2636,
+      "path": "BUILD.md",
+      "sha256": "58f517b3ad36bf82e01d898ed9d9e48dff0e11de40edcc21042e9226208c852c"
+    },
     {
       "bytes": 35147,
       "path": "LICENSE-gpl-3-0",

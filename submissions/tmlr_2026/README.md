@@ -69,9 +69,9 @@ state. No material has been uploaded or submitted.
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
 | `main.pdf` | 475,088 | n/a | n/a |
-| `source.zip` | 2,953,750 | 83 | 2,943,460 |
+| `source.zip` | 2,956,478 | 84 | 2,946,096 |
 | `supplement.zip` | 93,918,533 | 200 | 93,882,025 |
-| `release_manifest.json` | 113,467 | n/a | n/a |
+| `release_manifest.json` | 113,610 | n/a | n/a |
 
 The supplement uses 93.9% of the 100,000,000-byte limit,
 leaving 6,081,467 bytes. Both ZIPs use deterministic `ZIP_STORED`
@@ -80,8 +80,9 @@ entries; the strict size and inventory gates remain required.
 The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:
 24 also present in the supplement and 50 source-only compiled inputs.
 The generated `main.bbl` is in neither archive; BibTeX recreates it from the
-required bibliography and style. Archive membership also includes the required
-build note, bibliography, style, source and licence extras.
+required bibliography and style. `source.zip` also includes 10 required extras,
+including the standalone `BUILD.md`, bibliography, style, source and licence files.
+Compiled-input classification and total archive membership are distinct.
 
 `source.zip` contains the project-local compiler inputs and required BibTeX,
 style, source and licence extras. `external_tex_inputs` records protected
