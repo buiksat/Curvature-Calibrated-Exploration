@@ -815,217 +815,162 @@ def check_generated_artifacts(report: Report, root: Path) -> None:
 # 6. manuscript claims
 # --------------------------------------------------------------------------
 
-MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {
-    "paper/transport_experiment.tex": (
-        ("2400 policy", "all 2400 policy trajectories accepted"),
-        ("50 evaluation seeds", "50 evaluation seeds"),
-        ("$[92.9\\%,100\\%]$", "displayed exact Clopper-Pearson interval"),
-        ("$3\\times10^{-4}$", "selected learning rate"),
-        ("20 full-batch steps", "selected steps per round"),
-        (
-            "no deterministic algebra or certificate-check failure",
-            "zero deterministic failures",
-        ),
-        (
-            "no bound violation on the joint confidence event",
-            "zero on-event violations",
-        ),
-        ("No run has zero regret", "no zero-regret runs"),
-        (
-            "diagnostics, not verified numerical certificates",
-            "float64 diagnostics are not verified certificates",
-        ),
-        (
-            "does not provide a scalable policy certificate",
-            "endpoint is not scalable",
-        ),
-        # Updated for the current wording of the same required qualifiers.  Each
-        # replacement carries the identical scientific meaning as the literal it
-        # supersedes; none of them weakens a check.
-        (
-            "it is a dense\ndiagnostic comparator rather than a deployable policy",
-            "endpoint is a dense diagnostic comparator, not a deployable policy",
-        ),
-        ("intentionally uncertified", "naive current is uncertified"),
-        (
-            "naive score's observed optimism does not make it theoretically valid",
-            "naive current remained optimistic but is not valid",
-        ),
-        (
-            "do not show a causal or uniform advantage for full curvature",
-            "no uniform curvature advantage",
-        ),
-        (
-            "The cumulative guarantee is vacuous in every original-study cell",
-            "empirical vacuity",
-        ),
-        (
-            "Its raw trajectories were unavailable for this revision",
-            "original raw trajectories remain unavailable",
-        ),
-        (
-            "This dominance statement does not describe the nonlinear follow-up",
-            "original base dominance is not generalized to the follow-up",
-        ),
-        (
-            "the analytic certificate is conservative by five to six orders of magnitude on this grid",
-            "original conservative-certificate finding retains its study scope",
-        ),
-        ("nor generic network width", "no generic network-width claim"),
-        (
-            "lower sample-mean pseudo-regret than transport Hessian in every\n"
-            "reported condition",
-            "endpoint, frozen and naive sample-mean regret direction",
-        ),
-        (
-            "the cross-condition pattern is not a causal dose response",
-            "no cross-condition causal dose response",
-        ),
-    ),
-    "paper/transport_experiment_appendix.tex": (
-        ("50 evaluation seeds", "figures use only evaluation seeds"),
-        ("Smoke and tuning results are absent", "smoke and tuning excluded"),
-        (
-            "dense float64 diagnostics, not verified certificates",
-            "float64 diagnostics are not verified certificates",
-        ),
-        ("$10^{-12}$ ratio tolerance", "preregistered ratio tolerance"),
-    ),
-    "paper/transport_followup.tex": (
-        (
-            "600 policy trajectories. A separate set of 294 development and tuning trajectories precedes evaluation",
-            "follow-up separates evaluation from development and tuning",
-        ),
-        (
-            "its evidence is not pooled with this study",
-            "follow-up does not pool original-study evidence",
-        ),
-        (
-            "the Hessian policy has higher mean pseudo-regret than every comparator in every condition",
-            "follow-up keeps the adverse regret comparison",
-        ),
-        (
-            "Cumulative pseudo-regret measures the expected reward lost, over all rounds, by choosing the learner's action instead of the best action for each context",
-            "follow-up comparison is cumulative contextual pseudo-regret",
-        ),
-        (
-            "These are pointwise intervals from 10,000 paired seed-bootstrap resamples per comparison, without multiplicity adjustment",
-            "follow-up intervals remain pointwise and unadjusted",
-        ),
-        (
-            "Because policies follow their own adaptive histories, this comparison measures the outcome of each complete policy. It does not isolate the effect of changing only a certificate at a fixed state or establish a universal policy ordering",
-            "follow-up refuses universal regret ordering or causal attribution",
-        ),
-        (
-            "The model parameter $W$ changes both the reward function and its curvature, so comparisons across conditions do not isolate an effect of metric drift",
-            "follow-up changes reward tasks across W",
-        ),
-        (
-            "All 600 evaluation trajectories, including naive current, pass the simultaneous reference-confidence, method-optimism, and deterministic diagnostics",
-            "follow-up optimism includes the uncertified control",
-        ),
-        (
-            "These are observed checks, not proof of population coverage or of the need for transport. Float64 checks and converged quadrature are numerical diagnostics; they do not verify the theorem's assumptions through rigorous numerical enclosures",
-            "follow-up diagnostics do not prove validity or necessity",
-        ),
-        (
-            "The largest contribution to the Hessian bounds is path inflation, the extra charge introduced by the path certificate, in all three conditions",
-            "follow-up keeps path-certificate conservatism",
-        ),
-        (
-            "We call a larger bound \\emph{vacuous}: it adds no information beyond the cap. Every Hessian-policy bound is vacuous",
-            "follow-up keeps primary bound vacuity",
-        ),
-        (
-            "The frozen policy's own reference-geometry bounds also exceed the caps in all 150 of its trajectories",
-            "follow-up keeps frozen own-history bound vacuity",
-        ),
-        (
-            "After observing the policy outcomes, we examined how the Hessian score's width bonus related to its recommendations. We independently recomputed score diagnostics from all 600 preserved trajectories",
-            "mechanism analysis remains post-outcome exploratory",
-        ),
-        (
-            "It evaluates neither a new adaptive policy nor end-to-end speed",
-            "relative-certificate audit does not establish adaptive performance or speedup",
-        ),
-    ),
-    "paper/transport_followup_appendix.tex": (
-        (
-            "They describe a recommendation at a recorded state, not the subsequent trajectory of an alternative policy. Taking a different action would generally change future observations, parameters, matrices, and decisions",
-            "same-history recommendations are not alternative adaptive runs",
-        ),
-        (
-            "without converting floating-point residuals into verified certificates",
-            "relative audit is not verified numerical certification",
-        ),
-    ),
-    "TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md": (
-        ("2,400/2,400 trajectories", "full grid complete"),
-        ("Deterministic audit failures: 0", "zero deterministic failures"),
-        ("On-event theorem-bound violations: 0", "zero on-event violations"),
-        (
-            "2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1",
-            "PDF hash",
-        ),
-        ("63 pages, 933,908 bytes", "PDF page count and size"),
-    ),
-    # Submission compliance and the current abstract's scientific scope. The
-    # follow-up now leads the abstract; original-study findings remain guarded
-    # in their own sources rather than being relabeled as follow-up findings.
-    "submissions/tmlr_2026/main.tex": (
-        ("\\usepackage{tmlr}", "official TMLR stylefile is loaded"),
-        (
-            "four policies in three conditions using one synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition",
-            "abstract states the follow-up evaluation grid",
-        ),
-        (
-            "Transport inflation dominates its regret bounds. Both these bounds and the reference policy's own bounds exceed a deterministic regret cap",
-            "abstract keeps the conservative-certificate finding",
-        ),
-        (
-            "Both these bounds and the reference policy's own bounds exceed a deterministic regret cap",
-            "abstract keeps the vacuous-bound finding",
-        ),
-        (
-            "Hessian transport, which bounds matrix changes using prediction Hessians, has higher mean pseudo-regret than every comparator in each condition",
-            "abstract keeps the adverse regret comparison",
-        ),
-        (
-            "The results separate three questions for exploration with relinearized gradients: whether confidence is conditionally valid, whether regret bounds are informative, and whether decisions improve",
-            "abstract separates certificate validity from usefulness",
-        ),
-        (
-            "this comparison does not order regret across policies with different adaptive histories",
-            "abstract refuses adaptive regret ordering from same-history widths",
-        ),
-        (
-            r"all nine pointwise paired 95\% confidence intervals for regret differences exclude zero",
-            "abstract keeps pointwise paired uncertainty",
-        ),
-    ),
-    "paper/body_conclusion.tex": (
-        (
-            "the reference policy's own bounds remain vacuous",
-            "conclusion keeps the vacuous-bound finding",
-        ),
-        (
-            "all nine pointwise paired regret comparisons favor its comparators",
-            "conclusion keeps the adverse regret comparison",
-        ),
-        (
-            "The comparison does not order the realized regret of policies that collect different data",
-            "conclusion refuses a uniform curvature ordering",
-        ),
-        (
-            "The next useful step is to identify stronger confidence information or a lower complete computational cost that could justify using current curvature instead of direct reference scoring",
-            "conclusion leaves stronger confidence information open",
-        ),
-        (
-            "In our prespecified study, the evaluated Hessian policy has higher mean regret than every comparator: all nine pointwise paired regret comparisons favor its comparators. Its regret bound is dominated by transport inflation",
-            "conclusion keeps follow-up certificate conservatism",
-        ),
-    ),
-}
+MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INSTANTIATION_COMPLETION_REPORT.md': [('2,400/2,400 trajectories',
+                                                   'full grid complete'),
+                                                  ('Deterministic audit failures: 0',
+                                                   'zero deterministic failures'),
+                                                  ('On-event theorem-bound violations: 0',
+                                                   'zero on-event violations'),
+                                                  ('2545c368d6b97393f5c1e5bb61d4696f7fed6b8ae988ce42c9d7bc7ccab717e1',
+                                                   'PDF hash'),
+                                                  ('63 pages, 933,908 bytes',
+                                                   'PDF page count and size')],
+ 'paper/body_conclusion.tex': [('A useful next comparison needs stronger confidence information or '
+                                'a lower complete computational cost, including the frozen '
+                                'estimator',
+                                'current manuscript leaves stronger confidence information open')],
+ 'paper/scope_limitations.tex': [('Paired bootstrap intervals are pointwise and unadjusted',
+                                  'follow-up intervals remain pointwise and unadjusted'),
+                                 ('The comparisons concern complete policies, not isolated '
+                                  'certificate changes or a universal ordering.',
+                                  'follow-up refuses universal regret ordering or causal '
+                                  'attribution'),
+                                 ('Changing $W$ changes rewards as well as curvature; condition '
+                                  'comparisons do not isolate drift',
+                                  'follow-up changes reward tasks across W'),
+                                 ('Recorded confidence and optimism checks, including naive '
+                                  'current, establish neither population coverage, numerical '
+                                  'theorem certification, necessity nor practical advantage.',
+                                  'follow-up diagnostics do not prove validity or necessity'),
+                                 ('Fixed-state timings under parallel load exclude matrix '
+                                  'construction, confidence estimation and the policy loop, so do '
+                                  'not establish end-to-end speedup.',
+                                  'relative-certificate audit does not establish adaptive '
+                                  'performance or speedup'),
+                                 ('Post-outcome rescoring/replay holds recorded histories fixed: '
+                                  'it is exploratory, reveals no alternative adaptive trajectory '
+                                  'or downstream action effects, and does not identify an adaptive '
+                                  'causal mechanism.',
+                                  'same-history recommendations are not alternative adaptive runs'),
+                                 ('Float64 solves, eigenvalues, quadrature, replay residuals and '
+                                  'source hashes are not rigorous numerical enclosures.',
+                                  'relative audit is not verified numerical certification'),
+                                 ('Recorded confidence and optimism checks, including naive '
+                                  'current, establish neither population coverage, numerical '
+                                  'theorem certification, necessity nor practical advantage.',
+                                  'current manuscript separates certificate validity from '
+                                  'usefulness'),
+                                 ('The comparisons concern complete policies, not isolated '
+                                  'certificate changes or a universal ordering.',
+                                  'current manuscript refuses adaptive regret ordering from '
+                                  'same-history widths'),
+                                 ('The comparisons concern complete policies, not isolated '
+                                  'certificate changes or a universal ordering.',
+                                  'current manuscript refuses a uniform curvature ordering')],
+ 'paper/transport_experiment.tex': [('2400 policy', 'all 2400 policy trajectories accepted'),
+                                    ('50 evaluation seeds', '50 evaluation seeds'),
+                                    ('$[92.9\\%,100\\%]$',
+                                     'displayed exact Clopper-Pearson interval'),
+                                    ('$3\\times10^{-4}$', 'selected learning rate'),
+                                    ('20 full-batch steps', 'selected steps per round'),
+                                    ('no deterministic algebra or certificate-check failure',
+                                     'zero deterministic failures'),
+                                    ('no bound violation on the joint confidence event',
+                                     'zero on-event violations'),
+                                    ('No run has zero regret', 'no zero-regret runs'),
+                                    ('diagnostics, not verified numerical certificates',
+                                     'float64 diagnostics are not verified certificates'),
+                                    ('does not provide a scalable policy certificate',
+                                     'endpoint is not scalable'),
+                                    ('it is a dense\n'
+                                     'diagnostic comparator rather than a deployable policy',
+                                     'endpoint is a dense diagnostic comparator, not a deployable '
+                                     'policy'),
+                                    ('intentionally uncertified', 'naive current is uncertified'),
+                                    ("naive score's observed optimism does not make it "
+                                     'theoretically valid',
+                                     'naive current remained optimistic but is not valid'),
+                                    ('do not show a causal or uniform advantage for full curvature',
+                                     'no uniform curvature advantage'),
+                                    ('The cumulative guarantee is vacuous in every original-study '
+                                     'cell',
+                                     'empirical vacuity'),
+                                    ('Its raw trajectories were unavailable for this revision',
+                                     'original raw trajectories remain unavailable'),
+                                    ('This dominance statement does not describe the nonlinear '
+                                     'follow-up',
+                                     'original base dominance is not generalized to the follow-up'),
+                                    ('the analytic certificate is conservative by five to six '
+                                     'orders of magnitude on this grid',
+                                     'original conservative-certificate finding retains its study '
+                                     'scope'),
+                                    ('nor generic network width', 'no generic network-width claim'),
+                                    ('lower sample-mean pseudo-regret than transport Hessian in '
+                                     'every\n'
+                                     'reported condition',
+                                     'endpoint, frozen and naive sample-mean regret direction'),
+                                    ('the cross-condition pattern is not a causal dose response',
+                                     'no cross-condition causal dose response')],
+ 'paper/transport_experiment_appendix.tex': [('50 evaluation seeds',
+                                              'figures use only evaluation seeds'),
+                                             ('Smoke and tuning results are absent',
+                                              'smoke and tuning excluded'),
+                                             ('dense float64 diagnostics, not verified '
+                                              'certificates',
+                                              'float64 diagnostics are not verified certificates'),
+                                             ('$10^{-12}$ ratio tolerance',
+                                              'preregistered ratio tolerance')],
+ 'paper/transport_followup.tex': [('All 600 trajectories, including naive current, pass '
+                                   'simultaneous reference confidence, method optimism and '
+                                   'deterministic diagnostics',
+                                   'follow-up optimism includes the uncertified control'),
+                                  ("Path inflation is Hessian's largest bound contribution in all "
+                                   'three conditions.',
+                                   'follow-up keeps path-certificate conservatism'),
+                                  ('A bound above it is \\emph{vacuous}. Every Hessian bound and '
+                                   'all 150 frozen-policy own-history bounds exceed their caps.',
+                                   'follow-up keeps primary bound vacuity'),
+                                  ('all 150 frozen-policy own-history bounds exceed their caps.',
+                                   'follow-up keeps frozen own-history bound vacuity'),
+                                  ('After outcomes were observed, replay with the recorded actions '
+                                   'and rewards audits all 600 histories.',
+                                   'mechanism analysis remains post-outcome exploratory'),
+                                  ("Path inflation is Hessian's largest bound contribution in all "
+                                   'three conditions.',
+                                   'current manuscript keeps the conservative-certificate finding'),
+                                  ("Both Hessian's bounds and the frozen policy's own bounds "
+                                   'exceed the deterministic cap',
+                                   'current manuscript keeps the vacuous-bound finding'),
+                                  ('All nine pointwise paired comparisons favor these comparators '
+                                   'over Hessian.',
+                                   'current manuscript keeps the adverse regret comparison'),
+                                  ("Path inflation is Hessian's largest bound contribution in all "
+                                   'three conditions.',
+                                   'current manuscript keeps follow-up certificate conservatism')],
+ 'paper/transport_followup_appendix.tex': [('Evaluation consists of $3\\times4\\times50=600$ '
+                                            'further trajectories. The 294',
+                                            'follow-up separates evaluation from development and '
+                                            'tuning')],
+ 'paper/transport_theory.tex': [('\\operatorname{reg}_t '
+                                 ':=\\sup_{a\\in\\cA_t}\\mu_t^*(a)-\\mu_t^*(a_t), \\qquad '
+                                 'R_T=\\sum_{t=1}^T\\operatorname{reg}_t.',
+                                 'follow-up comparison is cumulative contextual pseudo-regret')],
+ 'submissions/tmlr_2026/main.tex': [('Hessian transport has higher mean pseudo-regret than every '
+                                     'comparator',
+                                     'follow-up keeps the adverse regret comparison'),
+                                    ('\\usepackage{tmlr}', 'official TMLR stylefile is loaded'),
+                                    ('four policies in three conditions of a synthetic '
+                                     '29-parameter scaled-tanh model, with 50 paired seeds per '
+                                     'condition',
+                                     'current manuscript states the follow-up evaluation grid'),
+                                    ("its bounds and the frozen policy's own bounds exceed the "
+                                     'deterministic cap',
+                                     'current manuscript keeps the vacuous-bound finding'),
+                                    ('Hessian transport has higher mean pseudo-regret than every '
+                                     'comparator',
+                                     'current manuscript keeps the adverse regret comparison'),
+                                    ('all nine pointwise paired 95\\% intervals exclude zero',
+                                     'current manuscript keeps pointwise paired uncertainty')]}
 
 # Literals that must NOT appear anywhere in the submitted manuscript sources.
 # These are the overclaims the evidence does not support, and the two tmlr.sty
@@ -1046,17 +991,22 @@ MANUSCRIPT_PROHIBITED: Sequence[tuple[str, str]] = (
     ("Acknowledgments", "acknowledgments would de-anonymize"),
 )
 
-PROHIBITED_SCOPE: Sequence[str] = (
-    "submissions/tmlr_2026/main.tex",
-    "paper/body_intro.tex",
-    "paper/body_conclusion.tex",
-    "paper/transport_experiment.tex",
-    "paper/transport_experiment_appendix.tex",
-    "paper/transport_followup.tex",
-    "paper/transport_followup_appendix.tex",
-    "paper/transport_theory.tex",
-    "paper/availability.tex",
-)
+PROHIBITED_SCOPE: Sequence[str] = ('submissions/tmlr_2026/main.tex',
+ 'paper/body_intro.tex',
+ 'paper/body_conclusion.tex',
+ 'paper/transport_experiment.tex',
+ 'paper/transport_experiment_appendix.tex',
+ 'paper/transport_followup.tex',
+ 'paper/transport_followup_appendix.tex',
+ 'paper/transport_theory.tex',
+ 'paper/availability.tex',
+ 'paper/body_related.tex',
+ 'paper/broader_impact.tex',
+ 'paper/notation.tex',
+ 'paper/scope_limitations.tex',
+ 'paper/transport_protocol_appendix.tex',
+ 'paper/transport_support_appendix.tex',
+ 'paper/transport_proofs.tex')
 
 
 def _normalize_prose(text: str) -> str:
@@ -1072,12 +1022,20 @@ def _normalize_prose(text: str) -> str:
 
 def check_manuscript(report: Report, root: Path) -> None:
     section = "manuscript"
+    sys.path.insert(0, str(root / "tools"))
+    import verify_tmlr_submission_numbers as ledger
+    active = {str(path) for path in ledger.manuscript_closure(root)}
+    report.expect(section, "current manuscript excludes original-study sources",
+                  not active.intersection(ledger.HISTORICAL_LEDGER_SOURCES),
+                  "Original study and follow-up retain separate pinned configurations and evidence exports",
+                  status=STATUS_PASS)
     for relative, invariants in sorted(MANUSCRIPT_INVARIANTS.items()):
         path = root / relative
         if not path.is_file():
             report.add(section, relative, STATUS_FAIL, "file is missing")
             continue
-        text = _normalize_prose(path.read_text(encoding="utf-8"))
+        raw = path.read_text(encoding="utf-8")
+        text = _normalize_prose(ledger.visible_tex(raw) if path.suffix == ".tex" else raw)
         for needle, description in invariants:
             report.expect(
                 section,
@@ -1092,7 +1050,8 @@ def check_manuscript(report: Report, root: Path) -> None:
         if not path.is_file():
             report.add(section, f"{relative}: present", STATUS_FAIL, "file is missing")
             continue
-        text = _normalize_prose(path.read_text(encoding="utf-8"))
+        raw = path.read_text(encoding="utf-8")
+        text = _normalize_prose(ledger.visible_tex(raw) if path.suffix == ".tex" else raw)
         hits = [
             f"{needle!r} ({why})"
             for needle, why in MANUSCRIPT_PROHIBITED

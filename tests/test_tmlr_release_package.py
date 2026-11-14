@@ -5903,9 +5903,11 @@ def test_the_generated_bibliography_is_reproducible_from_source_zip():
     is verifiable without either archive carrying the bytes.
     """
 
-    rebuilt = Path("/home/buiksat/cce-tmlr-work/srcziptest-r11/main.bbl")
-    if not rebuilt.is_file():
-        pytest.skip("no clean source.zip rebuild present")
+    release = _release_dir()
+    if release is None:
+        pytest.skip("no built release directory; run submissions/tmlr_2026/build.sh")
+    rebuilt = release / "source-rebuild/main.bbl"
+    assert rebuilt.is_file(), "the current release needs a clean source.zip rebuild"
     pinned = contract.COMPILED_CLOSURE["main.bbl"]
     assert hashlib.sha256(rebuilt.read_bytes()).hexdigest() == pinned["sha256"]
     assert rebuilt.stat().st_size == pinned["bytes"]
