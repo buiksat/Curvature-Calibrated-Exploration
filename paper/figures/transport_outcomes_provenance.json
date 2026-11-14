@@ -1,0 +1,24 @@
+{
+  "generator_sha256": "8e5d8ba7d29e15ecf243d00192589a2dd77d0b2fd0d33720f92a123802fa8cb8",
+  "inputs": [
+    {
+      "path": "submissions/tmlr_2026/evidence/execution_config.json",
+      "sha256": "be6e253b68970de29d2b18ca27413d3551f00d0dbca75eb168379ab3d9b0cae3"
+    },
+    {
+      "path": "submissions/tmlr_2026/evidence/seed_summaries.jsonl",
+      "sha256": "e1c4935f879df7418a2a115692113d90e50d6e50e3819cbe3ad29ce40a9afc60"
+    },
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.csv",
+      "sha256": "0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe"
+    },
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_paired.csv",
+      "sha256": "c5e92e0c7158419edfacc2b4b51576aa9c7197ba87958261d37beec44a032266"
+    }
+  ],
+  "output": "submissions/tmlr_2026/figures/transport_followup_outcomes.tex",
+  "output_sha256": "527726ec7baf327eb9f60b855383dadd37d6f8a00715ee07278b0e61ffe0731f",
+  "scope": "Terminal means from unchanged per-seed exports; stored paired intervals independently replayed by --check. No raw-trajectory reproduction."
+}

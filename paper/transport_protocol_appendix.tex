@@ -1,0 +1,64 @@
+\subsection{General action-space protocol}
+\label{app:general-protocol}
+
+\paragraph{General protocol and timing.}
+Let $(\mathsf A,\mathcal B)$ be a standard Borel action space.  At round $t$,
+the learner observes a context and a nonempty random action correspondence
+$\cA_t:\Omega\to 2^{\mathsf A}$ whose graph
+\[
+ \operatorname{Gr}(\cA_t)
+ :=\{(\omega,a):a\in\cA_t(\omega)\}
+ \in\cHist_t^-\otimes\mathcal B.
+\]
+Here $\cHist_t^-$ is the history after the context and action correspondence
+are observed but before fresh round-$t$ algorithmic randomization.  The variable
+$\Omega_t$ records all round-$t$ pre-reward randomization, which may be revealed
+in sequential stages, and $\cHist_t=\cHist_t^-\vee\sigma(\Omega_t)$ contains
+that randomization but not the reward.  The restrictions to
+$\operatorname{Gr}(\cA_t)$ of
+$(\omega,a)\mapsto\mu_t^*(a),\bq_t(a),m_t(a),b_t(a),\hat s_t(a)$, and, once
+defined below, $U_t(a)$ are assumed jointly measurable with respect to
+$\cHist_t\otimes\mathcal B$.  We also assume explicitly that
+$\sup_{a\in\cA_t}\mu_t^*(a)$ and $\sup_{a\in\cA_t}U_t(a)$ are finite
+$\cHist_t$-measurable random variables, that the oracle below returns a $\cHist_t$-measurable
+selector in $\cA_t$, and that the simultaneous confidence and all certificate
+events below, including path, operator, all-domain solver-upper, and
+played-action sharpness validity, are measurable.  These are
+substantive assumptions; standard-Borel structure
+and graph measurability alone do not make every supremum or selector measurable.
+
+The reference metric $\bVbar_t$ and, when used, the representation parameter
+$\btheta_t$ are determined from the prefix history and are
+$\cHist_t^-$-measurable.  The exact current metric $\bV_t$ is likewise formed
+before the fresh certificate randomization and is $\cHist_t^-$-measurable.  The realized algorithmic operator
+$\Calg_t$, path envelope $\bar D_t$, condition factors
+$\kappa_{-,t},\kappa_{+,t}$, solver-width map $\hat s_t(\cdot)$, sharpness
+factor $\alpha_t$, oracle tolerance $\xi_t$, and selected action $a_t$ may
+depend on $\Omega_t$ and are required only to be $\cHist_t$-measurable.  Thus
+``predictable'' below is reserved for $\cHist_t^-$-measurable quantities;
+quantities that may use $\Omega_t$ are called pre-reward measurable.  The
+reward is observed only after $a_t$ is selected.
+
+\subsection{Assumption ledger}
+
+\begin{table}[t]
+\caption{Assumption ledger for abstract confidence transport.  A float64 point
+residual, empirical eigenvalue estimate, or unenclosed numerical check is not a
+mathematical certificate.}
+\label{tab:transport-assumption-ledger}
+\centering\ccetablesize
+\begin{tabularx}{\columnwidth}{@{}p{.39\columnwidth}X@{}}
+\toprule
+Certificate & Status \\
+\midrule
+Reference confidence event & Statistical or model-specific premise \\
+Path-length envelope & Analytic or separately certified \\
+Two-sided operator comparison & Deterministic, analytic, or randomized with failure allocation \\
+All-domain solver upper validity & Exact-arithmetic or verified numerical certificate \\
+Played-action sharpness & Exact-arithmetic or verified selected-action certificate \\
+Linearization and misspecification envelopes & Supplied pre-reward bounds \\
+Measurable approximate selector & Oracle premise \\
+\bottomrule
+\end{tabularx}
+
+\end{table}
