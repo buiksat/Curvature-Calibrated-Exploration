@@ -1,11 +1,25 @@
 \section{Full-study protocol and exploratory diagnostics}
 \label{app:transport-followup}
 
-This appendix explains how the study was run and what its later diagnostics
-can tell us.  The protocol and policy comparisons were specified before
-evaluation.  The analyses on recorded histories came afterward: they hold
-the learner's information fixed to examine scores, rather than rerun an
-adaptive policy after changing its action.
+This appendix records the prespecified protocol and the post-outcome
+diagnostics on recorded histories.
+
+\subsection*{Bound scale and drift diagnostics}
+
+\begin{figure}[t]
+ \centering
+ \input{figures/transport_explanatory_bounds.tex}
+ \caption{Mean terminal theorem RHS relative to the deterministic cap $2T\min(1,\sqrt W)$, on each named policy's own 50 histories. Points plot the base-ten logarithm of the mean RHS/cap; zero is equality with the cap.}
+ \label{fig:transport-followup-bound-scale}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \input{figures/transport_table_drift.tex}
+ \caption{Prespecified drift diagnostics. The maximum and threshold frequencies use Hessian's 50,000 seed--round observations per condition; thresholds use $\ge$. Bound scales appear in \Cref{fig:transport-followup-bound-scale}.}
+ \label{fig:transport-followup-drift-bounds}
+\end{figure}
+\FloatBarrier
 
 \subsection{Prespecified protocol, uncertainty, and provenance}
 
@@ -17,6 +31,10 @@ context, action indicator, and their tensor product, then normalizes it to
 unit norm; its dimension is $4+5+20=29$.  The teacher has unit norm and a fixed
 regular-simplex construction in the interaction block.  The learner starts at
 zero, uses training ridge one, and receives only the selected action's reward.
+Rewards are Gaussian with scaled-tanh mean, $\|\phi(z)\|_2\le1$, projected
+$\|\btheta\|_2\le1$, noise standard deviation $0.25$, metric ridge one and
+$\delta=0.05$. Dense float64 Cholesky solves implement exact-current operators;
+action ties use the smallest index.
 The potential-noise table couples methods without revealing unselected rewards.
 The 24 development trajectories cover three conditions and four policies at
 both development seeds.
@@ -39,65 +57,47 @@ A documented development-only numerical refinement froze Gauss--Legendre
 quadrature order 2048 before tuning and evaluation.  The full development gate
 compared orders 1024 and 2048 on all 24 declared trajectories; a separate
 development check also compared 2048 and 4096.  No failed development check was
-reclassified as a passing evaluation.  Quadrature checks, dense eigenvalue
-comparisons, and confidence/optimism checks remain floating-point diagnostics.
-They do not supply rigorous numerical enclosures for theorem assumptions.
+reclassified as a passing evaluation.
 
 \paragraph{What the intervals measure.}
 Pairing compares policies exposed to the same underlying context and
-potential-noise stream.  It does not force them to select the same actions.
+potential-noise stream.
 The paired-bootstrap intervals resample the 50 evaluation seeds within a
 condition, preserving the pairing between policies, with 10,000 resamples and
-the recorded deterministic bootstrap seed.  The nine intervals in
-\Cref{fig:transport-followup-outcomes} are comparisonwise rather than
-multiplicity-adjusted.  Shared seeds across conditions do not make the 600
-trajectories independent observations from one common population.  The teacher,
-conditions, and shared optimizer are fixed in this uncertainty calculation.
+the recorded deterministic bootstrap seed.
 
-The numerical values underlying the outcome chart at $T=1000$, with
-50 paired evaluation seeds per condition, remain in the supplementary
-reproducibility files. All nine intervals are pointwise 95\% paired bootstrap
-intervals; no simultaneous coverage is asserted.
+The main-text table gives the terminal numerical values; its retained per-seed
+inputs support independent bootstrap reconstruction.
 
 \paragraph{Descriptive benchmarks.}
-These benchmarks provide reference performance levels for the same reward
-streams.  They neither estimate the best achievable contextual performance
-nor serve as equivalence tests between policies.
+These benchmarks provide descriptive reference performance levels.
 The online context-free benchmark samples each action once, then selects the
 smallest-index action with the largest empirical mean of its own selected
 rewards, ignoring context.  The best-fixed-action benchmark instead selects in
 hindsight the action with the largest total true mean along the realized
-context stream.  Both use the same potential-outcome streams as the study
-policies, but neither follows a study policy's selected-action history.
+context stream.  Both use the same potential-outcome streams as the study policies.
 
 \paragraph{What the retained evidence can reproduce.}
-The committed full-study export records the exact configuration, selected
-optimizer, source inventory, development/tuning summaries, per-seed terminal
-outcomes, drift summaries, and compact aggregate.  Its independent verifier
-recomputes the final-horizon means and paired intervals from the per-seed
-values.  The later mechanism analysis scans the preserved raw trajectories and
-records their hash inventory.  The supplementary numerical tables are generated directly
-from these machine artifacts by
-\texttt{tools/make\_transport\_followup\_paper.py}; the accompanying
-\texttt{transport\_followup\_provenance.json} binds input and output SHA-256
-digests.  This provenance is separate from the original near-linear study,
-whose raw trajectories were unavailable for the revision.
+The portable full-study export records the configuration, selected optimizer,
+development/tuning summaries, per-seed terminal outcomes and drift summaries.
+Its independent verifier reconstructs terminal means and paired intervals.
+The original numerical tables were generated by
+\texttt{tools/make\_transport\_followup\_paper.py};
+\texttt{transport\_followup\_provenance.json} records that generation.
+\Cref{tab:transport-followup-outcomes} is rendered separately by
+\texttt{tools/make\_tmlr\_outcomes.py}, with its own
+\texttt{transport\_outcomes\_provenance.json}.
 
-The explanatory charts in
-\Cref{fig:transport-followup-outcomes,fig:transport-followup-bound-scale}
-are generated from the same fixed summaries by
-\texttt{tools/make\_transport\_explanatory\_figures.py}.
-Their CSV sources retain the plotted values, and
-\texttt{transport\_explanatory\_provenance.json} records the input and output
-digests.  The logarithmic bound chart transforms the mean RHS divided by the
-condition's deterministic cap; it does not average trajectory-level logarithms.
-The additional diagnostic charts are generated from the reviewed numerical
-tables by \texttt{tools/make\_transport\_table\_charts.py}.
-They retain the published table precision; the original tables remain in the
-supplement for numerical lookup.  Their input and output digests are recorded
-in \texttt{transport\_table\_provenance.json}.
-The conceptual figures illustrate the stated certificate interfaces and
-analytic example, independently of these empirical summaries.
+The explanatory and diagnostic charts were originally generated by
+\texttt{tools/make\_transport\_explanatory\_figures.py} and
+\texttt{tools/make\_transport\_table\_charts.py}; their original input/output
+digests remain in \texttt{transport\_explanatory\_provenance.json} and
+\texttt{transport\_table\_provenance.json}.
+Post-generation editorial transforms remove duplicate caveat annotations and
+neutralize source comments. \texttt{transport\_editorial\_provenance.json}
+records these transforms and the current figure digests; the retained CSV
+values and plotted coordinates are unchanged. The conceptual figures
+illustrate the certificate interfaces and analytic example.
 
 \subsection{Exploratory recommendations on fixed histories}
 
@@ -109,10 +109,7 @@ history.
 condition and behavior policy.  Each point averages one-step pseudo-regret
 over 50,000 dependent states; the black-ringed points equal the actual mean cumulative
 pseudo-regret divided by 1000.  The other points are recommendations on
-states visited by the row policy.  They describe a recommendation at a
-recorded state, not the subsequent trajectory of an alternative policy.
-Taking a different action would generally change future observations,
-parameters, matrices, and decisions.  The analysis was specified after the
+states visited by the row policy.    The analysis was specified after the
 full-study outcomes were observed.
 
 \begin{figure}[p]
@@ -121,8 +118,7 @@ full-study outcomes were observed.
   \caption{Exploratory same-history mean one-step pseudo-regret.  Rows identify
   the policy that generated the history; colors and symbols identify the score
   used to recommend an action.  Black-ringed points are realized behavior-policy
-  outcomes divided by $T$.  The other points do not
-  reconstruct alternative adaptive runs.}
+  outcomes divided by $T$.}
   \label{fig:transport-followup-same-history}
 \end{figure}
 
@@ -155,24 +151,17 @@ five, five, and six in the respective conditions.  Across all behavior
 histories there are 65 changes among 600,000 states.  All occur at rounds
 2--10, with score differences below 0.629 of a binary64 score ULP
 (the spacing of representable numbers at the score's magnitude).
-The decimal calculation does not recompute upstream matrix solves,
-exponentials, coefficients, or fitted parameters.  An early changed action
-could affect subsequent adaptive history; that effect has not been measured.
-Likewise, equality between the full score vector and its bonus-plus-offset
-part in binary64 arithmetic includes initially zero centers and is not, by
-itself, evidence that the selected action was corrupted.
+
 
 \paragraph{Variation across seeds and history-generating policies.}
 \Cref{fig:transport-followup-mechanism-variation} reports per-seed variation
 instead of treating the pooled rounds as independent.  The row label tells
 us which policy generated the history; the score being diagnosed is always
 Hessian's.  Thus only Hessian rows describe the behavior policy's own score.
-The other rows ask what Hessian would recommend on states visited by endpoint,
-frozen reference, or naive current.  They do not diagnose width dominance in
-those policies' own scores.
+The other rows evaluate Hessian on states visited by endpoint, frozen reference
+or naive current.
 Each fraction has 1000 rounds in its denominator, and the
-reported median and range summarize 50 seeds.  These descriptive summaries
-are not confidence intervals.
+reported median and range summarize 50 seeds.
 
 \begin{figure}[p]
   \centering
@@ -190,8 +179,7 @@ are not confidence intervals.
 
 The endpoint constructions compare the current matrix directly with the
 reference matrix.  This audit checks their implementation and measures the
-resulting widths and recommendations on recorded states.  It does not test
-the behavior of a new adaptive policy.
+resulting widths and recommendations on recorded states.
 
 \paragraph{Which factors are compared?}
 For unit feature and parameter bounds, \Cref{cor:tanh-relative-weights} gives
@@ -202,8 +190,7 @@ symmetric coefficient $\exp(D_{{\rm cat},t}/2)$, where
 $D_{{\rm cat},t}=\max\{-\log c_{-,t},\log c_{+,t}\}$, or the separate outward
 coefficient $\sqrt{c_{+,t}}$ of \Cref{cor:relative-endpoint-ucb}.
 The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the
-cumulative bound.  Neither category construction is an upper bound on the
-length of the original interpolated factor path.
+cumulative bound.
 
 \paragraph{Replay and numerical checks.}
 The post-outcome audit replays the original representation optimizer with
@@ -212,9 +199,7 @@ a behavior action or generates a new observation.  It reconstructs
 collection-time category weights and compares the resulting sandwich,
 effective widths, and recommendations at the stored states.  Matrix, center,
 and endpoint reconstruction are checked at rounds 1, 2, 10, 100, 500, and 1000;
-the original float64 tolerances are retained.  These computations check an
-implementation of the mathematical construction, without converting
-floating-point residuals into verified certificates.  All declared checks
+the original float64 tolerances are retained.  All declared checks
 passed; the largest residual divided by its original tolerance was below
 $0.005$.  The per-seed variation in the preceding figure was reproduced by this
 separate fixed-action replay.
@@ -223,8 +208,7 @@ separate fixed-action replay.
 The upper panel of \Cref{fig:transport-followup-relative-audit} compares each
 effective width with its reference width before averaging.  The lower panel
 asks what immediate expected reward is lost by the recommendations on those
-same states.  It does not accumulate the outcomes of a policy that follows
-those recommendations over time.
+same states.
 
 \begin{figure}[p]
   \centering
@@ -235,7 +219,7 @@ those recommendations over time.
   the direct reference ratio is identically one.  The lower panel averages
   one-step pseudo-regret of recommendations on these same states.  Uniform
   uses $D_0$; the category methods use symmetric and separate outward factors.
-  These are fixed-history diagnostics, not adaptive policy outcomes.}
+}
   \label{fig:transport-followup-relative-audit}
 \end{figure}
 
@@ -245,9 +229,6 @@ Direct frozen-reference recommendations on these states appear in
 \Cref{fig:transport-followup-same-history}.
 
 \paragraph{What the timing records leave out.}
-Fixed-state kernel timings are retained in the audit artifact.  They were
-collected under parallel analysis load and exclude matrix construction,
-confidence estimation, and the policy loop, so they do not establish
-end-to-end speedup.  The category construction requires additional
+Fixed-state kernel timings are retained in the audit artifact.  They were collected under parallel analysis load.  The category construction requires additional
 accumulated collection weights and still uses matrix solves and the frozen
 confidence construction.

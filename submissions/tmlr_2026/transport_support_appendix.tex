@@ -1,0 +1,186 @@
+\subsection{Notation and certificate comparisons}
+
+\begin{table}[t]
+\caption{Notation for confidence transport.  Widths are geometric scales;
+the confidence and certificate assumptions justify their use in a score.}
+\label{tab:transport-notation}
+\centering
+\begin{tabularx}{\columnwidth}{@{}p{.22\columnwidth}X@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\bVbar_t$ & Frozen reference matrix of collection-time queries. \\
+$\bV_t$ & Exact current matrix, with past queries recomputed at the current parameter. \\
+$\Calg_t$ & SPD matrix actually applied by the algorithm. \\
+\midrule
+$\bar s_t(a)$ & Exact width from the frozen reference matrix. \\
+$s_t(a)$ & Exact width from the current matrix. \\
+$s_{\Calg,t}(a)$ & Exact width from the applied matrix. \\
+$\hat s_t(a)$ & Computed upper width used in the score. \\
+\midrule
+$m_t(a)$ & Prediction center in the reference-confidence band. \\
+$\beta_t$ & Nonnegative confidence multiplier for the reference width. \\
+$b_t(a)$ & Nonnegative additive error allowance in the prediction band. \\
+$\bar D_t$ & Upper bound on the chosen auxiliary SPD path length. \\
+$\kappa_{-,t},\kappa_{+,t}$ & Lower and upper factors comparing applied and current matrices. \\
+$\alpha_t$ & Sharpness factor for the computed width at the played action. \\
+$\xi_t$ & Allowed gap between the selected score and the score supremum. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[t]
+\caption{Transport certificates used in this paper.  The two-way factor is
+the product of the outward and return width factors.  ``Smallness'' states
+the additional restriction needed for that factor; ``rotation'' records
+whether replay gradients may change direction. The final two rows give only
+the operator-comparison factor; a separate metric-transport factor is still
+required.}
+\label{tab:transport-comparison-new}
+\centering\ccetablesize
+\begin{tabularx}{\columnwidth}{@{}
+  >{\raggedright\arraybackslash}p{.17\columnwidth}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}p{.18\columnwidth}
+  >{\centering\arraybackslash}p{.10\columnwidth}
+  >{\centering\arraybackslash}p{.10\columnwidth}@{}}
+\toprule
+Route & Assumption & two-way factor & smallness & rotation \\
+\midrule
+Logarithmic path & normalized SPD path length $\bar D_t$ & $e^{\bar D_t}$ & no & yes \\
+Direct endpoint & \eqref{eq:relative-endpoint-sandwich} & $\sqrt{c_+/c_-}$ & no & yes \\
+Category weights & fixed feature directions; \eqref{eq:tanh-category-relative} & $\sqrt{c_+/c_-}$ & no & no \\
+Local sandwich & \eqref{eq:local-additive-new} & $(1+\chi_t)/(1-\chi_t)$ & $\chi_t<1$ & yes \\
+Exact current & $\Calg_t=\bV_t$ & $1$ & no & yes \\
+Approximate current & two-sided $\kappa_\pm$ certificate & $\sqrt{\kappa_+/\kappa_-}$ & $\kappa_->0$ & yes \\
+\bottomrule
+\end{tabularx}
+
+\end{table}
+
+\paragraph{What extends to vector outputs?}
+The factor construction also accommodates several output coordinates and
+weights, provided their changes are controlled as well.  For vector outputs,
+let $J_s(\theta)\in\R^{p_s\times d}$ and supply an
+absolutely continuous factor $R_s(\theta)\in\R^{r_s\times p_s}$ satisfying
+$R_s^\top R_s=W_s\succeq0$.  Stacking
+$B_s=R_sJ_s\in\R^{r_s\times d}$ gives
+$\lambda I+\sum_sJ_s^\top W_sJ_s$.  Along a path,
+$\dot B_s=\dot R_sJ_s+R_s\dot J_s$; both terms must be controlled.  This
+covers the geometry of weighted Fisher/GGN factors but does not by itself prove
+a likelihood confidence sequence or an exponential-family regret theorem.
+
+\paragraph{What remains model-specific.}
+The geometric comparisons can be reused with another estimator if it supplies
+\eqref{eq:abstract-confidence-new}.  Geometry alone does not supply that
+statistical premise.  For an exponential-family model, one would also need a
+likelihood-score confidence event, a conversion to prediction error,
+pre-reward collection-time Fisher weights, control of weight and Jacobian
+transport, and an information-potential bound.  Those additional steps are
+outside the squared-loss specialization established here.
+
+\subsection{Algorithm and local comparison}
+
+Algorithm~\ref{alg:transported-ucb} allows a pre-reward $\xi_t$-approximate
+selector. The main finite-action rule uses the smallest-index exact maximizer,
+so $\xi_t=0$ as in \Cref{cor:finite-enumeration-new}.
+
+\begin{algorithm}[t]
+\caption{Corrected-center specialization of transported UCB}\label{alg:transported-ucb}
+\begin{algorithmic}[1]
+\STATE Observe the context and measurably enumerated finite action list $\cA_t$; this defines $\cHist_t^-$.
+\STATE Take the prefix-determined $\btheta_t$, $\bVbar_t$, and $\bV_t$; using the observed context, form $\bq_t(a)$, $m_t^{\rm corr}(a)$, and $b_t(a)$.
+\STATE Choose $\cHist_t^-$-measurable failure budgets before their corresponding draws; reveal the pre-reward randomness $\Omega_t$.
+\STATE Construct $\Calg_t$ and obtain pre-reward certificates $\bar D_t$, $\kappa_{-,t}$, and $\kappa_{+,t}$.
+\STATE Obtain one jointly measurable solver upper-width map $\hat s_t(a)$ over the score domain.
+\STATE Return a $\cHist_t$-measurable $\xi_t$-approximate selector for the score in \eqref{eq:transported-score-new}.
+\STATE Observe the reward; update the frozen ridge estimator and \eqref{eq:reference-update-new}.
+\end{algorithmic}
+\end{algorithm}
+
+%
+\setcounter{theorem}{13}
+\paragraph{Local small-drift comparison.}
+If $\chi_t<1$ and
+
+\begin{equation}\label{eq:local-additive-new}
+ (1-\chi_t)^2\bVbar_t\preceq\bV_t
+ \preceq(1+\chi_t)^2\bVbar_t,
+\end{equation}
+
+replace $e^{\bar D_t/2}$ by $1+\chi_t$ in
+\eqref{eq:transported-score-new}.
+
+\begin{corollary}[Local small-drift transport]
+\label{cor:local-small-drift-new}
+Under the remaining hypotheses of \Cref{thm:transported-ucb}, the local score
+satisfies
+\begin{align}
+R_T
+&\le\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)\gamma_T
+\sum_{t=1}^T\beta_t^2
+\left[1+\alpha_t\frac{1+\chi_t}{1-\chi_t}
+\sqrt{\frac{\kappa_{+,t}}{\kappa_{-,t}}}\right]^2}
+\nonumber\\
+&\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t.
+\label{eq:local-small-drift-regret-new}
+\end{align}
+\end{corollary}
+
+
+\setcounter{theorem}{16}
+
+\subsection{Further rate comparisons}
+
+%
+\setcounter{theorem}{10}
+\begin{corollary}[Finite-dimensional corrected-center rate]
+\label{cor:finite-d-rate-new}
+Suppose $\bar D_t\le D$, $\alpha_t\le\alpha$, and
+$\kappa_{+,t}/\kappa_{-,t}\le K$ for all $t$.  Let
+\begin{align*}
+ B_T&=\sum_{s<T}[\epsilon_{\rm lin}(s)+\epsilon_{\rm mis}(s)]^2,\\
+ E_T^{\rm cur}&=\sum_{t=1}^T
+ [\epsilon_{\rm lin,t}(a_t)+\epsilon_{\rm mis,t}(a_t)].
+\end{align*}
+Then \Cref{thm:transported-ucb,cor:corrected-center-new} imply
+\begin{align}
+R_T
+&\le2\alpha e^D\sqrt K\nonumber\\
+&\quad{}\times
+\left[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda S
++\frac{\sqrt{B_T}}{\sigma}\right]\nonumber\\
+&\quad{}\times
+\sqrt{\left(\sigma^2+\frac{G^2}{\lambda}\right)T\Gamma_{T,d}}
+\nonumber\\
+&\quad+2E_T^{\rm cur}+\sum_{t=1}^T\xi_t.
+\label{eq:finite-d-rate-new-display}
+\end{align}
+With exact realizability and a frozen linear model, $B_T=E_T^{\rm cur}=0$.
+For fixed $d$ and problem constants, the leading term is then
+$O(e^D\sqrt K\,d\sqrt T\log T)$.  Exact solves set $\alpha=1$, exact current
+curvature sets $K=1$, and exact score maximization sets $\xi_t=0$, recovering
+the standard LinUCB determinant-potential rate up to displayed constants.
+\end{corollary}
+
+\begin{remark}[Comparable guarantees do not order policies]
+\Cref{prop:frozen-width-ucb,cor:corrected-center-new} give a frozen-width
+counterpart to \eqref{eq:finite-d-rate-new-display}, with the factor
+$\alpha e^D\sqrt K$ removed and all remaining quantities evaluated on the
+frozen policy's own history.  With the same $\lambda$, $\sigma$, and
+confidence level, common uniform bounds on the query norm, reference norm,
+approximation envelopes, and accumulated oracle error give guarantees of the
+same order when $D$, $\alpha$, and $K$ are bounded.  In particular, under the
+statistical, uniform-region, and smoothness assumptions of
+\Cref{cor:global-near-linear-new}, the corrected center and exact
+frozen-width score maximization give the same
+$O(d\sqrt T\log T)+O(\sqrt T)$ rate when $W=\Omega(T)$, for fixed $d$
+and fixed problem constants.
+This comparison does not rank realized regret: different selected actions
+change the representation paths, centers, radii, and information gains.
+It neither proves that transport is unnecessary nor rules out improved
+performance from current curvature.  The stated $W$ scaling is a sufficient
+condition for these bounds, not a necessary condition for an informative
+transport certificate.
+\end{remark}
+\setcounter{theorem}{16}

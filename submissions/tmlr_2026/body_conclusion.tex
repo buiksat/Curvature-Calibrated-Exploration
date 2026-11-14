@@ -1,65 +1,13 @@
-%% Shared scientific source for the research and TMLR entry points.
 \section{Conclusion}\label{sec:conclusion}
 
-Recomputing old gradients changes an uncertainty matrix without collecting new
-rewards. A policy that uses this current curvature therefore needs a reason
-why its score is still an upper confidence bound. We give that reason through
-separate bounds on the change of matrix, its computational approximation, and
-the numerical width used to select an action. For squared loss, the corrected
-center supplies the reference confidence band along predictable parameter
-paths in a certified region, with explicit approximation-error bounds and no
-optimizer-convergence requirement.
+A frozen ridge correction supplies reference confidence along predictable
+nonlinear parameter paths without optimizer convergence. Confidence transport
+connects that band to current curvature through separate metric, operator and
+solver certificates. The reference-width floor and sharp symmetric factors
+characterize this conversion; fixed-direction scaled tanh permits tighter
+relative-weight endpoint certificates.
 
-The guarantee comes with a basic limitation. On the same history, with the same
-center, radius and bias, transport cannot produce a smaller certified width
-than direct reference scoring; exact actionwise transport recovers that width
-(\Cref{prop:reference-width-floor}). The comparison does not order the realized
-regret of policies that collect different data. A larger bonus can change
-future actions beneficially or adversely.
-
-In our prespecified study, the evaluated Hessian policy has higher mean regret
-than every comparator: all nine pointwise paired regret comparisons favor its
-comparators. Its regret
-bound is dominated by transport inflation, and exploratory analysis shows that
-its bonus usually determines its recommendation on the recorded states. Even
-the reference policy's own bounds remain vacuous. Tightening the transport
-factor alone therefore does not remove the confidence and approximation-error
-costs. The original near-linear study has a different, base-dominated bound
-decomposition; these studies do not isolate a causal effect of drift across
-reward tasks.
-
-The scaled-tanh model also permits a tighter certificate obtained by comparing
-weights on fixed feature directions (\Cref{cor:tanh-relative-weights}). Its
-audit measures width overhead on existing histories.
-It leaves open how a policy using that certificate would behave as it collects
-its own data. A horizon-independent comparison of matrices also leaves the
-separate confidence and bias terms in the regret bound; it does not by itself
-guarantee sublinear regret.
-
-\paragraph{Scope and next questions.}
-The theory is conditional on the confidence, measurability, matrix-comparison
-and solver requirements in \Cref{asm:abstract-transport,thm:transported-ucb}.
-The corrected-center construction additionally needs a reference model fixed
-before data collection and supplied Taylor and misspecification error bounds.
-The experiments cover one synthetic model, a fixed teacher, shared
-prediction-based optimizer selection and dense direct solves. All evaluated
-policies, including the uncertified control, pass the reported floating-point
-optimism checks. Those diagnostics do not establish verified numerical
-certification or the empirical necessity of transport. The original study's
-missing raw data and runtime provenance gaps remain disclosed in the
-reproducibility statement.
-
-The next useful step is to identify stronger confidence information or a lower
-complete computational cost that could justify using current curvature instead
-of direct reference scoring. That cost must include the frozen estimator used by the
-corrected center. A new adaptive-policy comparison should follow a specific
-hypothesis, a separately fixed protocol and fresh evaluation data. The present
-results establish no practical advantage over scalable neural-bandit methods.
-
-\iflegacyextras
-Legacy audits are summarized in \Cref{app:legacy-evidence}; none instantiates
-the transported theorem event.
-\else
-Earlier one-sided repository audits are excluded from the evidence for this
-paper (\Cref{app:legacy-evidence}).
-\fi
+A useful next comparison needs stronger confidence
+information or a lower complete computational cost, including the frozen
+estimator, and a specific adaptive-policy hypothesis with a separately fixed
+protocol and fresh evaluation data.

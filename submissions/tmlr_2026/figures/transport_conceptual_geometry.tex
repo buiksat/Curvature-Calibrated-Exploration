@@ -1,9 +1,9 @@
-% Analytic illustration, not experimental data. Source: transport_theory.tex,
-% rem:naive-width-band-counterexample and prop:reference-width-floor.
-% Chosen slice D=log(4), beta=1, m=b=0. The metric unit balls use equal axes:
-% E(Vbar) has radii (1,1); E(V) has radii (1/2,2). The plotted score bands are
-% reference [-1,1], uncertified naive [-1/2,1/2], transported [-1,1].
-% Native body-size TikZ; no external data, rescaling, or extra TikZ libraries.
+%
+%
+%
+%
+%
+%
 \begin{tikzpicture}[x=1cm,y=1cm,
   every node/.style={font=\normalsize,inner sep=0pt},
   reference/.style={blue!65!black,line width=1pt},
@@ -21,7 +21,7 @@
   \node[anchor=west] at (0,-1.8) {$E(M)=\{z:z^\top Mz\le1\}$};
   \node[anchor=west] at (7,-1.25) {\textbf{Bands along the query direction}};
 
-  % Equal coordinate scales: 1.05 cm per unit in both directions.
+  %
   \draw[black!40,->,line width=.45pt] (1.05,-4.35) -- (5.2,-4.35)
     node[right=3pt] {$z_1$};
   \draw[black!40,->,line width=.45pt] (3,-6.7) -- (3,-2);
@@ -44,7 +44,7 @@
   \draw[current] (3.55,-7.15) -- (4.2,-7.15);
   \node[anchor=west] at (4.37,-7.15) {Current $E(\bV)$};
 
-  % One common horizontal value scale: value v is placed at x=11.5+3v.
+  %
   \draw[black!30,line width=.45pt] (11.5,-2.1) -- (11.5,-6.35);
   \draw[black!55,densely dotted,line width=.55pt]
     (14.5,-1.95) -- (14.5,-6.35);
@@ -79,6 +79,4 @@
   \node[anchor=north] at (11.5,-7.4) {Mean / score value};
   \node[anchor=west] at (0,-7.85)
     {$\bar s=1$, $s=e^{-D/2}$; transport restores $e^{D/2}s=\bar s$ in this direction.};
-  \node[anchor=west] at (0,-8.32)
-    {This is not a realized learning trajectory or an observed policy failure.};
 \end{tikzpicture}

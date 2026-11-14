@@ -1,153 +1,48 @@
-%% body_related.tex
-%% Shared scientific source for the research and TMLR entry points.
 \section{Related Work}\label{sec:related}
 
-The main distinction is how a method constructs the uncertainty used to choose
-an action.  Some methods retain features computed when data arrive; others
-fix a network linearization, learn a last-layer representation, or update an
-approximate posterior.  We study a different choice: recomputing every past
-observation's Jacobian at the current parameter, then relating that current
-curvature to confidence built from collection-time features.
+\paragraph{Collection-time and fixed-feature confidence.}
+Linear UCB and Thompson sampling provide the statistical basis for many
+neural-bandit methods \citep{abbasi2011improved,thompson1933likelihood,agrawal2013thompson}.
+NeuralUCB and NeuralTS add arriving gradient features to their covariance
+without replaying historical gradients after retraining
+\citep{zhou2020neural,zhang2021neural}. Initialization-time NTK uncertainty
+\citep{kassraie2022neural}, grouped histories \citep{salgia2023provably} and
+online-regression reductions \citep{deb2024contextual} use different confidence
+constructions. Learned last-layer uncertainty
+\citep{riquelme2018deep,xu2022shallow,bui2025variance} concerns learned linear
+representations rather than a GGN over all network parameters.
 
-\paragraph{Confidence from collection-time or fixed features.}
-Linear UCB \citep{abbasi2011improved} and Thompson sampling
-\citep{thompson1933likelihood,agrawal2013thompson} provide the statistical basis
-for many neural-bandit methods.  In their stated algorithms, NeuralUCB
-\citep{zhou2020neural} and NeuralTS \citep{zhang2021neural} add a gradient
-feature to the covariance when its observation arrives.  Later network updates
-do not trigger a replay of all historical gradients in that covariance.
+\paragraph{Posterior and linearization methods.}
+\citet{duranmartin2022efficient} use recursive EKF updates in a learned or random
+low-dimensional affine parameter subspace. LO-FI maintains a
+ diagonal-plus-low-rank full-parameter precision through EKF/online-SVD updates
+without replaying old data, with linear parameter-count cost at fixed rank
+\citep{chang2023lowrank}. Fixed trained-network linearizations use implicit
+Jacobian/Fisher products and CG \citep{maddox2021fast}. Laplace approximations
+use local inverse curvature around a MAP solution \citep{mackay1992practical},
+with last-layer \citep{kristiadi2020being}, all-weight/subnetwork/structured
+variants \citep{daxberger2021laplace,ritter2018scalable,martens2015optimizing}.
+LMC-TS instead uses noisy loss-gradient steps to approximate posterior samples
+without materializing covariance \citep{xu2022langevin}. Our theorem connects
+replayed current curvature to a separate collection-time confidence metric.
 
-Other methods separate the learned prediction from a fixed reference for
-uncertainty.  \citet{kassraie2022neural} use initialization-time features for a
-kernelized NTK reference alongside a trained-network mean.  Their SupNN-UCB
-variant has a sublinear-regret guarantee under NTK-RKHS,
-sufficient-exploration, and network-width assumptions.
-\citet{salgia2023provably} controls adaptivity through grouped histories and a
-confidence argument relating a finite network to the NTK.
-\citet{deb2024contextual} instead study online neural regression and
-contextual-bandit reductions.  These guarantees address their respective
-feature and data constructions.  Our question is what additional certificates
-justify using a metric that replays the entire history at each current
-parameter.
+\paragraph{Statistical and geometric connections.}
+The bounded-misspecification LinUCB analysis of
+\citet[Appendix~E]{lattimore2020learning} is closely related to the corrected
+center: pseudo-responses yield predictable linear regression with Taylor and
+misspecification errors, and the current affine offset restores the prediction.
+The Thompson metric \citep{thompson1963certain} and its Finsler structure
+\citep{nussbaum1994finsler} give the normalized SPD path comparison.
+Frequent Directions bandit sketches already use spectral approximation quality
+in regret guarantees \citep{kuzborskij2019efficient}; here an additional metric
+comparison connects that applied operator to frozen confidence.
 
-\paragraph{Uncertainty in learned last-layer features.}
-NeuralLinear maintains Bayesian linear uncertainty in learned final-layer
-features \citep{riquelme2018deep}.  The methods of \citet{xu2022shallow} and
-\citet{bui2025variance} use UCB-style linear exploration over learned deep
-representations.  Their linear uncertainty models concern those representations;
-recomputing last-layer features is different from constructing a GGN over all
-network parameters.  Our theorem specifies certificates for the latter
-transport.  It does not give a general analysis of neural-linear representation
-learning.
-
-\paragraph{Uncertainty from recursively updated posteriors.}
-\citet{duranmartin2022efficient} use extended Kalman filter (EKF) updates in a
-learned or random low-dimensional affine parameter subspace.  A dense or
-diagonal covariance in that subspace induces a low-rank covariance over
-parameters spanning all network layers.  Memory does not grow with the number
-of rounds.  This reduces the space in which uncertainty is represented, rather
-than applying exact curvature--vector products in the full parameter space.
-
-LO-FI \citep{chang2023lowrank} instead maintains a diagonal-plus-low-rank
-approximation to the full-parameter posterior precision.  Recursive EKF and
-online-SVD updates compress the posterior in one pass, without replaying past
-data; at fixed rank, cost is linear in the parameter count.  The authors use
-this approximation for Thompson sampling in an MNIST contextual bandit.
-Our transported-UCB theorem relates current replayed curvature to a separate
-frozen-feature confidence metric, with explicit factors for approximate
-operators and solver widths.  Our dense audit evaluates neither compressed
-operators nor CG and establishes no practical advantage over LO-FI.
-
-\paragraph{Fixed linearizations, Laplace approximations, and sampling.}
-\citet{maddox2021fast} linearize once around a trained network and use implicit
-Jacobian/Fisher products with CG for predictive inference.  These implicit
-solves are closely related to those that could compute our widths, but the
-reference linearization remains fixed.  A Laplace approximation places a local
-Gaussian posterior around a MAP solution, using inverse curvature as its
-covariance \citep{mackay1992practical}.  Last-layer Laplace fixes the backbone
-and therefore omits uncertainty in its weights \citep{kristiadi2020being}.
-\citet{daxberger2021laplace} systematize all-weight, subnetwork, and last-layer
-variants with full, low-rank, Kronecker-factored, or diagonal curvature.
-Structured all-layer variants use Kronecker-factored curvature
-\citep{ritter2018scalable,martens2015optimizing}.  These constructions motivate
-ways to represent predictive uncertainty.  The issue here is sequential
-validity: whether a current relinearized operator can justify a UCB score when
-it differs from the predictable confidence Gram.
-
-Langevin Monte Carlo Thompson sampling (LMC-TS) \citep{xu2022langevin} avoids
-materializing a covariance matrix.  Noisy gradient steps on a regularized loss
-produce approximate samples from a loss-defined parameter posterior.  Its
-regret guarantee concerns linear contextual bandits; its neural-bandit evidence
-is empirical.  The sampling approximation must be controlled at each round.
-Our theorem has different requirements: certificates for metric transport,
-operator distortion, and the width used in the score.  The dense audit does
-not compare computational cost or empirical performance with LMC-TS.
-
-\paragraph{The statistical confidence model.}
-\citet[Appendix~E]{lattimore2020learning} analyze LinUCB with round-dependent
-feature sets and an explicit bonus for bounded misspecification.  This is a
-close connection to the corrected center used here.  Our pseudo-responses
-in \Cref{eq:pseudo-response-new} turn the nonlinear observations into
-predictable linear regression with a Taylor remainder and misspecification
-error.  Adding the current affine offset gives the corrected prediction center.
-Its confidence argument combines standard self-normalized regression bounds
-with deterministic bias bounds.  We do not claim a new generic method for
-misspecified linear confidence.  The further question is how that reference
-confidence can support current replayed curvature and the numerical width
-actually used for selection.
-
-\paragraph{The geometric and operator comparisons.}
-The metric geometry is established.  \citet{thompson1963certain} introduced
-the part metric now called the Thompson metric on ordered cones, and
-\citet{nussbaum1994finsler} developed its Finsler structure and applications.
-On the positive-definite cone, the tangent norm is
-$\|V^{-1/2}\dot V V^{-1/2}\|_{\rm op}$.  We use the resulting comparison
-between a path and its endpoints to connect frozen bandit confidence, current
-replayed GGN/Fisher curvature, approximate operators, and certified solver
-widths.  The geometry and the path-to-endpoint comparison themselves are not
-contributions of this paper.
-
-Spectral approximations also have an established role in bandit regret bounds.
-\citet{kuzborskij2019efficient} replace a linear-bandit Gram matrix with a
-Frequent Directions sketch and derive bounds in terms of its spectral
-approximation quality.  They already note that SOFUL may incur linear regret
-when the spectrum has heavy tails.  Our two-sided operator comparison in
-\Cref{thm:transported-ucb} plays a similar role: it relates the applied operator
-to exact current curvature.  A separate path certificate relates that
-curvature to the frozen-feature confidence metric, and a solver certificate
-controls the computed width.  We claim no novelty for converting a spectral
-sandwich into a regret bound, and we do not evaluate a sketched operator.
-
-\paragraph{Computing widths without storing a matrix.}
-Pearlmutter's algorithm \citep{pearlmutter1994fast} computes exact
-Hessian--vector products.  The analogous GGN--vector product has the
-Jacobian-transpose-times-Jacobian-times-vector structure
-\citep{schraudolph2002fast}.  Influence functions use inverse-curvature--vector
-products to attribute predictions to training points
-\citep{koh2017understanding}.  A CG implementation of our solver interface
-would use the same implicit-solve primitive.  The theorem permits certified
-operator and solve approximations, but the experiment uses dense current
-metrics and direct Cholesky solves.  It makes no matrix-free scalability claim.
-
-\paragraph{Weighted Grams and experimental design.}
-Weighted least-squares Grams appear in the experimental-design analysis of
-\citet{lattimore2020learning}.  In our scaled-tanh specialization, feature
-directions are fixed and relinearization changes their positive weights.
-Comparing those weights term by term gives elementary positive-semidefinite bounds
-(\Cref{cor:tanh-relative-weights}), which we use as an endpoint certificate.
-The reward model remains fixed during this comparison; a nonstationary reward
-model would require a separate statistical analysis.
-
-Bandit exploration also connects to classical D-optimal and A-optimal design
-through objectives such as maximizing $\log\det(\bVbar_t)$ or minimizing
-the trace of $\bVbar_t^{-1}$ \citep{valko2013finite}.  Stochastic trace and
-log-determinant estimators offer related matrix-free tools
-\citep{ubaru2017fast}.  Here the frozen log-determinant enters the regret
-analysis.  The audited policy chooses actions by its UCB score and does not
-implement those estimators.
-
-For current full-parameter GGN/Fisher scores, the conditional theorem requires
-transport from collection-time confidence, bounds on operator distortion, and
-control of solver error.  Whether this choice is computationally preferable to
-fixed NTK features, grouped histories, regression reductions, learned last-layer
-representations, or approximate posterior methods is not established here.
+\paragraph{Implicit computation and fixed directions.}
+Hessian--vector products \citep{pearlmutter1994fast}, GGN products
+\citep{schraudolph2002fast} and inverse-curvature products
+\citep{koh2017understanding} provide the primitives for implicit width solves.
+Weighted Grams also appear in experimental design
+\citep{lattimore2020learning}; termwise scaled-tanh weight comparisons give our
+endpoint certificates. Frozen log-determinant growth connects to D-optimal and
+A-optimal exploration \citep{valko2013finite}; stochastic trace/log-determinant
+estimators offer related implicit tools \citep{ubaru2017fast}.

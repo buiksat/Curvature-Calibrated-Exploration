@@ -1,0 +1,116 @@
+\subsection{Scope and limitations}\label{sec:scope-limitations}
+
+\paragraph{Statistical and computational premises.}
+Optimism concerns mean rewards, not individual noisy rewards. The theory
+requires reference confidence, bounded queries, measurability, pre-reward
+timing, and valid matrix/solver certificates; geometry supplies no confidence
+event. Finite enumeration supplies action-space measurability, not
+certification. Standard-Borel graph measurability alone ensures neither
+measurable suprema nor selectors (Appendix~A). Reference/current matrices and representation are
+prefix predictable; certificates may use pre-reward randomness. Terminal
+quantities need predictable prefix envelopes to enter earlier radii.
+Every scored action needs an upper-valid width; only the played action needs
+sharpness. Selection/checking use the same realized map. Changing a score width through
+refinement requires rechecking selection or retaining the original score width. Randomized post-selection checks need their own
+conditioning and failure allocation. On uncountable domains, pointwise
+certificates cannot be union-bounded after adaptive selection without
+separately conditioned verification.
+
+\paragraph{What transport establishes.}
+A width is geometric, not statistical information. The reference-width floor
+fixes history, center, radius, bias and the full reference band; additional
+mean restrictions or confidence information can change the admissible set.
+Same-history width comparisons and comparable-order guarantees do not rank
+adaptive regret or prove transport unnecessary. The exact actionwise ratio
+already evaluates the reference width it recovers, so supplies no shortcut as
+written; this is not a general computational lower bound. The abstract
+counterexample is neither a realizable scaled-tanh learning trajectory nor an
+observed failure or necessity instance. Its metric balls are not asserted
+statistical confidence sets. Symmetric-factor sharpness concerns metric
+factors, not a regret lower bound or every trajectory's worst case.
+
+\paragraph{Certificate and model limits.}
+Large path inflation, weak lower operator comparisons, loose solver widths or
+persistent bias can make valid bounds vacuous; an upper comparison alone
+cannot close the displayed regret bound. Endpoint distance need not bound the
+interpolated path length, which can be positive for equal endpoints. Direct
+SPD path length is factorization independent; factor-path envelopes depend on
+factorization and interpolation. Rowwise interpolation need not be any common
+model's GGN or its training path. Changing weights adds derivative obligations.
+Vector-output Fisher/GGN geometry needs controlled factors and Jacobians;
+singular square roots need not be differentiable, and a uniform positive
+spectral floor is essential. It supplies no likelihood confidence sequence or
+exponential-family regret theorem. Local and exponential comparisons use
+different premises and do not uniformly dominate each other.
+
+The corrected center needs a reference model fixed before collection,
+zero-centered ridge in the stated coordinates, and supplied historical and
+current Taylor and misspecification bounds. An arbitrary predictable optimizer
+does not make these errors small. Persistent misspecification can give linear
+bias and a vacuous radius: this is graceful degradation, not a robust
+misspecified-bandit guarantee. $W$ is a near-linearity scale, not generic hidden
+width or parameter count. Its horizon scaling is sufficient, not necessary,
+under the stated other assumptions; it gives neither unrestricted neural
+training guarantees nor sublinear regret for an arbitrary fixed nonlinear
+model. Fixed-direction/category comparisons do not cover general rotating
+gradients. Cheaper certificate maintenance leaves center and width solves;
+horizon-independent endpoint control leaves historical/current error costs
+and does not itself imply sublinear regret or better decisions. Geometry,
+self-normalized regression, determinant-potential and spectral-sandwich
+arguments are established tools. We give no generic innovation in these tools,
+general neural-linear representation-learning analysis, or nonstationary
+reward analysis.
+
+\paragraph{Empirical scope and uncertainty.}
+The study covers one synthetic scaled-tanh model and fixed teacher with shared
+prediction-MSE optimizer selection and dense float64 Cholesky solves. That
+selection is not policy-specific regret optimization. It evaluates no
+approximate/sketched operator, iterative solver, large model, real data or
+matrix-free scalability, and establishes no computational or performance
+advantage over scalable neural-bandit methods, LO-FI, LMC-TS or fixed-feature
+alternatives. Changing $W$ changes rewards as well as curvature; condition
+comparisons do not isolate drift, and target labels are not measured endpoint
+distances. Fixed $W$ at one horizon neither tests asymptotic scaling nor
+establishes a theorem-assumption violation.
+
+Matched exogenous streams preserve pairing, not adaptive actions or histories.
+The comparisons concern complete policies, not isolated certificate changes or
+a universal ordering. Paired bootstrap intervals are pointwise and unadjusted,
+conditional on the fixed teacher, design and selected optimizer; they include
+no environment-selection or tuning uncertainty or simultaneous coverage.
+Rounds are dependent, and shared seeds across conditions do not make all runs
+one independent population; development/tuning trajectories are not evaluation
+replicates. Descriptive benchmarks do not estimate best contextual performance,
+bound contextual benefit, establish matching actions/use of context or policy
+equivalence. Recorded confidence and
+optimism checks, including naive current, establish neither population
+coverage, numerical theorem certification, necessity nor practical advantage.
+Float64 solves, eigenvalues, quadrature, replay residuals and source hashes are
+not rigorous numerical enclosures.
+
+\paragraph{Reading bounds and exploratory diagnostics.}
+Appendix~\ref{app:transport-followup} defines fixed-history rescoring, decimal
+score-arithmetic checks and fixed-state kernel timings. Bounds and regret means
+use each named policy's own histories. Logarithms of
+mean RHS/cap are distinct from means of logarithms and individual-bound
+checks; subtracting inflation does not reconstruct another policy's bound or
+outcome. Post-outcome rescoring/replay holds recorded histories fixed: it is
+exploratory, reveals no alternative adaptive trajectory or downstream action
+effects, and does not identify an adaptive causal mechanism. Non-Hessian rows
+evaluate Hessian's score on other behavior histories, not those policies' own
+scores. Per-seed medians/ranges are descriptive, not confidence intervals.
+The decimal calculation uses already rounded binary64 inputs/coefficient,
+without recomputing upstream solves, exponentials or fitted parameters; early
+ranking changes' downstream effects are unmeasured, and score equality (including initially zero centers) alone
+does not prove corruption. Width overhead averages actionwise ratios, not
+ratios of means; relative factors concern endpoints, not synthetic path length.
+Fixed-state timings under parallel load exclude matrix construction,
+confidence estimation and the policy loop, so do not establish end-to-end
+speedup. Category methods still need collection weights and matrix solves.
+
+\paragraph{Reproducibility and deployment.}
+Portable per-seed exports support terminal means and paired intervals, not all
+roundwise audits or curve intervals. Full raw trajectories are not included in the
+compact supplement, and no durable public raw-bundle URL is provided; exploratory
+recomputation needs those raw inputs, and hashes do not replace bytes.
+ Deployment limits are stated in the Broader Impact Statement.

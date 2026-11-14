@@ -1,116 +1,77 @@
-# TMLR manuscript on main
+# Anonymous TMLR manuscript
 
-**Status: revised anonymous manuscript; compact research supplement built; not submitted.**
-
-`main.tex` is the self-contained TMLR entry point. Scientific sources are
-synchronized with `paper/` on `cce-review-revisions`; research code and evaluation
-artifacts live on that branch. Historical AISTATS and CODE sources are preserved at archive tag
-`archive/main-before-tmlr-cleanup-2026-11-12` and are outside the active tree.
-
-The latest abstract revision makes contextual-bandit scope explicit from its
-first sentence and follows the problem, gap, approach, results and interpretation.
-Its 250-word paragraph preserves the conditional theorem, the one-model study,
-and the adverse regret and vacuous-bound findings. The title remains aligned;
-small introduction edits clarify the same scope. See
-[the sources read and editorial rationale](ABSTRACT_REVISION.md).
-
-The preceding revision makes the completed nonlinear-regime follow-up the main
-empirical section and retains the original near-linear study in the appendix.
-It adds the precise same-history width comparison, direct endpoint and
-scaled-tanh relative-weight certificates, and exploratory diagnostics from the
-retained follow-up histories. The abstract, introduction, related work,
-conclusion, and availability statement now match that evidence. See
-[REVISION_STATUS.md](REVISION_STATUS.md) for the checks and remaining limits.
-
-The readability revision introduces the decision problem before the formal
-conditions, explains an exact-matrix example before the general theorem, and
-organizes the results around reader questions. Existing mathematical results
-and experimental evidence are preserved. A follow-up applies the checked Fable
-readability advice: a notation table, a chronological protocol guide, simpler
-abstract and policy explanations, explicit mean bound magnitudes, and a clearer
-chart comparator label. A final local pass clarifies the empirical certificate
-notation and threshold conventions, fixes grammar and score punctuation, and
-removes an unused equation number. The numerical tables have now been replaced with charts; the draft has 52 pages.
-
-Four explanatory figures guide the reader through the argument:
-
-| Figure | Current PDF page | Purpose |
-| --- | ---: | --- |
-| Certificate interfaces | 3 | Separate reference confidence, current metric, applied operator and numerical score width |
-| Abstract confidence geometry | 10 | Show why a smaller current width can miss a mean permitted by the reference band |
-| Policy outcomes | 20 | Show every policy mean and all nine pointwise paired comparisons |
-| Bound scale | 21 | Compare mean own-history bounds with the deterministic regret caps |
-
-The charts are generated from retained evidence. The analytic illustration is
-explicitly distinguished from observed experimental behavior. Ten additional charts replace the numerical tables, with point-and-interval
-comparisons, seed ranges and logarithmic diagnostics. The original tables
-remain in the research supplement for exact numerical lookup. All figures use native
-body-size text without resizing; no new experiments were run.
-
-## Format and provenance
-
-The official [TMLR template](https://github.com/JmlrOrg/tmlr-style-file/tree/7bf90efe3a0debbba703c05c43f3ff7e4d4a2992)
-was checked directly online again on 2026-10-15 (America/Los_Angeles). `tmlr.sty`, `tmlr.bst`, `fancyhdr.sty`, and `LICENSE`
-are unchanged upstream files; `STYLE_SHA256SUMS` records their hashes.
-
-The manuscript uses a 10pt article, the default anonymous TMLR mode, native
-single-column layout and fonts, author/year citations, and appendices after
-references. Result charts use portrait figures with native body-size labels;
-compact notation and assumption tables remain as text references. The first page discloses the
-Codex and Claude assistance. The availability statement describes the compact
-anonymous evidence supplement and separately states its raw-data limitations.
-The anonymous PDF contains no author contact details or identifying metadata.
-
-TMLR has rolling submissions and no fixed page limit. Manuscripts over 12
-main-text pages may have longer review timelines. Current requirements were
-read directly on 2026-10-15; the official template requires a one-paragraph
-abstract, without a stated word limit. The existing first-page assistance
-footnote and anonymous formatting are retained.
-
-- [Author guidelines](https://jmlr.org/tmlr/author-guide.html)
-- [Official template](https://github.com/JmlrOrg/tmlr-style-file/blob/main/main.tex)
-- [Editorial policies](https://jmlr.org/tmlr/editorial-policies.html)
-- [FAQ, including first-page LLM disclosure](https://jmlr.org/tmlr/faq.html)
-
-The [abstract revision record](ABSTRACT_REVISION.md) also cites the MIT and
-Nature writing guidance and the other TMLR documents actually read.
+Entry point: `main.tex`. The manuscript presents corrected-center confidence,
+the reference-width floor and symmetric-factor sharpness, and scaled-tanh
+relative-weight certificates through the transported-UCB framework. Section 6
+reports the retained prespecified nonlinear study. No new experiments accompany
+this editorial revision.
 
 ## Build
 
-From the repository root in the prepared cloud environment:
+From the repository root, with TeX Live, latexmk and Poppler installed:
 
 ```bash
-source /workspace/cce-env/activate.sh
-TMLR_OUT=/workspace/cce-build/tmlr-current bash submissions/tmlr_2026/build.sh
+openout_any=a TMLR_OUT=/tmp/cce-tmlr bash submissions/tmlr_2026/build.sh
 ```
 
-This creates `main.pdf` and `source.zip` outside the checkout and checks for
-unresolved references, citations, and missing characters. The default output
-directory is `/tmp/cce-tmlr`. `source.zip` is suitable for a standalone LaTeX
-project or Overleaf, with `main.tex` as its Main document. The archive uses the
-compiler's input list and contains only active manuscript inputs, required
-BibTeX/style files, and build instructions. It contains no inactive legacy
-appendices, code supplement, internal review notes, or portal declarations.
-See `BUILD.md` for the non-cloud build instructions.
+The output directory must be outside the checkout. The script checks official
+style hashes, compiles `main.pdf`, rejects undefined references/citations and
+missing characters, and packages active manuscript inputs as `source.zip`.
+Use `main.tex` with pdfLaTeX in Overleaf. The default anonymous TMLR mode and
+the first-page Codex/Claude assistance disclosure are retained.
 
-## Current validation
+## Inputs and evidence
 
-Final build and archive-reproduction facts are recorded in
-[REVISION_STATUS.md](REVISION_STATUS.md). Manuscript build checks are separate
-from experimental verification and from the strict anonymous code/evidence
-supplement built on the research branch. Use its matched release files together;
-see the status record for paths and hashes.
+`transport_proofs.tex` retains proofs and solver/randomized-certificate
+material in Appendix A. General action-space, assumption-ledger, notation,
+algorithm and supporting certificate material are also in A. The full-study
+protocol and post-outcome diagnostics retain Appendix D's identity. The
+sources `transport_experiment.tex`, `transport_experiment_appendix.tex` and
+`legacy_scope.tex` remain in Git and are excluded from this build.
 
-## Before submission
+The main outcome table is regenerated from unchanged portable per-seed
+summaries and execution configuration in `evidence/`, with the existing chart
+CSV data providing terminal comparison values. `evidence/` and the `tools/`
+scripts below live on the `cce-review-revisions` branch; this branch carries
+only the manuscript. There, with NumPy 2.2.3 installed in an external Python
+environment, run:
 
-The manuscript build does not establish readiness of the research code or
-empirical claims. [IMPLEMENTATION_REVIEW.md](IMPLEMENTATION_REVIEW.md) records
-the initial branch inspection and remaining reproducibility checks.
+```bash
+python3 tools/make_tmlr_outcomes.py
+python3 tools/make_tmlr_outcomes.py --check
+```
 
-Before uploading, the authors must review the manuscript, confirm the full
-author list and OpenReview declarations, and confirm that the work is not
-published, accepted, or under concurrent review at another archival venue.
-An AISTATS-formatted source file alone says nothing about its submission status.
-The verified compact supplement is below TMLR's 100 MB limit; its verification
-scope and raw-data limitations are recorded in `REVISION_STATUS.md`. No paper
-has been submitted.
+The check independently reconstructs the nine paired bootstrap intervals,
+checks the means and differences, and compares generated table/provenance
+bytes. This is terminal-summary verification; it does not replay raw
+trajectories or reproduce roundwise audits. The manuscript source ZIP includes
+the rendered table and figures, and requires no experiment runtime
+to compile. It is not the scientific code or raw-data supplement.
+
+`STYLE_SHA256SUMS` pins the unchanged official style, bibliography style,
+fancyhdr and license. Earlier audit and revision documents are historical
+records; their build/test results do not verify this editorial source state.
+Current source-state checks and artifacts are recorded in the assigned writer
+report. No paper has been submitted.
+
+Statement counters explicitly retain the manuscript's existing identities.
+Any later statement addition or relocation requires comparing the complete
+mathematical-environment and label-number inventories; the counters alone do
+not detect an incorrect number assignment.
+
+## Editorial figure reproduction
+
+Original figure-generation records are retained unchanged. The current figure
+bytes include explicit editorial transforms that remove duplicate caveat notes
+and neutralize project comments. With local source history available, run:
+
+```bash
+python3 tools/prepare_tmlr_figures.py
+python3 tools/prepare_tmlr_figures.py --check
+```
+
+`--original-root` can supply a matching scientific git-archive root. The check
+validates the original generation hashes, current output hashes, unchanged CSV
+data and the exact text transforms. `transport_editorial_provenance.json`
+records both original and current figure hashes. The standalone source ZIP
+contains the prepared figures; it needs no Git history to compile.

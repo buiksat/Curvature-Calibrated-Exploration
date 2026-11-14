@@ -11,15 +11,13 @@ reproducibility packager.
 - Entry point: [`submissions/tmlr_2026/main.tex`](submissions/tmlr_2026/main.tex).
 - Build instructions and submission status:
   [`submissions/tmlr_2026/README.md`](submissions/tmlr_2026/README.md).
-- Current validation record:
-  [`submissions/tmlr_2026/REVISION_STATUS.md`](submissions/tmlr_2026/REVISION_STATUS.md).
 
 For Overleaf, set the Main document to `submissions/tmlr_2026/main.tex` when
 importing this repository, or `main.tex` when importing the generated source ZIP.
 Build outside the checkout:
 
 ```bash
-TMLR_OUT=/tmp/cce-tmlr-main bash submissions/tmlr_2026/build.sh
+openout_any=a TMLR_OUT=/tmp/cce-tmlr-main bash submissions/tmlr_2026/build.sh
 ```
 
 The build produces a PDF and a standalone source archive. It does not generate

@@ -1,34 +1,33 @@
-%% TMLR 2026 submission entry point.
-%%
-%% This is the self-contained main-branch manuscript mirror. Scientific sources
-%% are synchronized with paper/ on cce-review-revisions. Build using build.sh.
-%% README.md records the current scope and remaining release work.
-%%
-%% Anonymous double-blind submission: tmlr.sty is loaded without [accepted] and
-%% without [preprint], which is what suppresses the author block.
+% Anonymous manuscript; build instructions are in BUILD.md.
+%
+%
+%
+%
+%
+%
+%
+%
 \documentclass[10pt]{article}
 
-%% Official TMLR stylefile and template, used unmodified.  See
-%% README.md and STYLE_SHA256SUMS for the upstream revision and file hashes.
+%
+%
 \usepackage{tmlr}
 
-%% Nothing in this submission reduces a font size, reduces \tabcolsep or scales
-%% a box to make content fit.  The three generated evidence tables are wider
-%% than the 6.5in measure; notation.tex sets them on landscape floats at
-%% the body font size and lets their long column headers wrap.  Document
-%% margins, body font size, caption size, \tabcolsep and paragraph spacing are
-%% the template's throughout.
+%
+%
+%
 
-% --- standard packages ----------------------------------------------------
+%
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
 \usepackage{algorithm}
-%% tmlr.sty defines a global \AND as its multi-author separator and
-%% algorithmic.sty then refuses to define its own.  Park tmlr's meaning under
-%% \tmlrAND and hand \AND to algorithmic; a de-anonymized camera-ready with
-%% several authors should separate them with \tmlrAND.  Neither style file is
-%% edited.
+%
+%
+%
+%
+%
 \makeatletter
+% Preserve the TMLR author separator before loading algorithmic.
 \let\tmlrAND\AND
 \let\AND\relax
 \makeatother
@@ -39,19 +38,18 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{graphicx}
-\usepackage{rotating} % landscape floats for the three wide evidence tables
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 \usepgfplotslibrary{groupplots,fillbetween}
 \usepackage{enumitem}
 \usepackage{microtype}
-\usepackage{float}    % [H] fixed-placement algorithm
-\usepackage{placeins} % \FloatBarrier
+\usepackage{float}    %
+\usepackage{placeins} %
 
-% --- anonymity and reproducibility of the PDF itself -----------------------
-% No author, title, subject or keyword metadata; no creation date, no file ID
-% and no pdfTeX banner, so the submitted bytes carry nothing about who or
-% where they were produced and two builds of the same source agree.
+%
+%
+%
+%
 \hypersetup{hidelinks,
   pdfauthor={},pdftitle={},pdfsubject={},pdfkeywords={},
   pdfcreator={},pdfproducer={}}
@@ -59,17 +57,16 @@
 \pdftrailerid{}
 \pdfsuppressptexinfo=-1
 
-% --- shared notation -------------------------------------------------------
+%
 \input{macros}
-% The current submission contains the transport theorem and its controlled
-% audit. Earlier one-sided material remains in Git but is outside this paper.
+%
 \newif\iflegacyextras \legacyextrasfalse
 \input{notation}
 
 \title{Confidence Transport in Contextual Bandits:\\Guarantees and Limits under Relinearization\thanks{OpenAI Codex and Anthropic Claude assisted with manuscript editing, code preparation, and review.}}
 
-% Authors must not appear in the submitted version.  tmlr.sty hides this block
-% as long as the package is loaded without [accepted] or [preprint].
+%
+%
 \author{Anonymous authors}
 
 \begin{document}
@@ -77,37 +74,28 @@
 \maketitle
 
 \begin{abstract}
-Contextual-bandit policies use confidence estimates to balance exploration and
-reward. For nonlinear predictors, retraining can change gradient-based estimates
-without adding observations, but standard sequential confidence arguments do not
-automatically justify confidence bands based on recomputed gradients. We develop
-confidence transport
-to connect a valid reference confidence band, built from gradients fixed before
-each reward, to scores based on recomputed gradients. The approach uses certified
-bounds on matrix changes and numerical error. Under explicit statistical and
-computational conditions, it yields an upper confidence bound policy with a regret
-guarantee. The conversion has a limit: with the same history, center, radius and
-bias, the certified uncertainty width cannot be smaller than the reference width.
-Exact actionwise transport recovers that width; this comparison does not order
-regret across policies with different adaptive histories.
-A prespecified study compares four policies in three conditions using one
-synthetic 29-parameter scaled-tanh model and 50 paired seeds per condition.
-Hessian transport, which bounds matrix changes using prediction Hessians, has
-higher mean pseudo-regret than every comparator in each condition; all nine
-pointwise paired 95\% confidence intervals for regret differences exclude zero.
-Transport inflation dominates its regret bounds. Both these bounds and the
-reference policy's own bounds exceed a deterministic regret cap.
-All policies, including an uncertified control, pass the recorded floating-point
-confidence and optimism checks. These checks establish neither universal validity
-nor a practical advantage. The results separate three questions for exploration
-with relinearized gradients: whether confidence is conditionally valid, whether
-regret bounds are informative, and whether decisions improve.
+Relinearizing historical gradients changes a contextual-bandit uncertainty
+matrix without adding observations. For squared loss, we construct a
+corrected-center confidence band along predictable parameter paths in a
+certified region, with supplied approximation-error bounds and no optimizer
+convergence requirement. We establish a reference-width floor on fixed
+histories and sharp symmetric exponential transport factors. For scaled tanh,
+relative gradient weights give a horizon-independent endpoint certificate.
+A transported-UCB theorem connects these results through explicit statistical,
+matrix and solver conditions. A prespecified study compares four policies in
+three conditions of a synthetic 29-parameter scaled-tanh model, with 50 paired
+seeds per condition. Hessian transport has higher mean pseudo-regret than every
+comparator; all nine pointwise paired 95\% intervals exclude zero. Its bonus
+usually determines its action, and its bounds and the frozen policy's own
+bounds exceed the deterministic cap. All four policies pass the recorded
+confidence and optimism checks.
 \end{abstract}
 
-% --- body -----------------------------------------------------------------
+%
 \input{body_intro}
 \input{transport_theory}
 \input{transport_followup}
+\input{scope_limitations}
 \input{body_related}
 \input{body_conclusion}
 
@@ -120,12 +108,15 @@ regret bounds are informative, and whether decisions improve.
 \bibliographystyle{tmlr}
 \bibliography{references}
 
-% --- appendix -------------------------------------------------------------
+%
 \appendix
+%
+% Explicit counters retain statement identities; further moves require
+% comparing all label numbers with the original manuscript.
+\setcounter{theorem}{14}
 \input{transport_proofs}
-\input{transport_experiment}
-\input{transport_experiment_appendix}
+%
+\setcounter{section}{3}
 \input{transport_followup_appendix}
-\input{legacy_scope}
 
 \end{document}

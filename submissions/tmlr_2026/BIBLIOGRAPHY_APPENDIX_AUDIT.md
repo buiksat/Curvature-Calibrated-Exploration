@@ -108,7 +108,7 @@ et al. (2020), and Zhou et al. (2020). The related-work section now credits the
 verified heavy-spectrum limitation and misspecified-linear confidence
 connection directly. The bounded source check, retrieval outcomes and PDF
 hashes are recorded in the research branch's
-[literature audit](https://github.com/buiksat/Curvature-Calibrated-Exploration/blob/cce-review-revisions/review/post_full_revision/LITERATURE_CHECK.md).
+literature audit (retained research record).
 It is not a comprehensive novelty review.
 
 The current manuscript adds the full-study appendix and new transport proofs

@@ -1,168 +1,32 @@
-%% body_intro.tex
-%% Shared scientific source for the research and TMLR entry points.
 \section{Introduction}\label{sec:intro}
 
-A contextual bandit must learn which action to take from the rewards of the
-actions it has already tried. An upper confidence bound (UCB) policy balances
-learning and reward by adding an uncertainty bonus to each predicted reward,
-then choosing an action with a large resulting score. The bonus matters: a
-policy that understates uncertainty can stop exploring too soon, while an
-excessively large bonus can overwhelm differences in predicted rewards.
+An upper confidence bound (UCB) policy adds an uncertainty bonus to a predicted
+reward. For a nonlinear predictor, retraining can change historical gradients
+without collecting new observations. The usual sequential confidence argument
+uses features fixed before their rewards; replayed gradients can instead
+depend on those rewards. We ask how a valid collection-time confidence band
+can support scores computed from current relinearized curvature.
 
-With a nonlinear predictor, retraining can change how the model represents past
-observations. For example, a recommender may refit its reward predictor after
-each interaction, then recompute the gradients of all previously recommended
-items. Their recorded rewards stay the same, but the matrix built from their
-gradients changes. A narrower width computed from that new matrix does not by
-itself establish greater statistical certainty. This paper asks when such a
-change of matrix preserves a confidence guarantee, and what that guarantee
-costs in an implemented policy.
+\paragraph{Contributions.}
+First, for squared loss, a frozen ridge correction supplies a confidence band
+around the corrected center along any predictable parameter path in a
+certified region, using supplied Taylor and misspecification bounds and
+requiring no optimizer convergence (\Cref{cor:corrected-center-new}).
+Second, on a fixed history with the same center, radius and bias, certified
+transported widths cannot improve on the reference width; an exact actionwise
+correction recovers it (\Cref{prop:reference-width-floor}). The symmetric
+exponential width factors are sharp (Section~\ref{sec:logarithmic-transport}).
+Third, scaled tanh admits a relative-weight endpoint certificate because its
+gradient directions stay fixed (\Cref{cor:tanh-relative-weights}).
+\Cref{thm:transported-ucb} connects these results: reference confidence,
+metric transport, operator comparison and numerical-width certificates give
+an implemented UCB score and a regret bound.
 
-\paragraph{Why the old and new matrices need different justifications.}
-The usual sequential confidence argument uses a feature for each observation
-that was fixed before its reward was seen. We call the matrix that accumulates
-those collection-time features the \emph{reference matrix}. Its stored features
-stay fixed, even as the predictor continues to learn. The \emph{current matrix}
-instead recomputes the gradients of the same past samples at today's model
-parameters. We call this recomputation \emph{relinearization} or \emph{replay};
-it does not collect new rewards.
-
-The distinction is statistical, not merely computational. Once the model has
-learned from past rewards, its recomputed features can depend on those rewards.
-The usual confidence argument therefore does not automatically apply to the
-current matrix. In notation, a sample collected at round $s$ contributes
-$\bq_s(a_s)=\nabla_\theta\mu_{\btheta_s}(x_s,a_s)$ to the reference matrix,
-but contributes $\nabla_\theta\mu_{\btheta_t}(x_s,a_s)$ when replayed at
-round $t$. The reference matrix retains the predictable rank-one update used by the
-standard self-normalized confidence argument; the replayed matrix need not.
-
-Existing methods make different choices here. NeuralUCB and NeuralTS store
-gradient features as observations arrive
-\citep{zhou2020neural,zhang2021neural}. Neural tangent kernel (NTK) methods can keep
-uncertainty features at initialization \citep{kassraie2022neural}, while
-neural-linear methods use linear uncertainty in a learned last-layer
-representation \citep{riquelme2018deep}. Fixed network linearizations and
-post-hoc Laplace approximations offer related ways to measure predictive
-uncertainty \citep{maddox2021fast,daxberger2021laplace}. We study the additional
-obligations created by replaying the historical gradients at the current
-parameter.
-
-\paragraph{The central result: valid transport can still be unhelpful.}
-\emph{Confidence transport} means using a justified comparison between the
-reference and current matrices to convert a valid reference confidence band into a
-score based on current curvature. A \emph{certificate} is a bound that makes
-such a comparison valid. The \emph{width} is the geometric part of the
-uncertainty bonus; a confidence radius scales it, and a separate term covers
-model bias.
-
-Using the sensitivities of the current predictor to build its uncertainty
-matrix is a natural modeling choice. Whether that matrix supports the original
-confidence guarantee is a separate question. Transport states what a policy
-must establish if it chooses to score with current curvature; direct reference
-scoring is already available. The conversion supplies no new observations or
-additional statistical information. In fact, with the same history, center, radius and
-bias, the certified transported width is at least the direct reference width.
-An exact actionwise correction recovers that reference width
-(\Cref{prop:reference-width-floor}). This comparison leaves the ordering of
-adaptive regret open: different bonuses can change actions, which changes the
-data on which subsequent decisions are based.
-
-Our controlled study uses one synthetic scaled-tanh model in three prespecified
-conditions. The evaluated Hessian-transport policy uses bounds on prediction
-Hessians to certify the change of matrix. It has higher mean pseudo-regret than
-every comparator in each condition. Its
-recorded optimism checks pass, but its regret bounds are larger than a simple
-deterministic cap. Thus a confidence construction can be valid under its
-assumptions, conservative in its bound, and poor as a decision rule. These are
-separate questions, and the paper examines each one.
-
-\paragraph{What the analysis provides.}
-The theory connects a statistical confidence band to the score the algorithm
-actually uses. \Cref{fig:transport-interfaces} separates the reference matrix
-$\bVbar_t$, the current matrix $\bV_t$, an applied operator $\Calg_t$ that may
-approximate it, and the numerical width $\hat s_t(a)$ returned by a solver.
-The matrices are symmetric positive definite (SPD), so their inverse quadratic
-forms define widths. Each step needs its own bound, available before the
-selected reward is observed.
-
-\begin{figure}[t]
- \centering
- \input{figures/transport_conceptual_interfaces.tex}
- \caption{The steps between a statistical confidence band and an implemented
- score. A bound on changing the matrix, a bound on approximating it, and a
- bound on the solver's output serve different purposes. The formal conditions
- are in \Cref{asm:abstract-transport}. Every scored action needs an upper-valid
- numerical width; only the selected action needs the stated sharpness bound.
- Both conditions refer to the same widths used to choose that action.}
- \label{fig:transport-interfaces}
-\end{figure}
-
-The transported-UCB theorem combines these bounds and gives a regret guarantee
-in terms of the reference matrix's accumulated information
-(\Cref{thm:transported-ucb}). A two-sided matrix comparison is essential for
-this guarantee: one direction preserves the upper confidence score, and the
-other controls the width of the action actually chosen. We obtain such
-comparisons from established Thompson--Finsler geometry, which measures
-multiplicative distance between positive-definite matrices
-\citep{thompson1963certain,nussbaum1994finsler}, and give computable certificates
-using changes in model gradients (\Cref{lem:factor-spd-path,cor:hessian-path-new}).
-The geometry and the UCB potential argument are established tools. The
-contribution is to state and connect the distinct statistical and computational
-obligations of scoring with replayed curvature.
-
-For squared loss, we also construct the center of the confidence band. A ridge
-correction based on collection-time features adjusts the current nonlinear
-prediction. The confidence band around this \emph{corrected center} remains valid along any
-predictable parameter path in the certified region, with supplied Taylor and
-misspecification error bounds (\Cref{cor:corrected-center-new}). It does not
-require the nonlinear optimizer to converge. The error bounds still have a
-cost: persistent model mismatch can make regret guarantees linear or vacuous.
-The finite-dimensional and near-linear consequences are given in
-\Cref{cor:finite-d-rate-new,cor:global-near-linear-new}.
-
-The scaled-tanh model permits a simpler comparison because its gradient
-directions are fixed and only their weights change. Comparing those weights
-gives a horizon-independent endpoint certificate and a tighter category-based
-version (\Cref{cor:tanh-relative-weights}). This specialization does not cover
-general rotating neural gradients.
-
-\paragraph{What the experiments establish.}
-The main study uses a 29-parameter scaled-tanh model with dense matrices and
-direct Cholesky solves in float64 (\Cref{sec:transport-followup}). It compares
-four policies in three prespecified conditions, with 50 paired seeds per
-condition. All nine pointwise paired intervals favor the comparators over
-Hessian transport. Transport inflation dominates Hessian's bound; the reference
-policy's own-trajectory bounds also remain vacuous. All policies, including
-the uncertified naive control, pass the recorded optimism diagnostics. These
-floating-point checks neither certify numerical enclosures nor establish that
-the correction was necessary in the observed runs.
-
-The conditions change the reward task as well as curvature. The results
-therefore describe this fixed teacher, model and shared prediction-based
-optimizer selection; they do not isolate a causal effect of drift. Subsequent
-analyses explain scores on recorded histories and assess tighter certificates
-there. They do not run alternative adaptive policies. The original near-linear
-audit is reported separately in \Cref{sec:transport-instantiation}; its bound
-is dominated by the base component rather than transport inflation.
-Approximate operators, conjugate-gradient performance and end-to-end
-scalability are outside the empirical study.
-
-\paragraph{Reading the paper.}
-\Cref{sec:abstract-transport} starts with the exact-matrix case and a notation
-guide, then states the general theorem and explains its bound. Readers working
-with finite action lists can use the guide beside the general protocol to
-separate its action-space details from the timing and certificate assumptions
-that still apply. The reference-width comparison then explains the limitation
-of transport. Readers interested primarily in the findings can continue to
-\Cref{sec:transport-followup} and return to the geometric certificates in
-\Cref{sec:logarithmic-transport} or the corrected-center construction in
-\Cref{sec:corrected-center} when needed.
-Proofs and the full experimental protocol are in the appendices.
-\iflegacyextras
-Earlier diagnostics are retained at their historical scope in
-\Cref{app:legacy-evidence}.
-\else
-Earlier repository studies use a different, one-sided theorem and do not execute
-the transported score. They are excluded from the evidence for this paper
-(\Cref{app:legacy-evidence}).
-\fi
+NeuralUCB and NeuralTS retain arriving gradient features
+\citep{zhou2020neural,zhang2021neural}; fixed NTK references and learned
+last-layer uncertainty offer other constructions
+\citep{kassraie2022neural,riquelme2018deep}. Current-curvature scoring creates
+the additional certificate obligations studied here. Sections
+\ref{sec:abstract-transport}--\ref{sec:closed-rates-new} give the framework,
+geometry, corrected center and rates; Section~\ref{sec:transport-followup}
+reports the study. Proofs and supporting details are in the appendices.

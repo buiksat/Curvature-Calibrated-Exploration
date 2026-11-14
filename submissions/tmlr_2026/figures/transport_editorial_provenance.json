@@ -1,0 +1,212 @@
+{
+  "accepted_fix_start_commit": "2281a291c2b23e252c0c2688489d9490e60c6358",
+  "editorial_tool": {
+    "path": "tools/prepare_tmlr_figures.py",
+    "sha256": "f79d89040c27ba9ab1a48eb876a7cbc0f7a757fb1faf9b89198f9b85c6fda87a"
+  },
+  "figures": [
+    {
+      "current_sha256": "ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0",
+      "fix_start_sha256": "0cdc2b6bdd77a6bf894f27c7a5a811b7521561172d93f59e49dbe2076aab1ce7",
+      "original_sha256": "12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b",
+      "path": "submissions/tmlr_2026/figures/transport_conceptual_geometry.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Remove the duplicate disclaimer text node; retain metric/score geometry.",
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3",
+      "fix_start_sha256": "6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4",
+      "original_sha256": "6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4",
+      "path": "submissions/tmlr_2026/figures/transport_conceptual_interfaces.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "3fb25e8ee6e2e0ed3894bc5d7e26cae1fa79ce06fce61eb0c27714672d84c554",
+      "fix_start_sha256": "4710bc0451c5a752f972bac32d56ce483caf81837677a0a18668017db10557e9",
+      "original_sha256": "bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324",
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_bounds.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Remove duplicate caveat note after the plotted figure.",
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "9b3bc251a8901b20cb79b417c3745fdbdf897b2235d98e3e34bbbde54cea230c",
+      "fix_start_sha256": "1dfbe8c1f1ef33c9d2208ad858de36cd7d592c921cbb6e77ff8fa79d68b24e1e",
+      "original_sha256": "a7c5d1303583be47e65b2140410f4c0a1bc7a604ce1b0d549352adc6b8bdb339",
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Remove duplicate caveat note after the plotted figure.",
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "696e8e896750ce71a96b9b42fd008e2325dd53911a1b54dae31e0cf7676eb95f",
+      "fix_start_sha256": "9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c",
+      "original_sha256": "9c6465521c216fa96fc6536044491684312108c510357f38cc92c0325319af3c",
+      "path": "submissions/tmlr_2026/figures/transport_instantiation_bound.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "3d10a68e4d54201a2317bdc6fb354511b243010be420df8e00e0b7ad74294983",
+      "fix_start_sha256": "239ae5e923801ed1a2f9eafa75ba6a642e8bd2bb14ec2875c8d080f22ea5ec98",
+      "original_sha256": "239ae5e923801ed1a2f9eafa75ba6a642e8bd2bb14ec2875c8d080f22ea5ec98",
+      "path": "submissions/tmlr_2026/figures/transport_instantiation_regret.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "b5cf3b0f30c1e42e8896b4efd8f501275c4371ec57f6b9af1db0d984a1bc763d",
+      "fix_start_sha256": "828590d0cab45e2621677474acec4ae1216857191d54e816d4f4b24a2fd276c2",
+      "original_sha256": "828590d0cab45e2621677474acec4ae1216857191d54e816d4f4b24a2fd276c2",
+      "path": "submissions/tmlr_2026/figures/transport_instantiation_tightness.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "249442e06853424c9e73cfeb017e7ebc520df333270e06bbabc379bddb589e5b",
+      "fix_start_sha256": "29beed29aeefddc881d86a327af944ac7b542a0ea30d440646c34a716d477391",
+      "original_sha256": "3698341c06b17ff36f817d2208d86fb84826ba8ff3fd9699b14e8d79c70449a6",
+      "path": "submissions/tmlr_2026/figures/transport_table_drift.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Remove duplicate caveat minipage; retain the plot and threshold legend.",
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "221d6e46ca925cc9452472838490528f14d0301f9380e1f2e03ad1fe9a154650",
+      "fix_start_sha256": "93105c1ff803f4cfcb14a1cd8a943b761dc5df05077d8f59d4df348669bb236e",
+      "original_sha256": "93105c1ff803f4cfcb14a1cd8a943b761dc5df05077d8f59d4df348669bb236e",
+      "path": "submissions/tmlr_2026/figures/transport_table_mechanism.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "17dad0f1a40fa6e6b85b21bc04bbf555585bd4cd1302043371433d866c88e1e6",
+      "fix_start_sha256": "a03b7e64641f3dc78680181caad1f903c318d02ef874ffac93979ae9b40469ac",
+      "original_sha256": "a03b7e64641f3dc78680181caad1f903c318d02ef874ffac93979ae9b40469ac",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_bound_ratios.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "017c47117b55fd985f094b21b1a27834ce78ce65517e642d9b005a3d4ae36320",
+      "fix_start_sha256": "d3fd174043f4953f683f9dcb1e011de35a06e271f5c4560c023a021e6ccbac82",
+      "original_sha256": "d3fd174043f4953f683f9dcb1e011de35a06e271f5c4560c023a021e6ccbac82",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_components.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "af8b5615a7bdd927c0bedbfb836985eb68de5d9ec901b9c0e31becffb15aa6e9",
+      "fix_start_sha256": "8cfe7cfff742229e3a2e45f26645b0c628a24e148df61f3b10d8010f1a2f7c48",
+      "original_sha256": "8cfe7cfff742229e3a2e45f26645b0c628a24e148df61f3b10d8010f1a2f7c48",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_distribution.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "6cc6eed769115918ba3edc0313133cabc7b1279a753461ad4ecbc89628df6b94",
+      "fix_start_sha256": "266975d0e808119e7590443ba4696d16ddce58a4b9a97f06f5f022a8e9fa5d81",
+      "original_sha256": "266975d0e808119e7590443ba4696d16ddce58a4b9a97f06f5f022a8e9fa5d81",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_path_ratios.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "9a6dd55f07aa1e29870388dcbaccf5ec40297dd5f0aa554bb3a7f5fc59c11425",
+      "fix_start_sha256": "c8562163804e9fd3c47589037485692ed3e9e81c785206c56275505dda9acd06",
+      "original_sha256": "c8562163804e9fd3c47589037485692ed3e9e81c785206c56275505dda9acd06",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_performance.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "0fd091b88dced6bf7700ed8a24ff343c5b775352a22f258a6004150eb0496c59",
+      "fix_start_sha256": "16f8890b8758cfd6b8574648843d92a07386cf61fc0555db51e1cc8ebcef5e3c",
+      "original_sha256": "16f8890b8758cfd6b8574648843d92a07386cf61fc0555db51e1cc8ebcef5e3c",
+      "path": "submissions/tmlr_2026/figures/transport_table_original_validity.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "c8d5475da9ad8ef926bfe1003b1a717ca73746c1028f5747c14f3502e8c2c6c2",
+      "fix_start_sha256": "f5f77ead8dd87ac4048f0421fe138a0ea091916e85c7c57c22dde0b453698170",
+      "original_sha256": "f5f77ead8dd87ac4048f0421fe138a0ea091916e85c7c57c22dde0b453698170",
+      "path": "submissions/tmlr_2026/figures/transport_table_relative.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    },
+    {
+      "current_sha256": "4ba36ea94863d8a0b07b8319061382abda31acb8a2bec6128470d3866522260d",
+      "fix_start_sha256": "80b867341dc4d08edef1322eb6c8f44abaf27c060c74635ee3e17ad885b20417",
+      "original_sha256": "80b867341dc4d08edef1322eb6c8f44abaf27c060c74635ee3e17ad885b20417",
+      "path": "submissions/tmlr_2026/figures/transport_table_same_history.tex",
+      "plotted_values_and_coordinates_unchanged_from_fix_start": true,
+      "transforms": [
+        "Neutralize source comment payloads, preserving TeX line continuation semantics."
+      ]
+    }
+  ],
+  "original_generation_records": [
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_provenance.json",
+      "sha256": "7e8294965356fa113e7c8c67f8e0ceda6c21c85dcc44b14d5ef79489032067ea",
+      "status": "original generation, unchanged"
+    },
+    {
+      "path": "submissions/tmlr_2026/figures/transport_table_provenance.json",
+      "sha256": "ab834344dd57663b671f2c1dc9f283e36aef28a53c8a0a7b290514ecd309766f",
+      "status": "original generation, unchanged"
+    }
+  ],
+  "original_source_commit": "588db96ec51c2daeb997b2da3f2e88344ee0e88d",
+  "schema_version": 1,
+  "scope": "Post-generation editorial transforms; no experiments or new plotted data.",
+  "unchanged_csv_outputs": [
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_bounds.csv",
+      "sha256": "523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1"
+    },
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_outcomes.csv",
+      "sha256": "0779da05a7a0945531a1bff8c34bb4f88dcdf3829eebfffe79b3ae360307a7fe"
+    },
+    {
+      "path": "submissions/tmlr_2026/figures/transport_explanatory_paired.csv",
+      "sha256": "c5e92e0c7158419edfacc2b4b51576aa9c7197ba87958261d37beec44a032266"
+    }
+  ]
+}
