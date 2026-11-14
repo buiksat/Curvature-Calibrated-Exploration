@@ -52,6 +52,9 @@ ENTRY_POINT = Path("submissions/tmlr_2026/main.tex")
 #: The compiled-source-closure manifest, shipped at the supplement root.
 SOURCE_CLOSURE_NAME = "SOURCE_CLOSURE.json"
 
+# Required flat-source build documentation, independent of compiler inputs.
+SOURCE_ARCHIVE_DOCUMENT_DIGESTS = {"BUILD.md": '58f517b3ad36bf82e01d898ed9d9e48dff0e11de40edcc21042e9226208c852c'}
+
 # Shared manuscript sources. Historical AISTATS and one-sided material stays
 # in Git; the current TMLR paper contains the transport theorem and its audit.
 # Exclusion applies to staging and the anonymous supplement together, so an
@@ -944,6 +947,11 @@ def stage(repo: Path, out: Path) -> tuple[Path, dict[str, str]]:
         sources[staged] = str(origin.relative_to(repo))
 
     place(repo / ENTRY_POINT, "main.tex")
+    for name in SOURCE_ARCHIVE_DOCUMENT_DIGESTS:
+        origin = repo / ENTRY_POINT.parent / name
+        if not origin.is_file() or sha256_file(origin) != SOURCE_ARCHIVE_DOCUMENT_DIGESTS[name]:
+            raise RuntimeError(f"Required source build document missing or differs from its pin: {name}")
+        place(origin, name)
     for path in sorted((repo / "paper").glob("*.tex")):
         if path.name in STAGE_TEX_EXCLUDE:
             continue
@@ -1734,9 +1742,13 @@ def closure(src: Path, repo: Path | None = None) -> list[Path]:
 
     opened = set(recorder_inputs(src, repo=repo))
     for extra in ("references.bib", "tmlr.bst", "LICENSE-tmlr-style",
-                  *VENDORED_LICENSE_FILES, *VENDORED_SOURCE_FILES):
+                  *VENDORED_LICENSE_FILES, *VENDORED_SOURCE_FILES,
+                  *SOURCE_ARCHIVE_DOCUMENT_DIGESTS):
         if (src / extra).is_file():
             opened.add(Path(extra))
+    for name, pin in SOURCE_ARCHIVE_DOCUMENT_DIGESTS.items():
+        if not (src / name).is_file() or sha256_file(src / name) != pin:
+            raise RuntimeError(f"Required staged source build document missing or differs from its pin: {name}")
     opened.discard(Path("main.bbl"))
     return sorted(opened)
 
@@ -1882,6 +1894,11 @@ def source_archive_extras(repo: Path) -> dict[str, Path]:
     }
     for name in (*VENDORED_LICENSE_FILES, *VENDORED_SOURCE_FILES):
         extras[name] = repo / VENDORED_DIRECTORY / name
+    for name, pin in SOURCE_ARCHIVE_DOCUMENT_DIGESTS.items():
+        origin = repo / ENTRY_POINT.parent / name
+        if not origin.is_file() or sha256_file(origin) != pin:
+            raise RuntimeError(f"Required source build document missing or differs from its pin: {name}")
+        extras[name] = origin
     return extras
 
 

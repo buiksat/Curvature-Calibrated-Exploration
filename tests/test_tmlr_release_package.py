@@ -2184,8 +2184,13 @@ def test_the_readme_current_release_table_matches_the_artifacts():
         closure = json.loads(archive.read(ledger_tool.SOURCE_CLOSURE_NAME))
     counts = collections.Counter(e["ships_in"] for e in closure["entries"])
     assert f"{len(closure['entries'])} entries" in readme
-    assert f"{counts['supplement']} whose bytes the supplement" in readme
-    assert f"{counts['source']} in `source.zip`" in readme
+    with zipfile.ZipFile(release / "source.zip") as archive:
+        source_members = set(archive.namelist())
+    compiled_members = {e["staged"] for e in closure["entries"] if e["staged"] != "main.bbl"}
+    assert compiled_members <= source_members
+    assert f"all {len(compiled_members)} nongenerated compiled inputs" in readme
+    assert f"{counts['supplement']} also present in the supplement" in readme
+    assert f"{counts['source']} source-only compiled inputs" in readme
 
 
 def test_the_report_states_the_current_release_package_test_count():
@@ -4547,6 +4552,29 @@ def test_the_source_archive_is_described_precisely():
         assert "recorder's `.fls` closure" not in text, path
 
 
+def test_source_zip_ships_the_required_flat_build_note():
+    release = _release_dir()
+    if release is None:
+        pytest.skip("no built release directory; run submissions/tmlr_2026/build.sh")
+    with zipfile.ZipFile(release / "source.zip") as archive:
+        note = archive.read("BUILD.md")
+    assert note == (REPO_ROOT / "submissions/tmlr_2026/BUILD.md").read_bytes()
+    assert hashlib.sha256(note).hexdigest() == packager.SOURCE_ARCHIVE_DOCUMENT_DIGESTS["BUILD.md"]
+    assert b"latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex" in note
+    assert b"supplement.zip" in note and b"tools/make_tmlr_outcomes.py --check" in note
+    assert b"no experiment code" in note
+
+
+@pytest.mark.parametrize("state", ["missing", "modified"])
+def test_required_source_build_note_cannot_be_missing_or_self_rehashed(tmp_path, state):
+    target = tmp_path / "submissions/tmlr_2026/BUILD.md"
+    target.parent.mkdir(parents=True)
+    if state == "modified":
+        target.write_bytes((REPO_ROOT / "submissions/tmlr_2026/BUILD.md").read_bytes() + b"\nUnreviewed extra instructions.\n")
+    with pytest.raises(RuntimeError, match="Required source build document missing or differs from its pin"):
+        packager.source_archive_extras(tmp_path)
+
+
 def test_the_formal_change_record_names_its_one_exception():
     note = (REPO_ROOT / "paper/EXPOSITION_REVISION.md").read_text(encoding="utf-8")
     assert "No theorem, lemma, corollary, proposition, assumption, equation" \
@@ -4643,6 +4671,7 @@ def test_the_staged_entry_point_is_validated_not_just_the_legacy_one(
                     ignore=shutil.ignore_patterns("*.pdf"))
     (repo / "submissions/tmlr_2026").mkdir(parents=True)
     shutil.copy2(REPO_ROOT / packager.ENTRY_POINT, repo / packager.ENTRY_POINT)
+    shutil.copy2(REPO_ROOT / "submissions/tmlr_2026/BUILD.md", repo / "submissions/tmlr_2026/BUILD.md")
     shutil.copy2(REPO_ROOT / "paper/validate.py", repo / "paper/validate.py")
     (repo / "tools").mkdir()
     shutil.copy2(REPO_ROOT / "tools/tex_conditionals.py",
@@ -4932,7 +4961,8 @@ def staged_tree(tmp_path_factory):
     # Do not invent unsupported recorder inputs for these archive-only extras.
     lines = [f"INPUT {p.relative_to(src)}"
              for p in sorted(src.rglob("*")) if p.is_file()
-             and str(p.relative_to(src)) not in packager.VENDORED_SOURCE_FILES]
+             and str(p.relative_to(src)) not in (*packager.VENDORED_SOURCE_FILES,
+                                                *packager.SOURCE_ARCHIVE_DOCUMENT_DIGESTS)]
     (src / "main.fls").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return src, sources
 

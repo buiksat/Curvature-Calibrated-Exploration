@@ -1051,7 +1051,10 @@ def check_manuscript(report: Report, root: Path) -> None:
             report.add(section, f"{relative}: present", STATUS_FAIL, "file is missing")
             continue
         raw = path.read_text(encoding="utf-8")
-        text = _normalize_prose(ledger.visible_tex(raw) if path.suffix == ".tex" else raw)
+        # Prohibited source content is rejected even in comments or inactive
+        # branches, which are still shipped. Required claims above use visible
+        # text so a comment cannot satisfy a manuscript invariant.
+        text = _normalize_prose(raw)
         hits = [
             f"{needle!r} ({why})"
             for needle, why in MANUSCRIPT_PROHIBITED

@@ -77,9 +77,11 @@ The supplement uses 93.9% of the 100,000,000-byte limit,
 leaving 6,081,467 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
-The compiled closure has 75 entries: 24 whose bytes the supplement
-carries, 50 in `source.zip`, and 1 generated BibTeX output in neither
-archive. `main.bbl` is recreated from the required bibliography and style.
+The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:
+24 also present in the supplement and 50 source-only compiled inputs.
+The generated `main.bbl` is in neither archive; BibTeX recreates it from the
+required bibliography and style. Archive membership also includes the required
+build note, bibliography, style, source and licence extras.
 
 `source.zip` contains the project-local compiler inputs and required BibTeX,
 style, source and licence extras. `external_tex_inputs` records protected

@@ -747,6 +747,34 @@ def test_deanonymizing_style_option_is_detected(tmp_path):
     assert any("official TMLR stylefile is loaded" in c for c in checks)
 
 
+@pytest.mark.parametrize("hidden", ["comment", "inactive_legacy"])
+@pytest.mark.parametrize("literal", [r"\usepackage[accepted]{tmlr}", "Acknowledgments", "outperforms"])
+def test_prohibited_source_literals_are_rejected_when_not_visible(tmp_path, hidden, literal):
+    scratch = _manuscript_scratch(tmp_path)
+    path = scratch / "submissions/tmlr_2026/main.tex"
+    extra = ("\n% " + literal + "\n" if hidden == "comment" else
+             "\n\\iflegacyextras\n" + literal + "\n\\fi\n")
+    path.write_text(path.read_text() + extra)
+    import verify_tmlr_submission_numbers as ledger
+    assert literal not in ledger.visible_tex(path.read_text())
+    report = verifier.Report()
+    verifier.check_manuscript(report, scratch)
+    assert any("prohibited overclaim" in item["check"] and literal in item["detail"]
+               for item in report.failures)
+
+
+def test_required_claim_cannot_be_satisfied_by_a_comment_echo(tmp_path):
+    scratch = _manuscript_scratch(tmp_path)
+    path = scratch / "submissions/tmlr_2026/main.tex"
+    literal = "Hessian transport has higher mean pseudo-regret than every comparator"
+    text = path.read_text()
+    assert "Hessian transport has higher mean pseudo-regret than every\ncomparator" in text
+    path.write_text(text.replace("Hessian transport has higher mean pseudo-regret than every\ncomparator", "A different visible claim", 1) + "\n% " + literal + "\n")
+    report = verifier.Report()
+    verifier.check_manuscript(report, scratch)
+    assert any("adverse regret comparison" in item["check"] for item in report.failures)
+
+
 def test_artifact_expectations_are_a_single_shared_copy():
     """The verifier and the supplement ledger must share one expectation module."""
 
