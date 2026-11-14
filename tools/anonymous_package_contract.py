@@ -566,7 +566,7 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/prepare_tmlr_figures.py': 'a53b1944cb1473d700da9c5fba7a76860f2a79d7f53fe1a622027304e74ed6b7',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '29b82b9f96be19c69341b8dfb0e4853341973f29bc92d802218714f5b3263db4'}
+ 'tools/verify_tmlr_submission_numbers.py': '745c2a165e6e1ccfa33c791110eb66dd14f9fcf5db41ddb092db0bad07e78b81'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({

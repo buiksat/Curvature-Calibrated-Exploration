@@ -1242,7 +1242,7 @@ _CATEGORY_REASON = {
         "'the per-round cost illustration is arithmetically consistent' "
         "recomputes it",
     "document-structure":
-        "a step number or list marker in the supplement's own instructions",
+        "a step number, list marker or explicit document counter; not a measurement",
     "environment-version":
         "a declared software version, checked against "
         "experiments/requirements.txt by a structural check",
@@ -1359,28 +1359,36 @@ CLASSIFIED_LITERALS = {('paper/figures/transport_conceptual_geometry.tex', '.25'
  ('paper/figures/transport_conceptual_interfaces.tex', '6.65'): ('analytic-schematic', 1),
  ('paper/figures/transport_conceptual_interfaces.tex', '6.8'): ('analytic-schematic', 1),
  ('paper/transport_experiment_appendix.tex', '1'): ('math-constant', 7),
+ ('paper/transport_experiment_appendix.tex', '1.13.1'): ('historical-dependency-version', 1),
+ ('paper/transport_experiment_appendix.tex', '1.15.2'): ('historical-dependency-version', 1),
  ('paper/transport_experiment_appendix.tex', '2'): ('math-constant', 10),
  ('paper/transport_followup.tex', '1'): ('math-constant', 1),
  ('paper/transport_followup.tex', '2'): ('math-constant', 1),
  ('paper/transport_followup_appendix.tex', '1'): ('math-constant', 5),
  ('paper/transport_followup_appendix.tex', '2'): ('math-constant', 6),
  ('paper/transport_followup_appendix.tex', '4'): ('math-constant', 1),
- ('paper/transport_proofs.tex', '0'): ('math-constant', 18),
+ ('paper/transport_proofs.tex', '0'): ('math-constant', 16),
  ('paper/transport_proofs.tex', '0,1'): ('interval-endpoint', 1),
  ('paper/transport_proofs.tex', '1'): ('math-constant', 80),
  ('paper/transport_proofs.tex', '2'): ('math-constant', 110),
  ('paper/transport_proofs.tex', '4'): ('math-constant', 4),
  ('paper/transport_protocol_appendix.tex', '2'): ('math-constant', 1),
- ('paper/transport_support_appendix.tex', '0'): ('math-constant', 4),
+ ('paper/transport_support_appendix.tex', '0'): ('math-constant', 2),
  ('paper/transport_support_appendix.tex', '1'): ('math-constant', 20),
+ ('paper/transport_support_appendix.tex', '10'): ('document-structure', 1),
+ ('paper/transport_support_appendix.tex', '13'): ('document-structure', 1),
+ ('paper/transport_support_appendix.tex', '16'): ('document-structure', 2),
  ('paper/transport_support_appendix.tex', '2'): ('math-constant', 13),
- ('paper/transport_theory.tex', '0'): ('math-constant', 32),
+ ('paper/transport_theory.tex', '0'): ('math-constant', 30),
  ('paper/transport_theory.tex', '0,1'): ('interval-endpoint', 5),
- ('paper/transport_theory.tex', '1'): ('math-constant', 83),
+ ('paper/transport_theory.tex', '1'): ('math-constant', 80),
  ('paper/transport_theory.tex', '1,0'): ('math-constant', 1),
+ ('paper/transport_theory.tex', '11'): ('document-structure', 1),
  ('paper/transport_theory.tex', '2'): ('math-constant', 94),
  ('paper/transport_theory.tex', '3'): ('math-constant', 2),
  ('paper/transport_theory.tex', '4'): ('math-constant', 5),
+ ('submissions/tmlr_2026/main.tex', '14'): ('document-structure', 1),
+ ('submissions/tmlr_2026/main.tex', '3'): ('document-structure', 1),
  ('submissions/tmlr_2026/supplement_README.md', '1.15.2'): ('environment-version', 1),
  ('submissions/tmlr_2026/supplement_README.md', '2.2.3'): ('environment-version', 1),
  ('submissions/tmlr_2026/supplement_README.md', '3.12'): ('environment-version', 1)}
@@ -1407,6 +1415,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_experiment.tex', '50 trajectory-level observations per cell'): 1,
  ('paper/transport_experiment.tex', '50 transport-Hessian trajectories'): 1,
  ('paper/transport_experiment.tex', '600 independent runs'): 1,
+ ('paper/transport_experiment.tex', '95\\% intervals'): 1,
  ('paper/transport_experiment.tex', 'All five actions are optimal somewhere in every'): 1,
  ('paper/transport_experiment.tex', 'Contexts have dimension $4$'): 1,
  ('paper/transport_experiment.tex', 'No run has zero regret'): 1,
@@ -1448,11 +1457,12 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_experiment_appendix.tex', '$97.33\\%,94.66\\%,89.39\\%,79.39\\%$'): 1,
  ('paper/transport_experiment_appendix.tex', '$D_{\\rm target}=0.25,0.5,1,2$'): 1,
  ('paper/transport_experiment_appendix.tex', '$T=1000$'): 3,
- ('paper/transport_experiment_appendix.tex', '$e^{\\bar D_t^Q/2}$'): 2,
+ ('paper/transport_experiment_appendix.tex', '$e^{\\bar D_t^Q/2}$'): 1,
  ('paper/transport_experiment_appendix.tex', '50 evaluation seeds'): 2,
  ('paper/transport_experiment_appendix.tex', '50 primary-policy trajectories'): 1,
- ('paper/transport_experiment_appendix.tex', '50 runs per cell'): 1,
+ ('paper/transport_experiment_appendix.tex', '50 runs per cell'): 2,
  ('paper/transport_experiment_appendix.tex', '50 transport-Hessian trajectories'): 1,
+ ('paper/transport_experiment_appendix.tex', '95\\% intervals'): 1,
  ('paper/transport_experiment_appendix.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'): 1,
  ('paper/transport_experiment_appendix.tex', '\\xi_t=0'): 1,
  ('paper/transport_experiment_appendix.tex', 'paired-bootstrap 95\\%'): 1,
@@ -1537,24 +1547,20 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'standard deviation $0.25$'): 1,
  ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'): 1,
  ('paper/transport_followup_appendix.tex', 'teacher seed 1729'): 1,
+ ('paper/transport_proofs.tex', '\\xi_t=0'): 2,
+ ('paper/transport_support_appendix.tex', '\\xi_t=0'): 2,
+ ('paper/transport_theory.tex', '\\alpha_t=1'): 1,
+ ('paper/transport_theory.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'): 2,
+ ('paper/transport_theory.tex', '\\xi_t=0'): 2,
  ('submissions/tmlr_2026/main.tex', '29-parameter'): 1,
  ('submissions/tmlr_2026/main.tex', '50 paired'): 1,
+ ('submissions/tmlr_2026/main.tex', '95\\% intervals'): 1,
  ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% intervals'): 1,
  ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'): 1,
  ('submissions/tmlr_2026/supplement_README.md', '21 artifacts'): 1,
  ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'): 1}
 
 
-CLASSIFIED_LITERALS.update({
-    ("paper/transport_experiment_appendix.tex", "1.15.2"): ("historical-dependency-version", 1),
-    ("paper/transport_experiment_appendix.tex", "1.13.1"): ("historical-dependency-version", 1),
-    ("paper/transport_support_appendix.tex", "13"): ("document-structure", 1),
-    ("paper/transport_support_appendix.tex", "16"): ("document-structure", 2),
-    ("paper/transport_support_appendix.tex", "10"): ("document-structure", 1),
-    ("paper/transport_theory.tex", "11"): ("document-structure", 1),
-    ("submissions/tmlr_2026/main.tex", "14"): ("document-structure", 1),
-    ("submissions/tmlr_2026/main.tex", "3"): ("document-structure", 1),
-})
 
 
 def _mirror_readme(table: dict) -> dict:
@@ -1583,16 +1589,6 @@ def scoped_declarations(table: dict, root: Path) -> dict:
 
 
 CLASSIFIED_LITERALS = _mirror_readme(CLASSIFIED_LITERALS)
-PHRASE_OCCURRENCES.update({
-    ("paper/transport_experiment.tex", r"95\% intervals"): 1,
-    ("paper/transport_experiment_appendix.tex", r"95\% intervals"): 1,
-    ("paper/transport_proofs.tex", r"\xi_t=0"): 1,
-    ("paper/transport_support_appendix.tex", r"\xi_t=0"): 2,
-    ("paper/transport_theory.tex", r"\alpha_t=1"): 1,
-    ("paper/transport_theory.tex", r"\kappa_{-,t}=\kappa_{+,t}=1"): 1,
-    ("paper/transport_theory.tex", r"\xi_t=0"): 3,
-    ("submissions/tmlr_2026/main.tex", r"95\% intervals"): 1,
-})
 
 
 
@@ -2737,6 +2733,10 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
            f"loaded {pin_module} at {sha256_file(pin_module)}")
 
     phrases = phrase_occurrences(root)
+    declared_phrases = scoped_declarations(_mirror_readme(PHRASE_OCCURRENCES), root)
+    expect("declared phrase counts match the authenticated context record",
+           declared_phrases == phrases,
+           "Reviewed authoring counts and independent occurrence pins must agree")
     phrase_pinned = phrase_pins(root)
     classified_pinned = classified_pins(root)
     file_pinned = file_pins(root)
@@ -2758,10 +2758,10 @@ def literal_coverage_checks(root: Path, ledger: Sequence[Entry],
            f"unknown categories: "
            f"{sorted({c for c, _, _ in classified_pinned.values()} - set(_CATEGORY_REASON))}")
     disagreeing = sorted(
-        f"{key}: category {classified_pinned[key][0]!r} vs "
-        f"{CLASSIFIED_LITERALS[key][0]!r}"
+        f"{key}: category/count {classified_pinned[key][:2]!r} vs "
+        f"{CLASSIFIED_LITERALS[key]!r}"
         for key in pinned & declared
-        if classified_pinned[key][0] != CLASSIFIED_LITERALS[key][0])
+        if classified_pinned[key][:2] != CLASSIFIED_LITERALS[key])
     expect("the pinned record and the category table agree",
            not disagreeing, "; ".join(disagreeing[:6]))
 

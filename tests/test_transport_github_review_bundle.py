@@ -669,28 +669,28 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
 
 @pytest.mark.parametrize("relative,before,after,required_check", [
     (
-        "submissions/tmlr_2026/main.tex",
-        "Transport inflation dominates its regret bounds",
-        "Transport inflation is irrelevant to its regret bounds",
-        "abstract keeps the conservative-certificate finding",
+        "paper/transport_followup.tex",
+        "Path inflation\nis Hessian's largest bound contribution",
+        "Path inflation is irrelevant to Hessian's bound",
+        "current manuscript keeps the conservative-certificate finding",
     ),
     (
         "submissions/tmlr_2026/main.tex",
-        "bounds exceed a deterministic regret cap",
-        "bounds improve on a deterministic regret cap",
-        "abstract keeps the vacuous-bound finding",
+        "bounds exceed the deterministic cap",
+        "bounds improve on the deterministic cap",
+        "current manuscript keeps the vacuous-bound finding",
     ),
     (
-        "submissions/tmlr_2026/main.tex",
-        "The results separate three questions",
-        "The results equate three questions",
-        "abstract separates certificate validity from usefulness",
+        "paper/scope_limitations.tex",
+        "establish neither population\ncoverage, numerical theorem certification, necessity nor practical advantage",
+        "establish population coverage, numerical theorem certification, necessity and practical advantage",
+        "current manuscript separates certificate validity from usefulness",
     ),
     (
-        "paper/body_conclusion.tex",
-        "comparison does not order the realized",
-        "comparison orders the realized",
-        "conclusion refuses a uniform curvature ordering",
+        "paper/scope_limitations.tex",
+        "not isolated certificate changes or\na universal ordering",
+        "isolated certificate changes and a universal ordering",
+        "current manuscript refuses a uniform curvature ordering",
     ),
 ])
 def test_revised_abstract_and_conclusion_qualifiers_remain_required(

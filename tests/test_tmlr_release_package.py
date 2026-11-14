@@ -1277,20 +1277,20 @@ def test_every_manuscript_literal_is_accounted_for():
     assert _audit(REPO_ROOT) == []
 
 
-@pytest.mark.parametrize("before,after", [
-    (r"99.382\%", r"99.383\%"),
-    ("means of actionwise ratios, not", "ratios of mean widths, not"),
-    ("185.26", "185.27"),
-    ("no equivalence test was performed", "an equivalence test confirmed matching performance"),
-    ("9.51", "9.52"),
-    ("19, 60, and 231", "19, 60, and 232"),
-    ("Each mean uses the named\npolicy's own 50 histories",
-     "Each mean uses the same\nHessian policy's 50 histories"),
+@pytest.mark.parametrize("source,before,after", [
+    ("paper/transport_followup.tex", r"99.382\%", r"99.383\%"),
+    ("paper/scope_limitations.tex", "averages actionwise ratios, not\nratios of means",
+     "averages ratios of means, not actionwise ratios"),
+    ("paper/transport_followup.tex", "185.26", "185.27"),
+    ("paper/transport_followup.tex", "No equivalence test\nwas performed", "An equivalence test confirmed matching performance"),
+    ("paper/transport_followup.tex", "9.51", "9.52"),
+    ("paper/transport_followup.tex", "19, 60 and 231", "19, 60 and 232"),
+    ("paper/transport_followup.tex", "frozen-policy own-history bounds", "frozen-policy bounds on Hessian histories"),
 ])
-def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, before, after):
+def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, source, before, after):
     root = _submitted_tex_tree(tmp_path)
     assert _audit(root) == []
-    path = root / "paper/transport_followup.tex"
+    path = root / source
     text = path.read_text()
     assert before in text
     path.write_text(text.replace(before, after, 1))
@@ -1327,7 +1327,7 @@ def _followup_ledger_tree(packaged_tree, tmp_path):
     """Complete evidence-only fixture; compiled-source closure is tested elsewhere."""
     tree, _records = packaged_tree
     root = _clone(tree, tmp_path / "followup-ledger")
-    for relative in (ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
+    for relative in (*ledger_tool.FOLLOWUP_SOURCE_HASHES, ledger_tool.CONFIG, ledger_tool.FOLLOWUP_PACKAGE_CONTRACT,
                      ledger_tool.FOLLOWUP_GENERATOR, ledger_tool.FOLLOWUP_EXPORT_VERIFIER,
                      ledger_tool.EXPLANATORY_GENERATOR, ledger_tool.TABLE_CHART_GENERATOR):
         if not (root / relative).is_file():
@@ -1395,7 +1395,7 @@ def test_followup_package_ledger_rejects_untrusted_contract_before_import(
     ("paper/transport_experiment_appendix.tex",
      r"preregistered $10^{-12}$ ratio tolerance",
      r"preregistered $10^{-14}$ ratio tolerance"),
-    ("paper/body_intro.tex", "29-parameter", "31-parameter"),
+    ("submissions/tmlr_2026/main.tex", "29-parameter", "31-parameter"),
 ])
 def test_audit_rejects_an_unchecked_edit_to_a_retained_literal(
         tmp_path, source, before, after):
@@ -1424,8 +1424,8 @@ def test_audit_rejects_a_study_value_moved_into_a_theory_source(tmp_path):
     path = root / "paper/transport_theory.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
-            "Neither the local factor",
-            "The median terminal ratio is 126.7.\nNeither the local factor", 1),
+            "The determinant identity follows",
+            "The median terminal ratio is 126.7.\nThe determinant identity follows", 1),
         encoding="utf-8")
     assert any("paper/transport_theory.tex" in name
                for name in _audit(root))
@@ -1849,10 +1849,10 @@ def test_ci_writes_the_new_gate_logs_outside_the_worktree():
 
 
 @pytest.mark.parametrize("where, anchor", [
-    ("paper/transport_experiment.tex",
-     "\\input{figures/transport_table_original_validity.tex}"),
-    ("paper/transport_experiment_appendix.tex",
-     "\\input{figures/transport_table_original_path_ratios.tex}"),
+    ("paper/transport_followup.tex",
+     "\\input{figures/transport_explanatory_outcomes.tex}"),
+    ("paper/transport_followup_appendix.tex",
+     "\\input{figures/transport_table_drift.tex}"),
 ])
 def test_a_shrink_hidden_behind_a_foreign_conditional_is_caught(
         tmp_path, where, anchor):
@@ -4624,10 +4624,10 @@ def test_the_staged_entry_point_is_validated_not_just_the_legacy_one(
     (repo / "tools").mkdir()
     shutil.copy2(REPO_ROOT / "tools/tex_conditionals.py",
                  repo / "tools/tex_conditionals.py")
-    experiment = repo / "paper/transport_experiment.tex"
+    experiment = repo / "paper/transport_followup.tex"
     experiment.write_text(
         experiment.read_text(encoding="utf-8").replace(
-            "\\paragraph{Protocol.}", broken + "\n\\paragraph{Protocol.}", 1),
+            "\\paragraph{Protocol and policies.}", broken + "\n\\paragraph{Protocol and policies.}", 1),
         encoding="utf-8")
 
     out = tmp_path / "out"
@@ -4791,12 +4791,16 @@ def test_the_recorded_revisions_include_every_candidate_so_far():
 def test_the_audited_set_is_the_transitive_input_closure():
     closure = {str(p) for p in ledger_tool.manuscript_closure(REPO_ROOT)}
     assert str(packager.ENTRY_POINT) in closure
-    for expected in ("paper/transport_experiment.tex",
+    for expected in ("paper/transport_followup.tex",
                      "paper/transport_proofs.tex",
-                     "paper/figures/transport_table_original_validity.tex",
-                     "paper/figures/transport_instantiation_bound.tex"):
+                     "paper/scope_limitations.tex",
+                     "paper/transport_protocol_appendix.tex",
+                     "paper/transport_support_appendix.tex",
+                     "paper/figures/transport_followup_outcomes.tex"):
         assert expected in closure, expected
-    for excluded in ("paper/main.tex", "paper/legacy_experiments.tex"):
+    for excluded in ("paper/main.tex", "paper/legacy_experiments.tex",
+                     "paper/transport_experiment.tex", "paper/transport_experiment_appendix.tex",
+                     "paper/legacy_scope.tex"):
         assert excluded not in closure, excluded
 
 
@@ -4833,8 +4837,8 @@ def test_an_unclassified_number_in_any_theory_source_fails(tmp_path):
     path = root / "paper/transport_theory.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
-            "Neither the local factor",
-            "The observed value is 42.7.\nNeither the local factor", 1),
+            "The determinant identity follows",
+            "The observed value is 42.7.\nThe determinant identity follows", 1),
         encoding="utf-8")
     failures = _audit(root)
     assert any("paper/transport_theory.tex" in name
@@ -5062,8 +5066,8 @@ def test_a_ledger_phrase_copied_into_another_file_fails(tmp_path):
     path = root / "paper/transport_theory.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
-            "Neither the local factor",
-            "best-fixed-action regret $180.4$ holds.\nNeither the local factor",
+            "The determinant identity follows",
+            "best-fixed-action regret $180.4$ holds.\nThe determinant identity follows",
             1),
         encoding="utf-8")
     assert _audit_fails(root)
@@ -5076,8 +5080,8 @@ def test_a_second_occurrence_of_a_classified_literal_fails(tmp_path):
     path = root / "paper/transport_theory.tex"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
-            "Neither the local factor",
-            "The measured optimism count is 4.\nNeither the local factor", 1),
+            "The determinant identity follows",
+            "The measured optimism count is 4.\nThe determinant identity follows", 1),
         encoding="utf-8")
     failures = _audit_fails(root)
     assert any("pinned semantic unit" in name for name in failures), failures
@@ -6096,7 +6100,7 @@ def test_repository_preflight_is_usable_but_does_not_certify():
      "interval-endpoint"),
     ("paper/transport_followup_appendix.tex", r"$D_0=4\log\cosh",
      r"$D_0=5\log\cosh", "math-constant"),
-    ("paper/availability.tex", "SciPy 1.13.1", "SciPy 1.14.1",
+    ("paper/transport_experiment_appendix.tex", "SciPy 1.13.1", "SciPy 1.14.1",
      "historical-dependency-version"),
     ("submissions/tmlr_2026/supplement_README.md", "NumPy 2.2.3",
      "NumPy 2.2.4", "environment-version"),

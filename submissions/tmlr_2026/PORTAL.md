@@ -17,7 +17,8 @@ funding or consent that is not recorded anywhere in this repository.
 ## Title
 
 ```
-Confidence Transport for Relinearized Curvature in Contextual Bandits
+Confidence Transport in Contextual Bandits:
+Guarantees and Limits under Relinearization
 ```
 
 ## Abstract
@@ -29,8 +30,8 @@ paragraph, as the template requires.
 ## Authors
 
 Established author block, taken verbatim from the CODE@MIT derivative in
-`submissions/code_mit_2026/main.tex`, which is the only place in this repository
-where the author list is recorded:
+the archived `submissions/code_mit_2026/main.tex`; see `../../ARCHIVE.md` for
+retrieving that historical source. This is a historical author list:
 
 1. Bahram Behzadian
 2. Khurshid Juarev
@@ -158,8 +159,9 @@ strengthen it into claims about human verification that nobody has recorded.
 
 ## Supplementary material
 
-Upload `supplement.zip` from the build output. It is anonymous, is well inside
-the 100 MB limit, and its `README.md` states plainly what it does and does not
+Upload `supplement.zip` from the build output. Its required anonymity checks and
+100 MB size gate must pass for that release. Its
+`README.md` states plainly what it does and does not
 let a reviewer check.
 
 ## Files to upload
