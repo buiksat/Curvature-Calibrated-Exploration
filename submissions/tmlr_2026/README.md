@@ -70,11 +70,11 @@ state. No material has been uploaded or submitted.
 |---|---:|---:|---:|
 | `main.pdf` | 475,088 | n/a | n/a |
 | `source.zip` | 2,953,750 | 83 | 2,943,460 |
-| `supplement.zip` | 93,864,028 | 197 | 93,828,058 |
-| `release_manifest.json` | 112,524 | n/a | n/a |
+| `supplement.zip` | 93,918,533 | 200 | 93,882,025 |
+| `release_manifest.json` | 113,467 | n/a | n/a |
 
 The supplement uses 93.9% of the 100,000,000-byte limit,
-leaving 6,135,972 bytes. Both ZIPs use deterministic `ZIP_STORED`
+leaving 6,081,467 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
 The compiled closure has 75 entries: 24 whose bytes the supplement
