@@ -6,7 +6,7 @@ after the first evaluation run starts; any change before that must be recorded
 here with its reason.
 
 Harness: `experiments/transport_v3.py`; analysis: `experiments/analyze_transport_v3.py`
-(test: `experiments/tests/test_transport_v3.py`). Every phase run writes
+(test, outside the pinned suites: `review/v3_protocol/test_transport_v3.py`). Every phase run writes
 `manifest.json` with its arguments, commit, a dirty flag and SHA-256 of both
 scientific modules. Pilot code state: commit `56d259a1`, stated by the drafting
 agent; the pilot predates the manifest and records no commit. Its scoring,
