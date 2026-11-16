@@ -11,6 +11,8 @@ them at fixed rounds.
 Usage:
   python -m experiments.transport_v3 --phase development --seeds 41000-41009 \
       --c 1 10 100 --output OUT_DIR [--workers 4]
+  python -m experiments.transport_v3 --phase tuning --seeds 41100-41109 --c C \
+      --methods tuning_uniform --learning-rate 3e-6 1e-5 3e-5 --steps 5 20 --output OUT_DIR
 """
 
 from __future__ import annotations
@@ -247,8 +249,38 @@ def run_ucb_glm(seed: int, spec: Spec) -> dict:
             "runtime_seconds": time.perf_counter() - start}
 
 
+def run_tuning(seed: int, spec: Spec) -> dict:
+    """Uniform-random behavior; all-action prediction MSE of the shared optimizer after a 10% burn-in."""
+    theta_o = teacher(spec.teacher_seed, spec.radius)
+    ctx, mu, rewards = stream(seed, spec, theta_o)
+    rng = np.random.default_rng(ti.derive_child_seed(seed, "transport_v3/behavior"))
+    width, sigma2, burn_in = spec.width, spec.sigma ** 2, spec.horizon // 10
+    theta = np.zeros(D)
+    counts, reward_sums = np.zeros(len(CATEGORY_FEATURES)), np.zeros(len(CATEGORY_FEATURES))
+    mse = []
+    for t in range(spec.horizon):
+        i = int(ctx[t])
+        if t >= burn_in:
+            mse.append(float(np.mean((mean(theta, FEATURES[i], width) - mu[t]) ** 2)))
+        a = int(rng.integers(0, K))
+        counts[i * K + a] += 1.0
+        reward_sums[i * K + a] += rewards[t, a]
+        for _ in range(spec.steps_per_round):
+            w_c = weight(theta, CATEGORY_FEATURES, width)
+            resid = counts * mean(theta, CATEGORY_FEATURES, width) - reward_sums
+            theta = theta - spec.learning_rate * ((w_c * resid) @ CATEGORY_FEATURES / sigma2 + spec.training_ridge * theta)
+        if not np.all(np.isfinite(theta)):
+            return {"method": "tuning_uniform", "seed": seed, "spec": asdict(spec), "mse": None, "failures": ["nonfinite_iterate"]}
+        norm = np.linalg.norm(theta)
+        if norm > spec.radius:
+            theta *= spec.radius / norm
+    return {"method": "tuning_uniform", "seed": seed, "spec": asdict(spec), "mse": float(np.mean(mse)), "failures": []}
+
+
 def run(job):
     method, seed, spec = job
+    if method == "tuning_uniform":
+        return run_tuning(seed, spec)
     return run_ucb_glm(seed, spec) if method == "ucb_glm" else run_corrected(method, seed, spec)
 
 
@@ -266,14 +298,16 @@ def main() -> None:
     parser.add_argument("--seeds", required=True)
     parser.add_argument("--c", type=float, nargs="+", default=[1.0])
     parser.add_argument("--horizon", type=int, default=Spec.horizon)
-    parser.add_argument("--learning-rate", type=float, default=Spec.learning_rate)
-    parser.add_argument("--methods", nargs="+", default=list(METHODS), choices=METHODS)
+    parser.add_argument("--learning-rate", type=float, nargs="+", default=[Spec.learning_rate])
+    parser.add_argument("--steps", type=int, nargs="+", default=[Spec.steps_per_round])
+    parser.add_argument("--methods", nargs="+", default=list(METHODS), choices=METHODS + ("tuning_uniform",))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    jobs = [(m, s, Spec(horizon=args.horizon, c=c, learning_rate=args.learning_rate))
-            for c in args.c for s in parse_seeds(args.seeds) for m in args.methods]
+    jobs = [(m, s, Spec(horizon=args.horizon, c=c, learning_rate=lr, steps_per_round=k))
+            for c in args.c for lr in args.learning_rate for k in args.steps
+            for s in parse_seeds(args.seeds) for m in args.methods]
     with Pool(args.workers) as pool, (args.output / "runs.jsonl").open("w") as out:
         for result in pool.imap(run, jobs):
             result["phase"] = args.phase
