@@ -1,0 +1,281 @@
+% Phase 2 drafts (T1--T4). NOT included by any build: no \input refers to
+% this file, and it sits outside the paper/*.tex glob. Notation follows
+% paper/transport_theory.tex. Proof-status tags:
+%   [checked]      every step was checked line by line in this session;
+%   [not checked]  the step relies on a statement whose proof was not
+%                  re-checked in this session.
+
+\section*{Draft T1: generalized-linear and logistic bandit literature}
+
+% Sources opened in this session (arXiv PDFs, text extracted with pypdf):
+%   Li, Lu, Zhou, arXiv:1703.00048v2; first page reads "Proceedings of the
+%     34th International Conference on Machine Learning, Sydney, Australia,
+%     PMLR 70, 2017".
+%   Faury, Abeille, Calauzenes, Fercoq, arXiv:2002.07530v2 (8 Jun 2020); the
+%     arXiv text carries no venue line and the arXiv API returns no journal_ref.
+%   Abeille, Faury, Calauzenes, arXiv:2010.12642v2; first page reads
+%     "Proceedings of the 24th International Conference on Artificial
+%     Intelligence and Statistics (AISTATS) 2021, San Diego, California, USA.
+%     PMLR: Volume 130".
+% NOT opened: Filippi, Cappe, Garivier, Szepesvari (2010). Every NeurIPS
+%   proceedings, HAL and author-page URL tried was refused by the proxy.
+% NOT verified: no entry was checked against DBLP or a proceedings page;
+%   dblp.org and proceedings.mlr.press were refused (proxy HTTP 403;
+%   WebFetch domain refusal). Page ranges are therefore omitted below.
+%
+% Draft bibliography entries (fields limited to what the opened PDFs state):
+% @inproceedings{li2017provably,
+%   title     = {Provably Optimal Algorithms for Generalized Linear Contextual Bandits},
+%   author    = {Li, Lihong and Lu, Yu and Zhou, Dengyong},
+%   booktitle = {Proceedings of the 34th International Conference on Machine Learning},
+%   series    = {Proceedings of Machine Learning Research}, volume = {70}, year = {2017}}
+% @misc{faury2020improved,
+%   title  = {Improved Optimistic Algorithms for Logistic Bandits},
+%   author = {Faury, Louis and Abeille, Marc and Calauz{\`e}nes, Cl{\'e}ment and Fercoq, Olivier},
+%   note   = {arXiv:2002.07530v2}, year = {2020}}   % venue unverified
+% @inproceedings{abeille2021instance,
+%   title     = {Instance-Wise Minimax-Optimal Algorithms for Logistic Bandits},
+%   author    = {Abeille, Marc and Faury, Louis and Calauz{\`e}nes, Cl{\'e}ment},
+%   booktitle = {Proceedings of the 24th International Conference on Artificial Intelligence and Statistics},
+%   series    = {Proceedings of Machine Learning Research}, volume = {130}, year = {2021}}
+% filippi2010parametric: not drafted; primary source not opened.
+
+\paragraph{Target model.} Rewards are $r_t=\mu_{\btheta^\circ,W}(z_t)+\eta_t$ with
+$\mu_{\btheta,W}(z)=\sqrt W\tanh(\phi(z)^\top\btheta/\sqrt W)$, Gaussian
+$\eta_t\sim N(0,\sigma^2)$, $\|\phi\|_2\le B_\phi$, $\|\btheta^\circ\|_2\le R$.
+This is the single-index (generalized-linear) form $E[r\mid z]=g(\phi(z)^\top\btheta^\circ)$
+with known, strictly increasing link $g(u)=\sqrt W\tanh(u/\sqrt W)$,
+$0<\dot g\le1$, $|\ddot g|\le c_h/\sqrt W$ with $c_h=4/(3\sqrt3)$ at $B_\phi=1$,
+and $|\ddot g|\le(2/\sqrt W)\dot g$. The paper fits it with squared loss and an
+arbitrary predictable parameter; it does not compute a maximum-likelihood or
+quasi-likelihood estimate.
+
+\begin{description}
+\item[Li, Lu and Zhou (2017).]
+\emph{Noise:} $Y_t=\mu(X_t^\top\theta^*)+\epsilon_t$ with
+$E[\epsilon_t\mid\mathcal F_{t-1}]=0$ and conditional $\sigma$-sub-Gaussian
+$\epsilon_t$ (their Eq.~(2)); the problem setting also states rewards
+$y_{t,a}\in[0,1]$. Contexts are drawn i.i.d.\ from $\nu$ with $\|x_{t,a}\|\le1$
+and $\lambda_{\min}(E[\frac1K\sum_a x_{t,a}x_{t,a}^\top])\ge\sigma_0^2>0$.
+\emph{Link:} fixed and strictly increasing; Assumption~1:
+$\kappa:=\inf_{\|x\|\le1,\|\theta-\theta^*\|\le1}\dot\mu(x^\top\theta)>0$;
+Assumption~2: $\mu$ twice differentiable with $\dot\mu\le L_\mu$,
+$|\ddot\mu|\le M_\mu$. \emph{Estimator:} the root of
+$\sum_{i<t}(Y_i-\mu(X_i^\top\theta))X_i=0$ (their Eq.~(6)).
+\emph{Bounds:} UCB-GLM (Theorem~2), with probability at least $1-2\delta$,
+$R_T\le\tau+\frac{2L_\mu\sigma d}{\kappa}\log(\frac{T}{d\delta})\sqrt T$ for
+$\tau=C\sigma_0^{-2}(d+\log(1/\delta))$; SupCB-GLM (Theorem~3), with probability
+at least $1-\delta$ and $T\ge T_0$, a bound $45(\sigma L_\mu/\kappa)\sqrt{dT}$
+times logarithmic factors in $T$, $K$, $d$ and $1/\delta$ (the extent of a
+radical in that display is ambiguous in the extracted text and is not
+transcribed here), stated to give
+$E[R_T]=O((\log T)^{1.5}\sqrt{dT\log K})$ for $\delta=1/T$.
+\emph{Coverage of Gaussian scaled tanh with squared loss: not covered as stated.}
+The link conditions hold ($L_\mu=1$, $M_\mu=c_h/\sqrt W$, and with
+$\|\btheta^\circ\|=1$, $\kappa=\operatorname{sech}^2(2/\sqrt W)$: $0.786$,
+$0.0707$, $0.00134$ at $W=16,1,0.25$), and Gaussian noise is sub-Gaussian.
+Three conditions fail or differ. (i) The setting states $y\in[0,1]$, and the
+proof of Theorem~2 bounds the initialization regret using $\mu\in[0,1]$;
+Gaussian rewards are unbounded. (ii) In the study's 29 coordinates the 80
+feature vectors have rank 25, so $\sigma_0=0$; after restriction to their
+span, $\sigma_0^2=1/60$ (computed from \texttt{feature\_table}). (iii) Their
+estimator solves Eq.~(6), not squared loss, and their guarantee is for their
+algorithm, not for the paper's corrected center. Whether the appendix proof of
+their Lemma~3 uses bounded rewards was not checked.
+\item[Faury, Abeille, Calauz\`enes and Fercoq (2020).]
+\emph{Noise:} $r_{t+1}\in\{0,1\}$ with $P(r_{t+1}=1\mid x_t,\mathcal F_t)=\mu(x_t^\top\theta_*)$.
+\emph{Link:} the sigmoid $\mu(x)=(1+e^{-x})^{-1}$, $L=M=1/4$; $\theta_*$ in a
+compact $\Theta$ with known $S$; $\|x\|_2\le1$;
+$\kappa:=\sup_{x\in\mathcal X,\theta\in\Theta}1/\dot\mu(x^\top\theta)$. Their
+concentration result (Theorem~1) requires martingale increments with
+$|\varepsilon_{t+1}|\le1$ almost surely. \emph{Bounds:} Logistic-UCB-1
+(Theorem~2), w.p.\ $\ge1-\delta$, $R_T\le C_1L\sqrt\kappa\,\gamma_T(\delta)\sqrt T$,
+$O(\sqrt\kappa\,d\sqrt T\log T)$ for $\lambda=d\log T$; Logistic-UCB-2
+(Theorem~3), $R_T\le C_2\gamma_T(\delta)\sqrt T+C_3\gamma_T(\delta)^2\kappa$, with
+$\gamma_t(\delta)$ defined after their Eq.~(4).
+\emph{Coverage: not covered.} The reward model is Bernoulli with the sigmoid
+link, and Theorem~1 needs bounded increments; Gaussian noise violates both.
+The affine identity $\sqrt W\tanh(u/\sqrt W)=\sqrt W(2\mu(2u/\sqrt W)-1)$ does
+not change the noise model.
+\item[Abeille, Faury and Calauz\`enes (2021).]
+\emph{Noise:} Bernoulli rewards with mean $\mu(x_t^\top\theta_\star)$,
+$\mu$ the logistic function, using $|\ddot\mu|\le\dot\mu$. \emph{Assumptions:}
+$\|x\|\le1$; $\|\theta_\star\|\le S$ known. \emph{Bounds:} OFULog (Theorem~1):
+$\mathrm{Regret}\le R^{\rm perm}+R^{\rm trans}$ with, with high probability and
+up to logarithmic factors ($\lesssim_T$), $R^{\rm perm}\lesssim d\sqrt{T/\kappa_\star}$
+and $R^{\rm trans}\lesssim\kappa_{\mathcal X}d^2\wedge(d^2+\sum_t\mathbf 1(x_t\in\mathcal X_-))$,
+where $\kappa_\star=1/\dot\mu(x_\star^\top\theta_\star)$ and
+$\kappa_{\mathcal X}=\max_x1/\dot\mu(x^\top\theta_\star)$. Theorem~2: for
+$\mathcal X=S^d(0,1)$ and $T\ge d^2\kappa_\star$, a local minimax lower bound
+$\Omega(d\sqrt{T/\kappa_\star})$. \emph{Coverage: not covered}, for the same
+reasons as Faury et al.: Bernoulli noise, logistic link.
+\item[Filippi, Capp\'e, Garivier and Szepesv\'ari (2010).]
+\emph{Primary source not opened; no statement is drafted from it.} Secondary
+statements in Li et al.\ (2017, pp.~2--5), not verified against the source:
+GLM-UCB attains $\tilde O(d\sqrt T)$; its link assumption is stronger than
+Li et al.'s Assumption~1; it uses an initial phase to make the design
+invertible and a projection step.
+\end{description}
+
+\section*{Draft T2: a Lipschitz bound on scaled-tanh relative weights}
+
+Write $\omega_\theta(z)=\operatorname{sech}^2(\phi(z)^\top\theta/\sqrt W)$ as in
+\Cref{cor:tanh-relative-weights}.
+
+\begin{lemma}[Relative-weight Lipschitz bound]\label{lem:tanh-weight-lipschitz}
+For every $z$, $W>0$ and $\theta_1,\theta_2$,
+\[
+\frac{\omega_{\theta_1}(z)}{\omega_{\theta_2}(z)}
+\le\exp\!\Big(\frac{2|\phi(z)^\top(\theta_1-\theta_2)|}{\sqrt W}\Big).
+\]
+If moreover $|\phi(z)^\top\theta_i|\le B_\phi R$ for $i=1,2$, the factor $2$
+can be replaced by $2\tanh(B_\phi R/\sqrt W)$.
+\end{lemma}
+
+\begin{proof}[Proof {[checked]}]
+Let $u_i=\phi(z)^\top\theta_i/\sqrt W$ and $h(u)=\log\operatorname{sech}^2u=-2\log\cosh u$.
+Then $h'(u)=-2\tanh u$, so $|h'|\le2$ on $\mathbb R$ and $|h'|\le2\tanh x$ on
+$[-x,x]$ because $\tanh$ is odd and increasing. By the mean value theorem,
+$|h(u_1)-h(u_2)|\le\sup|h'|\,|u_1-u_2|$ over the segment between $u_1$ and
+$u_2$, which lies in $[-x,x]$ when both endpoints do. Exponentiating
+$h(u_1)-h(u_2)\le|h(u_1)-h(u_2)|$ gives both claims.
+\end{proof}
+
+The constant $2$ is asymptotically attained: for fixed $\epsilon>0$,
+$\cosh^2(u)/\cosh^2(u-\epsilon)\to e^{2\epsilon}$ as $u\to\infty$ [checked].
+
+\begin{corollary}[Lipschitz endpoint certificate]\label{cor:tanh-lipschitz-endpoint}
+Under the hypotheses of \Cref{cor:tanh-relative-weights}, let
+$M_t=\max_{s<t}|\phi(z_s)^\top(\btheta_t-\btheta_s)|$ ($M_1=0$) and
+$D_t^{\rm lip}=4\tanh(B_\phi R/\sqrt W)\,M_t/\sqrt W$. Then
+$e^{-D_t^{\rm lip}}\bVbar_t\preceq\bV_t\preceq e^{D_t^{\rm lip}}\bVbar_t$, so
+$c_{\mp,t}=e^{\mp D_t^{\rm lip}}$ satisfy \eqref{eq:relative-endpoint-sandwich}
+and $d_{\rm Th}(\bVbar_t,\bV_t)\le D_t^{\rm lip}\le4M_t/\sqrt W$.
+\end{corollary}
+
+\begin{proof}[Proof {[checked]}]
+Put $c=e^{-D_t^{\rm lip}}\le1$. Then
+$\bV_t-c\bVbar_t=\lambda(1-c)\bI+\sigma^{-2}\sum_{s<t}
+(\omega_{\btheta_t}(z_s)^2-c\,\omega_{\btheta_s}(z_s)^2)\phi(z_s)\phi(z_s)^\top$.
+The first term is PSD. By \Cref{lem:tanh-weight-lipschitz} with the bounded
+index ($\|\phi\|\le B_\phi$, $\|\btheta\|\le R$),
+$\omega_{\btheta_t}(z_s)^2/\omega_{\btheta_s}(z_s)^2\ge
+e^{-4\tanh(B_\phi R/\sqrt W)|\phi(z_s)^\top(\btheta_t-\btheta_s)|/\sqrt W}\ge c$,
+so every coefficient is nonnegative and each summand is PSD. The upper
+inequality is symmetric with $c^{-1}\ge1$. The Thompson-distance statement is
+its definition; the last inequality uses $\tanh\le1$.
+\end{proof}
+
+\paragraph{Comparison with \Cref{cor:tanh-relative-weights}.} Let
+$x=B_\phi R/\sqrt W$.
+\begin{itemize}
+\item \emph{Uniform certificate} $D^{\rm unif}=4\log\cosh x$. $D_t^{\rm lip}<D^{\rm unif}$
+iff $M_t<\sqrt W\log\cosh(x)/\tanh(x)$; with $B_\phi=R=1$ the threshold is
+$0.505$, $0.570$, $0.687$ at $W=16,1,0.25$ [computed]. Since
+$M_t\le2B_\phi R$, the worst case of $D^{\rm lip}$ is $8x\tanh x$, which exceeds
+$D^{\rm unif}$ for every $x>0$ because $\log\cosh x\le x\tanh x<2x\tanh x$
+[checked: $\frac{d}{dx}(x\tanh x-\log\cosh x)=x\operatorname{sech}^2x\ge0$].
+So the uniform certificate is tighter for large index movement, and the
+Lipschitz certificate is tighter when $M_t$ is below the threshold.
+\item \emph{Category certificate} \eqref{eq:tanh-category-relative}. It is never
+looser than $D^{\rm lip}$ [checked]: for an observed category,
+$g_{t,c}/f_{t,c}=\omega_{\btheta_t}(c)^2\big/\big(n_{t,c}^{-1}\sum_{s<t:\phi(z_s)=\phi_c}\omega_{\btheta_s}(c)^2\big)$
+divides by a mean of the $\omega_{\btheta_s}(c)^2$, which lies between their
+minimum and maximum, so $g_{t,c}/f_{t,c}\in[e^{-D_t^{\rm lip}},e^{D_t^{\rm lip}}]$; adding $1$ to
+the min and max keeps both factors in that interval. The Lipschitz
+certificate does not need finite categories; it bounds the certificate by
+index movement, and through $M_t\le B_\phi\max_{s<t}\|\btheta_t-\btheta_s\|_2$, by
+parameter movement.
+\item \emph{Remark (Hessian path certificate, \Cref{cor:hessian-path-new}).} With
+$L_g=c_h/\sqrt W$, $c_h=4B_\phi^2/(3\sqrt3)$ and
+$\max_{s<t}\|\btheta_t-\btheta_s\|\le\sqrt{Q_t}$,
+$4M_t/\sqrt W\le4B_\phi\sqrt{Q_t}/\sqrt W=\frac{3\sqrt3\,\sigma\sqrt\lambda}{2B_\phi}\bar D_t$
+[checked]. With $\sigma=0.25$, $\lambda=B_\phi=1$ the factor is $0.650$.
+\end{itemize}
+
+\section*{Draft T3: the uniform endpoint factor when $W\ge cT$}
+
+\begin{corollary}\label{cor:tanh-endpoint-regime}
+If $W\ge cT$ for some $c>0$, then
+$\exp(4\log\cosh(B_\phi R/\sqrt W))=\cosh^4(B_\phi R/\sqrt W)\le\exp(2B_\phi^2R^2/(cT))$.
+\end{corollary}
+
+\begin{proof}[Proof {[checked]}]
+For $y\ge0$ let $f(y)=y^2/2-\log\cosh y$; $f(0)=0$ and $f'(y)=y-\tanh y\ge0$,
+so $\log\cosh y\le y^2/2$, and evenness extends this to all $y$. Hence
+$4\log\cosh(B_\phi R/\sqrt W)\le2B_\phi^2R^2/W\le2B_\phi^2R^2/(cT)$; $\exp$ is
+increasing.
+\end{proof}
+
+\paragraph{Implication under \Cref{cor:global-near-linear-new}'s assumptions.}
+Take the scaled-tanh specialization ($c_\mu=c_g=c_h$, $G=B_\phi$), exact current
+curvature, exact solves and exact maximization ($\kappa_{\pm,t}=\alpha_t=1$,
+$\xi_t=0$), and score with \Cref{cor:relative-endpoint-ucb} using the uniform
+certificate $c_{\pm,t}=\ell^{\mp2}$, $\ell=\operatorname{sech}^2(B_\phi R/\sqrt W)$.
+Then $h_t=1+\ell^{-2}=1+\cosh^4(B_\phi R/\sqrt W)\le\bar h:=1+e^{2B_\phi^2R^2/(cT)}$.
+Using \eqref{eq:relative-endpoint-regret} and
+\Cref{prop:frozen-width-ucb} as stated in the paper [not checked: their proofs
+were not re-read in this session]:
+\[
+R_T^{\rm endpoint}\le\bar h\sqrt{\Big(\sigma^2+\frac{G^2}{\lambda}\Big)\gamma_T\sum_t\beta_t^2}+2\sum_tb_t(a_t),
+\qquad
+R_T^{\rm frozen}\le2\sqrt{\Big(\sigma^2+\frac{G^2}{\lambda}\Big)\gamma_T\sum_t\beta_t^2}+2\sum_tb_t(a_t),
+\]
+each on its own policy's trajectory. So, as functions of the same $\gamma_T$,
+$\beta_t$ and $b_t$, the transported exploration term is at most
+$\bar h/2=\frac12(1+e^{2B_\phi^2R^2/(cT)})=1+O(1/(cT))$ times the frozen one;
+the bias terms are identical. This compares bound expressions; the realized
+$\gamma_T$, $\beta_t$, $b_t$ differ between the two trajectories.
+Bounding $\gamma_{t-1}\le\Gamma_{T,d}$ (\eqref{eq:finite-d-gamma-new}),
+$\epsilon_{\rm lin}(s),b_t\le2c_hR^2/\sqrt W$ (Taylor with $\|\btheta^\circ-\btheta_s\|\le2R$)
+and $\epsilon_{\rm mis}=0$ in \eqref{eq:beta-corrected-new} gives [checked]
+\[
+R_T^{\rm endpoint}\le\bar h\Big[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda R
++\frac{2c_hR^2\sqrt T}{\sigma\sqrt W}\Big]\sqrt{\sigma^2+\frac{G^2}{\lambda}}\sqrt{T\Gamma_{T,d}}
++\frac{4c_hR^2T}{\sqrt W}
+\]
+with probability at least $1-\delta$, which is \eqref{eq:global-near-linear-new}
+with $2e^{D_{T,W}}$ replaced by $\bar h$. With $W=cT$, the paper's
+$D_{T,W}=4c_hR\sqrt{T-1}/(\sigma\sqrt{\lambda cT})$ stays below
+$4c_hR/(\sigma\sqrt{\lambda c})$, about $12.3/\sqrt c$ at the study's constants,
+while $\bar h\to2$. At the study's $T=1000$ and $W=16,1,0.25$:
+$D_{T,W}=97.3,389.3,778.6$ and $1+\cosh^4(1/\sqrt W)=2.13,6.67,201.3$ [computed].
+Nothing is claimed here about analyses other than the paper's.
+
+\section*{Draft T4: related work and positioning}
+
+\paragraph{Related work (draft).}
+Scaled tanh is a single-index model with a known increasing link, the form
+studied by generalized linear bandits. Li et al.\ (2017) analyze UCB-GLM and
+SupCB-GLM under conditionally sub-Gaussian noise, a link with
+$\inf\dot\mu=\kappa>0$ near the true parameter, bounded first and second link
+derivatives, i.i.d.\ contexts with a nondegenerate design, and an estimator
+that solves the GLM score equation; their bounds scale as
+$\tilde O(d\sqrt T/\kappa)$ and $\tilde O(\sqrt{dT\log K}/\kappa)$. For the logistic
+link with Bernoulli rewards, Faury et al.\ (2020) replace the global $\kappa$ in
+the leading term by local quantities using a Bernstein-type self-normalized
+inequality, and Abeille et al.\ (2021) obtain a leading term
+$d\sqrt{T/\kappa_\star}$ with a matching local lower bound. None of these
+results applies as stated to our setting: the logistic analyses assume
+Bernoulli rewards, and Li et al.\ state bounded rewards and a nondegenerate
+context design that the study's 29-dimensional features do not have. Our
+analysis also differs in its object: it allows an arbitrary predictable
+parameter fitted with squared loss and corrects the prediction with a frozen
+linear estimate, rather than analyzing a likelihood estimator.
+% Filippi et al. (2010) to be added once the primary source is read.
+
+\paragraph{Positioning (draft).}
+Transport matters only when current and collection-time curvature differ. For
+scaled tanh the two metrics differ only through squared link derivatives, and
+a log-Lipschitz bound on those derivatives
+(\Cref{lem:tanh-weight-lipschitz}) gives an endpoint certificate controlled by
+how far the linear index has moved; the category certificate of
+\Cref{cor:tanh-relative-weights} is never looser. In the near-linear regime
+$W\ge cT$ that \Cref{cor:global-near-linear-new} targets, the uniform endpoint
+factor is at most $e^{2B_\phi^2R^2/(cT)}$
+(\Cref{cor:tanh-endpoint-regime}), so the endpoint-transported bound has the
+frozen bound's form with the factor $2$ replaced by
+$1+e^{2B_\phi^2R^2/(cT)}$, whereas the Hessian path certificate leaves the
+factor $2e^{D_{T,W}}$ with $D_{T,W}=O(1/\sqrt c)$. Transport therefore costs at
+most a $1+O(1/(cT))$ factor relative to frozen scoring under these
+assumptions; it does not improve on frozen scoring in this analysis.
