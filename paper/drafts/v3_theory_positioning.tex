@@ -46,9 +46,15 @@ $\eta_t\sim N(0,\sigma^2)$, $\|\phi\|_2\le B_\phi$, $\|\btheta^\circ\|_2\le R$.
 This is the single-index (generalized-linear) form $E[r\mid z]=g(\phi(z)^\top\btheta^\circ)$
 with known, strictly increasing link $g(u)=\sqrt W\tanh(u/\sqrt W)$,
 $0<\dot g\le1$, $|\ddot g|\le c_h/\sqrt W$ with $c_h=4/(3\sqrt3)$ at $B_\phi=1$,
-and $|\ddot g|\le(2/\sqrt W)\dot g$. The paper fits it with squared loss and an
-arbitrary predictable parameter; it does not compute a maximum-likelihood or
-quasi-likelihood estimate.
+and $|\ddot g|\le(2/\sqrt W)\dot g$. Under Gaussian noise squared loss is the
+negative log-likelihood, so the contrast with GLM analyses is not the loss.
+It is the estimator: the study's code takes a fixed number of projected
+gradient steps per round on a ridge-penalized squared loss and never solves to
+an optimum (\texttt{experiments/transport\_instantiation.py:752-791}), and the
+paper's confidence center is the frozen linear correction of
+\Cref{cor:corrected-center-new}, valid for any predictable parameter. The
+squared-loss normal equation is $\sum(y_i-\mu)\dot g\,x_i=0$, which differs
+from the GLM score equation below because tanh is not the canonical link.
 
 \begin{description}
 \item[Li, Lu and Zhou (2017).]
@@ -74,13 +80,16 @@ $E[R_T]=O((\log T)^{1.5}\sqrt{dT\log K})$ for $\delta=1/T$.
 The link conditions hold ($L_\mu=1$, $M_\mu=c_h/\sqrt W$, and with
 $\|\btheta^\circ\|=1$, $\kappa=\operatorname{sech}^2(2/\sqrt W)$: $0.786$,
 $0.0707$, $0.00134$ at $W=16,1,0.25$), and Gaussian noise is sub-Gaussian.
-Three conditions fail or differ. (i) The setting states $y\in[0,1]$, and the
-proof of Theorem~2 bounds the initialization regret using $\mu\in[0,1]$;
-Gaussian rewards are unbounded. (ii) In the study's 29 coordinates the 80
-feature vectors have rank 25, so $\sigma_0=0$; after restriction to their
-span, $\sigma_0^2=1/60$ (computed from \texttt{feature\_table}). (iii) Their
-estimator solves Eq.~(6), not squared loss, and their guarantee is for their
-algorithm, not for the paper's corrected center. Whether the appendix proof of
+Three conditions fail or differ. (i) The setting states rewards
+$y\in[0,1]$; Gaussian rewards are unbounded. Separately, the proof of
+Theorem~2 bounds the initialization regret using a mean range $\mu\in[0,1]$;
+the scaled-tanh mean satisfies $|\mu|\le\sqrt W\tanh(B_\phi R/\sqrt W)$, so that
+step carries over with a different range constant. (ii) In the study's raw 29
+coordinates the 80 feature vectors have rank 25, so $\sigma_0=0$; this is a
+coordinate artifact, since predictions depend on $\btheta$ only through its
+projection on that span, where $\sigma_0^2=1/60$ (computed from
+\texttt{feature\_table}). (iii) Their estimator solves Eq.~(6), and their
+guarantee is for their algorithm, not for the paper's corrected center. Whether the appendix proof of
 their Lemma~3 uses bounded rewards was not checked.
 \item[Faury, Abeille, Calauz\`enes and Fercoq (2020).]
 \emph{Noise:} $r_{t+1}\in\{0,1\}$ with $P(r_{t+1}=1\mid x_t,\mathcal F_t)=\mu(x_t^\top\theta_*)$.
@@ -92,7 +101,10 @@ $|\varepsilon_{t+1}|\le1$ almost surely. \emph{Bounds:} Logistic-UCB-1
 (Theorem~2), w.p.\ $\ge1-\delta$, $R_T\le C_1L\sqrt\kappa\,\gamma_T(\delta)\sqrt T$,
 $O(\sqrt\kappa\,d\sqrt T\log T)$ for $\lambda=d\log T$; Logistic-UCB-2
 (Theorem~3), $R_T\le C_2\gamma_T(\delta)\sqrt T+C_3\gamma_T(\delta)^2\kappa$, with
-$\gamma_t(\delta)$ defined after their Eq.~(4).
+$\gamma_t(\delta)$ defined after their Eq.~(4). They describe Theorem~3 as removing
+the dependence on $\kappa$ from the leading $\sqrt T$ term, and state that a key
+ingredient is a new Bernstein-like inequality for self-normalized martingales
+(their Theorem~1).
 \emph{Coverage: not covered.} The reward model is Bernoulli with the sigmoid
 link, and Theorem~1 needs bounded increments; Gaussian noise violates both.
 The affine identity $\sqrt W\tanh(u/\sqrt W)=\sqrt W(2\mu(2u/\sqrt W)-1)$ does
@@ -142,7 +154,10 @@ $h(u_1)-h(u_2)\le|h(u_1)-h(u_2)|$ gives both claims.
 \end{proof}
 
 The constant $2$ is asymptotically attained: for fixed $\epsilon>0$,
-$\cosh^2(u)/\cosh^2(u-\epsilon)\to e^{2\epsilon}$ as $u\to\infty$ [checked].
+$\cosh^2(u)/\cosh^2(u-\epsilon)\to e^{2\epsilon}$ as $u\to\infty$ [checked]. That
+limit is excluded by the norm bounds used downstream; under them the refined
+constant $2\tanh x$ is sharp as a Lipschitz constant (take $u_1,u_2\to x$)
+[checked]. Neither statement is a sharpness claim about $D_t^{\rm lip}$.
 
 \begin{corollary}[Lipschitz endpoint certificate]\label{cor:tanh-lipschitz-endpoint}
 Under the hypotheses of \Cref{cor:tanh-relative-weights}, let
@@ -151,6 +166,9 @@ $D_t^{\rm lip}=4\tanh(B_\phi R/\sqrt W)\,M_t/\sqrt W$. Then
 $e^{-D_t^{\rm lip}}\bVbar_t\preceq\bV_t\preceq e^{D_t^{\rm lip}}\bVbar_t$, so
 $c_{\mp,t}=e^{\mp D_t^{\rm lip}}$ satisfy \eqref{eq:relative-endpoint-sandwich}
 and $d_{\rm Th}(\bVbar_t,\bV_t)\le D_t^{\rm lip}\le4M_t/\sqrt W$.
+$D_t^{\rm lip}$ is a measurable function of $\btheta_t$ and $(\btheta_s,z_s)_{s<t}$,
+hence predictable. Computing $M_t$ needs every $\btheta_s$ and a scan of the
+history each round, unlike the category certificate.
 \end{corollary}
 
 \begin{proof}[Proof {[checked]}]
@@ -235,11 +253,19 @@ R_T^{\rm endpoint}\le\bar h\Big[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda
 +\frac{4c_hR^2T}{\sqrt W}
 \]
 with probability at least $1-\delta$, which is \eqref{eq:global-near-linear-new}
-with $2e^{D_{T,W}}$ replaced by $\bar h$. With $W=cT$, the paper's
+with $2e^{D_{T,W}}$ replaced by $\bar h$. This describes the score with the
+uniform certificate. The study's \texttt{transport\_endpoint} arm instead uses
+$c_{\pm,t}=e^{\pm d_{\rm Th}(\bVbar_t,\bV_t)}$, computed by a floating-point
+generalized eigensolve; since $d_{\rm Th}\le4\log\cosh x$, its
+$h_t=1+e^{d_{\rm Th}}\le\bar h$, so the same bound applies to that arm up to
+eigensolver error [checked]. With $W=cT$, the paper's
 $D_{T,W}=4c_hR\sqrt{T-1}/(\sigma\sqrt{\lambda cT})$ stays below
 $4c_hR/(\sigma\sqrt{\lambda c})$, about $12.3/\sqrt c$ at the study's constants,
-while $\bar h\to2$. At the study's $T=1000$ and $W=16,1,0.25$:
-$D_{T,W}=97.3,389.3,778.6$ and $1+\cosh^4(1/\sqrt W)=2.13,6.67,201.3$ [computed].
+while $\bar h\to2$. At the study's $T=1000$ and $W=16,1,0.25$, the Hessian factor of
+\eqref{eq:global-near-linear-new} is $2e^{D_{T,W}}\approx10^{42.6},10^{169.4},10^{338.4}$
+($D_{T,W}=97.3,389.3,778.6$), against the uniform-endpoint factor
+$h_t=1+\cosh^4(1/\sqrt W)=2.13,6.67,201.3$; with $c=W/T$ the corollary's
+$\bar h$ is $2.13,8.39,2982$ [computed].
 Nothing is claimed here about analyses other than the paper's.
 
 \section*{Draft T4: related work and positioning}
@@ -252,13 +278,12 @@ $\inf\dot\mu=\kappa>0$ near the true parameter, bounded first and second link
 derivatives, i.i.d.\ contexts with a nondegenerate design, and an estimator
 that solves the GLM score equation; their bounds scale as
 $\tilde O(d\sqrt T/\kappa)$ and $\tilde O(\sqrt{dT\log K}/\kappa)$. For the logistic
-link with Bernoulli rewards, Faury et al.\ (2020) replace the global $\kappa$ in
-the leading term by local quantities using a Bernstein-type self-normalized
-inequality, and Abeille et al.\ (2021) obtain a leading term
+link with Bernoulli rewards, Faury et al.\ (2020) remove $\kappa$ from the
+leading $\sqrt T$ term using a Bernstein-like inequality for self-normalized
+martingales, and Abeille et al.\ (2021) obtain a leading term
 $d\sqrt{T/\kappa_\star}$ with a matching local lower bound. None of these
 results applies as stated to our setting: the logistic analyses assume
-Bernoulli rewards, and Li et al.\ state bounded rewards and a nondegenerate
-context design that the study's 29-dimensional features do not have. Our
+Bernoulli rewards, and Li et al.\ state rewards in $[0,1]$. Our
 analysis also differs in its object: it allows an arbitrary predictable
 parameter fitted with squared loss and corrects the prediction with a frozen
 linear estimate, rather than analyzing a likelihood estimator.
@@ -276,6 +301,9 @@ factor is at most $e^{2B_\phi^2R^2/(cT)}$
 (\Cref{cor:tanh-endpoint-regime}), so the endpoint-transported bound has the
 frozen bound's form with the factor $2$ replaced by
 $1+e^{2B_\phi^2R^2/(cT)}$, whereas the Hessian path certificate leaves the
-factor $2e^{D_{T,W}}$ with $D_{T,W}=O(1/\sqrt c)$. Transport therefore costs at
-most a $1+O(1/(cT))$ factor relative to frozen scoring under these
-assumptions; it does not improve on frozen scoring in this analysis.
+factor $2e^{D_{T,W}}$ with $D_{T,W}=O(1/\sqrt c)$. Under these assumptions,
+the endpoint-transported bound's exploration term is therefore at most a
+$1+O(1/(cT))$ multiple of the frozen bound's, when both are written in the
+same $\gamma_T$, $\beta_t$ and $b_t$; the two bounds hold on different
+trajectories, and the bias terms are identical. In this analysis transport
+does not improve on frozen scoring.
