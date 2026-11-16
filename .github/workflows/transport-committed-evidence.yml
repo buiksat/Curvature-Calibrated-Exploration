@@ -96,19 +96,67 @@ jobs:
   # blocks nor is hidden by this one.
   submission-evidence:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
+    # The release manifest pins main.pdf and every system TeX input it reads to
+    # el9's TeX Live 2020 (texlive-*-20200406-26.el9).  Ubuntu's TeX Live 2023
+    # cannot reproduce those bytes, and its runner image leaves /usr/share
+    # writable, which package.py rightly refuses to trust.  So the job runs in
+    # the distribution the release was built on.
+    container:
+      image: quay.io/centos/centos:stream9
+    defaults:
+      run:
+        # package.py rejects any TeX tree the invoking user can write, and root
+        # can write everything, so the checks run as an ordinary user.
+        shell: /usr/sbin/runuser -u builder -- bash --noprofile --norc -eo pipefail {0}
     steps:
+      - name: Prepare the el9 build environment
+        shell: bash --noprofile --norc -eo pipefail {0}
+        run: |
+          dnf -y install --setopt=install_weak_deps=False \
+            git python3.12 shadow-utils diffutils findutils unzip \
+            poppler-utils qpdf ghostscript latexmk \
+            texlive-amscls texlive-amsfonts texlive-amsmath texlive-atbegshi \
+            texlive-atveryend texlive-auxhook texlive-babel texlive-bibtex \
+            texlive-bigintcalc texlive-bitset texlive-booktabs texlive-cm \
+            texlive-dehyph texlive-ec texlive-enumitem texlive-epstopdf-pkg \
+            texlive-eso-pic texlive-etexcmds texlive-firstaid texlive-float \
+            texlive-gettitlestring texlive-graphics texlive-graphics-cfg \
+            texlive-graphics-def texlive-hycolor texlive-hyperref \
+            texlive-hyph-utf8 texlive-hyphen-base texlive-hyphen-german \
+            texlive-iftex texlive-infwarerr texlive-intcalc texlive-kpathsea \
+            texlive-kvdefinekeys texlive-kvoptions texlive-kvsetkeys \
+            texlive-l3backend texlive-l3kernel texlive-l3packages texlive-latex \
+            texlive-latex-fonts texlive-latexconfig texlive-letltxmacro \
+            texlive-lm texlive-ltxcmds texlive-mptopdf texlive-natbib \
+            texlive-oberdiek texlive-pdfescape texlive-pdftex texlive-pdftexcmds \
+            texlive-pgf texlive-placeins texlive-refcount texlive-rerunfilecheck \
+            texlive-tex-ini-files texlive-texlive-scripts texlive-tools \
+            texlive-unicode-data texlive-uniquecounter texlive-updmap-map \
+            texlive-url texlive-xcolor
+          rpm -q texlive-base texlive-pdftex texlive-latex latexmk
+          # pdflatex.fmt records the minute it was dumped, and the manifest pins
+          # its bytes.  Re-dump it at the recorded time (2026-11-13T13:17:00Z)
+          # and fail here, not deep in the packager, if the bytes still differ.
+          SOURCE_DATE_EPOCH=1794575820 FORCE_SOURCE_DATE=1 \
+            fmtutil-sys --byfmt pdflatex > /dev/null
+          fmt="$(kpsewhich -var-value=TEXMFSYSVAR)/web2c/pdftex/pdflatex.fmt"
+          echo "e909258a20841d0fb4e40706bc7849e713d7062fa333f046103393493a48a1ab  $fmt" \
+            | sha256sum -c -
+          useradd --create-home --uid 1001 builder
+          python3.12 -m venv /opt/venv
+          chown -R builder /opt/venv
+          echo /opt/venv/bin >> "$GITHUB_PATH"
+
       # actions/checkout v4.2.2
       - name: Check out at full depth
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
 
-      # actions/setup-python v5.3.0
-      - name: Set up Python 3.12
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
-        with:
-          python-version: "3.12"
+      - name: Hand the checkout to the build user
+        shell: bash --noprofile --norc -eo pipefail {0}
+        run: chown -R builder "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
 
       - name: Install and verify the supported Python environment
         run: |
@@ -185,11 +233,6 @@ jobs:
             "${RUNNER_TEMP}/transport-review-bundle"
           echo "review bundle is byte-identical to the committed copy"
 
-      - name: Install PDF tooling
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends poppler-utils qpdf ghostscript
-
       - name: Archived PDF structural checks
         run: |
           set -euo pipefail
@@ -207,13 +250,6 @@ jobs:
 
       - name: Static TeX validation
         run: python paper/validate.py
-
-      - name: Install TeX Live for the manuscript builds
-        run: |
-          sudo apt-get install -y --no-install-recommends \
-            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended lmodern texlive-science \
-            texlive-pictures texlive-plain-generic cm-super biber latexmk unzip
 
       - name: Numerical-provenance ledger
         run: |
