@@ -10,7 +10,7 @@ them at fixed rounds.
 
 Usage:
   python -m experiments.transport_v3 --phase development --seeds 41000-41009 \
-      --c 1 10 100 --output OUT_DIR [--workers 4]
+      --c 1 --learning-rate 1e-5 --steps 20 --output OUT_DIR [--workers 4]
   python -m experiments.transport_v3 --phase tuning --seeds 41100-41109 --c C \
       --methods tuning_uniform --learning-rate 3e-6 1e-5 3e-5 --steps 5 20 --output OUT_DIR
 """
@@ -18,9 +18,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
+import subprocess
 import time
+import traceback
 from dataclasses import asdict, dataclass
 from multiprocessing import Pool
 from pathlib import Path
@@ -132,6 +135,8 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
             historical_error_energy=hist_energy, noise_std=spec.sigma)
         bias = 0.5 * lip * (spec.radius + np.linalg.norm(theta)) ** 2
         q_t = t * float(theta @ theta) - 2.0 * float(theta @ theta_sum) + theta_sq_sum
+        if q_t < -tolerance([theta_sq_sum]):
+            failures.append(f"negative_running_Q_round_{t + 1}")
         d_q = 2.0 * lip * math.sqrt(max(q_t, 0.0)) / (spec.sigma * math.sqrt(spec.ridge))
         d_th, _ = ti.thompson_distance(frozen, current)
         scores = ti.policy_scores(method, centers, beta=beta, current_bias=bias, frozen_widths=sbar,
@@ -153,14 +158,12 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
                 dense_current += np.outer(g, g) / sigma2
             cat_frozen = spec.ridge * np.eye(D) + (CATEGORY_FEATURES.T * frozen_weights) @ CATEGORY_FEATURES / sigma2
             dense_q = float(np.sum((thetas[:t] - theta) ** 2))
-            checks.append({"round": t + 1,
-                           "current_category_vs_dense": float(np.max(np.abs(current - dense_current))),
-                           "frozen_dense_vs_category": float(np.max(np.abs(frozen - cat_frozen))),
-                           "q_running_vs_dense": abs(q_t - dense_q),
-                           "tolerance": tolerance(current, dense_current, frozen, cat_frozen, [q_t, dense_q])})
-            if max(checks[-1]["current_category_vs_dense"], checks[-1]["frozen_dense_vs_category"],
-                   checks[-1]["q_running_vs_dense"]) > checks[-1]["tolerance"]:
-                failures.append(f"category_vs_dense_replay_round_{t + 1}")
+            check = {"round": t + 1,
+                     "current_category_vs_dense": [float(np.max(np.abs(current - dense_current))), tolerance(current, dense_current)],
+                     "frozen_dense_vs_category": [float(np.max(np.abs(frozen - cat_frozen))), tolerance(frozen, cat_frozen)],
+                     "q_running_vs_dense": [abs(q_t - dense_q), tolerance([q_t, dense_q])]}
+            checks.append(check)
+            failures += [f"{name}_round_{t + 1}" for name, value in check.items() if name != "round" and value[0] > value[1]]
             beta_log[t + 1] = {"beta": beta, "stochastic": beta_stat - math.sqrt(spec.ridge) * spec.radius,
                                "ridge": math.sqrt(spec.ridge) * spec.radius, "historical": beta_hist,
                                "bias": bias, "d_Q": d_q, "d_Th": d_th}
@@ -245,7 +248,7 @@ def run_ucb_glm(seed: int, spec: Spec) -> dict:
     return {"method": "ucb_glm", "seed": seed, "spec": asdict(spec), "W": width, "regret": regret,
             "context_free_regret": context_free_regret(mu, rewards), "kappa": kappa, "alpha": alpha,
             "tau": tau, "newton_failures": newton_failures,
-            "failures": ["newton_nonconvergence"] * (newton_failures > 0),
+            "failures": ["newton_nonconvergence"] * (newton_failures > 0) + ["tau_not_reached"] * (tau is None),
             "runtime_seconds": time.perf_counter() - start}
 
 
@@ -278,15 +281,22 @@ def run_tuning(seed: int, spec: Spec) -> dict:
 
 
 def run(job):
+    """Run one job; an exception becomes a recorded crash instead of aborting the phase."""
     method, seed, spec = job
-    if method == "tuning_uniform":
-        return run_tuning(seed, spec)
-    return run_ucb_glm(seed, spec) if method == "ucb_glm" else run_corrected(method, seed, spec)
+    try:
+        if method == "tuning_uniform":
+            return run_tuning(seed, spec)
+        return run_ucb_glm(seed, spec) if method == "ucb_glm" else run_corrected(method, seed, spec)
+    except Exception:
+        return {"method": method, "seed": seed, "spec": asdict(spec), "crashed": True,
+                "failures": ["crash"], "traceback": traceback.format_exc()}
 
 
 def parse_seeds(text: str) -> list[int]:
     lo, _, hi = text.partition("-")
     seeds = list(range(int(lo), int(hi or lo) + 1))
+    if not seeds:
+        raise SystemExit(f"empty seed range {text!r}")
     if any(30000 <= s <= 30249 for s in seeds):
         raise SystemExit("seeds 30000-30249 are reserved by the earlier study")
     return seeds
@@ -298,13 +308,21 @@ def main() -> None:
     parser.add_argument("--seeds", required=True)
     parser.add_argument("--c", type=float, nargs="+", default=[1.0])
     parser.add_argument("--horizon", type=int, default=Spec.horizon)
-    parser.add_argument("--learning-rate", type=float, nargs="+", default=[Spec.learning_rate])
-    parser.add_argument("--steps", type=int, nargs="+", default=[Spec.steps_per_round])
+    parser.add_argument("--learning-rate", type=float, nargs="+", required=True)
+    parser.add_argument("--steps", type=int, nargs="+", required=True)
     parser.add_argument("--methods", nargs="+", default=list(METHODS), choices=METHODS + ("tuning_uniform",))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
+    root = Path(__file__).resolve().parents[1]
+    git = lambda *a: subprocess.run(["git", "-C", str(root), *a], capture_output=True, text=True).stdout.strip()
+    manifest = {"argv": vars(args) | {"output": str(args.output)}, "commit": git("rev-parse", "HEAD"),
+                "dirty": bool(git("status", "--porcelain", "--", "experiments")),
+                "source_sha256": {f: hashlib.sha256((root / f).read_bytes()).hexdigest()
+                                  for f in ("experiments/transport_v3.py", "experiments/transport_instantiation.py")},
+                "numpy": np.__version__}
+    (args.output / "manifest.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
     jobs = [(m, s, Spec(horizon=args.horizon, c=c, learning_rate=lr, steps_per_round=k))
             for c in args.c for lr in args.learning_rate for k in args.steps
             for s in parse_seeds(args.seeds) for m in args.methods]

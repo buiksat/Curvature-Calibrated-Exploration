@@ -24,3 +24,14 @@ def test_short_runs_pass_replay_checks_and_bound_algebra():
     assert result["A5"] <= result["frozen_form_bound"]
     glm = v.run(("ucb_glm", 41000, spec))
     assert glm["tau"] is not None and glm["newton_failures"] == 0
+
+
+def test_crash_is_recorded_not_raised():
+    result = v.run(("not_a_method", 41000, v.Spec(horizon=5)))
+    assert result["crashed"] and result["failures"] == ["crash"]
+
+
+def test_holm_is_step_down():
+    from experiments.analyze_transport_v3 import holm
+    assert holm({"a": 0.001, "b": 0.03, "c": 0.04}) == {"a": True, "b": False, "c": False}
+    assert holm({"a": 0.01, "b": 0.02, "c": 0.03}) == {"a": True, "b": True, "c": True}

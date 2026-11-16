@@ -5,8 +5,14 @@ Only development seeds were used (pilot below). Nothing in this file may change
 after the first evaluation run starts; any change before that must be recorded
 here with its reason.
 
-Harness: `experiments/transport_v3.py` (test: `experiments/tests/test_transport_v3.py`).
-Pilot code state: commit `56d259a1`. Pilot output:
+Harness: `experiments/transport_v3.py`; analysis: `experiments/analyze_transport_v3.py`
+(test: `experiments/tests/test_transport_v3.py`). Every phase run writes
+`manifest.json` with its arguments, commit, a dirty flag and SHA-256 of both
+scientific modules. Pilot code state: commit `56d259a1`, stated by the drafting
+agent; the pilot predates the manifest and records no commit. Its scoring,
+confidence and UCB-GLM code paths are unchanged at the protocol commit; later
+commits changed replay tolerances to per-check values, record failures that
+were silent, and catch crashes. Pilot output:
 `review/v3_protocol/dev_pilot_runs.jsonl`
 (SHA-256 `b100027dae925a8b3f216a3ab47afe852a921b829089d68f395bc080d71d8573`).
 
@@ -24,8 +30,9 @@ Pilot code state: commit `56d259a1`. Pilot output:
 | W | W = cT with **c = 1**, so W = 20,000 |
 | λ, δ, projection radius | λ = 1 (confidence and training ridge), δ = 0.05, R = 1 |
 
-**Why this scale.** The A5 quantity depends on d, T and σ only, not on W. Its
-a priori bound uses γ_{t-1} ≤ Γ_{T,d} = d log(1 + T/(dλσ²)) = 65.31:
+**Why this scale.** The a priori bound on the A5 quantity depends on d, T, σ,
+λ, δ and G, not on W (realized A5 varies slightly with W through the
+trajectory). It uses γ_{t-1} ≤ Γ_{T,d} = d log(1 + T/(dλσ²)) = 65.31:
 A5 ≤ 2√((σ² + 1)Γ·T(Γ + 2log(1/δ))) = 19,894, below the cap
 2T·min(B_φR, √W) = 40,000 for every trajectory. The frozen policy's full
 own-history bound (`prop:frozen-width-ucb`, with corrected-center β_t and
@@ -36,7 +43,8 @@ c = 1, 10, 100, that is 0.93, 0.67 and 0.59 of the cap. The 29-parameter model
 of the earlier study would need T of order 10⁵ for A5 alone to fall below its
 cap (realized γ_T ≈ 151–154 at T = 1,000; `AUDIT_REPORT.md`, A5).
 
-**Selection rule for c (fixed before the pilot output was read).** The
+**Selection rule for c** (stated by the drafting agent to have been fixed
+before the pilot output was read; no record predates the pilot output). The
 smallest c in {1, 10, 100} for which the frozen policy's full own-history
 bound is at most 0.9 × cap on every development seed. Result: c = 1.
 
@@ -68,8 +76,21 @@ every cell. Other pilot observations at c = 1: for the frozen policy,
 zero-width optimism holds on 0.823–0.929 of state-action pairs (range over
 seeds) and the bonus-gap condition of A3 holds on at most 0.0002 of rounds on
 any seed; over all four corrected policies s/s̄ lies in
-[0.9999989, 1.0000128]; at round 20,000 of seed 41000,
+[1 − 1.11 × 10⁻⁶, 1 + 1.28 × 10⁻⁵]; for the frozen policy at round 20,000 of seed 41000,
 β = 15.36 with stochastic 8.23, ridge 1 and historical 6.13 terms.
+
+**Curvature at this scale is negligible, so H2 is expected by construction.**
+At W = 20,000 the relative weights differ from 1 by at most
+1 − sech²(1/√W) = 5.0 × 10⁻⁵, and Corollary 13 bounds d_Th by
+4 log cosh(1/√W) = 1.0 × 10⁻⁴ for every history. Equivalence of frozen,
+endpoint and naive here tests whether score perturbations of order 10⁻⁵ move
+regret by Δ; it says nothing about regimes where curvature matters. This
+follows from the task's constraints: for these constants the frozen bound is
+below the cap only when W is of order T. The c effect in the pilot appears in
+the frozen arm too (66.5 at c = 1 to 44.7 at c = 100) and tracks the Taylor
+envelopes: over the corrected-policy runs, the largest historical β term at
+round 20,000 falls from 6.15 to 0.61 and the largest b_t at the recorded
+rounds from 0.0109 to 0.0011.
 
 ## 2. Policies
 
@@ -131,9 +152,17 @@ at T. All tests are paired by seed.
   implies this in exact arithmetic, so H3 is a numerical confirmation, not a
   stochastic test. A5 < cap is reported for every run of every corrected policy.
 
-**Margin Δ (rule fixed before the pilot output was read):** 10% of the frozen
-policy's mean development regret at the selected c: Δ = 0.1 × 66.464 = **6.65
-regret units**. Justification from development data: the paired-difference SDs
+**Failed runs.** Every run is retained. The harness records replay-check
+excesses, a negative running Q, Newton nonconvergence and an unreached τ as
+run failures; such runs stay in all analyses and are listed. An exception in a
+run is recorded as a crash and does not stop the phase. A crashed
+policy–seed pair is excluded from every test involving that policy and
+listed; H3 fails if any frozen run crashed. Evaluation seeds are never rerun.
+
+**Margin Δ = 6.65 regret units, fixed now and never recomputed.** Rule
+(stated by the drafting agent to have been fixed before the pilot output was
+read; no record predates it): 10% of the frozen policy's mean pilot regret at
+the selected c, 0.1 × 66.464 = 6.646, rounded to 6.65. Justification from development data: the paired-difference SDs
 are 2.31 (endpoint − frozen), 2.47 (naive − frozen) and 0.33
 (endpoint − naive), with dev means −0.45, −0.35 and −0.10. At n = 50 the
 normal-approximation TOST power at a true difference of 0 exceeds 0.999 for
@@ -142,39 +171,49 @@ each pair. These SDs come from 10 seeds and are themselves uncertain.
 ## 4. Primary comparison and multiplicity
 
 - **Primary:** endpoint − frozen, TOST at Δ = 6.65, α = 0.05 (one of the H2
-  pairs). This is the comparison the T3 corollary addresses
-  (`paper/drafts/v3_theory_positioning.tex`).
+  pairs). Motivated by Draft T3 (`paper/drafts/v3_theory_positioning.tex`),
+  which bounds the endpoint exploration term relative to the frozen one as
+  bound expressions; T3 does not predict equivalence of realized regret.
 - H1: Holm across 5. H2: intersection–union, no adjustment. H3: deterministic.
 - **Secondary, unadjusted, labeled as such:** Hessian − frozen and
-  UCB-GLM − frozen, with 95% paired seed-bootstrap intervals (10,000
-  resamples, bootstrap seed `derive_child_seed(41200, "transport_v3/bootstrap")`).
+  UCB-GLM − frozen, with 95% percentile intervals from 10,000 resamples of
+  seed-paired differences, `np.random.default_rng(derive_child_seed(41200,
+  "transport_v3/bootstrap"))`.
+- All of H1–H3, the primary and secondary comparisons and the tuning
+  selection are implemented in `experiments/analyze_transport_v3.py`, which is
+  committed before any tuning or evaluation run. A dry run on the c = 1 pilot
+  runs (development data, n = 10) executed without error; its outputs are not
+  evidence for the hypotheses.
 - **Descriptive:** per-run γ_T, A5/cap, bound/cap, β_t terms at rounds 1, 10,
   100, 1,000, 10,000, 20,000, zero-width-optimism fraction, bonus-gap and
   width-argmax fractions, s/s̄ quantiles, replay checks, runtime, failures.
 
 ## 5. Seeds and phases
 
-| Phase | Seeds | Runs | Purpose |
-|---|---|---:|---|
-| Development | 41000–41009 | 50 (rerun at c = 1 and tuned optimizer) | confirm bound/cap ≤ 0.9 and replay checks before evaluation; stop if either fails |
-| Tuning | 41100–41109 | 60 | uniform behavior; learning rate ∈ {3e-6, 1e-5, 3e-5} × steps ∈ {5, 20}; select the lowest mean all-action prediction MSE after a 10% burn-in; ties to the smaller rate, then fewer steps; nonfinite iterates disqualify |
-| Evaluation | 41200–41249 | 250 | the tests above |
+Order, as the task specifies: development, tuning, evaluation.
 
-All ranges are disjoint from 30000–30249; `parse_seeds` rejects that range.
-The pilot already used the development seeds; tuning and evaluation seeds have
-not been used.
+| Phase | Seeds | Runs | Rule |
+|---|---|---:|---|
+| Development | 41000–41009 | 50 at c = 1, learning rate 1e-5, 20 steps | stop and report to the author, with no tuning or evaluation, if any replay check fails or any frozen bound exceeds 0.9 × cap |
+| Tuning | 41100–41109 | 60 at c = 1, uniform behavior | learning rate ∈ {3e-6, 1e-5, 3e-5} × steps ∈ {5, 20}; score = mean over the 10 seeds of per-run all-action prediction MSE after a 10% burn-in; a configuration with any failed or nonfinite seed is disqualified; ties to the smaller rate, then fewer steps (`analyze_transport_v3 tuning`) |
+| Evaluation | 41200–41249 | 250 at c = 1 with the tuned optimizer | the tests above; the CLI has no optimizer default, and the values used are recorded in `manifest.json` |
+
+All ranges are disjoint from 30000–30249; `parse_seeds` rejects that range
+and empty ranges. The pilot already used the development seeds; tuning and
+evaluation seeds have not been used.
 
 ## 6. Current matrix from category counts
 
 V_t = λI + σ⁻² Σ_c n_{t,c} sech⁴(φ_cᵀθ_t/√W) φ_cφ_cᵀ over the 12 categories;
 the frozen matrix is accumulated by rank-one updates and checked against its
-category form σ⁻²Σ_c F_{t,c}φ_cφ_cᵀ, F_{t,c} = Σ_{s<t: c} sech⁴(φ_cᵀθ_s/√W);
+category form λI + σ⁻²Σ_c F_{t,c}φ_cφ_cᵀ, F_{t,c} = Σ_{s<t: c} sech⁴(φ_cᵀθ_s/√W);
 Q_t uses running sums. At rounds 1, 10, 100, 1,000, 10,000 and 20,000 each run
-rebuilds V_t by dense per-observation replay and Q_t directly. Tolerance:
-4096·ε_mach·d·max(1, largest absolute entry), the rule of the earlier
-study's numerics configuration. Any excess is recorded as a run failure.
-**Pilot result:** 120 corrected-policy runs × 6 checkpoints, 0 failures; the
-largest discrepancy/tolerance ratio over all checks was 3.13 × 10⁻².
+rebuilds V_t by dense per-observation replay and Q_t directly. Tolerance, per check: 4096·ε_mach·d·max(1, largest absolute entry of the two
+compared objects), adapted from the earlier study's rule, which uses the
+operator norm. Any excess is recorded as a run failure.
+**Pilot result** (pooled tolerance over the three checks, as the pilot code
+computed it): 120 corrected-policy runs × 6 checkpoints, 0 failures; the
+largest discrepancy/tolerance ratio was 3.13 × 10⁻².
 
 ## 7. Compute estimate
 
@@ -189,7 +228,7 @@ workers. Storage: about 2.6 kB per run summary.
 | `PHASE2_PLAN.md` | This protocol | Reason |
 |---|---|---|
 | d = 2, φ = (1, aξ)/√2 | d = 6, kron features, 3 actions, 4 contexts | the d = 2 design has two orthogonal feature vectors, so it reduces to a two-armed bandit with gap ≈ 1.41 ≈ 5.7σ and context only relabels actions |
-| c = 100 | c = 1 by a prespecified dev rule | smallest c meeting the bound margin; more curvature at the same cost |
+| c = 100 | c = 1 by a prespecified dev rule | smallest c meeting the bound margin; larger Taylor envelopes at the same cost; curvature is negligible at either c (d_Th ≤ 1.0 × 10⁻⁴ at c = 1) |
 | no GLM baseline | UCB-GLM | required by the task |
 | primary: Hessian − frozen difference | primary: endpoint − frozen TOST | the task's equivalence hypothesis and Draft T3 |
 | development 41000–41001 | 41000–41009 | variance estimate for Δ |
