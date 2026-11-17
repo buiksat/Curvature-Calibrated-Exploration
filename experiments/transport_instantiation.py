@@ -281,12 +281,13 @@ def policy_scores(
         raise ValueError("current_bias must be scalar or match the centers")
     if not np.all(np.isfinite(bias)) or np.any(bias < 0.0):
         raise ValueError("current_bias must be finite and nonnegative")
+    # Evaluate only the selected policy's factor, so an unused exp(D/2) cannot overflow.
     widths = {
-        "transport_hessian": math.exp(0.5 * d_q) * current,
-        "transport_endpoint": math.exp(0.5 * endpoint) * current,
-        "frozen_reference": frozen,
-        "naive_current": current,
-    }[selected_method]
+        "transport_hessian": lambda: math.exp(0.5 * d_q) * current,
+        "transport_endpoint": lambda: math.exp(0.5 * endpoint) * current,
+        "frozen_reference": lambda: frozen,
+        "naive_current": lambda: current,
+    }[selected_method]()
     return np.asarray(centers + confidence * widths + bias, dtype=np.float64)
 
 
@@ -1158,6 +1159,7 @@ class _ResolvedConfig:
     horizons: tuple[int, ...]
     tuning_burn_in: int
     raise_on_audit_failure: bool
+    ratio_tolerance: float
 
     @classmethod
     def from_mapping(cls, source: Mapping[str, Any], horizon: int) -> "_ResolvedConfig":
@@ -1301,6 +1303,11 @@ class _ResolvedConfig:
                     ),
                     False,
                 )
+            ),
+            # The aggregator applies the same threshold when it recomputes these ratios.
+            ratio_tolerance=_nonnegative_float(
+                _nested_value(source, ("numerics.ratio_denominator_tolerance",), 1e-12),
+                name="ratio_denominator_tolerance",
             ),
         )
 
@@ -1987,12 +1994,12 @@ def run_policy_trajectory(
             "d_Th_minus_D_Q": d_th_minus_d_q,
             "D_Q_over_d_Th": (
                 d_q / endpoint_distance
-                if endpoint_distance > scalar_tolerance
+                if endpoint_distance > resolved.ratio_tolerance
                 else None
             ),
             "D_Q_over_path_quad": (
                 d_q / path_length
-                if path_length is not None and path_length > scalar_tolerance
+                if path_length is not None and path_length > resolved.ratio_tolerance
                 else None
             ),
             "reference_confidence_all_actions": reference_confidence,
