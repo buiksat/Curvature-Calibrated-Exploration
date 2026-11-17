@@ -38,7 +38,9 @@ CONTEXTS = np.asarray([[i, j] for i in (-1.0, 1.0) for j in (-1.0, 1.0)]) / math
 FEATURES = np.asarray([[np.kron(x, np.eye(K)[a]) for a in range(K)] for x in CONTEXTS])  # (4, K, D)
 CATEGORY_FEATURES = FEATURES.reshape(-1, D)  # category = context * K + action
 CORRECTED_METHODS = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
-METHODS = CORRECTED_METHODS + ("ucb_glm",)
+# Uncertified small-W arms: corrected center, statistical+ridge radius only, b_t = 0.
+ENVELOPE_FREE_METHODS = ("frozen_reference_no_envelope", "naive_current_no_envelope")
+METHODS = CORRECTED_METHODS + ENVELOPE_FREE_METHODS + ("linucb", "ucb_glm")
 CHECKPOINTS = (1, 10, 100, 1000, 10000, 20000)
 
 
@@ -106,6 +108,8 @@ def tolerance(*arrays) -> float:
 
 
 def run_corrected(method: str, seed: int, spec: Spec) -> dict:
+    base = method.removesuffix("_no_envelope")
+    envelope = base == method
     theta_o = teacher(spec.teacher_seed, spec.radius)
     ctx, mu, rewards = stream(seed, spec, theta_o)
     width, sigma2 = spec.width, spec.sigma ** 2
@@ -117,7 +121,7 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
     theta_sum, theta_sq_sum = np.zeros(D), 0.0
     categories, thetas = np.zeros(spec.horizon, dtype=np.int64), np.zeros((spec.horizon, D))
     hist_energy = regret = bias_sum = beta_sq_sum = a5_sum = 0.0
-    zero_width_ok = gap_dominated = width_argmax = ratio_count = 0
+    zero_width_ok = gap_dominated = width_argmax = optimism_failures = 0
     ratios, checks, beta_log, failures = [], [], {}, []
     start = time.perf_counter()
     for t in range(spec.horizon):
@@ -134,22 +138,25 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
             gamma, delta=spec.delta, ridge=spec.ridge, theta_radius=spec.radius,
             historical_error_energy=hist_energy, noise_std=spec.sigma)
         bias = 0.5 * lip * (spec.radius + np.linalg.norm(theta)) ** 2
+        if not envelope:
+            beta, bias = beta_stat, 0.0
         q_t = t * float(theta @ theta) - 2.0 * float(theta @ theta_sum) + theta_sq_sum
         if q_t < -tolerance([theta_sq_sum]):
             failures.append(f"negative_running_Q_round_{t + 1}")
         d_q = 2.0 * lip * math.sqrt(max(q_t, 0.0)) / (spec.sigma * math.sqrt(spec.ridge))
         d_th, _ = ti.thompson_distance(frozen, current)
-        scores = ti.policy_scores(method, centers, beta=beta, current_bias=bias, frozen_widths=sbar,
+        scores = ti.policy_scores(base, centers, beta=beta, current_bias=bias, frozen_widths=sbar,
                                   current_widths=s, hessian_path_bound=d_q, endpoint_distance=d_th)
         a = int(np.argmax(scores))
         regret += float(mu[t].max() - mu[t, a])
         # Diagnostics (A2-A6 analogues) on this policy's own history.
         own_w = {"transport_hessian": math.exp(0.5 * d_q) * s, "transport_endpoint": math.exp(0.5 * d_th) * s,
-                 "frozen_reference": sbar, "naive_current": s}[method]
+                 "frozen_reference": sbar, "naive_current": s}[base]
         top = np.sort(beta * own_w)
         gap_dominated += int(top[-1] - top[-2] > np.ptp(centers))
         width_argmax += int(a == int(np.argmax(own_w)))
         zero_width_ok += int(np.sum(centers + bias >= mu[t]))
+        optimism_failures += int(np.sum(scores < mu[t]))
         ratios.extend((s / sbar).tolist())
         if t + 1 in CHECKPOINTS:
             dense_current = spec.ridge * np.eye(D)
@@ -204,10 +211,35 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
         "gap_dominated_fraction": gap_dominated / spec.horizon,
         "width_argmax_fraction": width_argmax / spec.horizon,
         "zero_width_optimism_fraction": zero_width_ok / (K * spec.horizon),
+        "optimism_failure_pairs": optimism_failures,
         "s_over_sbar_quantiles": {str(p): float(np.quantile(ratios, p)) for p in (0.0, 0.1, 0.5, 0.9, 1.0)},
         "final_theta_norm": float(np.linalg.norm(theta)),
         "failures": failures, "runtime_seconds": time.perf_counter() - start,
     }
+
+
+def run_linucb(seed: int, spec: Spec) -> dict:
+    """The paper's corrected-center frozen-width UCB for the linear model phi^T theta: ridge on raw
+    rewards, radius sqrt(gamma_{t-1} + 2 log(1/delta)) + sqrt(lambda) R, b_t = 0 (uncertified under
+    the scaled-tanh misspecification)."""
+    theta_o = teacher(spec.teacher_seed, spec.radius)
+    ctx, mu, rewards = stream(seed, spec, theta_o)
+    sigma2 = spec.sigma ** 2
+    metric, rhs = spec.ridge * np.eye(D), np.zeros(D)
+    regret, optimism_failures = 0.0, 0
+    start = time.perf_counter()
+    for t in range(spec.horizon):
+        feats = FEATURES[int(ctx[t])]
+        beta = math.sqrt(ti.information_gain(metric, spec.ridge) + 2.0 * math.log(1.0 / spec.delta)) + math.sqrt(spec.ridge) * spec.radius
+        scores = feats @ ti.cholesky_solve(metric, rhs) + beta * ti.inverse_quadratic_widths(metric, feats)
+        a = int(np.argmax(scores))
+        regret += float(mu[t].max() - mu[t, a])
+        optimism_failures += int(np.sum(scores < mu[t]))
+        metric += np.outer(feats[a], feats[a]) / sigma2
+        rhs += feats[a] * rewards[t, a] / sigma2
+    return {"method": "linucb", "seed": seed, "spec": asdict(spec), "W": spec.width, "regret": regret,
+            "context_free_regret": context_free_regret(mu, rewards), "optimism_failure_pairs": optimism_failures,
+            "failures": [], "runtime_seconds": time.perf_counter() - start}
 
 
 def run_ucb_glm(seed: int, spec: Spec) -> dict:
@@ -286,6 +318,8 @@ def run(job):
     try:
         if method == "tuning_uniform":
             return run_tuning(seed, spec)
+        if method == "linucb":
+            return run_linucb(seed, spec)
         return run_ucb_glm(seed, spec) if method == "ucb_glm" else run_corrected(method, seed, spec)
     except Exception:
         return {"method": method, "seed": seed, "spec": asdict(spec), "crashed": True,

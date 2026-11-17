@@ -1,4 +1,4 @@
-"""Prespecified analysis for PROTOCOL_V3.md (tuning selection and evaluation tests).
+"""Prespecified analysis for PROTOCOL_V3.md (tuning selection and evaluation summaries).
 
   python -m experiments.analyze_transport_v3 tuning TUNING/runs.jsonl
   python -m experiments.analyze_transport_v3 evaluation EVAL/runs.jsonl --output RESULT.json
@@ -17,12 +17,19 @@ from scipy import stats
 
 from experiments import transport_instantiation as ti
 
-DELTA_MARGIN = 6.65  # fixed from the development pilot; never recomputed
-POLICIES = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current", "ucb_glm")
+HORIZON = 20000
+DESIGN_W = float(HORIZON)  # W = T cell
+SMALL_W = (100.0, 10.0, 1.0)
+DELTA_MARGIN = 3.0  # fixed in absolute regret units; never recomputed
+H1_POLICIES = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current", "linucb", "ucb_glm")
 EQUIVALENCE_PAIRS = (("transport_endpoint", "frozen_reference"), ("naive_current", "frozen_reference"),
                      ("transport_endpoint", "naive_current"))
-SECONDARY_PAIRS = (("transport_hessian", "frozen_reference"), ("ucb_glm", "frozen_reference"))
-BOOTSTRAP_SEED = ti.derive_child_seed(41200, "transport_v3/bootstrap")
+PRIMARY_PAIRS = (("ucb_glm", "frozen_reference"), ("transport_hessian", "frozen_reference"))
+DESCRIPTIVE_PAIRS = (("naive_current", "frozen_reference"), ("transport_endpoint", "frozen_reference"),
+                     ("naive_current_no_envelope", "frozen_reference_no_envelope"),
+                     ("transport_hessian", "frozen_reference"), ("linucb", "frozen_reference"),
+                     ("ucb_glm", "frozen_reference"))
+CERTIFIED = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
 TUNING_SEEDS = 10
 
 
@@ -55,56 +62,81 @@ def holm(pvalues: dict, alpha: float = 0.05) -> dict:
     return rejected
 
 
-def evaluate(runs: list[dict]) -> dict:
-    regret, failed, cf = defaultdict(dict), defaultdict(list), {}
+def bootstrap_ci(d: np.ndarray, label: str) -> list[float]:
+    """95% percentile interval over 10,000 resamples of seed-paired differences."""
+    rng = np.random.default_rng(ti.derive_child_seed(41200, f"transport_v3/bootstrap/{label}"))
+    boot = d[rng.integers(0, len(d), size=(10000, len(d)))].mean(axis=1)
+    return [float(np.quantile(boot, 0.025)), float(np.quantile(boot, 0.975))]
+
+
+def analyze_cell(runs: list[dict], width: float) -> dict:
+    regret, cf, flagged = defaultdict(dict), {}, defaultdict(list)
     for r in runs:
         if r.get("crashed"):
-            failed[r["method"]].append(r["seed"])
+            flagged[r["method"]].append([r["seed"], "crash"])
             continue
         regret[r["method"]][r["seed"]] = r["regret"]
         cf[r["seed"]] = r["context_free_regret"]
         if r["failures"]:
-            failed[r["method"]].append(r["seed"])  # flagged, still analyzed
+            flagged[r["method"]].append([r["seed"], r["failures"][:3]])  # flagged, still analyzed
 
     def paired(a, b):
-        seeds = sorted(set(regret[a]) & set(b if isinstance(b, dict) else regret[b]))
         right = b if isinstance(b, dict) else regret[b]
+        seeds = sorted(set(regret[a]) & set(right))
         return np.asarray([regret[a][s] - right[s] for s in seeds])
 
-    h1_p = {p: float(stats.ttest_1samp(paired(p, cf), 0.0, alternative="less").pvalue) for p in POLICIES}
-    h1_reject = holm(h1_p)
+    def describe(a, b):
+        d = paired(a, b)
+        return {"n": len(d), "mean": float(d.mean()), "bootstrap_ci95": bootstrap_ci(d, f"{width:g}/{a}-{b}")} if len(d) else None
+
+    ok = [r for r in runs if not r.get("crashed")]
+    out = {
+        "W": width, "flagged_or_crashed": dict(flagged),
+        "mean_regret": {m: float(np.mean(list(v.values()))) for m, v in sorted(regret.items())},
+        "mean_context_free": float(np.mean(list(cf.values()))) if cf else None,
+        "optimism_failure_pairs": {m: [int(sum(r["optimism_failure_pairs"] for r in ok if r["method"] == m)),
+                                       sum(r["optimism_failure_pairs"] > 0 for r in ok if r["method"] == m)]
+                                   for m in sorted({r["method"] for r in ok if "optimism_failure_pairs" in r})},
+        "s_over_sbar": {m: [min(r["s_over_sbar_quantiles"]["0.0"] for r in ok if r["method"] == m),
+                            float(np.median([r["s_over_sbar_quantiles"]["0.5"] for r in ok if r["method"] == m])),
+                            max(r["s_over_sbar_quantiles"]["1.0"] for r in ok if r["method"] == m)]
+                        for m in sorted({r["method"] for r in ok if "s_over_sbar_quantiles" in r})},
+        "descriptive_pairs": {f"{a}-{b}": describe(a, b) for a, b in DESCRIPTIVE_PAIRS},
+    }
+    if width != DESIGN_W:
+        return out
+    # Design checks (expected to pass by construction; not hypothesis tests).
+    h1_p = {p: float(stats.ttest_1samp(paired(p, cf), 0.0, alternative="less").pvalue) for p in H1_POLICIES}
+    h1 = holm(h1_p)
     h2 = {}
     for a, b in EQUIVALENCE_PAIRS:
         d = paired(a, b)
         half = stats.t.ppf(0.95, len(d) - 1) * d.std(ddof=1) / math.sqrt(len(d))
-        lo, hi = d.mean() - half, d.mean() + half
-        h2[f"{a}-{b}"] = {"n": len(d), "mean": float(d.mean()), "ci90": [float(lo), float(hi)],
-                          "equivalent": bool(-DELTA_MARGIN < lo and hi < DELTA_MARGIN)}
-    rng = np.random.default_rng(BOOTSTRAP_SEED)
-    secondary = {}
-    for a, b in SECONDARY_PAIRS:
-        d = paired(a, b)
-        boot = d[rng.integers(0, len(d), size=(10000, len(d)))].mean(axis=1)
-        secondary[f"{a}-{b}"] = {"n": len(d), "mean": float(d.mean()),
-                                 "percentile_ci95": [float(np.quantile(boot, 0.025)), float(np.quantile(boot, 0.975))]}
+        h2[f"{a}-{b}"] = {"n": len(d), "mean": float(d.mean()), "ci90": [float(d.mean() - half), float(d.mean() + half)],
+                          "equivalent": bool(-DELTA_MARGIN < d.mean() - half and d.mean() + half < DELTA_MARGIN)}
     frozen = [r for r in runs if r["method"] == "frozen_reference"]
-    corrected = [r for r in runs if r["method"] in POLICIES[:4]]
-    return {
-        "delta_margin": DELTA_MARGIN, "failed_or_flagged_seeds": dict(failed),
-        "H1": {p: {"n": len(paired(p, cf)), "mean_minus_context_free": float(paired(p, cf).mean()),
-                   "p_one_sided": h1_p[p], "holm_reject": h1_reject[p]} for p in POLICIES},
-        "H1_holds": all(h1_reject.values()),
-        "H2": h2, "H2_holds": all(v["equivalent"] for v in h2.values()),
-        "primary_endpoint_minus_frozen": h2["transport_endpoint-frozen_reference"],
+    certified = [r for r in runs if r["method"] in CERTIFIED]
+    out["design_checks"] = {
+        "H1": {p: {"p_one_sided": h1_p[p], "holm_reject": h1[p]} for p in H1_POLICIES}, "H1_holds": all(h1.values()),
+        "H2_delta": DELTA_MARGIN, "H2": h2, "H2_holds": all(v["equivalent"] for v in h2.values()),
         "H3_frozen_runs_below_cap": sum(not r.get("crashed") and r["frozen_form_bound"] < r["cap"] for r in frozen),
         "H3_frozen_runs": len(frozen),
-        "H3_holds": len(frozen) > 0 and all(not r.get("crashed") and r["frozen_form_bound"] < r["cap"] for r in frozen),
-        "A5_below_cap_runs": sum(not r.get("crashed") and r["A5"] < r["cap"] for r in corrected),
-        "corrected_runs": len(corrected),
-        "secondary_unadjusted": secondary,
-        "mean_regret": {p: float(np.mean(list(regret[p].values()))) for p in POLICIES if regret[p]},
-        "mean_context_free": float(np.mean(list(cf.values()))),
+        "H3_holds": bool(frozen) and all(not r.get("crashed") and r["frozen_form_bound"] < r["cap"] for r in frozen),
+        "A5_below_cap_runs": [sum(not r.get("crashed") and r["A5"] < r["cap"] for r in certified), len(certified)],
     }
+    # Primary family: two-sided paired t, Holm over the two comparisons.
+    p = {f"{a}-{b}": float(stats.ttest_1samp(paired(a, b), 0.0).pvalue) for a, b in PRIMARY_PAIRS}
+    reject = holm(p)
+    out["primary"] = {f"{a}-{b}": {**describe(a, b), "p_two_sided": p[f"{a}-{b}"], "holm_reject": reject[f"{a}-{b}"]}
+                      for a, b in PRIMARY_PAIRS}
+    return out
+
+
+def evaluate(runs: list[dict]) -> dict:
+    cells = defaultdict(list)
+    for r in runs:
+        cells[round(r["spec"]["c"] * r["spec"]["horizon"], 9)].append(r)
+    return {f"W={w:g}": analyze_cell(rs, w) for w, rs in sorted(cells.items(), reverse=True)}
 
 
 def main() -> None:

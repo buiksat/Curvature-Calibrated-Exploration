@@ -35,3 +35,10 @@ def test_holm_is_step_down():
     from experiments.analyze_transport_v3 import holm
     assert holm({"a": 0.001, "b": 0.03, "c": 0.04}) == {"a": True, "b": False, "c": False}
     assert holm({"a": 0.01, "b": 0.02, "c": 0.03}) == {"a": True, "b": True, "c": True}
+
+
+def test_new_arms_run_without_failures_at_small_width():
+    spec = v.Spec(horizon=120, c=1.0 / 120)  # W = 1
+    for method in v.ENVELOPE_FREE_METHODS + ("linucb",):
+        result = v.run((method, 41000, spec))
+        assert result["failures"] == [], (method, result.get("traceback"))
