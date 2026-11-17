@@ -39,7 +39,7 @@ class TransportStudyError(RuntimeError):
     """Raised when the preregistered study protocol is incomplete or invalid."""
 
 
-# experiments/BUCK was hashed by the 2026-10-14 run but archived in e3f41962, so it is no longer required.
+# experiments/BUCK was hashed by the 2026-10-14 run but has since been archived, so it is no longer required.
 STUDY_SOURCE_PATHS = (
     "experiments/README.md",
     "experiments/TRANSPORT_INSTANTIATION_PROTOCOL.md",
