@@ -21,6 +21,11 @@ RTOL = 1e-10
 POLICIES = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
 SCORE_FIELD = {"transport_hessian": "hessian_transport_scores", "transport_endpoint": "endpoint_transport_scores",
                "frozen_reference": "frozen_reference_scores", "naive_current": "naive_current_scores"}
+# every logged numeric field the checks read; each must be finite in every round
+USED = ("corrected_centers", "true_means", "frozen_widths", "current_widths", "current_bias", "beta_t_corr",
+        "beta_stat", "beta_hist", "gamma_t", "gamma_t_minus_1", "historical_certified_error_energy", "theta_t_norm",
+        "D_Q", "Q_t", "endpoint_thompson_distance", "scores", *SCORE_FIELD.values(), "instantaneous_pseudo_regret",
+        "cumulative_pseudo_regret", "played_frozen_width")
 
 
 def close(a, b):
@@ -45,9 +50,13 @@ def check_run(job):
     a2 = {}
     rounds = 0
     for line in path.open():
-        m = json.loads(line)["metrics"]
+        record = json.loads(line)
+        m = record["metrics"]
         rounds += 1
         t = m["round"]
+        # labels must match position (outer round is zero-based, metrics round one-based) and the run's seed
+        if t != rounds or record["round"] != rounds - 1 or record["seed"] != summary["seed"]: note("round_or_seed_label")
+        if not all(np.all(np.isfinite(np.asarray(m[k], float))) for k in USED): note("nonfinite_input")
         centers = np.asarray(m["corrected_centers"]); true = np.asarray(m["true_means"])
         sbar = np.asarray(m["frozen_widths"]); s = np.asarray(m["current_widths"])
         bias, beta = m["current_bias"], m["beta_t_corr"]
@@ -104,17 +113,20 @@ def check_run(job):
 if __name__ == "__main__":
     out, committed_path, out_json = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
     paths = sorted(p for p in out.glob("raw/evaluation/T-1000/*/*/seed-*/raw.jsonl") if (p.parent / "summary.json").exists())
-    committed = {(r["W"], r["method"], r["seed"]): r for r in map(json.loads, committed_path.open())}
-    jobs = []
+    rows = [json.loads(line) for line in committed_path.open()]
+    committed = {(r["W"], r["method"], r["seed"]): r for r in rows}
+    jobs, identities = [], []
     for p in paths:
         s = json.loads((p.parent / "summary.json").read_text())
-        jobs.append((p, committed.get((s["W"], s["method"], s["seed"]))))
+        identities.append((s["W"], s["method"], s["seed"]))
+        jobs.append((p, committed.get(identities[-1])))
+    # both sides must hold each (W, method, seed) exactly once, and the same set of them
+    if len(set(identities)) != len(identities) or len(committed) != len(rows) or set(identities) != set(committed):
+        print(f"IDENTITY MISMATCH: replay {len(identities)} runs, {len(set(identities))} distinct; committed "
+              f"{len(rows)} rows, {len(committed)} distinct; missing {sorted(set(committed) - set(identities))[:5]}")
+        raise SystemExit(1)
     with ProcessPoolExecutor(32) as pool:
         results = list(pool.map(check_run, jobs, chunksize=4))
-    if len(results) != len(committed):
-        total_missing = len(committed) - len(results)
-        print(f"MISSING replayed runs: {total_missing}")
-        raise SystemExit(1)
     total_bad = {}
     for r in results:
         for k, v in r["bad"].items():

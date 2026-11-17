@@ -35,7 +35,7 @@ containing `sha256` or `digest`, timings, worker count, git and Python details, 
 
 `check_raw.py` uses only the logged fields and the paper's formulas; it does not import the harness. It
 reconstructs each score with the simulator's association, centers + (beta * factor) * width + bias, so the
-scores must match exactly. Other quantities must agree to a relative 1e-10, and any nonfinite value fails.
+scores must match exactly. Other quantities must agree to a relative 1e-10. Every logged field it reads must be finite, each record's round labels must match its position and its seed the run's, and the replayed and committed runs must be the same set with no duplicates.
 It takes the logged centers, widths, gamma and Q_t as given; it does not rebuild those from the observations.
 It also runs the two Phase 1 checks that needed raw logs (`AUDIT_REPORT.md`, A2 and A4):
 
