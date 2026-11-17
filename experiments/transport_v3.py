@@ -118,7 +118,7 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
     theta = np.zeros(D)
     frozen, rhs = spec.ridge * np.eye(D), np.zeros(D)
     counts, frozen_weights, reward_sums = np.zeros(len(CATEGORY_FEATURES)), np.zeros(len(CATEGORY_FEATURES)), np.zeros(len(CATEGORY_FEATURES))
-    theta_sum, theta_sq_sum = np.zeros(D), 0.0
+    theta_mean, theta_scatter = np.zeros(D), 0.0  # Welford mean and scatter of collection parameters
     categories, thetas = np.zeros(spec.horizon, dtype=np.int64), np.zeros((spec.horizon, D))
     hist_energy = regret = bias_sum = beta_sq_sum = a5_sum = 0.0
     zero_width_ok = gap_dominated = width_argmax = optimism_failures = 0
@@ -140,10 +140,9 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
         bias = 0.5 * lip * (spec.radius + np.linalg.norm(theta)) ** 2
         if not envelope:
             beta, bias = beta_stat, 0.0
-        q_t = t * float(theta @ theta) - 2.0 * float(theta @ theta_sum) + theta_sq_sum
-        if q_t < -tolerance([theta_sq_sum]):
-            failures.append(f"negative_running_Q_round_{t + 1}")
-        d_q = 2.0 * lip * math.sqrt(max(q_t, 0.0)) / (spec.sigma * math.sqrt(spec.ridge))
+        # Q_t = sum_{s<t} ||theta_t - theta_s||^2 = scatter + t ||theta_t - mean||^2, both terms nonnegative.
+        q_t = theta_scatter + t * float((theta - theta_mean) @ (theta - theta_mean))
+        d_q = 2.0 * lip * math.sqrt(q_t) / (spec.sigma * math.sqrt(spec.ridge))
         d_th, _ = ti.thompson_distance(frozen, current)
         scores = ti.policy_scores(base, centers, beta=beta, current_bias=bias, frozen_widths=sbar,
                                   current_widths=s, hessian_path_bound=d_q, endpoint_distance=d_th)
@@ -184,8 +183,9 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
         frozen_weights[cat] += float(weight(theta, feats[a], width)) ** 2
         reward_sums[cat] += rewards[t, a]
         categories[t], thetas[t] = cat, theta
-        theta_sum += theta
-        theta_sq_sum += float(theta @ theta)
+        step = theta - theta_mean
+        theta_mean = theta_mean + step / (t + 1)
+        theta_scatter += float(step @ (theta - theta_mean))
         hist_energy += bias ** 2
         bias_sum += bias
         beta_sq_sum += beta ** 2
