@@ -198,6 +198,13 @@ def phase_ready(root, name):
     return False
 
 
+def mark_succeeded(manifest, **fields):
+    """Record a successful outcome; keep an error from an earlier interrupted attempt as history."""
+    if "error" in manifest:
+        manifest["resumed_after_error"] = manifest.pop("error")
+    manifest.update(**fields)
+
+
 def finish_phase(root, name):
     paths = [root / name, root / (name + ".provenance.json"), root / (name + ".sha256")]
     write_json(root / ("." + name + ".complete.json"), {path.name: sha256(path) for path in paths})
@@ -376,7 +383,7 @@ def run(args):
             study.run_development(config, root / "raw", overwrite=False)
             check_sources()
             if args.development_only:
-                manifest.update(status="development_complete", evaluation_complete=False)
+                mark_succeeded(manifest, status="development_complete", evaluation_complete=False)
                 write_json(manifest_path, manifest)
                 print("Declared development grid passed; tuning and evaluation have not been run.")
                 return 0
@@ -407,8 +414,8 @@ def run(args):
                 write_sha256_sidecar(aggregate_path)
                 finish_phase(root, "aggregate.json")
             check_sources()
-            manifest.update(status="complete", aggregate_sha256=sha256(aggregate_path),
-                            completed_at=dt.datetime.now(dt.timezone.utc).isoformat(), evaluation_complete=True)
+            mark_succeeded(manifest, status="complete", aggregate_sha256=sha256(aggregate_path),
+                           completed_at=dt.datetime.now(dt.timezone.utc).isoformat(), evaluation_complete=True)
             write_json(manifest_path, manifest)
             export_path = args.export_dir or REPO / "review/transport_review_followup" / f"{args.profile}-{root.name}"
             exported = export_compact(root, aggregate, manifest, export_path)
