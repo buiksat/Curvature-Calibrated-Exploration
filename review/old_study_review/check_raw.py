@@ -25,10 +25,13 @@ SCORE_FIELD = {"transport_hessian": "hessian_transport_scores", "transport_endpo
 
 def close(a, b):
     a, b = np.asarray(a, float), np.asarray(b, float)
+    if not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
+        return False
     return bool(np.all(np.abs(a - b) <= RTOL * np.maximum(1.0, np.maximum(np.abs(a), np.abs(b)))))
 
 
-def check_run(path):
+def check_run(job):
+    path, committed = job
     summary = json.loads((path.parent / "summary.json").read_text())
     w, method = summary["W"], summary["method"]
     lip = C_H / math.sqrt(w)
@@ -60,19 +63,18 @@ def check_run(path):
         if not close(bias, 0.5 * lip * (R + m["theta_t_norm"]) ** 2): note("envelope")
         if not close(m["D_Q"], 2 * lip * math.sqrt(max(m["Q_t"], 0.0)) / (SIGMA * math.sqrt(LAM))): note("D_Q")
         if m["Q_t"] < 0: note("Q_negative")
-        # scores of all four policies
-        width = {"transport_hessian": math.exp(m["D_Q"] / 2) * s,
-                 "transport_endpoint": math.exp(m["endpoint_thompson_distance"] / 2) * s,
-                 "frozen_reference": sbar, "naive_current": s}
+        # scores of all four policies, in the paper's form m + beta * factor * width + b, evaluated with the
+        # simulator's association (coefficient beta * factor first) so the binary64 scores must match exactly
+        coef = {"transport_hessian": beta * math.exp(m["D_Q"] / 2),
+                "transport_endpoint": beta * math.exp(m["endpoint_thompson_distance"] / 2),
+                "frozen_reference": beta, "naive_current": beta}
+        width = {"transport_hessian": s, "transport_endpoint": s, "frozen_reference": sbar, "naive_current": s}
+        recon = {p: centers + coef[p] * width[p] + bias for p in POLICIES}
         for p in POLICIES:
-            if not close(m[SCORE_FIELD[p]], centers + beta * width[p] + bias): note(f"score_{p}")
-        own = centers + beta * width[method] + bias
-        if not close(m["scores"], own): note("scores_field_is_own_policy")
-        top = float(np.max(own))  # exact ties go to the smallest index; allow recomputation rounding at ties
-        winners = np.flatnonzero(own >= top - RTOL * max(1.0, abs(top)))
-        if m["selected_action"] != int(winners[0]) and not close(own[m["selected_action"]], top): note("argmax")
-        logged = np.asarray(m["scores"])
-        if m["selected_action"] != int(np.argmax(logged)): note("argmax_of_logged_scores")
+            if not np.array_equal(np.asarray(m[SCORE_FIELD[p]]), recon[p]): note(f"score_{p}")
+        own = recon[method]
+        if not np.array_equal(np.asarray(m["scores"]), own): note("scores_field_is_own_policy")
+        if m["selected_action"] != int(np.argmax(own)): note("argmax")  # first maximum, as np.argmax in the simulator
         if m["optimal_action"] != int(np.argmax(true)): note("optimal_action")
         inst = float(true.max() - true[m["selected_action"]])
         if not close(m["instantaneous_pseudo_regret"], inst): note("instantaneous_regret")
@@ -93,6 +95,7 @@ def check_run(path):
     for key, value in (("cumulative_pseudo_regret", cum_regret), ("current_bias_cumulative", 2 * bias_sum),
                        ("frozen_width_sum", frozen_sum), ("rounds", rounds)):
         if not close(summary[key], value): note(f"summary_{key}")
+        if committed is None or not close(committed[key], value): note(f"committed_summary_{key}")
     return {"W": w, "method": method, "seed": summary["seed"], "bad": bad, "zero_width_ok": zero_width_ok,
             "zero_width_pairs": zero_width_pairs, "min_zero_width_slack": min_slack,
             "own_optimism_rounds": own_optimism_rounds, "a2": a2}
@@ -101,8 +104,17 @@ def check_run(path):
 if __name__ == "__main__":
     out, committed_path, out_json = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
     paths = sorted(p for p in out.glob("raw/evaluation/T-1000/*/*/seed-*/raw.jsonl") if (p.parent / "summary.json").exists())
+    committed = {(r["W"], r["method"], r["seed"]): r for r in map(json.loads, committed_path.open())}
+    jobs = []
+    for p in paths:
+        s = json.loads((p.parent / "summary.json").read_text())
+        jobs.append((p, committed.get((s["W"], s["method"], s["seed"]))))
     with ProcessPoolExecutor(32) as pool:
-        results = list(pool.map(check_run, paths, chunksize=4))
+        results = list(pool.map(check_run, jobs, chunksize=4))
+    if len(results) != len(committed):
+        total_missing = len(committed) - len(results)
+        print(f"MISSING replayed runs: {total_missing}")
+        raise SystemExit(1)
     total_bad = {}
     for r in results:
         for k, v in r["bad"].items():

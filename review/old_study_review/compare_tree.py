@@ -8,15 +8,16 @@ import json
 import sys
 from pathlib import Path
 
-EXACT = {"path", "output", "outputs", "runtime_seconds", "elapsed_seconds", "timestamp_utc", "started_at", "completed_at",
-         "workers", "python", "signature", "git_revision", "git_dirty", "git_dirty_at_start", "error"}
+# Filesystem locations are listed by name: "factor_path" is a scientific recipe, not a location.
+EXACT = {"path", "summary_path", "selection_path", "protocol_path", "output", "outputs", "runtime_seconds",
+         "elapsed_seconds", "timestamp_utc", "started_at", "completed_at", "workers", "python", "signature",
+         "git_revision", "git_dirty", "git_dirty_at_start", "error"}
 EXTRA = sys.argv[3:]
 
 
 def volatile(k):
     k = k.lower()
-    return (k in EXACT or k.endswith("_path") or "sha256" in k or "digest" in k
-            or any(e in k for e in EXTRA))
+    return k in EXACT or "sha256" in k or "digest" in k or any(e in k for e in EXTRA)
 skipped, diffs = set(), []
 
 

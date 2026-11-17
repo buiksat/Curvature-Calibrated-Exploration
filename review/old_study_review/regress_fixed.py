@@ -35,7 +35,7 @@ def one(job):
     diffs, ratio_changes = 0, 0
     for new, old in zip(norm(list(run.rounds)), logged):
         for k in set(new) | set(old):
-            if new.get(k) != old.get(k):
+            if k not in new or k not in old or new[k] != old[k]:  # a missing field differs from a null one
                 if k in RATIO:
                     ratio_changes += 1
                 else:
