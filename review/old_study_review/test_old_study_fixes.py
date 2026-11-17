@@ -37,17 +37,21 @@ def test_unused_transport_factor_cannot_overflow():
 
 def test_logged_ratios_use_the_configured_denominator_tolerance():
     config = load_config(ROOT / "experiments/configs/transport_review_followup.yaml", "full")
-    row = run_policy_trajectory(config, "frozen_reference", 50004, 2, 0.001, OptimizerSpec(0.0003, 20), "none").rounds[1]
+    # "full" diagnostics compute the quadrature path length, so both ratio fields are exercised
+    row = run_policy_trajectory(config, "frozen_reference", 50004, 2, 0.001, OptimizerSpec(0.0003, 20), "full").rounds[1]
     tolerance = config["numerics"]["ratio_denominator_tolerance"]
-    assert tolerance < row["d_Th"] <= row["algebra_tolerance"]  # the case the old algebra-tolerance rule dropped
-    assert math.isclose(row["D_Q_over_d_Th"], row["D_Q"] / row["d_Th"], rel_tol=1e-15)
+    for ratio, denominator in (("D_Q_over_d_Th", "d_Th"), ("D_Q_over_path_quad", "D_path_quad")):
+        assert tolerance < row[denominator] <= row["algebra_tolerance"]  # the case the old rule dropped
+        assert math.isclose(row[ratio], row["D_Q"] / row[denominator], rel_tol=1e-15)
 
 
-def test_success_moves_an_earlier_interruption_out_of_the_active_error():
+def test_success_moves_earlier_interruptions_out_of_the_active_error():
     manifest = {"status": "incomplete", "error": "KeyboardInterrupt: "}
+    launcher.mark_succeeded(manifest, status="development_complete", evaluation_complete=False)
+    manifest.update(status="incomplete", error="OSError: disk full")  # a later attempt fails, then resumes
     launcher.mark_succeeded(manifest, status="complete", evaluation_complete=True)
     assert "error" not in manifest
-    assert manifest["resumed_after_error"] == "KeyboardInterrupt: "
+    assert manifest["resumed_after_errors"] == ["KeyboardInterrupt: ", "OSError: disk full"]
     assert manifest["status"] == "complete" and manifest["evaluation_complete"] is True
     clean = {"status": "evaluation"}
     launcher.mark_succeeded(clean, status="complete")

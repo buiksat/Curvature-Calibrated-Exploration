@@ -199,9 +199,9 @@ def phase_ready(root, name):
 
 
 def mark_succeeded(manifest, **fields):
-    """Record a successful outcome; keep an error from an earlier interrupted attempt as history."""
+    """Record a successful outcome; keep every error from earlier interrupted attempts, oldest first."""
     if "error" in manifest:
-        manifest["resumed_after_error"] = manifest.pop("error")
+        manifest.setdefault("resumed_after_errors", []).append(manifest.pop("error"))
     manifest.update(**fields)
 
 
