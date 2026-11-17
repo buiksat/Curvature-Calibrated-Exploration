@@ -1,7 +1,8 @@
 # Protocol v3: an informative-bound study of confidence transport
 
-Status: **revision 2, draft for author approval. No tuning or evaluation run has
-been made.** Only development seeds were used (pilots below). Nothing in this
+Status: **revision 2, approved by the author on 2026-11-16. No tuning or
+evaluation run had been made at approval.** Only development seeds were used
+before approval (pilots below). Nothing in this
 file may change after the first evaluation run starts; any change before that
 must be recorded in §9 with its reason.
 
@@ -351,6 +352,8 @@ python -B -m experiments.analyze_transport_v3 evaluation <all.jsonl> --output <a
 | Q_t from raw running sums | Welford running mean and scatter | in pilot 2, 9 of 240 descriptive-cell runs failed the Q_t replay check at round 20,000 from cancellation (the commit message of `6f041f96` says 7; the pilot 2 output has 9) |
 | pilot 1 (150 runs, c ∈ {1, 10, 100}) | pilot 5 (300 runs, commit `1b051a2b`) | pilot 2 (commit `6cb058f1`) found the Q_t defect; pilot 3 (`6f041f96`) was the first run of the revision-2 harness with no recorded failure; pilots 4 and 5 reran it after the code-review fixes below |
 | no independent code review | read-only Codex review of the harness, analysis, audit script and tests at `6f041f96`, with two follow-ups (fixes in `706ff746` and `1b051a2b`) | non-Hessian arms no longer evaluate e^{D̄_t/2}; a nonfinite optimizer iterate is a crash; UCB-GLM's Newton solve is damped and never applies a rejected step; the analysis refuses mixed optimizer settings, phases and duplicates, survives a missing primary arm, and qualifies tuning only on ten distinct finite design-cell seeds; no pilot trajectory changed |
+
+After approval, only the status line above changed; no design, test, seed or margin changed.
 
 ## 10. Differences from `PHASE2_PLAN.md`
 
