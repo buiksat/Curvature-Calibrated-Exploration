@@ -16,6 +16,7 @@ cd SRC && python -B tools/run_review_experiments.py --profile full --output OUT 
 ```
 
 It exited 0 after 32 minutes and wrote its export to `SRC/review/transport_review_followup/full-out/`.
+The 4.6 GB replay tree was deleted after the checks below; rerun the commands above to recreate `OUT` and `SRC`.
 Seeds 30000-30249 were reused only to reproduce recorded runs; nothing from the replay is new evaluation data.
 
 "Identical" below means exactly equal values after `compare_tree.py` skips the keys it names as volatile:
@@ -61,13 +62,16 @@ defect that changes a published result. Their four should-fix findings are fixed
 code: every per-round field (presence and value) and summary equals the original-code replay, and
 `policy_scores` is bitwise equal to the version at `d8c97288` on 8,000 random finite inputs.
 
-Not fixed, because each needs a pinned hash changed or added (rule 2 of the audit task):
+With the author's approval, `tools/verify_transport_committed_evidence.py` acknowledges the two changed study
+sources in `CURRENT_STUDY_SOURCE_COMPATIBILITY`, pinned to exact snapshot and current hashes, so the detached
+verifier still fails closed on any other edit. The review bundle regenerates byte-identically.
 
-- `tools/verify_transport_committed_evidence.py` reports the two changed study sources as unpinned divergences,
-  so `tests/test_transport_github_review_bundle.py::test_detached_verifier_passes_without_the_raw_tree` fails.
-  Acknowledging them needs two entries in its `CURRENT_STUDY_SOURCE_COMPATIBILITY` map.
-- `tools/analyze_relative_transport.py` and `review/post_full_fable/independent/symmetric_scan.py` still read the
-  run manifest's `error`, so for a run that resumes under the fixed driver they would not report
-  `resumed_after_errors`. Both scripts' hashes are pinned by the release manifest and their own artifacts.
+Left unchanged:
+
+- `tools/analyze_relative_transport.py` and `review/post_full_fable/independent/symmetric_scan.py` read the run
+  manifest's `error` with `.get`, so for a run that resumes under the fixed driver they record `null` and do not
+  report `resumed_after_errors`. Neither fails. Changing them would invalidate the script hashes recorded in their
+  committed outputs, which were produced from the 2026-10-14 raw tree, whose manifest still has `error`.
 - `submissions/tmlr_2026/release_manifest.json` still records the old hashes of
-  `experiments/transport_instantiation.py` and `experiments/run_transport_instantiation_study.py`.
+  `experiments/transport_instantiation.py` and `experiments/run_transport_instantiation_study.py`; the audit task
+  forbids edits under `submissions/tmlr_2026/`.
