@@ -1,0 +1,31 @@
+{
+ "argv": {
+  "c": [
+   1.0
+  ],
+  "horizon": 20000,
+  "learning_rate": [
+   3e-06,
+   1e-05,
+   3e-05
+  ],
+  "methods": [
+   "tuning_uniform"
+  ],
+  "output": "/home/buiksat/.cce-v3-runs/tuning",
+  "phase": "tuning",
+  "seeds": "41100-41109",
+  "steps": [
+   5,
+   20
+  ],
+  "workers": 20
+ },
+ "commit": "d700ce1133497f2ea150b0e7a7abe550f555c0a6",
+ "dirty": false,
+ "numpy": "2.2.3",
+ "source_sha256": {
+  "experiments/transport_instantiation.py": "68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4",
+  "experiments/transport_v3.py": "5c040e850682fff8e228ef62dbe55eedc18ec11e97d323036dc2623f19cc8402"
+ }
+}
