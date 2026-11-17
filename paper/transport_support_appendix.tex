@@ -1,33 +1,5 @@
-\subsection{Notation and certificate comparisons}
+\subsection{Certificate comparisons}
 
-\begin{table}[t]
-\caption{Notation for confidence transport.  Widths are geometric scales;
-the confidence and certificate assumptions justify their use in a score.}
-\label{tab:transport-notation}
-\centering
-\begin{tabularx}{\columnwidth}{@{}p{.22\columnwidth}X@{}}
-\toprule
-Symbol & Meaning \\
-\midrule
-$\bVbar_t$ & Frozen reference matrix of collection-time queries. \\
-$\bV_t$ & Exact current matrix, with past queries recomputed at the current parameter. \\
-$\Calg_t$ & SPD matrix actually applied by the algorithm. \\
-\midrule
-$\bar s_t(a)$ & Exact width from the frozen reference matrix. \\
-$s_t(a)$ & Exact width from the current matrix. \\
-$s_{\Calg,t}(a)$ & Exact width from the applied matrix. \\
-$\hat s_t(a)$ & Computed upper width used in the score. \\
-\midrule
-$m_t(a)$ & Prediction center in the reference-confidence band. \\
-$\beta_t$ & Nonnegative confidence multiplier for the reference width. \\
-$b_t(a)$ & Nonnegative additive error allowance in the prediction band. \\
-$\bar D_t$ & Upper bound on the chosen auxiliary SPD path length. \\
-$\kappa_{-,t},\kappa_{+,t}$ & Lower and upper factors comparing applied and current matrices. \\
-$\alpha_t$ & Sharpness factor for the computed width at the played action. \\
-$\xi_t$ & Allowed gap between the selected score and the score supremum. \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \begin{table}[t]
 \caption{Transport certificates used in this paper.  The two-way factor is
