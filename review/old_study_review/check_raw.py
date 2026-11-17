@@ -30,7 +30,7 @@ USED = ("corrected_centers", "true_means", "frozen_widths", "current_widths", "c
 
 def close(a, b):
     a, b = np.asarray(a, float), np.asarray(b, float)
-    if not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
+    if a.shape != b.shape or not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):  # no broadcasting
         return False
     return bool(np.all(np.abs(a - b) <= RTOL * np.maximum(1.0, np.maximum(np.abs(a), np.abs(b)))))
 
@@ -91,7 +91,8 @@ def check_run(job):
         if not close(m["cumulative_pseudo_regret"], cum_regret): note("cumulative_regret")
         if not close(m["played_frozen_width"], sbar[m["selected_action"]]): note("played_frozen_width")
         own_optimism_rounds += bool(np.all(own >= true))
-        if bool(m["method_optimism_all_actions"]) != bool(np.all(own >= true)): note("method_optimism_flag")
+        flag = m["method_optimism_all_actions"]
+        if not isinstance(flag, bool) or flag != bool(np.all(own >= true)): note("method_optimism_flag")
         # A4: zero-width optimism m_t(a) + b_t >= mu*_t(a) for every action
         slack = centers + bias - true
         zero_width_pairs += len(slack); zero_width_ok += int(np.sum(slack >= 0)); min_slack = min(min_slack, float(slack.min()))
