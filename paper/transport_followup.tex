@@ -64,6 +64,30 @@ The base-ten logarithms of Hessian's mean terminal RHS/cap are approximately
 19, 60 and 231 (\Cref{fig:transport-followup-bound-scale}). Path inflation
 is Hessian's largest bound contribution in all three conditions.
 
+Every policy uses the Taylor envelope at the current parameter norm,
+$\epslin=\tfrac12(c_h/\sqrt W)(R+\|\btheta_t\|_2)^2$ with $c_h=4/(3\sqrt3)$
+and $R=B_\phi=1$, both for the bias $b_t$ and for the historical terms of
+$\beta_t$. At $\|\btheta_t\|_2=R$ it equals the constant $2c_hR^2/\sqrt W$ of
+\Cref{cor:global-near-linear-new}: 0.385, 1.540 and 3.079 at $W=16,1,0.25$.
+The per-run mean envelope is 98.3\%--98.5\% of that constant (median over
+seeds, for every policy and condition).
+Three terms set the scale of the frozen bound
+$2\sqrt{(\sigma^2+G^2/\lambda)\gamma_T\sum_t\beta_t^2}+2\sum_tb_t(a_t)$ of
+\Cref{prop:frozen-width-ucb}: the exploration term with $\beta_t$ reduced to
+its stochastic and ridge parts; the remainder of the exploration term, due to
+the historical Taylor part of $\beta_t$; and the bias term. On the frozen
+policy's own histories their medians are 10,155, 26,898 and 758 at $W=16$;
+10,122, 108,171 and 3,031 at $W=1$; and 10,001, 215,317 and 6,063 at
+$W=0.25$. The first term alone exceeds every cap: with $d=29$ and $T=1000$
+the realized $\gamma_T$ is about 151--153 (medians). It contains no Taylor
+term, and on the same queries a linear model's frozen matrix dominates the
+scaled-tanh one because every collection weight satisfies
+$\operatorname{sech}^4\le1$. On the 150 recorded context--action sequences,
+an exactly linear model's frozen bound would therefore exceed its own cap
+$2T=2000$ as well. The historical term grows as $1/\sqrt W$ and is the
+largest term at every $W$; the bias term is about $2T$ times the mean
+envelope.
+
 
 
 
