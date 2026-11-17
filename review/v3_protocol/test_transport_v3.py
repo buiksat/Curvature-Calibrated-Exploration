@@ -69,7 +69,7 @@ def test_analysis_refuses_bad_inputs_and_survives_a_missing_primary_arm():
     runs = [row(m, s) for m in an.H1_POLICIES if m != "ucb_glm" for s in (41000, 41001, 41002)]
     primary = an.evaluate(runs)["W=20000"]["primary"]["ucb_glm-frozen_reference"]
     assert primary["available"] is False and primary["holm_reject"] is False
-    for bad in (runs + [row("frozen_reference", 41000, lr=3e-5)], runs + [runs[0]],
+    for bad in (runs + [row("frozen_reference", 41003, lr=3e-5)], runs + [runs[0]],  # distinct keys except the duplicate
                 runs + [row("frozen_reference", 41003, phase="tuning")]):
         with pytest.raises(SystemExit):
             an.evaluate(bad)
@@ -79,3 +79,15 @@ def test_analysis_refuses_bad_inputs_and_survives_a_missing_primary_arm():
                 [dict(r, spec=dict(r["spec"], c=0.00005)) for r in tuning]):
         with pytest.raises(SystemExit):
             an.select_optimizer(bad)
+
+
+def test_glm_solve_finds_the_finite_root_and_never_applies_a_rejected_step():
+    f, width = v.CATEGORY_FEATURES, 1.0
+    counts, sums = np.r_[2.0, np.ones(5), np.zeros(6)], np.r_[0.09, np.zeros(11)]
+    for old_mean in (0.99, np.nextafter(1.0, 0.0)):  # warm starts from a saturated earlier fit
+        start = np.linalg.solve(f[:6], np.r_[np.arctanh(old_mean), np.zeros(5)])
+        theta, converged = v.glm_solve(start, counts, sums, width)
+        assert np.all(np.isfinite(theta))
+        assert v.glm_objective(theta, counts, sums, width) <= v.glm_objective(start, counts, sums, width) + 1e-9
+        if old_mean == 0.99:
+            assert converged and np.isclose(f[0] @ theta, np.arctanh(0.045))

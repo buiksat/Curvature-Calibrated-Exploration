@@ -252,6 +252,34 @@ def glm_objective(theta, counts, sums, width) -> float:
     return float(counts @ (width * (z + np.log1p(np.exp(-2.0 * z)) - math.log(2.0))) - sums @ u)
 
 
+def glm_solve(theta_hat, counts, sums, width, iterations: int = 50):
+    """Damped Newton for the UCB-GLM estimating equation; returns (estimate, converged).
+
+    Armijo backtracking on glm_objective, with a rounding slack so the full Newton step is kept near
+    the root. A singular or nonfinite step, or a line search that finds no acceptable step size down
+    to 1e-10, stops the solve at the last accepted iterate and reports nonconvergence.
+    """
+    for _ in range(iterations):
+        grad = (counts * mean(theta_hat, CATEGORY_FEATURES, width) - sums) @ CATEGORY_FEATURES
+        if np.linalg.norm(grad) <= 1e-10 * max(1.0, float(np.sum(np.abs(sums)))):
+            return theta_hat, True
+        hess = (CATEGORY_FEATURES.T * (counts * weight(theta_hat, CATEGORY_FEATURES, width))) @ CATEGORY_FEATURES
+        try:
+            step = np.linalg.solve(hess, grad)
+        except np.linalg.LinAlgError:
+            return theta_hat, False
+        if not np.all(np.isfinite(step)):
+            return theta_hat, False
+        f0, size = glm_objective(theta_hat, counts, sums, width), 1.0
+        slack = 1e-10 * max(1.0, abs(f0))
+        while not glm_objective(theta_hat - size * step, counts, sums, width) <= f0 - 1e-4 * size * float(grad @ step) + slack:
+            size *= 0.5
+            if size <= 1e-10:
+                return theta_hat, False
+        theta_hat = theta_hat - size * step
+    return theta_hat, False
+
+
 def run_ucb_glm(seed: int, spec: Spec) -> dict:
     """Li, Lu and Zhou (2017), Algorithm 1 (UCB-GLM), with link sqrt(W) tanh(u / sqrt(W))."""
     theta_o = teacher(spec.teacher_seed, spec.radius)
@@ -269,25 +297,7 @@ def run_ucb_glm(seed: int, spec: Spec) -> dict:
         if tau is None:  # random initialization until lambda_min(V_{tau+1}) >= 1 (their Lemma 3 premise)
             a = int(rng.integers(0, K))
         else:
-            converged = False
-            for _ in range(50):  # damped Newton on the convex objective glm_objective
-                grad = (counts * mean(theta_hat, CATEGORY_FEATURES, width) - sums) @ CATEGORY_FEATURES
-                if np.linalg.norm(grad) <= 1e-10 * max(1.0, float(np.sum(np.abs(sums)))):
-                    converged = True
-                    break
-                hess = (CATEGORY_FEATURES.T * (counts * weight(theta_hat, CATEGORY_FEATURES, width))) @ CATEGORY_FEATURES
-                try:
-                    step = np.linalg.solve(hess, grad)
-                except np.linalg.LinAlgError:
-                    break  # keep the last finite iterate; counted as nonconvergence
-                if not np.all(np.isfinite(step)):
-                    break
-                # Armijo backtracking with a rounding slack, so the full Newton step is kept near the root
-                f0, size = glm_objective(theta_hat, counts, sums, width), 1.0
-                slack = 1e-10 * max(1.0, abs(f0))
-                while size > 1e-10 and not glm_objective(theta_hat - size * step, counts, sums, width) <= f0 - 1e-4 * size * float(grad @ step) + slack:
-                    size *= 0.5
-                theta_hat = theta_hat - size * step
+            theta_hat, converged = glm_solve(theta_hat, counts, sums, width)
             newton_failures += not converged
             bonus = alpha * ti.inverse_quadratic_widths(gram, feats)
             a = int(np.argmax(feats @ theta_hat + bonus))
