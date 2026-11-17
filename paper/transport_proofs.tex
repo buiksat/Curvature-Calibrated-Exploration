@@ -448,6 +448,120 @@ It increases up to $\tau=1/2$ and then decreases, giving path length
 Thus \Cref{cor:tanh-relative-weights} controls endpoint comparison, not the
 length used by the original synthetic-path certificate.
 
+\begin{proof}[Proof of \Cref{lem:tanh-weight-lipschitz}]
+Let $u_i=\phi(z)^\top\theta_i/\sqrt W$ and
+$h(u)=\log\operatorname{sech}^2u=-2\log\cosh u$. Then $h'(u)=-2\tanh u$, so
+$|h'|\le2$ on $\R$ and $|h'|\le2\tanh x$ on $[-x,x]$ because $\tanh$ is odd and
+increasing. By the mean value theorem,
+$|h(u_1)-h(u_2)|\le\sup|h'|\,|u_1-u_2|$ over the segment between $u_1$ and
+$u_2$, which lies in $[-x,x]$ when both endpoints do. Exponentiating
+$h(u_1)-h(u_2)\le|h(u_1)-h(u_2)|$ gives both claims.
+\end{proof}
+
+The constant $2$ is asymptotically attained: for fixed $\epsilon>0$,
+$\cosh^2(u)/\cosh^2(u-\epsilon)\to e^{2\epsilon}$ as $u\to\infty$. That limit
+is excluded by the norm bounds used below; under them the refined constant
+$2\tanh x$ is sharp as a Lipschitz constant (take $u_1,u_2\to x$). Neither
+statement is a sharpness claim about $D_t^{\rm lip}$.
+
+\begin{proof}[Proof of \Cref{cor:tanh-lipschitz-endpoint}]
+Put $c=e^{-D_t^{\rm lip}}\le1$. Then
+\[
+ \bV_t-c\bVbar_t=\lambda(1-c)\bI+\sigma^{-2}\sum_{s<t}
+ \big(\omega_{\btheta_t}(z_s)^2-c\,\omega_{\btheta_s}(z_s)^2\big)
+ \phi(z_s)\phi(z_s)^\top.
+\]
+The first term is positive semidefinite. By \Cref{lem:tanh-weight-lipschitz}
+with the bounded index ($\|\phi\|_2\le B_\phi$, $\|\btheta\|_2\le R$),
+$\omega_{\btheta_t}(z_s)^2/\omega_{\btheta_s}(z_s)^2\ge
+e^{-4\tanh(B_\phi R/\sqrt W)|\phi(z_s)^\top(\btheta_t-\btheta_s)|/\sqrt W}\ge c$,
+so every coefficient is nonnegative and each summand is positive
+semidefinite. The upper inequality is symmetric with $c^{-1}\ge1$. The
+Thompson-distance statement is its definition; the last inequality uses
+$\tanh\le1$.
+\end{proof}
+
+\paragraph{Comparison of the endpoint certificates.}
+Let $x=B_\phi R/\sqrt W$.
+\begin{itemize}
+\item \emph{Uniform certificate} $D^{\rm unif}=4\log\cosh x$.
+$D_t^{\rm lip}<D^{\rm unif}$ if and only if
+$M_t<\sqrt W\log\cosh(x)/\tanh(x)$; with $B_\phi=R=1$ the threshold is
+$0.505$, $0.570$ and $0.687$ at $W=16,1,0.25$. Since $M_t\le2B_\phi R$, the
+worst case of $D_t^{\rm lip}$ is $8x\tanh x$, which exceeds $D^{\rm unif}$ for
+every $x>0$ because $\log\cosh x\le x\tanh x<2x\tanh x$; the first inequality
+holds because $x\tanh x-\log\cosh x$ vanishes at $0$ and has derivative
+$x\operatorname{sech}^2x\ge0$. So the uniform certificate is tighter for large
+index movement, and the Lipschitz certificate is tighter when $M_t$ is below
+the threshold.
+\item \emph{Category certificate} \eqref{eq:tanh-category-relative}. It is
+never looser than $D_t^{\rm lip}$: for an observed category,
+$g_{t,c}/f_{t,c}=\omega_{\btheta_t}(c)^2\big/\big(n_{t,c}^{-1}
+\sum_{s<t:\phi(z_s)=\phi_c}\omega_{\btheta_s}(c)^2\big)$ divides by a mean of
+the $\omega_{\btheta_s}(c)^2$, which lies between their minimum and maximum,
+so $g_{t,c}/f_{t,c}\in[e^{-D_t^{\rm lip}},e^{D_t^{\rm lip}}]$; adding $1$ to
+the minimum and maximum keeps both factors in that interval. The Lipschitz
+certificate does not need finite categories; it bounds the certificate by
+index movement and, through $M_t\le B_\phi\max_{s<t}\|\btheta_t-\btheta_s\|_2$,
+by parameter movement.
+\item \emph{Hessian path certificate} (\Cref{cor:hessian-path-new}). With
+$L_g=c_h/\sqrt W$, $c_h=4B_\phi^2/(3\sqrt3)$ and
+$\max_{s<t}\|\btheta_t-\btheta_s\|_2\le\sqrt{Q_t}$,
+$4M_t/\sqrt W\le4B_\phi\sqrt{Q_t}/\sqrt W
+=\frac{3\sqrt3\,\sigma\sqrt\lambda}{2B_\phi}\bar D_t$. With $\sigma=0.25$ and
+$\lambda=B_\phi=1$ the factor is $0.650$.
+\end{itemize}
+
+\begin{proof}[Proof of \Cref{cor:tanh-endpoint-regime}]
+For $y\ge0$ let $f(y)=y^2/2-\log\cosh y$; $f(0)=0$ and $f'(y)=y-\tanh y\ge0$,
+so $\log\cosh y\le y^2/2$, and evenness extends this to all $y$. Hence
+$4\log\cosh(B_\phi R/\sqrt W)\le2B_\phi^2R^2/W\le2B_\phi^2R^2/(cT)$, and
+$\exp$ is increasing.
+\end{proof}
+
+\paragraph{The endpoint-transported bound when $W\ge cT$.}
+Under the assumptions of \Cref{cor:global-near-linear-new} for scaled tanh
+($c_\mu=c_g=c_h$, $G=B_\phi$, $\kappa_{\pm,t}=\alpha_t=1$, $\xi_t=0$), score with
+\Cref{cor:relative-endpoint-ucb} using the uniform certificate
+$c_{\pm,t}=\ell^{\mp2}$, $\ell=\operatorname{sech}^2(B_\phi R/\sqrt W)$. Then
+$h_t=1+\ell^{-2}=1+\cosh^4(B_\phi R/\sqrt W)\le\bar h:=1+e^{2B_\phi^2R^2/(cT)}$
+by \Cref{cor:tanh-endpoint-regime}. By \eqref{eq:relative-endpoint-regret}
+and \Cref{prop:frozen-width-ucb},
+\[
+ R_T^{\rm endpoint}\le\bar h\sqrt{\Big(\sigma^2+\frac{G^2}{\lambda}\Big)
+ \gamma_T\sum_t\beta_t^2}+2\sum_tb_t(a_t),
+ \qquad
+ R_T^{\rm frozen}\le2\sqrt{\Big(\sigma^2+\frac{G^2}{\lambda}\Big)
+ \gamma_T\sum_t\beta_t^2}+2\sum_tb_t(a_t),
+\]
+each on its own policy's trajectory. As functions of the same $\gamma_T$,
+$\beta_t$ and $b_t$, the transported exploration term is at most
+$\bar h/2=1+O(1/(cT))$ times the frozen one, and the bias terms are identical;
+the realized $\gamma_T$, $\beta_t$ and $b_t$ differ between the two
+trajectories. Bounding $\gamma_{t-1}\le\Gamma_{T,d}$
+\eqref{eq:finite-d-gamma-new}, $\epslin(s),b_t\le2c_hR^2/\sqrt W$ (Taylor's
+theorem with $\|\btheta^\circ-\btheta_s\|_2\le2R$) and $\epsilon_{\rm mis}=0$ in
+\eqref{eq:beta-corrected-new} gives, with probability at least $1-\delta$,
+\[
+ R_T^{\rm endpoint}\le\bar h\Big[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}
+ +\sqrt\lambda R+\frac{2c_hR^2\sqrt T}{\sigma\sqrt W}\Big]
+ \sqrt{\sigma^2+\frac{G^2}{\lambda}}\sqrt{T\Gamma_{T,d}}
+ +\frac{4c_hR^2T}{\sqrt W},
+\]
+which is \eqref{eq:global-near-linear-new} with $2e^{D_{T,W}}$ replaced by
+$\bar h$. A score with the dense endpoint certificate
+$c_{\pm,t}=e^{\pm d_{\rm Th}(\bVbar_t,\bV_t)}$ has
+$h_t=1+e^{d_{\rm Th}}\le\bar h$, since $d_{\rm Th}\le4\log\cosh x$, so the same
+bound applies to it in exact arithmetic. With $W=cT$,
+$D_{T,W}=4c_hR\sqrt{T-1}/(\sigma\sqrt{\lambda cT})$ stays below
+$4c_hR/(\sigma\sqrt{\lambda c})$, about $12.3/\sqrt c$ at the first study's
+constants, while $\bar h\to2$. At that study's $T=1000$ and $W=16,1,0.25$, the
+Hessian factor $2e^{D_{T,W}}$ is approximately $10^{42.6}$, $10^{169.4}$ and
+$10^{338.4}$ ($D_{T,W}=97.3$, $389.3$ and $778.6$), against the uniform
+endpoint factor $1+\cosh^4(1/\sqrt W)=2.13$, $6.67$ and $201.3$; with
+$c=W/T$, $\bar h$ is $2.13$, $8.39$ and $2982$. Nothing here concerns analyses
+other than this paper's.
+
 \begin{proof}[Proof of \Cref{cor:local-small-drift-new}]
 Inverting \eqref{eq:local-additive-new} gives
 \[
