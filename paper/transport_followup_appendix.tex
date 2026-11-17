@@ -232,3 +232,60 @@ Direct frozen-reference recommendations on these states appear in
 Fixed-state kernel timings are retained in the audit artifact.  They were collected under parallel analysis load.  The category construction requires additional
 accumulated collection weights and still uses matrix solves and the frozen
 confidence construction.
+
+\subsection{Protocol of the second study}
+\label{app:transport-v3}
+
+\paragraph{Seeds and phases.}
+Development seeds 41000--41009, tuning seeds 41100--41109 and evaluation
+seeds 41200--41249 are disjoint from the first study's. Development runs fixed
+the design-cell scale, the margin and the numerical checks; development and
+tuning runs are not evaluation replicates. The design cell uses $c=1$ in
+$W=cT$, the smallest $c$ in $\{1,10,100\}$ for which every development frozen
+bound was at most 0.9 of the cap; no record of this rule predates the first
+development output. The margin $\Delta=3.0$ is a quarter of the
+development mean Hessian-minus-frozen difference, 12.0, and was fixed before
+evaluation. Evaluation runs were not repeated.
+
+\paragraph{Optimizer.}
+Each corrected-center policy fits $\btheta_t$ by projected full-batch gradient
+descent on $\sum_{s<t}(r_s-\mu_{\btheta}(z_s))^2/(2\sigma^2)+\|\btheta\|_2^2/2$
+from $\btheta_1=0$: a fixed number of steps per round, then one projection
+onto $\|\btheta\|_2\le1$. Sixty tuning runs with uniform-random actions in the
+design cell compared learning rates $\{3\times10^{-6},10^{-5},3\times10^{-5}\}$
+and $\{5,20\}$ steps by all-action prediction MSE after a 10\% burn-in,
+averaged over the ten tuning seeds. All six candidates were eligible; learning
+rate $3\times10^{-6}$ with 5 steps had the smallest mean MSE,
+$4.062\times10^{-5}$, and the six means were within 0.2\% of each other. The
+same optimizer is used in every cell.
+
+\paragraph{Analysis.}
+The unit of analysis is the evaluation seed, and every comparison is paired by
+seed. The design checks are: one-sided paired $t$-tests of policy minus
+context-free benchmark, with Holm's procedure over the six policies at
+familywise level $0.05$; two one-sided tests with $\Delta=3.0$ for endpoint
+minus frozen, naive minus frozen and endpoint minus naive, using the
+two-sided 90\% paired-$t$ interval and holding only if all three pairs pass;
+and the frozen bound below the cap on every frozen run. The primary family is
+UCB-GLM minus frozen and Hessian minus frozen, each a two-sided paired $t$-test,
+with Holm's procedure over the two at familywise level $0.05$. Every reported
+interval is a 95\% percentile bootstrap interval from 10,000 resamples of
+seed-paired differences with a fixed generator seed; intervals are
+descriptive, and decisions use the $t$-based procedures.
+
+\paragraph{Matrices and numerical checks.}
+The current matrix is computed from category counts,
+$\bV_t=\lambda\bI+\sigma^{-2}\sum_cn_{t,c}\operatorname{sech}^4
+(\phi_c^\top\btheta_t/\sqrt W)\phi_c\phi_c^\top$, and $Q_t$ from a running mean
+and scatter of $\btheta_1,\ldots,\btheta_{t-1}$, which avoids the cancellation
+of raw running sums at small $W$. At rounds 1, 10, 100, 1,000, 10,000 and
+20,000 each corrected-center run rebuilds $\bV_t$, the frozen matrix and $Q_t$
+by dense per-observation replay; the tolerance per check is
+$4096\,\varepsilon_{\rm mach}\,d\max(1,m)$, with $m$ the largest absolute entry
+of the two compared objects. UCB-GLM solves its score equation by Newton's
+method with Armijo backtracking on the convex objective
+$\sum_c[n_cW\log\cosh(\phi_c^\top\theta/\sqrt W)-S_c\phi_c^\top\theta]$, where
+$S_c$ is the reward sum of category $c$, warm-started and with at most 50
+iterations. A replay excess, a Newton nonconvergence, an unreached random-phase
+stopping rule or an exception would have been recorded and the run retained;
+none occurred.

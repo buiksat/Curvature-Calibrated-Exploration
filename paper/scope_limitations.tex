@@ -80,6 +80,17 @@ coverage, numerical theorem certification, necessity nor practical advantage.
 Float64 solves, eigenvalues, quadrature, replay residuals and source hashes are
 not rigorous numerical enclosures.
 
+The second study (\Cref{sec:transport-v3}) shares these limits and adds its
+own. It covers one six-dimensional model with 12 feature categories and one
+optimizer, selected in the design cell and not retuned per cell. Its design
+checks hold by construction in a near-linear cell and test the setup, not
+transport. Its descriptive cells were chosen after development output was
+read and carry no test. UCB-GLM runs exactly as specified in every cell,
+with a random-phase stopping rule of our choosing, and its regret theorem does
+not apply; neither UCB-GLM nor linear UCB is certified here, and the bound
+comparison after \Cref{cor:tanh-endpoint-regime} does not predict realized
+regret.
+
 \paragraph{Reading bounds and exploratory diagnostics.}
 Appendix~\ref{app:transport-followup} defines fixed-history rescoring, decimal
 score-arithmetic checks and fixed-state kernel timings. Bounds and regret means
