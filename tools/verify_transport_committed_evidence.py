@@ -144,6 +144,18 @@ CURRENT_STUDY_SOURCE_COMPATIBILITY["experiments/README.md"] = {
     "diverged_in_commit": "TMLR-only cleanup on 2026-11-12",
     "reason": "Documentation-only replacement of retired Buck commands with direct Python commands; scientific implementation, configuration and measured evidence are unchanged.",
 }
+CURRENT_STUDY_SOURCE_COMPATIBILITY["experiments/transport_instantiation.py"] = {
+    "selection_inventory_sha256": "68a93c4d774012338cb0a75f587a682721dd5548031b7d8dade85110cd0ef2a4",
+    "expected_head_sha256": "4cea4cffbf646098e72524d71f57a49eb1968dd063d9df85b64ff57a8fdd27a9",
+    "diverged_in_commit": "code-review fixes on 2026-11-17",
+    "reason": "The logged diagnostics D_Q_over_d_Th and D_Q_over_path_quad use numerics.ratio_denominator_tolerance, as the aggregator does, and policy_scores evaluates only the selected policy's factor. Twelve evaluation trajectories (seed 30200, every W and method) rerun with this file equal the original-code replay in every per-round field and summary; see review/old_study_review/.",
+}
+CURRENT_STUDY_SOURCE_COMPATIBILITY["experiments/run_transport_instantiation_study.py"] = {
+    "selection_inventory_sha256": "6154655f8e31928fc3e6dd9cd7d92a8f77df6df63080c662e9af115a210859ed",
+    "expected_head_sha256": "b1858c18ac6ec8d1727362dabbff6e0f47ed88274856200516cf2bd4d0ba04d2",
+    "diverged_in_commit": "code-review fixes on 2026-11-17",
+    "reason": "The study source inventory no longer requires experiments/BUCK, which was archived after the study ran; no simulation, tuning or aggregation code changed.",
+}
 
 
 STATUS_PASS = "PASS"
