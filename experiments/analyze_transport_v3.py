@@ -43,7 +43,10 @@ def select_optimizer(runs: list[dict]) -> dict:
         by_config[(r["spec"]["learning_rate"], r["spec"]["steps_per_round"])].append(r)
     scores = {}
     for config, rs in by_config.items():
-        if len(rs) == TUNING_SEEDS and all(not r["failures"] and r.get("mse") is not None for r in rs):
+        valid = all(r["method"] == "tuning_uniform" and r.get("phase") == "tuning" and not r["failures"]
+                    and r["spec"]["horizon"] == HORIZON and r["spec"]["c"] == 1.0  # design cell only
+                    and r.get("mse") is not None and math.isfinite(r["mse"]) for r in rs)
+        if valid and len(rs) == len({r["seed"] for r in rs}) == TUNING_SEEDS:
             scores[config] = float(np.mean([r["mse"] for r in rs]))
     if not scores:
         raise SystemExit("no tuning configuration qualified")
@@ -60,6 +63,12 @@ def holm(pvalues: dict, alpha: float = 0.05) -> dict:
         still = still and pvalues[name] <= alpha / (len(order) - rank)
         rejected[name] = still
     return rejected
+
+
+def t_pvalue(d: np.ndarray, alternative: str = "two-sided") -> float:
+    """Paired t p-value; 1.0 (never rejects) when fewer than two pairs or the statistic is undefined."""
+    p = float(stats.ttest_1samp(d, 0.0, alternative=alternative).pvalue) if len(d) >= 2 else 1.0
+    return p if math.isfinite(p) else 1.0
 
 
 def bootstrap_ci(d: np.ndarray, label: str) -> list[float]:
@@ -106,7 +115,7 @@ def analyze_cell(runs: list[dict], width: float) -> dict:
     if width != DESIGN_W:
         return out
     # Design checks (expected to pass by construction; not hypothesis tests).
-    h1_p = {p: float(stats.ttest_1samp(paired(p, cf), 0.0, alternative="less").pvalue) for p in H1_POLICIES}
+    h1_p = {p: t_pvalue(paired(p, cf), "less") for p in H1_POLICIES}
     h1 = holm(h1_p)
     h2 = {}
     for a, b in EQUIVALENCE_PAIRS:
@@ -124,15 +133,24 @@ def analyze_cell(runs: list[dict], width: float) -> dict:
         "H3_holds": bool(frozen) and all(not r.get("crashed") and r["frozen_form_bound"] < r["cap"] for r in frozen),
         "A5_below_cap_runs": [sum(not r.get("crashed") and r["A5"] < r["cap"] for r in certified), len(certified)],
     }
-    # Primary family: two-sided paired t, Holm over the two comparisons.
-    p = {f"{a}-{b}": float(stats.ttest_1samp(paired(a, b), 0.0).pvalue) for a, b in PRIMARY_PAIRS}
+    # Primary family: two-sided paired t, Holm over the two comparisons. A pair with fewer than two
+    # seeds is reported unavailable and enters Holm with p = 1, so the family size stays 2.
+    p = {f"{a}-{b}": t_pvalue(paired(a, b)) for a, b in PRIMARY_PAIRS}
     reject = holm(p)
-    out["primary"] = {f"{a}-{b}": {**describe(a, b), "p_two_sided": p[f"{a}-{b}"], "holm_reject": reject[f"{a}-{b}"]}
+    out["primary"] = {f"{a}-{b}": {**(describe(a, b) or {"n": 0}), "available": len(paired(a, b)) >= 2,
+                                   "p_two_sided": p[f"{a}-{b}"], "holm_reject": reject[f"{a}-{b}"]}
                       for a, b in PRIMARY_PAIRS}
     return out
 
 
 def evaluate(runs: list[dict]) -> dict:
+    """Refuses inputs that would pair runs across optimizer settings or phases, or duplicate a run."""
+    configs = {(r["spec"]["learning_rate"], r["spec"]["steps_per_round"]) for r in runs}
+    phases = {r.get("phase") for r in runs}
+    keys = [(round(r["spec"]["c"] * r["spec"]["horizon"], 9), r["method"], r["seed"]) for r in runs]
+    if len(configs) > 1 or len(phases) > 1 or len(keys) != len(set(keys)):
+        raise SystemExit(f"invalid input: optimizers {sorted(configs)}, phases {sorted(map(str, phases))}, "
+                         f"{len(keys) - len(set(keys))} duplicate W/method/seed records")
     cells = defaultdict(list)
     for r in runs:
         cells[round(r["spec"]["c"] * r["spec"]["horizon"], 9)].append(r)

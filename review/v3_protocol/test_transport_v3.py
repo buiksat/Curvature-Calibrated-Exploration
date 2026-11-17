@@ -42,3 +42,40 @@ def test_new_arms_run_without_failures_at_small_width():
     for method in v.ENVELOPE_FREE_METHODS + ("linucb",):
         result = v.run((method, 41000, spec))
         assert result["failures"] == [], (method, result.get("traceback"))
+
+
+def test_nonfinite_iterate_is_a_crash_not_a_success():
+    result = v.run(("frozen_reference", 41000, v.Spec(horizon=1, learning_rate=1e308)))
+    assert result["crashed"] and "FloatingPointError" in result["traceback"]
+
+
+def test_glm_objective_gradient_is_the_estimating_equation():
+    rng = np.random.default_rng(0)
+    theta, counts, sums, width = rng.normal(size=v.D), rng.integers(1, 5, 12).astype(float), rng.normal(size=12), 1.0
+    grad = (counts * v.mean(theta, v.CATEGORY_FEATURES, width) - sums) @ v.CATEGORY_FEATURES
+    eye = np.eye(v.D) * 1e-6
+    numeric = [(v.glm_objective(theta + e, counts, sums, width) - v.glm_objective(theta - e, counts, sums, width)) / 2e-6 for e in eye]
+    assert np.allclose(grad, numeric, atol=1e-6)
+
+
+def test_analysis_refuses_bad_inputs_and_survives_a_missing_primary_arm():
+    from experiments import analyze_transport_v3 as an
+
+    def row(method, seed, lr=1e-5, phase="development", **extra):
+        spec = {"horizon": 20000, "c": 1.0, "learning_rate": lr, "steps_per_round": 20}
+        return {"method": method, "seed": seed, "phase": phase, "spec": spec, "regret": 1.0 + seed % 7,
+                "context_free_regret": 100.0, "failures": [], "A5": 1.0, "frozen_form_bound": 1.0, "cap": 40000.0, **extra}
+
+    runs = [row(m, s) for m in an.H1_POLICIES if m != "ucb_glm" for s in (41000, 41001, 41002)]
+    primary = an.evaluate(runs)["W=20000"]["primary"]["ucb_glm-frozen_reference"]
+    assert primary["available"] is False and primary["holm_reject"] is False
+    for bad in (runs + [row("frozen_reference", 41000, lr=3e-5)], runs + [runs[0]],
+                runs + [row("frozen_reference", 41003, phase="tuning")]):
+        with pytest.raises(SystemExit):
+            an.evaluate(bad)
+    tuning = [row("tuning_uniform", s, phase="tuning", mse=0.1) for s in range(41100, 41110)]
+    assert an.select_optimizer(tuning)["learning_rate"] == 1e-5
+    for bad in ([tuning[0]] * 10, tuning[:9] + [dict(tuning[9], mse=float("nan"))],
+                [dict(r, spec=dict(r["spec"], c=0.00005)) for r in tuning]):
+        with pytest.raises(SystemExit):
+            an.select_optimizer(bad)

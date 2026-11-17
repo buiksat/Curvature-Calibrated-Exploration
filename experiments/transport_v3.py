@@ -144,13 +144,14 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
         q_t = theta_scatter + t * float((theta - theta_mean) @ (theta - theta_mean))
         d_q = 2.0 * lip * math.sqrt(q_t) / (spec.sigma * math.sqrt(spec.ridge))
         d_th, _ = ti.thompson_distance(frozen, current)
-        scores = ti.policy_scores(base, centers, beta=beta, current_bias=bias, frozen_widths=sbar,
-                                  current_widths=s, hessian_path_bound=d_q, endpoint_distance=d_th)
+        hessian = base == "transport_hessian"  # other arms never evaluate exp(d_q / 2), which can overflow
+        scores = ti.policy_scores(base, centers, beta=beta, current_bias=bias, frozen_widths=sbar, current_widths=s,
+                                  hessian_path_bound=d_q if hessian else 0.0, endpoint_distance=d_th)
         a = int(np.argmax(scores))
         regret += float(mu[t].max() - mu[t, a])
         # Diagnostics (A2-A6 analogues) on this policy's own history.
-        own_w = {"transport_hessian": math.exp(0.5 * d_q) * s, "transport_endpoint": math.exp(0.5 * d_th) * s,
-                 "frozen_reference": sbar, "naive_current": s}[base]
+        own_w = {"transport_hessian": lambda: math.exp(0.5 * d_q) * s, "transport_endpoint": lambda: math.exp(0.5 * d_th) * s,
+                 "frozen_reference": lambda: sbar, "naive_current": lambda: s}[base]()
         top = np.sort(beta * own_w)
         gap_dominated += int(top[-1] - top[-2] > np.ptp(centers))
         width_argmax += int(a == int(np.argmax(own_w)))
@@ -194,6 +195,8 @@ def run_corrected(method: str, seed: int, spec: Spec) -> dict:
             w_c = weight(theta, CATEGORY_FEATURES, width)
             resid = counts * mean(theta, CATEGORY_FEATURES, width) - reward_sums
             theta = theta - spec.learning_rate * ((w_c * resid) @ CATEGORY_FEATURES / sigma2 + spec.training_ridge * theta)
+        if not np.all(np.isfinite(theta)):  # NumPy overflow does not raise; make it a recorded crash
+            raise FloatingPointError(f"nonfinite optimizer iterate after round {t + 1}")
         norm = np.linalg.norm(theta)
         if norm > spec.radius:
             theta *= spec.radius / norm
@@ -242,6 +245,13 @@ def run_linucb(seed: int, spec: Spec) -> dict:
             "failures": [], "runtime_seconds": time.perf_counter() - start}
 
 
+def glm_objective(theta, counts, sums, width) -> float:
+    """sum_c n_c W log cosh(u_c / sqrt W) - S_c u_c; its gradient is the UCB-GLM estimating equation."""
+    u = CATEGORY_FEATURES @ theta
+    z = np.abs(u) / math.sqrt(width)
+    return float(counts @ (width * (z + np.log1p(np.exp(-2.0 * z)) - math.log(2.0))) - sums @ u)
+
+
 def run_ucb_glm(seed: int, spec: Spec) -> dict:
     """Li, Lu and Zhou (2017), Algorithm 1 (UCB-GLM), with link sqrt(W) tanh(u / sqrt(W))."""
     theta_o = teacher(spec.teacher_seed, spec.radius)
@@ -259,15 +269,26 @@ def run_ucb_glm(seed: int, spec: Spec) -> dict:
         if tau is None:  # random initialization until lambda_min(V_{tau+1}) >= 1 (their Lemma 3 premise)
             a = int(rng.integers(0, K))
         else:
-            for _ in range(50):  # Newton on the convex GLM objective sum_c n_c W log cosh(u/sqrt W) - S_c u
-                u = CATEGORY_FEATURES @ theta_hat
+            converged = False
+            for _ in range(50):  # damped Newton on the convex objective glm_objective
                 grad = (counts * mean(theta_hat, CATEGORY_FEATURES, width) - sums) @ CATEGORY_FEATURES
                 if np.linalg.norm(grad) <= 1e-10 * max(1.0, float(np.sum(np.abs(sums)))):
+                    converged = True
                     break
-                hess = (CATEGORY_FEATURES.T * (counts * (1.0 - np.tanh(u / math.sqrt(width)) ** 2))) @ CATEGORY_FEATURES
-                theta_hat = theta_hat - np.linalg.solve(hess, grad)
-            else:
-                newton_failures += 1
+                hess = (CATEGORY_FEATURES.T * (counts * weight(theta_hat, CATEGORY_FEATURES, width))) @ CATEGORY_FEATURES
+                try:
+                    step = np.linalg.solve(hess, grad)
+                except np.linalg.LinAlgError:
+                    break  # keep the last finite iterate; counted as nonconvergence
+                if not np.all(np.isfinite(step)):
+                    break
+                # Armijo backtracking with a rounding slack, so the full Newton step is kept near the root
+                f0, size = glm_objective(theta_hat, counts, sums, width), 1.0
+                slack = 1e-10 * max(1.0, abs(f0))
+                while size > 1e-10 and not glm_objective(theta_hat - size * step, counts, sums, width) <= f0 - 1e-4 * size * float(grad @ step) + slack:
+                    size *= 0.5
+                theta_hat = theta_hat - size * step
+            newton_failures += not converged
             bonus = alpha * ti.inverse_quadratic_widths(gram, feats)
             a = int(np.argmax(feats @ theta_hat + bonus))
         regret += float(mu[t].max() - mu[t, a])
@@ -348,6 +369,8 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
+    if args.phase == "evaluation" and (len(args.learning_rate), len(args.steps)) != (1, 1):
+        parser.error("evaluation uses exactly one tuned optimizer: one --learning-rate and one --steps")
     args.output.mkdir(parents=True, exist_ok=False)
     root = Path(__file__).resolve().parents[1]
     git = lambda *a: subprocess.run(["git", "-C", str(root), *a], capture_output=True, text=True).stdout.strip()
