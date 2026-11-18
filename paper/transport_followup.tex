@@ -139,7 +139,7 @@ and there are 12 feature categories. The teacher has unit norm; rewards are
 Gaussian with scaled-tanh mean and $\sigma=0.25$; $\lambda=1$, $\delta=0.05$,
 $R=1$ and $T=20{,}000$. The design cell sets $W=T$. There the a priori frozen
 bound, from \eqref{eq:finite-d-gamma-new} and the envelopes of the first study,
-is at most 37,195, which is 0.93 of the cap $2T\min(1,\sqrt W)=40{,}000$; but
+is 37,195, which is 0.93 of the cap $2T\min(1,\sqrt W)=40{,}000$; but
 curvature is negligible, since \Cref{cor:tanh-relative-weights} gives
 $d_{\rm Th}(\bVbar_t,\bV_t)\le4\log\cosh(1/\sqrt W)\approx1.0\times10^{-4}$.
 Three descriptive cells, $W=100,10,1$, have stronger curvature and vacuous
@@ -175,7 +175,7 @@ Holm over six, every $p\le1.2\times10^{-108}$). Frozen reference, endpoint and
 naive current are equivalent within the prespecified margin $\Delta=3.0$
 regret units: for each of the three pairs the two-sided 90\% paired-$t$
 interval lies inside $(-1.0,1.0)$ (two one-sided tests, intersection--union).
-All 50 frozen bounds are below the cap, at most 0.761 of it. Both primary
+All 50 frozen bounds are below the cap; the largest is 0.761 of it. Both primary
 comparisons, two-sided paired $t$-tests with Holm over the two, reject:
 UCB-GLM minus frozen is $-34.4$ ($p=5.7\times10^{-34}$) and Hessian minus
 frozen is $16.8$ ($p=5.3\times10^{-30}$). These checks and comparisons concern

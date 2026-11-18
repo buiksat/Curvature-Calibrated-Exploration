@@ -69,11 +69,11 @@ assert -1.0 < min(ci) and max(ci) < 1.0 and d["design_checks"]["H2_delta"] == 3.
 expect(F, "inside $(-1.0,1.0)$")
 expect(F, "$\\Delta=3.0$")
 fz = [r for r in runs if r["W"] == 20000 and r["method"] == "frozen_reference"]
-expect(F, f"at most {max(r['frozen_form_bound'] / r['cap'] for r in fz):.3f} of it")
+expect(F, f"the largest is {max(r['frozen_form_bound'] / r['cap'] for r in fz):.3f} of it")
 gam = 6 * math.log(1 + 20000 / (6 * LAM * SIGMA ** 2))
 beta = math.sqrt(gam + 2 * math.log(1 / DELTA)) + 1 + 2 * C_H * math.sqrt(20000) / (SIGMA * math.sqrt(20000))
 apriori = 2 * beta * math.sqrt((SIGMA ** 2 + 1) * gam * 20000) + 4 * C_H * 20000 / math.sqrt(20000)
-expect(F, f"at most {comma(apriori, 0)}, which is {apriori / 40000:.2f} of the cap")
+expect(F, f"is {comma(apriori, 0)}, which is {apriori / 40000:.2f} of the cap")
 expect(F, f"\\approx{4 * math.log(math.cosh(1 / math.sqrt(20000))) / 1e-4:.1f}\\times10^{{-4}}")
 rows = {"transport_hessian": "Hessian", "transport_endpoint": "Endpoint", "frozen_reference": "Frozen reference",
         "naive_current": "Naive current", "frozen_reference_no_envelope": "Envelope-free frozen",
