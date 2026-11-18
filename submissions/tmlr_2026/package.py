@@ -189,6 +189,19 @@ SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "experiments/configs/transport_review_followup.yaml",
     "experiments/TRANSPORT_REVIEW_FOLLOWUP_PROTOCOL.md",
     "experiments/tests/test_transport_review_followup_config.py",
+    # The second study (Section 6.1); its evidence files are also required as
+    # ledger sources through FOLLOWUP_SOURCE_HASHES.
+    "experiments/transport_v3.py",
+    "experiments/analyze_transport_v3.py",
+    "review/v3_results/check_paper_numbers.py",
+    "review/v3_results/eval_analysis.json",
+    "review/v3_results/eval_runs.jsonl",
+    "review/v3_results/tuning_selection.json",
+    "review/v3_results/tuning_runs.jsonl",
+    "review/v3_protocol/dev_pilot_runs.jsonl",
+    "review/v3_protocol/dev_pilot5_analysis.json",
+    "review/v3_audit/phase1_audit.py",
+    "review/v3_audit/phase1_audit.json",
 )
 
 # The active transport manuscript has no standalone symbolic-rate table.

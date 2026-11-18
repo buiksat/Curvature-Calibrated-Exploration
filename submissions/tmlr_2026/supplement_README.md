@@ -21,6 +21,14 @@ and chart regeneration. It does not contain the raw trajectory archive.
 - `review/transport_relative_diagnostics/full/` contains the relative-width
   analysis, per-seed diagnostics, original-input inventory and checksums.
   `tools/analyze_relative_transport.py` contains the replay implementation.
+- `review/v3_results/` and `review/v3_protocol/` contain the second study's
+  per-run records, analysis, optimizer selection and development records;
+  `experiments/transport_v3.py` and `experiments/analyze_transport_v3.py`
+  contain its implementation and analysis, and the manuscript appendix states
+  its protocol. `review/v3_audit/` contains the follow-up's envelope and bound-scale
+  diagnostics cited in its frozen-bound paragraph, and
+  `review/v3_results/check_paper_numbers.py` recomputes the numbers these
+  additions state.
 - `results/derived/transport_instantiation/` contains the earlier controlled
   audit's aggregate, optimizer selection, provenance records and checksums.
 - `paper/` contains the active manuscript sources and generated artifacts.

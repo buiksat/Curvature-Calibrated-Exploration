@@ -28,7 +28,7 @@ directory. Extract `supplement.zip` separately and run its own `verify.sh` with
 the pinned Python environment. The internal `release_manifest.json` is not
 anonymous upload material.
 
-The current PDF has 34 pages in the recorded TeX environment. Build results,
+The current PDF has 38 pages in the recorded TeX environment. Build results,
 including PDF comparisons and exact test counts, belong to the verification
 report for the particular commit; this document does not certify later builds.
 
@@ -56,8 +56,10 @@ their own source states and do not verify this revision.
 
 Raw trajectories are absent from the compact supplement. Terminal summaries
 support the checks described in the manuscript; they do not reconstruct missing
-roundwise raw data or establish universal floating-point certificates. No new
-adaptive experiments or Phase 2 implementation are part of this port.
+roundwise raw data or establish universal floating-point certificates. The second
+prespecified study (Section 6.1) is a new adaptive experiment; its per-run records
+and analysis are in `review/v3_results/` and `review/v3_protocol/`. No Phase 2
+implementation is part of this port.
 
 ## Current release
 
@@ -68,13 +70,13 @@ state. No material has been uploaded or submitted.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 475,088 | n/a | n/a |
-| `source.zip` | 2,957,393 | 84 | 2,947,011 |
-| `supplement.zip` | 93,923,108 | 201 | 93,886,508 |
-| `release_manifest.json` | 113,753 | n/a | n/a |
+| `main.pdf` | 527,911 | n/a | n/a |
+| `source.zip` | 2,983,783 | 84 | 2,973,401 |
+| `supplement.zip` | 98,521,454 | 212 | 98,483,236 |
+| `release_manifest.json` | 115,641 | n/a | n/a |
 
-The supplement uses 93.9% of the 100,000,000-byte limit,
-leaving 6,076,892 bytes. Both ZIPs use deterministic `ZIP_STORED`
+The supplement uses 98.5% of the 100,000,000-byte limit,
+leaving 1,478,546 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
 The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:

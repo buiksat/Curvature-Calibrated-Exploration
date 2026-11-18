@@ -2869,8 +2869,8 @@ _CATEGORY_REASON = {
         "a prespecified setting of the second study (test or interval level, "
         "resample count, burn-in share, tolerance coefficient, iteration cap, "
         "candidate grid, descriptive scale, or a design constant of its "
-        "synthetic model such as the action count) fixed in PROTOCOL_V3.md and "
-        "the hash-pinned study code; not a measurement",
+        "synthetic model such as the action count) fixed in the study's "
+        "protocol and its hash-pinned code; not a measurement",
     "math-constant":
         "a constant, exponent, index or coefficient inside a formula or a "
         "theorem statement; not a measurement",
