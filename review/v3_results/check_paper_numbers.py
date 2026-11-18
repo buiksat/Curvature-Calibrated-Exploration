@@ -2,7 +2,7 @@
 
 Run from the repository root:  python -B review/v3_results/check_paper_numbers.py
 Sources: review/v3_results/{eval_runs.jsonl,eval_analysis.json,tuning_selection.json},
-review/v3_audit/phase1_audit.json, the first study's committed per-seed summaries, and closed forms.
+the first study's committed per-seed summaries, and closed forms.
 """
 import json
 import math
@@ -35,10 +35,12 @@ def tex(x, p):  # table style: {,} thousands separator and $-$ minus
 F = "transport_followup.tex"
 # First study (Section 6): envelopes and frozen-bound terms.
 expect(F, ", ".join(f"{2 * C_H / math.sqrt(w):.3f}" for w in (16, 1)) + f" and {2 * C_H / math.sqrt(0.25):.3f}")
-audit = json.loads((ROOT / "review/v3_audit/phase1_audit.json").read_text())["compact"]
-ratios = [v["A1_mean_current_envelope_over_H_a"]["median"] for v in audit.values()]
-expect(F, f"{100 * min(ratios):.1f}\\%--{100 * max(ratios):.1f}\\%")
 summaries = [json.loads(l) for l in (ROOT / "review/transport_review_followup/full-cce-full-local/seed_summaries.jsonl").open()]
+# per-seed mean envelope sum_t eps_t / T over 2 c_h R^2 / sqrt(W); median per (W, method)
+ratios = [st.median(r["current_bias_cumulative"] / 2 / r["rounds"] / (2 * C_H / math.sqrt(w))
+                    for r in summaries if (r["W"], r["method"]) == (w, m))
+          for w, m in {(r["W"], r["method"]) for r in summaries}]
+expect(F, f"{100 * min(ratios):.1f}\\%--{100 * max(ratios):.1f}\\%")
 gammas = []
 for w in (16.0, 1.0, 0.25):
     rs = [r for r in summaries if r["W"] == w and r["method"] == "frozen_reference"]

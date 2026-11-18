@@ -24,11 +24,14 @@ and chart regeneration. It does not contain the raw trajectory archive.
 - `review/v3_results/` and `review/v3_protocol/` contain the second study's
   per-run records, analysis, optimizer selection and development records;
   `experiments/transport_v3.py` and `experiments/analyze_transport_v3.py`
-  contain its implementation and analysis, and the manuscript appendix states
-  its protocol. `review/v3_audit/` contains the follow-up's envelope and bound-scale
-  diagnostics cited in its frozen-bound paragraph, and
+  contain its implementation and analysis. Their docstrings cite a protocol
+  document that is not included; the manuscript appendix states the protocol.
   `review/v3_results/check_paper_numbers.py` recomputes the numbers these
-  additions state.
+  additions state. The second study ran with an earlier
+  `experiments/transport_instantiation.py` whose `policy_scores` computed every
+  policy's width factor; the included version computes only the selected
+  policy's factor, with the same arithmetic, so its scores are unchanged for
+  finite inputs.
 - `results/derived/transport_instantiation/` contains the earlier controlled
   audit's aggregate, optimizer selection, provenance records and checksums.
 - `paper/` contains the active manuscript sources and generated artifacts.

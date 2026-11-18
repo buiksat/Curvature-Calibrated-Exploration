@@ -199,9 +199,7 @@ SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "review/v3_results/tuning_selection.json",
     "review/v3_results/tuning_runs.jsonl",
     "review/v3_protocol/dev_pilot_runs.jsonl",
-    "review/v3_protocol/dev_pilot5_analysis.json",
-    "review/v3_audit/phase1_audit.py",
-    "review/v3_audit/phase1_audit.json",
+    "review/v3_protocol/dev_pilot5_runs.jsonl",
 )
 
 # The active transport manuscript has no standalone symbolic-rate table.

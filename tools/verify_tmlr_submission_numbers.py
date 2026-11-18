@@ -539,8 +539,7 @@ V3_RUNS = Path("review/v3_results/eval_runs.jsonl")
 V3_TUNING = Path("review/v3_results/tuning_selection.json")
 V3_TUNING_RUNS = Path("review/v3_results/tuning_runs.jsonl")
 V3_DEV_RUNS = Path("review/v3_protocol/dev_pilot_runs.jsonl")
-V3_DEV_ANALYSIS = Path("review/v3_protocol/dev_pilot5_analysis.json")
-V3_AUDIT = Path("review/v3_audit/phase1_audit.json")
+V3_DEV5_RUNS = Path("review/v3_protocol/dev_pilot5_runs.jsonl")  # development pilot of record
 PROOFS_TEX = Path("paper/transport_proofs.tex")
 
 # The second study's retained evidence, hash-pinned like the follow-up export.
@@ -550,8 +549,9 @@ FOLLOWUP_SOURCE_HASHES.update({
     Path('review/v3_results/tuning_selection.json'): 'f2b6033a76ea818ae0216683cb90115625e1e4ea4bb2202eb548b715ba81f8a5',
     Path('review/v3_results/tuning_runs.jsonl'): '231dd0f3b515f937d77704507fc2dcb4c5b147e31f3a9b343cab26531131b5cf',
     Path('review/v3_protocol/dev_pilot_runs.jsonl'): 'b100027dae925a8b3f216a3ab47afe852a921b829089d68f395bc080d71d8573',
-    Path('review/v3_protocol/dev_pilot5_analysis.json'): '047c5a80e857012a600a2d67d4359badcf35f1f74c4ad989f9e7b7707c6e95a2',
-    Path('review/v3_audit/phase1_audit.json'): 'a4151a0150690fd33985fcab5854df1aff15090d7c6e3530f95391b063f5990c',
+    Path('review/v3_protocol/dev_pilot5_runs.jsonl'): 'ef94bf39142b0f0f97f05deede8c365add7c1cbaf917c69932b369eeb0db374c',
+    Path('experiments/transport_v3.py'): '5c040e850682fff8e228ef62dbe55eedc18ec11e97d323036dc2623f19cc8402',
+    Path('experiments/analyze_transport_v3.py'): '2629c1a964589a21db3f0d744ca6855f522849d3f0350eda5ad1da0a15f667d9',
 })
 
 V3_CERTIFIED = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
@@ -561,7 +561,12 @@ V3_ROWS = (("transport_hessian", "Hessian"), ("transport_endpoint", "Endpoint"),
            ("naive_current_no_envelope", "Envelope-free naive"),
            ("linucb", "Linear UCB"), ("ucb_glm", "UCB-GLM"))
 V3_DESIGN_W, V3_CURVED_W = 20000, (100, 10, 1)
-C_H = 4 / (3 * math.sqrt(3))  # 4 B_phi^2 / (3 sqrt 3) with B_phi = 1
+C_H = 4 / (3 * math.sqrt(3))  # 4 B_phi^2 / (3 sqrt 3); B_phi = 1 for both studies' features
+
+
+def _c_h(config) -> float:
+    """c_h = 4 B_phi^2 / (3 sqrt 3) from the first follow-up's feature bound."""
+    return 4 * config["environment"]["feature_bound"] ** 2 / (3 * math.sqrt(3))
 
 
 def _only(values):
@@ -589,6 +594,7 @@ _V3_DESIGN_ROWS = {
     "linucb": ("43.47", "6.24", "$-$22.57", "$-$24.03", "$-$21.04"),
     "ucb_glm": ("31.63", "9.05", "$-$34.41", "$-$36.56", "$-$32.26"),
 }
+_V3_DESIGN_CONTEXT_FREE = "9{,}372.05"
 _V3_CURVED_ROWS = {
     "transport_hessian": ("2{,}837.6", "4{,}789.0", "8{,}635.4"),
     "transport_endpoint": ("440.3", "1{,}004.5", "1{,}886.9"),
@@ -645,15 +651,22 @@ def v3_ledger() -> list[Entry]:
     # Section 6: frozen-bound scale of the first study.
     phrase = "0.385, 1.540 and 3.079 at $W=16,1,0.25$"
     for width, display in ((16, "0.385"), (1, "1.540"), (0.25, "3.079")):
-        add(F, phrase, display, FOLLOWUP_CONFIG, f"closed form 2 c_h R^2 / sqrt(W), W={width}",
-            lambda c, w=width: 2 * C_H * c["environment"]["feature_bound"] ** 2 / math.sqrt(w),
+        add(F, phrase, display, FOLLOWUP_CONFIG,
+            f"closed form 2 c_h R^2 / sqrt(W), R = teacher.theta_radius, W={width}",
+            lambda c, w=width: 2 * _c_h(c) * c["teacher"]["theta_radius"] ** 2 / math.sqrt(w),
             units="reward units", population="first follow-up constants")
     phrase = "The per-run mean envelope is 98.3\\%--98.5\\% of that constant"
+    def envelope_share(rows):
+        """Median over seeds of the mean envelope sum_t eps_t / T over 2 c_h R^2 / sqrt(W)."""
+        return statistics.median(r["current_bias_cumulative"] / 2 / r["rounds"]
+                                 / (2 * C_H / math.sqrt(r["W"])) for r in rows)
+
     for pick, display in ((min, "98.3"), (max, "98.5")):
-        add(F, phrase, display, V3_AUDIT,
-            f"{pick.__name__} over compact cells of A1_mean_current_envelope_over_H_a.median, in percent",
-            lambda a, p=pick: 100 * p(v["A1_mean_current_envelope_over_H_a"]["median"]
-                                      for v in a["compact"].values()),
+        add(F, phrase, display, FOLLOWUP_SEEDS,
+            f"{pick.__name__} over (W, method) of the median of current_bias_cumulative/2/rounds "
+            "/ (2 c_h / sqrt(W)), in percent",
+            lambda s, p=pick: 100 * p(envelope_share([r for r in s if (r["W"], r["method"]) == cell])
+                                      for cell in {(r["W"], r["method"]) for r in s}),
             units="percent", population="first follow-up, 50 seeds per policy and condition")
     terms = ("statistical_bound_component", "historical_bound_component", "current_bias_cumulative")
     for width, label, displays in ((16., "$W=16$", ("10,155", "26,898", "758")),
@@ -786,7 +799,7 @@ def v3_ledger() -> list[Entry]:
             add(F, cell, display.removeprefix("$-$"), source,
                 f"W=20000 {method} {kind}" + (", negated for the displayed minus sign" if negative else ""),
                 (lambda d, f=compute: -f(d)) if negative else compute)
-    add(F, "9{,}372.05", "9{,}372.05", V3_ANALYSIS, "W=20000 mean_context_free",
+    add(F, _V3_DESIGN_CONTEXT_FREE, _V3_DESIGN_CONTEXT_FREE, V3_ANALYSIS, "W=20000 mean_context_free",
         lambda a: design(a)["mean_context_free"])
 
     # Descriptive cells.
@@ -897,18 +910,32 @@ def v3_ledger() -> list[Entry]:
             units="seed", population="second study")
     add(A, "The design cell uses $c=1$", "1", V3_RUNS, "spec.c shared by every W=20000 evaluation run",
         lambda r: spec(r, "c", V3_DESIGN_W), units="declared constant")
+    add(A, "every development frozen bound was at most 0.9 of the cap", "0.9", V3_DEV_RUNS,
+        "0.9 if every c=1 development run's frozen_form_bound is at most 0.9 cap, else NaN",
+        lambda r: 0.9 if all(x["frozen_form_bound"] <= 0.9 * x["cap"] for x in r
+                             if x["spec"]["c"] == 1.0 and "frozen_form_bound" in x) else math.nan,
+        units="ratio", population="second study, development pilot over c in {1,10,100}")
     add(A, "The margin $\\Delta=3.0$ is a quarter", "3.0", V3_ANALYSIS, "W=20000 design_checks.H2_delta",
         lambda a: design(a)["design_checks"]["H2_delta"])
-    add(A, "development mean Hessian-minus-frozen difference, 12.0,", "12.0", V3_DEV_ANALYSIS,
-        "W=20000 descriptive_pairs transport_hessian-frozen_reference mean, development seeds",
-        lambda a: a[f"W={V3_DESIGN_W}"]["descriptive_pairs"]["transport_hessian-frozen_reference"]["mean"],
+    def development_difference(runs):
+        regret = {(r["seed"], r["method"]): r["regret"] for r in runs if r["W"] == float(V3_DESIGN_W)}
+        seeds = sorted({seed for seed, _ in regret})
+        return statistics.mean(regret[(s, "transport_hessian")] - regret[(s, "frozen_reference")]
+                               for s in seeds)
+
+    add(A, "development mean Hessian-minus-frozen difference, 12.0,", "12.0", V3_DEV5_RUNS,
+        "mean over development seeds of W=20000 Hessian minus frozen regret, pilot of record",
+        development_difference,
         population="second study, 10 development seeds")
     add(A, "two one-sided tests with $\\Delta=3.0$", "3.0", V3_ANALYSIS, "W=20000 design_checks.H2_delta",
         lambda a: design(a)["design_checks"]["H2_delta"])
     candidates = lambda t: [tuple(float(x) for x in key.split("|")) for key in t["mean_mse"]]
     phrase = "learning rates $\\{3\\times10^{-6},10^{-5},3\\times10^{-5}\\}$ and $\\{5,20\\}$ steps"
-    add(A, phrase, "3\\times10^{-6}", V3_TUNING, "smallest learning rate among the tuning candidates",
-        lambda t: min(lr for lr, _ in candidates(t)), units="learning rate", population="tuning")
+    grid = lambda t: (sorted({lr for lr, _ in candidates(t)}), sorted({s for _, s in candidates(t)}))
+    add(A, phrase, "3\\times10^{-6}", V3_TUNING,
+        "smallest learning rate, and the candidate grid is exactly {3e-6, 1e-5, 3e-5} x {5, 20}",
+        lambda t: min(grid(t)[0]) if grid(t) == ([3e-6, 1e-5, 3e-5], [5.0, 20.0]) else math.nan,
+        units="learning rate", population="tuning")
     add(A, phrase, "3\\times10^{-5}", V3_TUNING, "largest learning rate among the tuning candidates",
         lambda t: max(lr for lr, _ in candidates(t)), units="learning rate", population="tuning")
     add(A, phrase, "5", V3_TUNING, "fewest steps among the tuning candidates",
@@ -951,8 +978,8 @@ def v3_ledger() -> list[Entry]:
         lambda c: 3 * math.sqrt(3) * c["environment"]["noise_std"] / 2, units="ratio",
         population="first follow-up constants")
     add(PROOFS_TEX, "about $12.3/\\sqrt c$", "12.3", FOLLOWUP_CONFIG,
-        "closed form 4 c_h / sigma with sigma = environment.noise_std",
-        lambda c: 4 * C_H / c["environment"]["noise_std"], units="ratio",
+        "closed form 4 c_h R / sigma, R = teacher.theta_radius, sigma = environment.noise_std",
+        lambda c: 4 * _c_h(c) * c["teacher"]["theta_radius"] / c["environment"]["noise_std"], units="ratio",
         population="first follow-up constants")
     add(PROOFS_TEX, "At that study's $T=1000$ and $W=16,1,0.25$", "1000", FOLLOWUP_CONFIG,
         "horizons[0]", lambda c: _only(c["horizons"]), units="rounds",
@@ -961,7 +988,7 @@ def v3_ledger() -> list[Entry]:
               "($D_{T,W}=97.3$, $389.3$ and $778.6$)")
     for index, (width, power, distance) in enumerate(((16, "42.6", "97.3"), (1, "169.4", "389.3"),
                                                      (0.25, "338.4", "778.6"))):
-        d_tw = lambda c, w=width: (4 * C_H * math.sqrt(_only(c["horizons"]) - 1)
+        d_tw = lambda c, w=width: (4 * _c_h(c) * c["teacher"]["theta_radius"] * math.sqrt(_only(c["horizons"]) - 1)
                                    / (c["environment"]["noise_std"] * math.sqrt(w)))
         add(PROOFS_TEX, phrase, power, FOLLOWUP_CONFIG, f"log10(2 exp(D_T,W)), W={width}",
             lambda c, f=d_tw: math.log10(2) + f(c) / math.log(10), units="log10 factor",
@@ -989,6 +1016,54 @@ def v3_ledger() -> list[Entry]:
         "minus W=20000 primary ucb_glm-frozen_reference mean",
         lambda a: -primary(a, "ucb_glm-frozen_reference"))
     return entries
+
+
+def v3_table_checks(root: Path) -> list[Check]:
+    """Bind each Section 6.1 table cell to its row label and column.
+
+    The v3_ledger entries recompute every displayed cell, but a per-cell phrase
+    only says the value occurs somewhere in the file.  This compares both
+    tabulars, row by row and column by column, with the display tables the
+    entries use, so swapping two cells fails.
+    """
+    path = root / FOLLOWUP_TEX
+    if not path.is_file():
+        return [Check("second-study tables are present", STATUS_FAIL, f"missing {FOLLOWUP_TEX}")]
+    text = visible_tex(path.read_text(encoding="utf-8"))
+
+    def rows(label):
+        start = text.index(f"\\label{{{label}}}")
+        lines = text[start:text.index("\\end{tabular}", start)].splitlines()
+        lines = lines[next(i for i, line in enumerate(lines) if "\\begin{tabular}" in line) + 1:]
+        body = " ".join(line for line in lines
+                        if line.strip() not in ("\\toprule", "\\midrule", "\\bottomrule"))
+        return [[" ".join(cell.split()) for cell in row.split("&")]
+                for row in body.split("\\\\") if row.strip()]
+
+    design = [["Policy", "Mean regret", "SD", "Minus frozen", "95\\% interval"]]
+    for method, name in V3_ROWS:
+        cells = _V3_DESIGN_ROWS.get(method)
+        if cells is not None:
+            design.append([name, *cells[:3], f"[{cells[3]}, {cells[4]}]"] if len(cells) == 5
+                          else [name, *cells, "---", "---"])
+    design.append(["Context-free", _V3_DESIGN_CONTEXT_FREE, "", "", ""])
+    curved = [["Policy", "$W=100$", "$W=10$", "$W=1$"]]
+    for method, name in V3_ROWS + (("context_free", "Context-free"), ("hessian_minus", "Hessian minus frozen"),
+                                    ("largest_ratio", "Largest frozen bound/cap")):
+        curved.append([name, *_V3_CURVED_ROWS[method]])
+    checks = []
+    for label, want in (("tab:transport-v3-design", design), ("tab:transport-v3-descriptive", curved)):
+        try:
+            got = rows(label)
+        except (ValueError, StopIteration) as exc:
+            checks.append(Check(f"second-study table {label}: every cell in its row and column",
+                                STATUS_FAIL, repr(exc)))
+            continue
+        first = next((f"row {i}: {g!r} vs {w!r}" for i, (g, w) in enumerate(zip(got, want)) if g != w),
+                     None if len(got) == len(want) else f"{len(got)} rows vs {len(want)}")
+        checks.append(Check(f"second-study table {label}: every cell in its row and column",
+                            STATUS_PASS if first is None else STATUS_FAIL, first or f"{len(want)} rows"))
+    return checks
 
 
 def historical_and_prior_ledger(root: Path | None = None) -> list[Entry]:
@@ -3027,7 +3102,6 @@ CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
  ('paper/transport_followup.tex', '95'): ('protocol-constant', 2),
  ('paper/transport_followup_appendix.tex', '0'): ('math-constant', 1),
  ('paper/transport_followup_appendix.tex', '0.05'): ('protocol-constant', 2),
- ('paper/transport_followup_appendix.tex', '0.9'): ('protocol-constant', 1),
  ('paper/transport_followup_appendix.tex', '1'): ('math-constant', 7),
  ('paper/transport_followup_appendix.tex', '1,10,100'): ('protocol-constant', 1),
  ('paper/transport_followup_appendix.tex', '10'): ('protocol-constant', 1),
@@ -3324,6 +3398,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'development mean Hessian-minus-frozen difference, 12.0,'): 1,
  ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
  ('paper/transport_followup_appendix.tex', 'evaluation seeds 41200--41249'): 1,
+ ('paper/transport_followup_appendix.tex', 'every development frozen bound was at most 0.9 of the cap'): 1,
  ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'): 1,
  ('paper/transport_followup_appendix.tex', 'learning rates $\\{3\\times10^{-6},10^{-5},3\\times10^{-5}\\}$ and $\\{5,20\\}$ steps'): 1,
  ('paper/transport_followup_appendix.tex', 'rate $3\\times10^{-6}$ with 5 steps had the smallest mean MSE, $4.062\\times10^{-5}$, and the six means were within 0.2\\% of each other'): 1,
@@ -5342,6 +5417,8 @@ def run(root: Path, *, check_manuscript: bool = True,
             f"expected literal {needle!r} in {entry.manuscript}",
         ))
 
+    if check_manuscript:
+        checks.extend(v3_table_checks(root))
     checks.extend(structural_checks(root, aggregate, config))
     checks.extend(followup_checks(root, followup_data))
     if check_manuscript:
