@@ -38,6 +38,11 @@ containing `sha256` or `digest`, timings, worker count, git and Python details, 
 reconstructs each score with the simulator's association, centers + (beta * factor) * width + bias, so the
 scores must match exactly. Other quantities must agree within 1e-10 * max(1, |a|, |b|) (an absolute 1e-10 below magnitude 1) and have the same shape. Every logged numeric field it reads must be finite, the optimism flag must be a JSON boolean, each record's round labels must match its position and its seed the run's, and the replayed and committed runs must be the same set with no duplicates.
 It takes the logged centers, widths, gamma and Q_t as given; it does not rebuild those from the observations.
+It does not check that every per-action vector in a round has the same length, and it accepts a JSON value of
+another type (for example `false` for 0.0) when the value is numerically correct. A 2026-11-18 re-review found
+both. The first lets a truncated `true_means` pass when the selected and optimal actions are 0, which changes the
+A4 counts; the second cannot make a wrong number pass. The script is left unchanged because the replay it checked
+has been deleted, so a changed script could not be rerun against it.
 It also runs the two Phase 1 checks that needed raw logs (`AUDIT_REPORT.md`, A2 and A4):
 
 - A2 medians per cell at t = 10, 100, 500, 1000 are in `check_raw_600.json`; the t = 1000 values lie in the
