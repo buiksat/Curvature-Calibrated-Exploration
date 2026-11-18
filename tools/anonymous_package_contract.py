@@ -568,11 +568,11 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- 'tools/numeric_context_pins.py': '7d09fb9b9965f383d44f85f38990ec0b9f09a36f1ae0dad5ecb19877eb922e98',
+ 'tools/numeric_context_pins.py': '459fcfc106bc83289c90646514a3ee9a10246a117ab3907a6c2bd48358405bcc',
  'tools/prepare_tmlr_figures.py': '53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '43cc56bc012bb186d2045c06802643a8ceb62e0b9640c318bbeb27af3cf57547'}
+ 'tools/verify_tmlr_submission_numbers.py': '1d28d9e0b2318b0b9c8a4c16fb9ef2c3be575e1788540fd7c32b66f7ea8257cb'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({
