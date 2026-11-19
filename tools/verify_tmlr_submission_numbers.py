@@ -822,6 +822,23 @@ def v3_ledger() -> list[Entry]:
             add(F, phrase, display, V3_ANALYSIS, f"minus W=1 descriptive_pairs {pair} {kind}",
                 lambda a, p=pair, k=kind: -(a["W=1"]["descriptive_pairs"][p]["mean"] if k == "mean"
                                             else a["W=1"]["descriptive_pairs"][p]["bootstrap_ci95"][k == "hi"]))
+    phrase = ("naive minus frozen is $-0.6$ ($[-1.8, 0.5]$), $-0.1$ ($[-1.0, 0.9]$) and $-0.3$ "
+              "($[-1.4, 0.8]$) at $W=100$, $10$ and $1$")
+    pair = "naive_current_no_envelope-frozen_reference_no_envelope"
+    for index, displays in enumerate((("0.6", "1.8", "0.5"), ("0.1", "1.0", "0.9"), ("0.3", "1.4", "0.8"))):
+        for kind, display in zip(("mean", "lo", "hi"), displays):
+            sign = 1 if kind == "hi" else -1  # mean and lower end are negative, shown as magnitudes
+            add(F, phrase, display, V3_ANALYSIS,
+                f"{'' if sign > 0 else 'minus '}W={V3_CURVED_W[index]} descriptive_pairs {pair} {kind}",
+                lambda a, i=index, k=kind, s=sign, p=pair: s * (curved(a)[i]["descriptive_pairs"][p]["mean"] if k == "mean"
+                                                                else curved(a)[i]["descriptive_pairs"][p]["bootstrap_ci95"][k == "hi"]))
+    phrase = "lies between 0.985 and 1.305"
+    for pick, slot, display in ((min, 0, "0.985"), (max, 2, "1.305")):
+        add(F, phrase, display, V3_ANALYSIS,
+            f"{pick.__name__} of s_over_sbar[{slot}] over all four cells and every method that records it",
+            lambda a, p=pick, j=slot: p(v[j] for w in (V3_DESIGN_W,) + V3_CURVED_W
+                                        for v in a[f"W={w}"]["s_over_sbar"].values()),
+            units="ratio", population="second study, every action and round of every run that records both widths")
     phrase = "grows to 2,396.8, 3,784.6 and 6,733.3"
     for index, display in enumerate(("2,396.8", "3,784.6", "6,733.3")):
         add(F, phrase, display, V3_ANALYSIS,
@@ -3227,9 +3244,9 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '$T=20{,}000$ over 50 seeds'): 1,
  ('paper/transport_followup.tex', '$W=0.25$'): 2,
  ('paper/transport_followup.tex', '$W=1$'): 7,
- ('paper/transport_followup.tex', '$W=10$'): 1,
- ('paper/transport_followup.tex', '$W=100$'): 3,
- ('paper/transport_followup.tex', '$W=100$ and $10$'): 2,
+ ('paper/transport_followup.tex', '$W=10$'): 2,
+ ('paper/transport_followup.tex', '$W=100$'): 4,
+ ('paper/transport_followup.tex', '$W=100$ and $10$'): 1,
  ('paper/transport_followup.tex', '$W=16,1,0.25$'): 3,
  ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
  ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
@@ -3330,6 +3347,8 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', 'design cell ($W=T=20{,}000$)'): 1,
  ('paper/transport_followup.tex', 'differences with pointwise 95\\% paired'): 1,
  ('paper/transport_followup.tex', 'endpoint minus frozen is $-15.3$ ($[-20.5,-10.2]$)'): 1,
+ ('paper/transport_followup.tex', 'naive minus frozen is $-0.6$ ($[-1.8, 0.5]$), $-0.1$ ($[-1.0, 0.9]$) and $-0.3$ ($[-1.4, 0.8]$) at $W=100$, $10$ and $1$'): 1,
+ ('paper/transport_followup.tex', 'lies between 0.985 and 1.305'): 1,
  ('paper/transport_followup.tex', 'every $p\\le1.2\\times10^{-108}$'): 1,
  ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
  ('paper/transport_followup.tex', 'from 440.9--1,902.1 to 43.3--43.9'): 1,
