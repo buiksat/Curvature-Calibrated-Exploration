@@ -116,9 +116,17 @@ the most curved descriptive cell.
 %
 \appendix
 %
-% Explicit counters retain statement identities; further moves require
-% comparing all label numbers with the original manuscript.
-\setcounter{theorem}{14}
+% Appendix-only statements and tables are numbered A.1, A.2, ... within
+% each appendix section; the counters restart at the next \section.
+\counterwithin{theorem}{section}
+\counterwithin{table}{section}
+\renewcommand{\thelemma}{\thetheorem}
+\renewcommand{\thecorollary}{\thetheorem}
+\renewcommand{\theproposition}{\thetheorem}
+\renewcommand{\theHtheorem}{app.\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
 \input{transport_proofs}
 %
 \input{transport_followup_appendix}
