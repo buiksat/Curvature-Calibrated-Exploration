@@ -18,6 +18,10 @@ correction recovers it (\Cref{prop:reference-width-floor}). The symmetric
 exponential width factors are sharp (Section~\ref{sec:logarithmic-transport}).
 Third, scaled tanh admits a relative-weight endpoint certificate because its
 gradient directions stay fixed (\Cref{cor:tanh-relative-weights}).
+A log-Lipschitz bound on the link derivative gives a further certificate
+controlled by index movement, and when $W\ge cT$ the uniform endpoint factor
+is $1+O(1/(cT))$, so the endpoint-transported bound has the frozen bound's form
+(\Cref{cor:tanh-lipschitz-endpoint,cor:tanh-endpoint-regime}).
 \Cref{thm:transported-ucb} connects these results: reference confidence,
 metric transport, operator comparison and numerical-width certificates give
 an implemented UCB score and a regret bound.
@@ -29,4 +33,5 @@ last-layer uncertainty offer other constructions
 the additional certificate obligations studied here. Sections
 \ref{sec:abstract-transport}--\ref{sec:closed-rates-new} give the framework,
 geometry, corrected center and rates; Section~\ref{sec:transport-followup}
-reports the study. Proofs and supporting details are in the appendices.
+reports two prespecified studies, the second with an informative frozen bound
+and generalized-linear baselines. Proofs and supporting details are in the appendices.

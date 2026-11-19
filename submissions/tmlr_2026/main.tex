@@ -88,7 +88,12 @@ seeds per condition. Hessian transport has higher mean pseudo-regret than every
 comparator; all nine pointwise paired 95\% intervals exclude zero. Its bonus
 usually determines its action, and its bounds and the frozen policy's own
 bounds exceed the deterministic cap. All four policies pass the recorded
-confidence and optimism checks.
+confidence and optimism checks. A second prespecified study, at a scale
+where the frozen bound is below the reward cap, finds endpoint transport
+equivalent to frozen scoring within a prespecified margin, a regret cost of
+16.8 units for Hessian transport, and 34.4 units less regret for a
+generalized-linear UCB baseline, which has higher regret than linear UCB in
+the most curved descriptive cell.
 \end{abstract}
 
 %
@@ -116,7 +121,6 @@ confidence and optimism checks.
 \setcounter{theorem}{14}
 \input{transport_proofs}
 %
-\setcounter{section}{3}
 \input{transport_followup_appendix}
 
 \end{document}

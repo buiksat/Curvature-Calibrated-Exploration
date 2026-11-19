@@ -700,3 +700,64 @@ For finite feature categories, maintain a count and a sum of collection-time
 weights; current category projections then compute the certificate without
 an eigensolve or a full-history scan. The appendix gives the termwise proof
 and an example with equal endpoints and positive synthetic path length.
+
+The two scaled-tanh metrics differ only through squared link derivatives,
+whose logarithm is Lipschitz in the linear index. This gives a further
+endpoint certificate, controlled by how far the index has moved. The new
+statements below are numbered after those of the appendix.
+
+\setcounter{theorem}{16}
+\begin{lemma}[Relative-weight Lipschitz bound]
+\label{lem:tanh-weight-lipschitz}
+For every $z$, $W>0$ and $\theta_1,\theta_2$,
+\[
+ \frac{\omega_{\theta_1}(z)}{\omega_{\theta_2}(z)}
+ \le\exp\!\Big(\frac{2|\phi(z)^\top(\theta_1-\theta_2)|}{\sqrt W}\Big).
+\]
+If moreover $|\phi(z)^\top\theta_i|\le B_\phi R$ for $i=1,2$, the factor $2$
+can be replaced by $2\tanh(B_\phi R/\sqrt W)$.
+\end{lemma}
+
+\begin{corollary}[Lipschitz endpoint certificate]
+\label{cor:tanh-lipschitz-endpoint}
+Under the hypotheses of \Cref{cor:tanh-relative-weights}, let
+$M_t=\max_{s<t}|\phi(z_s)^\top(\btheta_t-\btheta_s)|$ ($M_1=0$) and
+$D_t^{\rm lip}=4\tanh(B_\phi R/\sqrt W)\,M_t/\sqrt W$. Then
+$e^{-D_t^{\rm lip}}\bVbar_t\preceq\bV_t\preceq e^{D_t^{\rm lip}}\bVbar_t$, so
+$c_{\mp,t}=e^{\mp D_t^{\rm lip}}$ satisfy \eqref{eq:relative-endpoint-sandwich}
+and $d_{\rm Th}(\bVbar_t,\bV_t)\le D_t^{\rm lip}\le4M_t/\sqrt W$.
+$D_t^{\rm lip}$ is a measurable function of $\btheta_t$ and
+$(\btheta_s,z_s)_{s<t}$, hence predictable.
+\end{corollary}
+
+Computing $M_t$ needs every $\btheta_s$ and a scan of the history each round,
+unlike the category certificate. The category certificate
+\eqref{eq:tanh-category-relative} is never looser than $D_t^{\rm lip}$, and
+the Lipschitz certificate is tighter than the uniform one exactly when $M_t$
+is below $\sqrt W\log\cosh(x)/\tanh(x)$, $x=B_\phi R/\sqrt W$; the appendix
+proves both statements and compares $D_t^{\rm lip}$ with the Hessian path
+certificate. In the near-linear regime of \Cref{cor:global-near-linear-new},
+the uniform certificate itself is close to one.
+
+\begin{corollary}[Uniform endpoint factor when $W\ge cT$]
+\label{cor:tanh-endpoint-regime}
+If $W\ge cT$ for some $c>0$, then
+$\exp(4\log\cosh(B_\phi R/\sqrt W))=\cosh^4(B_\phi R/\sqrt W)
+\le\exp(2B_\phi^2R^2/(cT))$.
+\end{corollary}
+
+\paragraph{What transport adds in the near-linear regime.}
+Take the scaled-tanh specialization of \Cref{cor:global-near-linear-new}
+with exact current curvature, exact solves and exact maximization, and score
+with \Cref{cor:relative-endpoint-ucb} using the uniform certificate. By
+\Cref{cor:tanh-endpoint-regime}, the endpoint-transported bound then has the
+frozen bound's form (\Cref{prop:frozen-width-ucb}) with the factor $2$
+replaced by $1+\cosh^4(B_\phi R/\sqrt W)\le1+e^{2B_\phi^2R^2/(cT)}$, whereas
+the Hessian path certificate leaves the factor $2e^{D_{T,W}}$ with
+$D_{T,W}=O(1/\sqrt c)$. When both bounds are written in the same $\gamma_T$,
+$\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at
+most a $1+O(1/(cT))$ multiple of the frozen one, and the bias terms are
+identical; the two bounds hold on different trajectories. In this analysis
+transport does not improve on frozen scoring. The appendix gives the
+resulting explicit bound and evaluates both factors at the first study's
+constants.

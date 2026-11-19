@@ -12,6 +12,25 @@ constructions. Learned last-layer uncertainty
 \citep{riquelme2018deep,xu2022shallow,bui2025variance} concerns learned linear
 representations rather than a GGN over all network parameters.
 
+\paragraph{Generalized linear and logistic bandits.}
+Scaled tanh is a single-index model with a known increasing link, the form
+studied by generalized linear bandits. \citet{li2017provably} analyze
+UCB-GLM and SupCB-GLM under conditionally sub-Gaussian noise, a link with
+$\inf\dot\mu=\kappa>0$ near the true parameter, bounded first and second link
+derivatives, i.i.d.\ contexts with a nondegenerate design, and an estimator
+that solves the GLM score equation; their bounds scale as
+$\tilde O(d\sqrt T/\kappa)$ and $\tilde O(\sqrt{dT\log K}/\kappa)$. For the
+logistic link with Bernoulli rewards, \citet{faury2020improved} remove
+$\kappa$ from the leading $\sqrt T$ term using a Bernstein-like inequality for
+self-normalized martingales, and \citet{abeille2021instance} obtain a leading
+term $d\sqrt{T/\kappa_\star}$ with a matching local lower bound. None of these
+results applies as stated to our setting: the logistic analyses assume
+Bernoulli rewards, and \citet{li2017provably} state rewards in $[0,1]$. Our
+analysis also differs in its object: it allows an arbitrary predictable
+parameter fitted with squared loss and corrects the prediction with a frozen
+linear estimate, rather than analyzing a likelihood estimator.
+Section~\ref{sec:transport-v3} runs UCB-GLM as a baseline.
+
 \paragraph{Posterior and linearization methods.}
 \citet{duranmartin2022efficient} use recursive EKF updates in a learned or random
 low-dimensional affine parameter subspace. LO-FI maintains a

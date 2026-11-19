@@ -23,10 +23,9 @@ mean restrictions or confidence information can change the admissible set.
 Same-history width comparisons and comparable-order guarantees do not rank
 adaptive regret or prove transport unnecessary. The exact actionwise ratio
 already evaluates the reference width it recovers, so supplies no shortcut as
-written; this is not a general computational lower bound. The abstract
+written. The abstract
 counterexample is neither a realizable scaled-tanh learning trajectory nor an
-observed failure or necessity instance. Its metric balls are not asserted
-statistical confidence sets. Symmetric-factor sharpness concerns metric
+observed failure or necessity instance. Symmetric-factor sharpness concerns metric
 factors, not a regret lower bound or every trajectory's worst case.
 
 \paragraph{Certificate and model limits.}
@@ -39,8 +38,7 @@ factorization and interpolation. Rowwise interpolation need not be any common
 model's GGN or its training path. Changing weights adds derivative obligations.
 Vector-output Fisher/GGN geometry needs controlled factors and Jacobians;
 singular square roots need not be differentiable, and a uniform positive
-spectral floor is essential. It supplies no likelihood confidence sequence or
-exponential-family regret theorem. Local and exponential comparisons use
+spectral floor is essential. Local and exponential comparisons use
 different premises and do not uniformly dominate each other.
 
 The corrected center needs a reference model fixed before collection,
@@ -50,25 +48,19 @@ does not make these errors small. Persistent misspecification can give linear
 bias and a vacuous radius: this is graceful degradation, not a robust
 misspecified-bandit guarantee. $W$ is a near-linearity scale, not generic hidden
 width or parameter count. Its horizon scaling is sufficient, not necessary,
-under the stated other assumptions; it gives neither unrestricted neural
-training guarantees nor sublinear regret for an arbitrary fixed nonlinear
-model. Fixed-direction/category comparisons do not cover general rotating
+under the stated other assumptions. Fixed-direction/category comparisons do not cover general rotating
 gradients. Cheaper certificate maintenance leaves center and width solves;
 horizon-independent endpoint control leaves historical/current error costs
 and does not itself imply sublinear regret or better decisions. Geometry,
 self-normalized regression, determinant-potential and spectral-sandwich
-arguments are established tools. We give no generic innovation in these tools,
-general neural-linear representation-learning analysis, or nonstationary
-reward analysis.
+arguments are established tools.
 
 \paragraph{Empirical scope and uncertainty.}
 The study covers one synthetic scaled-tanh model and fixed teacher with shared
 prediction-MSE optimizer selection and dense float64 Cholesky solves. That
 selection is not policy-specific regret optimization. It evaluates no
 approximate/sketched operator, iterative solver, large model, real data or
-matrix-free scalability, and establishes no computational or performance
-advantage over scalable neural-bandit methods, LO-FI, LMC-TS or fixed-feature
-alternatives. Changing $W$ changes rewards as well as curvature; condition
+matrix-free scalability. Changing $W$ changes rewards as well as curvature; condition
 comparisons do not isolate drift, and target labels are not measured endpoint
 distances. Fixed $W$ at one horizon neither tests asymptotic scaling nor
 establishes a theorem-assumption violation.
@@ -87,6 +79,17 @@ optimism checks, including naive current, establish neither population
 coverage, numerical theorem certification, necessity nor practical advantage.
 Float64 solves, eigenvalues, quadrature, replay residuals and source hashes are
 not rigorous numerical enclosures.
+
+The second study (\Cref{sec:transport-v3}) shares these limits and adds its
+own. It covers one six-dimensional model with 12 feature categories and one
+optimizer, selected in the design cell and not retuned per cell. Its design
+checks hold by construction in a near-linear cell and test the setup, not
+transport. Its descriptive cells were chosen after development output was
+read and carry no test. UCB-GLM runs exactly as specified in every cell,
+with a random-phase stopping rule of our choosing, and its regret theorem does
+not apply; neither UCB-GLM nor linear UCB is certified here, and the bound
+comparison after \Cref{cor:tanh-endpoint-regime} does not predict realized
+regret.
 
 \paragraph{Reading bounds and exploratory diagnostics.}
 Appendix~\ref{app:transport-followup} defines fixed-history rescoring, decimal

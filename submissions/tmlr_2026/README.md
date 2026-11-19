@@ -3,8 +3,9 @@
 Entry point: `main.tex`. The manuscript presents corrected-center confidence,
 the reference-width floor and symmetric-factor sharpness, and scaled-tanh
 relative-weight certificates through the transported-UCB framework. Section 6
-reports the retained prespecified nonlinear study. No new experiments accompany
-this editorial revision.
+reports the retained prespecified nonlinear study. Section 6.1 reports a second
+prespecified study at a scale where the frozen bound is below the reward cap; its
+code, per-run records and analysis live on the `cce-review-revisions` branch.
 
 ## Build
 
@@ -25,7 +26,8 @@ the first-page Codex/Claude assistance disclosure are retained.
 `transport_proofs.tex` retains proofs and solver/randomized-certificate
 material in Appendix A. General action-space, assumption-ledger, notation,
 algorithm and supporting certificate material are also in A. The full-study
-protocol and post-outcome diagnostics retain Appendix D's identity. The
+protocol, post-outcome diagnostics and the second study's protocol are in
+Appendix B. The
 sources `transport_experiment.tex`, `transport_experiment_appendix.tex` and
 `legacy_scope.tex` remain in Git and are excluded from this build.
 
