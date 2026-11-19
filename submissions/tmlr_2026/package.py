@@ -399,46 +399,7 @@ FORBIDDEN = (
     r"\borcid\b",
 )
 
-# The bibliography legitimately carries third-party author names, including a
-# cited preprint by two of this paper's authors.  Citing prior work in the third
-# person is normal under double-blind review; the scrub therefore allows author
-# names inside references.bib and nowhere else.  FINALIZATION_REPORT.md records
-# this as an explicit author release decision rather than hiding it here.
-#
-# The exemption is scoped to the matched token, not to the line it sits on.  It
-# used to clear a whole line as soon as one allowed name appeared anywhere on
-# it, so a references.bib line carrying both an author name and, say, a local
-# checkout path shipped the path as well.
-SCRUB_ALLOWLIST = {"references.bib"}
-SCRUB_ALLOWED_TOKENS = (r"Granziol", r"Juarev")
-
 FORBIDDEN_RE = re.compile("|".join(FORBIDDEN), re.IGNORECASE)
-SCRUB_ALLOWED_TOKEN_RE = re.compile("|".join(SCRUB_ALLOWED_TOKENS),
-                                    re.IGNORECASE)
-
-# A BibTeX key is mechanically derived from the first author's surname, so the
-# same two names also occur in the manuscript as \citep{granziol2026hessian}.
-# That is the identical release decision as the bibliography entry -- citing
-# prior work in the third person -- and it is exempt on the identical terms:
-# the matched token must itself be an allowed author name, and it must lie
-# inside a citation command's key argument.  Prose naming an author is not.
-CITATION_KEYS_RE = re.compile(
-    r"\\[a-zA-Z]*cite[a-zA-Z]*\s*(?:\[[^\]]*\]\s*)*\{([^}]*)\}")
-
-
-def _citation_key_spans(line: str) -> list[tuple[int, int]]:
-    return [match.span(1) for match in CITATION_KEYS_RE.finditer(line)]
-
-
-def citation_exempt(arcname: str, match: re.Match[str], line: str) -> bool:
-    """True only for an allowed author token in a bibliography or citation key."""
-
-    if SCRUB_ALLOWED_TOKEN_RE.fullmatch(match.group(0)) is None:
-        return False
-    if Path(arcname).name in SCRUB_ALLOWLIST:
-        return True
-    return any(start <= match.start() and match.end() <= end
-               for start, end in _citation_key_spans(line))
 
 # --------------------------------------------------------------------------
 # the venue's layout rules, enforced on the sources the submission compiles
@@ -3188,8 +3149,6 @@ def scrub(entries: Iterable[tuple[Path, str]]) -> list[str]:
             continue
         for number, line in enumerate(text.splitlines(), 1):
             for match in FORBIDDEN_RE.finditer(line):
-                if citation_exempt(arcname, match, line):
-                    continue
                 findings.append(f"{arcname}:{number}: {match.group(0)!r} in {line.strip()[:120]!r}")
     return findings
 
@@ -3501,8 +3460,6 @@ def scan_for_identifiers(entries: Iterable[tuple[Path, str]],
                     f"{arcname}:{number}: known project revision "
                     f"{candidate!r}")
             for match in identity.finditer(line):
-                if citation_exempt(arcname, match, line):
-                    continue
                 findings.append(
                     f"{arcname}:{number}: project or author identifier "
                     f"{match.group(0)!r}")

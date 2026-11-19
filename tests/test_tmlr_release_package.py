@@ -246,34 +246,16 @@ def test_scan_flags_project_and_author_identity_in_any_case(tmp_path, text):
     assert scan([(path, "x.md")]), text
 
 
-def test_author_names_are_allowed_only_inside_the_bibliography(tmp_path):
-    """Positive control for the exemption, and proof it is not line-scoped."""
+def test_author_names_are_flagged_inside_the_bibliography_too(tmp_path):
+    """No file is exempt: an author name in references.bib is a leak."""
 
     entry = tmp_path / "references.bib"
     entry.write_text(
         "@article{granziol2026hessian,\n"
         "  author  = {Granziol, Diego and Juarev, Khurshid},\n"
         "}\n", encoding="utf-8")
-    assert scan([(entry, "references.bib")]) == []
-    assert packager.scrub([(entry, "references.bib")]) == []
-
-    # the same names anywhere else are a leak
-    elsewhere = tmp_path / "notes.md"
-    elsewhere.write_text("thanks to Granziol and Juarev\n", encoding="utf-8")
-    assert scan([(elsewhere, "notes.md")])
-    assert packager.scrub([(elsewhere, "notes.md")])
-
-    # and a bibliography line that also carries a checkout path no longer
-    # passes just because an allowed name sits on it
-    mixed = tmp_path / "mixed.bib"
-    mixed.write_text(
-        "  note = {Granziol, see /home/someone/checkout/paper.pdf},\n",
-        encoding="utf-8")
-    findings = packager.scrub([(mixed, "references.bib")])
-    assert len(findings) == 1, findings
-    assert "'/home/s'" in findings[0], findings
-    # the exempt name on the same line is still exempt; the path is not
-    assert "'Granziol'" not in findings[0]
+    assert scan([(entry, "references.bib")])
+    assert packager.scrub([(entry, "references.bib")])
 
 
 def test_supplement_is_only_clean_because_of_the_anonymization(tmp_path):
