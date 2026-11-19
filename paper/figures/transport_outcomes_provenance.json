@@ -1,5 +1,5 @@
 {
-  "generator_sha256": "65626c9c0113737520f3c97c97b2a4e90a05878cd8d421accff0e75da8a817f3",
+  "generator_sha256": "d9574f648fe0f0de63a5bd00cc407b49325963e1a76a093dc8df0921663756be",
   "inputs": [
     {
       "path": "review/transport_review_followup/full-cce-full-local/execution_config.json",
@@ -19,6 +19,6 @@
     }
   ],
   "output": "paper/figures/transport_followup_outcomes.tex",
-  "output_sha256": "527726ec7baf327eb9f60b855383dadd37d6f8a00715ee07278b0e61ffe0731f",
+  "output_sha256": "75c6f0c23c539985efb129b5e833e93ebec9a818cf7c1d56a326a9421b19aeed",
   "scope": "Terminal means from unchanged per-seed exports; stored paired intervals independently replayed by --check. No raw-trajectory reproduction."
 }

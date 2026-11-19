@@ -465,6 +465,8 @@ segment from $\btheta_s$ to $\btheta_t$:
  \sigma^{-1}\nabla_\theta\mu_{\btheta_s+
  \tau(\btheta_t-\btheta_s)}(x_s,a_s)^\top.
 \end{equation}
+This rowwise interpolation is a device for the certificate; it need not be the
+generalized Gauss--Newton path of any common model or its training path.
 
 \Cref{lem:factor-spd-path} leaves the factor derivative to be bounded. A
 prediction-Hessian bound and the ridge floor bound it through the accumulated
@@ -793,7 +795,9 @@ Either certificate can be used in \Cref{cor:relative-endpoint-ucb}.
 
 For finite feature categories, maintain a count and a sum of collection-time
 weights; current category projections then compute the certificate without
-an eigensolve or a full-history scan. The appendix gives the termwise proof
+an eigensolve or a full-history scan. The center and width solves remain, and
+these comparisons rely on fixed gradient directions, so they do not cover
+rotating gradients. The appendix gives the termwise proof
 and an example with equal endpoints and positive synthetic path length.
 
 The category certificate needs finite feature categories, and the uniform
@@ -843,6 +847,10 @@ $\exp(4\log\cosh(B_\phi R/\sqrt W))=\cosh^4(B_\phi R/\sqrt W)
 \le\exp(2B_\phi^2R^2/(cT))$.
 \end{corollary}
 
+An endpoint factor that does not grow with the horizon leaves the historical
+and current error terms in place, and by itself it implies neither sublinear
+regret nor better decisions.
+
 \paragraph{What transport adds in the near-linear regime.}
 Take the scaled-tanh specialization of \Cref{cor:global-near-linear-new}
 with exact current curvature, exact solves and exact maximization, and score
@@ -855,6 +863,6 @@ $D_{T,W}=O(1/\sqrt c)$. When both bounds are written in the same $\gamma_T$,
 $\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at
 most a $1+O(1/(cT))$ multiple of the frozen one, and the bias terms are
 identical; the two bounds hold on different trajectories. In this analysis
-transport does not improve on frozen scoring. The appendix gives the
+transport does not improve on scoring with the reference width. The appendix gives the
 resulting explicit bound and evaluates both factors at the first study's
 constants.

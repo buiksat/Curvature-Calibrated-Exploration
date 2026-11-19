@@ -1,22 +1,45 @@
 \section{Full-study protocol and exploratory diagnostics}
 \label{app:transport-followup}
 
-This appendix records the prespecified protocol and the post-outcome
-diagnostics on recorded histories.
+This appendix records the first study's protocol, fixed before evaluation, and
+the post-outcome diagnostics on recorded histories, then the second study's
+protocol.
 
-\subsection*{Bound scale and drift diagnostics}
+\subsection*{Outcomes, bound scale and drift diagnostics}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/transport_explanatory_outcomes.tex}
+ \caption{First study: policy outcomes at $T=1000$. Left: mean cumulative pseudo-regret. Right: comparator-minus-Hessian-path differences with pointwise 95\% paired seed-bootstrap intervals. Negative differences favor the comparator. The label ``Hessian'' denotes Hessian-path transport and ``Endpoint'' denotes endpoint transport.}
+ \label{fig:transport-followup-outcomes}
+\end{figure}
+
+\paragraph{Reading the bound scale.}
+The logarithm of a mean bound-to-cap ratio differs from the mean of the
+logarithms and from checks of individual bounds. Subtracting the path
+inflation from the Hessian-path bound does not reconstruct another policy's
+bound or outcome.
+
+\paragraph{Taylor envelope.}
+Every first-study policy uses the Taylor envelope at the current parameter
+norm, $\epslin=\tfrac12(c_h/\sqrt W)(R+\|\btheta_t\|_2)^2$ with
+$c_h=4/(3\sqrt3)$ and $R=B_\phi=1$, both for the error allowance $b_t$ and for
+the historical terms of $\beta_t$. At $\|\btheta_t\|_2=R$ it equals the
+constant $2c_hR^2/\sqrt W$ of \Cref{cor:global-near-linear-new}: 0.385, 1.540
+and 3.079 at $W=16,1,0.25$. The per-run mean envelope is 98.3\%--98.5\% of
+that constant (median over seeds, for every policy and condition).
 
 \begin{figure}[t]
  \centering
  \input{figures/transport_explanatory_bounds.tex}
- \caption{Mean terminal theorem RHS relative to the deterministic cap $2T\min(1,\sqrt W)$, on each named policy's own 50 histories. Points plot the base-ten logarithm of the mean RHS/cap; zero is equality with the cap.}
+ \caption{First study: mean terminal theorem bound relative to the regret cap $2T\min(1,\sqrt W)$, on each named policy's own 50 histories. Points plot the base-ten logarithm of the mean ratio of the bound to the cap; zero is equality with the cap. ``Hessian'' denotes Hessian-path transport.}
  \label{fig:transport-followup-bound-scale}
 \end{figure}
 
 \begin{figure}[p]
   \centering
   \input{figures/transport_table_drift.tex}
- \caption{Prespecified drift diagnostics. The maximum and threshold frequencies use Hessian's 50,000 seed--round observations per condition; thresholds use $\ge$. Bound scales appear in \Cref{fig:transport-followup-bound-scale}.}
+ \caption{Prespecified drift diagnostics. The maximum and threshold frequencies use the Hessian-path policy's 50,000 seed--round observations per condition; thresholds use $\ge$. Bound scales appear in \Cref{fig:transport-followup-bound-scale}.}
  \label{fig:transport-followup-drift-bounds}
 \end{figure}
 \FloatBarrier
@@ -64,7 +87,10 @@ Pairing compares policies exposed to the same underlying context and
 potential-noise stream.
 The paired-bootstrap intervals resample the 50 evaluation seeds within a
 condition, preserving the pairing between policies, with 10,000 resamples and
-the recorded deterministic bootstrap seed.
+the recorded deterministic bootstrap seed. Rounds within a trajectory are
+dependent, and seeds shared across conditions do not make all runs one
+independent population. The condition labels in the configuration are
+encodings of $W$, not measured endpoint distances.
 
 The main-text table gives the terminal numerical values; its retained per-seed
 inputs support independent bootstrap reconstruction.
@@ -76,6 +102,9 @@ smallest-index action with the largest empirical mean of its own selected
 rewards, ignoring context.  The best-fixed-action benchmark instead selects in
 hindsight the action with the largest total true mean along the realized
 context stream.  Both use the same potential-outcome streams as the study policies.
+They do not estimate the best contextual performance or bound the benefit of
+using context, and they do not show that policies match in their actions, use
+context, or are equivalent.
 
 \paragraph{What the retained evidence can reproduce.}
 The portable full-study export records the configuration, selected optimizer,
@@ -115,7 +144,8 @@ full-study outcomes were observed.
   \caption{Exploratory same-history mean one-step pseudo-regret.  Rows identify
   the policy that generated the history; colors and symbols identify the score
   used to recommend an action.  Black-ringed points are realized behavior-policy
-  outcomes divided by $T$.}
+  outcomes divided by $T$. ``Hessian'' denotes Hessian-path transport and
+  ``Endpoint'' denotes endpoint transport.}
   \label{fig:transport-followup-same-history}
 \end{figure}
 
@@ -148,27 +178,32 @@ five, five, and six in the respective conditions.  Across all behavior
 histories there are 65 changes among 600,000 states.  All occur at rounds
 2--10, with score differences below 0.629 of a binary64 score ULP
 (the spacing of representable numbers at the score's magnitude).
+The decimal calculation does not recompute upstream solves, exponentials or
+fitted parameters, the downstream effects of these early ranking changes are
+unmeasured, and equal scores, including the initially zero centers, do not by
+themselves indicate corrupted values.
 
 
 \paragraph{Variation across seeds and history-generating policies.}
 \Cref{fig:transport-followup-mechanism-variation} reports per-seed variation
 instead of treating the pooled rounds as independent.  The row label tells
 us which policy generated the history; the score being diagnosed is always
-Hessian's.  Thus only Hessian rows describe the behavior policy's own score.
-The other rows evaluate Hessian on states visited by endpoint, frozen reference
-or naive current.
+that of Hessian-path transport.  Thus only the Hessian-path rows describe the
+behavior policy's own score.  The other rows evaluate the Hessian-path score on
+states visited by endpoint transport, frozen reference or naive current.
 Each fraction has 1000 rounds in its denominator, and the
 reported median and range summarize 50 seeds.
 
 \begin{figure}[p]
   \centering
   \input{figures/transport_table_mechanism.tex}
-  \caption{Exploratory per-seed variation in Hessian-score recommendations on
-  all four behavior histories.  Every row evaluates the Hessian score; row
+  \caption{Exploratory per-seed variation in Hessian-path score recommendations on
+  all four behavior histories.  Every row evaluates the Hessian-path score; row
   labels identify the history-generating policy.  Dots mark the median percentage of rounds; whiskers show
   the minimum--maximum range across 50 seeds.  Width argmax uses the exact
   smallest-index tie rule; the strict condition is the bonus-gap inequality
-  above.}
+  above. ``Hessian'' denotes Hessian-path transport and ``Endpoint'' denotes
+  endpoint transport.}
   \label{fig:transport-followup-mechanism-variation}
 \end{figure}
 
@@ -198,7 +233,8 @@ effective widths, and recommendations at the stored states.  Matrix, center,
 and endpoint reconstruction are checked at rounds 1, 2, 10, 100, 500, and 1000;
 the original float64 tolerances are retained.  All declared checks
 passed; the largest residual divided by its original tolerance was below
-$0.005$.  The per-seed variation in the preceding figure was reproduced by this
+$0.005$. Float64 solves, eigenvalues, quadrature, replay residuals and source
+hashes are not rigorous numerical enclosures.  The per-seed variation in the preceding figure was reproduced by this
 separate fixed-action replay.
 
 \paragraph{How to read the width and regret comparisons.}
@@ -210,7 +246,7 @@ same states.
 \begin{figure}[p]
   \centering
   \input{figures/transport_table_relative.tex}
-  \caption{Exploratory relative certificates on Hessian's recorded histories.
+  \caption{Exploratory relative certificates on the Hessian-path policy's recorded histories.
   The upper panel averages effective-width/reference-width ratios over all
   five candidate actions and 1000 rounds, then over 50 seeds per condition;
   the direct reference ratio is identically one.  The lower panel averages
@@ -220,13 +256,17 @@ same states.
   \label{fig:transport-followup-relative-audit}
 \end{figure}
 
+The width overhead averages actionwise ratios, not ratios of means, and the
+relative factors compare endpoints, not the synthetic path length.
 The displayed figure uses the primary policy's histories; the machine
 artifact also reports all four behavior-history groups and per-seed summaries.
 Direct frozen-reference recommendations on these states appear in
 \Cref{fig:transport-followup-same-history}.
 
 \paragraph{What the timing records leave out.}
-Fixed-state kernel timings are retained in the audit artifact.  They were collected under parallel analysis load.  The category construction requires additional
+Fixed-state kernel timings are retained in the audit artifact.  They were collected under parallel analysis load.
+Fixed-state timings under parallel load exclude matrix construction, confidence
+estimation and the policy loop, so do not establish end-to-end speedup.  The category construction requires additional
 accumulated collection weights and still uses matrix solves and the frozen
 confidence construction.
 
@@ -241,8 +281,29 @@ tuning runs are not evaluation replicates. The design cell uses $c=1$ in
 $W=cT$, the smallest $c$ in $\{1,10,100\}$ for which every development frozen
 bound was at most 0.9 of the cap; no record of this rule predates the first
 development output. The margin $\Delta=3.0$ is a quarter of the
-development mean Hessian-minus-frozen difference, 12.0, and was fixed before
+development mean Hessian-path-minus-frozen difference, 12.0, and was fixed before
 evaluation. Evaluation runs were not repeated.
+
+\paragraph{Which scales keep the a priori frozen bound below the cap.}
+Let $W=cT$ with $W\ge1$, so that the regret cap is $2T$. In
+\Cref{prop:frozen-width-ucb}, bound $\gamma_{t-1}\le\Gamma_{T,d}$ by
+\eqref{eq:finite-d-gamma-new} with $G=B_\phi$, the historical and current
+Taylor envelopes by $2c_hR^2/\sqrt W$, the misspecification envelopes by zero,
+and $\sum_t\beta_t^2$ by $T$ times the largest $\beta_t^2$. With $B_\phi=1$,
+the resulting a priori frozen bound divided by the regret cap is
+\[
+ \Bigl[\sqrt{\Gamma_{T,d}+2\log(1/\delta)}+\sqrt\lambda R\Bigr]
+ \sqrt{\frac{(\sigma^2+1/\lambda)\Gamma_{T,d}}{T}}
+ +\frac{1}{\sqrt c}\Bigl[\frac{2c_hR^2}{\sigma}
+ \sqrt{\frac{(\sigma^2+1/\lambda)\Gamma_{T,d}}{T}}
+ +\frac{2c_hR^2}{\sqrt T}\Bigr]
+ =:A+\frac{B}{\sqrt c}.
+\]
+At the constants of \Cref{sec:transport-v3}, $A=0.556$ and $B=0.374$. The
+ratio therefore decreases in $c$, equals 0.93 in the design cell, and is below
+one exactly when $c>(B/(1-A))^2=0.709$. When $W<1$ the cap $2T\sqrt W$ is
+smaller than $2T$ while the bound is unchanged, so the ratio exceeds $A+B/\sqrt
+c$ and is above one there as well. As $c$ grows the ratio decreases to $A$.
 
 \paragraph{Optimizer.}
 Each corrected-center policy fits $\btheta_t$ by projected full-batch gradient
@@ -264,8 +325,10 @@ familywise level $0.05$; two one-sided tests with $\Delta=3.0$ for endpoint
 minus frozen, naive minus frozen and endpoint minus naive, using the
 two-sided 90\% paired-$t$ interval and holding only if all three pairs pass;
 and the frozen bound below the cap on every frozen run. The primary family is
-UCB-GLM minus frozen and Hessian minus frozen, each a two-sided paired $t$-test,
-with Holm's procedure over the two at familywise level $0.05$. Every reported
+UCB-GLM minus frozen and Hessian-path minus frozen, each a two-sided paired $t$-test,
+with Holm's procedure over the two at familywise level $0.05$. All six
+policies have lower mean regret than the context-free benchmark in the design
+cell, with every $p\le1.2\times10^{-108}$ in the first family. Every reported
 interval is a 95\% percentile bootstrap interval from 10,000 resamples of
 seed-paired differences with a fixed generator seed; intervals are
 descriptive, and decisions use the $t$-based procedures.

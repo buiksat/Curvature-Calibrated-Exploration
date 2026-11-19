@@ -36,12 +36,12 @@ Section~\ref{sec:transport-v3} runs UCB-GLM as a baseline.
 \paragraph{Posterior and linearization methods.}
 \citet{duranmartin2022efficient} use recursive EKF updates in a learned or random
 low-dimensional affine parameter subspace. LO-FI maintains a
- diagonal-plus-low-rank full-parameter precision through EKF/online-SVD updates
+ diagonal-plus-low-rank full-parameter precision through EKF and online-SVD updates
 without replaying old data, with linear parameter-count cost at fixed rank
 \citep{chang2023lowrank}. Fixed trained-network linearizations use implicit
-Jacobian/Fisher products and CG \citep{maddox2021fast}. Laplace approximations
+Jacobian or Fisher products and CG \citep{maddox2021fast}. Laplace approximations
 use local inverse curvature around a MAP solution \citep{mackay1992practical},
-with last-layer \citep{kristiadi2020being}, all-weight/subnetwork/structured
+with last-layer \citep{kristiadi2020being}, all-weight, subnetwork and structured
 variants \citep{daxberger2021laplace,ritter2018scalable,martens2015optimizing}.
 LMC-TS instead uses noisy loss-gradient steps to approximate posterior samples
 without materializing covariance \citep{xu2022langevin}. Our theorem connects
@@ -56,7 +56,9 @@ The Thompson metric \citep{thompson1963certain} and its Finsler structure
 \citep{nussbaum1994finsler} give the normalized SPD path comparison.
 Frequent Directions bandit sketches already use spectral approximation quality
 in regret guarantees \citep{kuzborskij2019efficient}; here an additional metric
-comparison connects that applied operator to frozen confidence.
+comparison connects that applied operator to frozen confidence. The geometric,
+self-normalized regression, determinant-potential and spectral-sandwich
+arguments used here are established tools.
 
 \paragraph{Implicit computation and fixed directions.}
 Hessian--vector products \citep{pearlmutter1994fast}, GGN products
@@ -65,5 +67,5 @@ Hessian--vector products \citep{pearlmutter1994fast}, GGN products
 Weighted Grams also appear in experimental design
 \citep{lattimore2020learning}; termwise scaled-tanh weight comparisons give our
 endpoint certificates. Frozen log-determinant growth connects to D-optimal and
-A-optimal exploration \citep{valko2013finite}; stochastic trace/log-determinant
+A-optimal exploration \citep{valko2013finite}; stochastic trace and log-determinant
 estimators offer related implicit tools \citep{ubaru2017fast}.

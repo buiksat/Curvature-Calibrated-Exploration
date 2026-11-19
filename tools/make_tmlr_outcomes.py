@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "review/transport_review_followup/full-cce-full-local"
 OUTPUT = ROOT / "paper/figures"
 METHODS = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
-NAMES = ("Hessian", "Endpoint", "Frozen reference", "Naive current")
+NAMES = ("Hessian-path transport", "Endpoint transport", "Frozen reference", "Naive current")
 WIDTHS = (16.0, 1.0, 0.25)
 # Pins refer to bytes copied unchanged from the inspected local scientific ref.
 INPUT_HASHES = {
