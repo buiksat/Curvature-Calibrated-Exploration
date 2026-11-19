@@ -71,12 +71,10 @@ With the author's approval, `tools/verify_transport_committed_evidence.py` ackno
 sources in `CURRENT_STUDY_SOURCE_COMPATIBILITY`, pinned to exact snapshot and current hashes, so the detached
 verifier still fails closed on any other edit. The review bundle regenerates byte-identically.
 
-Left unchanged:
+The 2026-11-18 release repin updated `submissions/tmlr_2026/release_manifest.json` to the current hashes of
+`experiments/transport_instantiation.py` and `experiments/run_transport_instantiation_study.py`.
 
-- `tools/analyze_relative_transport.py` and `review/post_full_fable/independent/symmetric_scan.py` read the run
-  manifest's `error` with `.get`, so for a run that resumes under the fixed driver they record `null` and do not
-  report `resumed_after_errors`. Neither fails. Changing them would invalidate the script hashes recorded in their
-  committed outputs, which were produced from the 2026-10-14 raw tree, whose manifest still has `error`.
-- `submissions/tmlr_2026/release_manifest.json` still records the old hashes of
-  `experiments/transport_instantiation.py` and `experiments/run_transport_instantiation_study.py`; the audit task
-  forbids edits under `submissions/tmlr_2026/`.
+Left unchanged: `tools/analyze_relative_transport.py` and `review/post_full_fable/independent/symmetric_scan.py`
+read the run manifest's `error` with `.get`, so for a run that resumes under the fixed driver they record `null` and
+do not report `resumed_after_errors`. Neither fails. Changing them would invalidate the script hashes recorded in
+their committed outputs, which were produced from the 2026-10-14 raw tree, whose manifest still has `error`.
