@@ -13,7 +13,7 @@ every certified bound vacuous. The second chooses a scale at which the frozen
 bound is below the regret cap and adds two uncertified baselines.
 \Cref{tab:transport-study-design} lists the cells of both studies.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{The cells of the two studies: parameter dimension $d$, horizon $T$ and
 scale $W$. Each cell has 50 paired evaluation seeds per policy.}
@@ -39,11 +39,11 @@ Cholesky solves. Appendix~\ref{app:transport-followup} gives the full model,
 protocol, splits and checks.
 All policies update their representations and use the corrected center and
 confidence multiplier of \Cref{cor:corrected-center-new}.
-\emph{Hessian-path transport} inflates the current width by the Hessian path
-certificate $\bar D_t^Q$ of \Cref{cor:hessian-path-new}. \emph{Endpoint
-transport} inflates it by the dense endpoint Thompson distance
-$d_{\rm Th}(\bVbar_t,\bV_t)$; \emph{frozen reference} scores with the reference
-width; \emph{naive current} scores with the current width without transport,
+\emph{Hessian-path transport} multiplies the current width by
+$\exp(\bar D_t^Q/2)$, where $\bar D_t^Q$ is the certificate of
+\Cref{cor:hessian-path-new}. \emph{Endpoint transport} multiplies it by
+$\exp(d_{\rm Th}(\bVbar_t,\bV_t)/2)$, with the dense endpoint Thompson distance;
+\emph{frozen reference} scores with the reference width; \emph{naive current} scores with the current width without transport,
 as an uncertified control.
 
 \paragraph{Regret.}
@@ -60,9 +60,9 @@ best-fixed-action-in-hindsight means are 180.01, 177.97 and 171.84 on the same
 streams as the context-free benchmark (Appendix~\ref{app:transport-followup},
 which also plots these outcomes in \Cref{fig:transport-followup-outcomes}).
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
-\caption{First study: mean cumulative pseudo-regret at $T=1000$ and
+\caption{First study: mean regret at $T=1000$ and
 comparator-minus-Hessian-path paired differences. Intervals are pointwise
 95\% paired seed-bootstrap intervals from 10,000 resamples of 50 seeds per
 condition.}
@@ -107,7 +107,8 @@ at $W=0.25$; distances are at least one in 286 of 50,000 seed--round
 observations (\Cref{fig:transport-followup-drift-bounds}).
 
 \paragraph{Exploratory diagnostics.}
-The diagnostics in this paragraph were specified after outcomes were observed
+The diagnostics in this paragraph and the next were specified after outcomes
+were observed
 (Appendix~\ref{app:transport-followup}). Post-outcome rescoring and replay
 hold recorded histories fixed: they are exploratory, reveal no alternative
 adaptive trajectory or downstream action effects, and do not identify an
@@ -117,11 +118,13 @@ width bonuses exceeds the full range of the centers on 97.1\%, 99.4\% and
 99.5\% of rounds at $W=16,1,0.25$; this gap is sufficient for the
 largest-width action to maximize the score. Its action agrees with the
 current-width argmax on 99.4\% of rounds at $W=16$ and on more than 99.9\% at
-$W=1$ and $0.25$. The endpoint policy scores with the dense endpoint distance;
-no policy uses the relative-weight certificate of
-\Cref{cor:tanh-relative-weights}, which appears only in a retrospective audit.
-After outcomes were observed, replay with the recorded actions and rewards
-audits all 600 histories. On the Hessian-path policy's histories, the
+$W=1$ and $0.25$.
+
+\paragraph{Retrospective endpoint audit.}
+The endpoint policy scores with the dense endpoint distance; no policy uses the
+relative-weight certificate of \Cref{cor:tanh-relative-weights}, which appears
+only in this audit. Replay with the recorded actions and rewards audits all
+600 histories. On the Hessian-path policy's histories, the
 category-specific outward factor has mean effective-width overheads
 $0.28\%$--$12.68\%$ relative to the reference width, versus $0.16\%$--$12.13\%$
 for the dense endpoint distance across conditions.
@@ -138,8 +141,7 @@ chosen on development runs and fixed before the held-out evaluation seeds were
 run (Appendix~\ref{app:transport-v3}). Its three descriptive cells, with
 stronger curvature, were chosen after development output was read and carry
 no test; every certified bound in them is vacuous, and the intervals reported
-for them are descriptive. No cell of either study has both substantial
-curvature and a non-vacuous frozen bound.
+for them are descriptive.
 
 \paragraph{Design.}
 Contexts are drawn uniformly from the four vectors $(\pm1,\pm1)/\sqrt2$, there
@@ -151,8 +153,10 @@ bound, from \eqref{eq:finite-d-gamma-new} and the envelopes of the first study,
 is 37,195, which is 0.93 of the cap $2T\min(1,\sqrt W)=40{,}000$; but
 curvature is negligible, since \Cref{cor:tanh-relative-weights} gives
 $d_{\rm Th}(\bVbar_t,\bV_t)\le4\log\cosh(1/\sqrt W)\approx1.0\times10^{-4}$.
-At these constants, the a priori frozen bound with $W=cT$ is below the regret
-cap exactly when $c>0.709$ (Appendix~\ref{app:transport-v3}).
+At these constants and with $W=cT\ge1$, the a priori frozen bound divided by
+the regret cap equals $A+B/\sqrt c$, with $A$ and $B$ defined in
+Appendix~\ref{app:transport-v3}; it is below the cap exactly when $c>c_\star$,
+where $c_\star=(B/(1-A))^2\approx0.709$.
 Three descriptive cells, $W=100,10,1$, have stronger curvature. Each cell has
 50 paired evaluation seeds, and all policies in a cell share a seed's context
 and potential-outcome streams. One optimizer, selected in the design cell by
@@ -180,32 +184,32 @@ allowances}: the historical Taylor part of $\beta_t$ and the error allowance
 certified bounds vacuous.
 
 \paragraph{Design-cell results.}
-\Cref{tab:transport-v3-design} gives the design cell. Hessian-path transport's mean cumulative pseudo-regret exceeds
-that of the frozen-reference policy by 16.8 units (paired 95\% interval
-$[15.4, 18.0]$), and UCB-GLM's is 34.4 units lower ($[-36.6, -32.3]$).
-Endpoint transport and naive current differ from the frozen-reference policy
-by less than 0.2 units in mean regret. The decisions use paired $t$-tests fixed
-before evaluation. Both primary comparisons, two-sided paired $t$-tests with
-Holm over the two, reject (unadjusted $p$ shown): UCB-GLM minus frozen is
-$-34.4$ ($p=5.7\times10^{-34}$) and Hessian-path minus frozen is $16.8$
-($p=5.3\times10^{-30}$). Endpoint transport, frozen reference and naive current
-have equivalent mean cumulative pseudo-regret within the margin $\Delta=3.0$
-regret units: for each of the three pairs the two-sided 90\% paired-$t$
-interval lies inside $(-1.0,1.0)$ (two one-sided tests, intersection--union).
-The design checks hold: all six policies have lower mean regret than the
+\Cref{tab:transport-v3-design} gives the design cell. The two primary
+comparisons are two-sided paired $t$-tests fixed before evaluation, with Holm
+adjustment over the two; both reject (unadjusted $p$ shown). Hessian-path
+transport's mean regret exceeds that of the frozen-reference policy by 16.8 units
+(bootstrap 95\% interval $[15.4, 18.0]$, $p=5.3\times10^{-30}$), and UCB-GLM's
+is 34.4 units lower ($[-36.6, -32.3]$, $p=5.7\times10^{-34}$). Endpoint
+transport, frozen reference and naive current have equivalent mean regret
+within the margin $\Delta=3.0$ regret units: endpoint transport and naive
+current differ from the frozen-reference policy by less than 0.2 units in mean
+regret, and for each of the three pairs the two-sided 90\% paired-$t$ interval
+lies inside $(-1.0,1.0)$ (two one-sided tests, intersection--union). The
+design checks hold: all six policies have lower mean regret than the
 context-free benchmark (one-sided paired $t$-tests, Holm over six;
 Appendix~\ref{app:transport-v3}), and all 50 frozen bounds are below the cap;
-the largest is 0.761 of it. These results concern one near-linear cell, in
-which the equivalence of the first three policies is expected by
-construction because curvature is negligible.
+the largest is 0.761 of it. These results concern one cell. The observed
+equivalence is consistent with the small certified metric change in this
+near-linear cell.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
-\caption{Second study, design cell ($W=T=20{,}000$): mean cumulative
-pseudo-regret at $T$, its standard deviation over 50 seeds, and the
+\caption{Second study, design cell ($W=T=20{,}000$): mean regret at $T$, its
+standard deviation over 50 seeds, and the
 policy-minus-frozen paired difference with a pointwise 95\% paired
-seed-bootstrap interval from 10,000 resamples. The intervals are descriptive;
-the decisions in the text use Holm-adjusted paired $t$-tests.}
+seed-bootstrap interval from 10,000 resamples. The intervals are descriptive.
+The primary comparisons use Holm-adjusted paired $t$-tests, and the
+equivalence decision uses two one-sided tests.}
 \label{tab:transport-v3-design}
 \begin{tabular}{@{}lrrrl@{}}
 \toprule
@@ -239,17 +243,16 @@ the reference width. Among the reference, endpoint and naive widths the choice
 matters less: at $W=100$ and $10$ both paired intervals against frozen include
 zero, while at $W=1$ endpoint minus frozen is $-15.3$ ($[-20.5,-10.2]$) and
 naive minus frozen is $-23.1$ ($[-28.3,-18.0]$), so the design cell's
-equivalence does not carry over to $W=1$. The difference in mean cumulative
-pseudo-regret between Hessian-path transport and the frozen-reference policy
-grows to 2,396.8, 3,784.6 and 6,733.3. UCB-GLM has mean regret 33.4, 42.8 and
+equivalence does not carry over to $W=1$. The difference in mean regret
+between Hessian-path transport and the frozen-reference policy grows to 2,396.8, 3,784.6 and 6,733.3. UCB-GLM has mean regret 33.4, 42.8 and
 340.0. At $W=1$, where $\kappa=0.0707$ makes its radius $\alpha=19.19$
 (against $1.36$ at $W=T$), it has about 7.7 times the regret of linear UCB
 (44.1); whether the radius causes this was not tested.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
-\caption{Second study, descriptive cells: mean cumulative pseudo-regret at
-$T=20{,}000$ over 50 seeds, the Hessian-path-minus-frozen mean paired
+\caption{Second study, descriptive cells: mean regret at $T=20{,}000$ over 50
+seeds, the Hessian-path-minus-frozen mean paired
 difference, and the largest frozen bound relative to the cap $40{,}000$.
 Envelope-free policies and linear UCB are uncertified.}
 \label{tab:transport-v3-descriptive}
@@ -284,8 +287,8 @@ check failed it; UCB-GLM does not record it.
 
 \paragraph{What the second study shows.}
 Where the frozen bound is non-vacuous and curvature is negligible, endpoint
-transport and naive current have mean cumulative pseudo-regret equivalent to
-that of the frozen-reference policy within the margin, which is consistent with
+transport and naive current have mean regret equivalent to that of the
+frozen-reference policy within the margin, which is consistent with
 the bound comparison after \Cref{cor:tanh-endpoint-regime} (that comparison
 concerns bound expressions, not realized regret), and the Hessian path
 certificate raises mean regret even there. UCB-GLM, whose regret theorem does

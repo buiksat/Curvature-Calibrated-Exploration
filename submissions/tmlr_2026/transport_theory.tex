@@ -1,9 +1,8 @@
 \section{From frozen confidence to current-curvature scores}\label{sec:abstract-transport}
 
-An upper confidence bound (UCB) adds an uncertainty allowance to a prediction
-of the true mean reward $\mu_t^*(a)$. Collection-time queries form the frozen
-reference matrix; relinearization recomputes historical queries at the current
-parameter. Let $\bq_t(a)\in\R^d$ be the current prediction query. Distinguish
+Collection-time queries form the frozen reference matrix; relinearization
+recomputes historical queries at the current parameter. Let $\mu_t^*(a)$ be the
+true mean reward and $\bq_t(a)\in\R^d$ the current prediction query. Distinguish
 the reference matrix $\bVbar_t$, exact current matrix $\bV_t$, and applied SPD
 operator $\Calg_t$:
 
@@ -92,12 +91,32 @@ under the general standard-Borel protocol and measurability requirements in
  \label{fig:transport-interfaces}
 \end{figure}
 
-\paragraph{Confidence and computational interfaces.}
+\paragraph{The transport principle.}
 A collection-time confidence band controls the mean reward through the
 reference width, but the score uses a computed width from the applied
-operator. The next assumption states that band together with the three
-certificates that connect it to the current metric, the applied operator and
-the computed width (\Cref{fig:transport-interfaces});
+operator. With exact current curvature and exact solves ($\Calg_t=\bV_t$,
+$\hat s_t=s_t$), suppose the two endpoint matrices satisfy
+$c_{-,t}\bVbar_t\preceq\bV_t\preceq c_{+,t}\bVbar_t$, as in
+\Cref{cor:relative-endpoint-ucb}. Inverting this sandwich gives, for every
+query,
+\[
+ \bar s_t(a)\le\sqrt{c_{+,t}}\,s_t(a)\le\sqrt{c_{+,t}/c_{-,t}}\,\bar s_t(a).
+\]
+The first inequality gives optimism: the score with width
+$\sqrt{c_{+,t}}\,s_t(a)$ lies above the reference-width score, and hence above
+every mean that the reference band permits. The second inequality bounds the
+inflation: at the played action, the transported width is at most
+$\sqrt{c_{+,t}/c_{-,t}}$ times the reference width, which the frozen
+determinant potential controls. The paper obtains $c_{-,t}$ and $c_{+,t}$ in
+three ways: from the length of a path of SPD matrices joining $\bVbar_t$ to
+$\bV_t$ (\Cref{sec:logarithmic-transport}), from the exact endpoint Thompson
+distance between the two matrices, and, for scaled tanh, from termwise
+comparisons of the gradient weights
+(\Cref{cor:tanh-relative-weights,cor:tanh-lipschitz-endpoint}). The next
+assumption replaces the exact case by the band and three certificates: a bound
+on the length of an SPD path from $\bVbar_t$ to $\bV_t$, a two-sided comparison
+of the applied operator with $\bV_t$, and conditions on the computed width
+(\Cref{fig:transport-interfaces});
 \Cref{tab:transport-assumption-ledger} lists their requirements.
 
 \begin{assumption}[Reference confidence and operational certificates]
@@ -164,29 +183,9 @@ verification needs its own pre-draw filtration and conditional failure
 allocation.  No all-action sharpness condition is required.
 \end{remark}
 
-\paragraph{The transport principle.}
-With exact current curvature and exact solves ($\Calg_t=\bV_t$,
-$\hat s_t=s_t$), suppose the two endpoint matrices satisfy
-$c_{-,t}\bVbar_t\preceq\bV_t\preceq c_{+,t}\bVbar_t$, as in
-\Cref{cor:relative-endpoint-ucb}. Inverting this sandwich gives, for every
-query,
-\[
- \bar s_t(a)\le\sqrt{c_{+,t}}\,s_t(a)\le\sqrt{c_{+,t}/c_{-,t}}\,\bar s_t(a).
-\]
-The first inequality gives optimism: the score with width
-$\sqrt{c_{+,t}}\,s_t(a)$ lies above the reference-width score, and hence above
-every mean that the reference band permits. The second inequality bounds the
-inflation: at the played action, the transported width is at most
-$\sqrt{c_{+,t}/c_{-,t}}$ times the reference width, which the frozen
-determinant potential controls. The paper obtains $c_{-,t}$ and $c_{+,t}$ in
-three ways: from the length of a path of SPD matrices joining $\bVbar_t$ to
-$\bV_t$ (\Cref{sec:logarithmic-transport}), from the exact endpoint Thompson
-distance between the two matrices, and, for scaled tanh, from termwise
-comparisons of the gradient weights
-(\Cref{cor:tanh-relative-weights,cor:tanh-lipschitz-endpoint}). The next
-theorem states the path version with an approximate operator, a computed
-width and an approximate maximizer, which add the factors $\kappa_{\pm,t}$,
-$\alpha_t$ and the term $\xi_t$.
+\Cref{thm:transported-ucb} states the path version of the transport
+principle, in which the approximate operator, computed width and approximate
+maximizer add the factors $\kappa_{\pm,t}$, $\alpha_t$ and the term $\xi_t$.
 
 \begin{theorem}[Estimator- and solver-agnostic confidence transport]
 \label{thm:transported-ucb}
@@ -580,10 +579,15 @@ approximate realizability
  |m^\circ(z)|\le\epsilon_{\rm mis}(z).
 \end{equation}
 For any predictable $\btheta_t\in\Theta$, set
-$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$. Let $\rho_s^\circ$ be the
-Taylor remainder of $\mu_{\btheta^\circ}$ around $\btheta_s$. The
-pseudo-response $y_s$ defined in \eqref{eq:pseudo-response-new} below
-satisfies, by this expansion and \eqref{eq:approx-realizability-new},
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$. Subtract the collection-time
+affine offset to obtain the pseudo-responses
+
+\begin{equation}\label{eq:pseudo-response-new}
+ y_s=r_s-\mu_{\btheta_s}(x_s,a_s)+\bq_s(a_s)^\top\btheta_s.
+\end{equation}
+
+Let $\rho_s^\circ$ be the Taylor remainder of $\mu_{\btheta^\circ}$ around
+$\btheta_s$. By this expansion and \eqref{eq:approx-realizability-new},
 \[
  y_s=\bq_s(a_s)^\top\btheta^\circ+\eta_s+\rho_s^\circ+m^\circ(x_s,a_s).
 \]
@@ -595,18 +599,13 @@ enters the center only through an exact identity
 (\Cref{app:transport-proofs}), so no stationarity, residual or convergence
 property of $\btheta_t$ is used. The certified parameter region and the
 Taylor and misspecification envelopes are still required, and they can be
-large. Subtract the collection-time affine offset to obtain the
-pseudo-responses and their frozen ridge estimate:
+large. The frozen ridge estimate
 
-\begin{align}
- y_s&=r_s-\mu_{\btheta_s}(x_s,a_s)+\bq_s(a_s)^\top\btheta_s,
- \label{eq:pseudo-response-new}\\
- \hat\btheta_t^{\rm lin}
- &=\bVbar_t^{-1}\sigma^{-2}\sum_{s<t}\bq_s(a_s)y_s.
- \label{eq:frozen-ridge-new}
-\end{align}
+\begin{equation}\label{eq:frozen-ridge-new}
+ \hat\btheta_t^{\rm lin}=\bVbar_t^{-1}\sigma^{-2}\sum_{s<t}\bq_s(a_s)y_s
+\end{equation}
 
-Correct the current prediction with that estimate:
+corrects the current prediction:
 
 \begin{equation}\label{eq:corrected-center-new}
  m_t^{\rm corr}(a)=\mu_{\btheta_t}(x_t,a)

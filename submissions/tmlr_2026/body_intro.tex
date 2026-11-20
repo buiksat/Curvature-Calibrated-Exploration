@@ -11,25 +11,20 @@ For example, in the scaled-tanh model
 $\mu_\theta(z)=\sqrt W\tanh(\phi(z)^\top\theta/\sqrt W)$, the gradient at a
 past observation $z_s$ is
 $\operatorname{sech}^2(\phi(z_s)^\top\theta/\sqrt W)\,\phi(z_s)$, so its
-weight depends on the parameter at which it is evaluated. Recomputed at the
-current parameter $\theta_t$, which was fitted to every reward before round
-$t$, that weight depends on the reward of round $s$ and on later rewards. The
-rebuilt matrix is therefore not a sum of outer products of regressors fixed
-before their rewards, which is what the self-normalized confidence argument
-requires.
+weight depends on the parameter at which it is evaluated. If the current
+parameter $\theta_t$ is fitted using past rewards, the recomputed weight can
+depend on the reward at round $s$ and on later rewards. The rebuilt matrix
+therefore need not satisfy the predictability condition used by the
+collection-time confidence argument.
 
 Curvature evaluated at a current trained parameter appears in several
-uncertainty methods. Laplace approximations use local inverse curvature
+uncertainty methods: Laplace approximations use local inverse curvature
 around a MAP solution
-\citep{mackay1992practical,kristiadi2020being,daxberger2021laplace},
+\citep{mackay1992practical,kristiadi2020being,daxberger2021laplace}, and
 linearizations of a trained network use implicit Jacobian or Fisher products
-with conjugate gradients \citep{maddox2021fast}, and Hessian--vector, GGN and
-inverse-curvature products supply the primitives for such solves
-\citep{pearlmutter1994fast,schraudolph2002fast,koh2017understanding}.
-NeuralUCB and NeuralTS instead keep the gradient features computed when each
-observation arrived \citep{zhou2020neural,zhang2021neural}, and fixed NTK
-references and learned last-layer uncertainty offer other constructions
-\citep{kassraie2022neural,riquelme2018deep}.
+with conjugate gradients \citep{maddox2021fast}. NeuralUCB and NeuralTS
+instead keep the gradient features computed when each observation arrived
+\citep{zhou2020neural,zhang2021neural}.
 
 This paper first builds a confidence band from collection-time gradients and
 then certifies its conversion to the current metric. The band's width, the
@@ -69,14 +64,13 @@ endpoint certificates on a bounded parameter region
 the uniform endpoint factor is $1+O(1/(cT))$, so the endpoint-transported bound
 has the frozen bound's form (\Cref{cor:tanh-endpoint-regime}).
 \item \emph{What happens to regret?} In both synthetic studies,
-Hessian-path transport has higher mean cumulative pseudo-regret than the
-frozen-reference policy. In a near-linear design cell where the
+Hessian-path transport has higher mean cumulative pseudo-regret (mean regret)
+than the frozen-reference policy. In a near-linear design cell where the
 frozen-reference policy's regret bound is below the deterministic cumulative
 pseudo-regret cap, endpoint transport and the frozen-reference policy have
-equivalent mean cumulative pseudo-regret within a margin fixed before
-evaluation. In more curved cells, removing the Taylor-error allowances lowers
-mean regret far more than switching among the reference, endpoint and naive
-current widths does (Section~\ref{sec:transport-followup}).
+equivalent mean regret within a margin fixed before evaluation. In more curved
+cells, removing the Taylor-error allowances lowers mean regret far more than
+switching among the reference, endpoint and naive current widths does (Section~\ref{sec:transport-followup}).
 \end{itemize}
 Sections~\ref{sec:abstract-transport}--\ref{sec:closed-rates-new} give the
 framework, the matrix comparisons, the corrected center and the rates;
