@@ -766,9 +766,9 @@ def test_prohibited_source_literals_are_rejected_when_not_visible(tmp_path, hidd
 def test_required_claim_cannot_be_satisfied_by_a_comment_echo(tmp_path):
     scratch = _manuscript_scratch(tmp_path)
     path = scratch / "submissions/tmlr_2026/main.tex"
-    literal = "Hessian-path transport has higher mean cumulative pseudo-regret than the frozen-reference policy in both"
+    literal = "Hessian-path transport has higher mean cumulative pseudo-regret (mean regret) than the frozen-reference policy in both"
     text = path.read_text()
-    wrapped = "Hessian-path transport has higher\nmean cumulative pseudo-regret than the frozen-reference policy in both"
+    wrapped = "Hessian-path transport has higher mean cumulative pseudo-regret\n(mean regret) than the frozen-reference policy in both"
     assert wrapped in text
     path.write_text(text.replace(wrapped, "A different visible claim", 1) + "\n% " + literal + "\n")
     report = verifier.Report()
