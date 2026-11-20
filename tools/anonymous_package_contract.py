@@ -563,16 +563,16 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/editorial_originals/make_transport_table_charts.py': 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
  'tools/editorial_originals/transport_conceptual_geometry.tex': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b',
  'tools/editorial_originals/transport_conceptual_interfaces.tex': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4',
- 'tools/followup_anonymous_contract.py': '5652dcdcfdd8f7c14b4462673d161ac6d4658221550f1be2e5af62e871105e1f',
- 'tools/make_tmlr_outcomes.py': '65626c9c0113737520f3c97c97b2a4e90a05878cd8d421accff0e75da8a817f3',
+ 'tools/followup_anonymous_contract.py': '8065382334b8e4cf958924c9c45001f2dd71b5ddef05ef9a89b6f13dc3e7f1ca',
+ 'tools/make_tmlr_outcomes.py': 'd9574f648fe0f0de63a5bd00cc407b49325963e1a76a093dc8df0921663756be',
  'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- 'tools/numeric_context_pins.py': '8252bce928c44722126ca73220db99f59eec719c00d59091a21c260d3dfeffa9',
+ 'tools/numeric_context_pins.py': '54e6f1f2dbd401fd7fe79afa8c6917c7a830cfe8a905725a7f47b53031dd79eb',
  'tools/prepare_tmlr_figures.py': '53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '42e5bc339b2006906bfeb6118547991bfa97d690db62bf153c0a9c23a78431b6'}
+ 'tools/verify_tmlr_submission_numbers.py': '70d4b0e345d3b6f9a19a916b8dc810d770835cba97eb20388fb795cef110fbc2'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({
