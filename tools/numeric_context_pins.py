@@ -1346,11 +1346,11 @@ FILE_PINS: dict[str, str] = {
     'paper/transport_followup_appendix.tex':
         'b5060542009808dc2dfa9b21ccb4fbfa1268211489ec39578d1661fa659e6ef8',
     'paper/transport_proofs.tex':
-        'edf99820f36b7b058ea120ba84f18f1711eb91ef94ea765fc60df53f803528bb',
+        '5f3a15ce498c6be8b4f4df9bee4ec603e87c41b7226a4ba928915030f23099d8',
     'paper/transport_protocol_appendix.tex':
-        'c9499e1264529d7031e88e1d610d6cdc6d666edd8e601b24a51b0fdface99a97',
+        'ecfbee9ffb6097694da077b2df248d107b5a77f375c3a6323df1c5d4d4fbd77f',
     'paper/transport_support_appendix.tex':
-        '5e1c4a0e9d9885cb6e0e3c75ef448c3c602612c07bb216932b43e67c0f1696d7',
+        '61edf07be22f52c88170913ec9126a9dd4390bd9b02e5ab39f9321aa07e87278',
     'paper/transport_theory.tex':
         '369cbe423361a15b3828d78ccf1ebb5314d3e44f3611b69334f3d15622eb3c0c',
     'submissions/tmlr_2026/main.tex':

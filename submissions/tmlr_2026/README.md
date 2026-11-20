@@ -70,7 +70,7 @@ state. No material has been uploaded or submitted.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 545,185 | n/a | n/a |
+| `main.pdf` | 544,622 | n/a | n/a |
 | `source.zip` | 2,995,059 | 84 | 2,984,677 |
 | `supplement.zip` | 99,288,642 | 210 | 99,250,710 |
 | `release_manifest.json` | 115,306 | n/a | n/a |
