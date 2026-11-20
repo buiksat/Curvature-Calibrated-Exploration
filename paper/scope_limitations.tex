@@ -15,8 +15,9 @@ optimization. Neither study evaluates an approximate or sketched operator, an
 iterative solver, a large model, real data or matrix-free scalability.
 Changing $W$ changes rewards as well as curvature; condition comparisons do not
 isolate drift. A fixed $W$ at one horizon neither tests asymptotic scaling nor
-shows that an assumption of a theorem fails. Matched exogenous streams preserve
-pairing, not adaptive actions or histories. The comparisons concern complete
+shows that an assumption of a theorem fails. Policies share context and
+potential-outcome streams within each seed, while generating their own actions
+and histories. The comparisons concern complete
 policies, not isolated certificate changes or a universal ordering. Paired
 bootstrap intervals are pointwise and unadjusted, conditional on the fixed
 teacher, design and selected optimizer; they include no environment-selection
@@ -28,5 +29,3 @@ The second study covers one six-dimensional model with 12 feature categories
 and one optimizer, selected in the design cell and not retuned per cell. Its
 only cell with a non-vacuous frozen bound is near-linear, so its design checks
 and equivalence results test the setup rather than transport under curvature.
-No cell of either study has both substantial curvature and a non-vacuous
-frozen bound.
