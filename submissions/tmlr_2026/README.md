@@ -28,7 +28,7 @@ directory. Extract `supplement.zip` separately and run its own `verify.sh` with
 the pinned Python environment. The internal `release_manifest.json` is not
 anonymous upload material.
 
-The current PDF has 38 pages in the recorded TeX environment. Build results,
+The current PDF has 41 pages in the recorded TeX environment. Build results,
 including PDF comparisons and exact test counts, belong to the verification
 report for the particular commit; this document does not certify later builds.
 
@@ -70,13 +70,13 @@ state. No material has been uploaded or submitted.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 529,118 | n/a | n/a |
-| `source.zip` | 2,984,408 | 84 | 2,974,026 |
-| `supplement.zip` | 99,264,865 | 210 | 99,226,933 |
-| `release_manifest.json` | 115,303 | n/a | n/a |
+| `main.pdf` | 545,525 | n/a | n/a |
+| `source.zip` | 2,996,214 | 84 | 2,985,832 |
+| `supplement.zip` | 99,290,306 | 210 | 99,252,374 |
+| `release_manifest.json` | 115,306 | n/a | n/a |
 
 The supplement uses 99.3% of the 100,000,000-byte limit,
-leaving 735,135 bytes. Both ZIPs use deterministic `ZIP_STORED`
+leaving 709,694 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
 The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:
