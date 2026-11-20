@@ -3,9 +3,11 @@
 Entry point: `main.tex`. The manuscript presents corrected-center confidence,
 the reference-width floor and symmetric-factor sharpness, and scaled-tanh
 relative-weight certificates through the transported-UCB framework. Section 6
-reports the retained prespecified nonlinear study. Section 6.1 reports a second
-prespecified study at a scale where the frozen bound is below the reward cap; its
-code, per-run records and analysis live on the `cce-review-revisions` branch.
+reports two synthetic studies. The first fixed its protocol before evaluation.
+The second (Section 6.1) chose its scale and margin on development runs and fixed
+them before held-out evaluation, at a scale where the frozen bound is below the
+regret cap; its code, per-run records and analysis live on the
+`cce-review-revisions` branch.
 
 ## Build
 

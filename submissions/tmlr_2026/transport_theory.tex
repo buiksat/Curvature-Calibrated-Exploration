@@ -26,10 +26,30 @@ Here $\lambda>0$ is ridge regularization and $\sigma>0$ is the update scale
  \end{aligned}
 \end{equation}
 
+``Frozen'' refers only to the stored collection-time gradients
+$\bq_s(a_s)$, $s<t$, that build the reference matrix. Every width in
+\eqref{eq:three-widths-new} uses the same current query $\bq_t(a)$; only the
+matrix differs. The predictor keeps updating: the representation $\btheta_t$
+may change every round, and Section~\ref{sec:corrected-center} sets
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$ at the current parameter.
 The computed upper width $\hat s_t(a)$ is a separate solver output.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Matrix & Built from & Width of $\bq_t(a)$ \\
+\midrule
+Reference $\bVbar_t$ & ridge and the frozen gradients & reference width $\bar s_t(a)$ \\
+Current $\bV_t$ & ridge and past gradients recomputed at $\btheta_t$ & current width $s_t(a)$ \\
+Applied $\Calg_t$ & the SPD operator the algorithm inverts & applied width $s_{\Calg,t}(a)$ \\
+--- & solver output, at least $s_{\Calg,t}(a)$ & computed width $\hat s_t(a)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 $m_t(a)$, $\beta_t\ge0$, and $b_t(a)\ge0$ denote the reference-band center,
-radius, and error allowance (\Cref{tab:transport-notation}). The frozen
-information gain and pseudo-regret are
+confidence multiplier, and error allowance (\Cref{tab:transport-notation}).
+The frozen information gain and pseudo-regret are
 
 \begin{equation}\label{eq:frozen-gamma-new}
  \gamma_T
@@ -64,11 +84,21 @@ Sections~\ref{sec:abstract-transport}--\ref{sec:closed-rates-new} also hold
 under the general standard-Borel protocol and measurability requirements in
 \Cref{app:general-protocol}.
 
+\begin{figure}[t]
+ \centering
+ \input{figures/transport_conceptual_interfaces.tex}
+ \caption{The reference-confidence, metric-transport, operator and solver
+ interfaces connected by \Cref{asm:abstract-transport,thm:transported-ucb}.}
+ \label{fig:transport-interfaces}
+\end{figure}
+
 \paragraph{Confidence and computational interfaces.}
-The next assumption connects reference confidence to the current metric,
-applied operator and numerical score width
-(\Cref{fig:transport-interfaces}); \Cref{tab:transport-assumption-ledger}
-lists their requirements.
+A collection-time confidence band controls the mean reward through the
+reference width, but the score uses a computed width from the applied
+operator. The next assumption states that band together with the three
+certificates that connect it to the current metric, the applied operator and
+the computed width (\Cref{fig:transport-interfaces});
+\Cref{tab:transport-assumption-ledger} lists their requirements.
 
 \begin{assumption}[Reference confidence and operational certificates]
 \label{asm:abstract-transport}
@@ -134,13 +164,29 @@ verification needs its own pre-draw filtration and conditional failure
 allocation.  No all-action sharpness condition is required.
 \end{remark}
 
-\begin{figure}[t]
- \centering
- \input{figures/transport_conceptual_interfaces.tex}
- \caption{The reference-confidence, metric-transport, operator and solver
- interfaces connected by \Cref{asm:abstract-transport,thm:transported-ucb}.}
- \label{fig:transport-interfaces}
-\end{figure}
+\paragraph{The transport principle.}
+With exact current curvature and exact solves ($\Calg_t=\bV_t$,
+$\hat s_t=s_t$), suppose the two endpoint matrices satisfy
+$c_{-,t}\bVbar_t\preceq\bV_t\preceq c_{+,t}\bVbar_t$, as in
+\Cref{cor:relative-endpoint-ucb}. Inverting this sandwich gives, for every
+query,
+\[
+ \bar s_t(a)\le\sqrt{c_{+,t}}\,s_t(a)\le\sqrt{c_{+,t}/c_{-,t}}\,\bar s_t(a).
+\]
+The first inequality gives optimism: the score with width
+$\sqrt{c_{+,t}}\,s_t(a)$ lies above the reference-width score, and hence above
+every mean that the reference band permits. The second inequality bounds the
+inflation: at the played action, the transported width is at most
+$\sqrt{c_{+,t}/c_{-,t}}$ times the reference width, which the frozen
+determinant potential controls. The paper obtains $c_{-,t}$ and $c_{+,t}$ in
+three ways: from the length of a path of SPD matrices joining $\bVbar_t$ to
+$\bV_t$ (\Cref{sec:logarithmic-transport}), from the exact endpoint Thompson
+distance between the two matrices, and, for scaled tanh, from termwise
+comparisons of the gradient weights
+(\Cref{cor:tanh-relative-weights,cor:tanh-lipschitz-endpoint}). The next
+theorem states the path version with an approximate operator, a computed
+width and an approximate maximizer, which add the factors $\kappa_{\pm,t}$,
+$\alpha_t$ and the term $\xi_t$.
 
 \begin{theorem}[Estimator- and solver-agnostic confidence transport]
 \label{thm:transported-ucb}
@@ -185,8 +231,10 @@ bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
 The factor $e^{\bar D_t}$ combines an outward width comparison that preserves
 optimism and a return comparison at the played action. Operator distortion
 contributes $\kappa_{+,t}/\kappa_{-,t}$, solver excess contributes $\alpha_t$,
-and $\xi_t$ charges approximate score maximization. Direct reference scoring
-has the following guarantee on its own trajectory.
+and $\xi_t$ charges approximate score maximization. \Cref{thm:transported-ucb}
+pays these factors to score with the current metric; it leaves open what the
+reference width guarantees without them. Scoring directly with the reference
+width gives the following guarantee on the policy's own trajectory.
 
 \begin{proposition}[Frozen-width UCB on its own trajectory]
 \label{prop:frozen-width-ucb}
@@ -215,7 +263,10 @@ reference-confidence event has probability at least $1-\delta$, so does this
 guarantee.
 \end{proposition}
 
-Holding the history, center, radius and bias fixed gives the width comparison.
+\Cref{thm:transported-ucb,prop:frozen-width-ucb} bound regret on different
+trajectories, so they do not say whether transport could certify a width
+narrower than the reference width. Holding the history, center, confidence
+multiplier and error allowance fixed answers this.
 
 \begin{proposition}[Reference-width floor on a fixed history]
 \label{prop:reference-width-floor}
@@ -242,6 +293,15 @@ $\bar s_t(a)$.  If the only restriction on its mean is the full interval
 $m_t(a)+\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that
 interval if and only if $w_t(a)\ge\bar s_t(a)$.
 \end{proposition}
+
+The comparison holds the history fixed. Policies that score with different
+widths select different actions, so their histories, centers and confidence
+multipliers differ, and \Cref{prop:reference-width-floor} does not order their
+adaptive regret or show that transport is unnecessary. Additional restrictions
+on the mean, or confidence information beyond the full reference band, can
+change the set of admissible means. The exact actionwise multiplier
+\eqref{eq:actionwise-width-ratio} evaluates the reference width it recovers,
+so as written it offers no computational shortcut.
 
 \begin{remark}[The reference band alone does not justify a smaller width]
 \label{rem:naive-width-band-counterexample}
@@ -273,6 +333,10 @@ $\beta=1$: support in the query direction is the inverse-metric width.
  \label{fig:transport-confidence-geometry}
 \end{figure}
 
+\Cref{thm:transported-ucb,prop:frozen-width-ucb} assume finite measurable
+suprema and a measurable approximate selector. For the finite action lists of
+the protocol, the smallest-index rule supplies both, with $\xi_t=0$.
+
 \begin{corollary}[Measurably enumerated finite domains]
 \label{cor:finite-enumeration-new}
 Suppose there is a positive $\cHist_t^-$-measurable integer $K_t$ and
@@ -298,8 +362,10 @@ Algorithm~\ref{alg:transported-ucb}; its confidence construction is in
 \section{How to compare the frozen and current matrices}
 \label{sec:logarithmic-transport}
 
-The order $A\preceq B$ means $B-A$ is positive semidefinite. A normalized
-SPD path length gives a multiplicative endpoint comparison.
+The order $A\preceq B$ means $B-A$ is positive semidefinite.
+\Cref{thm:transported-ucb} takes the path certificate $\bar D_t$ as given. The
+next lemma shows that the normalized length of any SPD path from $\bVbar_t$ to
+$\bV_t$ supplies it, through a multiplicative comparison of the endpoints.
 
 \begin{lemma}[Logarithmic comparison along an SPD path]
 \label{lem:log-spd-path}
@@ -366,8 +432,9 @@ sharpness statement, not a contextual-bandit regret lower bound and not a
 claim that every trajectory attains the worst case.
 \end{remark}
 
-For a ridge-plus-Gram replay matrix, stack the gradient features as rows of
-$\Bmat$. Bounding the changing factor controls the SPD path length.
+\Cref{lem:log-spd-path} still needs a bound on the path length. For a
+ridge-plus-Gram replay matrix, stack the gradient features as rows of $\Bmat$;
+bounding the derivative of this factor bounds the length.
 
 \begin{lemma}[Rectangular factor-path certificate]
 \label{lem:factor-spd-path}
@@ -397,9 +464,12 @@ segment from $\btheta_s$ to $\btheta_t$:
  \sigma^{-1}\nabla_\theta\mu_{\btheta_s+
  \tau(\btheta_t-\btheta_s)}(x_s,a_s)^\top.
 \end{equation}
+This rowwise interpolation is a device for the certificate; it need not be the
+generalized Gauss--Newton path of any common model or its training path.
 
-A prediction-Hessian bound and the ridge floor yield a certificate through
-the accumulated squared parameter movement $Q_t$.
+\Cref{lem:factor-spd-path} leaves the factor derivative to be bounded. A
+prediction-Hessian bound and the ridge floor bound it through the accumulated
+squared parameter movement $Q_t$.
 
 \begin{corollary}[Hessian path certificate]
 \label{cor:hessian-path-new}
@@ -421,8 +491,9 @@ $Q_1=0$, and both metrics equal $\lambda\bI$.
 
 The normalized factor condition in \Cref{lem:factor-spd-path} retains
 directional information discarded by the ridge-only Hessian bound and permits
-gradient rotation. The two width comparisons and operational approximation
-factors are
+gradient rotation. These results compare matrices; the score needs widths,
+and an approximate operator adds a second comparison. The next proposition
+gives both width comparisons and the operational approximation factors.
 
 \begin{proposition}[Width transport and approximate operators]
 \label{prop:width-transport-new}
@@ -444,7 +515,10 @@ $\kappa_{+,t}=1+\varepsilon_t$.  An upper comparison alone does not imply a
 lower factor.
 \end{proposition}
 
-A direct endpoint sandwich can replace the path premise:
+A path certificate can be loose even when the endpoints are close: a path
+can have positive length between equal endpoints (\Cref{app:transport-proofs}).
+When the two endpoint matrices can be compared directly, an endpoint sandwich
+replaces the path premise.
 
 \begin{corollary}[Direct endpoint sandwich]
 \label{cor:relative-endpoint-ucb}
@@ -506,8 +580,23 @@ approximate realizability
  |m^\circ(z)|\le\epsilon_{\rm mis}(z).
 \end{equation}
 For any predictable $\btheta_t\in\Theta$, set
-$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$. Subtract the collection-time
-affine offset to obtain pseudo-responses and their frozen ridge estimate:
+$\bq_t(a)=\nabla_\theta\mu_{\btheta_t}(x_t,a)$. Let $\rho_s^\circ$ be the
+Taylor remainder of $\mu_{\btheta^\circ}$ around $\btheta_s$. The
+pseudo-response $y_s$ defined in \eqref{eq:pseudo-response-new} below
+satisfies, by this expansion and \eqref{eq:approx-realizability-new},
+\[
+ y_s=\bq_s(a_s)^\top\btheta^\circ+\eta_s+\rho_s^\circ+m^\circ(x_s,a_s).
+\]
+The expansion is taken around whatever parameter $\btheta_s$ the optimizer
+returned, so the identity holds for every predictable iterate: the
+pseudo-responses form a linear regression on $\btheta^\circ$ whose regressors
+$\bq_s(a_s)$ are fixed before their rewards. The current parameter then
+enters the center only through an exact identity
+(\Cref{app:transport-proofs}), so no stationarity, residual or convergence
+property of $\btheta_t$ is used. The certified parameter region and the
+Taylor and misspecification envelopes are still required, and they can be
+large. Subtract the collection-time affine offset to obtain the
+pseudo-responses and their frozen ridge estimate:
 
 \begin{align}
  y_s&=r_s-\mu_{\btheta_s}(x_s,a_s)+\bq_s(a_s)^\top\btheta_s,
@@ -524,9 +613,8 @@ Correct the current prediction with that estimate:
  +\bq_t(a)^\top(\hat\btheta_t^{\rm lin}-\btheta_t).
 \end{equation}
 
-Fix $\delta\in(0,1)$. Let $\rho_s^\circ$ be the Taylor remainder of
-$\mu_{\btheta^\circ}$ around $\btheta_s$. Supply historical Taylor and
-misspecification envelopes
+Fix $\delta\in(0,1)$. Supply historical Taylor and misspecification
+envelopes
 
 \begin{equation}\label{eq:lin-mis-envelopes-new}
  |\rho_s^\circ|\le\epsilon_{\rm lin}(s),\qquad
@@ -562,6 +650,13 @@ residual, or optimizer convergence rate.
 The historical deterministic term follows from
 $\Phi_t^\top\bVbar_t^{-1}\Phi_t\preceq I$, with
 $\Phi_t=[\bq_1/\sigma,\ldots,\bq_{t-1}/\sigma]$; its scale is $1/\sigma$.
+The corollary removes the optimizer from the argument, not the envelopes. It
+needs a reference model fixed before collection, a ridge penalty centered at
+zero in the stated coordinates, and supplied historical and current Taylor and
+misspecification bounds. An arbitrary predictable optimizer does not make
+these errors small. Persistent misspecification can make the error-allowance
+term grow linearly in $T$ and the confidence multiplier vacuous: the bound
+degrades gracefully, which is not a robust misspecified-bandit guarantee.
 
 \section{When the regret bound is informative}
 \label{sec:closed-rates-new}
@@ -576,13 +671,10 @@ ridge term, and the query-norm bound implies
 
 The corrected-center rate combining this information bound with historical
 and current errors is given in \Cref{cor:finite-d-rate-new} in the appendix.
+That rate leaves the transport factor and the envelopes as free quantities.
+A global near-linearity condition controls gradient change and Taylor error
+together, and so bounds both.
 
-
-
-Global near-linearity controls gradient change and Taylor error together.
-
-%
-\setcounter{theorem}{11}
 \begin{corollary}[Global near-linearity under exponential transport]
 \label{cor:global-near-linear-new}
 Assume exact realizability, $\mu^*(z)=\mu_{\btheta^\circ}(z)$, and suppose
@@ -659,8 +751,12 @@ The symbol $W$ is a smoothness scale here; it is not identified with hidden
 width or parameter count.
 \end{remark}
 
-Comparing the squared gradient multipliers termwise, including the common
-ridge, gives uniform and category-specific endpoint certificates.
+\Cref{cor:global-near-linear-new} keeps the Hessian path factor
+$e^{D_{T,W}}$ bounded by letting $W$ grow linearly in $T$, and it uses only a
+bound on the Hessian norm. For scaled tanh, the gradient directions are fixed,
+so the two matrices can be compared term by term. Comparing the
+squared gradient multipliers, including the common ridge, gives uniform and
+category-specific endpoint certificates.
 
 \begin{corollary}[Relative weights for scaled tanh]
 \label{cor:tanh-relative-weights}
@@ -698,15 +794,18 @@ Either certificate can be used in \Cref{cor:relative-endpoint-ucb}.
 
 For finite feature categories, maintain a count and a sum of collection-time
 weights; current category projections then compute the certificate without
-an eigensolve or a full-history scan. The appendix gives the termwise proof
+an eigensolve or a full-history scan. The center and width solves remain, and
+these comparisons rely on fixed gradient directions, so they do not cover
+rotating gradients. The appendix gives the termwise proof
 and an example with equal endpoints and positive synthetic path length.
 
-The two scaled-tanh metrics differ only through squared link derivatives,
-whose logarithm is Lipschitz in the linear index. This gives a further
-endpoint certificate, controlled by how far the index has moved. The new
-statements below are numbered after those of the appendix.
+The category certificate needs finite feature categories, and the uniform
+certificate does not use how far the parameters have moved. The two
+scaled-tanh metrics differ only through squared link derivatives, whose
+logarithm is Lipschitz in the linear index. The next lemma states this, and
+the corollary after it turns it into an endpoint certificate controlled by
+how far the index has moved.
 
-\setcounter{theorem}{16}
 \begin{lemma}[Relative-weight Lipschitz bound]
 \label{lem:tanh-weight-lipschitz}
 For every $z$, $W>0$ and $\theta_1,\theta_2$,
@@ -737,7 +836,8 @@ the Lipschitz certificate is tighter than the uniform one exactly when $M_t$
 is below $\sqrt W\log\cosh(x)/\tanh(x)$, $x=B_\phi R/\sqrt W$; the appendix
 proves both statements and compares $D_t^{\rm lip}$ with the Hessian path
 certificate. In the near-linear regime of \Cref{cor:global-near-linear-new},
-the uniform certificate itself is close to one.
+the uniform certificate itself is close to one; the next corollary makes this
+quantitative when $W$ grows linearly in $T$.
 
 \begin{corollary}[Uniform endpoint factor when $W\ge cT$]
 \label{cor:tanh-endpoint-regime}
@@ -745,6 +845,10 @@ If $W\ge cT$ for some $c>0$, then
 $\exp(4\log\cosh(B_\phi R/\sqrt W))=\cosh^4(B_\phi R/\sqrt W)
 \le\exp(2B_\phi^2R^2/(cT))$.
 \end{corollary}
+
+An endpoint factor that does not grow with the horizon leaves the historical
+and current error terms in place, and by itself it implies neither sublinear
+regret nor better decisions.
 
 \paragraph{What transport adds in the near-linear regime.}
 Take the scaled-tanh specialization of \Cref{cor:global-near-linear-new}
@@ -758,6 +862,6 @@ $D_{T,W}=O(1/\sqrt c)$. When both bounds are written in the same $\gamma_T$,
 $\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at
 most a $1+O(1/(cT))$ multiple of the frozen one, and the bias terms are
 identical; the two bounds hold on different trajectories. In this analysis
-transport does not improve on frozen scoring. The appendix gives the
+transport does not improve on scoring with the reference width. The appendix gives the
 resulting explicit bound and evaluates both factors at the first study's
 constants.

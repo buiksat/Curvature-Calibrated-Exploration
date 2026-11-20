@@ -7,12 +7,27 @@ solver certificates. The reference-width floor and sharp symmetric factors
 characterize this conversion; fixed-direction scaled tanh permits tighter
 relative-weight endpoint certificates.
 
-In a second study in which the frozen bound is non-vacuous, endpoint
-transport matched frozen scoring within a prespecified margin, the Hessian
-width cost regret, and UCB-GLM had lower regret than frozen scoring; in the
-most curved descriptive cell it had higher regret than linear UCB.
+In the second study's near-linear design cell, where the frozen bound is below
+the regret cap, endpoint transport and the frozen-reference policy had
+equivalent mean cumulative pseudo-regret within a margin fixed before
+evaluation, Hessian-path transport had higher mean cumulative pseudo-regret
+than the frozen-reference policy, and UCB-GLM had lower mean regret; in the
+most curved descriptive cell UCB-GLM had higher mean regret than linear UCB.
 
-A useful next comparison needs stronger confidence
-information or a lower complete computational cost, including the frozen
-estimator, and a specific adaptive-policy hypothesis with a separately fixed
-protocol and fresh evaluation data.
+Four takeaways follow. First, on a fixed history transport cannot certify a
+width below the reference width while it preserves the full reference band
+(\Cref{prop:reference-width-floor}): it can make a current-curvature score
+valid, but it cannot make the certified width narrower. Second, for scaled tanh
+with $W\ge cT$ the uniform endpoint factor is $1+O(1/(cT))$
+(\Cref{cor:tanh-endpoint-regime}), so the endpoint-transported bound keeps the
+frozen bound's form, whereas Hessian-path transport had higher mean cumulative
+pseudo-regret than the frozen-reference policy in every condition of both
+studies. Third, in the curved cells of the second study, removing the
+Taylor-error allowances lowered mean regret far more than switching among the
+reference, endpoint and naive current widths changed it
+(\Cref{tab:transport-v3-descriptive}). Fourth, no cell of either study has both
+substantial curvature and a non-vacuous frozen bound, so a useful next
+comparison needs stronger confidence information or a lower complete
+computational cost, including the frozen estimator, and a specific
+adaptive-policy hypothesis with a separately fixed protocol and fresh
+evaluation data.

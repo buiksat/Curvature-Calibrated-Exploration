@@ -1,37 +1,84 @@
 \section{Introduction}\label{sec:intro}
 
 An upper confidence bound (UCB) policy adds an uncertainty bonus to a predicted
-reward. For a nonlinear predictor, retraining can change historical gradients
-without collecting new observations. The usual sequential confidence argument
-uses features fixed before their rewards; replayed gradients can instead
-depend on those rewards. We ask how a valid collection-time confidence band
-can support scores computed from current relinearized curvature.
+reward. For a nonlinear predictor the bonus is usually built from gradients,
+and retraining changes the gradients of past observations without collecting
+new ones. The usual sequential confidence argument needs each regressor to be
+fixed before its reward is observed. Gradients recomputed at the current
+parameter can depend on the rewards used for training, so collection-time
+confidence does not by itself justify a score built from current curvature.
+For example, in the scaled-tanh model
+$\mu_\theta(z)=\sqrt W\tanh(\phi(z)^\top\theta/\sqrt W)$, the gradient at a
+past observation $z_s$ is
+$\operatorname{sech}^2(\phi(z_s)^\top\theta/\sqrt W)\,\phi(z_s)$, so its
+weight depends on the parameter at which it is evaluated. Recomputed at the
+current parameter $\theta_t$, which was fitted to every reward before round
+$t$, that weight depends on the reward of round $s$ and on later rewards. The
+rebuilt matrix is therefore not a sum of outer products of regressors fixed
+before their rewards, which is what the self-normalized confidence argument
+requires.
+
+Curvature evaluated at a current trained parameter appears in several
+uncertainty methods. Laplace approximations use local inverse curvature
+around a MAP solution
+\citep{mackay1992practical,kristiadi2020being,daxberger2021laplace},
+linearizations of a trained network use implicit Jacobian or Fisher products
+with conjugate gradients \citep{maddox2021fast}, and Hessian--vector, GGN and
+inverse-curvature products supply the primitives for such solves
+\citep{pearlmutter1994fast,schraudolph2002fast,koh2017understanding}.
+NeuralUCB and NeuralTS instead keep the gradient features computed when each
+observation arrived \citep{zhou2020neural,zhang2021neural}, and fixed NTK
+references and learned last-layer uncertainty offer other constructions
+\citep{kassraie2022neural,riquelme2018deep}.
+
+This paper first builds a confidence band from collection-time gradients and
+then certifies its conversion to the current metric. The band's width, the
+\emph{reference width}, is computed from the matrix of gradients stored when
+each observation was collected. Its center, the \emph{corrected center}, is
+the current prediction plus a correction from a ridge regression on those
+stored gradients. \emph{Transport} converts the band into a score that uses
+widths in the current metric, multiplied by a factor that a certificate
+bounds. On a fixed history, with the same center, confidence multiplier and
+error allowance, transport cannot certify a width narrower than the reference
+width while it preserves the full reference band; this comparison does not
+rank adaptive policies, whose histories differ.
+
+We analyze current-curvature scoring to characterize when it is valid and what
+it costs. The paper does not establish a computational advantage for it and
+does not propose a better bandit algorithm. Two synthetic studies then ask how
+conservative the certificates are and what happens to regret.
 
 \paragraph{Contributions.}
-First, for squared loss, a frozen ridge correction supplies a confidence band
-around the corrected center along any predictable parameter path in a
-certified region, using supplied Taylor and misspecification bounds and
-requiring no optimizer convergence (\Cref{cor:corrected-center-new}).
-Second, on a fixed history with the same center, radius and bias, certified
-transported widths cannot improve on the reference width; an exact actionwise
-correction recovers it (\Cref{prop:reference-width-floor}). The symmetric
-exponential width factors are sharp (Section~\ref{sec:logarithmic-transport}).
-Third, scaled tanh admits a relative-weight endpoint certificate because its
-gradient directions stay fixed (\Cref{cor:tanh-relative-weights}).
-A log-Lipschitz bound on the link derivative gives a further certificate
-controlled by index movement, and when $W\ge cT$ the uniform endpoint factor
-is $1+O(1/(cT))$, so the endpoint-transported bound has the frozen bound's form
-(\Cref{cor:tanh-lipschitz-endpoint,cor:tanh-endpoint-regime}).
-\Cref{thm:transported-ucb} connects these results: reference confidence,
-metric transport, operator comparison and numerical-width certificates give
-an implemented UCB score and a regret bound.
-
-NeuralUCB and NeuralTS retain arriving gradient features
-\citep{zhou2020neural,zhang2021neural}; fixed NTK references and learned
-last-layer uncertainty offer other constructions
-\citep{kassraie2022neural,riquelme2018deep}. Current-curvature scoring creates
-the additional certificate obligations studied here. Sections
-\ref{sec:abstract-transport}--\ref{sec:closed-rates-new} give the framework,
-geometry, corrected center and rates; Section~\ref{sec:transport-followup}
-reports two prespecified studies, the second with a non-vacuous frozen bound
-and generalized-linear and linear UCB baselines. Proofs and supporting details are in the appendices.
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=2pt]
+\item \emph{Can confidence survive retraining without optimizer convergence?}
+For squared loss, a frozen ridge correction gives a confidence band around the
+corrected center along any predictable parameter path in a certified region,
+given Taylor-remainder and misspecification bounds
+(\Cref{cor:corrected-center-new}).
+\item \emph{What does conversion to the current metric require, and can it
+narrow the width?} A transport theorem combines the reference band with metric,
+operator and solver certificates into a UCB score and a regret bound
+(\Cref{thm:transported-ucb}). On a fixed history, certified transported widths
+cannot fall below the reference width, and an exact actionwise correction
+recovers it (\Cref{prop:reference-width-floor}); the symmetric exponential
+width factors are sharp (Section~\ref{sec:logarithmic-transport}).
+\item \emph{Can the conversion be tight for a model with fixed gradient
+directions?} For scaled tanh, termwise comparisons of the gradient weights give
+endpoint certificates on a bounded parameter region
+(\Cref{cor:tanh-relative-weights,cor:tanh-lipschitz-endpoint}); when $W\ge cT$
+the uniform endpoint factor is $1+O(1/(cT))$, so the endpoint-transported bound
+has the frozen bound's form (\Cref{cor:tanh-endpoint-regime}).
+\item \emph{What happens to regret?} In both synthetic studies,
+Hessian-path transport has higher mean cumulative pseudo-regret than the
+frozen-reference policy. In a near-linear design cell where the
+frozen-reference policy's regret bound is below the deterministic cumulative
+pseudo-regret cap, endpoint transport and the frozen-reference policy have
+equivalent mean cumulative pseudo-regret within a margin fixed before
+evaluation. In more curved cells, removing the Taylor-error allowances lowers
+mean regret far more than switching among the reference, endpoint and naive
+current widths does (Section~\ref{sec:transport-followup}).
+\end{itemize}
+Sections~\ref{sec:abstract-transport}--\ref{sec:closed-rates-new} give the
+framework, the matrix comparisons, the corrected center and the rates;
+Section~\ref{sec:transport-followup} reports the studies, and the proofs are in
+\Cref{app:transport-proofs}.
