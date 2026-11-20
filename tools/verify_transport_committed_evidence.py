@@ -837,7 +837,7 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                                    'PDF hash'),
                                                   ('63 pages, 933,908 bytes',
                                                    'PDF page count and size')],
- 'paper/body_conclusion.tex': [('A useful next comparison needs stronger confidence information or '
+ 'paper/body_conclusion.tex': [('a useful next comparison needs stronger confidence information or '
                                 'a lower complete computational cost, including the frozen '
                                 'estimator',
                                 'current manuscript leaves stronger confidence information open')],
@@ -854,19 +854,6 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                   'current, establish neither population coverage, numerical '
                                   'theorem certification, necessity nor practical advantage.',
                                   'follow-up diagnostics do not prove validity or necessity'),
-                                 ('Fixed-state timings under parallel load exclude matrix '
-                                  'construction, confidence estimation and the policy loop, so do '
-                                  'not establish end-to-end speedup.',
-                                  'relative-certificate audit does not establish adaptive '
-                                  'performance or speedup'),
-                                 ('Post-outcome rescoring/replay holds recorded histories fixed: '
-                                  'it is exploratory, reveals no alternative adaptive trajectory '
-                                  'or downstream action effects, and does not identify an adaptive '
-                                  'causal mechanism.',
-                                  'same-history recommendations are not alternative adaptive runs'),
-                                 ('Float64 solves, eigenvalues, quadrature, replay residuals and '
-                                  'source hashes are not rigorous numerical enclosures.',
-                                  'relative audit is not verified numerical certification'),
                                  ('Recorded confidence and optimism checks, including naive '
                                   'current, establish neither population coverage, numerical '
                                   'theorem certification, necessity nor practical advantage.',
@@ -932,34 +919,60 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                               'float64 diagnostics are not verified certificates'),
                                              ('$10^{-12}$ ratio tolerance',
                                               'preregistered ratio tolerance')],
- 'paper/transport_followup.tex': [('All 600 trajectories, including naive current, pass '
-                                   'simultaneous reference confidence, method optimism and '
-                                   'deterministic diagnostics',
+ 'paper/transport_followup.tex': [('Post-outcome rescoring and replay hold recorded histories '
+                                   'fixed: they are exploratory, reveal no alternative adaptive '
+                                   'trajectory or downstream action effects, and do not identify '
+                                   'an adaptive causal mechanism.',
+                                   'same-history recommendations are not alternative adaptive '
+                                   'runs'),
+                                  ('In all 600 trajectories, no violation was observed in the '
+                                   'recorded checks of simultaneous reference confidence, policy '
+                                   'optimism and the deterministic diagnostics, including for the '
+                                   'uncertified naive-current control.',
                                    'follow-up optimism includes the uncertified control'),
-                                  ("Path inflation is Hessian's largest bound contribution in all "
-                                   'three conditions.',
+                                  ("Path inflation is the Hessian-path policy's largest bound "
+                                   'contribution in all three conditions.',
                                    'follow-up keeps path-certificate conservatism'),
-                                  ('A bound above it is \\emph{vacuous}. Every Hessian bound and '
-                                   'all 150 frozen-policy own-history bounds exceed their caps.',
+                                  ('Every Hessian-path bound and all 150 frozen-reference '
+                                   'own-history bounds exceed their caps.',
                                    'follow-up keeps primary bound vacuity'),
-                                  ('all 150 frozen-policy own-history bounds exceed their caps.',
+                                  ('all 150 frozen-reference own-history bounds exceed their caps.',
                                    'follow-up keeps frozen own-history bound vacuity'),
                                   ('After outcomes were observed, replay with the recorded actions '
                                    'and rewards audits all 600 histories.',
                                    'mechanism analysis remains post-outcome exploratory'),
-                                  ("Path inflation is Hessian's largest bound contribution in all "
-                                   'three conditions.',
+                                  ("Path inflation is the Hessian-path policy's largest bound "
+                                   'contribution in all three conditions.',
                                    'current manuscript keeps the conservative-certificate finding'),
-                                  ("Both Hessian's bounds and the frozen policy's own bounds "
-                                   'exceed the deterministic cap',
+                                  ('Every Hessian-path bound and all 150 frozen-reference '
+                                   'own-history bounds exceed their caps.',
                                    'current manuscript keeps the vacuous-bound finding'),
-                                  ('All nine pointwise paired comparisons favor these comparators '
-                                   'over Hessian.',
+                                  ('All nine pointwise paired 95\\% intervals exclude zero in the '
+                                   "comparator's favor",
                                    'current manuscript keeps the adverse regret comparison'),
-                                  ("Path inflation is Hessian's largest bound contribution in all "
-                                   'three conditions.',
-                                   'current manuscript keeps follow-up certificate conservatism')],
- 'paper/transport_followup_appendix.tex': [('Evaluation consists of $3\\times4\\times50=600$ '
+                                  ("Path inflation is the Hessian-path policy's largest bound "
+                                   'contribution in all three conditions.',
+                                   'current manuscript keeps follow-up certificate conservatism'),
+                                  ('$T=1000$, $W\\in\\{16,1,0.25\\}$ and 50 paired seeds per '
+                                   'policy--condition cell (600 trajectories) of a 29-parameter '
+                                   'scaled-tanh model',
+                                   'current manuscript states the follow-up evaluation grid'),
+                                  ('Every Hessian-path bound and all 150 frozen-reference '
+                                   'own-history bounds exceed their caps.',
+                                   'current manuscript keeps the vacuous-bound finding'),
+                                  ('All nine pointwise paired 95\\% intervals exclude zero',
+                                   'current manuscript keeps pointwise paired uncertainty')],
+ 'paper/transport_followup_appendix.tex': [('Fixed-state timings under parallel load exclude '
+                                            'matrix construction, confidence estimation and the '
+                                            'policy loop, so do not establish end-to-end speedup.',
+                                            'relative-certificate audit does not establish '
+                                            'adaptive performance or speedup'),
+                                           ('Float64 solves, eigenvalues, quadrature, replay '
+                                            'residuals and source hashes are not rigorous '
+                                            'numerical enclosures.',
+                                            'relative audit is not verified numerical '
+                                            'certification'),
+                                           ('Evaluation consists of $3\\times4\\times50=600$ '
                                             'further trajectories. The 294',
                                             'follow-up separates evaluation from development and '
                                             'tuning')],
@@ -967,22 +980,13 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                  ':=\\sup_{a\\in\\cA_t}\\mu_t^*(a)-\\mu_t^*(a_t), \\qquad '
                                  'R_T=\\sum_{t=1}^T\\operatorname{reg}_t.',
                                  'follow-up comparison is cumulative contextual pseudo-regret')],
- 'submissions/tmlr_2026/main.tex': [('Hessian transport has higher mean pseudo-regret than every '
-                                     'comparator',
+ 'submissions/tmlr_2026/main.tex': [('Hessian-path transport has higher mean cumulative '
+                                     'pseudo-regret than the frozen-reference policy in both',
                                      'follow-up keeps the adverse regret comparison'),
                                     ('\\usepackage{tmlr}', 'official TMLR stylefile is loaded'),
-                                    ('four policies in three conditions of a synthetic '
-                                     '29-parameter scaled-tanh model, with 50 paired seeds per '
-                                     'condition',
-                                     'current manuscript states the follow-up evaluation grid'),
-                                    ("its bounds and the frozen policy's own bounds exceed the "
-                                     'deterministic cap',
-                                     'current manuscript keeps the vacuous-bound finding'),
-                                    ('Hessian transport has higher mean pseudo-regret than every '
-                                     'comparator',
-                                     'current manuscript keeps the adverse regret comparison'),
-                                    ('all nine pointwise paired 95\\% intervals exclude zero',
-                                     'current manuscript keeps pointwise paired uncertainty')]}
+                                    ('Hessian-path transport has higher mean cumulative '
+                                     'pseudo-regret than the frozen-reference policy in both',
+                                     'current manuscript keeps the adverse regret comparison')]}
 
 # Literals that must NOT appear anywhere in the submitted manuscript sources.
 # These are the overclaims the evidence does not support, and the two tmlr.sty

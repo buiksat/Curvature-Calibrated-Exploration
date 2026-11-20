@@ -33,14 +33,15 @@ def tex(x, p):  # table style: {,} thousands separator and $-$ minus
 
 
 F = "transport_followup.tex"
-# First study (Section 6): envelopes and frozen-bound terms.
-expect(F, ", ".join(f"{2 * C_H / math.sqrt(w):.3f}" for w in (16, 1)) + f" and {2 * C_H / math.sqrt(0.25):.3f}")
+A = "transport_followup_appendix.tex"
+# First study (Section 6 and Appendix B): envelopes and frozen-bound terms.
+expect(A, ", ".join(f"{2 * C_H / math.sqrt(w):.3f}" for w in (16, 1)) + f" and {2 * C_H / math.sqrt(0.25):.3f}")
 summaries = [json.loads(l) for l in (ROOT / "review/transport_review_followup/full-cce-full-local/seed_summaries.jsonl").open()]
 # per-seed mean envelope sum_t eps_t / T over 2 c_h R^2 / sqrt(W); median per (W, method)
 ratios = [st.median(r["current_bias_cumulative"] / 2 / r["rounds"] / (2 * C_H / math.sqrt(w))
                     for r in summaries if (r["W"], r["method"]) == (w, m))
           for w, m in {(r["W"], r["method"]) for r in summaries}]
-expect(F, f"{100 * min(ratios):.1f}\\%--{100 * max(ratios):.1f}\\%")
+expect(A, f"{100 * min(ratios):.1f}\\%--{100 * max(ratios):.1f}\\%")
 gammas = []
 for w in (16.0, 1.0, 0.25):
     rs = [r for r in summaries if r["W"] == w and r["method"] == "frozen_reference"]
@@ -57,18 +58,26 @@ runs = [json.loads(l) for l in (ROOT / "review/v3_results/eval_runs.jsonl").open
 assert len(runs) == 1500 and not any(r["failures"] for r in runs)
 d = a["W=20000"]
 pr = d["primary"]
-expect(F, f"costs {pr['transport_hessian-frozen_reference']['mean']:.1f} regret units")
-expect(F, f"has {-pr['ucb_glm-frozen_reference']['mean']:.1f} units less regret")
+expect(F, f"the frozen-reference policy by {pr['transport_hessian-frozen_reference']['mean']:.1f} units")
+expect(F, f"UCB-GLM's is {-pr['ucb_glm-frozen_reference']['mean']:.1f} units lower")
 expect(F, f"UCB-GLM minus frozen is ${pr['ucb_glm-frozen_reference']['mean']:.1f}$".replace("$-", "$-"))
 for key in pr:
     m, e = f"{pr[key]['p_two_sided']:.1e}".split("e")
     expect(F, f"$p={m}\\times10^{{{int(e)}}}$")
 h1 = max(v["p_one_sided"] for v in d["design_checks"]["H1"].values())
 m, e = f"{h1:.1e}".split("e")
-expect(F, f"$p\\le{m}\\times10^{{{int(e)}}}$")
+expect(A, f"$p\\le{m}\\times10^{{{int(e)}}}$")
 ci = [x for v in d["design_checks"]["H2"].values() for x in v["ci90"]]
 assert -1.0 < min(ci) and max(ci) < 1.0 and d["design_checks"]["H2_delta"] == 3.0
 expect(F, "inside $(-1.0,1.0)$")
+dp = d["descriptive_pairs"]
+lo, hi = dp["transport_hessian-frozen_reference"]["bootstrap_ci95"]
+expect(F, f"$[{lo:.1f}, {hi:.1f}]$")
+lo, hi = dp["ucb_glm-frozen_reference"]["bootstrap_ci95"]
+expect(F, f"$[{lo:.1f}, {hi:.1f}]$")
+gap0 = max(abs(dp[f"{k}-frozen_reference"]["mean"]) for k in ("transport_endpoint", "naive_current"))
+assert gap0 < 0.2
+expect(F, "by less than 0.2 units in mean regret")
 expect(F, "$\\Delta=3.0$")
 fz = [r for r in runs if r["W"] == 20000 and r["method"] == "frozen_reference"]
 expect(F, f"the largest is {max(r['frozen_form_bound'] / r['cap'] for r in fz):.3f} of it")
@@ -76,8 +85,17 @@ gam = 6 * math.log(1 + 20000 / (6 * LAM * SIGMA ** 2))
 beta = math.sqrt(gam + 2 * math.log(1 / DELTA)) + 1 + 2 * C_H * math.sqrt(20000) / (SIGMA * math.sqrt(20000))
 apriori = 2 * beta * math.sqrt((SIGMA ** 2 + 1) * gam * 20000) + 4 * C_H * 20000 / math.sqrt(20000)
 expect(F, f"is {comma(apriori, 0)}, which is {apriori / 40000:.2f} of the cap")
+# A priori bound / cap = A_ + B_/sqrt(c) for W = cT >= 1; below one exactly when c > (B_/(1-A_))^2.
+scale = math.sqrt((SIGMA ** 2 + 1 / LAM) * gam / 20000)
+A_ = (math.sqrt(gam + 2 * math.log(1 / DELTA)) + 1) * scale
+B_ = 2 * C_H / SIGMA * scale + 2 * C_H / math.sqrt(20000)
+assert abs(A_ + B_ - apriori / 40000) < 1e-12
+expect(F, f"exactly when $c>{(B_ / (1 - A_)) ** 2:.3f}$")
+expect(A, f"$A={A_:.3f}$ and $B={B_:.3f}$")
+expect(A, f"equals {A_ + B_:.2f} in the design cell")
+expect(A, f"(B/(1-A))^2={(B_ / (1 - A_)) ** 2:.3f}$")
 expect(F, f"\\approx{4 * math.log(math.cosh(1 / math.sqrt(20000))) / 1e-4:.1f}\\times10^{{-4}}")
-rows = {"transport_hessian": "Hessian", "transport_endpoint": "Endpoint", "frozen_reference": "Frozen reference",
+rows = {"transport_hessian": "Hessian-path transport", "transport_endpoint": "Endpoint transport", "frozen_reference": "Frozen reference",
         "naive_current": "Naive current", "frozen_reference_no_envelope": "Envelope-free frozen",
         "naive_current_no_envelope": "Envelope-free naive", "linucb": "Linear UCB", "ucb_glm": "UCB-GLM"}
 for k, name in rows.items():  # design-cell table
@@ -94,11 +112,11 @@ for k, name in rows.items():  # descriptive table
     expect(F, f"{name} & " + " & ".join(tex(c["mean_regret"][k], 1) for c in cells) + " \\\\")
 expect(F, "Context-free & " + " & ".join(tex(c["mean_context_free"], 1) for c in cells) + " \\\\")
 hes = [c["descriptive_pairs"]["transport_hessian-frozen_reference"]["mean"] for c in cells]
-expect(F, "Hessian minus frozen & " + " & ".join(tex(x, 1) for x in hes) + " \\\\")
+expect(F, "Hessian-path minus frozen & " + " & ".join(tex(x, 1) for x in hes) + " \\\\")
 expect(F, f"{comma(hes[0], 1)}, {comma(hes[1], 1)} and {comma(hes[2], 1)}")
 big = [max(r["frozen_form_bound"] / r["cap"] for r in runs if r["W"] == w and r["method"] == "frozen_reference")
        for w in (100.0, 10.0, 1.0)]
-expect(F, "Largest frozen bound/cap & " + " & ".join(f"{x:.2f}" for x in big) + " \\\\")
+expect(F, "Largest frozen bound-to-cap ratio & " + " & ".join(f"{x:.2f}" for x in big) + " \\\\")
 fr = [c["mean_regret"]["frozen_reference"] for c in cells]
 expect(F, f"(frozen: {comma(fr[0], 1)}, {comma(fr[1], 1)} and {comma(fr[2], 1)})")
 expect(F, f"from {comma(min(fr), 1)}--{comma(max(fr), 1)} to")
@@ -134,7 +152,6 @@ expect(F, f"In the {len(checked):,} corrected-center runs")
 expect(F, f"{n:,} checks in all; the largest discrepancy was {worst:.3f} of its tolerance")
 assert all(r["optimism_failure_pairs"] == 0 for r in runs if "optimism_failure_pairs" in r)
 
-A = "transport_followup_appendix.tex"
 t = json.loads((ROOT / "review/v3_results/tuning_selection.json").read_text())
 mse = t["mean_mse"]
 assert (t["learning_rate"], t["steps_per_round"]) == (3e-06, 5) and not t["disqualified"]

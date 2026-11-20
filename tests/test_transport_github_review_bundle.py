@@ -670,14 +670,14 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
 @pytest.mark.parametrize("relative,before,after,required_check", [
     (
         "paper/transport_followup.tex",
-        "Path inflation\nis Hessian's largest bound contribution",
-        "Path inflation is irrelevant to Hessian's bound",
+        "Path inflation is the\nHessian-path policy's largest bound contribution",
+        "Path inflation is irrelevant to the Hessian-path policy's bound",
         "current manuscript keeps the conservative-certificate finding",
     ),
     (
-        "submissions/tmlr_2026/main.tex",
-        "bounds exceed the deterministic cap",
-        "bounds improve on the deterministic cap",
+        "paper/transport_followup.tex",
+        "own-history bounds exceed their caps",
+        "own-history bounds stay below their caps",
         "current manuscript keeps the vacuous-bound finding",
     ),
     (
@@ -688,7 +688,7 @@ def test_removing_a_required_qualifier_is_detected(tmp_path):
     ),
     (
         "paper/scope_limitations.tex",
-        "not isolated certificate changes or\na universal ordering",
+        "not isolated certificate changes or a universal ordering",
         "isolated certificate changes and a universal ordering",
         "current manuscript refuses a uniform curvature ordering",
     ),
@@ -766,10 +766,11 @@ def test_prohibited_source_literals_are_rejected_when_not_visible(tmp_path, hidd
 def test_required_claim_cannot_be_satisfied_by_a_comment_echo(tmp_path):
     scratch = _manuscript_scratch(tmp_path)
     path = scratch / "submissions/tmlr_2026/main.tex"
-    literal = "Hessian transport has higher mean pseudo-regret than every comparator"
+    literal = "Hessian-path transport has higher mean cumulative pseudo-regret than the frozen-reference policy in both"
     text = path.read_text()
-    assert "Hessian transport has higher mean pseudo-regret than every\ncomparator" in text
-    path.write_text(text.replace("Hessian transport has higher mean pseudo-regret than every\ncomparator", "A different visible claim", 1) + "\n% " + literal + "\n")
+    wrapped = "Hessian-path transport has higher\nmean cumulative pseudo-regret than the frozen-reference policy in both"
+    assert wrapped in text
+    path.write_text(text.replace(wrapped, "A different visible claim", 1) + "\n% " + literal + "\n")
     report = verifier.Report()
     verifier.check_manuscript(report, scratch)
     assert any("adverse regret comparison" in item["check"] for item in report.failures)

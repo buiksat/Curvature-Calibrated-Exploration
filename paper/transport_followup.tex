@@ -15,19 +15,19 @@ bound is below the regret cap and adds two uncertified baselines.
 
 \begin{table}[t]
 \centering
-\caption{The cells of the two studies. $d$ is the parameter dimension and $T$
-the horizon; each cell has 50 paired evaluation seeds per policy.}
+\caption{The cells of the two studies: parameter dimension $d$, horizon $T$ and
+scale $W$. Each cell has 50 paired evaluation seeds per policy.}
 \label{tab:transport-study-design}
 \small
-\begin{tabular}{@{}lrrrl@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.17\linewidth}lll>{\raggedright\arraybackslash}X@{}}
 \toprule
-Cells & $d$ & $T$ & $W$ & Interpretation \\
+Cells & Dimension & Horizon & Scale & Interpretation \\
 \midrule
-First study & 29 & 1{,}000 & 16, 1, 0.25 & Fixed before evaluation; every certified bound vacuous \\
-Second study, design cell & 6 & 20{,}000 & 20{,}000 & Tests fixed before evaluation; near-linear; frozen bound below the cap \\
-Second study, descriptive cells & 6 & 20{,}000 & 100, 10, 1 & Chosen after development output; no tests; certified bounds vacuous \\
+First study & $d=29$ & $T=1{,}000$ & $W\in\{16,1,0.25\}$ & Fixed before evaluation; every certified bound vacuous \\
+Second study, design cell & $d=6$ & $T=20{,}000$ & $W=20{,}000$ & Tests fixed before evaluation; near-linear; frozen bound below the cap \\
+Second study, descriptive cells & $d=6$ & $T=20{,}000$ & $W\in\{100,10,1\}$ & Chosen after development output; no tests; certified bounds vacuous \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \paragraph{First study: design and policies.}

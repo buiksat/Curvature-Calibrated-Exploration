@@ -94,7 +94,7 @@ FOLLOWUP_SOURCE_HASHES = {Path('review/post_full_fable/independent/analysis.json
  Path('tools/editorial_generator_sources.py'): 'e36441c29cd366cd7e420b709362a07924004929e5bfc88f9f3a1dfbd1dc9edb',
  Path('tools/editorial_originals/make_transport_explanatory_figures.py'): '464083a92053499c9dacba950707a3cbd4749fe0e908531c06b27da5e5b43150',
  Path('tools/editorial_originals/make_transport_table_charts.py'): 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
- Path('tools/make_tmlr_outcomes.py'): '65626c9c0113737520f3c97c97b2a4e90a05878cd8d421accff0e75da8a817f3',
+ Path('tools/make_tmlr_outcomes.py'): 'd9574f648fe0f0de63a5bd00cc407b49325963e1a76a093dc8df0921663756be',
  Path('tools/make_transport_explanatory_figures.py'): 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  Path('tools/make_transport_followup_paper.py'): '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  Path('tools/make_transport_table_charts.py'): 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
@@ -555,7 +555,7 @@ FOLLOWUP_SOURCE_HASHES.update({
 })
 
 V3_CERTIFIED = ("transport_hessian", "transport_endpoint", "frozen_reference", "naive_current")
-V3_ROWS = (("transport_hessian", "Hessian"), ("transport_endpoint", "Endpoint"),
+V3_ROWS = (("transport_hessian", "Hessian-path transport"), ("transport_endpoint", "Endpoint transport"),
            ("frozen_reference", "Frozen reference"), ("naive_current", "Naive current"),
            ("frozen_reference_no_envelope", "Envelope-free frozen"),
            ("naive_current_no_envelope", "Envelope-free naive"),
@@ -651,7 +651,7 @@ def v3_ledger() -> list[Entry]:
     # Section 6: frozen-bound scale of the first study.
     phrase = "0.385, 1.540 and 3.079 at $W=16,1,0.25$"
     for width, display in ((16, "0.385"), (1, "1.540"), (0.25, "3.079")):
-        add(F, phrase, display, FOLLOWUP_CONFIG,
+        add(A, phrase, display, FOLLOWUP_CONFIG,
             f"closed form 2 c_h R^2 / sqrt(W), R = teacher.theta_radius, W={width}",
             lambda c, w=width: 2 * _c_h(c) * c["teacher"]["theta_radius"] ** 2 / math.sqrt(w),
             units="reward units", population="first follow-up constants")
@@ -662,7 +662,7 @@ def v3_ledger() -> list[Entry]:
                                  / (2 * C_H / math.sqrt(r["W"])) for r in rows)
 
     for pick, display in ((min, "98.3"), (max, "98.5")):
-        add(F, phrase, display, FOLLOWUP_SEEDS,
+        add(A, phrase, display, FOLLOWUP_SEEDS,
             f"{pick.__name__} over (W, method) of the median of current_bias_cumulative/2/rounds "
             "/ (2 c_h / sqrt(W)), in percent",
             lambda s, p=pick: 100 * p(envelope_share([r for r in s if (r["W"], r["method"]) == cell])
@@ -703,14 +703,12 @@ def v3_ledger() -> list[Entry]:
         cell = a["W=1"]["mean_regret"]
         return cell["ucb_glm"] / cell["linucb"]
 
-    add(F, "width costs 16.8 regret units relative to frozen", "16.8", V3_ANALYSIS,
+    add(F, "the frozen-reference policy by 16.8 units", "16.8", V3_ANALYSIS,
         "W=20000 primary transport_hessian-frozen_reference mean",
         lambda a: primary(a, "transport_hessian-frozen_reference"))
-    add(F, "UCB-GLM has 34.4 units less regret than frozen", "34.4", V3_ANALYSIS,
+    add(F, "UCB-GLM's is 34.4 units lower", "34.4", V3_ANALYSIS,
         "minus W=20000 primary ucb_glm-frozen_reference mean",
         lambda a: -primary(a, "ucb_glm-frozen_reference"))
-    add(F, "at $W=1$ UCB-GLM has about 7.7 times the regret of linear UCB.", "7.7", V3_ANALYSIS,
-        "W=1 mean_regret ucb_glm / linucb", ratio_glm_linucb, units="ratio")
     phrase = "$\\sigma=0.25$; $\\lambda=1$, $\\delta=0.05$, $R=1$ and $T=20{,}000$"
     for key, display in (("sigma", "0.25"), ("ridge", "1"), ("delta", "0.05"),
                          ("radius", "1"), ("horizon", "20{,}000")):
@@ -743,17 +741,17 @@ def v3_ledger() -> list[Entry]:
 
     # Design checks and primary comparisons.
     design = lambda a: a[f"W={V3_DESIGN_W}"]
-    add(F, "every $p\\le1.2\\times10^{-108}$", "1.2\\times10^{-108}", V3_ANALYSIS,
+    add(A, "every $p\\le1.2\\times10^{-108}$", "1.2\\times10^{-108}", V3_ANALYSIS,
         "max over policies of W=20000 design_checks.H1.p_one_sided",
         lambda a: max(v["p_one_sided"] for v in design(a)["design_checks"]["H1"].values()),
         units="p-value")
-    add(F, "prespecified margin $\\Delta=3.0$", "3.0", V3_ANALYSIS, "W=20000 design_checks.H2_delta",
+    add(F, "within the margin $\\Delta=3.0$", "3.0", V3_ANALYSIS, "W=20000 design_checks.H2_delta",
         lambda a: design(a)["design_checks"]["H2_delta"])
     add(F, "interval lies inside $(-1.0,1.0)$", "1.0", V3_ANALYSIS,
         "max |endpoint| of the three W=20000 H2 ci90 intervals, rounded up to one decimal",
         lambda a: math.ceil(10 * max(abs(x) for v in design(a)["design_checks"]["H2"].values()
                                      for x in v["ci90"])) / 10)
-    phrase = "All 50 frozen bounds are below the cap; the largest is 0.761 of it."
+    phrase = "all 50 frozen bounds are below the cap; the largest is 0.761 of it."
     add(F, phrase, "50", V3_RUNS, "count of W=20000 frozen_reference runs with frozen_form_bound < cap",
         lambda r: sum(x["frozen_form_bound"] < x["cap"]
                       for x in _v3_runs(r, V3_DESIGN_W, "frozen_reference")), units="runs")
@@ -865,8 +863,8 @@ def v3_ledger() -> list[Entry]:
         "cap shared by every curved-cell run that records one",
         lambda r: _only(x["cap"] for x in r if x["W"] in (100., 10., 1.) and "cap" in x),
         units="reward units")
-    for method, name in V3_ROWS + (("context_free", "Context-free"), ("hessian_minus", "Hessian minus frozen"),
-                                    ("largest_ratio", "Largest frozen bound/cap")):
+    for method, name in V3_ROWS + (("context_free", "Context-free"), ("hessian_minus", "Hessian-path minus frozen"),
+                                    ("largest_ratio", "Largest frozen bound-to-cap ratio")):
         displays = _V3_CURVED_ROWS[method]
         for index, display in enumerate(displays):
             width = V3_CURVED_W[index]
@@ -940,7 +938,7 @@ def v3_ledger() -> list[Entry]:
         return statistics.mean(regret[(s, "transport_hessian")] - regret[(s, "frozen_reference")]
                                for s in seeds)
 
-    add(A, "development mean Hessian-minus-frozen difference, 12.0,", "12.0", V3_DEV5_RUNS,
+    add(A, "development mean Hessian-path-minus-frozen difference, 12.0,", "12.0", V3_DEV5_RUNS,
         "mean over development seeds of W=20000 Hessian minus frozen regret, pilot of record",
         development_difference,
         population="second study, 10 development seeds")
@@ -1025,13 +1023,132 @@ def v3_ledger() -> list[Entry]:
             lambda c, w=width: 1 + math.exp(2 / w), units="factor",
             population="first follow-up constants")
 
-    # Abstract.
-    add(ABSTRACT_TEX, "a regret cost of 16.8 units for Hessian transport", "16.8", V3_ANALYSIS,
-        "W=20000 primary transport_hessian-frozen_reference mean",
-        lambda a: primary(a, "transport_hessian-frozen_reference"))
-    add(ABSTRACT_TEX, "34.4 units less regret for a generalized-linear UCB baseline", "34.4", V3_ANALYSIS,
-        "minus W=20000 primary ucb_glm-frozen_reference mean",
-        lambda a: -primary(a, "ucb_glm-frozen_reference"))
+    return entries
+
+
+
+def _v3_ratio_parts(spec) -> tuple[float, float]:
+    """A and B with (a priori frozen bound) / cap = A + B / sqrt(c) for W = cT >= 1.
+
+    The same bound as `_v3_apriori`, split by its dependence on c; Appendix B.4
+    states the split.
+    """
+    sigma, ridge, delta, radius, horizon = (spec["sigma"], spec["ridge"], spec["delta"],
+                                            spec["radius"], spec["horizon"])
+    dimension = 6
+    gamma = dimension * math.log(1 + horizon / (dimension * ridge * sigma ** 2))
+    scale = math.sqrt((sigma ** 2 + 1 / ridge) * gamma / horizon)
+    a = (math.sqrt(gamma + 2 * math.log(1 / delta)) + math.sqrt(ridge) * radius) * scale
+    b = 2 * C_H * radius ** 2 / sigma * scale + 2 * C_H * radius ** 2 / math.sqrt(horizon)
+    bound, cap = _v3_apriori(spec)
+    if abs(a + b / math.sqrt(spec["c"]) - bound / cap) > 1e-12:
+        raise LedgerError("A + B/sqrt(c) does not reproduce the a priori frozen bound over the cap")
+    return a, b
+
+
+def revision_ledger() -> list[Entry]:
+    """Numbers added or re-rounded by the 2026-11-19 writing revision.
+
+    Six percentages that the earlier text showed to three decimals are now shown
+    to one decimal.  Their original declarations stay in the reviewed set and are
+    no longer mapped to the text; the entries below re-declare them with the same
+    selectors.  Two of them would round to 100.0, so the text states the lower
+    bound "more than 99.9"; that entry returns 99.9 only when the value exceeds
+    it.  Bounds stated as "less than" are checked the same way.
+    """
+    entries: list[Entry] = []
+    F, A = FOLLOWUP_TEX, FOLLOWUP_APPENDIX_TEX
+    C = FOLLOWUP_CONFIG
+
+    def add(file, phrase, display, source, selector, compute, units, population):
+        entries.append(Entry(file, phrase, display, source, selector, units,
+                             "explicit selector, writing revision", population,
+                             lambda data, _config, f=compute: f(data)))
+
+    def pct(a, width, key):
+        counts = _followup_group(a, width)["hessian_recommendation_diagnostics"]["counts"]
+        return 100 * counts[key] / counts["rounds"]
+
+    def exceeds(value, bound):
+        return bound if value > bound else math.nan
+
+    own = "first follow-up, Hessian-path policy's own histories, 50 seeds x 1000 rounds"
+    for width, display in ((16., "97.1"), (1., "99.4"), (.25, "99.5")):
+        add(F, "97.1\\%, 99.4\\% and 99.5\\%", display, FOLLOWUP_ANALYSIS,
+            f"100 * primary W={width} strict_width_dominance_sufficient / rounds",
+            lambda a, w=width: pct(a, w, "strict_width_dominance_sufficient"),
+            "percent of dependent rounds", own)
+    add(F, "99.4\\% of rounds at $W=16$", "99.4", FOLLOWUP_ANALYSIS,
+        "100 * primary W=16.0 width_argmax_first_matches / rounds",
+        lambda a: pct(a, 16., "width_argmax_first_matches"), "percent of dependent rounds", own)
+    for width in (1., .25):
+        add(F, "more than 99.9\\% at $W=1$ and $0.25$", "99.9", FOLLOWUP_ANALYSIS,
+            f"99.9 if 100 * primary W={width} width_argmax_first_matches / rounds exceeds 99.9",
+            lambda a, w=width: exceeds(pct(a, w, "width_argmax_first_matches"), 99.9),
+            "percent, lower bound", own)
+
+    # Study-design table (Table 1).
+    add(F, "$d=29$", "29", C, "environment.feature_dimension",
+        lambda c: c["environment"]["feature_dimension"], "parameters", "first follow-up constants")
+    add(F, "$T=1{,}000$", "1{,}000", C, "reporting.primary_horizon",
+        lambda c: c["reporting"]["primary_horizon"], "rounds", "first follow-up constants")
+    add(F, "$T=20{,}000$", "20{,}000", V3_RUNS, "spec.horizon shared by every evaluation run",
+        lambda r: _only(x["spec"]["horizon"] for x in r), "rounds", "second study constants")
+    add(F, "$W=20{,}000$", "20{,}000", V3_ANALYSIS, "W of the design cell",
+        lambda a: a[f"W={V3_DESIGN_W}"]["W"], "scale", "second study constants")
+    for width in V3_CURVED_W:
+        add(F, "$W\\in\\{100,10,1\\}$", str(width), V3_ANALYSIS, f"W of analysis cell W={width}",
+            lambda a, w=width: a[f"W={w}"]["W"], "scale", "second study constants")
+    add(F, "50 paired evaluation seeds per policy", "50", C, "len(seed_sets.evaluation)",
+        lambda c: len(c["seed_sets"]["evaluation"]), "seeds", "first follow-up constants")
+    add(F, "50 paired evaluation seeds per policy", "50", V3_RUNS,
+        "distinct seeds per (W, method), required equal in every cell",
+        lambda r: _only(len({x["seed"] for x in r if (x["W"], x["method"]) == key})
+                        for key in {(x["W"], x["method"]) for x in r}), "seeds",
+        "second study, every cell")
+
+    # Design-cell results.
+    design = lambda a: a[f"W={V3_DESIGN_W}"]
+    pairs = lambda a, m: design(a)["descriptive_pairs"][f"{m}-frozen_reference"]
+    def below(a):
+        value = max(abs(pairs(a, m)["mean"]) for m in ("transport_endpoint", "naive_current"))
+        bound = math.ceil(10 * value) / 10
+        return bound if value < bound else math.nan
+    add(F, "by less than 0.2 units in mean regret", "0.2", V3_ANALYSIS,
+        "ceil(10 * max |W=20000 endpoint or naive minus frozen mean|) / 10, strict upper bound",
+        below, "regret units, upper bound", "second study, design cell")
+    for kind, display in (("low", "15.4"), ("high", "18.0")):
+        add(F, "$[15.4, 18.0]$", display, V3_ANALYSIS,
+            f"W=20000 descriptive_pairs transport_hessian-frozen_reference bootstrap_ci95 {kind}",
+            lambda a, k=kind: pairs(a, "transport_hessian")["bootstrap_ci95"][k == "high"],
+            "regret units", "second study, design cell")
+    for kind, display in (("low", "36.6"), ("high", "32.3")):
+        add(F, "$[-36.6, -32.3]$", display, V3_ANALYSIS,
+            f"minus W=20000 descriptive_pairs ucb_glm-frozen_reference bootstrap_ci95 {kind}",
+            lambda a, k=kind: -pairs(a, "ucb_glm")["bootstrap_ci95"][k == "high"],
+            "regret units", "second study, design cell")
+
+    # Which c keep the a priori frozen bound below the cap (Section 6.1, Appendix B.4).
+    def spec(runs):
+        return {key: _only(x["spec"][key] for x in runs if x["W"] == float(V3_DESIGN_W))
+                for key in runs[0]["spec"]}
+    def threshold(runs):
+        a, b = _v3_ratio_parts(spec(runs))
+        return (b / (1 - a)) ** 2
+    for file, phrase in ((F, "exactly when $c>0.709$"), (A, "(B/(1-A))^2=0.709$")):
+        add(file, phrase, "0.709", V3_RUNS, "closed form (B/(1-A))^2 from the shared design-cell spec",
+            threshold, "ratio W/T", "second study constants")
+    add(A, "$A=0.556$", "0.556", V3_RUNS, "closed form A from the shared design-cell spec",
+        lambda r: _v3_ratio_parts(spec(r))[0], "ratio", "second study constants")
+    add(A, "$B=0.374$", "0.374", V3_RUNS, "closed form B from the shared design-cell spec",
+        lambda r: _v3_ratio_parts(spec(r))[1], "ratio", "second study constants")
+    add(A, "equals 0.93 in the design cell", "0.93", V3_RUNS,
+        "a priori frozen bound / cap from the shared design-cell spec",
+        lambda r: (lambda b: b[0] / b[1])(_v3_apriori(spec(r))), "ratio", "second study constants")
+    for index, display in enumerate(("16", "1", "0.25")):
+        add(A, "$W=16,1,0.25$", display, C, f"followup.prespecified_width_W[{index}]",
+            lambda c, i=index: c["followup"]["prespecified_width_W"][i], "model smoothness parameter",
+            "first follow-up constants")
     return entries
 
 
@@ -1065,8 +1182,8 @@ def v3_table_checks(root: Path) -> list[Check]:
                           else [name, *cells, "---", "---"])
     design.append(["Context-free", _V3_DESIGN_CONTEXT_FREE, "", "", ""])
     curved = [["Policy", "$W=100$", "$W=10$", "$W=1$"]]
-    for method, name in V3_ROWS + (("context_free", "Context-free"), ("hessian_minus", "Hessian minus frozen"),
-                                    ("largest_ratio", "Largest frozen bound/cap")):
+    for method, name in V3_ROWS + (("context_free", "Context-free"), ("hessian_minus", "Hessian-path minus frozen"),
+                                    ("largest_ratio", "Largest frozen bound-to-cap ratio")):
         curved.append([name, *_V3_CURVED_ROWS[method]])
     checks = []
     for label, want in (("tab:transport-v3-design", design), ("tab:transport-v3-descriptive", curved)):
@@ -1508,7 +1625,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'parameters',
    'declared constant',
    'completed follow-up configuration'),
-  'submissions/tmlr_2026/main.tex',
+  'paper/transport_followup.tex',
   '29-parameter'),
  (('submissions/tmlr_2026/main.tex',
    '29-parameter',
@@ -1642,7 +1759,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  'All 600 trajectories'),
+  'all 600 trajectories'),
  (('paper/transport_followup.tex',
    'all 600 preserved trajectories',
    '600',
@@ -1848,7 +1965,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  '50/50 successes'),
+  '50 of 50 trajectories without a violation'),
  (('paper/transport_followup_appendix.tex',
    '50 evaluation seeds',
    '50',
@@ -1937,7 +2054,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'percent',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
+  'paper/transport_followup_appendix.tex',
   'differences with pointwise 95\\% paired'),
  (('paper/transport_followup.tex',
    'exact 95\\% Clopper--Pearson interval',
@@ -1978,7 +2095,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  '16/50 seeds'),
+  '16 of 50 seeds'),
  (('paper/transport_followup.tex',
    '16 of 50 seeds',
    '50',
@@ -1988,7 +2105,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  '16/50 seeds'),
+  '16 of 50 seeds'),
  (('paper/transport_followup.tex',
    '286 of 50,000',
    '286',
@@ -1998,7 +2115,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  '286/50,000'),
+  '286 of 50,000'),
  (('paper/transport_followup.tex',
    'of 50,000 seed--round observations',
    '50,000',
@@ -2008,7 +2125,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  '286/50,000'),
+  '286 of 50,000'),
  (('paper/transport_followup.tex',
    '50,000 seed--round observations per condition',
    '50,000',
@@ -2068,67 +2185,7 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'explicit selector over the retained follow-up export',
    'completed follow-up; exploratory results identified separately'),
   'paper/transport_followup.tex',
-  'all 150 frozen-policy'),
- (('paper/transport_followup.tex',
-   '99.382\\%',
-   '99.382',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=16.0 width_argmax_first_matches / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '99.382\\%'),
- (('paper/transport_followup.tex',
-   '97.104\\%',
-   '97.104',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=16.0 strict_width_dominance_sufficient / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '97.104\\%'),
- (('paper/transport_followup.tex',
-   '99.962\\%',
-   '99.962',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=1.0 width_argmax_first_matches / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '99.962\\%'),
- (('paper/transport_followup.tex',
-   '99.372\\%',
-   '99.372',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=1.0 strict_width_dominance_sufficient / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '99.372\\%'),
- (('paper/transport_followup.tex',
-   '99.982\\%',
-   '99.982',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=0.25 width_argmax_first_matches / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '99.982\\%'),
- (('paper/transport_followup.tex',
-   '99.508\\%',
-   '99.508',
-   'review/post_full_fable/independent/analysis.json',
-   '100 * primary W=0.25 strict_width_dominance_sufficient / rounds',
-   'percent of dependent rounds',
-   'explicit selector over the retained follow-up export',
-   'completed follow-up; exploratory results identified separately'),
-  'paper/transport_followup.tex',
-  '99.508\\%'),
+  'all 150 frozen-reference'),
  (('paper/transport_followup_appendix.tex',
    'teacher seed 1729',
    '1729',
@@ -2767,8 +2824,18 @@ EDITORIAL_LEDGER_SPECS = [(('submissions/tmlr_2026/main.tex',
    'percent',
    'declared confidence level',
    'completed follow-up pointwise paired bootstrap intervals'),
-  'submissions/tmlr_2026/main.tex',
-  'pointwise paired 95\\% intervals')]
+  'paper/transport_followup.tex',
+  'pointwise paired 95\\% intervals'),
+ (('paper/transport_followup_appendix.tex',
+   '$T=1000$',
+   '1000',
+   'review/transport_review_followup/full-cce-full-local/execution_config.json',
+   'reporting.primary_horizon',
+   'rounds',
+   'explicit selector over the retained follow-up export',
+   'completed follow-up; exploratory results identified separately'),
+  'paper/transport_followup_appendix.tex',
+  '$T=1000$')]
 HISTORICAL_LEDGER_SOURCES = {"paper/transport_experiment.tex", "paper/transport_experiment_appendix.tex", "paper/legacy_scope.tex"}
 
 def ledger_entry_identity(entry: Entry) -> tuple[str, ...]:
@@ -2807,6 +2874,7 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
     if not packaged:
         entries.extend(entry for entry in original if str(entry.manuscript) in HISTORICAL_LEDGER_SOURCES)
     entries.extend(v3_ledger())
+    entries.extend(revision_ledger())
     return entries
 
 
@@ -3007,6 +3075,9 @@ _CATEGORY_REASON = {
 #: (path, literal) -> (category, exact occurrence count)
 # Fixed editorial declarations; values and contexts are separately authenticated.
 CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
+ ('paper/body_intro.tex', '2'): ('math-constant', 1),
+ ('paper/body_conclusion.tex', '1'): ('math-constant', 2),
+ ('submissions/tmlr_2026/main.tex', '1'): ('math-constant', 2),
  ('paper/body_related.tex', '0'): ('math-constant', 1),
  ('paper/body_related.tex', '0,1'): ('interval-endpoint', 1),
  ('paper/figures/transport_conceptual_geometry.tex', '.25'): ('analytic-schematic', 1),
@@ -3111,19 +3182,19 @@ CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
  ('paper/transport_followup.tex', '10,000'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '100,10,1'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '12'): ('protocol-constant', 1),
- ('paper/transport_followup.tex', '2'): ('math-constant', 15),
+ ('paper/transport_followup.tex', '2'): ('math-constant', 13),
  ('paper/transport_followup.tex', '3'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '4'): ('math-constant', 1),
- ('paper/transport_followup.tex', '6'): ('protocol-constant', 1),
+ ('paper/transport_followup.tex', '6'): ('protocol-constant', 3),
  ('paper/transport_followup.tex', '90'): ('protocol-constant', 1),
- ('paper/transport_followup.tex', '95'): ('protocol-constant', 2),
+ ('paper/transport_followup.tex', '95'): ('protocol-constant', 3),
  ('paper/transport_followup_appendix.tex', '0'): ('math-constant', 1),
  ('paper/transport_followup_appendix.tex', '0.05'): ('protocol-constant', 2),
- ('paper/transport_followup_appendix.tex', '1'): ('math-constant', 7),
+ ('paper/transport_followup_appendix.tex', '1'): ('math-constant', 15),
  ('paper/transport_followup_appendix.tex', '1,10,100'): ('protocol-constant', 1),
  ('paper/transport_followup_appendix.tex', '10'): ('protocol-constant', 1),
  ('paper/transport_followup_appendix.tex', '10,000'): ('protocol-constant', 1),
- ('paper/transport_followup_appendix.tex', '2'): ('math-constant', 12),
+ ('paper/transport_followup_appendix.tex', '2'): ('math-constant', 29),
  ('paper/transport_followup_appendix.tex', '4'): ('math-constant', 2),
  ('paper/transport_followup_appendix.tex', '4096'): ('protocol-constant', 1),
  ('paper/transport_followup_appendix.tex', '50'): ('protocol-constant', 1),
@@ -3139,21 +3210,15 @@ CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
  ('paper/transport_protocol_appendix.tex', '2'): ('math-constant', 1),
  ('paper/transport_support_appendix.tex', '0'): ('math-constant', 2),
  ('paper/transport_support_appendix.tex', '1'): ('math-constant', 20),
- ('paper/transport_support_appendix.tex', '10'): ('document-structure', 1),
- ('paper/transport_support_appendix.tex', '13'): ('document-structure', 1),
- ('paper/transport_support_appendix.tex', '16'): ('document-structure', 2),
  ('paper/transport_support_appendix.tex', '2'): ('math-constant', 13),
  ('paper/transport_theory.tex', '0'): ('math-constant', 33),
  ('paper/transport_theory.tex', '0,1'): ('interval-endpoint', 5),
  ('paper/transport_theory.tex', '1'): ('math-constant', 84),
  ('paper/transport_theory.tex', '1,0'): ('math-constant', 1),
  ('paper/transport_theory.tex', '1,2'): ('math-constant', 1),
- ('paper/transport_theory.tex', '11'): ('document-structure', 1),
- ('paper/transport_theory.tex', '16'): ('document-structure', 1),
  ('paper/transport_theory.tex', '2'): ('math-constant', 105),
  ('paper/transport_theory.tex', '3'): ('math-constant', 2),
  ('paper/transport_theory.tex', '4'): ('math-constant', 9),
- ('submissions/tmlr_2026/main.tex', '14'): ('document-structure', 1),
  ('submissions/tmlr_2026/supplement_README.md', '1.15.2'): ('environment-version', 1),
  ('submissions/tmlr_2026/supplement_README.md', '2.2.3'): ('environment-version', 1),
  ('submissions/tmlr_2026/supplement_README.md', '3.12'): ('environment-version', 1)}
@@ -3240,7 +3305,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '$0.28\\%$'): 1,
  ('paper/transport_followup.tex', '$12.13\\%$'): 1,
  ('paper/transport_followup.tex', '$12.68\\%$'): 1,
- ('paper/transport_followup.tex', '$T=1000$'): 4,
+ ('paper/transport_followup.tex', '$T=1000$'): 3,
  ('paper/transport_followup.tex', '$T=20{,}000$ over 50 seeds'): 1,
  ('paper/transport_followup.tex', '$W=0.25$'): 2,
  ('paper/transport_followup.tex', '$W=1$'): 7,
@@ -3248,19 +3313,19 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '$W=100$'): 4,
  ('paper/transport_followup.tex', '$W=100$ and $10$'): 1,
  ('paper/transport_followup.tex', '$W=16,1,0.25$'): 3,
- ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 1,
+ ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'): 2,
  ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'): 1,
  ('paper/transport_followup.tex', '$\\delta=0.05$'): 1,
  ('paper/transport_followup.tex', '$\\sigma=0.25$; $\\lambda=1$, $\\delta=0.05$, $R=1$ and $T=20{,}000$'): 1,
- ('paper/transport_followup.tex', '$c_h=4/(3\\sqrt3)$'): 1,
+ ('paper/transport_followup_appendix.tex', '$c_h=4/(3\\sqrt3)$'): 1,
  ('paper/transport_followup.tex', '(frozen: 440.9, 1,004.4 and 1,902.1)'): 1,
- ('paper/transport_followup.tex', '0.385, 1.540 and 3.079 at $W=16,1,0.25$'): 1,
+ ('paper/transport_followup_appendix.tex', '0.385, 1.540 and 3.079 at $W=16,1,0.25$'): 1,
  ('paper/transport_followup.tex', '10,001, 215,317 and 6,063 at $W=0.25$'): 1,
  ('paper/transport_followup.tex', '10,122, 108,171 and 3,031 at $W=1$'): 1,
  ('paper/transport_followup.tex', '10,155, 26,898 and 758 at $W=16$'): 1,
  ('paper/transport_followup.tex', '12.30'): 1,
  ('paper/transport_followup.tex', '16.75'): 1,
- ('paper/transport_followup.tex', '16/50 seeds'): 1,
+ ('paper/transport_followup.tex', '16 of 50 seeds'): 1,
  ('paper/transport_followup.tex', '180.01,\n177.97 and 171.84'): 1,
  ('paper/transport_followup.tex', '185.26,\n183.06 and 176.67'): 1,
  ('paper/transport_followup.tex', '19, 60 and 231'): 1,
@@ -3272,7 +3337,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '1{,}886.9'): 1,
  ('paper/transport_followup.tex', '1{,}902.1'): 1,
  ('paper/transport_followup.tex', '2000, 2000 and 1000'): 1,
- ('paper/transport_followup.tex', '286/50,000'): 1,
+ ('paper/transport_followup.tex', '286 of 50,000'): 1,
  ('paper/transport_followup.tex', '2{,}396.8'): 1,
  ('paper/transport_followup.tex', '2{,}837.6'): 1,
  ('paper/transport_followup.tex', '31.63'): 1,
@@ -3299,9 +3364,9 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '5.53'): 1,
  ('paper/transport_followup.tex', '5.58'): 1,
  ('paper/transport_followup.tex', '5.86'): 1,
- ('paper/transport_followup.tex', '50 paired'): 2,
+ ('paper/transport_followup.tex', '50 paired'): 3,
  ('paper/transport_followup.tex', '50 seeds per condition'): 1,
- ('paper/transport_followup.tex', '50/50 successes'): 1,
+ ('paper/transport_followup.tex', '50 of 50 trajectories without a violation'): 1,
  ('paper/transport_followup.tex', '6.24'): 1,
  ('paper/transport_followup.tex', '600 trajectories'): 2,
  ('paper/transport_followup.tex', '65.87'): 1,
@@ -3314,25 +3379,19 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '9.05'): 1,
  ('paper/transport_followup.tex', '9.51, 37.19 and 80.91'): 1,
  ('paper/transport_followup.tex', '95\\% intervals'): 1,
- ('paper/transport_followup.tex', '97.104\\%'): 1,
- ('paper/transport_followup.tex', '99.372\\%'): 1,
- ('paper/transport_followup.tex', '99.382\\%'): 1,
- ('paper/transport_followup.tex', '99.508\\%'): 1,
- ('paper/transport_followup.tex', '99.962\\%'): 1,
- ('paper/transport_followup.tex', '99.982\\%'): 1,
  ('paper/transport_followup.tex', '9{,}294.0'): 1,
  ('paper/transport_followup.tex', '9{,}364.3'): 1,
  ('paper/transport_followup.tex', '9{,}372.05'): 1,
  ('paper/transport_followup.tex', 'Algorithm~1 of'): 1,
  ('paper/transport_followup.tex', 'All 1,500 evaluation runs completed'): 1,
- ('paper/transport_followup.tex', 'All 50 frozen bounds are below the cap; the largest is 0.761 of it.'): 1,
- ('paper/transport_followup.tex', 'All 600 trajectories'): 1,
- ('paper/transport_followup.tex', 'Each cell has 50 paired evaluation seeds'): 1,
+ ('paper/transport_followup.tex', 'all 50 frozen bounds are below the cap; the largest is 0.761 of it.'): 1,
+ ('paper/transport_followup.tex', 'all 600 trajectories'): 1,
+ ('paper/transport_followup.tex', 'Each cell has 50 paired evaluation seeds'): 2,
  ('paper/transport_followup.tex', 'In the 1,100 corrected-center runs'): 1,
  ('paper/transport_followup.tex', 'Intervals are pointwise 95\\% paired'): 1,
  ('paper/transport_followup.tex', 'On the 150 recorded context--action sequences'): 1,
- ('paper/transport_followup.tex', 'The per-run mean envelope is 98.3\\%--98.5\\% of that constant'): 1,
- ('paper/transport_followup.tex', 'UCB-GLM has 34.4 units less regret than frozen'): 1,
+ ('paper/transport_followup_appendix.tex', 'The per-run mean envelope is 98.3\\%--98.5\\% of that constant'): 1,
+ ('paper/transport_followup.tex', "UCB-GLM's is 34.4 units lower"): 1,
  ('paper/transport_followup.tex', 'UCB-GLM has mean regret 33.4, 42.8 and 340.0'): 1,
  ('paper/transport_followup.tex', 'UCB-GLM minus frozen is $-34.4$ ($p=5.7\\times10^{-34}$)'): 1,
  ('paper/transport_followup.tex', '[$-$1.10, 0.81]'): 1,
@@ -3340,16 +3399,15 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', '[$-$24.03, $-$21.04]'): 1,
  ('paper/transport_followup.tex', '[$-$36.56, $-$32.26]'): 1,
  ('paper/transport_followup.tex', '[15.43, 18.00]'): 1,
- ('paper/transport_followup.tex', 'all 150 frozen-policy'): 1,
+ ('paper/transport_followup.tex', 'all 150 frozen-reference'): 1,
  ('paper/transport_followup.tex', 'all 600 histories'): 1,
- ('paper/transport_followup.tex', 'at $W=1$ UCB-GLM has about 7.7 times the regret of linear UCB.'): 1,
  ('paper/transport_followup.tex', 'by at most 23.1 units'): 1,
  ('paper/transport_followup.tex', 'design cell ($W=T=20{,}000$)'): 1,
- ('paper/transport_followup.tex', 'differences with pointwise 95\\% paired'): 1,
+ ('paper/transport_followup_appendix.tex', 'differences with pointwise 95\\% paired'): 1,
  ('paper/transport_followup.tex', 'endpoint minus frozen is $-15.3$ ($[-20.5,-10.2]$)'): 1,
  ('paper/transport_followup.tex', 'naive minus frozen is $-0.6$ ($[-1.8, 0.5]$), $-0.1$ ($[-1.0, 0.9]$) and $-0.3$ ($[-1.4, 0.8]$) at $W=100$, $10$ and $1$'): 1,
  ('paper/transport_followup.tex', 'lies between 0.985 and 1.305'): 1,
- ('paper/transport_followup.tex', 'every $p\\le1.2\\times10^{-108}$'): 1,
+ ('paper/transport_followup_appendix.tex', 'every $p\\le1.2\\times10^{-108}$'): 1,
  ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
  ('paper/transport_followup.tex', 'from 440.9--1,902.1 to 43.3--43.9'): 1,
  ('paper/transport_followup.tex', 'frozen is $16.8$ ($p=5.3\\times10^{-30}$)'): 1,
@@ -3362,13 +3420,13 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', 'its random phase lasted 12 to 34 rounds'): 1,
  ('paper/transport_followup.tex', 'its standard deviation over 50 seeds'): 1,
  ('paper/transport_followup.tex', 'naive minus frozen is $-23.1$ ($[-28.3,-18.0]$)'): 1,
- ('paper/transport_followup.tex', 'prespecified margin $\\Delta=3.0$'): 1,
+ ('paper/transport_followup.tex', 'within the margin $\\Delta=3.0$'): 1,
  ('paper/transport_followup.tex', 'relative to the cap $40{,}000$'): 1,
  ('paper/transport_followup.tex', 'stay between 43.1 and 44.1'): 1,
  ('paper/transport_followup.tex', 'the realized $\\gamma_T$ is about 151--153 (medians)'): 1,
  ('paper/transport_followup.tex', 'they use 10,000 paired seed-bootstrap resamples'): 1,
  ('paper/transport_followup.tex', 'where $\\kappa=0.0707$ makes its radius $\\alpha=19.19$ (against $1.36$ at $W=T$)'): 1,
- ('paper/transport_followup.tex', 'width costs 16.8 regret units relative to frozen'): 1,
+ ('paper/transport_followup.tex', 'the frozen-reference policy by 16.8 units'): 1,
  ('paper/transport_followup.tex', 'with $d=29$'): 1,
  ('paper/transport_followup_appendix.tex', '$0.00392155$'): 1,
  ('paper/transport_followup_appendix.tex', '$0.005$'): 1,
@@ -3414,7 +3472,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'and 1000 rounds'): 1,
  ('paper/transport_followup_appendix.tex', 'at 16 states'): 1,
  ('paper/transport_followup_appendix.tex', 'below 0.629'): 1,
- ('paper/transport_followup_appendix.tex', 'development mean Hessian-minus-frozen difference, 12.0,'): 1,
+ ('paper/transport_followup_appendix.tex', 'development mean Hessian-path-minus-frozen difference, 12.0,'): 1,
  ('paper/transport_followup_appendix.tex', 'divided by 1000'): 1,
  ('paper/transport_followup_appendix.tex', 'evaluation seeds 41200--41249'): 1,
  ('paper/transport_followup_appendix.tex', 'every development frozen bound was at most 0.9 of the cap'): 1,
@@ -3436,23 +3494,38 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_proofs.tex', "At that study's $T=1000$ and $W=16,1,0.25$"): 1,
  ('paper/transport_proofs.tex', 'With $\\sigma=0.25$ and $\\lambda=B_\\phi=1$ the factor is $0.650$'): 1,
  ('paper/transport_proofs.tex', '\\alpha_t=1'): 1,
- ('paper/transport_proofs.tex', '\\setcounter{table}{0}'): 1,
  ('paper/transport_proofs.tex', '\\xi_t=0'): 3,
  ('paper/transport_proofs.tex', 'about $12.3/\\sqrt c$'): 1,
  ('paper/transport_proofs.tex', 'approximately $10^{42.6}$, $10^{169.4}$ and $10^{338.4}$ ($D_{T,W}=97.3$, $389.3$ and $778.6$)'): 1,
  ('paper/transport_support_appendix.tex', '\\xi_t=0'): 2,
  ('paper/transport_theory.tex', '\\alpha_t=1'): 1,
  ('paper/transport_theory.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'): 2,
- ('paper/transport_theory.tex', '\\xi_t=0'): 2,
- ('submissions/tmlr_2026/main.tex', '29-parameter'): 1,
- ('submissions/tmlr_2026/main.tex', '34.4 units less regret for a generalized-linear UCB baseline'): 1,
+ ('paper/transport_theory.tex', '\\xi_t=0'): 3,
  ('submissions/tmlr_2026/main.tex', '50 paired'): 1,
- ('submissions/tmlr_2026/main.tex', '95\\% intervals'): 1,
- ('submissions/tmlr_2026/main.tex', 'a regret cost of 16.8 units for Hessian transport'): 1,
- ('submissions/tmlr_2026/main.tex', 'pointwise paired 95\\% intervals'): 1,
  ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'): 1,
  ('submissions/tmlr_2026/supplement_README.md', '21 artifacts'): 1,
- ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'): 1}
+ ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'): 1,
+ ('paper/transport_followup.tex', '29-parameter'): 1,
+ ('paper/transport_followup.tex', 'pointwise paired 95\\% intervals'): 1,
+ ('paper/transport_followup.tex', '97.1\\%, 99.4\\% and 99.5\\%'): 1,
+ ('paper/transport_followup.tex', '99.4\\% of rounds at $W=16$'): 1,
+ ('paper/transport_followup.tex', 'more than 99.9\\% at $W=1$ and $0.25$'): 1,
+ ('paper/transport_followup.tex', '$d=29$'): 2,
+ ('paper/transport_followup.tex', '$T=1{,}000$'): 1,
+ ('paper/transport_followup.tex', '$T=20{,}000$'): 4,
+ ('paper/transport_followup.tex', '$W=20{,}000$'): 1,
+ ('paper/transport_followup.tex', '$W\\in\\{100,10,1\\}$'): 1,
+ ('paper/transport_followup.tex', '50 paired evaluation seeds per policy'): 1,
+ ('paper/transport_followup.tex', 'by less than 0.2 units in mean regret'): 1,
+ ('paper/transport_followup.tex', '$[15.4, 18.0]$'): 1,
+ ('paper/transport_followup.tex', '$[-36.6, -32.3]$'): 1,
+ ('paper/transport_followup.tex', 'exactly when $c>0.709$'): 1,
+ ('paper/transport_followup_appendix.tex', '$T=1000$'): 1,
+ ('paper/transport_followup_appendix.tex', '$W=16,1,0.25$'): 1,
+ ('paper/transport_followup_appendix.tex', '(B/(1-A))^2=0.709$'): 1,
+ ('paper/transport_followup_appendix.tex', '$A=0.556$'): 1,
+ ('paper/transport_followup_appendix.tex', '$B=0.374$'): 1,
+ ('paper/transport_followup_appendix.tex', 'equals 0.93 in the design cell'): 1}
 
 
 
