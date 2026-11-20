@@ -758,14 +758,11 @@ def v3_ledger() -> list[Entry]:
     add(F, phrase, "0.761", V3_RUNS, "max frozen_form_bound / cap over W=20000 frozen_reference runs",
         lambda r: max(x["frozen_form_bound"] / x["cap"]
                       for x in _v3_runs(r, V3_DESIGN_W, "frozen_reference")), units="ratio")
-    for pair, phrase, sign, mean_display, p_display in (
-            ("ucb_glm-frozen_reference", "UCB-GLM minus frozen is $-34.4$ ($p=5.7\\times10^{-34}$)",
-             -1, "34.4", "5.7\\times10^{-34}"),
-            ("transport_hessian-frozen_reference", "frozen is $16.8$ ($p=5.3\\times10^{-30}$)",
-             1, "16.8", "5.3\\times10^{-30}")):
-        add(F, phrase, mean_display, V3_ANALYSIS, f"{'minus ' if sign < 0 else ''}W=20000 primary {pair} mean",
-            lambda a, p=pair, s=sign: s * primary(a, p))
-        add(F, phrase, p_display, V3_ANALYSIS, f"W=20000 primary {pair} p_two_sided",
+    # Each primary mean is declared once above ("by 16.8 units", "34.4 units
+    # lower"); the text states its p-value in the same sentence.
+    for pair, p_display in (("ucb_glm-frozen_reference", "5.7\\times10^{-34}"),
+                            ("transport_hessian-frozen_reference", "5.3\\times10^{-30}")):
+        add(F, f"$p={p_display}$", p_display, V3_ANALYSIS, f"W=20000 primary {pair} p_two_sided",
             lambda a, p=pair: design(a)["primary"][p]["p_two_sided"], units="p-value")
 
     # Design-cell table.
@@ -1135,7 +1132,7 @@ def revision_ledger() -> list[Entry]:
     def threshold(runs):
         a, b = _v3_ratio_parts(spec(runs))
         return (b / (1 - a)) ** 2
-    for file, phrase in ((F, "exactly when $c>0.709$"), (A, "(B/(1-A))^2=0.709$")):
+    for file, phrase in ((F, "c_\\star=(B/(1-A))^2\\approx0.709$"), (A, "c_\\star=(B/(1-A))^2\\approx0.709$")):
         add(file, phrase, "0.709", V3_RUNS, "closed form (B/(1-A))^2 from the shared design-cell spec",
             threshold, "ratio W/T", "second study constants")
     add(A, "$A=0.556$", "0.556", V3_RUNS, "closed form A from the shared design-cell spec",
@@ -3182,7 +3179,7 @@ CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
  ('paper/transport_followup.tex', '10,000'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '100,10,1'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '12'): ('protocol-constant', 1),
- ('paper/transport_followup.tex', '2'): ('math-constant', 13),
+ ('paper/transport_followup.tex', '2'): ('math-constant', 15),
  ('paper/transport_followup.tex', '3'): ('protocol-constant', 1),
  ('paper/transport_followup.tex', '4'): ('math-constant', 1),
  ('paper/transport_followup.tex', '6'): ('protocol-constant', 3),
@@ -3393,7 +3390,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'The per-run mean envelope is 98.3\\%--98.5\\% of that constant'): 1,
  ('paper/transport_followup.tex', "UCB-GLM's is 34.4 units lower"): 1,
  ('paper/transport_followup.tex', 'UCB-GLM has mean regret 33.4, 42.8 and 340.0'): 1,
- ('paper/transport_followup.tex', 'UCB-GLM minus frozen is $-34.4$ ($p=5.7\\times10^{-34}$)'): 1,
+ ('paper/transport_followup.tex', '$p=5.7\\times10^{-34}$'): 1,
  ('paper/transport_followup.tex', '[$-$1.10, 0.81]'): 1,
  ('paper/transport_followup.tex', '[$-$1.17, 0.72]'): 1,
  ('paper/transport_followup.tex', '[$-$24.03, $-$21.04]'): 1,
@@ -3410,7 +3407,7 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'every $p\\le1.2\\times10^{-108}$'): 1,
  ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'): 1,
  ('paper/transport_followup.tex', 'from 440.9--1,902.1 to 43.3--43.9'): 1,
- ('paper/transport_followup.tex', 'frozen is $16.8$ ($p=5.3\\times10^{-30}$)'): 1,
+ ('paper/transport_followup.tex', '$p=5.3\\times10^{-30}$'): 1,
  ('paper/transport_followup.tex', 'grows to 2,396.8, 3,784.6 and 6,733.3'): 1,
  ('paper/transport_followup.tex', 'interval lies inside $(-1.0,1.0)$'): 1,
  ('paper/transport_followup.tex', 'intervals from 10,000 resamples of 50 seeds per condition'): 1,
@@ -3519,10 +3516,10 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup.tex', 'by less than 0.2 units in mean regret'): 1,
  ('paper/transport_followup.tex', '$[15.4, 18.0]$'): 1,
  ('paper/transport_followup.tex', '$[-36.6, -32.3]$'): 1,
- ('paper/transport_followup.tex', 'exactly when $c>0.709$'): 1,
+ ('paper/transport_followup.tex', 'c_\\star=(B/(1-A))^2\\approx0.709$'): 1,
  ('paper/transport_followup_appendix.tex', '$T=1000$'): 1,
  ('paper/transport_followup_appendix.tex', '$W=16,1,0.25$'): 1,
- ('paper/transport_followup_appendix.tex', '(B/(1-A))^2=0.709$'): 1,
+ ('paper/transport_followup_appendix.tex', 'c_\\star=(B/(1-A))^2\\approx0.709$'): 1,
  ('paper/transport_followup_appendix.tex', '$A=0.556$'): 1,
  ('paper/transport_followup_appendix.tex', '$B=0.374$'): 1,
  ('paper/transport_followup_appendix.tex', 'equals 0.93 in the design cell'): 1}

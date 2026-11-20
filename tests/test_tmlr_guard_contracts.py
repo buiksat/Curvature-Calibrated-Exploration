@@ -67,7 +67,7 @@ def historical_tree(tmp_path):
 @pytest.mark.parametrize("relative", sorted(ledger.HISTORICAL_LEDGER_SOURCES))
 def test_repository_historical_source_deletion_fails_instead_of_reducing_entries(historical_tree, relative):
     before = ledger.build_ledger(historical_tree)
-    assert len(before) == 430
+    assert len(before) == 428
     (historical_tree / relative).unlink()
     with pytest.raises(ledger.LedgerError, match="Required historical manuscript sources missing"):
         ledger.build_ledger(historical_tree)

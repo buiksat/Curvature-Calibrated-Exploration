@@ -837,7 +837,7 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                                    'PDF hash'),
                                                   ('63 pages, 933,908 bytes',
                                                    'PDF page count and size')],
- 'paper/body_conclusion.tex': [('a useful next comparison needs stronger confidence information or '
+ 'paper/body_conclusion.tex': [('A useful next comparison needs stronger confidence information or '
                                 'a lower complete computational cost, including the frozen '
                                 'estimator',
                                 'current manuscript leaves stronger confidence information open')],
@@ -938,8 +938,8 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                    'follow-up keeps primary bound vacuity'),
                                   ('all 150 frozen-reference own-history bounds exceed their caps.',
                                    'follow-up keeps frozen own-history bound vacuity'),
-                                  ('After outcomes were observed, replay with the recorded actions '
-                                   'and rewards audits all 600 histories.',
+                                  ('The diagnostics in this paragraph and the next were specified '
+                                   'after outcomes were observed',
                                    'mechanism analysis remains post-outcome exploratory'),
                                   ("Path inflation is the Hessian-path policy's largest bound "
                                    'contribution in all three conditions.',
@@ -981,11 +981,13 @@ MANUSCRIPT_INVARIANTS: Mapping[str, Sequence[tuple[str, str]]] = {'TRANSPORT_INS
                                  'R_T=\\sum_{t=1}^T\\operatorname{reg}_t.',
                                  'follow-up comparison is cumulative contextual pseudo-regret')],
  'submissions/tmlr_2026/main.tex': [('Hessian-path transport has higher mean cumulative '
-                                     'pseudo-regret than the frozen-reference policy in both',
+                                     'pseudo-regret (mean regret) than the frozen-reference '
+                                     'policy in both',
                                      'follow-up keeps the adverse regret comparison'),
                                     ('\\usepackage{tmlr}', 'official TMLR stylefile is loaded'),
                                     ('Hessian-path transport has higher mean cumulative '
-                                     'pseudo-regret than the frozen-reference policy in both',
+                                     'pseudo-regret (mean regret) than the frozen-reference '
+                                     'policy in both',
                                      'current manuscript keeps the adverse regret comparison')]}
 
 # Literals that must NOT appear anywhere in the submitted manuscript sources.

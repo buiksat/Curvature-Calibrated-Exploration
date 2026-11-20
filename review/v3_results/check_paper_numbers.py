@@ -60,7 +60,6 @@ d = a["W=20000"]
 pr = d["primary"]
 expect(F, f"the frozen-reference policy by {pr['transport_hessian-frozen_reference']['mean']:.1f} units")
 expect(F, f"UCB-GLM's is {-pr['ucb_glm-frozen_reference']['mean']:.1f} units lower")
-expect(F, f"UCB-GLM minus frozen is ${pr['ucb_glm-frozen_reference']['mean']:.1f}$".replace("$-", "$-"))
 for key in pr:
     m, e = f"{pr[key]['p_two_sided']:.1e}".split("e")
     expect(F, f"$p={m}\\times10^{{{int(e)}}}$")
@@ -85,15 +84,15 @@ gam = 6 * math.log(1 + 20000 / (6 * LAM * SIGMA ** 2))
 beta = math.sqrt(gam + 2 * math.log(1 / DELTA)) + 1 + 2 * C_H * math.sqrt(20000) / (SIGMA * math.sqrt(20000))
 apriori = 2 * beta * math.sqrt((SIGMA ** 2 + 1) * gam * 20000) + 4 * C_H * 20000 / math.sqrt(20000)
 expect(F, f"is {comma(apriori, 0)}, which is {apriori / 40000:.2f} of the cap")
-# A priori bound / cap = A_ + B_/sqrt(c) for W = cT >= 1; below one exactly when c > (B_/(1-A_))^2.
+# A priori bound / cap = A_ + B_/sqrt(c) for W = cT >= 1; below one exactly when c > c_star = (B_/(1-A_))^2.
 scale = math.sqrt((SIGMA ** 2 + 1 / LAM) * gam / 20000)
 A_ = (math.sqrt(gam + 2 * math.log(1 / DELTA)) + 1) * scale
 B_ = 2 * C_H / SIGMA * scale + 2 * C_H / math.sqrt(20000)
 assert abs(A_ + B_ - apriori / 40000) < 1e-12
-expect(F, f"exactly when $c>{(B_ / (1 - A_)) ** 2:.3f}$")
+expect(F, f"c_\\star=(B/(1-A))^2\\approx{(B_ / (1 - A_)) ** 2:.3f}$")
 expect(A, f"$A={A_:.3f}$ and $B={B_:.3f}$")
 expect(A, f"equals {A_ + B_:.2f} in the design cell")
-expect(A, f"(B/(1-A))^2={(B_ / (1 - A_)) ** 2:.3f}$")
+expect(A, f"c_\\star=(B/(1-A))^2\\approx{(B_ / (1 - A_)) ** 2:.3f}$")
 expect(F, f"\\approx{4 * math.log(math.cosh(1 / math.sqrt(20000))) / 1e-4:.1f}\\times10^{{-4}}")
 rows = {"transport_hessian": "Hessian-path transport", "transport_endpoint": "Endpoint transport", "frozen_reference": "Frozen reference",
         "naive_current": "Naive current", "frozen_reference_no_envelope": "Envelope-free frozen",
