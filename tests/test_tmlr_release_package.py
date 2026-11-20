@@ -1260,14 +1260,14 @@ def test_every_manuscript_literal_is_accounted_for():
 
 
 @pytest.mark.parametrize("source,before,after", [
-    ("paper/transport_followup.tex", r"99.382\%", r"99.383\%"),
-    ("paper/scope_limitations.tex", "averages actionwise ratios, not\nratios of means",
+    ("paper/transport_followup.tex", r"97.1\%", r"97.2\%"),
+    ("paper/transport_followup_appendix.tex", "averages actionwise ratios, not ratios of means",
      "averages ratios of means, not actionwise ratios"),
     ("paper/transport_followup.tex", "185.26", "185.27"),
-    ("paper/transport_followup.tex", "No equivalence test\nwas performed", "An equivalence test confirmed matching performance"),
+    ("paper/transport_followup.tex", "no\nequivalence test was performed", "an equivalence test confirmed matching performance"),
     ("paper/transport_followup.tex", "9.51", "9.52"),
     ("paper/transport_followup.tex", "19, 60 and 231", "19, 60 and 232"),
-    ("paper/transport_followup.tex", "frozen-policy own-history bounds", "frozen-policy bounds on Hessian histories"),
+    ("paper/transport_followup.tex", "frozen-reference own-history bounds", "frozen-reference bounds on Hessian-path histories"),
 ])
 def test_followup_empirical_value_and_denominator_context_are_pinned(tmp_path, source, before, after):
     root = _submitted_tex_tree(tmp_path)
@@ -1384,7 +1384,7 @@ def test_followup_package_ledger_rejects_untrusted_contract_before_import(
     ("paper/transport_experiment_appendix.tex",
      r"preregistered $10^{-12}$ ratio tolerance",
      r"preregistered $10^{-14}$ ratio tolerance"),
-    ("submissions/tmlr_2026/main.tex", "29-parameter", "31-parameter"),
+    ("paper/transport_followup.tex", "29-parameter", "31-parameter"),
 ])
 def test_audit_rejects_an_unchecked_edit_to_a_retained_literal(
         tmp_path, source, before, after):
@@ -1854,7 +1854,7 @@ def test_ci_writes_the_new_gate_logs_outside_the_worktree():
 
 @pytest.mark.parametrize("where, anchor", [
     ("paper/transport_followup.tex",
-     "\\input{figures/transport_explanatory_outcomes.tex}"),
+     "\\input{figures/transport_followup_outcomes.tex}"),
     ("paper/transport_followup_appendix.tex",
      "\\input{figures/transport_table_drift.tex}"),
 ])
@@ -1896,7 +1896,7 @@ def test_a_shrink_hidden_inside_the_compiled_legacy_branch_is_caught(tmp_path):
 def test_an_explicit_or_obfuscated_size_change_is_caught(
         tmp_path, injected, expected):
     root = _submitted_tex_tree(tmp_path)
-    anchor = "\\input{figures/transport_explanatory_outcomes.tex}"
+    anchor = "\\input{figures/transport_followup_outcomes.tex}"
     path = root / "paper/transport_followup.tex"
     text = path.read_text(encoding="utf-8")
     assert anchor in text
@@ -4688,7 +4688,7 @@ def test_the_staged_entry_point_is_validated_not_just_the_legacy_one(
     experiment = repo / "paper/transport_followup.tex"
     experiment.write_text(
         experiment.read_text(encoding="utf-8").replace(
-            "\\paragraph{Protocol and policies.}", broken + "\n\\paragraph{Protocol and policies.}", 1),
+            "\\paragraph{First study: design and policies.}", broken + "\n\\paragraph{First study: design and policies.}", 1),
         encoding="utf-8")
 
     out = tmp_path / "out"
