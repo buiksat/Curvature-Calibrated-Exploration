@@ -75,28 +75,26 @@
 
 \begin{abstract}
 Relinearizing historical gradients changes a contextual-bandit uncertainty
-matrix without adding observations. We study how confidence based on
-collection-time gradients can support UCB scores based on current curvature.
-For squared loss, a frozen ridge correction yields a confidence band along
+matrix without adding observations. We study how confidence from
+collection-time gradients can support UCB scores from current curvature. For
+squared loss, a frozen ridge correction yields a confidence band along
 predictable parameter paths in a certified region, given Taylor-remainder and
-misspecification bounds, without requiring optimizer convergence. A transport
-theorem combines this reference confidence with metric, operator and solver
+misspecification bounds, without optimizer convergence. A transport theorem
+combines this reference confidence with metric, operator and solver
 certificates. With the history, center, confidence multiplier and error
 allowance held fixed, preserving the full reference band cannot yield a
 narrower certified width. We establish sharp symmetric exponential
-metric-transport factors and derive endpoint certificates for scaled tanh on a
-bounded parameter region; when $W\ge cT$ the uniform endpoint factor is
-$1+O(1/(cT))$. Two synthetic studies with 50 paired seeds per condition
-examine the cost of these constructions. Hessian-path transport has higher
-mean cumulative pseudo-regret than the frozen-reference policy in both. In a
-near-linear design cell where the frozen-reference policy's regret bound is
-below the deterministic cumulative pseudo-regret cap, endpoint transport and
-the frozen-reference policy have equivalent mean cumulative pseudo-regret
-within a margin of three units fixed before evaluation, and a
-generalized-linear UCB baseline has lower mean regret than both. In
-descriptive cells with stronger curvature, removing the Taylor-error
-allowances lowers mean regret substantially, and the generalized-linear
-baseline has higher mean regret than linear UCB in the most curved cell.
+metric-transport factors and endpoint certificates for scaled tanh on a
+bounded parameter region; when its near-linearity scale $W\ge cT$, the uniform
+endpoint factor is $1+O(1/(cT))$. Two synthetic studies use 50 paired seeds
+per condition. Hessian-path transport has higher mean cumulative pseudo-regret
+(mean regret) than the frozen-reference policy in both. In a near-linear
+design cell where the frozen-reference policy's regret bound is below the
+deterministic cumulative pseudo-regret cap, endpoint transport and the
+frozen-reference policy have equivalent mean regret within a three-unit margin
+fixed before evaluation, and a generalized-linear UCB baseline has lower mean
+regret than both. In descriptive cells with stronger curvature, removing the
+Taylor-error allowances lowers mean regret substantially.
 \end{abstract}
 
 %
