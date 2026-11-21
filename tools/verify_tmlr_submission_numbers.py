@@ -98,7 +98,7 @@ FOLLOWUP_SOURCE_HASHES = {Path('review/post_full_fable/independent/analysis.json
  Path('tools/make_transport_explanatory_figures.py'): 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  Path('tools/make_transport_followup_paper.py'): '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  Path('tools/make_transport_table_charts.py'): 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- Path('tools/prepare_tmlr_figures.py'): '53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8',
+ Path('tools/prepare_tmlr_figures.py'): 'f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a',
  Path('tools/transport_artifact_expectations.py'): 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  Path('tools/verify_review_experiment_export.py'): 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0'}
 

@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIGURES = Path("paper/figures")
 FIGURE_PINS = {'transport_conceptual_geometry.tex': {'current_sha256': 'ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0',
                                        'original_sha256': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b'},
- 'transport_conceptual_interfaces.tex': {'current_sha256': '2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3',
+ 'transport_conceptual_interfaces.tex': {'current_sha256': '65e5224212c4e39ae43af565af2c13c4bdfce341f9ffa4f6473671029294cd2e',
                                          'original_sha256': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4'},
  'transport_explanatory_bounds.tex': {'current_sha256': '3fb25e8ee6e2e0ed3894bc5d7e26cae1fa79ce06fce61eb0c27714672d84c554',
                                       'original_sha256': 'bee87dd7c6c536c1ee44249901d329867a5f7bbd5a25da497620bff1f86ad324'},
@@ -80,6 +80,12 @@ def transform(name, original):
             raise ValueError("Original conceptual disclaimer differs")
         text = text.replace(annotation, "")
         operations.append("Remove the duplicate disclaimer text node; retain metric/score geometry.")
+    elif name == "transport_conceptual_interfaces.tex":
+        label = "Same history, center, radius, and bias."
+        if text.count(label) != 1:
+            raise ValueError("Original conceptual comparison label differs")
+        text = text.replace(label, "Same history, center, confidence multiplier and error allowance.")
+        operations.append("Name the confidence multiplier and error allowance in the comparison label.")
     text = neutralize_comments(text)
     operations.append("Neutralize source comment payloads, preserving TeX line continuation semantics.")
     if digest(text.encode()) != pin["current_sha256"]:

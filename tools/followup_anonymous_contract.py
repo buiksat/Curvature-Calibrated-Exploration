@@ -118,8 +118,8 @@ FOLLOWUP_CONTRACT: dict[str, dict[str, Any]] = {'review/post_full_fable/independ
 # PINNED_CONTRACT_END
 
 # PINNED_ARTIFACTS_START
-ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_provenance.json': {'bytes': 8317,
-                                                       'sha256': 'b4c89e0e9610c40ab4eab8f6bb1bc0e3c4b38b3f40ba04985bb33b8bab92c674'},
+ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_provenance.json': {'bytes': 8404,
+                                                       'sha256': '9982a97c2a1d5f7ada7486f862a5217f09fb01a3cd7bbca017221758b0f8de2a'},
  'paper/figures/transport_explanatory_bounds.csv': {'bytes': 787,
                                                     'sha256': '523f691b7075a0544e3863ab63ae0795cf9fc81efd66e665e978a36cd47c74e1'},
  'paper/figures/transport_explanatory_bounds.tex': {'bytes': 1335,
@@ -176,8 +176,8 @@ ARTIFACT_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_editorial_p
 # reconstructed from the experiment. Keep their provenance class explicit.
 SCHEMATIC_PINS: dict[str, dict[str, Any]] = {'paper/figures/transport_conceptual_geometry.tex': {'bytes': 3418,
                                                      'sha256': 'ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0'},
- 'paper/figures/transport_conceptual_interfaces.tex': {'bytes': 2366,
-                                                       'sha256': '2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3'}}
+ 'paper/figures/transport_conceptual_interfaces.tex': {'bytes': 2391,
+                                                       'sha256': '65e5224212c4e39ae43af565af2c13c4bdfce341f9ffa4f6473671029294cd2e'}}
 
 README = """# Anonymous compact follow-up evidence
 

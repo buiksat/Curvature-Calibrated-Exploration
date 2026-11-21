@@ -1,7 +1,7 @@
 {
   "editorial_tool": {
     "path": "tools/prepare_tmlr_figures.py",
-    "sha256": "53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8"
+    "sha256": "f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a"
   },
   "figures": [
     {
@@ -14,10 +14,11 @@
       ]
     },
     {
-      "current_sha256": "2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3",
+      "current_sha256": "65e5224212c4e39ae43af565af2c13c4bdfce341f9ffa4f6473671029294cd2e",
       "original_sha256": "6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4",
       "path": "paper/figures/transport_conceptual_interfaces.tex",
       "transforms": [
+        "Name the confidence multiplier and error allowance in the comparison label.",
         "Neutralize source comment payloads, preserving TeX line continuation semantics."
       ]
     },
