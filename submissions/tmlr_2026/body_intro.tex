@@ -27,8 +27,7 @@ instead keep the gradient features computed when each observation arrived
 \citep{zhou2020neural,zhang2021neural}.
 
 This paper first builds a confidence band from collection-time gradients and
-then certifies its conversion to the current metric. The band's width, the
-\emph{reference width}, is computed from the matrix of gradients stored when
+then certifies its conversion to the current metric. The \emph{reference width} is computed from the matrix of gradients stored when
 each observation was collected. Its center, the \emph{corrected center}, is
 the current prediction plus a correction from a ridge regression on those
 stored gradients. \emph{Transport} converts the band into a score that uses
