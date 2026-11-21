@@ -499,10 +499,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
               'role': 'venue-template',
               'sha256': '816214ff5919aa457b6b443bee52b15d9561421417b7f8a50cc84651519f0002',
               'ships_in': 'source'},
- 'transport_followup.tex': {'bytes': 17522,
+ 'transport_followup.tex': {'bytes': 17085,
                             'repository': 'paper/transport_followup.tex',
                             'role': 'manuscript-source',
-                            'sha256': '085c203fa32b7017de733ff62e45a065997c3e61e3e9d4f9af4392d1fc9a1407',
+                            'sha256': '754100a8f872efe4a3f76fa7ffadf72a6a4fa4875503e6694dfb1351eec752a5',
                             'ships_in': 'supplement'},
  'transport_followup_appendix.tex': {'bytes': 19799,
                                      'repository': 'paper/transport_followup_appendix.tex',
@@ -524,10 +524,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
                                     'role': 'manuscript-source',
                                     'sha256': '12e2c41153369cbe2a20b3ae951f8996a771a1bd9bf26933d3cb822029514cb0',
                                     'ships_in': 'supplement'},
- 'transport_theory.tex': {'bytes': 37666,
+ 'transport_theory.tex': {'bytes': 37394,
                           'repository': 'paper/transport_theory.tex',
                           'role': 'manuscript-source',
-                          'sha256': 'da8ba2b17a61375643f1c3d814868f439ae61617080ee4f4bba39c92c2e0e39c',
+                          'sha256': '7dc657f4b6e4fa3cee945e51e9cd69c71d2a804039bd044b49dcc6e259817333',
                           'ships_in': 'supplement'}}
 
 #: The shipped tools whose bytes decide whether a reviewer's verification
