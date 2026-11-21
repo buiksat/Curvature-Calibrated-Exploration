@@ -221,7 +221,7 @@ R_T
 &\quad+2\sum_{t=1}^Tb_t(a_t)+\sum_{t=1}^T\xi_t
 \label{eq:simple-transport-regret-new}
 \end{align}
-holds.  The bias envelope enters twice and the approximate-oracle error enters
+holds.  The error allowance enters twice and the approximate-oracle error enters
 once.  If the confidence event has probability at least $1-\delta$ and the
 joint certificate event has probability at least $1-\delta_{\rm cert}$, these
 bounds hold with probability at least $1-\delta-\delta_{\rm cert}$.
@@ -283,8 +283,8 @@ For exact current widths, the actionwise multiplier
  \end{cases}
  \qquad\text{satisfies}\qquad c_t(a)s_t(a)=\bar s_t(a).
 \end{equation}
-Thus this exact actionwise correction reproduces the frozen-width score when
-the center, radius, and bias are the same.
+Thus this exact actionwise correction reproduces the reference-width score when
+the center, confidence multiplier and error allowance are the same.
 
 More generally, fix an action and $m_t(a)$, $b_t(a)$, $\beta_t>0$, and
 $\bar s_t(a)$.  If the only restriction on its mean is the full interval
@@ -859,8 +859,8 @@ replaced by $1+\cosh^4(B_\phi R/\sqrt W)\le1+e^{2B_\phi^2R^2/(cT)}$, whereas
 the Hessian path certificate leaves the factor $2e^{D_{T,W}}$ with
 $D_{T,W}=O(1/\sqrt c)$. When both bounds are written in the same $\gamma_T$,
 $\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at
-most a $1+O(1/(cT))$ multiple of the frozen one, and the bias terms are
-identical; the two bounds hold on different trajectories. In this analysis
+most a $1+O(1/(cT))$ multiple of the frozen one, and the error-allowance
+terms are identical; the two bounds hold on different trajectories. In this analysis
 transport does not improve on scoring with the reference width. The appendix gives the
 resulting explicit bound and evaluates both factors at the first study's
 constants.
