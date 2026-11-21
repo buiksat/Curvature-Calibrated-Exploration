@@ -8,8 +8,7 @@ their context and potential-outcome streams across policies. The
 \emph{deterministic cumulative pseudo-regret cap} $2T\min(1,\sqrt W)$ comes
 from the range of the mean reward, whose width is at most $2\min(1,\sqrt W)$
 per round; we call it the \emph{regret cap}, and a bound above it is
-\emph{vacuous}. The first study fixed its protocol before evaluation and finds
-every certified bound vacuous. The second chooses a scale at which the frozen
+\emph{vacuous}. The first study finds every certified bound vacuous. The second chooses a scale at which the frozen
 bound is below the regret cap and adds two uncertified baselines.
 \Cref{tab:transport-study-design} lists the cells of both studies.
 
@@ -286,17 +285,11 @@ discrepancy was 0.039 of its tolerance. No run that records the optimism
 check failed it; UCB-GLM does not record it.
 
 \paragraph{What the second study shows.}
-Where the frozen bound is non-vacuous and curvature is negligible, endpoint
-transport and naive current have mean regret equivalent to that of the
-frozen-reference policy within the margin, which is consistent with
-the bound comparison after \Cref{cor:tanh-endpoint-regime} (that comparison
-concerns bound expressions, not realized regret), and the Hessian path
-certificate raises mean regret even there. UCB-GLM, whose regret theorem does
-not cover Gaussian rewards, has the lowest mean regret in the design cell and
-at $W=100$, about the same mean regret as linear UCB at $W=10$, and much
-higher regret at $W=1$. In the curved cells, removing the Taylor-error
-allowances lowers frozen's mean regret from 440.9--1,902.1 to 43.3--43.9,
-while the reference, endpoint and naive widths differ in mean regret by at
-most 23.1 units. These are results for one synthetic model and one selected
-optimizer, and no cell has both substantial curvature and a non-vacuous
-frozen bound.
+In the near-linear design cell, where the frozen bound is non-vacuous, the
+reference, endpoint and naive widths gave equivalent mean regret within the
+margin. This is consistent with the bound comparison after
+\Cref{cor:tanh-endpoint-regime}, which concerns bound expressions, not realized
+regret. In the curved cells, removing the Taylor-error allowances lowered mean
+regret far more than the choice among those widths changed it. These are
+results for one synthetic model and one selected optimizer, and no cell has
+both substantial curvature and a non-vacuous frozen bound.
