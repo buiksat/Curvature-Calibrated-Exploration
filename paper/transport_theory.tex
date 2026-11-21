@@ -597,9 +597,7 @@ pseudo-responses form a linear regression on $\btheta^\circ$ whose regressors
 $\bq_s(a_s)$ are fixed before their rewards. The current parameter then
 enters the center only through an exact identity
 (\Cref{app:transport-proofs}), so no stationarity, residual or convergence
-property of $\btheta_t$ is used. The certified parameter region and the
-Taylor and misspecification envelopes are still required, and they can be
-large. The frozen ridge estimate
+property of $\btheta_t$ is used. The frozen ridge estimate
 
 \begin{equation}\label{eq:frozen-ridge-new}
  \hat\btheta_t^{\rm lin}=\bVbar_t^{-1}\sigma^{-2}\sum_{s<t}\bq_s(a_s)y_s
@@ -649,11 +647,10 @@ residual, or optimizer convergence rate.
 The historical deterministic term follows from
 $\Phi_t^\top\bVbar_t^{-1}\Phi_t\preceq I$, with
 $\Phi_t=[\bq_1/\sigma,\ldots,\bq_{t-1}/\sigma]$; its scale is $1/\sigma$.
-The corollary removes the optimizer from the argument, not the envelopes. It
-needs a reference model fixed before collection, a ridge penalty centered at
-zero in the stated coordinates, and supplied historical and current Taylor and
-misspecification bounds. An arbitrary predictable optimizer does not make
-these errors small. Persistent misspecification can make the error-allowance
+The corollary still needs a reference model fixed before collection, a ridge
+penalty centered at zero in the stated coordinates, the certified parameter
+region, and supplied historical and current Taylor and misspecification
+bounds; the region and these bounds can be large. Persistent misspecification can make the error-allowance
 term grow linearly in $T$ and the confidence multiplier vacuous: the bound
 degrades gracefully, which is not a robust misspecified-bandit guarantee.
 
