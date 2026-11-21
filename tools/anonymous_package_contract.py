@@ -563,16 +563,16 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/editorial_originals/make_transport_table_charts.py': 'ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479',
  'tools/editorial_originals/transport_conceptual_geometry.tex': '12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b',
  'tools/editorial_originals/transport_conceptual_interfaces.tex': '6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4',
- 'tools/followup_anonymous_contract.py': '8065382334b8e4cf958924c9c45001f2dd71b5ddef05ef9a89b6f13dc3e7f1ca',
+ 'tools/followup_anonymous_contract.py': '7bcb3cd251f825e8b74a307c3f9f377571449e3476c5904867f69995fdf5f6b6',
  'tools/make_tmlr_outcomes.py': 'd9574f648fe0f0de63a5bd00cc407b49325963e1a76a093dc8df0921663756be',
  'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- 'tools/numeric_context_pins.py': '42197866506716b1ee557d2c9efa0fd1c6098b299034ec6b8e4a31ba64f0fe0a',
+ 'tools/numeric_context_pins.py': '821ad27ddb79c4cecb0af86efce44ff921328500a9b5f097c509bfb660a6f2bb',
  'tools/prepare_tmlr_figures.py': 'f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': 'b67e670bca79bbcb0ac4aef080421659f0d11bd6f2e1c232e12e433c29cebe59'}
+ 'tools/verify_tmlr_submission_numbers.py': '8dc7b05d32395dd6c2ad42d5b43ab37f68596551502a7536ee61da850814db2c'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({

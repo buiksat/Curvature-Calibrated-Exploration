@@ -166,7 +166,7 @@ UNITS: tuple[str, ...] = (
     'Let $c_t=\\beta_t[1+\\alpha_te^{\\bar D_t} \\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}]$. Summation and one Cauchy--Schwarz application give \\[ R_T-2\\sum_tb_t(a_t)-\\sum_t\\xi_t \\le\\sqrt{\\sum_tc_t^2}\\sqrt{\\sum_t\\bar s_t^2(a_t)}. \\] Since $\\bar s_t^2(a_t)\\le G^2/\\lambda$, the scalar inequality $x\\le(1+M)\\log(1+x)$ for $0\\le x\\le M$, with $x=\\sigma^{-2}\\bar s_t^2(a_t)$ and $M=G^2/(\\lambda\\sigma^2)$, yields',
     'More generally, fix an action and $m_t(a)$, $b_t(a)$, $\\beta_t>0$, and $\\bar s_t(a)$. If the only restriction on its mean is the full interval \\eqref{eq:abstract-confidence-new}, a score $m_t(a)+\\beta_t w_t(a)+b_t(a)$ is an upper bound for every mean in that interval if and only if $w_t(a)\\ge\\bar s_t(a)$.',
     'More generally, suppose there is a measurable function $\\nu_t:[0,1]\\to[0,\\infty)$ with $\\nu_t\\in L^1([0,1])$ such that \\[ \\dot\\Bmat(\\tau)^\\top\\dot\\Bmat(\\tau) \\preceq\\nu_t(\\tau)^2\\bV(\\tau) \\] almost everywhere. Then $\\mathcal D(\\bV)\\le2\\int_0^1\\nu_t(\\tau)d\\tau$. For nonnegative $\\nu_t$, the displayed PSD premise is equivalently the norm condition $\\|\\dot\\Bmat(\\tau)\\bV(\\tau)^{-1/2}\\|_{\\rm op}\\le\\nu_t(\\tau)$ almost everywhere.',
-    "Relinearizing historical gradients changes a contextual-bandit uncertainty matrix without adding observations. We study how confidence from collection-time gradients can support UCB scores from current curvature. For squared loss, a frozen ridge correction yields a confidence band along predictable parameter paths in a certified region, given Taylor-remainder and misspecification bounds, without optimizer convergence. A transport theorem combines this reference confidence with metric, operator and solver certificates. With the history, center, confidence multiplier and error allowance held fixed, preserving the full reference band cannot yield a narrower certified width. We establish sharp symmetric exponential metric-transport factors and endpoint certificates for scaled tanh on a bounded parameter region; when its near-linearity scale $W\\ge cT$, the uniform endpoint factor is $1+O(1/(cT))$. Two synthetic studies use 50 paired seeds per condition. Hessian-path transport has higher mean cumulative pseudo-regret (mean regret) than the frozen-reference policy in both. In a near-linear design cell where the frozen-reference policy's regret bound is below the deterministic cumulative pseudo-regret cap, endpoint transport and the frozen-reference policy have equivalent mean regret within a three-unit margin fixed before evaluation, and a generalized-linear UCB baseline has lower mean regret than both. In descriptive cells with stronger curvature, removing the Taylor-error allowances lowers mean regret substantially.",
+    "Relinearizing historical gradients changes a contextual-bandit uncertainty matrix without adding observations. We study how confidence from collection-time gradients can support UCB scores from current curvature. For squared loss, a frozen ridge correction yields a confidence band along predictable parameter paths in a certified region, given Taylor-remainder and misspecification bounds, without optimizer convergence. A transport theorem combines this reference confidence with metric, operator and solver certificates. With the history, center, confidence multiplier and error allowance held fixed, preserving the full reference band cannot yield a narrower certified width. We establish sharp symmetric exponential metric-transport factors and endpoint certificates for scaled tanh on a bounded parameter region; when its near-linearity scale satisfies $W\\ge cT$, the uniform endpoint factor is $1+O(1/(cT))$. Two synthetic studies use 50 paired seeds per condition. Hessian-path transport has higher mean cumulative pseudo-regret (mean regret) than the frozen-reference policy in both. In a near-linear design cell where the frozen-reference policy's regret bound is below the deterministic cumulative pseudo-regret cap, endpoint transport and the frozen-reference policy have equivalent mean regret within a three-unit margin fixed before evaluation, and a generalized-linear UCB baseline has lower mean regret than both. In descriptive cells with stronger curvature, removing the Taylor-error allowances lowers mean regret substantially.",
     'Set $\\gamma_0=0$. The determinant identity follows from the frozen rank-one update and uses the actions actually selected.',
     'Set $\\hat s=\\sqrt{U}$. If $L>0$, the observable factor $\\alpha=\\sqrt{U/L}$ verifies played-action sharpness. If $L\\le0<U$, the interval supplies no finite positive multiplicative sharpness factor; the solve must continue or an additive-width theorem must be used. If $U=0$, the exact inverse quadratic form is zero and the solver returns $\\hat s=0$. For $\\bq=0$, skip the solve and return zero.',
     'Since $\\sup_u|2\\operatorname{sech}^2(u)\\tanh(u)|=4/(3\\sqrt3)$, \\Cref{cor:global-near-linear-new} applies with \\[ G=B_\\phi,\\qquad c_\\mu=c_g=c_h:=\\frac{4B_\\phi^2}{3\\sqrt3}. \\] The symbol $W$ is a smoothness scale here; it is not identified with hidden width or parameter count.',
@@ -233,7 +233,7 @@ UNITS: tuple[str, ...] = (
     '\\bVbar_{t+1}',
     '\\bar s_t^2(a)',
     '\\bq_t(a)=0',
-    '\\draw[black!28,line width=    ] (0,-4.6) -- (16.2,-4.6); \\node[anchor=west] at (0,-4.95) {Selection and sharpness use the \\textbf{same realized width map} $\\hat s_t(\\cdot)$.}; \\node[anchor=west] at (0,-5.57) {\\textbf{Direct reference comparison}\\quad Same history, center, radius, and bias.}; \\node[anchor=west] at (0,-6.11) {$w_t^{\\rm tr}(a)=e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a) \\ge\\bar s_t(a)$;\\quad exact actionwise correction gives $c_t(a)s_t(a)=\\bar s_t(a)$.}; \\node[anchor=west] at (0,-6.65) {These comparisons do not order the regret of policies with different adaptive histories.};',
+    '\\draw[black!28,line width=    ] (0,-4.6) -- (16.2,-4.6); \\node[anchor=west] at (0,-4.95) {Selection and sharpness use the \\textbf{same realized width map} $\\hat s_t(\\cdot)$.}; \\node[anchor=west] at (0,-5.57) {\\textbf{Direct reference comparison}\\quad Same history, center, confidence multiplier and error allowance.}; \\node[anchor=west] at (0,-6.11) {$w_t^{\\rm tr}(a)=e^{\\bar D_t/2}\\sqrt{\\kappa_{+,t}}\\,\\hat s_t(a) \\ge\\bar s_t(a)$;\\quad exact actionwise correction gives $c_t(a)s_t(a)=\\bar s_t(a)$.}; \\node[anchor=west] at (0,-6.65) {These comparisons do not order the regret of policies with different adaptive histories.};',
     '\\draw[black!30,line width=     ] (11.5,-2.1) -- (11.5,-6.35); \\draw[black!55,densely dotted,line width=     ] (14.5,-1.95) -- (14.5,-6.35); \\node[anchor=south] at (14.5,-1.8) {$\\mu^*=1$};',
     '\\draw[black!40,->,line width=     ] (1.05,-4.35) -- (5.2,-4.35) node[right=   ] {$z_1$}; \\draw[black!40,->,line width=     ] (3,-6.7) -- (3,-2); \\node[anchor=west] at (3.6,-2.35) {$z_2$}; \\draw[reference,fill=blue!4] (3,-4.35) circle[radius=      ]; \\draw[current,fill=orange!6,fill opacity=.55] (3,-4.35) ellipse[x radius=      ,y radius=     ]; \\draw[black,->,line width=    ] (3,-4.35) -- (4.6,-4.35); \\node[anchor=north] at (4.6,-4.53) {$\\bq=\\mathbf e_1$}; \\fill[orange!80!black] (3.525,-4.35) circle[radius=   ]; \\fill[blue!65!black] (4.05,-4.35) circle[radius=   ]; \\draw[orange!80!black,line width=     ] (3.525,-4.32) -- (3.525,-3.6) -- (4.4,-3.6); \\node[anchor=west] at (4.47,-3.6) {$s=\\tfrac12$}; \\draw[blue!65!black,line width=     ] (4.05,-4.32) -- (4.05,-3.02) -- (4.4,-3.02); \\node[anchor=west] at (4.47,-3.02) {$\\bar s=1$}; \\draw[reference] (0,-7.15) -- (.65,-7.15); \\node[anchor=west] at (.82,-7.15) {Reference $E(\\bVbar)$}; \\draw[current] (3.55,-7.15) -- (4.2,-7.15); \\node[anchor=west] at (4.37,-7.15) {Current $E(\\bV)$};',
     '\\draw[black!50,line width=     ] (8.15,-6.7) -- (14.85,-6.7); \\foreach \\x/\\lab in {8.5/-1,10/-\\frac12,11.5/0,13/\\frac12,14.5/1}{ \\draw[black!50,line width=     ] (\\x,-6.64) -- (\\x,-6.76); \\node[anchor=north] at (\\x,-6.86) {$\\lab$}; } \\node[anchor=north] at (11.5,-7.4) {Mean / score value}; \\node[anchor=west] at (0,-7.85) {$\\bar s=1$, $s=e^{-D/2}$; transport restores $e^{D/2}s=\\bar s$ in this direction.};',
@@ -301,7 +301,7 @@ UNITS: tuple[str, ...] = (
     'and require the same finite measurable supremum and approximate-selector condition for this score. Keep every other hypothesis of that theorem. On the joint confidence and certificate event, writing $h_t=1+\\alpha_t\\sqrt{c_{+,t}\\kappa_{+,t}/(c_{-,t}\\kappa_{-,t})}$,',
     'd_{\\rm Th}(\\bV(0),\\bV(1))',
     'gives $\\kappa_{-,t}=1-\\varepsilon_t$ and $\\kappa_{+,t}=1+\\varepsilon_t$. An upper comparison alone does not imply a lower factor.',
-    'holds. The bias envelope enters twice and the approximate-oracle error enters once. If the confidence event has probability at least $1-\\delta$ and the joint certificate event has probability at least $1-\\delta_{\\rm cert}$, these bounds hold with probability at least $1-\\delta-\\delta_{\\rm cert}$.',
+    'holds. The error allowance enters twice and the approximate-oracle error enters once. If the confidence event has probability at least $1-\\delta$ and the joint certificate event has probability at least $1-\\delta_{\\rm cert}$, these bounds hold with probability at least $1-\\delta-\\delta_{\\rm cert}$.',
     'replace $e^{\\bar D_t/2}$ by $1+\\chi_t$ in \\eqref{eq:transported-score-new}.',
     's_t^2(a)',
     's_{\\Calg,t}^2(a)',
@@ -361,7 +361,7 @@ UNITS: tuple[str, ...] = (
     "{Variation across seeds and history-generating policies.} \\Cref{fig:transport-followup-mechanism-variation} reports per-seed variation instead of treating the pooled rounds as independent. The row label tells us which policy generated the history; the score being diagnosed is always that of Hessian-path transport. Thus only the Hessian-path rows describe the behavior policy's own score. The other rows evaluate the Hessian-path score on states visited by endpoint transport, frozen reference or naive current. Each fraction has 1000 rounds in its denominator, and the reported median and range summarize 50 seeds.",
     '{What the intervals measure.} Pairing compares policies exposed to the same underlying context and potential-noise stream. The paired-bootstrap intervals resample the 50 evaluation seeds within a condition, preserving the pairing between policies, with 10,000 resamples and the recorded deterministic bootstrap seed. Rounds within a trajectory are dependent, and seeds shared across conditions do not make all runs one independent population. The condition labels in the configuration are encodings of $W$, not measured endpoint distances.',
     "{What the second study shows.} Where the frozen bound is non-vacuous and curvature is negligible, endpoint transport and naive current have mean regret equivalent to that of the frozen-reference policy within the margin, which is consistent with the bound comparison after \\Cref{cor:tanh-endpoint-regime} (that comparison concerns bound expressions, not realized regret), and the Hessian path certificate raises mean regret even there. UCB-GLM, whose regret theorem does not cover Gaussian rewards, has the lowest mean regret in the design cell and at $W=100$, about the same mean regret as linear UCB at $W=10$, and much higher regret at $W=1$. In the curved cells, removing the Taylor-error allowances lowers frozen's mean regret from 440.9--1,902.1 to 43.3--43.9, while the reference, endpoint and naive widths differ in mean regret by at most 23.1 units. These are results for one synthetic model and one selected optimizer, and no cell has both substantial curvature and a non-vacuous frozen bound.",
-    "{What transport adds in the near-linear regime.} Take the scaled-tanh specialization of \\Cref{cor:global-near-linear-new} with exact current curvature, exact solves and exact maximization, and score with \\Cref{cor:relative-endpoint-ucb} using the uniform certificate. By \\Cref{cor:tanh-endpoint-regime}, the endpoint-transported bound then has the frozen bound's form (\\Cref{prop:frozen-width-ucb}) with the factor $2$ replaced by $1+\\cosh^4(B_\\phi R/\\sqrt W)\\le1+e^{2B_\\phi^2R^2/(cT)}$, whereas the Hessian path certificate leaves the factor $2e^{D_{T,W}}$ with $D_{T,W}=O(1/\\sqrt c)$. When both bounds are written in the same $\\gamma_T$, $\\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at most a $1+O(1/(cT))$ multiple of the frozen one, and the bias terms are identical; the two bounds hold on different trajectories. In this analysis transport does not improve on scoring with the reference width. The appendix gives the resulting explicit bound and evaluates both factors at the first study's constants.",
+    "{What transport adds in the near-linear regime.} Take the scaled-tanh specialization of \\Cref{cor:global-near-linear-new} with exact current curvature, exact solves and exact maximization, and score with \\Cref{cor:relative-endpoint-ucb} using the uniform certificate. By \\Cref{cor:tanh-endpoint-regime}, the endpoint-transported bound then has the frozen bound's form (\\Cref{prop:frozen-width-ucb}) with the factor $2$ replaced by $1+\\cosh^4(B_\\phi R/\\sqrt W)\\le1+e^{2B_\\phi^2R^2/(cT)}$, whereas the Hessian path certificate leaves the factor $2e^{D_{T,W}}$ with $D_{T,W}=O(1/\\sqrt c)$. When both bounds are written in the same $\\gamma_T$, $\\beta_t$ and $b_t$, the endpoint-transported exploration term is therefore at most a $1+O(1/(cT))$ multiple of the frozen one, and the error-allowance terms are identical; the two bounds hold on different trajectories. In this analysis transport does not improve on scoring with the reference width. The appendix gives the resulting explicit bound and evaluates both factors at the first study's constants.",
     '{When the width bonus determines the action.} A large bonus can make the widest action win even when its predicted reward is lower. A sufficient check is that its bonus advantage exceeds the largest possible difference between prediction centers on the recorded state. Write the primary score on a recorded state as $m_t(a)+B_t s_t(a)+b_t$, where $b_t$ is action independent and $B_t=\\beta_t^{\\rm corr}\\exp(\\bar D_t^Q/2)$. Let $s_{t,(1)}\\ge s_{t,(2)}$ be the largest two current widths. The strict condition \\[ B_t\\bigl(s_{t,(1)}-s_{t,(2)}\\bigr) >\\max_a m_t(a)-\\min_a m_t(a) \\] is sufficient for the unique largest-width action to maximize the score. Width-argmax agreement alone is weaker: prediction centers might favor the same action. The exact tie rule is the smallest action index.',
     '{Which factors are compared?} For unit feature and parameter bounds, \\Cref{cor:tanh-relative-weights} gives the uniform endpoint bound $D_0=4\\log\\cosh(1/\\sqrt W)$, approximately $0.124$, $1.735$, and $5.300$ at the three conditions. The category-specific sandwich $c_{-,t}\\bVbar_t\\preceq\\bV_t\\preceq c_{+,t}\\bVbar_t$ gives a symmetric coefficient $\\exp(D_{{\\rm cat},t}/2)$, where $D_{{\\rm cat},t}=\\max\\{-\\log c_{-,t},\\log c_{+,t}\\}$, or the separate outward coefficient $\\sqrt{c_{+,t}}$ of \\Cref{cor:relative-endpoint-ucb}. The latter retains the separate return factor $c_{-,t}^{-1/2}$ in the cumulative bound.',
     '{Which scales keep the a priori frozen bound below the cap.} Let $W=cT$ with $W\\ge1$, so that the regret cap is $2T$. In \\Cref{prop:frozen-width-ucb}, bound $\\gamma_{t-1}\\le\\Gamma_{T,d}$ by \\eqref{eq:finite-d-gamma-new} with $G=B_\\phi$, the historical and current Taylor envelopes by $2c_hR^2/\\sqrt W$, the misspecification envelopes by zero, and $\\sum_t\\beta_t^2$ by $T$ times the largest $\\beta_t^2$. With $B_\\phi=1$, the resulting a priori frozen bound divided by the regret cap is \\[ \\Bigl[\\sqrt{\\Gamma_{T,d}+2\\log(1/\\delta)}+\\sqrt\\lambda R\\Bigr] \\sqrt{\\frac{(\\sigma^2+1/\\lambda)\\Gamma_{T,d}}{T}} +\\frac{1}{\\sqrt c}\\Bigl[\\frac{2c_hR^2}{\\sigma} \\sqrt{\\frac{(\\sigma^2+1/\\lambda)\\Gamma_{T,d}}{T}} +\\frac{2c_hR^2}{\\sqrt T}\\Bigr] =:A+\\frac{B}{\\sqrt c}. \\] At the constants of \\Cref{sec:transport-v3}, $A=0.556$ and $B=0.374$. The ratio therefore decreases in $c$, equals 0.93 in the design cell, and is below one exactly when $c>c_\\star$, where $c_\\star=(B/(1-A))^2\\approx0.709$. When $W<1$ the cap $2T\\sqrt W$ is smaller than $2T$ while the bound is unchanged, so the ratio exceeds $A+B/\\sqrt c$ and is above one there as well. As $c$ grows the ratio decreases to $A$.',
@@ -986,7 +986,7 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
         (3, _u((170, 211), (145, 439), (140, 745))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '50 paired'):
-        (1, _u((108, 932))),
+        (1, _u((108, 942))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'):
         (1, _u((23, 41))),
@@ -1156,7 +1156,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
     ('paper/figures/transport_conceptual_interfaces.tex', '.3'):
         ('analytic-schematic', 1, _u((167, 292))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0'):
-        ('analytic-schematic', 7, _u((167, 268), (223, 40), (175, 33), (175, 80), (175, 199), (175, 316), (175, 499))),
+        ('analytic-schematic', 7, _u((167, 268), (223, 40), (175, 33), (175, 80), (175, 199), (175, 341), (175, 524))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0,0'):
         ('analytic-schematic', 1, _u((167, 320))),
     ('paper/figures/transport_conceptual_interfaces.tex', '1.15'):
@@ -1172,7 +1172,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
     ('paper/figures/transport_conceptual_interfaces.tex', '16.2'):
         ('analytic-schematic', 2, _u((167, 287), (175, 45))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2'):
-        ('analytic-schematic', 2, _u((167, 160), (175, 355))),
+        ('analytic-schematic', 2, _u((167, 160), (175, 380))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2.2'):
         ('analytic-schematic', 3, _u((223, 43), (93, 90), (129, 72))),
     ('paper/figures/transport_conceptual_interfaces.tex', '28'):
@@ -1190,9 +1190,9 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
     ('paper/figures/transport_conceptual_interfaces.tex', '6'):
         ('analytic-schematic', 1, _u((16, 55))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.11'):
-        ('analytic-schematic', 1, _u((175, 319))),
+        ('analytic-schematic', 1, _u((175, 344))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.65'):
-        ('analytic-schematic', 1, _u((175, 502))),
+        ('analytic-schematic', 1, _u((175, 527))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.8'):
         ('analytic-schematic', 1, _u((167, 271))),
     # paper/scope_limitations.tex
@@ -1288,7 +1288,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
     ('paper/transport_theory.tex', '0,1'):
         ('interval-endpoint', 5, _u((144, 78), (161, 78), (107, 63), (107, 102), (96, 15))),
     ('paper/transport_theory.tex', '1'):
-        ('math-constant', 84, _u((172, 10), (82, 25), (81, 22), (80, 24), (186, 63), (186, 90), (186, 106), (201, 116), (262, 127), (72, 9), (72, 34), (72, 67), (191, 78), (211, 68), (211, 88), (232, 15), (232, 36), (214, 68), (230, 15), (230, 36), (243, 134), (243, 202), (243, 269), (209, 69), (209, 94), (209, 115), (91, 203), (25, 0), (164, 296), (169, 81), (287, 146), (287, 176), (287, 204), (145, 241), (189, 58), (189, 74), (189, 103), (195, 70), (165, 356), (165, 365), (241, 22), (171, 23), (171, 52), (21, 80), (21, 189), (184, 59), (184, 90), (107, 99), (107, 242), (107, 378), (204, 43), (126, 46), (213, 31), (203, 55), (203, 82), (203, 115), (242, 20), (242, 55), (240, 204), (220, 67), (220, 97), (220, 118), (188, 63), (87, 17), (87, 26), (138, 120), (118, 70), (118, 131), (118, 158), (185, 71), (140, 793), (140, 858), (239, 25), (94, 98), (94, 219), (205, 55), (205, 136), (248, 11), (248, 19), (248, 22), (303, 432), (303, 574), (303, 727), (303, 731))),
+        ('math-constant', 84, _u((172, 10), (82, 25), (81, 22), (80, 24), (186, 63), (186, 90), (186, 106), (201, 116), (262, 127), (72, 9), (72, 34), (72, 67), (191, 78), (211, 68), (211, 88), (232, 15), (232, 36), (214, 68), (230, 15), (230, 36), (243, 136), (243, 204), (243, 271), (209, 69), (209, 94), (209, 115), (91, 203), (25, 0), (164, 296), (169, 81), (287, 146), (287, 176), (287, 204), (145, 241), (189, 58), (189, 74), (189, 103), (195, 70), (165, 356), (165, 365), (241, 22), (171, 23), (171, 52), (21, 80), (21, 189), (184, 59), (184, 90), (107, 99), (107, 242), (107, 378), (204, 43), (126, 46), (213, 31), (203, 55), (203, 82), (203, 115), (242, 20), (242, 55), (240, 204), (220, 67), (220, 97), (220, 118), (188, 63), (87, 17), (87, 26), (138, 120), (118, 70), (118, 131), (118, 158), (185, 71), (140, 793), (140, 858), (239, 25), (94, 98), (94, 219), (205, 55), (205, 136), (248, 11), (248, 19), (248, 22), (303, 432), (303, 574), (303, 727), (303, 731))),
     ('paper/transport_theory.tex', '1,0'):
         ('math-constant', 1, _u((164, 227))),
     ('paper/transport_theory.tex', '1,2'):
@@ -1301,7 +1301,7 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
         ('math-constant', 9, _u((140, 780), (235, 12), (111, 49), (111, 150), (102, 212), (143, 214), (166, 114), (166, 150), (303, 440))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '1'):
-        ('math-constant', 2, _u((108, 892), (108, 896))),
+        ('math-constant', 2, _u((108, 902), (108, 906))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '1.15.2'):
         ('environment-version', 1, _u((130, 43))),
@@ -1320,7 +1320,7 @@ FILE_PINS: dict[str, str] = {
     'paper/body_conclusion.tex':
         '18c9c7824d1bf9b76fad6b2f51b940c73ca3ebad553455a126df8c9b962bbeb0',
     'paper/body_intro.tex':
-        '848e03429b169f50cef8a7fc7f3af2e9b3e7aeb02712d3511507a389c5f0a7bb',
+        '1b1a167bd951cf40ed7016daa85567dfb0164a51fced57d749d1437d9e532f50',
     'paper/body_related.tex':
         '0c89e9e9c89be4098689e1d5c5965c635514a1904695e2a63ea61d1d4d8201b2',
     'paper/broader_impact.tex':
@@ -1328,7 +1328,7 @@ FILE_PINS: dict[str, str] = {
     'paper/figures/transport_conceptual_geometry.tex':
         '8939eab6c15a186346f16afd231a52d1a2f7ec32c160e064663477339f138066',
     'paper/figures/transport_conceptual_interfaces.tex':
-        '8887badd9f997fd3ac84d6affc65f0e44150b46bbedc3c9d45c66dec57e2a2c4',
+        'eda69bbfa4a0a62f5b574fe4f5d069e2f12fed149452fe8b232b39d23aaa64db',
     'paper/legacy_scope.tex':
         'be156968b1bdb7a14e7451e7c45d747f5b5586fc6be2101ede15cd829f3b542a',
     'paper/macros.tex':
@@ -1352,9 +1352,9 @@ FILE_PINS: dict[str, str] = {
     'paper/transport_support_appendix.tex':
         '61edf07be22f52c88170913ec9126a9dd4390bd9b02e5ab39f9321aa07e87278',
     'paper/transport_theory.tex':
-        '369cbe423361a15b3828d78ccf1ebb5314d3e44f3611b69334f3d15622eb3c0c',
+        'd6016e7a5c581ad23959ea9502e06a80802ffaf5e3b8458f6bfc55cd7937109d',
     'submissions/tmlr_2026/main.tex':
-        '00aa99fcf4841bd8726ee5b48bb58af1a8991d7b9309ff236b754a93c8d2b597',
+        'e01d34bef713e071582c4a1a173b6878334b54afbaa93feb9c5a0c4a3ae2838e',
     'submissions/tmlr_2026/supplement_README.md':
         'e74859310ff43502ef86ff48e74ff8d808b8ac4c16f9fc02ab167751cb6ef9d5',
 }
