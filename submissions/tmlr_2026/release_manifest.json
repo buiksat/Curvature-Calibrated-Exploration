@@ -204,16 +204,16 @@
   },
   "deliverables": {
     "main.pdf": {
-      "bytes": 544622,
-      "sha256": "1b7320e1eb5b3c2ccb30776b8d18bb1e34311d90dea89450c2ee0e6ac7cea24b"
+      "bytes": 544654,
+      "sha256": "2eac7783c3eb084b1feb9a2c99cea6ea315abaa86bd10a29d110f95111c20722"
     },
     "source.zip": {
-      "bytes": 2995059,
-      "sha256": "5e1bc9c8b1e7823b481bd4a272cf864d197481dfee05be16e42b6317b725ae59"
+      "bytes": 2995116,
+      "sha256": "721cb6a820db9c92a3a0e775e30750a1fc9f12f0d9a039c62b9405a3ecd57e0f"
     },
     "supplement.zip": {
-      "bytes": 99288642,
-      "sha256": "e1c3ae28f21e357f42678254b93757384c9bb9d84ea9cffcd5b906d0b1be49c0"
+      "bytes": 99289268,
+      "sha256": "3a80ac0e4f6d4a36246c6ed661fa85767867fe5463401cc479a3b236f5cbcd73"
     }
   },
   "external_tex_inputs": [
@@ -1626,16 +1626,16 @@
     "tools/editorial_originals/make_transport_table_charts.py": "ed0e3fb6b1e5449009fa4a9f0a2850e32c205ce2bbd47923958039512ce6e479",
     "tools/editorial_originals/transport_conceptual_geometry.tex": "12f0039ce9c0c20f8d78aa46193b606042cac7015094837b6f3581d8b110fb5b",
     "tools/editorial_originals/transport_conceptual_interfaces.tex": "6b1976da5525e1aa1aad47bb0775c37e4de0734617eacd17fefb0386b817e3e4",
-    "tools/followup_anonymous_contract.py": "8065382334b8e4cf958924c9c45001f2dd71b5ddef05ef9a89b6f13dc3e7f1ca",
+    "tools/followup_anonymous_contract.py": "7bcb3cd251f825e8b74a307c3f9f377571449e3476c5904867f69995fdf5f6b6",
     "tools/make_tmlr_outcomes.py": "d9574f648fe0f0de63a5bd00cc407b49325963e1a76a093dc8df0921663756be",
     "tools/make_transport_explanatory_figures.py": "c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657",
     "tools/make_transport_followup_paper.py": "153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496",
     "tools/make_transport_table_charts.py": "a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80",
-    "tools/numeric_context_pins.py": "42197866506716b1ee557d2c9efa0fd1c6098b299034ec6b8e4a31ba64f0fe0a",
-    "tools/prepare_tmlr_figures.py": "53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8",
+    "tools/numeric_context_pins.py": "821ad27ddb79c4cecb0af86efce44ff921328500a9b5f097c509bfb660a6f2bb",
+    "tools/prepare_tmlr_figures.py": "f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a",
     "tools/transport_artifact_expectations.py": "f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c",
     "tools/verify_review_experiment_export.py": "d9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0",
-    "tools/verify_tmlr_submission_numbers.py": "b67e670bca79bbcb0ac4aef080421659f0d11bd6f2e1c232e12e433c29cebe59"
+    "tools/verify_tmlr_submission_numbers.py": "8dc7b05d32395dd6c2ad42d5b43ab37f68596551502a7536ee61da850814db2c"
   },
   "source_zip_contents": [
     {
@@ -1699,9 +1699,9 @@
       "sha256": "af89554cd4d14608ef6a74f27ae1edb7eaf97247e50e552d27612f26752f6dc4"
     },
     {
-      "bytes": 4970,
+      "bytes": 4951,
       "path": "body_intro.tex",
-      "sha256": "39b50f11e60fdf42a43c1f73d957cef6e3e2f6ab45aac1ae2915518bd740980e"
+      "sha256": "a81564a518552e3dfdb548609de28b21fc0208228d5030a224f886a10b0c57e3"
     },
     {
       "bytes": 4683,
@@ -1729,9 +1729,9 @@
       "sha256": "ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0"
     },
     {
-      "bytes": 2366,
+      "bytes": 2391,
       "path": "figures/transport_conceptual_interfaces.tex",
-      "sha256": "2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3"
+      "sha256": "65e5224212c4e39ae43af565af2c13c4bdfce341f9ffa4f6473671029294cd2e"
     },
     {
       "bytes": 1335,
@@ -1774,9 +1774,9 @@
       "sha256": "793ec3b25eb9e2e898c08c298ad73dcdb53df6e4a4fed07583987662361c8a1b"
     },
     {
-      "bytes": 3728,
+      "bytes": 3738,
       "path": "main.tex",
-      "sha256": "56aa03ef8f31fee73b2860d1350c4d1c1343ffc3ad4adde20ef66619292ad368"
+      "sha256": "7240d06cefacffb03aaf4c6622d4cda05b6e2032430f6bf8941a26a8f7146ffc"
     },
     {
       "bytes": 56225,
@@ -2054,9 +2054,9 @@
       "sha256": "12e2c41153369cbe2a20b3ae951f8996a771a1bd9bf26933d3cb822029514cb0"
     },
     {
-      "bytes": 37625,
+      "bytes": 37666,
       "path": "transport_theory.tex",
-      "sha256": "d74c4d6e00a967628d8bfbac8acf095657ef1457d6a5ef840d56dfea7fa5073e"
+      "sha256": "da8ba2b17a61375643f1c3d814868f439ae61617080ee4f4bba39c92c2e0e39c"
     }
   ],
   "supplement_zip_contents": [
@@ -2083,7 +2083,7 @@
     {
       "bytes": 22326,
       "path": "SOURCE_CLOSURE.json",
-      "sha256": "ad0cf92f91da727e761eb5bcf817e24044fe6e023a5a369da651d416d98b3b30"
+      "sha256": "eeca56054e4d7e082b021848ce7b8730f2ad63ec525f184ffafd6f1c016d3b19"
     },
     {
       "bytes": 29252,
@@ -2211,9 +2211,9 @@
       "sha256": "af89554cd4d14608ef6a74f27ae1edb7eaf97247e50e552d27612f26752f6dc4"
     },
     {
-      "bytes": 4970,
+      "bytes": 4951,
       "path": "paper/body_intro.tex",
-      "sha256": "39b50f11e60fdf42a43c1f73d957cef6e3e2f6ab45aac1ae2915518bd740980e"
+      "sha256": "a81564a518552e3dfdb548609de28b21fc0208228d5030a224f886a10b0c57e3"
     },
     {
       "bytes": 4683,
@@ -2231,14 +2231,14 @@
       "sha256": "ff32d8d81a828a4b13d645685d816573822637dc12b8e7dce706815091483ce0"
     },
     {
-      "bytes": 2366,
+      "bytes": 2391,
       "path": "paper/figures/transport_conceptual_interfaces.tex",
-      "sha256": "2e79c2d0d80e86bf3c4836970904331ece648433fd4096306903bfb32c132af3"
+      "sha256": "65e5224212c4e39ae43af565af2c13c4bdfce341f9ffa4f6473671029294cd2e"
     },
     {
-      "bytes": 8317,
+      "bytes": 8404,
       "path": "paper/figures/transport_editorial_provenance.json",
-      "sha256": "b4c89e0e9610c40ab4eab8f6bb1bc0e3c4b38b3f40ba04985bb33b8bab92c674"
+      "sha256": "9982a97c2a1d5f7ada7486f862a5217f09fb01a3cd7bbca017221758b0f8de2a"
     },
     {
       "bytes": 787,
@@ -2831,9 +2831,9 @@
       "sha256": "12e2c41153369cbe2a20b3ae951f8996a771a1bd9bf26933d3cb822029514cb0"
     },
     {
-      "bytes": 37625,
+      "bytes": 37666,
       "path": "paper/transport_theory.tex",
-      "sha256": "d74c4d6e00a967628d8bfbac8acf095657ef1457d6a5ef840d56dfea7fa5073e"
+      "sha256": "da8ba2b17a61375643f1c3d814868f439ae61617080ee4f4bba39c92c2e0e39c"
     },
     {
       "bytes": 77035395,
@@ -3006,9 +3006,9 @@
       "sha256": "f2b6033a76ea818ae0216683cb90115625e1e4ea4bb2202eb548b715ba81f8a5"
     },
     {
-      "bytes": 3728,
+      "bytes": 3738,
       "path": "submissions/tmlr_2026/main.tex",
-      "sha256": "56aa03ef8f31fee73b2860d1350c4d1c1343ffc3ad4adde20ef66619292ad368"
+      "sha256": "7240d06cefacffb03aaf4c6622d4cda05b6e2032430f6bf8941a26a8f7146ffc"
     },
     {
       "bytes": 28190,
@@ -3018,7 +3018,7 @@
     {
       "bytes": 56728,
       "path": "tools/anonymous_package_contract.py",
-      "sha256": "3b0d4fea168961c9bb2e8c62068154fde9033371f14959b9e7421b69bc4339c9"
+      "sha256": "fe090d6190eb4d3af78c2ef803c891a78a24691c2d3ca169edc2c9a5aeb641c6"
     },
     {
       "bytes": 3269,
@@ -3053,7 +3053,7 @@
     {
       "bytes": 36887,
       "path": "tools/followup_anonymous_contract.py",
-      "sha256": "8065382334b8e4cf958924c9c45001f2dd71b5ddef05ef9a89b6f13dc3e7f1ca"
+      "sha256": "7bcb3cd251f825e8b74a307c3f9f377571449e3476c5904867f69995fdf5f6b6"
     },
     {
       "bytes": 8554,
@@ -3076,14 +3076,14 @@
       "sha256": "a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80"
     },
     {
-      "bytes": 168526,
+      "bytes": 168574,
       "path": "tools/numeric_context_pins.py",
-      "sha256": "42197866506716b1ee557d2c9efa0fd1c6098b299034ec6b8e4a31ba64f0fe0a"
+      "sha256": "821ad27ddb79c4cecb0af86efce44ff921328500a9b5f097c509bfb660a6f2bb"
     },
     {
-      "bytes": 9832,
+      "bytes": 10266,
       "path": "tools/prepare_tmlr_figures.py",
-      "sha256": "53e85a88c7bbee5ed83162c248d226596cbb2908b574ae4c847eca443a28e7b8"
+      "sha256": "f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a"
     },
     {
       "bytes": 5170,
@@ -3103,7 +3103,7 @@
     {
       "bytes": 309816,
       "path": "tools/verify_tmlr_submission_numbers.py",
-      "sha256": "b67e670bca79bbcb0ac4aef080421659f0d11bd6f2e1c232e12e433c29cebe59"
+      "sha256": "8dc7b05d32395dd6c2ad42d5b43ab37f68596551502a7536ee61da850814db2c"
     },
     {
       "bytes": 6244,
