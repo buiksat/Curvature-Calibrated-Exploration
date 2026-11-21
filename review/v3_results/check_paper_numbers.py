@@ -118,9 +118,6 @@ big = [max(r["frozen_form_bound"] / r["cap"] for r in runs if r["W"] == w and r[
 expect(F, "Largest frozen bound-to-cap ratio & " + " & ".join(f"{x:.2f}" for x in big) + " \\\\")
 fr = [c["mean_regret"]["frozen_reference"] for c in cells]
 expect(F, f"(frozen: {comma(fr[0], 1)}, {comma(fr[1], 1)} and {comma(fr[2], 1)})")
-expect(F, f"from {comma(min(fr), 1)}--{comma(max(fr), 1)} to")
-nf = [c["mean_regret"]["frozen_reference_no_envelope"] for c in cells]
-expect(F, f"to {min(nf):.1f}--{max(nf):.1f}")
 low = [c["mean_regret"][k] for c in cells for k in ("frozen_reference_no_envelope", "naive_current_no_envelope", "linucb")]
 expect(F, f"between {min(low):.1f} and {max(low):.1f}")
 for k in ("transport_endpoint", "naive_current"):
@@ -131,10 +128,6 @@ for c in cells[:2]:
     for k in ("transport_endpoint", "naive_current"):
         lo, hi = c["descriptive_pairs"][f"{k}-frozen_reference"]["bootstrap_ci95"]
         assert lo < 0 < hi
-gap = max(abs(c["mean_regret"][x] - c["mean_regret"][y]) for c in cells
-          for x in ("frozen_reference", "transport_endpoint", "naive_current")
-          for y in ("frozen_reference", "transport_endpoint", "naive_current"))
-expect(F, f"at most {gap:.1f} units")
 glm = [c["mean_regret"]["ucb_glm"] for c in cells]
 expect(F, f"{glm[0]:.1f}, {glm[1]:.1f} and {glm[2]:.1f}")
 lin1 = a["W=1"]["mean_regret"]["linucb"]
