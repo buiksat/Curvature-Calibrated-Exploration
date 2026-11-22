@@ -23,12 +23,18 @@ Limits that bound this result:
    (theta* = -R), the representation is held at +R for 8192 rounds, and one
    batch step moves it to within 0.0036 of zero. It shows that the failure
    can occur on a realizable trajectory; it says nothing about how often it
-   occurs under ordinary training.
+   occurs under ordinary training. Because the teacher is on the boundary,
+   the new envelope, computed only from theta_s, phi_s, R and W, equals the
+   realized teacher remainder at every block round (exactly, all 256 seeds;
+   unit test `test_scalar_block_envelope_equals_realized_teacher_remainder`)
+   and exceeds it by at most 2e-7 relative at round 8193. The
+   envelope is implementable and certified; it is also tight here, which
+   leaves the naive band no slack from the allowance.
 2. Endpoint transport and the reference width coincide here. In one
    dimension with V_t >= Vbar_t, exp(d_Th/2) s = sbar exactly, so endpoint
    coverage follows from frozen coverage and this example does not test
    endpoint transport as a distinct construction.
-3. The failure needs the new certified envelope. With the manuscript's
+3. The failure depends on the envelope. With the manuscript's
    envelope on the same histories, the naive half-width is 0.784 against a
    center error of at most 0.277, and no naive failure occurs in 256 seeds;
    those intervals span 0.94 of the feasible range.

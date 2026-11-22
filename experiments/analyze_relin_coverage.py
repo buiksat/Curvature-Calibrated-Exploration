@@ -49,7 +49,7 @@ def _protocol_check(run_dir: Path, expected: str | None) -> dict:
 
 def _write_csv(path: Path, rows: list[dict]) -> None:
     with path.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
