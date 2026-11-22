@@ -99,8 +99,15 @@ the step lands exactly on theta = 0.
 | Deterministic sanity values | `--phase deterministic` and test | 0.85564, 0.27038, 0.28711, 0.25290 (targets 0.856, 0.270, 0.287, 0.253) |
 | Analysis re-run on artifacts extracted from the archives | `package.sh` | CSVs and tables byte-identical; summaries identical except the run-directory path |
 
-Not run: the repository's full test suite __SUITE__; an independent code
-review; an Overleaf compile (no manuscript file changed).
+Repository suite, fresh clone, `pytest tests experiments/tests`: on commit
+`99e16424`, 2 failed, 739 passed, 46 skipped (exit 1). The failures were the
+`git diff --check` guard (CRLF line endings in the two analysis CSVs) and the
+suite-count guard (771 stated, 787 collected). After the fixes in
+`fec20488`: 741 passed, 46 skipped (exit 0). The final commit adds only report
+text on top of `fec20488`.
+
+Not run: an independent code review; an Overleaf compile or release rebuild
+(no manuscript, figure or packaged file changed).
 
 ## Primary results (256 evaluation seeds, 50100-50355)
 
@@ -189,3 +196,20 @@ P1 was kept unchanged. W = 100 was selected by the rule written in
 `DEVELOPMENT_PLAN.md` before development runs. One analysis defect (a
 relative-only tolerance in the Thompson cross-check) was fixed during
 development; no run record changed.
+
+## Changes after the protocol freeze
+
+Both evaluation manifests record commit `dd391771`, a clean `experiments/`
+tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
+
+1. `analyze_relin_coverage.py` now writes CSVs with LF line endings instead
+   of the `csv` module's CRLF default, which the repository's
+   `git diff --check` guard rejected. This is the only code change between
+   `14dd6958` and the final commit. Re-running the analysis left both
+   summary JSON files and all archives byte-identical; the CSVs differ only
+   in line endings.
+2. `submissions/tmlr_2026/REVISION_VALIDATION.md`: "Repository suite
+   collection" changed from 771 to 787 collected, because this branch adds
+   16 tests. That file is not part of the release package.
+3. Report text edits. No run, seed, configuration, tolerance or outcome
+   definition changed.
