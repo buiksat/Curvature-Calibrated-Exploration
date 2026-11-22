@@ -1,0 +1,22 @@
+{
+ "argv": {
+  "horizon": "20000",
+  "methods": "['frozen_reference', 'naive_current', 'transport_endpoint']",
+  "output": "/home/buiksat/cce-relin-runs/secondary_eval",
+  "phase": "evaluation",
+  "protocol": "review/relinearization_coverage/PROTOCOL.md",
+  "seeds": "51100-51163",
+  "widths": "[100.0]",
+  "workers": "4"
+ },
+ "commit": "dd39177105b4f38f4f6fbf9279cb864e2cc912ca",
+ "dirty": false,
+ "numpy": "2.2.3",
+ "protocol_sha256": "742c3f1a58cd4b74819b3e4646dc11540c8ac70b7b306f775ae8526bb17cd2c3",
+ "source_sha256": {
+  "experiments/relin_coverage.py": "419de95fbcea3ea03e78b208a9d923130226b18cbd165abc7c06c058c1ab7efe",
+  "experiments/relin_policy.py": "b174d86d545dd3115bb91c70e9a333829a148a5316814ff94d998b5b8d7fe8df",
+  "experiments/transport_instantiation.py": "4cea4cffbf646098e72524d71f57a49eb1968dd063d9df85b64ff57a8fdd27a9",
+  "experiments/transport_v3.py": "5c040e850682fff8e228ef62dbe55eedc18ec11e97d323036dc2623f19cc8402"
+ }
+}
