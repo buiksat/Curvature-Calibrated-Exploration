@@ -97,6 +97,7 @@ def primary_seed(npz: Path, meta: dict) -> dict:
     row["regret"] = float(np.sum(mu.max(axis=1) - mu[np.arange(T), action]))
     row["cap_paper"] = 2.0 * T * min(1.0, math.sqrt(model.width))
     row["cap_feasible_range"] = T * span
+    row["feasible_span"] = span
     row["width_ratio_T"] = float(z["s"][-1, 0] / z["sbar"][-1, 0])
     row["width_ratio_min"] = float(np.min(z["s"] / z["sbar"]))
     row["d_th_T"] = float(z["d_th"][-1])
@@ -109,8 +110,8 @@ def primary_seed(npz: Path, meta: dict) -> dict:
     row["argmax_agree_all"] = bool(z["argmax_agree"].all())
     row["envelope_valid_current"] = bool(np.all(z["b_sharp"] + 1e-15 >= z["remainder_current"]))
     row["replay_rel_max"] = float(max(z["vcur_suff_rel"].max(), z["vbar_dense_rel"].max()))
-    row["thompson_check_rel_max"] = max(abs(a - b) / max(abs(b), 1e-300) if b else abs(a)
-                                        for _, a, b in meta["thompson_scipy_checks"])
+    # Same tolerance as the unit test: |ours - scipy| <= 1e-12 + 1e-9 |scipy| (d_Th is ~1e-14 during the block).
+    row["thompson_check_excess"] = max(abs(a - b) - (1e-12 + 1e-9 * abs(b)) for _, a, b in meta["thompson_scipy_checks"])
     row["stored_query_error"] = meta["max_stored_query_recompute_error"]
     row["theta_in_region"] = bool(np.all(np.abs(z["theta"]) <= model.radius))
     row["runtime_seconds"] = meta["runtime_seconds"]
@@ -125,7 +126,7 @@ def _summary_stats(values) -> dict:
             "mean": float(v.mean())}
 
 
-def primary(run_dir: Path, out: Path, expected: str | None) -> dict:
+def primary(run_dir: Path, out: Path, expected: str | None, expected_seeds: int | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     provenance = _protocol_check(run_dir, expected)
     rows, crashes = [], sorted(p.name for p in run_dir.glob("seed_*.crash.json"))
@@ -140,6 +141,7 @@ def primary(run_dir: Path, out: Path, expected: str | None) -> dict:
     n = n_ok + n_crash
     level = ALPHA / 3.0
     summary = {"run_dir": str(run_dir), **provenance, "seeds_completed": n_ok, "seeds_crashed": n_crash,
+               "expected_seeds": expected_seeds,
                "crash_files": crashes, "delta": DELTA, "alpha": ALPHA, "bonferroni_level_each": level, "tau": TAU,
                "nonfinite_seeds": [r["seed"] for r in rows if not r["finite"]]}
     # Crashed or nonfinite seeds: never a naive failure; always a control failure.
@@ -173,7 +175,7 @@ def primary(run_dir: Path, out: Path, expected: str | None) -> dict:
         summary[env] = block
     for key in ("regret", "cap_paper", "cap_feasible_range", "width_ratio_T", "width_ratio_min", "d_th_T",
                 "endpoint_factor_T", "center_error_T_max", "theta_new", "runtime_seconds", "replay_rel_max",
-                "thompson_check_rel_max", "stored_query_error"):
+                "thompson_check_excess", "stored_query_error"):
         summary[key] = _summary_stats(r[key] for r in good)
     summary["checks"] = {
         "argmax_agree_all_seeds": all(r["argmax_agree_all"] for r in good),
@@ -181,7 +183,7 @@ def primary(run_dir: Path, out: Path, expected: str | None) -> dict:
         "theta_in_region_all_seeds": all(r["theta_in_region"] for r in good),
         "projection_occurred_seeds": sum(r["projected"] for r in good),
         "replay_rel_max_below_1e-10": all(r["replay_rel_max"] < 1e-10 for r in good),
-        "thompson_check_rel_max_below_1e-9": all(r["thompson_check_rel_max"] < 1e-9 for r in good),
+        "thompson_check_within_tolerance": all(r["thompson_check_excess"] <= 0.0 for r in good),
         "stored_query_error_zero": all(r["stored_query_error"] == 0.0 for r in good)}
     summary["classification"] = classify(summary)
     (out / "primary_summary.json").write_text(json.dumps(summary, indent=1, sort_keys=True) + "\n")
@@ -191,7 +193,8 @@ def primary(run_dir: Path, out: Path, expected: str | None) -> dict:
 
 def classify(s: dict) -> str:
     sharp, checks = s["sharp"], s["checks"]
-    ok = (s["seeds_crashed"] == 0 and not s["nonfinite_seeds"] and all(v for k, v in checks.items()
+    ok = (s["seeds_crashed"] == 0 and not s["nonfinite_seeds"]
+          and (s["expected_seeds"] is None or s["seeds_completed"] == s["expected_seeds"]) and all(v for k, v in checks.items()
           if k != "projection_occurred_seeds") and sharp["endpoint_dominance_violations"] == 0)
     if not ok:
         return "invalid or incomplete experiment"
@@ -398,13 +401,17 @@ def main() -> None:
     p.add_argument("run_dir", type=Path)
     p.add_argument("--out", type=Path)
     p.add_argument("--expected-protocol-sha256")
+    p.add_argument("--expected-seeds", type=int)
     args = p.parse_args()
     if args.command == "select-width":
         print(json.dumps(select_width(args.run_dir), indent=1))
         return
     if args.out is None:
         p.error("--out is required")
-    result = (primary if args.command == "primary" else secondary)(args.run_dir, args.out, args.expected_protocol_sha256)
+    if args.command == "primary":
+        result = primary(args.run_dir, args.out, args.expected_protocol_sha256, args.expected_seeds)
+    else:
+        result = secondary(args.run_dir, args.out, args.expected_protocol_sha256)
     print(json.dumps(result.get("classification", result.get("by_width")), indent=1, default=str)[:4000])
 
 
