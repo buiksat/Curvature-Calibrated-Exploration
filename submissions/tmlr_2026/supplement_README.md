@@ -37,7 +37,10 @@ and chart regeneration. It does not contain the raw trajectory archive.
   coverage runs and `secondary_summary.json` for the policy runs.
   `experiments/relin_coverage.py`, `experiments/relin_policy.py` and
   `experiments/analyze_relin_coverage.py` contain its implementation and
-  analysis. Their docstrings cite a protocol document that is not included.
+  analysis. The example's protocol, run manifests, seed lists and per-seed
+  records are not included, so these files support checking its stated values,
+  not a canonical rerun; the runners' required `--protocol` argument names that
+  missing document.
 - `results/derived/transport_instantiation/` contains the earlier controlled
   audit's aggregate, optimizer selection, provenance records and checksums.
 - `paper/` contains the active manuscript sources and generated artifacts.

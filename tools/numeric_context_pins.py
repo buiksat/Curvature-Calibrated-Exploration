@@ -1373,7 +1373,7 @@ FILE_PINS: dict[str, str] = {
     'README.md':
         '27d3ebdcbb6837d77545890cee27ec7a87442c415987e9a4f6723279176ecb47',
     'paper/availability.tex':
-        '31ffb125f4256b024c38a4539ea83f8fddc397880c938bf15f715f82bc69c7c5',
+        '47bdb731e1a48327058275fb8b58b962524799254d25b204d4fa9fb15b3af96f',
     'paper/body_conclusion.tex':
         '18c9c7824d1bf9b76fad6b2f51b940c73ca3ebad553455a126df8c9b962bbeb0',
     'paper/body_intro.tex':
@@ -1415,5 +1415,5 @@ FILE_PINS: dict[str, str] = {
     'submissions/tmlr_2026/main.tex':
         'e01d34bef713e071582c4a1a173b6878334b54afbaa93feb9c5a0c4a3ae2838e',
     'submissions/tmlr_2026/supplement_README.md':
-        '748d26cb99a49c87d579085063c95562e4e8a74c27decda0de9db18dea75b341',
+        'bece24516c1784e8850372f86a480e239aea3d0789c20863b912dabf74f2aceb',
 }

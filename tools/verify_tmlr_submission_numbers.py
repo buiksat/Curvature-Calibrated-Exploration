@@ -1180,7 +1180,7 @@ def relin_ledger() -> list[Entry]:
     sharp = lambda s: s["sharp"]
     tau = lambda s: s["sharp"][f"tau{s['tau']:g}"]
     add("$\\delta=0.05$", "0.05", RELIN_PRIMARY, "delta",
-        lambda s: s["delta"], "confidence level", seeds)
+        lambda s: s["delta"], "confidence failure target", seeds)
     add("$n=8192$", "8192", RELIN_PRIMARY,
         "sharp.naive.first_failure_round (constant across seeds) - 1",
         lambda s: one(sharp(s)["naive"]["first_failure_round"]) - 1, "rounds", seeds)

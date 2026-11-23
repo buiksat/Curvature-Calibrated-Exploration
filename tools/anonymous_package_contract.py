@@ -164,10 +164,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
                      'role': 'vendored-package',
                      'sha256': '7fe47ed7f8222c56452bd73bf0682e72023ece06d59207653a02e080a341118d',
                      'ships_in': 'source'},
- 'availability.tex': {'bytes': 1009,
+ 'availability.tex': {'bytes': 1136,
                       'repository': 'paper/availability.tex',
                       'role': 'manuscript-source',
-                      'sha256': 'dc7de1fd89d40bcec3f5725b389098fa39afcd6fae2e444cf5222027cc83417a',
+                      'sha256': 'ce32dd930beb7acc65e0578936bcacb5d2abbb045c846219d382ffc0ff0b0492',
                       'ships_in': 'supplement'},
  'body_conclusion.tex': {'bytes': 1638,
                          'repository': 'paper/body_conclusion.tex',
@@ -573,11 +573,11 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- 'tools/numeric_context_pins.py': '2a57d1dd1ca29e63a7b19c7dcab97faa26fc321e4efcf8604cfa0ffe457ebadd',
+ 'tools/numeric_context_pins.py': '6aa6eb7e3a77700181a0d21cc481103ae359b2e84885c14b10b9fdfa868e95c5',
  'tools/prepare_tmlr_figures.py': 'f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '4bb57346cb939affb106c750e3dfe8bf8f7ceb0721ddf057fbb676a0c6b663a5'}
+ 'tools/verify_tmlr_submission_numbers.py': '294f1c2c491f6138150a46bb1526d60837237dcd247f1143e5433caa59d7b8af'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({
