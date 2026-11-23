@@ -8,7 +8,7 @@
 | `experiments/relin_policy.py` | secondary study: own-history policies on the `transport_v3` environment |
 | `experiments/analyze_relin_coverage.py` | analysis from saved run records only |
 | `experiments/plot_relin_coverage.py` | figures from the analysis CSV/JSON (matplotlib venv) |
-| `experiments/tests/test_relin_coverage.py` | 16 verification tests |
+| `experiments/tests/test_relin_coverage.py` | 22 verification tests |
 | `review/relinearization_coverage/DEVELOPMENT_PLAN.md` | written before development runs |
 | `review/relinearization_coverage/PROTOCOL.md`, `PROTOCOL.sha256` | frozen before evaluation |
 | `review/relinearization_coverage/report/development.md` | every development candidate and result |
@@ -28,6 +28,12 @@ one `.json` of run metadata per seed (primary) or per policy-seed (secondary),
 plus `manifest_*.json` with argv, commit, dirty flag, source SHA-256 and, for
 evaluation, the protocol SHA-256. `RUNS/archives/*.tar` packs each directory;
 their SHA-256 are in `results/archive_SHA256SUMS`.
+
+Re-running a runner into an existing directory resumes: it skips seeds with a
+complete record written with the same configuration and refuses partial or
+mismatched records and manifests. The analysis checks every record against
+the directory's manifests and counts planned seeds without a complete record
+as missing.
 
 Roundwise records sufficient to recompute every reported coverage and width
 number:
@@ -69,8 +75,8 @@ $PY -B -m experiments.relin_policy --phase evaluation --seeds 51100-51163 --widt
 # analysis and figures
 SHA=$(cut -d' ' -f1 review/relinearization_coverage/PROTOCOL.sha256)
 $PY -B -m experiments.analyze_relin_coverage primary RUNS/primary_eval --out OUT --expected-seeds 256 \
-  --expected-protocol-sha256 $SHA
-$PY -B -m experiments.analyze_relin_coverage secondary RUNS/secondary_eval --out OUT \
+  --seeds 50100-50355 --expected-protocol-sha256 $SHA
+$PY -B -m experiments.analyze_relin_coverage secondary RUNS/secondary_eval --out OUT --seeds 51100-51163 \
   --expected-protocol-sha256 $SHA
 ~/.cce-fig-venv/bin/python experiments/plot_relin_coverage.py OUT
 ```

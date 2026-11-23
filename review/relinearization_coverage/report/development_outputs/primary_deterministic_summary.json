@@ -48,7 +48,9 @@
   "min": 1.16871584187271,
   "n": 1
  },
+ "expected_seeds": null,
  "manifest_protocol_sha256": [],
+ "missing_seeds": [],
  "nonfinite_seeds": [],
  "original": {
   "endpoint": {
@@ -223,6 +225,7 @@
  },
  "seeds_completed": 1,
  "seeds_crashed": 0,
+ "seeds_planned": 1,
  "sharp": {
   "endpoint": {
    "ambiguous_cases_total": 0,

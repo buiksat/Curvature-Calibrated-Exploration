@@ -138,7 +138,7 @@ def _job(args):
     except Exception:
         tb = traceback.format_exc()
         Path(f"{stem}.crash.json").write_text(json.dumps({"method": method, "seed": seed, "spec": asdict(spec),
-                                                          "crashed": True, "traceback": tb}) + "\n")
+                                                          "phase": phase, "crashed": True, "traceback": tb}) + "\n")
         return stem.name, tb
 
 
@@ -162,14 +162,14 @@ def main() -> None:
     manifest = {"argv": {k: str(v) for k, v in vars(args).items()}, **rc.provenance(root, files)}
     if args.protocol:
         manifest["protocol_sha256"] = hashlib.sha256(args.protocol.read_bytes()).hexdigest()
-    (args.output / f"manifest_{int(time.time())}.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
+    rc.write_manifest(args.output, manifest)
     jobs = []
     for W in args.widths:
         spec = PolicySpec(width=W, horizon=args.horizon)
         for seed in rc.parse_seeds(args.seeds):
             for m in args.methods:
                 stem = args.output / f"W{W:g}_{m}_{seed}"
-                if not any(Path(f"{stem}{x}").exists() for x in (".json", ".crash.json")):
+                if not rc.resume_done(stem, {"method": m, "seed": seed, "spec": asdict(spec), "phase": args.phase}):
                     jobs.append((m, seed, spec, args.output, args.phase))
     start = time.perf_counter()
     with Pool(args.workers) as pool:

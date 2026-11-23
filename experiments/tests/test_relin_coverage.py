@@ -1,17 +1,21 @@
 from __future__ import annotations
 
+import json
 import math
+from dataclasses import asdict
 
 import numpy as np
 import pytest
 from scipy.optimize import minimize_scalar
 
+from experiments import analyze_relin_coverage as ac
 from experiments import relin_coverage as rc
 from experiments import relin_policy as rp
 from experiments import transport_instantiation as ti
 from experiments import transport_v3 as v3
 
 SMALL = rc.ModelClass(block=256)
+TINY = rc.ModelClass(block=64)
 LEARNER_KEYS = ("theta", "center", "sbar", "s", "d_th", "beta_sharp", "beta_original", "b_sharp", "b_original", "action")
 
 
@@ -189,3 +193,106 @@ def test_policy_runner_records_and_replay_checks():
     assert np.all(np.exp(rec["d_th"] / 2)[:, None] * rec["s"] >= rec["sbar"] * (1 - 1e-12))
     feats = v3.FEATURES[rec["context"].astype(int)]
     assert np.all(rec["b"] >= 0.0) and feats.shape == (120, 3, 6)
+
+
+# ---------------------------------------------------------------- analysis failure paths
+
+
+def _primary_dir(out, seeds: str):
+    out.mkdir()
+    argv = {"phase": "development", "seeds": seeds, "teacher": "-1.0", "block": str(TINY.block),
+            "width": str(TINY.width), "output": str(out), "workers": "1", "protocol": "None"}
+    rc.write_manifest(out, {"argv": argv, "model": asdict(TINY), "source_sha256": {}})
+    for s in rc.parse_seeds(seeds):
+        rc.write_seed(rc.run_seed(s, TINY, -1.0), out, "development")
+    return out
+
+
+def _poison(npz, key: str) -> None:
+    with np.load(npz) as f:
+        z = {k: f[k] for k in f.files}
+    z[key] = z[key].astype(float)
+    z[key].flat[0] = np.nan
+    np.savez_compressed(npz, **z)
+
+
+@pytest.mark.parametrize("key", ["mu_star", "beta_original", "b_original"])
+def test_analysis_counts_nonfinite_primary_records_against_the_controls(tmp_path, key):
+    run = _primary_dir(tmp_path / "run", "52000")
+    _poison(run / "seed_52000.npz", key)
+    s = ac.primary(run, tmp_path / "out", None)
+    assert s["nonfinite_seeds"] == [52000] and s["classification"] == "invalid or incomplete experiment"
+    for env in rc.ENVELOPES:
+        for tau in ac.TAU_GRID:
+            b = s[env][f"tau{tau:g}"]
+            assert (b["n"], b["naive_failures"], b["frozen_failures"], b["endpoint_failures"]) == (1, 0, 1, 1)
+    assert "nonfinite 1" in (tmp_path / "out" / "primary_tables.md").read_text()
+
+
+def test_analysis_binds_primary_records_to_the_manifest_plan(tmp_path):
+    run = _primary_dir(tmp_path / "run", "52001-52003")
+    (run / "seed_52002.npz").unlink()  # record without its arrays
+    (run / "seed_52003.npz").unlink()
+    (run / "seed_52003.json").unlink()
+    (run / "seed_52003.crash.json").write_text(json.dumps(
+        {"seed": 52003, "model": asdict(TINY), "teacher": -1.0, "phase": "development", "crashed": True}))
+    s = ac.primary(run, tmp_path / "out", None)
+    assert (s["seeds_planned"], s["seeds_completed"], s["seeds_crashed"], s["missing_seeds"]) == (3, 1, 1, [52002])
+    assert s["classification"] == "invalid or incomplete experiment"
+    good = ac.primary_seed(run / "seed_52001.npz", json.loads((run / "seed_52001.json").read_text()))
+    b = s["sharp"]["tau1e-09"]
+    assert b["n"] == 3 and b["naive_failures"] == int(good["sharp_naive_fail_tau1e-09"])
+    assert b["frozen_failures"] == 2 + int(good["sharp_frozen_fail_conservative_tau1e-09"])
+    with pytest.raises(SystemExit):  # the manifests plan three seeds, not one
+        ac.primary(run, tmp_path / "out", None, seeds=[52001])
+    meta = json.loads((run / "seed_52001.json").read_text())
+    (run / "seed_52001.json").write_text(json.dumps(meta | {"model": asdict(rc.ModelClass(block=64, width=1.0))}))
+    with pytest.raises(SystemExit):  # record written with another configuration
+        ac.primary(run, tmp_path / "out", None)
+
+
+def test_analysis_counts_invalid_secondary_runs_as_own_coverage_failures(tmp_path):
+    run, spec = tmp_path / "run", rp.PolicySpec(width=10.0, horizon=60)
+    run.mkdir()
+    argv = {"phase": "development", "seeds": "52010-52011", "widths": "[10.0]", "horizon": "60",
+            "methods": str(list(rp.METHODS)), "output": str(run), "workers": "1", "protocol": "None"}
+    rc.write_manifest(run, {"argv": argv, "source_sha256": {}})
+    for seed in (52010, 52011):
+        for m in rp.METHODS:
+            assert rp._job((m, seed, spec, run, "development"))[1] is None
+    full = ac.secondary(run, tmp_path / "full", None)
+    assert full["complete"] and all(c["own_coverage_failures"] == 0 for c in full["by_width"]["10"]["methods"].values())
+    _poison(run / "W10_frozen_reference_52010.npz", "center")
+    (run / "W10_naive_current_52011.npz").unlink()
+    s = ac.secondary(run, tmp_path / "out", None)
+    assert not s["complete"] and s["runs_planned"] == 6
+    assert s["nonfinite_runs"] == ["W10_frozen_reference_52010"] and s["missing_runs"] == ["W10_naive_current_52011"]
+    methods = s["by_width"]["10"]["methods"]
+    assert [(methods[m]["n"], methods[m]["own_coverage_failures"]) for m in rp.METHODS] == [(2, 1), (2, 1), (2, 0)]
+    assert "naive_current" not in s["by_width"]["10"]["paired_minus_frozen"]  # no seed has both valid runs
+    assert "incomplete" in (tmp_path / "out" / "secondary_tables.md").read_text()
+    with pytest.raises(SystemExit):
+        ac.secondary(run, tmp_path / "out", None, seeds=[52010, 52011, 52012])
+
+
+def test_runner_resume_refuses_partial_or_mismatched_records(tmp_path):
+    want = {"seed": 7, "model": asdict(TINY), "teacher": -1.0, "phase": "development"}
+    stem = tmp_path / "seed_7"
+    assert rc.resume_done(stem, want) is False
+    (tmp_path / "seed_7.json").write_text(json.dumps(want))
+    with pytest.raises(SystemExit):  # json without its npz
+        rc.resume_done(stem, want)
+    np.savez_compressed(tmp_path / "seed_7.npz", x=np.zeros(1))
+    assert rc.resume_done(stem, want) is True
+    with pytest.raises(SystemExit):
+        rc.resume_done(stem, want | {"teacher": -0.5})
+    crash = tmp_path / "seed_8"
+    (tmp_path / "seed_8.crash.json").write_text(json.dumps(want | {"seed": 8, "crashed": True}))
+    assert rc.resume_done(crash, want | {"seed": 8}) is True
+    manifest = {"argv": {"phase": "development", "seeds": "7", "workers": "1"}, "model": asdict(TINY),
+                "source_sha256": {"experiments/relin_coverage.py": "a"}}
+    rc.write_manifest(tmp_path, manifest)
+    rc.write_manifest(tmp_path, manifest | {"argv": manifest["argv"] | {"seeds": "8", "workers": "4"}})
+    assert len(list(tmp_path.glob("manifest_*.json"))) == 2  # a resumed run adds a manifest, never overwrites one
+    with pytest.raises(SystemExit):
+        rc.write_manifest(tmp_path, manifest | {"source_sha256": {"experiments/relin_coverage.py": "b"}})

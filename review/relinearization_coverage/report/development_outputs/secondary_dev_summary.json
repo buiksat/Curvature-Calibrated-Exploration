@@ -625,8 +625,12 @@
    }
   }
  },
+ "complete": true,
  "crashes": [],
  "manifest_protocol_sha256": [],
+ "missing_runs": [],
+ "nonfinite_runs": [],
  "run_dir": "RUNS/secondary_dev",
- "runs": 144
+ "runs": 144,
+ "runs_planned": 144
 }

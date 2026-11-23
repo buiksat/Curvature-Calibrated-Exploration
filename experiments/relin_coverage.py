@@ -248,7 +248,9 @@ def _job(args):
         return seed, None
     except Exception:
         tb = traceback.format_exc()
-        (out / f"seed_{seed}.crash.json").write_text(json.dumps({"seed": seed, "crashed": True, "traceback": tb}) + "\n")
+        (out / f"seed_{seed}.crash.json").write_text(json.dumps(
+            {"seed": seed, "model": asdict(model), "teacher": teacher, "phase": phase, "crashed": True,
+             "traceback": tb}) + "\n")
         return seed, tb
 
 
@@ -265,6 +267,36 @@ def provenance(root: Path, files: tuple[str, ...]) -> dict:
     return {"commit": git("rev-parse", "HEAD"), "dirty": bool(git("status", "--porcelain", "--", "experiments")),
             "source_sha256": {f: hashlib.sha256((root / f).read_bytes()).hexdigest() for f in files},
             "numpy": np.__version__}
+
+
+def manifest_key(manifest: dict) -> tuple:
+    """Fields that every manifest in one run directory must share (seeds, workers and paths may differ)."""
+    argv = {k: v for k, v in manifest["argv"].items() if k not in ("seeds", "workers", "output", "protocol")}
+    return argv, manifest.get("model"), manifest["source_sha256"], manifest.get("protocol_sha256")
+
+
+def write_manifest(output: Path, manifest: dict) -> None:
+    """Refuse to resume into a directory written with another configuration, source or protocol."""
+    for path in sorted(output.glob("manifest_*.json")):
+        if manifest_key(json.loads(path.read_text())) != manifest_key(manifest):
+            raise SystemExit(f"{path} records a different configuration, source or protocol; use a new output directory")
+    (output / f"manifest_{time.time_ns()}.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
+
+
+def resume_done(stem: Path, expected: dict) -> bool:
+    """True if this run already has a complete record written with `expected`; refuse partial or mismatched ones."""
+    for suffix, companion in ((".json", ".npz"), (".crash.json", None)):
+        path = Path(f"{stem}{suffix}")
+        if not path.exists():
+            continue
+        if companion and not Path(f"{stem}{companion}").exists():
+            raise SystemExit(f"{path} has no {companion}; remove it and rerun")
+        recorded = json.loads(path.read_text())
+        diff = {k: (recorded.get(k), v) for k, v in expected.items() if recorded.get(k) != v}
+        if diff:
+            raise SystemExit(f"{path} was written with a different configuration (recorded, current): {diff}")
+        return True
+    return False
 
 
 def main() -> None:
@@ -287,9 +319,10 @@ def main() -> None:
                 **provenance(root, ("experiments/relin_coverage.py", "experiments/transport_instantiation.py"))}
     if args.protocol:
         manifest["protocol_sha256"] = hashlib.sha256(args.protocol.read_bytes()).hexdigest()
-    (args.output / f"manifest_{int(time.time())}.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
+    write_manifest(args.output, manifest)
     seeds = [0] if args.phase == "deterministic" else parse_seeds(args.seeds)
-    todo = [s for s in seeds if not any((args.output / f"seed_{s}{x}").exists() for x in (".json", ".crash.json"))]
+    todo = [s for s in seeds if not resume_done(args.output / f"seed_{s}", {
+        "seed": s, "model": asdict(model), "teacher": args.teacher, "phase": args.phase})]
     jobs = [(s, model, args.teacher, args.output, args.phase, args.phase == "deterministic") for s in todo]
     start = time.perf_counter()
     with Pool(args.workers) as pool:

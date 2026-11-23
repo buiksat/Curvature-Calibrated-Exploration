@@ -6,7 +6,7 @@ outputs are under `RUNS/primary_deterministic`, `RUNS/primary_dev` and
 `development_outputs/`.
 
 Configurations investigated: 4 in total (P1, S1, S2, S3), within the limit of 12.
-Development compute: about 0.05 core-hours (primary) and 0.78 core-hours (secondary).
+Development compute: about 0.012 core-hours (primary: 16 seeds at about 2.6 s each plus the deterministic run, from the saved runtimes) and 0.78 core-hours (secondary).
 
 ## Deterministic algebraic check (P1, mean rewards, sigma = 0.25 retained)
 

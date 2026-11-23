@@ -50,6 +50,7 @@
  },
  "expected_seeds": 16,
  "manifest_protocol_sha256": [],
+ "missing_seeds": [],
  "nonfinite_seeds": [],
  "original": {
   "endpoint": {
@@ -224,6 +225,7 @@
  },
  "seeds_completed": 16,
  "seeds_crashed": 0,
+ "seeds_planned": 16,
  "sharp": {
   "endpoint": {
    "ambiguous_cases_total": 0,

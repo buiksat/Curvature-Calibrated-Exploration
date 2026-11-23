@@ -11,9 +11,11 @@ r_frozen = beta sbar + b, r_naive = beta s + b, r_endpoint = beta exp(d_Th / 2) 
 from __future__ import annotations
 
 import argparse
+import ast
 import csv
 import json
 import math
+from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -47,6 +49,25 @@ def _protocol_check(run_dir: Path, expected: str | None) -> dict:
     return {"manifest_protocol_sha256": shas}
 
 
+def _run_plan(run_dir: Path, seeds: list[int] | None) -> dict:
+    """The invocation recorded by the run directory's manifests; every record is checked against it."""
+    manifests = [json.loads(p.read_text()) for p in sorted(run_dir.glob("manifest_*.json"))]
+    if not manifests:
+        raise SystemExit(f"{run_dir}: no manifest")
+    if any(rc.manifest_key(m) != rc.manifest_key(manifests[0]) for m in manifests):
+        raise SystemExit(f"{run_dir}: manifests disagree on configuration, source or protocol")
+    planned = sorted({s for m in manifests for s in rc.parse_seeds(m["argv"]["seeds"])})
+    if seeds is not None and planned != sorted(seeds):
+        raise SystemExit(f"{run_dir}: manifests plan {len(planned)} seeds {planned[0]}-{planned[-1]}, not the expected seeds")
+    return {"argv": manifests[0]["argv"], "model": manifests[0].get("model"), "seeds": planned}
+
+
+def _check_record(path: Path, recorded: dict, expected: dict) -> None:
+    diff = {k: (recorded.get(k), v) for k, v in expected.items() if recorded.get(k) != v}
+    if diff:
+        raise SystemExit(f"{path} does not match its run manifest (recorded, manifest): {diff}")
+
+
 def _write_csv(path: Path, rows: list[dict]) -> None:
     with path.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
@@ -60,7 +81,9 @@ def primary_seed(npz: Path, meta: dict) -> dict:
     T, span = model.horizon, 2.0 * float(rc.h(model.radius, model))
     mu, center, action = z["mu_star"], z["center"], z["action"]
     err = np.abs(mu - center)
-    finite = all(np.all(np.isfinite(z[k])) for k in ("center", "sbar", "s", "d_th", "beta_sharp", "b_sharp"))
+    # Every stored array except the reward, which is NaN by design at the unobserved scoring round.
+    finite = (all(np.all(np.isfinite(z[k])) for k in z.files if k != "reward")
+              and math.isfinite(meta["update"]["theta_new"]))
     row = {"seed": meta["seed"], "finite": finite, "theta_new": meta["update"]["theta_new"],
            "projected": meta["update"]["projected"]}
     opt = mu >= mu.max(axis=1, keepdims=True)
@@ -126,33 +149,41 @@ def _summary_stats(values) -> dict:
             "mean": float(v.mean())}
 
 
-def primary(run_dir: Path, out: Path, expected: str | None, expected_seeds: int | None = None) -> dict:
+def primary(run_dir: Path, out: Path, expected: str | None, expected_seeds: int | None = None,
+            seeds: list[int] | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     provenance = _protocol_check(run_dir, expected)
-    rows, crashes = [], sorted(p.name for p in run_dir.glob("seed_*.crash.json"))
+    plan = _run_plan(run_dir, seeds)
+    want = {"model": plan["model"], "teacher": float(plan["argv"]["teacher"]), "phase": plan["argv"]["phase"]}
+    rows, crashed, crashes = [], set(), sorted(p.name for p in run_dir.glob("seed_*.crash.json"))
     for meta_path in sorted(run_dir.glob("seed_*.json")):
-        if meta_path.name.endswith(".crash.json"):
-            continue
         meta = json.loads(meta_path.read_text())
-        rows.append(primary_seed(meta_path.with_suffix(".npz"), meta))
+        if meta.get("seed") not in plan["seeds"]:
+            raise SystemExit(f"{meta_path}: seed outside the manifest plan")
+        _check_record(meta_path, meta, want)
+        if meta_path.name.endswith(".crash.json"):
+            crashed.add(meta["seed"])
+        elif meta_path.with_suffix(".npz").exists():  # a record without its arrays counts as missing
+            rows.append(primary_seed(meta_path.with_suffix(".npz"), meta))
     if rows:
         _write_csv(out / "primary_seed_level.csv", rows)
-    n_ok, n_crash = len(rows), len(crashes)
-    n = n_ok + n_crash
+    crashed -= {r["seed"] for r in rows}
+    missing = sorted(set(plan["seeds"]) - {r["seed"] for r in rows} - crashed)
+    n_ok, n_crash, n = len(rows), len(crashed), len(plan["seeds"])
     level = ALPHA / 3.0
-    summary = {"run_dir": str(run_dir), **provenance, "seeds_completed": n_ok, "seeds_crashed": n_crash,
-               "expected_seeds": expected_seeds,
+    summary = {"run_dir": str(run_dir), **provenance, "seeds_planned": n, "seeds_completed": n_ok,
+               "seeds_crashed": n_crash, "missing_seeds": missing, "expected_seeds": expected_seeds,
                "crash_files": crashes, "delta": DELTA, "alpha": ALPHA, "bonferroni_level_each": level, "tau": TAU,
                "nonfinite_seeds": [r["seed"] for r in rows if not r["finite"]]}
-    # Crashed or nonfinite seeds: never a naive failure; always a control failure.
-    bad = [r for r in rows if not r["finite"]]
+    # Crashed, missing or nonfinite seeds: never a naive failure; always a control failure.
     good = [r for r in rows if r["finite"]]
+    n_bad = n - len(good)
     for env in rc.ENVELOPES:
         block = {}
         for tau in TAU_GRID:
             k_naive = sum(r[f"{env}_naive_fail_tau{tau:g}"] for r in good)
-            k_frozen = sum(r[f"{env}_frozen_fail_conservative_tau{tau:g}"] for r in good) + len(bad) + n_crash
-            k_endpoint = sum(r[f"{env}_endpoint_fail_conservative_tau{tau:g}"] for r in good) + len(bad) + n_crash
+            k_frozen = sum(r[f"{env}_frozen_fail_conservative_tau{tau:g}"] for r in good) + n_bad
+            k_endpoint = sum(r[f"{env}_endpoint_fail_conservative_tau{tau:g}"] for r in good) + n_bad
             block[f"tau{tau:g}"] = {
                 "n": n, "naive_failures": k_naive, "frozen_failures": k_frozen, "endpoint_failures": k_endpoint,
                 "L_naive": cp_lower(k_naive, n, level) if n else None,
@@ -193,7 +224,7 @@ def primary(run_dir: Path, out: Path, expected: str | None, expected_seeds: int 
 
 def classify(s: dict) -> str:
     sharp, checks = s["sharp"], s["checks"]
-    ok = (s["seeds_crashed"] == 0 and not s["nonfinite_seeds"]
+    ok = (s["seeds_crashed"] == 0 and not s["nonfinite_seeds"] and not s["missing_seeds"]
           and (s["expected_seeds"] is None or s["seeds_completed"] == s["expected_seeds"]) and all(v for k, v in checks.items()
           if k != "projection_occurred_seeds") and sharp["endpoint_dominance_violations"] == 0)
     if not ok:
@@ -209,8 +240,11 @@ def classify(s: dict) -> str:
 
 
 def primary_markdown(s: dict) -> str:
+    fmt = lambda d, key, spec=".4f": format(d[key], spec) if d.get("n") else "n/a"  # no valid seeds -> n/a
     lines = ["# Primary study: seed-level simultaneous coverage", "",
-             f"Seeds completed {s['seeds_completed']}, crashed {s['seeds_crashed']}. delta = {DELTA}; "
+             f"Seeds completed {s['seeds_completed']}, crashed {s['seeds_crashed']}"
+             + (f", missing {len(s['missing_seeds'])}, nonfinite {len(s['nonfinite_seeds'])}"
+                if s["missing_seeds"] or s["nonfinite_seeds"] else "") + f". delta = {DELTA}; "
              f"alpha = {ALPHA}, each one-sided Clopper-Pearson bound at alpha/3 = {ALPHA / 3:.6f}; tau = {TAU:g}.", "",
              f"Classification: **{s['classification']}**", ""]
     for env in rc.ENVELOPES:
@@ -227,19 +261,18 @@ def primary_markdown(s: dict) -> str:
                   "|---|---:|---:|---:|---:|---:|---:|"]
         for c in rc.CONSTRUCTIONS:
             b = s[env][c]
-            fmt = lambda d, key: f"{d[key]:.4f}" if d.get("n") else "n/a"
             lines.append(f"| {c} | {b['upper_failures']} | {b['optimal_action_upper_failures']} | "
                          f"{fmt(b['max_margin'], 'median')} | {fmt(b['halfwidth_T'], 'median')} | "
                          f"{fmt(b['length_over_span_T'], 'median')} | "
                          f"{fmt(b['length_over_span_at_first_naive_failure'], 'max')} |")
         lines += ["", f"Frozen-policy regret bounds (own trajectory): direct sum of instantaneous bounds median "
-                      f"{s[env]['frozen_bound_direct_sum']['median']:.1f}; determinant-potential bound median "
-                      f"{s[env]['frozen_bound_potential']['median']:.1f}; caps: paper {s['cap_paper']['median']:.0f}, "
-                      f"feasible range {s['cap_feasible_range']['median']:.1f}.", ""]
-    lines += [f"Realized pseudo-regret of the behavior policy: median {s['regret']['median']:.3f} "
-              f"(min {s['regret']['min']:.3f}, max {s['regret']['max']:.3f}).",
-              f"Width ratio s/sbar at T: median {s['width_ratio_T']['median']:.5f}; "
-              f"endpoint factor exp(d_Th/2) at T: median {s['endpoint_factor_T']['median']:.5f}.", "",
+                      f"{fmt(s[env]['frozen_bound_direct_sum'], 'median', '.1f')}; determinant-potential bound median "
+                      f"{fmt(s[env]['frozen_bound_potential'], 'median', '.1f')}; caps: paper {fmt(s['cap_paper'], 'median', '.0f')}, "
+                      f"feasible range {fmt(s['cap_feasible_range'], 'median', '.1f')}.", ""]
+    lines += [f"Realized pseudo-regret of the behavior policy: median {fmt(s['regret'], 'median', '.3f')} "
+              f"(min {fmt(s['regret'], 'min', '.3f')}, max {fmt(s['regret'], 'max', '.3f')}).",
+              f"Width ratio s/sbar at T: median {fmt(s['width_ratio_T'], 'median', '.5f')}; "
+              f"endpoint factor exp(d_Th/2) at T: median {fmt(s['endpoint_factor_T'], 'median', '.5f')}.", "",
               "Checks: " + ", ".join(f"{k}={v}" for k, v in s["checks"].items()), ""]
     return "\n".join(lines)
 
@@ -265,7 +298,8 @@ def secondary_run(npz: Path, meta: dict) -> dict:
     row = {"W": spec.width, "method": meta["method"], "seed": meta["seed"], "regret": meta["regret"],
            "context_free_regret": meta["context_free_regret"], "runtime_seconds": meta["runtime_seconds"],
            "replay_failures": len(meta["failures"]),
-           "finite": bool(all(np.all(np.isfinite(z[k])) for k in ("center", "sbar", "s", "b", "beta", "d_th")))}
+           "finite": bool(all(np.all(np.isfinite(z[k])) for k in z.files)
+                          and all(math.isfinite(meta[k]) for k in ("regret", "gamma_T")))}
     for c, rad in r.items():
         margin = err - rad
         row[f"{c}_coverage_fail"] = bool(np.any(margin > (TAU if c == "naive" else -TAU)))
@@ -301,34 +335,56 @@ def _bootstrap(diffs: np.ndarray, label: str) -> list[float]:
     return [float(np.quantile(means, 0.025)), float(np.quantile(means, 0.975))]
 
 
-def secondary(run_dir: Path, out: Path, expected: str | None) -> dict:
+def secondary(run_dir: Path, out: Path, expected: str | None, seeds: list[int] | None = None) -> dict:
+    from experiments import relin_policy as rp
+
     out.mkdir(parents=True, exist_ok=True)
     provenance = _protocol_check(run_dir, expected)
-    rows = []
+    plan = _run_plan(run_dir, seeds)
+    argv = plan["argv"]
+    planned = {(float(W), m, s) for W in ast.literal_eval(argv["widths"])
+               for m in ast.literal_eval(argv["methods"]) for s in plan["seeds"]}
+    rows, present = [], set()
     for meta_path in sorted(run_dir.glob("W*.json")):
+        meta = json.loads(meta_path.read_text())
+        key = (meta["spec"]["width"], meta["method"], meta["seed"])
+        if key not in planned:
+            raise SystemExit(f"{meta_path}: run outside the manifest plan")
+        _check_record(meta_path, meta, {"spec": asdict(rp.PolicySpec(width=key[0], horizon=int(argv["horizon"]))),
+                                        "phase": argv["phase"]})
         if meta_path.name.endswith(".crash.json"):
-            continue
-        rows.append(secondary_run(meta_path.with_suffix(".npz"), json.loads(meta_path.read_text())))
+            present.add(key)
+        elif meta_path.with_suffix(".npz").exists():  # a record without its arrays counts as missing
+            rows.append(secondary_run(meta_path.with_suffix(".npz"), meta))
+            present.add(key)
     crashes = sorted(p.name for p in run_dir.glob("W*.crash.json"))
     if rows:
         _write_csv(out / "secondary_run_level.csv", rows)
-    summary = {"run_dir": str(run_dir), **provenance, "runs": len(rows), "crashes": crashes, "by_width": {}}
-    for W in sorted({r["W"] for r in rows}):
+    name = lambda W, m, s: f"W{W:g}_{m}_{s}"
+    missing = sorted(name(*k) for k in planned - present)
+    nonfinite = sorted(name(r["W"], r["method"], r["seed"]) for r in rows if not r["finite"])
+    summary = {"run_dir": str(run_dir), **provenance, "runs_planned": len(planned), "runs": len(rows),
+               "crashes": crashes, "missing_runs": missing, "nonfinite_runs": nonfinite,
+               "complete": not (missing or nonfinite or crashes), "by_width": {}}
+    for W in sorted({W for W, _, _ in planned}):
         cell = {"methods": {}, "paired_minus_frozen": {}}
-        by = {m: {r["seed"]: r for r in rows if r["W"] == W and r["method"] == m} for m in SECONDARY_OWN}
+        methods = [m for m in SECONDARY_OWN if any(k[:2] == (W, m) for k in planned)]
+        by = {m: {r["seed"]: r for r in rows if r["W"] == W and r["method"] == m and r["finite"]} for m in methods}
         for m, runs in by.items():
             v = list(runs.values())
-            n = len(v)
-            k = sum(r["own_coverage_fail"] for r in v)
+            n = sum(1 for k in planned if k[:2] == (W, m))
+            # Crashed, missing or nonfinite runs count as coverage failures of their own policy.
+            k = sum(r["own_coverage_fail"] for r in v) + n - len(v)
             cell["methods"][m] = {
                 "n": n, "regret": _summary_stats(r["regret"] for r in v),
-                "regret_sd": float(np.std([r["regret"] for r in v], ddof=1)) if n > 1 else None,
+                "regret_sd": float(np.std([r["regret"] for r in v], ddof=1)) if len(v) > 1 else None,
                 "own_coverage_failures": k,
                 "own_coverage_cp95": [cp_lower(k, n, 0.025), cp_upper(k, n, 0.025)] if n else None,
                 "all_constructions_coverage_failures": {c: sum(r[f"{c}_coverage_fail"] for r in v) for c in rc.CONSTRUCTIONS},
                 "upper_failures_own": sum(r[f"{SECONDARY_OWN[m]}_upper_fail"] for r in v),
-                "width_ratio_min": min(r["width_ratio_min"] for r in v), "width_ratio_max": max(r["width_ratio_max"] for r in v),
-                "d_th_max": max(r["d_th_max"] for r in v),
+                "width_ratio_min": min((r["width_ratio_min"] for r in v), default=math.nan),
+                "width_ratio_max": max((r["width_ratio_max"] for r in v), default=math.nan),
+                "d_th_max": max((r["d_th_max"] for r in v), default=math.nan),
                 "own_length_over_span_median": _summary_stats(r["own_length_over_span_median"] for r in v),
                 "bound_potential": _summary_stats(r["bound_potential"] for r in v),
                 "bound_direct_sum": _summary_stats(r["bound_direct_sum"] for r in v),
@@ -340,10 +396,10 @@ def secondary(run_dir: Path, out: Path, expected: str | None) -> dict:
                 "runtime_seconds": _summary_stats(r["runtime_seconds"] for r in v),
                 "context_free_regret": _summary_stats(r["context_free_regret"] for r in v)}
         for m in ("naive_current", "transport_endpoint"):
-            seeds = sorted(set(by[m]) & set(by["frozen_reference"]))
-            if len(seeds) > 1:
-                d = np.asarray([by[m][s]["regret"] - by["frozen_reference"][s]["regret"] for s in seeds])
-                cell["paired_minus_frozen"][m] = {"n": len(seeds), "mean": float(d.mean()), "sd": float(d.std(ddof=1)),
+            common = sorted(set(by.get(m, ())) & set(by.get("frozen_reference", ())))
+            if len(common) > 1:
+                d = np.asarray([by[m][s]["regret"] - by["frozen_reference"][s]["regret"] for s in common])
+                cell["paired_minus_frozen"][m] = {"n": len(common), "mean": float(d.mean()), "sd": float(d.std(ddof=1)),
                                                   "bootstrap95": _bootstrap(d, f"{W:g}/{m}")}
         summary["by_width"][f"{W:g}"] = cell
     (out / "secondary_summary.json").write_text(json.dumps(summary, indent=1, sort_keys=True) + "\n")
@@ -353,7 +409,9 @@ def secondary(run_dir: Path, out: Path, expected: str | None) -> dict:
 
 def secondary_markdown(s: dict) -> str:
     lines = ["# Secondary study: policies on their own adaptive histories", "",
-             f"Runs {s['runs']}, crashes {len(s['crashes'])}.", ""]
+             f"Runs {s['runs']}, crashes {len(s['crashes'])}"
+             + ("" if s["complete"] else f", missing {len(s['missing_runs'])}, nonfinite {len(s['nonfinite_runs'])}; "
+                "incomplete") + ".", ""]
     for W, cell in s["by_width"].items():
         lines += [f"## W = {W}", "", "| policy | n | mean regret | SD | minus frozen | 95% bootstrap | own-coverage fails "
                   "| s/sbar range | max d_Th | potential bound (median) | bound < cap |",
@@ -361,15 +419,14 @@ def secondary_markdown(s: dict) -> str:
         for m, b in cell["methods"].items():
             d = cell["paired_minus_frozen"].get(m)
             pb = b["bound_potential"]
-            lines.append(
-                f"| {m} | {b['n']} | {b['regret']['mean']:.2f} | {b['regret_sd']:.2f} | "
-                f"{d['mean']:.2f} | [{d['bootstrap95'][0]:.2f}, {d['bootstrap95'][1]:.2f}] | " if d else
-                f"| {m} | {b['n']} | {b['regret']['mean']:.2f} | {b['regret_sd']:.2f} | --- | --- | ")
-            lines[-1] += (f"{b['own_coverage_failures']}/{b['n']} | {b['width_ratio_min']:.4f}--{b['width_ratio_max']:.4f} | "
-                          f"{b['d_th_max']:.4g} | {pb['median']:.0f} | {b['bound_potential_below_paper_cap']}/{b['n']} |"
-                          if pb.get("n") else
-                          f"{b['own_coverage_failures']}/{b['n']} | {b['width_ratio_min']:.4f}--{b['width_ratio_max']:.4f} | "
-                          f"{b['d_th_max']:.4g} | uncertified | --- |")
+            num = lambda x: "n/a" if x is None else f"{x:.2f}"
+            row = f"| {m} | {b['n']} | {num(b['regret'].get('mean'))} | {num(b['regret_sd'])} | "
+            row += f"{d['mean']:.2f} | [{d['bootstrap95'][0]:.2f}, {d['bootstrap95'][1]:.2f}] | " if d else "--- | --- | "
+            row += (f"{b['own_coverage_failures']}/{b['n']} | {b['width_ratio_min']:.4f}--{b['width_ratio_max']:.4f} | "
+                    f"{b['d_th_max']:.4g} | ")
+            row += (f"{pb['median']:.0f} | {b['bound_potential_below_paper_cap']}/{b['n']} |" if pb.get("n")
+                    else "uncertified | --- |" if m == "naive_current" else "n/a | --- |")
+            lines.append(row)
         lines.append("")
     return "\n".join(lines)
 
@@ -388,7 +445,7 @@ def select_width(run_dir: Path) -> dict:
             "frozen_bound_over_cap_max": max(r["bound_potential"] / r["cap_paper"] for r in frozen) if frozen else None,
             "replay_failures": sum(r["replay_failures"] for r in all_w),
             "qualifies": bool(frozen) and all(r["bound_potential"] < r["cap_paper"] for r in frozen)
-                         and not any(r["replay_failures"] for r in all_w)
+                         and not any(r["replay_failures"] for r in all_w) and all(r["finite"] for r in all_w)
                          and not any(f"W{W:g}_" in c.name for c in crashes)}
     qualified = [float(W) for W, v in result.items() if v["qualifies"]]
     result["selected_width"] = min(qualified) if qualified else None
@@ -402,16 +459,18 @@ def main() -> None:
     p.add_argument("--out", type=Path)
     p.add_argument("--expected-protocol-sha256")
     p.add_argument("--expected-seeds", type=int)
+    p.add_argument("--seeds", help="exact planned seed range, e.g. 50100-50355; must equal the manifests' plan")
     args = p.parse_args()
     if args.command == "select-width":
         print(json.dumps(select_width(args.run_dir), indent=1))
         return
     if args.out is None:
         p.error("--out is required")
+    seeds = rc.parse_seeds(args.seeds) if args.seeds else None
     if args.command == "primary":
-        result = primary(args.run_dir, args.out, args.expected_protocol_sha256, args.expected_seeds)
+        result = primary(args.run_dir, args.out, args.expected_protocol_sha256, args.expected_seeds, seeds)
     else:
-        result = secondary(args.run_dir, args.out, args.expected_protocol_sha256)
+        result = secondary(args.run_dir, args.out, args.expected_protocol_sha256, seeds)
     print(json.dumps(result.get("classification", result.get("by_width")), indent=1, default=str)[:4000])
 
 

@@ -37,7 +37,8 @@ Limits that bound this result:
 3. The failure depends on the envelope. With the manuscript's
    envelope on the same histories, the naive half-width is 0.784 against a
    center error of at most 0.277, and no naive failure occurs in 256 seeds;
-   those intervals span 0.94 of the feasible range.
+   the naive intervals span 0.826 of the feasible range and the frozen and
+   endpoint intervals 0.938.
 4. No regret consequence. Both actions receive equal bonuses within each
    construction, so all three scores select the same action at every round of
    every seed. Every naive failure is at the post-update round 8193; the
@@ -83,6 +84,9 @@ the step lands exactly on theta = 0.
 | Check | Command or source | Result |
 |---|---|---|
 | Unit tests (16) on the frozen snapshot | `pytest experiments/tests/test_relin_coverage.py` | 16 passed, exit 0 |
+| Unit tests (22) after the review fixes | same | 22 passed, exit 0 |
+| Analysis failure paths: NaN in `mu_star`, `beta_original` or `b_original`; record without its arrays; crash record; record or seed plan that disagrees with the manifest; secondary NaN and missing runs; resume refusal | test (6 cases, added after the review) | pass; the five analysis cases fail against the pre-fix analysis |
+| Analysis re-run with the fixed code on all five saved run directories | analysis CLI | evaluation CSVs and tables byte-identical; summaries gain only completeness fields; no value changed |
 | Envelope vs independent numerical supremum (dense grid plus bounded refinement), 160 random (W, A, x), W in {0.25, 1, 6.25, 100} | test | formula never below numerical sup by more than 1e-12 and never above it by more than 1e-9 |
 | Envelope never exceeds the manuscript's envelope; zero for phi = 0; rejects parameters outside the region | test | pass |
 | Gradient step vs central finite difference of the stated loss and vs the closed form | test | relative error below 1e-7 (finite difference) and 1e-12 (closed form) |
@@ -172,8 +176,8 @@ Figure: `results/secondary_paired_W100.pdf`.
 ## Compute
 
 Primary evaluation 256 seeds in 169 s wall on 4 workers (2.58 s per seed on
-average, 0.18 core-hours). Secondary evaluation 192 runs in 984 s wall on 4 workers (20.3 s per run on average, 1.08 core-hours). Development used about 0.05
-(primary) and 0.78 (secondary) core-hours. Total about 2.1 core-hours,
+average, 0.18 core-hours). Secondary evaluation 192 runs in 984 s wall on 4 workers (20.3 s per run on average, 1.08 core-hours). Development used about 0.01
+(primary) and 0.78 (secondary) core-hours. Total about 2.05 core-hours,
 within the 8 core-hour budget.
 
 ## Still unsupported
@@ -204,8 +208,8 @@ tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
 
 1. `analyze_relin_coverage.py` now writes CSVs with LF line endings instead
    of the `csv` module's CRLF default, which the repository's
-   `git diff --check` guard rejected. This is the only code change between
-   `14dd6958` and the final commit. Re-running the analysis left both
+   `git diff --check` guard rejected. This was the only code change before
+   the independent review (item 4). Re-running the analysis left both
    summary JSON files and all archives byte-identical; the CSVs differ only
    in line endings.
 2. `submissions/tmlr_2026/REVISION_VALIDATION.md`: "Repository suite
@@ -213,3 +217,32 @@ tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
    16 tests. That file is not part of the release package.
 3. Report text edits. No run, seed, configuration, tolerance or outcome
    definition changed.
+4. Fixes from the independent Codex review of `ca511361` (four findings):
+   - The primary analysis now treats a seed as nonfinite if any stored array
+     other than the final, intentionally unobserved reward is nonfinite.
+     Before, NaN in `mu_star` or in the original-envelope arrays made every
+     comparison false and so looked like coverage.
+   - The secondary analysis now counts crashed, missing and nonfinite runs as
+     coverage failures of their own policy, uses only valid runs for regret
+     and paired differences, and reports `complete`, `missing_runs` and
+     `nonfinite_runs`. Before, it computed the finite flag but did not use it,
+     and listed crashes without counting them.
+   - Both analyses now read the seed plan from the run directory's manifests,
+     require all manifests to agree on configuration, source and protocol,
+     check every record against them, count a planned seed or run with no
+     complete record as missing (control failure; classification invalid or
+     incomplete), and accept `--seeds` to assert the exact planned range.
+   - Both runners now resume only from complete records written with the
+     same seed, configuration and phase, and refuse to add a manifest that
+     disagrees with an existing one. Manifest file names use nanoseconds so
+     two runs started in the same second cannot overwrite each other's
+     manifest. This keeps the protocol's rule that no seed is rerun.
+   - The development compute figure (0.05 core-hours primary) was wrong; the
+     saved runtimes sum to 0.012. The opening limitation gave the controls'
+     original-envelope length/span (0.938) as if it applied to the naive
+     intervals (0.826).
+   These change no run, seed, configuration, tolerance, endpoint or result.
+   On every saved run directory the fixed analysis reproduces the evaluation
+   CSVs and tables byte for byte; the committed summary JSONs were
+   regenerated and differ only by the added completeness fields.
+   `REVISION_VALIDATION.md` now states 793 collected tests (6 added).
