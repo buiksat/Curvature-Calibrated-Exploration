@@ -107,11 +107,19 @@ Repository suite, fresh clone, `pytest tests experiments/tests`: on commit
 `99e16424`, 2 failed, 739 passed, 46 skipped (exit 1). The failures were the
 `git diff --check` guard (CRLF line endings in the two analysis CSVs) and the
 suite-count guard (771 stated, 787 collected). After the fixes in
-`fec20488`: 741 passed, 46 skipped (exit 0). The final commit adds only report
-text on top of `fec20488`.
+`fec20488`: 741 passed, 46 skipped (exit 0). After the review fixes, on
+`9d73db63`: 748 passed, 46 skipped (exit 0; 794 collected).
 
-Not run: an independent code review; an Overleaf compile or release rebuild
-(no manuscript, figure or packaged file changed).
+Independent review: a read-only Codex reviewer (`gpt-6.1-sol[1m]`, high
+effort) reviewed the code and every reported number on `ca511361` and found
+two robustness defects and two report errors (CHANGES_REQUIRED). It reproduced
+every evaluation CSV, table and summary value from the saved records. A second
+round on `889e89c6` found three gaps in those fixes (CHANGES_REQUIRED); a third
+round on `9d73db63` returned CLEAR. See "Changes after the protocol freeze",
+item 4.
+
+Not run: an Overleaf compile or release rebuild (no manuscript, figure or
+packaged file changed).
 
 ## Primary results (256 evaluation seeds, 50100-50355)
 
