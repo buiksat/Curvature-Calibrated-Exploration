@@ -70,17 +70,17 @@ state. No material has been uploaded or submitted.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 544,204 | n/a | n/a |
-| `source.zip` | 2,994,486 | 84 | 2,984,104 |
-| `supplement.zip` | 99,285,598 | 210 | 99,247,666 |
-| `release_manifest.json` | 115,307 | n/a | n/a |
+| `main.pdf` | 549,300 | n/a | n/a |
+| `source.zip` | 2,997,639 | 85 | 2,987,133 |
+| `supplement.zip` | 99,379,202 | 216 | 99,340,324 |
+| `release_manifest.json` | 116,526 | n/a | n/a |
 
-The supplement uses 99.3% of the 100,000,000-byte limit,
-leaving 714,402 bytes. Both ZIPs use deterministic `ZIP_STORED`
+The supplement uses 99.4% of the 100,000,000-byte limit,
+leaving 620,798 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
-The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:
-24 also present in the supplement and 50 source-only compiled inputs.
+The compiled closure has 76 entries. `source.zip` contains all 75 nongenerated compiled inputs:
+25 also present in the supplement and 50 source-only compiled inputs.
 The generated `main.bbl` is in neither archive; BibTeX recreates it from the
 required bibliography and style. `source.zip` also includes 10 required extras,
 including the standalone `BUILD.md`, bibliography, style, source and licence files.

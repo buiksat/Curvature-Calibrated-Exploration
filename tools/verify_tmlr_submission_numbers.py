@@ -1136,6 +1136,146 @@ def revision_ledger() -> list[Entry]:
     return entries
 
 
+# The realizable-trajectory example (Section 6.2), hash-pinned like the second study.
+RELIN_TEX = Path("paper/transport_realizable.tex")
+RELIN_PRIMARY = Path("review/relinearization_coverage/results/primary_summary.json")
+RELIN_SECONDARY = Path("review/relinearization_coverage/results/secondary_summary.json")
+FOLLOWUP_SOURCE_HASHES.update({
+    RELIN_PRIMARY: 'b63adee5e0086a2f132a76f67c9805d559fed9152ae10c84ed3ace85688288c6',
+    RELIN_SECONDARY: '80bb578a4a71e6e00d71d0e634159b90f894248710c4710e8ab05af2c025f60e',
+    Path('experiments/relin_coverage.py'): 'b6e16f260dbc283d47f5327be0215074f01e7a40d5a668a64d9489f781e1b1c0',
+    Path('experiments/relin_policy.py'): 'dbba75342b6bfd0e07be7e0225bc3f1fe59fd43d9a154f5d9d977d96077d431b',
+    Path('experiments/analyze_relin_coverage.py'): 'e26a5b7dbadc4c20612b42ffc2206db81ce2971c883bcf6e3e1dfdfef491f04a',
+})
+RELIN_METHODS = ("frozen_reference", "naive_current", "transport_endpoint")
+
+
+def relin_ledger() -> list[Entry]:
+    """Every measured number of the realizable-trajectory example.
+
+    The primary summary covers the 256 delayed-update coverage seeds; the
+    secondary summary covers 64 seeds per policy at W = 100.  Bounds stated as
+    "within", "at least" or "at most" return the stated bound only when the
+    value satisfies it, and NaN otherwise.  Word-form claims ("in none",
+    "include zero") are bound with display 0 the same way.
+    """
+    entries: list[Entry] = []
+    X = RELIN_TEX
+
+    def add(phrase, display, source, selector, compute, units, population):
+        entries.append(Entry(X, phrase, display, source, selector, units,
+                             "explicit selector over the example's summaries", population,
+                             lambda data, _config, f=compute: f(data)))
+
+    def one(stats):
+        """The single value of a per-seed statistic that is constant across seeds."""
+        if stats["min"] != stats["max"]:
+            raise LedgerError(f"expected a constant statistic, got {stats}")
+        return stats["min"]
+
+    def holds(ok, bound):
+        return bound if ok else math.nan
+
+    seeds = "realizable example, 256 primary evaluation seeds"
+    sharp = lambda s: s["sharp"]
+    tau = lambda s: s["sharp"][f"tau{s['tau']:g}"]
+    add("$\\delta=0.05$", "0.05", RELIN_PRIMARY, "delta",
+        lambda s: s["delta"], "confidence level", seeds)
+    add("$n=8192$", "8192", RELIN_PRIMARY,
+        "sharp.naive.first_failure_round (constant across seeds) - 1",
+        lambda s: one(sharp(s)["naive"]["first_failure_round"]) - 1, "rounds", seeds)
+    add("to within $0.004$ of zero", "0.004", RELIN_PRIMARY,
+        "0.004 if max |theta_new| over seeds < 0.004",
+        lambda s: holds(max(abs(s["theta_new"]["min"]), abs(s["theta_new"]["max"])) < 0.004, 0.004),
+        "parameter, upper bound", seeds)
+    for end in ("min", "max"):
+        add("the current width is $0.856$ of the reference width", "0.856", RELIN_PRIMARY,
+            f"width_ratio_T {end}", lambda s, e=end: s["width_ratio_T"][e], "ratio", seeds)
+    for end, display in (("min", "0.262"), ("max", "0.277")):
+        add("off by $0.262$--$0.277$", display, RELIN_PRIMARY, f"center_error_T_max {end}",
+            lambda s, e=end: s["center_error_T_max"][e], "reward units", seeds)
+    for policy, phrase, display in (("naive", "the naive half-width is $0.253$", "0.253"),
+                                    ("frozen", "the reference half-width is $0.287$", "0.287")):
+        for end in ("min", "max"):
+            add(phrase, display, RELIN_PRIMARY, f"sharp.{policy}.halfwidth_T {end}",
+                lambda s, p=policy, e=end: sharp(s)[p]["halfwidth_T"][e], "reward units", seeds)
+    add("In 256 held-out seeds", "256", RELIN_PRIMARY, "seeds_completed (all planned, none missing)",
+        lambda s: s["seeds_completed"] if s["seeds_completed"] == s["seeds_planned"]
+        and not s["missing_seeds"] and not s["nonfinite_seeds"] else math.nan, "seeds", seeds)
+    add("In 256 held-out seeds", "256", RELIN_PRIMARY, "sharp tau n",
+        lambda s: tau(s)["n"], "seeds", seeds)
+    add("in all 256 seeds", "256", RELIN_PRIMARY, "sharp tau naive_failures",
+        lambda s: tau(s)["naive_failures"], "seeds", seeds)
+    add("endpoint-transported bands in none", "0", RELIN_PRIMARY,
+        "sharp tau frozen_failures + endpoint_failures",
+        lambda s: tau(s)["frozen_failures"] + tau(s)["endpoint_failures"], "seeds", seeds)
+    add("at level $0.05/3$", "0.05", RELIN_PRIMARY, "alpha", lambda s: s["alpha"],
+        "familywise level", seeds)
+    add("at level $0.05/3$", "3", RELIN_PRIMARY, "alpha / bonferroni_level_each",
+        lambda s: s["alpha"] / s["bonferroni_level_each"], "tests", seeds)
+    add("at least $0.984$", "0.984", RELIN_PRIMARY, "0.984 if sharp tau L_naive >= 0.984",
+        lambda s: holds(tau(s)["L_naive"] >= 0.984, 0.984), "probability, lower bound", seeds)
+    for policy in ("frozen", "endpoint"):
+        add("at most $0.016$", "0.016", RELIN_PRIMARY, f"0.016 if sharp tau U_{policy} <= 0.016",
+            lambda s, p=policy: holds(tau(s)[f"U_{p}"] <= 0.016, 0.016),
+            "probability, upper bound", seeds)
+    for policy in ("frozen", "endpoint"):
+        for end in ("min", "max"):
+            add("span $0.30$ of", "0.30", RELIN_PRIMARY,
+                f"sharp.{policy}.length_over_span_T {end}",
+                lambda s, p=policy, e=end: sharp(s)[p]["length_over_span_T"][e],
+                "share of feasible range", seeds)
+    for end, display in (("min", "0.784"), ("max", "0.785")):
+        add("half-width is $0.784$--$0.785$", display, RELIN_PRIMARY,
+            f"original.naive.halfwidth_T {end}",
+            lambda s, e=end: s["original"]["naive"]["halfwidth_T"][e], "reward units", seeds)
+    add("and no seed fails", "0", RELIN_PRIMARY,
+        "original tau naive_failures + frozen_failures + endpoint_failures",
+        lambda s: sum(s["original"][f"tau{s['tau']:g}"][f"{p}_failures"]
+                      for p in ("naive", "frozen", "endpoint")), "seeds", seeds)
+    add("violates the upper bound only at the suboptimal action", "0", RELIN_PRIMARY,
+        "sharp.naive.optimal_action_upper_failures (with upper_failures = every seed)",
+        lambda s: sharp(s)["naive"]["optimal_action_upper_failures"]
+        if sharp(s)["naive"]["upper_failures"] == s["seeds_completed"] else math.nan,
+        "seeds", seeds)
+
+    cell = "realizable example, secondary W = 100, 64 seeds per policy"
+    width = lambda s: s["by_width"][_only(s["by_width"])]
+    methods = lambda s: width(s)["methods"]
+    add("$W=100$", "100", RELIN_SECONDARY,
+        "the only by_width key", lambda s: float(_only(s["by_width"])), "scale", cell)
+    for method in RELIN_METHODS:
+        add("over 64 seeds", "64", RELIN_SECONDARY, f"methods.{method}.n",
+            lambda s, m=method: methods(s)[m]["n"], "seeds", cell)
+    add("mean regrets within $0.7$ of one another", "0.7", RELIN_SECONDARY,
+        "0.7 if max - min of methods' regret.mean < 0.7",
+        lambda s: holds(max(methods(s)[m]["regret"]["mean"] for m in RELIN_METHODS)
+                        - min(methods(s)[m]["regret"]["mean"] for m in RELIN_METHODS) < 0.7, 0.7),
+        "regret units, upper bound", cell)
+    for method in ("naive_current", "transport_endpoint"):
+        add("minus frozen include zero", "0", RELIN_SECONDARY,
+            f"0 if paired_minus_frozen.{method}.bootstrap95 contains 0",
+            lambda s, m=method: holds(width(s)["paired_minus_frozen"][m]["bootstrap95"][0] < 0
+                                      < width(s)["paired_minus_frozen"][m]["bootstrap95"][1], 0.0),
+            "regret units", cell)
+    add("and no coverage failure", "0", RELIN_SECONDARY,
+        "sum over methods of own_coverage_failures and all_constructions_coverage_failures",
+        lambda s: sum(methods(s)[m]["own_coverage_failures"]
+                      + sum(methods(s)[m]["all_constructions_coverage_failures"].values())
+                      for m in RELIN_METHODS), "runs", cell)
+    add("differed by at most $0.25\\%$", "0.25", RELIN_SECONDARY,
+        "0.25 if 100 * max over methods of |width_ratio - 1| <= 0.25",
+        lambda s: holds(100 * max(max(methods(s)[m]["width_ratio_max"] - 1,
+                                      1 - methods(s)[m]["width_ratio_min"])
+                                  for m in RELIN_METHODS) <= 0.25, 0.25),
+        "percent, upper bound", cell)
+    add("the cell's frozen bound is below the cap", "0", RELIN_SECONDARY,
+        "frozen_reference n - bound_potential_below_paper_cap",
+        lambda s: methods(s)["frozen_reference"]["n"]
+        - methods(s)["frozen_reference"]["bound_potential_below_paper_cap"], "runs", cell)
+    return entries
+
+
 def v3_table_checks(root: Path) -> list[Check]:
     """Bind each Section 6.1 table cell to its row label and column.
 
@@ -2859,6 +2999,7 @@ def build_ledger(root: Path | None = None) -> list[Entry]:
         entries.extend(entry for entry in original if str(entry.manuscript) in HISTORICAL_LEDGER_SOURCES)
     entries.extend(v3_ledger())
     entries.extend(revision_ledger())
+    entries.extend(relin_ledger())
     return entries
 
 
@@ -3010,11 +3151,12 @@ SYMBOLIC_TABLE_CELLS = (
 
 _CATEGORY_REASON = {
     "protocol-constant":
-        "a prespecified setting of the second study (test or interval level, "
-        "resample count, burn-in share, tolerance coefficient, iteration cap, "
-        "candidate grid, descriptive scale, or a design constant of its "
-        "synthetic model such as the action count) fixed in the study's "
-        "protocol and its hash-pinned code; not a measurement",
+        "a prespecified setting of the second study or of the realizable-"
+        "trajectory example (test or interval level, resample count, burn-in "
+        "share, tolerance coefficient, iteration cap, candidate grid, "
+        "descriptive scale, or a design constant of its synthetic model such "
+        "as the action set, scale, radius, ridge or noise level) fixed in the "
+        "study's protocol and its hash-pinned code; not a measurement",
     "math-constant":
         "a constant, exponent, index or coefficient inside a formula or a "
         "theorem statement; not a measurement",
@@ -3205,7 +3347,12 @@ CLASSIFIED_LITERALS = {('paper/body_intro.tex', '1'): ('math-constant', 2),
  ('paper/transport_theory.tex', '4'): ('math-constant', 9),
  ('submissions/tmlr_2026/supplement_README.md', '1.15.2'): ('environment-version', 1),
  ('submissions/tmlr_2026/supplement_README.md', '2.2.3'): ('environment-version', 1),
- ('submissions/tmlr_2026/supplement_README.md', '3.12'): ('environment-version', 1)}
+ ('submissions/tmlr_2026/supplement_README.md', '3.12'): ('environment-version', 1),
+ ('paper/transport_realizable.tex', '6.25'): ('protocol-constant', 1),
+ ('paper/transport_realizable.tex', '1'): ('protocol-constant', 6),
+ ('paper/transport_realizable.tex', '0.25'): ('protocol-constant', 1),
+ ('paper/transport_realizable.tex', '2'): ('math-constant', 1),
+ ('paper/transport_realizable.tex', '95'): ('protocol-constant', 1)}
 PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_experiment.tex', '$1.20$--$1.22$ times the endpoint distance'): 1,
  ('paper/transport_experiment.tex', '$1.88\\times10^6$'): 1,
@@ -3507,7 +3654,31 @@ PHRASE_OCCURRENCES = {('paper/legacy_scope.tex', '29-parameter'): 1,
  ('paper/transport_followup_appendix.tex', 'c_\\star=(B/(1-A))^2\\approx0.709$'): 1,
  ('paper/transport_followup_appendix.tex', '$A=0.556$'): 1,
  ('paper/transport_followup_appendix.tex', '$B=0.374$'): 1,
- ('paper/transport_followup_appendix.tex', 'equals 0.93 in the design cell'): 1}
+ ('paper/transport_followup_appendix.tex', 'equals 0.93 in the design cell'): 1,
+ ('paper/transport_realizable.tex', '$\\delta=0.05$'): 1,
+ ('paper/transport_realizable.tex', '$n=8192$'): 1,
+ ('paper/transport_realizable.tex', 'In 256 held-out seeds'): 1,
+ ('paper/transport_realizable.tex', 'and no coverage failure'): 1,
+ ('paper/transport_realizable.tex', 'and no seed fails'): 1,
+ ('paper/transport_realizable.tex', '$W=100$'): 1,
+ ('paper/transport_realizable.tex', 'at least $0.984$'): 1,
+ ('paper/transport_realizable.tex', 'at level $0.05/3$'): 1,
+ ('paper/transport_realizable.tex', 'at most $0.016$'): 1,
+ ('paper/transport_realizable.tex', 'differed by at most $0.25\\%$'): 1,
+ ('paper/transport_realizable.tex', 'endpoint-transported bands in none'): 1,
+ ('paper/transport_realizable.tex', 'half-width is $0.784$--$0.785$'): 1,
+ ('paper/transport_realizable.tex', 'in all 256 seeds'): 1,
+ ('paper/transport_realizable.tex', 'mean regrets within $0.7$ of one another'): 1,
+ ('paper/transport_realizable.tex', 'minus frozen include zero'): 1,
+ ('paper/transport_realizable.tex', 'off by $0.262$--$0.277$'): 1,
+ ('paper/transport_realizable.tex', 'over 64 seeds'): 1,
+ ('paper/transport_realizable.tex', 'span $0.30$ of'): 1,
+ ('paper/transport_realizable.tex', "the cell's frozen bound is below the cap"): 1,
+ ('paper/transport_realizable.tex', 'the current width is $0.856$ of the reference width'): 1,
+ ('paper/transport_realizable.tex', 'the naive half-width is $0.253$'): 1,
+ ('paper/transport_realizable.tex', 'the reference half-width is $0.287$'): 1,
+ ('paper/transport_realizable.tex', 'to within $0.004$ of zero'): 1,
+ ('paper/transport_realizable.tex', 'violates the upper bound only at the suboptimal action'): 1}
 
 
 

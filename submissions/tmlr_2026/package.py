@@ -200,6 +200,13 @@ SUPPLEMENT_FOLLOWUP_SUPPORT = (
     "review/v3_results/tuning_runs.jsonl",
     "review/v3_protocol/dev_pilot_runs.jsonl",
     "review/v3_protocol/dev_pilot5_runs.jsonl",
+    # The realizable-trajectory example (Section 6.2); its two summaries are
+    # ledger sources through FOLLOWUP_SOURCE_HASHES.
+    "experiments/relin_coverage.py",
+    "experiments/relin_policy.py",
+    "experiments/analyze_relin_coverage.py",
+    "review/relinearization_coverage/results/primary_summary.json",
+    "review/relinearization_coverage/results/secondary_summary.json",
 )
 
 # The active transport manuscript has no standalone symbolic-rate table.

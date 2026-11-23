@@ -32,6 +32,12 @@ and chart regeneration. It does not contain the raw trajectory archive.
   policy's width factor; the included version computes only the selected
   policy's factor, with the same arithmetic, so its scores are unchanged for
   finite inputs.
+- `review/relinearization_coverage/results/` contains the summaries of the
+  realizable-trajectory example: `primary_summary.json` for the delayed-update
+  coverage runs and `secondary_summary.json` for the policy runs.
+  `experiments/relin_coverage.py`, `experiments/relin_policy.py` and
+  `experiments/analyze_relin_coverage.py` contain its implementation and
+  analysis. Their docstrings cite a protocol document that is not included.
 - `results/derived/transport_instantiation/` contains the earlier controlled
   audit's aggregate, optimizer selection, provenance records and checksums.
 - `paper/` contains the active manuscript sources and generated artifacts.

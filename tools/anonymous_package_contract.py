@@ -164,10 +164,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
                      'role': 'vendored-package',
                      'sha256': '7fe47ed7f8222c56452bd73bf0682e72023ece06d59207653a02e080a341118d',
                      'ships_in': 'source'},
- 'availability.tex': {'bytes': 917,
+ 'availability.tex': {'bytes': 1009,
                       'repository': 'paper/availability.tex',
                       'role': 'manuscript-source',
-                      'sha256': '30288cb2ca85ed7aca9ce1943638ef15bbb17a3f865d5ab82040d67b7d4e0783',
+                      'sha256': 'dc7de1fd89d40bcec3f5725b389098fa39afcd6fae2e444cf5222027cc83417a',
                       'ships_in': 'supplement'},
  'body_conclusion.tex': {'bytes': 1638,
                          'repository': 'paper/body_conclusion.tex',
@@ -499,10 +499,10 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
               'role': 'venue-template',
               'sha256': '816214ff5919aa457b6b443bee52b15d9561421417b7f8a50cc84651519f0002',
               'ships_in': 'source'},
- 'transport_followup.tex': {'bytes': 17085,
+ 'transport_followup.tex': {'bytes': 17115,
                             'repository': 'paper/transport_followup.tex',
                             'role': 'manuscript-source',
-                            'sha256': '754100a8f872efe4a3f76fa7ffadf72a6a4fa4875503e6694dfb1351eec752a5',
+                            'sha256': '2b014181b0ea5e90d393dc6fca2ba9fd951d62280a72f83ede3845b23090d280',
                             'ships_in': 'supplement'},
  'transport_followup_appendix.tex': {'bytes': 19878,
                                      'repository': 'paper/transport_followup_appendix.tex',
@@ -519,15 +519,20 @@ COMPILED_CLOSURE: dict[str, dict[str, object]] = {'algorithm.sty': {'bytes': 324
                                      'role': 'manuscript-source',
                                      'sha256': 'eb055d799905894eae419b481caae95ff49c4e023463b0f737987bfadfea3e09',
                                      'ships_in': 'supplement'},
+ 'transport_realizable.tex': {'bytes': 2863,
+                              'repository': 'paper/transport_realizable.tex',
+                              'role': 'manuscript-source',
+                              'sha256': '60f1e48cefc57babec847bbbcde0e4663fb4d21f83414d678d3bb97dd3bfd904',
+                              'ships_in': 'supplement'},
  'transport_support_appendix.tex': {'bytes': 7212,
                                     'repository': 'paper/transport_support_appendix.tex',
                                     'role': 'manuscript-source',
                                     'sha256': '12e2c41153369cbe2a20b3ae951f8996a771a1bd9bf26933d3cb822029514cb0',
                                     'ships_in': 'supplement'},
- 'transport_theory.tex': {'bytes': 37394,
+ 'transport_theory.tex': {'bytes': 37438,
                           'repository': 'paper/transport_theory.tex',
                           'role': 'manuscript-source',
-                          'sha256': '7dc657f4b6e4fa3cee945e51e9cd69c71d2a804039bd044b49dcc6e259817333',
+                          'sha256': 'beb6a47e689b96bd4eb8a6cbfc4b597ceec685d38af7ac90279e26cfe17a7b6e',
                           'ships_in': 'supplement'}}
 
 #: The shipped tools whose bytes decide whether a reviewer's verification
@@ -568,11 +573,11 @@ SHIPPED_TOOL_DIGESTS: dict[str, str] = {'review/post_full_fable/independent/symm
  'tools/make_transport_explanatory_figures.py': 'c08246a2e6327be846b89dd0de96ef8298644b6e9ce84ca35a62dcdecdaca657',
  'tools/make_transport_followup_paper.py': '153da33c998c3074e6fdabb9dc241157da5ff2bf0e9f401350699fa87a540496',
  'tools/make_transport_table_charts.py': 'a92a5cdb2877d4c54de70d7077d4d14d8d0ded7585259b826b608aa43b87cf80',
- 'tools/numeric_context_pins.py': '0ccf0091a295c2c08d65360b28122dab57ad7ba2f38ecba2dd874fca4da16133',
+ 'tools/numeric_context_pins.py': '2a57d1dd1ca29e63a7b19c7dcab97faa26fc321e4efcf8604cfa0ffe457ebadd',
  'tools/prepare_tmlr_figures.py': 'f1cb11ef2f5d862793b8e0fa726e089f06c734946fdd88e24375ae5ab5f40c1a',
  'tools/transport_artifact_expectations.py': 'f57d14db29873c2873b5630fa205f048060e9b5980b1cb22b4ae3854edd41e7c',
  'tools/verify_review_experiment_export.py': 'd9d3f6d0994ddceba279563f92dda946ba99f0c27c8aa5a6a83d1b267aa9fad0',
- 'tools/verify_tmlr_submission_numbers.py': '9819dd16532ceb83f7164603c227f8001966493d4c76c1bb0529c2ed4d6b5d4b'}
+ 'tools/verify_tmlr_submission_numbers.py': '4bb57346cb939affb106c750e3dfe8bf8f7ceb0721ddf057fbb676a0c6b663a5'}
 
 #: Every field a declaration record must carry, and nothing else may be missing.
 REQUIRED_RECORD_FIELDS = frozenset({

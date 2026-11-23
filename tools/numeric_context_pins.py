@@ -161,6 +161,7 @@ UNITS: tuple[str, ...] = (
     "Four takeaways follow. First, on a fixed history transport cannot certify a width below the reference width while it preserves the full reference band (\\Cref{prop:reference-width-floor}). It can make a current-curvature score valid, but it cannot make the certified width narrower. Second, for scaled tanh with $W\\ge cT$ the uniform endpoint factor is $1+O(1/(cT))$ (\\Cref{cor:tanh-endpoint-regime}), so the endpoint-transported bound keeps the frozen bound's form. In the experiments, Hessian-path transport had higher mean regret than the frozen-reference policy in every condition of both studies. Third, in the curved cells of the second study, removing the Taylor-error allowances lowered mean regret far more than switching among the reference, endpoint and naive current widths changed it (\\Cref{tab:transport-v3-descriptive}). Fourth, no cell of either study has both substantial curvature and a non-vacuous frozen bound. A useful next comparison needs stronger confidence information or a lower complete computational cost, including the frozen estimator, and a specific adaptive-policy hypothesis with a separately fixed protocol and fresh evaluation data.",
     'Here $\\lambda>0$ is ridge regularization and $\\sigma>0$ is the update scale (the noise scale for squared loss). For the same query, define',
     'If the observed feature vectors belong to a finite set $\\{\\phi_c\\}$, let $n_{t,c}$ be their counts, let $f_{t,c}=\\sum_{s<t:\\phi(z_s)=\\phi_c}\\omega_{\\btheta_s}(z_s)^2$, and put $g_{t,c}=n_{t,c}\\operatorname{sech}^4(\\phi_c^\\top\\btheta_t/\\sqrt W)$. The sharper category certificate is',
+    "In the six-dimensional model of \\Cref{sec:transport-v3} at $W=100$, with the same sharper envelope, the three policies run on their own histories over 64 seeds had mean regrets within $0.7$ of one another (paired 95\\% bootstrap intervals for naive and endpoint minus frozen include zero) and no coverage failure, and their current and reference widths differed by at most $0.25\\%$. With this envelope the cell's frozen bound is below the cap, but its current and reference widths nearly coincide, so it does not test the failure above.",
     'Let $\\bu=\\Calg^{-1}\\bq$. Since $s_{\\Calg}^2=\\bq^\\top\\bu=\\|\\bu\\|_{\\Calg}^2$, \\[ \\left|\\bq^\\top\\tilde\\bu-s_{\\Calg}^2\\right| =\\left|\\langle\\bu,\\tilde\\bu-\\bu\\rangle_{\\Calg}\\right| \\le\\|\\bu\\|_{\\Calg}\\|\\tilde\\bu-\\bu\\|_{\\Calg} \\le\\varepsilon s_{\\Calg}^2. \\] This proves the pointwise two-sided quadratic-form comparison. Dividing its lower side by $1-\\varepsilon$ gives upper validity for this query, while combining both sides gives the displayed sharpness factor. Applying the lower inequality actionwise on the simultaneous family event gives the all-domain upper condition; only the played query uses the upper inequality for sharpness. For PCG the argument is unchanged once the certificate is expressed in the original $\\Calg$-energy norm.',
     'Let $\\mathcal J$ be a finite or countable certificate-source index set. For $j\\in\\mathcal J$, choose an $\\cHist_t^-$-measurable failure budget $\\delta_{j,t}$ before drawing its random object. Let $\\mathcal P_{j,t}$ be the pre-reward sigma-algebra immediately before that draw. It may equal $\\cHist_t^-$ for a round-start draw or include the selected action and earlier randomness for a post-selection check. It is sufficient that \\[ \\Pr(\\mathcal E_{j,t}^c\\mid\\mathcal P_{j,t})\\le\\delta_{j,t}, \\qquad \\sum_{j\\in\\mathcal J}\\sum_{t=1}^T\\delta_{j,t} \\le\\delta_{\\rm cert}\\quad\\text{almost surely}. \\] The tower property and a union bound give simultaneous validity at least $1-\\delta_{\\rm cert}$ without independence. Countability makes the joint event measurable, the nonnegative double sum well-defined, and the union bound valid. On an uncountable score domain, the solver upper event must already be simultaneous. A pointwise certificate cannot be union-bounded after adaptive selection unless it is separately verified at the selected action with the correct conditioning. Realized terminal spectral quantities may be used for post-hoc analysis, but they cannot be inserted into an earlier action-time radius unless a predictable prefix envelope was supplied at that time.',
     'Let $c_t=\\beta_t[1+\\alpha_te^{\\bar D_t} \\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}]$. Summation and one Cauchy--Schwarz application give \\[ R_T-2\\sum_tb_t(a_t)-\\sum_t\\xi_t \\le\\sqrt{\\sum_tc_t^2}\\sqrt{\\sum_t\\bar s_t^2(a_t)}. \\] Since $\\bar s_t^2(a_t)\\le G^2/\\lambda$, the scalar inequality $x\\le(1+M)\\log(1+x)$ for $0\\le x\\le M$, with $x=\\sigma^{-2}\\bar s_t^2(a_t)$ and $M=G^2/(\\lambda\\sigma^2)$, yields',
@@ -179,10 +180,12 @@ UNITS: tuple[str, ...] = (
     'The historical deterministic term follows from $\\Phi_t^\\top\\bVbar_t^{-1}\\Phi_t\\preceq I$, with $\\Phi_t=[\\bq_1/\\sigma,\\ldots,\\bq_{t-1}/\\sigma]$; its scale is $1/\\sigma$. The corollary still needs a reference model fixed before collection, a ridge penalty centered at zero in the stated coordinates, the certified parameter region, and supplied historical and current Taylor and misspecification bounds; the region and these bounds can be large. Persistent misspecification can make the error-allowance term grow linearly in $T$ and the confidence multiplier vacuous: the bound degrades gracefully, which is not a robust misspecified-bandit guarantee.',
     'The inclusion of $1$ in the minimum and maximum accounts for the ridge. Each category ratio is a weighted average of sample ratios $r_s=\\widetilde\\omega_s^2/\\omega_s^2$, with weights $\\omega_s^2/f_{t,c}$. Therefore $\\ell^2\\le g_{t,c}/f_{t,c}\\le\\ell^{-2}$, which gives the asserted uniform bounds on $m,M$. It also shows that the category factors are no looser than the direct sample factors $\\min\\{1,\\min_{s<t}r_s\\}$ and $\\max\\{1,\\max_{s<t}r_s\\}$. For an empty history both metrics equal $\\lambda\\bI$.',
     "The locked grid contains horizons $T\\in\\{250,500,1000\\}$, 50 evaluation seeds, and target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$. Each $(T,D_{\\rm target})$ cell is a separately executed model condition because both quantities enter the rule for $W$. The target label is neither realized transport distance nor generic network width, so trends across targets are not a dose response to certificate inflation. The four policies share contexts and potential-noise tables. The primary \\emph{transport Hessian} policy uses $\\bar D_t^Q$ in the score. The \\emph{transport endpoint} policy replaces it by the dense endpoint Thompson distance computed from the learner-known matrices $\\bVbar_t$ and $\\bV_t$ before the reward is observed; it is a dense diagnostic comparator. The \\emph{frozen reference} policy uses the frozen width directly. The \\emph{naive current} policy omits transport and is intentionally uncertified. Each policy has its own selected history and representation path; the frozen-reference policy also updates its representation. ``Frozen'' refers to its collection-time metric. Ten disjoint tuning seeds selected learning rate $3\\times10^{-4}$ and 20 full-batch steps followed by projection each round by preregistered all-action prediction MSE; evaluation seeds never entered that selection. The environment was not filtered after generation. Within each $T=1000$ target cell, the 50-seed means round to optimal-action entropy $1.579$, optimality gap $0.123$, best-fixed-action regret $180.4$, and online context-free mean-only regret $185.4$. All five actions are optimal somewhere in every evaluation stream. Entropy is measured in nats; its maximum for five actions is $\\log 5\\approx1.609$, so the mean entropy is close to its uniform-action maximum. These diagnostics were reported after the grid was fixed; they were not used to select seeds.",
+    "The remark after \\Cref{prop:reference-width-floor} is an abstract band instance. A controlled scaled-tanh learner shows the same failure on a realizable trajectory. Take $\\mu_\\theta(\\phi)=h(\\phi\\theta)$ with $h(u)=\\sqrt W\\tanh(u/\\sqrt W)$, $W=6.25$, actions $\\phi\\in\\{-1,+1\\}$, $R=1$, teacher $\\theta^\\star=-R$, $\\lambda=1$, $\\sigma=0.25$ and $\\delta=0.05$. The learner holds $\\theta_t=R$ for $n=8192$ rounds of frozen-reference UCB with the corrected center of \\Cref{cor:corrected-center-new}, then takes one projected batch gradient step of the squared loss, which moves $\\theta$ to within $0.004$ of zero, and scores round $n+1$ before observing another reward. The Taylor allowances use the exact supremum of the remainder over the radius-$R$ ball, $\\max_{v\\in\\{-A,A,-x,x\\}}|h(v)-h(x)-h'(x)(v-x)|$ with $x=\\phi^\\top\\theta$ and $A=R\\|\\phi\\|_2$, which is sharper than the envelope of the two studies above. At the post-update query the current width is $0.856$ of the reference width, the corrected center is off by $0.262$--$0.277$, the naive half-width is $0.253$ and the reference half-width is $0.287$. In 256 held-out seeds, run under a protocol fixed before evaluation, the naive-current band failed simultaneous coverage in all 256 seeds and the frozen-reference and endpoint-transported bands in none (one-sided Clopper--Pearson bounds at level $0.05/3$: naive failure probability at least $0.984$, frozen and endpoint failure probabilities at most $0.016$). The covering intervals span $0.30$ of the feasible mean range $2h(R)$.",
     'The second study covers one six-dimensional model with 12 feature categories and one optimizer, selected in the design cell and not retuned per cell. Its only cell with a non-vacuous frozen bound is near-linear, so its design checks and equivalence results test the setup rather than transport under curvature.',
     "Their sum equals the sharp right-hand side in \\eqref{eq:sharp-transport-regret-new} for the experiment's $\\alpha_t=\\kappa_{-,t}=\\kappa_{+,t}=1$ and $\\xi_t=0$. The differences retain the same trajectory and the same potential factor; they do not rerun a policy with a component removed. The committed figure CSVs report the mean of each component over 50 primary-policy trajectories at each round. At $T=1000$, dividing those terminal component means by the corresponding mean sharp right-hand side gives base shares $97.33\\%,94.66\\%,89.39\\%,79.39\\%$ and path shares $2.01\\%,4.04\\%,8.16\\%,16.27\\%$ for $D_{\\rm target}=0.25,0.5,1,2$, respectively. The remaining tightness summaries appear in \\Cref{fig:transport-original-components,fig:transport-original-bound-ratios}. These joint cumulative quantities establish the decomposition; marginal medians of $e^{\\bar D_t^Q/2}$ do not determine it.",
     "This analysis asks what different scores recommend when given the same information. For each logged state, we evaluate all four original score rules using that state's matrices, centers, and radii, without changing its history. \\Cref{fig:transport-followup-same-history} includes all 12 combinations of condition and behavior policy. Each point averages one-step pseudo-regret over 50,000 dependent states; the black-ringed points equal the actual mean cumulative pseudo-regret divided by 1000. The other points are recommendations on states visited by the row policy. The analysis was specified after the full-study outcomes were observed.",
     'This appendix expands the original locked full aggregate summarized in \\Cref{sec:transport-instantiation}. The experiment protocol, configuration, selection record, aggregate, and every generated artifact carry provenance and         hashes. The figures use only the 50 evaluation seeds. Smoke and tuning results are absent. The original raw trajectories were unavailable for this revision; recorded hashes bind the retained artifacts but do not replace those missing inputs or establish an independent raw-data reproduction.',
+    'This is a constructed example: it shows that the failure can occur on a realizable trajectory, not how often it occurs under ordinary training. Three further restrictions apply. In one dimension with $\\bV_t\\succeq\\bVbar_t$, endpoint transport reproduces the reference width exactly, so the example does not distinguish the two. With the envelope of the two studies above, the naive half-width is $0.784$--$0.785$ and no seed fails. Both actions receive equal bonuses within each construction, so all three scores select the same actions; every naive failure occurs at round $n+1$ and violates the upper bound only at the suboptimal action, and the example says nothing about regret.',
     'This proves \\eqref{eq:sharp-transport-regret-new}. Finally, $\\alpha_te^{\\bar D_t}\\sqrt{\\kappa_{+,t}/\\kappa_{-,t}}\\ge1$, hence $1+x\\le2x$ gives \\eqref{eq:simple-transport-regret-new}. The probability statement follows by a union bound; independence is not required.',
     'This remains valid when $\\bar D_t\\ge1$. At $t=1$, the factor has zero rows, $Q_1=0$, and both metrics equal $\\lambda\\bI$.',
     "Three terms set the scale of the frozen bound $2\\sqrt{(\\sigma^2+G^2/\\lambda)\\gamma_T\\sum_t\\beta_t^2}+2\\sum_tb_t(a_t)$ of \\Cref{prop:frozen-width-ucb}: the exploration term with $\\beta_t$ reduced to its stochastic and ridge parts; the remainder of the exploration term, due to the historical Taylor part of $\\beta_t$; and the allowance term. On the frozen-reference policy's own histories their medians are 10,155, 26,898 and 758 at $W=16$; 10,122, 108,171 and 3,031 at $W=1$; and 10,001, 215,317 and 6,063 at $W=0.25$. The first term alone exceeds every cap: with $d=29$ and $T=1000$ the realized $\\gamma_T$ is about 151--153 (medians). The first term contains no Taylor term, and on the same queries a linear model's reference matrix dominates the scaled-tanh one because every collection weight satisfies $\\operatorname{sech}^4\\le1$. On the 150 recorded context--action sequences, an exactly linear model's frozen bound would therefore exceed its own cap $2T=2000$ as well. The historical term grows as $1/\\sqrt W$ and is the largest term at every $W$; the allowance term is about $2T$ times the mean Taylor envelope, which Appendix~\\ref{app:transport-followup} reports.",
@@ -222,7 +225,7 @@ UNITS: tuple[str, ...] = (
     '[Rectangular factor-path certificate] \\label{lem:factor-spd-path} Let $\\Bmat:[0,1]\\to\\R^{m\\times d}$ be absolutely continuous and set $\\bV(\\tau)=\\lambda\\bI+\\Bmat(\\tau)^\\top\\Bmat(\\tau)$, with $\\lambda>0$. Then',
     '[Relative weights for scaled tanh] \\label{cor:tanh-relative-weights} For the scaled-tanh model above, suppose $W>0$, $\\|\\phi(z_s)\\|_2\\le B_\\phi$, and $\\|\\btheta_s\\|_2,\\|\\btheta_t\\|_2\\le R$ for all $s<t$. Set $\\omega_\\theta(z)=\\operatorname{sech}^2(\\phi(z)^\\top\\theta/\\sqrt W)$ and $\\ell=\\operatorname{sech}^2(B_\\phi R/\\sqrt W)>0$. For',
     '[Relative-weight Lipschitz bound] \\label{lem:tanh-weight-lipschitz} For every $z$, $W>0$ and $\\theta_1,\\theta_2$, \\[ \\frac{\\omega_{\\theta_1}(z)}{\\omega_{\\theta_2}(z)} \\le\\exp\\!\\Big(\\frac{2|\\phi(z)^\\top(\\theta_1-\\theta_2)|}{\\sqrt W}\\Big). \\] If moreover $|\\phi(z)^\\top\\theta_i|\\le B_\\phi R$ for $i=1,2$, the factor $2$ can be replaced by $2\\tanh(B_\\phi R/\\sqrt W)$.',
-    '[The reference band alone does not justify a smaller width] \\label{rem:naive-width-band-counterexample} Consider an abstract confidence-band instance with $D>0$, $\\bVbar=\\bI_2$, $\\bV=\\operatorname{diag}(e^D,e^{-D})$, and $\\bq=(1,0)^\\top$. Take $m=b=0$, $\\beta>0$, and $\\mu^*=\\beta$. Then $\\bar s=1$ and $s=e^{-D/2}$, so \\[ |\\mu^*-m|=\\beta\\bar s+b,\\qquad m+\\beta s+b=\\beta e^{-D/2}<\\mu^*. \\] Reference confidence therefore holds while the naive current-width score is not an upper bound. This illustrates the limited-information statement of \\Cref{prop:reference-width-floor}; it does not construct a realizable scaled-tanh learning trajectory or establish that this certificate family was necessary in the reported runs.',
+    '[The reference band alone does not justify a smaller width] \\label{rem:naive-width-band-counterexample} Consider an abstract confidence-band instance with $D>0$, $\\bVbar=\\bI_2$, $\\bV=\\operatorname{diag}(e^D,e^{-D})$, and $\\bq=(1,0)^\\top$. Take $m=b=0$, $\\beta>0$, and $\\mu^*=\\beta$. Then $\\bar s=1$ and $s=e^{-D/2}$, so \\[ |\\mu^*-m|=\\beta\\bar s+b,\\qquad m+\\beta s+b=\\beta e^{-D/2}<\\mu^*. \\] Reference confidence therefore holds while the naive current-width score is not an upper bound. This illustrates the limited-information statement of \\Cref{prop:reference-width-floor}; it does not construct a realizable scaled-tanh learning trajectory (\\Cref{sec:transport-realizable} gives one) or establish that this certificate family was necessary in the reported runs.',
     '[Thompson distance and selected-path length] The integrand in \\eqref{eq:generic-path-length-new} is the classical Thompson Finsler norm on the positive-definite cone \\citep{thompson1963certain,nussbaum1994finsler}. Its endpoint metric is \\[ d_{\\rm Th}(A,B) :=\\inf\\{r\\ge0:e^{-r}A\\preceq B\\preceq e^rA\\}. \\] Equivalently, \\[ d_{\\rm Th}(A,B) =\\left\\|\\log(A^{-1/2}BA^{-1/2})\\right\\|_{\\rm op}. \\] Therefore \\Cref{lem:log-spd-path} gives',
     '[Uniform endpoint factor when $W\\ge cT$] \\label{cor:tanh-endpoint-regime} If $W\\ge cT$ for some $c>0$, then $\\exp(4\\log\\cosh(B_\\phi R/\\sqrt W))=\\cosh^4(B_\\phi R/\\sqrt W) \\le\\exp(2B_\\phi^2R^2/(cT))$.',
     '[x=   ,y=   , every node/.style={font=\\normalsize,inner sep=   }, cert/.style={draw=blue!55!black,line width=     ,->}, object/.style={draw=black!28,fill=black!2,rounded corners=   , minimum width=     ,minimum height=      ,align=center}] \\path[use as bounding box] (0,-6.8) rectangle (16.2,.3); \\node[anchor=west] at (0,0) {\\textbf{Before the reward: conditional certificate comparisons}};',
@@ -376,157 +379,157 @@ def _u(*cited: tuple[int, int]) -> tuple[tuple[str, int], ...]:
 PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     # paper/legacy_scope.tex
     ('paper/legacy_scope.tex', '29-parameter'):
-        (1, _u((115, 350))),
+        (1, _u((116, 350))),
     # paper/transport_experiment.tex
     ('paper/transport_experiment.tex', '$1.20$--$1.22$ times the endpoint distance'):
-        (1, _u((252, 485))),
+        (1, _u((255, 485))),
     ('paper/transport_experiment.tex', '$1.88\\times10^6$'):
-        (1, _u((252, 569))),
+        (1, _u((255, 569))),
     ('paper/transport_experiment.tex', '$126.7$--$135.0$ at $T=1000$'):
-        (1, _u((250, 195))),
+        (1, _u((253, 195))),
     ('paper/transport_experiment.tex', '$2.0\\%$--$16.3\\%$'):
-        (1, _u((117, 325))),
+        (1, _u((118, 325))),
     ('paper/transport_experiment.tex', '$2.24\\times10^6$'):
-        (1, _u((252, 839))),
+        (1, _u((255, 839))),
     ('paper/transport_experiment.tex', '$2.51\\times10^5$'):
-        (1, _u((252, 551))),
+        (1, _u((255, 551))),
     ('paper/transport_experiment.tex', '$3{,}989$--$12{,}607$'):
-        (1, _u((250, 448))),
+        (1, _u((253, 448))),
     ('paper/transport_experiment.tex', '$79.4\\%$--$97.3\\%$'):
-        (1, _u((117, 214))),
+        (1, _u((118, 214))),
     ('paper/transport_experiment.tex', '$8.74\\times10^{-6}$'):
-        (1, _u((252, 254))),
+        (1, _u((255, 254))),
     ('paper/transport_experiment.tex', '$9{,}948$--$10{,}010$'):
-        (1, _u((117, 601))),
+        (1, _u((118, 601))),
     ('paper/transport_experiment.tex', '$T=1000$'):
-        (8, _u((120, 1373), (252, 28), (252, 859), (252, 1056), (250, 215), (117, 172), (283, 22), (279, 55))),
+        (8, _u((121, 1373), (255, 28), (255, 859), (255, 1056), (253, 215), (118, 172), (286, 22), (282, 55))),
     ('paper/transport_experiment.tex', '$[92.9\\%,100\\%]$'):
-        (1, _u((298, 240))),
+        (1, _u((301, 240))),
     ('paper/transport_experiment.tex', '$\\log 5\\approx1.609$'):
-        (1, _u((120, 1690))),
+        (1, _u((121, 1690))),
     ('paper/transport_experiment.tex', '$e^{\\bar D_t^Q/2}$'):
-        (1, _u((252, 982))),
+        (1, _u((255, 982))),
     ('paper/transport_experiment.tex', '100 declared checkpoints per trajectory'):
-        (1, _u((252, 345))),
+        (1, _u((255, 345))),
     ('paper/transport_experiment.tex', '20 full-batch steps'):
-        (1, _u((120, 1165))),
+        (1, _u((121, 1165))),
     ('paper/transport_experiment.tex', '5,000\neligible seed--checkpoint ratios'):
-        (1, _u((252, 398))),
+        (1, _u((255, 398))),
     ('paper/transport_experiment.tex', '50 evaluation seeds'):
-        (2, _u((120, 58), (279, 188))),
+        (2, _u((121, 58), (282, 188))),
     ('paper/transport_experiment.tex', '50 runs per cell'):
-        (1, _u((274, 238))),
+        (1, _u((277, 238))),
     ('paper/transport_experiment.tex', '50 trajectory-level observations per cell'):
-        (1, _u((252, 295))),
+        (1, _u((255, 295))),
     ('paper/transport_experiment.tex', '50 transport-Hessian trajectories'):
-        (1, _u((117, 396))),
+        (1, _u((118, 396))),
     ('paper/transport_experiment.tex', '600 independent runs'):
-        (1, _u((298, 361))),
+        (1, _u((301, 361))),
     ('paper/transport_experiment.tex', '95\\% intervals'):
-        (1, _u((279, 159))),
+        (1, _u((282, 159))),
     ('paper/transport_experiment.tex', 'All five actions are optimal somewhere in every'):
-        (1, _u((120, 1562))),
+        (1, _u((121, 1562))),
     ('paper/transport_experiment.tex', 'Contexts have dimension $4$'):
-        (1, _u((285, 116))),
+        (1, _u((288, 116))),
     ('paper/transport_experiment.tex', 'No run has zero regret'):
-        (1, _u((250, 225))),
+        (1, _u((253, 225))),
     ('paper/transport_experiment.tex', 'Ten disjoint tuning seeds'):
-        (1, _u((120, 1095))),
+        (1, _u((121, 1095))),
     ('paper/transport_experiment.tex', '\\alpha_t=1'):
-        (1, _u((285, 428))),
+        (1, _u((288, 428))),
     ('paper/transport_experiment.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (1, _u((285, 446))),
+        (1, _u((288, 446))),
     ('paper/transport_experiment.tex', '\\xi_t=0'):
-        (1, _u((285, 481))),
+        (1, _u((288, 481))),
     ('paper/transport_experiment.tex', 'all 2400 policy\ntrajectories'):
-        (1, _u((298, 413))),
+        (1, _u((301, 413))),
     ('paper/transport_experiment.tex', 'best-fixed-action regret $180.4$'):
-        (1, _u((120, 1478))),
+        (1, _u((121, 1478))),
     ('paper/transport_experiment.tex', 'cap $2{,}000$'):
-        (1, _u((117, 642))),
+        (1, _u((118, 642))),
     ('paper/transport_experiment.tex', 'deterministic cap $2T$'):
-        (1, _u((250, 337))),
+        (1, _u((253, 337))),
     ('paper/transport_experiment.tex', 'each of the 12\nhorizon--target cells'):
-        (1, _u((298, 81))),
+        (1, _u((301, 81))),
     ('paper/transport_experiment.tex', 'exact 95\\% Clopper--Pearson interval'):
-        (1, _u((298, 200))),
+        (1, _u((301, 200))),
     ('paper/transport_experiment.tex', 'feature map has dimension $29$'):
-        (1, _u((285, 204))),
+        (1, _u((288, 204))),
     ('paper/transport_experiment.tex', 'horizons $T\\in\\{250,500,1000\\}$'):
-        (1, _u((120, 25))),
+        (1, _u((121, 25))),
     ('paper/transport_experiment.tex', 'is $126.7$--$155.7$ over the'):
-        (1, _u((250, 152))),
+        (1, _u((253, 152))),
     ('paper/transport_experiment.tex', 'is $3.07\\times10^5$'):
-        (1, _u((252, 818))),
+        (1, _u((255, 818))),
     ('paper/transport_experiment.tex', 'learning rate $3\\times10^{-4}$'):
-        (1, _u((120, 1130))),
+        (1, _u((121, 1130))),
     ('paper/transport_experiment.tex', 'mean-only regret $185.4$'):
-        (1, _u((120, 1536))),
+        (1, _u((121, 1536))),
     ('paper/transport_experiment.tex', 'no bound violation on the joint confidence event'):
-        (1, _u((298, 529))),
+        (1, _u((301, 529))),
     ('paper/transport_experiment.tex', 'no deterministic algebra or certificate-check failure'):
-        (1, _u((298, 447))),
+        (1, _u((301, 447))),
     ('paper/transport_experiment.tex', 'optimal-action\nentropy $1.579$'):
-        (1, _u((120, 1422))),
+        (1, _u((121, 1422))),
     ('paper/transport_experiment.tex', 'optimality\ngap $0.123$'):
-        (1, _u((120, 1454))),
+        (1, _u((121, 1454))),
     ('paper/transport_experiment.tex', 'paired-bootstrap 95\\%'):
-        (1, _u((279, 142))),
+        (1, _u((282, 142))),
     ('paper/transport_experiment.tex', 'pools all 50,000 seed--round values'):
-        (1, _u((252, 1015))),
+        (1, _u((255, 1015))),
     ('paper/transport_experiment.tex', 'ranges from\n$1.02$'):
-        (1, _u((252, 1074))),
+        (1, _u((255, 1074))),
     ('paper/transport_experiment.tex', 'ranges from $0.0486$'):
-        (1, _u((252, 100))),
+        (1, _u((255, 100))),
     ('paper/transport_experiment.tex', 'ranges from $1.31\\times10^{-7}$'):
-        (1, _u((252, 219))),
+        (1, _u((255, 219))),
     ('paper/transport_experiment.tex', 'rises\nfrom $81.0$'):
-        (1, _u((283, 91))),
+        (1, _u((286, 91))),
     ('paper/transport_experiment.tex', 'target labels $D_{\\rm target}\\in\\{0.25,0.5,1,2\\}$'):
-        (1, _u((120, 83))),
+        (1, _u((121, 83))),
     ('paper/transport_experiment.tex', 'the 50-seed means'):
-        (1, _u((120, 1395))),
+        (1, _u((121, 1395))),
     ('paper/transport_experiment.tex', 'the same 50 base seeds'):
-        (1, _u((298, 55))),
+        (1, _u((301, 55))),
     ('paper/transport_experiment.tex', 'there are five actions'):
-        (1, _u((285, 145))),
+        (1, _u((288, 145))),
     ('paper/transport_experiment.tex', 'to $0.384$'):
-        (1, _u((252, 121))),
+        (1, _u((255, 121))),
     ('paper/transport_experiment.tex', 'to $1.18$'):
-        (1, _u((252, 1093))),
+        (1, _u((255, 1093))),
     ('paper/transport_experiment.tex', 'to $94.0$'):
-        (1, _u((283, 109))),
+        (1, _u((286, 109))),
     ('paper/transport_experiment.tex', 'versus caps of $500$--$2{,}000$'):
-        (1, _u((250, 471))),
+        (1, _u((253, 471))),
     # paper/transport_experiment_appendix.tex
     ('paper/transport_experiment_appendix.tex', '$2.01\\%,4.04\\%,8.16\\%,16.27\\%$'):
-        (1, _u((122, 566))),
+        (1, _u((124, 566))),
     ('paper/transport_experiment_appendix.tex', '$97.33\\%,94.66\\%,89.39\\%,79.39\\%$'):
-        (1, _u((122, 516))),
+        (1, _u((124, 516))),
     ('paper/transport_experiment_appendix.tex', '$D_{\\rm target}=0.25,0.5,1,2$'):
-        (1, _u((122, 601))),
+        (1, _u((124, 601))),
     ('paper/transport_experiment_appendix.tex', '$T=1000$'):
-        (3, _u((122, 400), (276, 49), (278, 98))),
+        (3, _u((124, 400), (279, 49), (281, 98))),
     ('paper/transport_experiment_appendix.tex', '$e^{\\bar D_t^Q/2}$'):
-        (1, _u((122, 851))),
+        (1, _u((124, 851))),
     ('paper/transport_experiment_appendix.tex', '50 evaluation seeds'):
-        (2, _u((124, 267), (276, 127))),
+        (2, _u((126, 267), (279, 127))),
     ('paper/transport_experiment_appendix.tex', '50 primary-policy trajectories'):
-        (1, _u((122, 351))),
+        (1, _u((124, 351))),
     ('paper/transport_experiment_appendix.tex', '50 runs per cell'):
-        (2, _u((281, 166), (280, 76))),
+        (2, _u((284, 166), (283, 76))),
     ('paper/transport_experiment_appendix.tex', '50 transport-Hessian trajectories'):
-        (1, _u((278, 61))),
+        (1, _u((281, 61))),
     ('paper/transport_experiment_appendix.tex', '95\\% intervals'):
-        (1, _u((276, 103))),
+        (1, _u((279, 103))),
     ('paper/transport_experiment_appendix.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (1, _u((122, 115))),
+        (1, _u((124, 115))),
     ('paper/transport_experiment_appendix.tex', '\\xi_t=0'):
-        (1, _u((122, 149))),
+        (1, _u((124, 149))),
     ('paper/transport_experiment_appendix.tex', 'paired-bootstrap 95\\%'):
-        (1, _u((276, 86))),
+        (1, _u((279, 86))),
     ('paper/transport_experiment_appendix.tex', 'preregistered $10^{-12}$ ratio tolerance'):
-        (1, _u((277, 490))),
+        (1, _u((280, 490))),
     # paper/transport_followup.tex
     ('paper/transport_followup.tex', '$-$0.10'):
         (1, _u((1, 0))),
@@ -537,77 +540,77 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '$-$34.41'):
         (1, _u((4, 0))),
     ('paper/transport_followup.tex', '$0.16\\%$'):
-        (1, _u((289, 454))),
+        (1, _u((292, 454))),
     ('paper/transport_followup.tex', '$0.28\\%$'):
-        (1, _u((289, 394))),
+        (1, _u((292, 394))),
     ('paper/transport_followup.tex', '$12.13\\%$'):
-        (1, _u((289, 464))),
+        (1, _u((292, 464))),
     ('paper/transport_followup.tex', '$12.68\\%$'):
-        (1, _u((289, 404))),
+        (1, _u((292, 404))),
     ('paper/transport_followup.tex', '$T=1000$'):
-        (3, _u((262, 90), (263, 29), (127, 575))),
+        (3, _u((265, 90), (266, 29), (130, 575))),
     ('paper/transport_followup.tex', '$T=1{,}000$'):
         (1, _u((6, 0))),
     ('paper/transport_followup.tex', '$T=20{,}000$'):
-        (4, _u((7, 0), (7, 0), (256, 334), (290, 49))),
+        (4, _u((7, 0), (7, 0), (259, 334), (293, 49))),
     ('paper/transport_followup.tex', '$T=20{,}000$ over 50 seeds'):
-        (1, _u((290, 49))),
+        (1, _u((293, 49))),
     ('paper/transport_followup.tex', '$W=0.25$'):
-        (2, _u((127, 509), (253, 482))),
+        (2, _u((130, 509), (256, 482))),
     ('paper/transport_followup.tex', '$W=1$'):
-        (6, _u((127, 469), (258, 733), (254, 1040), (254, 1206), (254, 1394), (8, 0))),
+        (6, _u((130, 469), (261, 733), (257, 1040), (257, 1206), (257, 1394), (8, 0))),
     ('paper/transport_followup.tex', '$W=10$'):
         (1, _u((9, 0))),
     ('paper/transport_followup.tex', '$W=100$'):
-        (3, _u((254, 604), (254, 963), (10, 0))),
+        (3, _u((257, 604), (257, 963), (10, 0))),
     ('paper/transport_followup.tex', '$W=100$ and $10$'):
-        (1, _u((254, 963))),
+        (1, _u((257, 963))),
     ('paper/transport_followup.tex', '$W=16,1,0.25$'):
-        (3, _u((287, 446), (251, 78), (258, 538))),
+        (3, _u((290, 446), (254, 78), (261, 538))),
     ('paper/transport_followup.tex', '$W=20{,}000$'):
         (1, _u((11, 0))),
     ('paper/transport_followup.tex', '$W\\in\\{100,10,1\\}$'):
         (1, _u((12, 0))),
     ('paper/transport_followup.tex', '$W\\in\\{16,1,0.25\\}$'):
-        (2, _u((13, 0), (262, 100))),
+        (2, _u((13, 0), (265, 100))),
     ('paper/transport_followup.tex', '$[-36.6, -32.3]$'):
-        (1, _u((255, 427))),
+        (1, _u((258, 427))),
     ('paper/transport_followup.tex', '$[15.4, 18.0]$'):
-        (1, _u((255, 352))),
+        (1, _u((258, 352))),
     ('paper/transport_followup.tex', '$[92.9\\%,100\\%]$'):
-        (1, _u((253, 384))),
+        (1, _u((256, 384))),
     ('paper/transport_followup.tex', '$\\delta=0.05$'):
-        (1, _u((256, 309))),
+        (1, _u((259, 309))),
     ('paper/transport_followup.tex', '$\\sigma=0.25$; $\\lambda=1$, $\\delta=0.05$, $R=1$ and $T=20{,}000$'):
-        (1, _u((256, 281))),
+        (1, _u((259, 281))),
     ('paper/transport_followup.tex', '$d=29$'):
-        (2, _u((19, 0), (127, 564))),
+        (2, _u((19, 0), (130, 564))),
     ('paper/transport_followup.tex', '$p=5.3\\times10^{-30}$'):
-        (1, _u((255, 368))),
+        (1, _u((258, 368))),
     ('paper/transport_followup.tex', '$p=5.7\\times10^{-34}$'):
-        (1, _u((255, 445))),
+        (1, _u((258, 445))),
     ('paper/transport_followup.tex', '(frozen: 440.9, 1,004.4 and 1,902.1)'):
-        (1, _u((254, 157))),
+        (1, _u((257, 157))),
     ('paper/transport_followup.tex', '10,001, 215,317 and 6,063 at $W=0.25$'):
-        (1, _u((127, 480))),
+        (1, _u((130, 480))),
     ('paper/transport_followup.tex', '10,122, 108,171 and 3,031 at $W=1$'):
-        (1, _u((127, 440))),
+        (1, _u((130, 440))),
     ('paper/transport_followup.tex', '10,155, 26,898 and 758 at $W=16$'):
-        (1, _u((127, 406))),
+        (1, _u((130, 406))),
     ('paper/transport_followup.tex', '12.30'):
         (1, _u((26, 0))),
     ('paper/transport_followup.tex', '16 of 50 seeds'):
-        (1, _u((253, 464))),
+        (1, _u((256, 464))),
     ('paper/transport_followup.tex', '16.75'):
         (1, _u((27, 0))),
     ('paper/transport_followup.tex', '180.01,\n177.97 and 171.84'):
-        (1, _u((287, 722))),
+        (1, _u((290, 722))),
     ('paper/transport_followup.tex', '185.26,\n183.06 and 176.67'):
-        (1, _u((287, 417))),
+        (1, _u((290, 417))),
     ('paper/transport_followup.tex', '19, 60 and 231'):
-        (1, _u((251, 372))),
+        (1, _u((254, 372))),
     ('paper/transport_followup.tex', '19,800 checks in all; the largest discrepancy was 0.039 of its tolerance'):
-        (1, _u((272, 378))),
+        (1, _u((275, 378))),
     ('paper/transport_followup.tex', '1{,}003.8'):
         (1, _u((28, 0))),
     ('paper/transport_followup.tex', '1{,}004.4'):
@@ -621,11 +624,11 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '1{,}902.1'):
         (1, _u((33, 0))),
     ('paper/transport_followup.tex', '2000, 2000 and 1000'):
-        (1, _u((251, 55))),
+        (1, _u((254, 55))),
     ('paper/transport_followup.tex', '286 of 50,000'):
-        (1, _u((253, 522))),
+        (1, _u((256, 522))),
     ('paper/transport_followup.tex', '29-parameter'):
-        (1, _u((262, 191))),
+        (1, _u((265, 191))),
     ('paper/transport_followup.tex', '2{,}396.8'):
         (1, _u((34, 0))),
     ('paper/transport_followup.tex', '2{,}837.6'):
@@ -633,9 +636,9 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '31.63'):
         (1, _u((36, 0))),
     ('paper/transport_followup.tex', '33.4'):
-        (2, _u((254, 1369), (37, 0))),
+        (2, _u((257, 1369), (37, 0))),
     ('paper/transport_followup.tex', '340.0'):
-        (2, _u((254, 1384), (38, 0))),
+        (2, _u((257, 1384), (38, 0))),
     ('paper/transport_followup.tex', '37.35'):
         (1, _u((39, 0))),
     ('paper/transport_followup.tex', '3{,}784.6'):
@@ -643,9 +646,9 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '4.22'):
         (1, _u((41, 0))),
     ('paper/transport_followup.tex', '42.8'):
-        (2, _u((254, 1375), (42, 0))),
+        (2, _u((257, 1375), (42, 0))),
     ('paper/transport_followup.tex', '43.1'):
-        (2, _u((254, 256), (43, 0))),
+        (2, _u((257, 256), (43, 0))),
     ('paper/transport_followup.tex', '43.2'):
         (2, _u((44, 0), (44, 0))),
     ('paper/transport_followup.tex', '43.3'):
@@ -659,15 +662,15 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '43.9'):
         (1, _u((49, 0))),
     ('paper/transport_followup.tex', '44.1'):
-        (3, _u((254, 265), (254, 1531), (50, 0))),
+        (3, _u((257, 265), (257, 1531), (50, 0))),
     ('paper/transport_followup.tex', '440.3'):
         (1, _u((51, 0))),
     ('paper/transport_followup.tex', '440.9'):
-        (2, _u((254, 166), (52, 0))),
+        (2, _u((257, 166), (52, 0))),
     ('paper/transport_followup.tex', '441.2'):
         (1, _u((53, 0))),
     ('paper/transport_followup.tex', '4\\log\\cosh(1/\\sqrt W)\\approx1.0\\times10^{-4}'):
-        (1, _u((256, 652))),
+        (1, _u((259, 652))),
     ('paper/transport_followup.tex', '4{,}789.0'):
         (1, _u((54, 0))),
     ('paper/transport_followup.tex', '5.16'):
@@ -679,17 +682,17 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '5.86'):
         (1, _u((58, 0))),
     ('paper/transport_followup.tex', '50 of 50 trajectories without a violation'):
-        (1, _u((253, 279))),
+        (1, _u((256, 279))),
     ('paper/transport_followup.tex', '50 paired'):
-        (3, _u((296, 97), (262, 124), (256, 1039))),
+        (3, _u((299, 97), (265, 124), (259, 1039))),
     ('paper/transport_followup.tex', '50 paired evaluation seeds per policy'):
-        (1, _u((296, 97))),
+        (1, _u((299, 97))),
     ('paper/transport_followup.tex', '50 seeds per condition'):
-        (1, _u((263, 178))),
+        (1, _u((266, 178))),
     ('paper/transport_followup.tex', '6.24'):
         (1, _u((59, 0))),
     ('paper/transport_followup.tex', '600 trajectories'):
-        (2, _u((262, 168), (253, 38))),
+        (2, _u((265, 168), (256, 38))),
     ('paper/transport_followup.tex', '65.87'):
         (1, _u((60, 0))),
     ('paper/transport_followup.tex', '65.94'):
@@ -707,13 +710,13 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '9.05'):
         (1, _u((67, 0))),
     ('paper/transport_followup.tex', '9.51, 37.19 and 80.91'):
-        (1, _u((251, 289))),
+        (1, _u((254, 289))),
     ('paper/transport_followup.tex', '95\\% intervals'):
-        (1, _u((287, 235))),
+        (1, _u((290, 235))),
     ('paper/transport_followup.tex', '97.1\\%, 99.4\\% and 99.5\\%'):
-        (1, _u((258, 499))),
+        (1, _u((261, 499))),
     ('paper/transport_followup.tex', '99.4\\% of rounds at $W=16$'):
-        (1, _u((258, 679))),
+        (1, _u((261, 679))),
     ('paper/transport_followup.tex', '9{,}294.0'):
         (1, _u((69, 0))),
     ('paper/transport_followup.tex', '9{,}364.3'):
@@ -721,271 +724,320 @@ PHRASE_PINS: dict[tuple[str, str], tuple[int, tuple[tuple[str, int], ...]]] = {
     ('paper/transport_followup.tex', '9{,}372.05'):
         (1, _u((71, 0))),
     ('paper/transport_followup.tex', 'Algorithm~1 of'):
-        (1, _u((282, 88))),
+        (1, _u((285, 88))),
     ('paper/transport_followup.tex', 'All 1,500 evaluation runs completed'):
-        (1, _u((272, 20))),
+        (1, _u((275, 20))),
     ('paper/transport_followup.tex', 'Each cell has 50 paired evaluation seeds'):
-        (2, _u((296, 83), (256, 1025))),
+        (2, _u((299, 83), (259, 1025))),
     ('paper/transport_followup.tex', 'In the 1,100 corrected-center runs'):
-        (1, _u((272, 182))),
+        (1, _u((275, 182))),
     ('paper/transport_followup.tex', 'Intervals are pointwise 95\\% paired'):
-        (1, _u((263, 92))),
+        (1, _u((266, 92))),
     ('paper/transport_followup.tex', 'On the 150 recorded context--action sequences'):
-        (1, _u((127, 836))),
+        (1, _u((130, 836))),
     ('paper/transport_followup.tex', 'UCB-GLM has mean regret 33.4, 42.8 and 340.0'):
-        (1, _u((254, 1345))),
+        (1, _u((257, 1345))),
     ('paper/transport_followup.tex', "UCB-GLM's is 34.4 units lower"):
-        (1, _u((255, 396))),
+        (1, _u((258, 396))),
     ('paper/transport_followup.tex', '[$-$1.10, 0.81]'):
-        (1, _u((132, 0))),
-    ('paper/transport_followup.tex', '[$-$1.17, 0.72]'):
-        (1, _u((133, 0))),
-    ('paper/transport_followup.tex', '[$-$24.03, $-$21.04]'):
-        (1, _u((134, 0))),
-    ('paper/transport_followup.tex', '[$-$36.56, $-$32.26]'):
         (1, _u((135, 0))),
-    ('paper/transport_followup.tex', '[15.43, 18.00]'):
+    ('paper/transport_followup.tex', '[$-$1.17, 0.72]'):
         (1, _u((136, 0))),
+    ('paper/transport_followup.tex', '[$-$24.03, $-$21.04]'):
+        (1, _u((137, 0))),
+    ('paper/transport_followup.tex', '[$-$36.56, $-$32.26]'):
+        (1, _u((138, 0))),
+    ('paper/transport_followup.tex', '[15.43, 18.00]'):
+        (1, _u((139, 0))),
     ('paper/transport_followup.tex', 'all 150 frozen-reference'):
-        (1, _u((251, 122))),
+        (1, _u((254, 122))),
     ('paper/transport_followup.tex', 'all 50 frozen bounds are below the cap; the largest is 0.761 of it.'):
-        (1, _u((255, 1031))),
+        (1, _u((258, 1031))),
     ('paper/transport_followup.tex', 'all 600 histories'):
-        (1, _u((289, 263))),
+        (1, _u((292, 263))),
     ('paper/transport_followup.tex', 'all 600 trajectories'):
-        (1, _u((253, 34))),
+        (1, _u((256, 34))),
     ('paper/transport_followup.tex', 'by less than 0.2 units in mean regret'):
-        (1, _u((255, 674))),
+        (1, _u((258, 674))),
     ('paper/transport_followup.tex', 'c_\\star=(B/(1-A))^2\\approx0.709$'):
-        (1, _u((256, 927))),
+        (1, _u((259, 927))),
     ('paper/transport_followup.tex', 'design cell ($W=T=20{,}000$)'):
-        (1, _u((291, 15))),
+        (1, _u((294, 15))),
     ('paper/transport_followup.tex', 'endpoint minus frozen is $-15.3$ ($[-20.5,-10.2]$)'):
-        (1, _u((254, 1046))),
+        (1, _u((257, 1046))),
     ('paper/transport_followup.tex', 'exact 95\\% Clopper--Pearson interval'):
-        (1, _u((253, 330))),
+        (1, _u((256, 330))),
     ('paper/transport_followup.tex', 'grows to 2,396.8, 3,784.6 and 6,733.3'):
-        (1, _u((254, 1306))),
+        (1, _u((257, 1306))),
     ('paper/transport_followup.tex', 'interval lies inside $(-1.0,1.0)$'):
-        (1, _u((255, 775))),
+        (1, _u((258, 775))),
     ('paper/transport_followup.tex', 'intervals from 10,000 resamples of 50 seeds per condition'):
-        (1, _u((263, 143))),
+        (1, _u((266, 143))),
     ('paper/transport_followup.tex', 'is 37,195, which is 0.93 of the cap $2T\\min(1,\\sqrt W)=40{,}000$'):
-        (1, _u((256, 482))),
+        (1, _u((259, 482))),
     ('paper/transport_followup.tex', 'it has about 7.7 times the regret of linear UCB (44.1)'):
-        (1, _u((254, 1482))),
+        (1, _u((257, 1482))),
     ('paper/transport_followup.tex', 'its own cap $2T=2000$'):
-        (1, _u((127, 945))),
+        (1, _u((130, 945))),
     ('paper/transport_followup.tex', 'its random phase lasted 12 to 34 rounds'):
-        (1, _u((272, 141))),
+        (1, _u((275, 141))),
     ('paper/transport_followup.tex', 'its standard deviation over 50 seeds'):
-        (1, _u((291, 65))),
+        (1, _u((294, 65))),
     ('paper/transport_followup.tex', 'lies between 0.985 and 1.305'):
-        (1, _u((254, 775))),
+        (1, _u((257, 775))),
     ('paper/transport_followup.tex', 'more than 99.9\\% at $W=1$ and $0.25$'):
-        (1, _u((258, 713))),
+        (1, _u((261, 713))),
     ('paper/transport_followup.tex', 'naive minus frozen is $-0.6$ ($[-1.8, 0.5]$), $-0.1$ ($[-1.0, 0.9]$) and $-0.3$ ($[-1.4, 0.8]$) at $W=100$, $10$ and $1$'):
-        (1, _u((254, 505))),
+        (1, _u((257, 505))),
     ('paper/transport_followup.tex', 'naive minus frozen is $-23.1$ ($[-28.3,-18.0]$)'):
-        (1, _u((254, 1101))),
+        (1, _u((257, 1101))),
     ('paper/transport_followup.tex', 'pointwise paired 95\\% intervals'):
-        (1, _u((287, 218))),
+        (1, _u((290, 218))),
     ('paper/transport_followup.tex', 'relative to the cap $40{,}000$'):
-        (1, _u((290, 160))),
+        (1, _u((293, 160))),
     ('paper/transport_followup.tex', 'stay between 43.1 and 44.1'):
-        (1, _u((254, 243))),
+        (1, _u((257, 243))),
     ('paper/transport_followup.tex', 'the frozen-reference policy by 16.8 units'):
-        (1, _u((255, 285))),
+        (1, _u((258, 285))),
     ('paper/transport_followup.tex', 'the realized $\\gamma_T$ is about 151--153 (medians)'):
-        (1, _u((127, 584))),
+        (1, _u((130, 584))),
     ('paper/transport_followup.tex', 'they use 10,000 paired seed-bootstrap resamples'):
-        (1, _u((287, 290))),
+        (1, _u((290, 290))),
     ('paper/transport_followup.tex', 'where $\\kappa=0.0707$ makes its radius $\\alpha=19.19$ (against $1.36$ at $W=T$)'):
-        (1, _u((254, 1401))),
+        (1, _u((257, 1401))),
     ('paper/transport_followup.tex', 'with $d=29$'):
-        (1, _u((127, 559))),
+        (1, _u((130, 559))),
     ('paper/transport_followup.tex', 'within the margin $\\Delta=3.0$'):
-        (1, _u((255, 552))),
+        (1, _u((258, 552))),
     # paper/transport_followup_appendix.tex
     ('paper/transport_followup_appendix.tex', '$0.00392155$'):
-        (1, _u((293, 611))),
+        (1, _u((296, 611))),
     ('paper/transport_followup_appendix.tex', '$0.005$'):
-        (1, _u((288, 613))),
+        (1, _u((291, 613))),
     ('paper/transport_followup_appendix.tex', '$0.124$'):
-        (1, _u((303, 178))),
+        (1, _u((306, 178))),
     ('paper/transport_followup_appendix.tex', '$1.735$'):
-        (1, _u((303, 187))),
+        (1, _u((306, 187))),
     ('paper/transport_followup_appendix.tex', '$3\\times4\\times50=600$'):
-        (1, _u((293, 648))),
+        (1, _u((296, 648))),
     ('paper/transport_followup_appendix.tex', '$4+5+20=29$'):
-        (1, _u((257, 345))),
+        (1, _u((260, 345))),
     ('paper/transport_followup_appendix.tex', '$5.300$'):
-        (1, _u((303, 200))),
+        (1, _u((306, 200))),
     ('paper/transport_followup_appendix.tex', '$A=0.556$'):
-        (1, _u((304, 800))),
+        (1, _u((307, 800))),
     ('paper/transport_followup_appendix.tex', '$B=0.374$'):
-        (1, _u((304, 814))),
+        (1, _u((307, 814))),
     ('paper/transport_followup_appendix.tex', '$T=1000$'):
-        (1, _u((265, 33))),
+        (1, _u((268, 33))),
     ('paper/transport_followup_appendix.tex', '$W=16,1,0.25$'):
-        (1, _u((295, 400))),
+        (1, _u((298, 400))),
     ('paper/transport_followup_appendix.tex', '$\\delta=0.05$'):
-        (1, _u((257, 702))),
+        (1, _u((260, 702))),
     ('paper/transport_followup_appendix.tex', '$\\{1,5,20\\}$'):
-        (1, _u((293, 388))),
+        (1, _u((296, 388))),
     ('paper/transport_followup_appendix.tex', '$\\{3\\times10^{-5},10^{-4},3\\times10^{-4}\\}$'):
-        (1, _u((293, 339))),
+        (1, _u((296, 339))),
     ('paper/transport_followup_appendix.tex', '$c_h=4/(3\\sqrt3)$'):
-        (1, _u((295, 158))),
+        (1, _u((298, 158))),
     ('paper/transport_followup_appendix.tex', '0.385, 1.540 and 3.079 at $W=16,1,0.25$'):
-        (1, _u((295, 374))),
+        (1, _u((298, 374))),
     ('paper/transport_followup_appendix.tex', '1000 rounds in its denominator'):
-        (1, _u((299, 531))),
+        (1, _u((302, 531))),
     ('paper/transport_followup_appendix.tex', '1024'):
-        (1, _u((271, 205))),
+        (1, _u((274, 205))),
     ('paper/transport_followup_appendix.tex', '12 combinations'):
-        (1, _u((123, 284))),
+        (1, _u((125, 284))),
     ('paper/transport_followup_appendix.tex', '2--10'):
-        (1, _u((294, 690))),
+        (1, _u((297, 690))),
     ('paper/transport_followup_appendix.tex', '20 steps'):
-        (1, _u((293, 488))),
+        (1, _u((296, 488))),
     ('paper/transport_followup_appendix.tex', '2048'):
-        (3, _u((271, 128), (271, 214), (271, 295))),
+        (3, _u((274, 128), (274, 214), (274, 295))),
     ('paper/transport_followup_appendix.tex', '2048 and 4096'):
-        (1, _u((271, 295))),
+        (1, _u((274, 295))),
     ('paper/transport_followup_appendix.tex', '24 declared trajectories'):
-        (1, _u((271, 226))),
+        (1, _u((274, 226))),
     ('paper/transport_followup_appendix.tex', '24 development trajectories'):
-        (1, _u((257, 902))),
+        (1, _u((260, 902))),
     ('paper/transport_followup_appendix.tex', '250-digit'):
-        (1, _u((294, 325))),
+        (1, _u((297, 325))),
     ('paper/transport_followup_appendix.tex', '270 tuning\ntrajectories'):
-        (1, _u((293, 169))),
+        (1, _u((296, 169))),
     ('paper/transport_followup_appendix.tex', '30 tuning'):
-        (1, _u((293, 560))),
+        (1, _u((296, 560))),
     ('paper/transport_followup_appendix.tex', '30000--30001'):
-        (1, _u((257, 89))),
+        (1, _u((260, 89))),
     ('paper/transport_followup_appendix.tex', '30100--30109'):
-        (1, _u((257, 116))),
+        (1, _u((260, 116))),
     ('paper/transport_followup_appendix.tex', '30200--30249'):
-        (1, _u((257, 151))),
+        (1, _u((260, 151))),
     ('paper/transport_followup_appendix.tex', '50 evaluation seeds'):
-        (1, _u((300, 167))),
+        (1, _u((303, 167))),
     ('paper/transport_followup_appendix.tex', '50 histories'):
-        (1, _u((264, 117))),
+        (1, _u((267, 117))),
     ('paper/transport_followup_appendix.tex', '50 seeds per condition'):
-        (1, _u((260, 207))),
+        (1, _u((263, 207))),
     ('paper/transport_followup_appendix.tex', '50,000 dependent states'):
-        (1, _u((123, 382))),
+        (1, _u((125, 382))),
     ('paper/transport_followup_appendix.tex', '50,000 seed--round observations per condition'):
-        (1, _u((284, 101))),
+        (1, _u((287, 101))),
     ('paper/transport_followup_appendix.tex', '600 trajectories'):
-        (1, _u((288, 146))),
+        (1, _u((291, 146))),
     ('paper/transport_followup_appendix.tex', '600,000 states'):
-        (1, _u((294, 654))),
+        (1, _u((297, 654))),
     ('paper/transport_followup_appendix.tex', '65 changes'):
-        (1, _u((294, 637))),
+        (1, _u((297, 637))),
     ('paper/transport_followup_appendix.tex', 'At rounds 1, 10, 100, 1,000, 10,000 and 20,000'):
-        (1, _u((269, 343))),
+        (1, _u((272, 343))),
     ('paper/transport_followup_appendix.tex', 'Candidate 008'):
-        (1, _u((293, 438))),
+        (1, _u((296, 438))),
     ('paper/transport_followup_appendix.tex', 'Development seeds 41000--41009'):
-        (1, _u((292, 20))),
+        (1, _u((295, 20))),
     ('paper/transport_followup_appendix.tex', 'The 294'):
-        (1, _u((293, 693))),
+        (1, _u((296, 693))),
     ('paper/transport_followup_appendix.tex', 'The design cell uses $c=1$'):
-        (1, _u((292, 291))),
+        (1, _u((295, 291))),
     ('paper/transport_followup_appendix.tex', 'The margin $\\Delta=3.0$ is a quarter'):
-        (1, _u((292, 495))),
+        (1, _u((295, 495))),
     ('paper/transport_followup_appendix.tex', 'The per-run mean envelope is 98.3\\%--98.5\\% of that constant'):
-        (1, _u((295, 415))),
+        (1, _u((298, 415))),
     ('paper/transport_followup_appendix.tex', 'across 50 seeds'):
-        (1, _u((259, 281))),
+        (1, _u((262, 281))),
     ('paper/transport_followup_appendix.tex', 'all 600 trajectories'):
-        (1, _u((288, 142))),
+        (1, _u((291, 142))),
     ('paper/transport_followup_appendix.tex', 'and 1000 rounds'):
-        (1, _u((260, 180))),
+        (1, _u((263, 180))),
     ('paper/transport_followup_appendix.tex', 'at 16 states'):
-        (1, _u((294, 533))),
+        (1, _u((297, 533))),
     ('paper/transport_followup_appendix.tex', 'below 0.629'):
-        (1, _u((294, 720))),
+        (1, _u((297, 720))),
     ('paper/transport_followup_appendix.tex', 'c_\\star=(B/(1-A))^2\\approx0.709$'):
-        (1, _u((304, 945))),
+        (1, _u((307, 945))),
     ('paper/transport_followup_appendix.tex', 'development mean Hessian-path-minus-frozen difference, 12.0,'):
-        (1, _u((292, 539))),
+        (1, _u((295, 539))),
     ('paper/transport_followup_appendix.tex', 'differences with pointwise 95\\% paired'):
-        (1, _u((265, 117))),
+        (1, _u((268, 117))),
     ('paper/transport_followup_appendix.tex', 'divided by 1000'):
-        (1, _u((123, 478))),
+        (1, _u((125, 478))),
     ('paper/transport_followup_appendix.tex', 'equals 0.93 in the design cell'):
-        (1, _u((304, 863))),
+        (1, _u((307, 863))),
     ('paper/transport_followup_appendix.tex', 'evaluation seeds 41200--41249'):
-        (1, _u((292, 82))),
+        (1, _u((295, 82))),
     ('paper/transport_followup_appendix.tex', 'every $p\\le1.2\\times10^{-108}$'):
-        (1, _u((249, 780))),
+        (1, _u((252, 780))),
     ('paper/transport_followup_appendix.tex', 'every development frozen bound was at most 0.9 of the cap'):
-        (1, _u((292, 374))),
+        (1, _u((295, 374))),
     ('paper/transport_followup_appendix.tex', 'learning rate $3\\times10^{-4}$'):
-        (1, _u((293, 453))),
+        (1, _u((296, 453))),
     ('paper/transport_followup_appendix.tex', 'learning rates $\\{3\\times10^{-6},10^{-5},3\\times10^{-5}\\}$ and $\\{5,20\\}$ steps'):
-        (1, _u((273, 347))),
+        (1, _u((276, 347))),
     ('paper/transport_followup_appendix.tex', 'rate $3\\times10^{-6}$ with 5 steps had the smallest mean MSE, $4.062\\times10^{-5}$, and the six means were within 0.2\\% of each other'):
-        (1, _u((273, 557))),
+        (1, _u((276, 557))),
     ('paper/transport_followup_appendix.tex', 'rounds 1, 2, 10, 100, 500, and 1000'):
-        (1, _u((288, 437))),
+        (1, _u((291, 437))),
     ('paper/transport_followup_appendix.tex', 'standard deviation $0.25$'):
-        (1, _u((257, 654))),
+        (1, _u((260, 654))),
     ('paper/transport_followup_appendix.tex', 'summarize 50 seeds'):
-        (1, _u((299, 597))),
+        (1, _u((302, 597))),
     ('paper/transport_followup_appendix.tex', 'teacher seed 1729'):
-        (1, _u((257, 52))),
+        (1, _u((260, 52))),
     ('paper/transport_followup_appendix.tex', 'tuning seeds 41100--41109'):
-        (1, _u((292, 52))),
+        (1, _u((295, 52))),
     ('paper/transport_followup_appendix.tex', 'two one-sided tests with $\\Delta=3.0$'):
-        (1, _u((249, 259))),
+        (1, _u((252, 259))),
     ('paper/transport_followup_appendix.tex', 'with 10,000 resamples and'):
-        (1, _u((300, 248))),
+        (1, _u((303, 248))),
     # paper/transport_proofs.tex
     ('paper/transport_proofs.tex', '$0.505$, $0.570$ and $0.687$ at $W=16,1,0.25$'):
-        (1, _u((181, 171))),
+        (1, _u((184, 171))),
     ('paper/transport_proofs.tex', '$1+\\cosh^4(1/\\sqrt W)=2.13$, $6.67$ and $201.3$'):
-        (1, _u((297, 2254))),
+        (1, _u((300, 2254))),
     ('paper/transport_proofs.tex', '$T=1000$'):
-        (1, _u((297, 2057))),
+        (1, _u((300, 2057))),
     ('paper/transport_proofs.tex', '$W=16,1,0.25$'):
-        (2, _u((181, 203), (297, 2070))),
+        (2, _u((184, 203), (300, 2070))),
     ('paper/transport_proofs.tex', '$\\bar h$ is $2.13$, $8.39$ and $2982$'):
-        (1, _u((297, 2317))),
+        (1, _u((300, 2317))),
     ('paper/transport_proofs.tex', "At that study's $T=1000$ and $W=16,1,0.25$"):
-        (1, _u((297, 2041))),
+        (1, _u((300, 2041))),
     ('paper/transport_proofs.tex', 'With $\\sigma=0.25$ and $\\lambda=B_\\phi=1$ the factor is $0.650$'):
-        (1, _u((180, 266))),
+        (1, _u((183, 266))),
     ('paper/transport_proofs.tex', '\\alpha_t=1'):
-        (1, _u((297, 170))),
+        (1, _u((300, 170))),
     ('paper/transport_proofs.tex', '\\xi_t=0'):
-        (3, _u((148, 414), (149, 565), (297, 184))),
+        (3, _u((151, 414), (152, 565), (300, 184))),
     ('paper/transport_proofs.tex', 'about $12.3/\\sqrt c$'):
-        (1, _u((297, 1968))),
+        (1, _u((300, 1968))),
     ('paper/transport_proofs.tex', 'approximately $10^{42.6}$, $10^{169.4}$ and $10^{338.4}$ ($D_{T,W}=97.3$, $389.3$ and $778.6$)'):
-        (1, _u((297, 2122))),
+        (1, _u((300, 2122))),
+    # paper/transport_realizable.tex
+    ('paper/transport_realizable.tex', '$W=100$'):
+        (1, _u((103, 59))),
+    ('paper/transport_realizable.tex', '$\\delta=0.05$'):
+        (1, _u((122, 343))),
+    ('paper/transport_realizable.tex', '$n=8192$'):
+        (1, _u((122, 393))),
+    ('paper/transport_realizable.tex', 'In 256 held-out seeds'):
+        (1, _u((122, 1109))),
+    ('paper/transport_realizable.tex', 'and no coverage failure'):
+        (1, _u((103, 288))),
+    ('paper/transport_realizable.tex', 'and no seed fails'):
+        (1, _u((127, 413))),
+    ('paper/transport_realizable.tex', 'at least $0.984$'):
+        (1, _u((122, 1391))),
+    ('paper/transport_realizable.tex', 'at level $0.05/3$'):
+        (1, _u((122, 1346))),
+    ('paper/transport_realizable.tex', 'at most $0.016$'):
+        (1, _u((122, 1451))),
+    ('paper/transport_realizable.tex', 'differed by at most $0.25\\%$'):
+        (1, _u((103, 352))),
+    ('paper/transport_realizable.tex', 'endpoint-transported bands in none'):
+        (1, _u((122, 1276))),
+    ('paper/transport_realizable.tex', 'half-width is $0.784$--$0.785$'):
+        (1, _u((127, 382))),
+    ('paper/transport_realizable.tex', 'in all 256 seeds'):
+        (1, _u((122, 1230))),
+    ('paper/transport_realizable.tex', 'mean regrets within $0.7$ of one another'):
+        (1, _u((103, 164))),
+    ('paper/transport_realizable.tex', 'minus frozen include zero'):
+        (1, _u((103, 261))),
+    ('paper/transport_realizable.tex', 'off by $0.262$--$0.277$'):
+        (1, _u((122, 1011))),
+    ('paper/transport_realizable.tex', 'over 64 seeds'):
+        (1, _u((103, 146))),
+    ('paper/transport_realizable.tex', 'span $0.30$ of'):
+        (1, _u((122, 1492))),
+    ('paper/transport_realizable.tex', "the cell's frozen bound is below the cap"):
+        (1, _u((103, 401))),
+    ('paper/transport_realizable.tex', 'the current width is $0.856$ of the reference width'):
+        (1, _u((122, 934))),
+    ('paper/transport_realizable.tex', 'the naive half-width is $0.253$'):
+        (1, _u((122, 1036))),
+    ('paper/transport_realizable.tex', 'the reference half-width is $0.287$'):
+        (1, _u((122, 1072))),
+    ('paper/transport_realizable.tex', 'to within $0.004$ of zero'):
+        (1, _u((122, 582))),
+    ('paper/transport_realizable.tex', 'violates the upper bound only at the suboptimal action'):
+        (1, _u((127, 584))),
     # paper/transport_support_appendix.tex
     ('paper/transport_support_appendix.tex', '\\xi_t=0'):
-        (2, _u((90, 159), (131, 270))),
+        (2, _u((90, 159), (134, 270))),
     # paper/transport_theory.tex
     ('paper/transport_theory.tex', '\\alpha_t=1'):
-        (1, _u((140, 696))),
+        (1, _u((143, 696))),
     ('paper/transport_theory.tex', '\\kappa_{-,t}=\\kappa_{+,t}=1'):
-        (2, _u((95, 29), (140, 710))),
+        (2, _u((95, 29), (143, 710))),
     ('paper/transport_theory.tex', '\\xi_t=0'):
-        (2, _u((145, 439), (140, 745))),
+        (2, _u((148, 439), (143, 745))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '50 paired'):
-        (1, _u((108, 942))),
+        (1, _u((109, 942))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '2,400 trajectories'):
         (1, _u((23, 41))),
     ('submissions/tmlr_2026/supplement_README.md', '21 artifacts'):
-        (1, _u((114, 30))),
+        (1, _u((115, 30))),
     ('submissions/tmlr_2026/supplement_README.md', 'all 21 published tables, figures and CSVs'):
         (1, _u((22, 386))),
 }
@@ -997,312 +1049,323 @@ CLASSIFIED_PINS: dict[tuple[str, str], tuple[str, int, tuple[tuple[str, int], ..
         ('math-constant', 2, _u((100, 353), (100, 357))),
     # paper/body_intro.tex
     ('paper/body_intro.tex', '1'):
-        ('math-constant', 2, _u((178, 309), (178, 313))),
+        ('math-constant', 2, _u((181, 309), (181, 313))),
     ('paper/body_intro.tex', '2'):
         ('math-constant', 1, _u((92, 696))),
     # paper/body_related.tex
     ('paper/body_related.tex', '0'):
-        ('math-constant', 1, _u((267, 282))),
+        ('math-constant', 1, _u((270, 282))),
     ('paper/body_related.tex', '0,1'):
-        ('interval-endpoint', 1, _u((267, 1141))),
+        ('interval-endpoint', 1, _u((270, 1141))),
     # paper/figures/transport_conceptual_geometry.tex
     ('paper/figures/transport_conceptual_geometry.tex', '.25'):
-        ('analytic-schematic', 1, _u((168, 275))),
+        ('analytic-schematic', 1, _u((171, 275))),
     ('paper/figures/transport_conceptual_geometry.tex', '.55'):
-        ('analytic-schematic', 2, _u((168, 456), (176, 291))),
+        ('analytic-schematic', 2, _u((171, 456), (179, 291))),
     ('paper/figures/transport_conceptual_geometry.tex', '.65'):
-        ('analytic-schematic', 1, _u((176, 870))),
+        ('analytic-schematic', 1, _u((179, 870))),
     ('paper/figures/transport_conceptual_geometry.tex', '.82'):
-        ('analytic-schematic', 1, _u((176, 905))),
+        ('analytic-schematic', 1, _u((179, 905))),
     ('paper/figures/transport_conceptual_geometry.tex', '0'):
-        ('analytic-schematic', 7, _u((168, 250), (168, 424), (168, 453), (223, 23), (223, 85), (176, 857), (177, 314))),
+        ('analytic-schematic', 7, _u((171, 250), (171, 424), (171, 453), (226, 23), (226, 85), (179, 857), (180, 314))),
     ('paper/figures/transport_conceptual_geometry.tex', '0,0'):
-        ('analytic-schematic', 1, _u((168, 304))),
+        ('analytic-schematic', 1, _u((171, 304))),
     ('paper/figures/transport_conceptual_geometry.tex', '0,13'):
-        ('analytic-schematic', 1, _u((177, 107))),
+        ('analytic-schematic', 1, _u((180, 107))),
     ('paper/figures/transport_conceptual_geometry.tex', '1'):
-        ('analytic-schematic', 6, _u((168, 501), (168, 542), (176, 834), (175, 183), (177, 125), (177, 332))),
+        ('analytic-schematic', 6, _u((171, 501), (171, 542), (179, 834), (178, 183), (180, 125), (180, 332))),
     ('paper/figures/transport_conceptual_geometry.tex', '1,0'):
-        ('analytic-schematic', 1, _u((168, 407))),
+        ('analytic-schematic', 1, _u((171, 407))),
     ('paper/figures/transport_conceptual_geometry.tex', '1,10'):
-        ('analytic-schematic', 1, _u((177, 88))),
+        ('analytic-schematic', 1, _u((180, 88))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.05'):
-        ('analytic-schematic', 1, _u((176, 37))),
+        ('analytic-schematic', 1, _u((179, 37))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.25'):
-        ('analytic-schematic', 2, _u((223, 26), (223, 149))),
+        ('analytic-schematic', 2, _u((226, 26), (226, 149))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.8'):
-        ('analytic-schematic', 2, _u((223, 88), (175, 170))),
+        ('analytic-schematic', 2, _u((226, 88), (178, 170))),
     ('paper/figures/transport_conceptual_geometry.tex', '1.95'):
-        ('analytic-schematic', 1, _u((175, 117))),
+        ('analytic-schematic', 1, _u((178, 117))),
     ('paper/figures/transport_conceptual_geometry.tex', '10'):
-        ('analytic-schematic', 3, _u((225, 91), (225, 132), (225, 146))),
+        ('analytic-schematic', 3, _u((228, 91), (228, 132), (228, 146))),
     ('paper/figures/transport_conceptual_geometry.tex', '11.5'):
-        ('analytic-schematic', 4, _u((175, 34), (175, 49), (177, 102), (177, 258))),
+        ('analytic-schematic', 4, _u((178, 34), (178, 49), (180, 102), (180, 258))),
     ('paper/figures/transport_conceptual_geometry.tex', '13'):
-        ('analytic-schematic', 3, _u((225, 105), (225, 173), (225, 187))),
+        ('analytic-schematic', 3, _u((228, 105), (228, 173), (228, 187))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.5'):
-        ('analytic-schematic', 13, _u((175, 111), (175, 127), (175, 164), (224, 97), (224, 173), (224, 189), (224, 216), (225, 212), (226, 104), (226, 184), (226, 200), (226, 227), (177, 120))),
+        ('analytic-schematic', 13, _u((178, 111), (178, 127), (178, 164), (227, 97), (227, 173), (227, 189), (227, 216), (228, 212), (229, 104), (229, 184), (229, 200), (229, 227), (180, 120))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.72'):
-        ('analytic-schematic', 1, _u((225, 269))),
+        ('analytic-schematic', 1, _u((228, 269))),
     ('paper/figures/transport_conceptual_geometry.tex', '14.85'):
-        ('analytic-schematic', 1, _u((177, 49))),
+        ('analytic-schematic', 1, _u((180, 49))),
     ('paper/figures/transport_conceptual_geometry.tex', '16.2'):
-        ('analytic-schematic', 1, _u((168, 270))),
+        ('analytic-schematic', 1, _u((171, 270))),
     ('paper/figures/transport_conceptual_geometry.tex', '2'):
-        ('analytic-schematic', 4, _u((176, 141), (226, 62), (177, 345), (177, 375))),
+        ('analytic-schematic', 4, _u((179, 141), (229, 62), (180, 345), (180, 375))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.1'):
-        ('analytic-schematic', 1, _u((175, 40))),
+        ('analytic-schematic', 1, _u((178, 40))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.25'):
-        ('analytic-schematic', 1, _u((224, 26))),
+        ('analytic-schematic', 1, _u((227, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.35'):
-        ('analytic-schematic', 1, _u((176, 173))),
+        ('analytic-schematic', 1, _u((179, 173))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.73'):
-        ('analytic-schematic', 2, _u((224, 133), (224, 179))),
+        ('analytic-schematic', 2, _u((227, 133), (227, 179))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.85'):
-        ('analytic-schematic', 3, _u((224, 87), (224, 103), (224, 222))),
+        ('analytic-schematic', 3, _u((227, 87), (227, 103), (227, 222))),
     ('paper/figures/transport_conceptual_geometry.tex', '2.97'):
-        ('analytic-schematic', 2, _u((224, 148), (224, 195))),
+        ('analytic-schematic', 2, _u((227, 148), (227, 195))),
     ('paper/figures/transport_conceptual_geometry.tex', '3'):
-        ('analytic-schematic', 5, _u((176, 126), (176, 138), (176, 218), (176, 297), (176, 380))),
+        ('analytic-schematic', 5, _u((179, 126), (179, 138), (179, 218), (179, 297), (179, 380))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.02'):
-        ('analytic-schematic', 3, _u((176, 768), (176, 783), (176, 819))),
+        ('analytic-schematic', 3, _u((179, 768), (179, 783), (179, 819))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.525'):
-        ('analytic-schematic', 3, _u((176, 485), (176, 613), (176, 630))),
+        ('analytic-schematic', 3, _u((179, 485), (179, 613), (179, 630))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.55'):
-        ('analytic-schematic', 1, _u((176, 957))),
+        ('analytic-schematic', 1, _u((179, 957))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.6'):
-        ('analytic-schematic', 4, _u((176, 168), (176, 637), (176, 651), (176, 686))),
+        ('analytic-schematic', 4, _u((179, 168), (179, 637), (179, 651), (179, 686))),
     ('paper/figures/transport_conceptual_geometry.tex', '3.75'):
-        ('analytic-schematic', 1, _u((225, 26))),
+        ('analytic-schematic', 1, _u((228, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '30'):
-        ('analytic-schematic', 1, _u((175, 12))),
+        ('analytic-schematic', 1, _u((178, 12))),
     ('paper/figures/transport_conceptual_geometry.tex', '4'):
-        ('analytic-schematic', 2, _u((168, 490), (176, 214))),
+        ('analytic-schematic', 2, _u((171, 490), (179, 214))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.05'):
-        ('analytic-schematic', 3, _u((176, 540), (176, 746), (176, 762))),
+        ('analytic-schematic', 3, _u((179, 540), (179, 746), (179, 762))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.2'):
-        ('analytic-schematic', 1, _u((176, 973))),
+        ('analytic-schematic', 1, _u((179, 973))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.23'):
-        ('analytic-schematic', 2, _u((225, 136), (225, 177))),
+        ('analytic-schematic', 2, _u((228, 136), (228, 177))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.32'):
-        ('analytic-schematic', 2, _u((176, 620), (176, 752))),
+        ('analytic-schematic', 2, _u((179, 620), (179, 752))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.35'):
-        ('analytic-schematic', 12, _u((176, 43), (176, 58), (176, 221), (176, 300), (176, 383), (176, 398), (176, 492), (176, 546), (225, 95), (225, 109), (225, 218), (225, 276))),
+        ('analytic-schematic', 12, _u((179, 43), (179, 58), (179, 221), (179, 300), (179, 383), (179, 398), (179, 492), (179, 546), (228, 95), (228, 109), (228, 218), (228, 276))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.37'):
-        ('analytic-schematic', 1, _u((176, 1008))),
+        ('analytic-schematic', 1, _u((179, 1008))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.4'):
-        ('analytic-schematic', 2, _u((176, 646), (176, 778))),
+        ('analytic-schematic', 2, _u((179, 646), (179, 778))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.47'):
-        ('analytic-schematic', 4, _u((176, 680), (176, 813), (225, 150), (225, 191))),
+        ('analytic-schematic', 4, _u((179, 680), (179, 813), (228, 150), (228, 191))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.53'):
-        ('analytic-schematic', 1, _u((176, 434))),
+        ('analytic-schematic', 1, _u((179, 434))),
     ('paper/figures/transport_conceptual_geometry.tex', '4.6'):
-        ('analytic-schematic', 2, _u((176, 393), (176, 429))),
+        ('analytic-schematic', 2, _u((179, 393), (179, 429))),
     ('paper/figures/transport_conceptual_geometry.tex', '40'):
-        ('analytic-schematic', 2, _u((176, 12), (176, 101))),
+        ('analytic-schematic', 2, _u((179, 12), (179, 101))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.2'):
-        ('analytic-schematic', 1, _u((176, 53))),
+        ('analytic-schematic', 1, _u((179, 53))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.25'):
-        ('analytic-schematic', 1, _u((226, 26))),
+        ('analytic-schematic', 1, _u((229, 26))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.73'):
-        ('analytic-schematic', 2, _u((226, 142), (226, 190))),
+        ('analytic-schematic', 2, _u((229, 142), (229, 190))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.85'):
-        ('analytic-schematic', 3, _u((226, 94), (226, 110), (226, 233))),
+        ('analytic-schematic', 3, _u((229, 94), (229, 110), (229, 233))),
     ('paper/figures/transport_conceptual_geometry.tex', '5.97'):
-        ('analytic-schematic', 2, _u((226, 157), (226, 206))),
+        ('analytic-schematic', 2, _u((229, 157), (229, 206))),
     ('paper/figures/transport_conceptual_geometry.tex', '50'):
-        ('analytic-schematic', 2, _u((177, 12), (177, 141))),
+        ('analytic-schematic', 2, _u((180, 12), (180, 141))),
     ('paper/figures/transport_conceptual_geometry.tex', '55'):
-        ('analytic-schematic', 1, _u((175, 74))),
+        ('analytic-schematic', 1, _u((178, 74))),
     ('paper/figures/transport_conceptual_geometry.tex', '6'):
-        ('analytic-schematic', 1, _u((176, 276))),
+        ('analytic-schematic', 1, _u((179, 276))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.35'):
-        ('analytic-schematic', 2, _u((175, 55), (175, 133))),
+        ('analytic-schematic', 2, _u((178, 55), (178, 133))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.64'):
-        ('analytic-schematic', 1, _u((177, 167))),
+        ('analytic-schematic', 1, _u((180, 167))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.7'):
-        ('analytic-schematic', 3, _u((176, 129), (177, 40), (177, 56))),
+        ('analytic-schematic', 3, _u((179, 129), (180, 40), (180, 56))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.76'):
-        ('analytic-schematic', 1, _u((177, 181))),
+        ('analytic-schematic', 1, _u((180, 181))),
     ('paper/figures/transport_conceptual_geometry.tex', '6.86'):
-        ('analytic-schematic', 1, _u((177, 216))),
+        ('analytic-schematic', 1, _u((180, 216))),
     ('paper/figures/transport_conceptual_geometry.tex', '65'):
-        ('analytic-schematic', 3, _u((168, 89), (176, 529), (176, 718))),
+        ('analytic-schematic', 3, _u((171, 89), (179, 529), (179, 718))),
     ('paper/figures/transport_conceptual_geometry.tex', '7'):
-        ('analytic-schematic', 4, _u((223, 146), (224, 23), (225, 23), (226, 23))),
+        ('analytic-schematic', 4, _u((226, 146), (227, 23), (228, 23), (229, 23))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.15'):
-        ('analytic-schematic', 6, _u((176, 860), (176, 875), (176, 910), (176, 963), (176, 978), (176, 1014))),
+        ('analytic-schematic', 6, _u((179, 860), (179, 875), (179, 910), (179, 963), (179, 978), (179, 1014))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.4'):
-        ('analytic-schematic', 1, _u((177, 264))),
+        ('analytic-schematic', 1, _u((180, 264))),
     ('paper/figures/transport_conceptual_geometry.tex', '7.85'):
-        ('analytic-schematic', 1, _u((177, 317))),
+        ('analytic-schematic', 1, _u((180, 317))),
     ('paper/figures/transport_conceptual_geometry.tex', '70'):
-        ('analytic-schematic', 1, _u((168, 196))),
+        ('analytic-schematic', 1, _u((171, 196))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.15'):
-        ('analytic-schematic', 1, _u((177, 34))),
+        ('analytic-schematic', 1, _u((180, 34))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.35'):
-        ('analytic-schematic', 1, _u((168, 253))),
+        ('analytic-schematic', 1, _u((171, 253))),
     ('paper/figures/transport_conceptual_geometry.tex', '8.5'):
-        ('analytic-schematic', 7, _u((224, 82), (224, 128), (224, 143), (226, 89), (226, 137), (226, 152), (177, 83))),
+        ('analytic-schematic', 7, _u((227, 82), (227, 128), (227, 143), (229, 89), (229, 137), (229, 152), (180, 83))),
     ('paper/figures/transport_conceptual_geometry.tex', '80'):
-        ('analytic-schematic', 3, _u((168, 138), (176, 474), (176, 585))),
+        ('analytic-schematic', 3, _u((171, 138), (179, 474), (179, 585))),
     # paper/figures/transport_conceptual_interfaces.tex
     ('paper/figures/transport_conceptual_interfaces.tex', '.3'):
-        ('analytic-schematic', 1, _u((167, 292))),
+        ('analytic-schematic', 1, _u((170, 292))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0'):
-        ('analytic-schematic', 7, _u((167, 268), (222, 40), (174, 33), (174, 80), (174, 199), (174, 341), (174, 524))),
+        ('analytic-schematic', 7, _u((170, 268), (225, 40), (177, 33), (177, 80), (177, 199), (177, 341), (177, 524))),
     ('paper/figures/transport_conceptual_interfaces.tex', '0,0'):
-        ('analytic-schematic', 1, _u((167, 320))),
+        ('analytic-schematic', 1, _u((170, 320))),
     ('paper/figures/transport_conceptual_interfaces.tex', '1.15'):
-        ('analytic-schematic', 4, _u((227, 35), (16, 58), (15, 54), (14, 61))),
+        ('analytic-schematic', 4, _u((230, 35), (16, 58), (15, 54), (14, 61))),
     ('paper/figures/transport_conceptual_interfaces.tex', '1.8'):
-        ('analytic-schematic', 1, _u((227, 30))),
+        ('analytic-schematic', 1, _u((230, 30))),
     ('paper/figures/transport_conceptual_interfaces.tex', '10.2'):
         ('analytic-schematic', 1, _u((15, 48))),
     ('paper/figures/transport_conceptual_interfaces.tex', '11'):
-        ('analytic-schematic', 1, _u((129, 68))),
+        ('analytic-schematic', 1, _u((132, 68))),
     ('paper/figures/transport_conceptual_interfaces.tex', '14.4'):
         ('analytic-schematic', 1, _u((14, 55))),
     ('paper/figures/transport_conceptual_interfaces.tex', '16.2'):
-        ('analytic-schematic', 2, _u((167, 287), (174, 45))),
+        ('analytic-schematic', 2, _u((170, 287), (177, 45))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2'):
-        ('analytic-schematic', 2, _u((167, 160), (174, 380))),
+        ('analytic-schematic', 2, _u((170, 160), (177, 380))),
     ('paper/figures/transport_conceptual_interfaces.tex', '2.2'):
-        ('analytic-schematic', 3, _u((222, 43), (93, 90), (129, 72))),
+        ('analytic-schematic', 3, _u((225, 43), (93, 90), (132, 72))),
     ('paper/figures/transport_conceptual_interfaces.tex', '28'):
-        ('analytic-schematic', 2, _u((167, 146), (174, 12))),
+        ('analytic-schematic', 2, _u((170, 146), (177, 12))),
     ('paper/figures/transport_conceptual_interfaces.tex', '4.6'):
-        ('analytic-schematic', 2, _u((174, 36), (174, 51))),
+        ('analytic-schematic', 2, _u((177, 36), (177, 51))),
     ('paper/figures/transport_conceptual_interfaces.tex', '4.95'):
-        ('analytic-schematic', 1, _u((174, 83))),
+        ('analytic-schematic', 1, _u((177, 83))),
     ('paper/figures/transport_conceptual_interfaces.tex', '5.5'):
         ('analytic-schematic', 1, _u((93, 85))),
     ('paper/figures/transport_conceptual_interfaces.tex', '5.57'):
-        ('analytic-schematic', 1, _u((174, 202))),
+        ('analytic-schematic', 1, _u((177, 202))),
     ('paper/figures/transport_conceptual_interfaces.tex', '55'):
-        ('analytic-schematic', 1, _u((167, 89))),
+        ('analytic-schematic', 1, _u((170, 89))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6'):
         ('analytic-schematic', 1, _u((16, 55))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.11'):
-        ('analytic-schematic', 1, _u((174, 344))),
+        ('analytic-schematic', 1, _u((177, 344))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.65'):
-        ('analytic-schematic', 1, _u((174, 527))),
+        ('analytic-schematic', 1, _u((177, 527))),
     ('paper/figures/transport_conceptual_interfaces.tex', '6.8'):
-        ('analytic-schematic', 1, _u((167, 271))),
+        ('analytic-schematic', 1, _u((170, 271))),
     # paper/scope_limitations.tex
     ('paper/scope_limitations.tex', '12'):
-        ('protocol-constant', 1, _u((121, 55))),
+        ('protocol-constant', 1, _u((123, 55))),
     # paper/transport_experiment_appendix.tex
     ('paper/transport_experiment_appendix.tex', '1'):
-        ('math-constant', 7, _u((270, 168), (270, 177), (77, 19), (76, 19), (86, 18), (86, 46), (78, 10))),
+        ('math-constant', 7, _u((273, 168), (273, 177), (77, 19), (76, 19), (86, 18), (86, 46), (78, 10))),
     ('paper/transport_experiment_appendix.tex', '1.13.1'):
-        ('historical-dependency-version', 1, _u((275, 661))),
+        ('historical-dependency-version', 1, _u((278, 661))),
     ('paper/transport_experiment_appendix.tex', '1.15.2'):
-        ('historical-dependency-version', 1, _u((275, 600))),
+        ('historical-dependency-version', 1, _u((278, 600))),
     ('paper/transport_experiment_appendix.tex', '2'):
-        ('math-constant', 10, _u((270, 104), (270, 108), (270, 171), (77, 1), (77, 44), (76, 1), (76, 44), (86, 43), (86, 64), (78, 1))),
+        ('math-constant', 10, _u((273, 104), (273, 108), (273, 171), (77, 1), (77, 44), (76, 1), (76, 44), (86, 43), (86, 64), (78, 1))),
     # paper/transport_followup.tex
     ('paper/transport_followup.tex', '0'):
-        ('math-constant', 2, _u((282, 434), (282, 1201))),
+        ('math-constant', 2, _u((285, 434), (285, 1201))),
     ('paper/transport_followup.tex', '0,1'):
-        ('interval-endpoint', 1, _u((282, 727))),
+        ('interval-endpoint', 1, _u((285, 727))),
     ('paper/transport_followup.tex', '1'):
-        ('math-constant', 10, _u((128, 352), (128, 435), (127, 1006), (256, 167), (282, 337), (282, 506), (282, 520), (282, 569), (282, 937), (282, 946))),
+        ('math-constant', 10, _u((131, 352), (131, 435), (130, 1006), (259, 167), (285, 337), (285, 506), (285, 520), (285, 569), (285, 937), (285, 946))),
     ('paper/transport_followup.tex', '10,000'):
-        ('protocol-constant', 1, _u((291, 207))),
+        ('protocol-constant', 1, _u((294, 207))),
     ('paper/transport_followup.tex', '100,10,1'):
-        ('protocol-constant', 1, _u((256, 989))),
+        ('protocol-constant', 1, _u((259, 989))),
     ('paper/transport_followup.tex', '12'):
-        ('protocol-constant', 1, _u((256, 184))),
+        ('protocol-constant', 1, _u((259, 184))),
     ('paper/transport_followup.tex', '2'):
-        ('math-constant', 15, _u((128, 345), (128, 429), (262, 716), (262, 867), (127, 47), (127, 62), (127, 66), (127, 98), (127, 101), (127, 1084), (282, 499), (282, 508), (282, 564), (282, 877), (282, 940))),
+        ('math-constant', 15, _u((131, 345), (131, 429), (265, 716), (265, 867), (130, 47), (130, 62), (130, 66), (130, 98), (130, 101), (130, 1084), (285, 499), (285, 508), (285, 564), (285, 877), (285, 940))),
     ('paper/transport_followup.tex', '3'):
-        ('protocol-constant', 1, _u((256, 96))),
+        ('protocol-constant', 1, _u((259, 96))),
     ('paper/transport_followup.tex', '4'):
-        ('math-constant', 1, _u((127, 828))),
+        ('math-constant', 1, _u((130, 828))),
     ('paper/transport_followup.tex', '6'):
-        ('protocol-constant', 3, _u((20, 3), (20, 3), (256, 141))),
+        ('protocol-constant', 3, _u((20, 3), (20, 3), (259, 141))),
     ('paper/transport_followup.tex', '90'):
-        ('protocol-constant', 1, _u((255, 759))),
+        ('protocol-constant', 1, _u((258, 759))),
     ('paper/transport_followup.tex', '95'):
-        ('protocol-constant', 3, _u((255, 338), (291, 166), (68, 0))),
+        ('protocol-constant', 3, _u((258, 338), (294, 166), (68, 0))),
     # paper/transport_followup_appendix.tex
     ('paper/transport_followup_appendix.tex', '0'):
-        ('math-constant', 1, _u((273, 188))),
+        ('math-constant', 1, _u((276, 188))),
     ('paper/transport_followup_appendix.tex', '0.05'):
-        ('protocol-constant', 2, _u((249, 252), (249, 676))),
+        ('protocol-constant', 2, _u((252, 252), (252, 676))),
     ('paper/transport_followup_appendix.tex', '1'):
-        ('math-constant', 15, _u((295, 190), (264, 77), (302, 434), (302, 526), (303, 151), (303, 581), (304, 168), (304, 416), (304, 519), (304, 573), (304, 608), (304, 670), (304, 987), (269, 274), (269, 559))),
+        ('math-constant', 15, _u((298, 190), (267, 77), (305, 434), (305, 526), (306, 151), (306, 581), (307, 168), (307, 416), (307, 519), (307, 573), (307, 608), (307, 670), (307, 987), (272, 274), (272, 559))),
     ('paper/transport_followup_appendix.tex', '1,10,100'):
-        ('protocol-constant', 1, _u((292, 352))),
+        ('protocol-constant', 1, _u((295, 352))),
     ('paper/transport_followup_appendix.tex', '10'):
-        ('protocol-constant', 1, _u((273, 464))),
+        ('protocol-constant', 1, _u((276, 464))),
     ('paper/transport_followup_appendix.tex', '10,000'):
-        ('protocol-constant', 1, _u((249, 917))),
+        ('protocol-constant', 1, _u((252, 917))),
     ('paper/transport_followup_appendix.tex', '2'):
-        ('math-constant', 29, _u((295, 150), (295, 319), (295, 325), (264, 70), (302, 418), (302, 447), (302, 536), (303, 369), (303, 583), (304, 113), (304, 285), (304, 291), (304, 362), (304, 399), (304, 513), (304, 571), (304, 631), (304, 637), (304, 668), (304, 705), (304, 711), (304, 999), (304, 1027), (273, 139), (273, 142), (273, 150), (273, 167), (273, 169), (269, 113))),
+        ('math-constant', 29, _u((298, 150), (298, 319), (298, 325), (267, 70), (305, 418), (305, 447), (305, 536), (306, 369), (306, 583), (307, 113), (307, 285), (307, 291), (307, 362), (307, 399), (307, 513), (307, 571), (307, 631), (307, 637), (307, 668), (307, 705), (307, 711), (307, 999), (307, 1027), (276, 139), (276, 142), (276, 150), (276, 167), (276, 169), (272, 113))),
     ('paper/transport_followup_appendix.tex', '4'):
-        ('math-constant', 2, _u((303, 140), (269, 148))),
+        ('math-constant', 2, _u((306, 140), (272, 148))),
     ('paper/transport_followup_appendix.tex', '4096'):
-        ('protocol-constant', 1, _u((269, 523))),
+        ('protocol-constant', 1, _u((272, 523))),
     ('paper/transport_followup_appendix.tex', '50'):
-        ('protocol-constant', 1, _u((269, 883))),
+        ('protocol-constant', 1, _u((272, 883))),
     ('paper/transport_followup_appendix.tex', '90'):
-        ('protocol-constant', 1, _u((249, 389))),
+        ('protocol-constant', 1, _u((252, 389))),
     ('paper/transport_followup_appendix.tex', '95'):
-        ('protocol-constant', 1, _u((249, 877))),
+        ('protocol-constant', 1, _u((252, 877))),
     # paper/transport_proofs.tex
     ('paper/transport_proofs.tex', '0'):
-        ('math-constant', 22, _u((105, 304), (99, 162), (99, 213), (97, 165), (157, 554), (157, 609), (98, 80), (98, 101), (248, 174), (248, 232), (248, 742), (113, 65), (181, 335), (181, 454), (153, 88), (153, 91), (297, 1260), (142, 172), (110, 29), (110, 270), (110, 346), (110, 359))),
+        ('math-constant', 22, _u((106, 304), (99, 162), (99, 213), (97, 165), (160, 554), (160, 609), (98, 80), (98, 101), (251, 174), (251, 232), (251, 742), (114, 65), (184, 335), (184, 454), (156, 88), (156, 91), (300, 1260), (145, 172), (111, 29), (111, 270), (111, 346), (111, 359))),
     ('paper/transport_proofs.tex', '0,1'):
         ('interval-endpoint', 1, _u((97, 179))),
     ('paper/transport_proofs.tex', '1'):
-        ('math-constant', 95, _u((197, 114), (215, 18), (105, 17), (105, 284), (105, 293), (186, 42), (125, 127), (159, 546), (97, 235), (97, 291), (148, 121), (157, 383), (157, 455), (157, 485), (157, 572), (156, 130), (156, 154), (156, 175), (156, 192), (156, 248), (156, 273), (156, 296), (156, 507), (156, 539), (156, 566), (156, 599), (156, 707), (156, 772), (150, 86), (160, 299), (160, 464), (160, 491), (152, 181), (218, 16), (246, 48), (246, 56), (246, 150), (246, 179), (246, 188), (246, 349), (246, 424), (147, 68), (147, 207), (147, 305), (149, 134), (149, 549), (149, 556), (155, 521), (155, 599), (73, 2), (74, 4), (119, 18), (119, 398), (119, 428), (248, 107), (248, 368), (248, 531), (248, 573), (248, 627), (154, 110), (154, 642), (181, 151), (179, 190), (179, 419), (297, 352), (297, 364), (297, 402), (297, 919), (297, 923), (297, 1090), (297, 1330), (297, 1401), (297, 1741), (297, 1892), (151, 108), (151, 141), (151, 153), (151, 421), (151, 431), (191, 58), (191, 118), (192, 99), (116, 31), (116, 55), (116, 178), (146, 234), (146, 247), (146, 298), (146, 374), (146, 417), (146, 432), (103, 17), (103, 342), (104, 529), (104, 670))),
+        ('math-constant', 95, _u((200, 114), (218, 18), (106, 17), (106, 284), (106, 293), (189, 42), (128, 127), (162, 546), (97, 235), (97, 291), (151, 121), (160, 383), (160, 455), (160, 485), (160, 572), (159, 130), (159, 154), (159, 175), (159, 192), (159, 248), (159, 273), (159, 296), (159, 507), (159, 539), (159, 566), (159, 599), (159, 707), (159, 772), (153, 86), (163, 299), (163, 464), (163, 491), (155, 181), (221, 16), (249, 48), (249, 56), (249, 150), (249, 179), (249, 188), (249, 349), (249, 424), (150, 68), (150, 207), (150, 305), (152, 134), (152, 549), (152, 556), (158, 521), (158, 599), (73, 2), (74, 4), (120, 18), (120, 398), (120, 428), (251, 107), (251, 368), (251, 531), (251, 573), (251, 627), (157, 110), (157, 642), (184, 151), (182, 190), (182, 419), (300, 352), (300, 364), (300, 402), (300, 919), (300, 923), (300, 1090), (300, 1330), (300, 1401), (300, 1741), (300, 1892), (154, 108), (154, 141), (154, 153), (154, 421), (154, 431), (194, 58), (194, 118), (195, 99), (117, 31), (117, 55), (117, 178), (149, 234), (149, 247), (149, 298), (149, 374), (149, 417), (149, 432), (104, 17), (104, 342), (105, 529), (105, 670))),
     ('paper/transport_proofs.tex', '2'):
-        ('math-constant', 161, _u((198, 55), (198, 93), (197, 116), (217, 44), (217, 80), (215, 103), (105, 134), (105, 181), (105, 204), (105, 232), (105, 244), (105, 335), (105, 346), (105, 363), (105, 380), (186, 55), (186, 78), (186, 88), (159, 226), (159, 251), (97, 283), (157, 385), (157, 457), (157, 487), (156, 132), (156, 156), (156, 177), (156, 194), (156, 250), (156, 275), (156, 385), (156, 509), (156, 541), (156, 555), (156, 568), (156, 601), (156, 630), (156, 709), (150, 109), (150, 230), (150, 239), (150, 251), (150, 353), (150, 366), (160, 99), (160, 123), (160, 139), (160, 168), (160, 222), (160, 253), (160, 277), (160, 305), (160, 466), (160, 493), (152, 183), (216, 73), (218, 103), (246, 182), (246, 532), (147, 58), (147, 167), (147, 176), (147, 316), (147, 336), (149, 122), (149, 130), (149, 327), (149, 336), (149, 438), (149, 477), (149, 486), (155, 248), (155, 258), (155, 281), (155, 293), (155, 304), (155, 368), (155, 504), (155, 528), (155, 564), (155, 596), (155, 632), (98, 141), (98, 209), (73, 26), (74, 26), (119, 155), (119, 166), (119, 193), (119, 221), (119, 251), (112, 203), (248, 210), (248, 288), (248, 295), (248, 499), (248, 525), (248, 575), (248, 667), (248, 703), (248, 725), (248, 732), (158, 117), (158, 121), (158, 149), (113, 14), (113, 76), (113, 87), (113, 107), (113, 223), (154, 127), (154, 169), (154, 198), (154, 406), (154, 432), (181, 371), (181, 498), (179, 169), (179, 242), (179, 298), (180, 100), (180, 247), (153, 67), (153, 69), (153, 142), (153, 144), (153, 232), (153, 235), (153, 249), (153, 252), (297, 320), (297, 361), (297, 407), (297, 415), (297, 418), (297, 584), (297, 594), (297, 633), (297, 636), (297, 698), (297, 708), (297, 747), (297, 750), (297, 917), (297, 1164), (297, 1395), (297, 1434), (297, 1440), (297, 1483), (297, 1493), (297, 1539), (297, 1605), (297, 2105), (192, 127), (116, 225), (146, 271), (146, 322), (103, 42), (103, 72), (103, 113), (103, 245))),
+        ('math-constant', 161, _u((201, 55), (201, 93), (200, 116), (220, 44), (220, 80), (218, 103), (106, 134), (106, 181), (106, 204), (106, 232), (106, 244), (106, 335), (106, 346), (106, 363), (106, 380), (189, 55), (189, 78), (189, 88), (162, 226), (162, 251), (97, 283), (160, 385), (160, 457), (160, 487), (159, 132), (159, 156), (159, 177), (159, 194), (159, 250), (159, 275), (159, 385), (159, 509), (159, 541), (159, 555), (159, 568), (159, 601), (159, 630), (159, 709), (153, 109), (153, 230), (153, 239), (153, 251), (153, 353), (153, 366), (163, 99), (163, 123), (163, 139), (163, 168), (163, 222), (163, 253), (163, 277), (163, 305), (163, 466), (163, 493), (155, 183), (219, 73), (221, 103), (249, 182), (249, 532), (150, 58), (150, 167), (150, 176), (150, 316), (150, 336), (152, 122), (152, 130), (152, 327), (152, 336), (152, 438), (152, 477), (152, 486), (158, 248), (158, 258), (158, 281), (158, 293), (158, 304), (158, 368), (158, 504), (158, 528), (158, 564), (158, 596), (158, 632), (98, 141), (98, 209), (73, 26), (74, 26), (120, 155), (120, 166), (120, 193), (120, 221), (120, 251), (113, 203), (251, 210), (251, 288), (251, 295), (251, 499), (251, 525), (251, 575), (251, 667), (251, 703), (251, 725), (251, 732), (161, 117), (161, 121), (161, 149), (114, 14), (114, 76), (114, 87), (114, 107), (114, 223), (157, 127), (157, 169), (157, 198), (157, 406), (157, 432), (184, 371), (184, 498), (182, 169), (182, 242), (182, 298), (183, 100), (183, 247), (156, 67), (156, 69), (156, 142), (156, 144), (156, 232), (156, 235), (156, 249), (156, 252), (300, 320), (300, 361), (300, 407), (300, 415), (300, 418), (300, 584), (300, 594), (300, 633), (300, 636), (300, 698), (300, 708), (300, 747), (300, 750), (300, 917), (300, 1164), (300, 1395), (300, 1434), (300, 1440), (300, 1483), (300, 1493), (300, 1539), (300, 1605), (300, 2105), (195, 127), (117, 225), (149, 271), (149, 322), (104, 42), (104, 72), (104, 113), (104, 245))),
     ('paper/transport_proofs.tex', '3'):
-        ('math-constant', 2, _u((180, 103), (180, 218))),
+        ('math-constant', 2, _u((183, 103), (183, 218))),
     ('paper/transport_proofs.tex', '4'):
-        ('math-constant', 13, _u((149, 431), (149, 441), (155, 642), (248, 522), (154, 441), (181, 41), (180, 92), (180, 170), (153, 193), (297, 372), (297, 1533), (297, 1879), (297, 1935))),
+        ('math-constant', 13, _u((152, 431), (152, 441), (158, 642), (251, 522), (157, 441), (184, 41), (183, 92), (183, 170), (156, 193), (300, 372), (300, 1533), (300, 1879), (300, 1935))),
     ('paper/transport_proofs.tex', '8'):
-        ('math-constant', 1, _u((181, 281))),
+        ('math-constant', 1, _u((184, 281))),
     # paper/transport_protocol_appendix.tex
     ('paper/transport_protocol_appendix.tex', '2'):
-        ('math-constant', 1, _u((266, 200))),
+        ('math-constant', 1, _u((269, 200))),
+    # paper/transport_realizable.tex
+    ('paper/transport_realizable.tex', '0.25'):
+        ('protocol-constant', 1, _u((122, 333))),
+    ('paper/transport_realizable.tex', '1'):
+        ('protocol-constant', 6, _u((122, 269), (122, 272), (122, 281), (122, 321), (122, 629), (127, 577))),
+    ('paper/transport_realizable.tex', '2'):
+        ('math-constant', 1, _u((122, 1532))),
+    ('paper/transport_realizable.tex', '6.25'):
+        ('protocol-constant', 1, _u((122, 243))),
+    ('paper/transport_realizable.tex', '95'):
+        ('protocol-constant', 1, _u((103, 213))),
     # paper/transport_support_appendix.tex
     ('paper/transport_support_appendix.tex', '0'):
-        ('math-constant', 2, _u((18, 10), (131, 71))),
+        ('math-constant', 2, _u((18, 10), (134, 71))),
     ('paper/transport_support_appendix.tex', '1'):
-        ('math-constant', 20, _u((0, 2), (0, 13), (17, 8), (5, 1), (137, 1), (268, 43), (193, 31), (193, 71), (243, 29), (220, 67), (220, 87), (220, 103), (220, 113), (230, 15), (230, 36), (89, 9), (236, 45), (228, 29), (131, 195), (131, 231))),
+        ('math-constant', 20, _u((0, 2), (0, 13), (17, 8), (5, 1), (140, 1), (271, 43), (196, 31), (196, 71), (246, 29), (223, 67), (223, 87), (223, 103), (223, 113), (233, 15), (233, 36), (89, 9), (239, 45), (231, 29), (134, 195), (134, 231))),
     ('paper/transport_support_appendix.tex', '2'):
-        ('math-constant', 13, _u((193, 41), (193, 81), (243, 21), (220, 22), (220, 32), (220, 79), (220, 171), (230, 6), (88, 57), (236, 39), (237, 33), (237, 43), (228, 6))),
+        ('math-constant', 13, _u((196, 41), (196, 81), (246, 21), (223, 22), (223, 32), (223, 79), (223, 171), (233, 6), (88, 57), (239, 39), (240, 33), (240, 43), (231, 6))),
     # paper/transport_theory.tex
     ('paper/transport_theory.tex', '0'):
-        ('math-constant', 33, _u((101, 14), (101, 53), (109, 14), (196, 33), (139, 121), (139, 136), (173, 9), (106, 63), (164, 158), (164, 249), (164, 260), (286, 132), (194, 57), (194, 104), (240, 15), (24, 0), (24, 0), (24, 0), (24, 0), (24, 0), (24, 0), (161, 200), (107, 71), (126, 81), (201, 38), (140, 516), (162, 113), (162, 327), (204, 73), (204, 154), (163, 86), (143, 191), (166, 99))),
+        ('math-constant', 33, _u((101, 14), (101, 53), (110, 14), (199, 33), (142, 121), (142, 136), (176, 9), (107, 63), (167, 158), (167, 249), (167, 260), (289, 132), (197, 57), (197, 104), (243, 15), (24, 0), (24, 0), (24, 0), (24, 0), (24, 0), (24, 0), (164, 200), (108, 71), (129, 81), (204, 38), (143, 516), (165, 113), (165, 327), (207, 73), (207, 154), (166, 86), (146, 191), (169, 99))),
     ('paper/transport_theory.tex', '0,1'):
-        ('interval-endpoint', 5, _u((144, 78), (161, 78), (107, 63), (107, 102), (96, 15))),
+        ('interval-endpoint', 5, _u((147, 78), (164, 78), (108, 63), (108, 102), (96, 15))),
     ('paper/transport_theory.tex', '1'):
-        ('math-constant', 84, _u((171, 10), (82, 25), (81, 22), (80, 24), (185, 63), (185, 90), (185, 106), (200, 116), (261, 127), (72, 9), (72, 34), (72, 67), (190, 78), (210, 68), (210, 88), (231, 15), (231, 36), (213, 68), (229, 15), (229, 36), (242, 136), (242, 204), (242, 271), (208, 69), (208, 94), (208, 115), (91, 203), (25, 0), (164, 296), (169, 81), (286, 146), (286, 176), (286, 204), (145, 241), (188, 58), (188, 74), (188, 103), (194, 70), (165, 356), (165, 365), (240, 22), (170, 23), (170, 52), (21, 80), (21, 189), (183, 59), (183, 90), (107, 99), (107, 242), (107, 378), (203, 43), (126, 46), (212, 31), (202, 55), (202, 82), (202, 115), (241, 20), (241, 55), (239, 204), (219, 67), (219, 97), (219, 118), (187, 63), (87, 17), (87, 26), (138, 120), (118, 70), (118, 131), (118, 158), (184, 71), (140, 793), (140, 858), (238, 25), (94, 98), (94, 219), (204, 55), (204, 136), (247, 11), (247, 19), (247, 22), (301, 432), (301, 574), (301, 727), (301, 731))),
+        ('math-constant', 84, _u((174, 10), (82, 25), (81, 22), (80, 24), (188, 63), (188, 90), (188, 106), (203, 116), (264, 127), (72, 9), (72, 34), (72, 67), (193, 78), (213, 68), (213, 88), (234, 15), (234, 36), (216, 68), (232, 15), (232, 36), (245, 136), (245, 204), (245, 271), (211, 69), (211, 94), (211, 115), (91, 203), (25, 0), (167, 296), (172, 81), (289, 146), (289, 176), (289, 204), (148, 241), (191, 58), (191, 74), (191, 103), (197, 70), (168, 356), (168, 365), (243, 22), (173, 23), (173, 52), (21, 80), (21, 189), (186, 59), (186, 90), (108, 99), (108, 242), (108, 378), (206, 43), (129, 46), (215, 31), (205, 55), (205, 82), (205, 115), (244, 20), (244, 55), (242, 204), (222, 67), (222, 97), (222, 118), (190, 63), (87, 17), (87, 26), (141, 120), (119, 70), (119, 131), (119, 158), (187, 71), (143, 793), (143, 858), (241, 25), (94, 98), (94, 219), (207, 55), (207, 136), (250, 11), (250, 19), (250, 22), (304, 432), (304, 574), (304, 727), (304, 731))),
     ('paper/transport_theory.tex', '1,0'):
-        ('math-constant', 1, _u((164, 227))),
+        ('math-constant', 1, _u((167, 227))),
     ('paper/transport_theory.tex', '1,2'):
-        ('math-constant', 1, _u((163, 297))),
+        ('math-constant', 1, _u((166, 297))),
     ('paper/transport_theory.tex', '2'):
-        ('math-constant', 105, _u((79, 19), (172, 9), (244, 4), (245, 12), (185, 117), (185, 128), (72, 36), (72, 69), (206, 68), (190, 164), (210, 23), (210, 33), (210, 80), (210, 160), (231, 6), (213, 23), (213, 33), (213, 81), (213, 90), (213, 94), (229, 6), (207, 4), (207, 26), (208, 4), (208, 24), (208, 34), (208, 81), (208, 85), (199, 62), (164, 312), (164, 378), (286, 206), (286, 231), (188, 76), (188, 105), (165, 358), (165, 367), (170, 25), (170, 54), (21, 101), (21, 122), (21, 168), (21, 204), (183, 92), (107, 177), (107, 380), (141, 116), (182, 58), (189, 122), (172, 9), (211, 40), (245, 12), (212, 42), (202, 57), (202, 84), (214, 28), (219, 22), (219, 32), (219, 79), (219, 84), (219, 88), (195, 78), (195, 86), (195, 88), (187, 74), (87, 20), (232, 81), (184, 82), (184, 102), (209, 4), (238, 19), (233, 12), (233, 21), (235, 25), (235, 35), (234, 21), (85, 21), (221, 14), (75, 8), (75, 39), (111, 14), (111, 35), (111, 158), (162, 246), (162, 307), (83, 21), (83, 58), (84, 21), (84, 58), (205, 38), (205, 73), (102, 164), (247, 108), (247, 145), (163, 187), (163, 315), (163, 338), (166, 178), (166, 186), (166, 189), (301, 416), (301, 467), (301, 475), (301, 478), (301, 544))),
+        ('math-constant', 105, _u((79, 19), (175, 9), (247, 4), (248, 12), (188, 117), (188, 128), (72, 36), (72, 69), (209, 68), (193, 164), (213, 23), (213, 33), (213, 80), (213, 160), (234, 6), (216, 23), (216, 33), (216, 81), (216, 90), (216, 94), (232, 6), (210, 4), (210, 26), (211, 4), (211, 24), (211, 34), (211, 81), (211, 85), (202, 62), (167, 312), (167, 378), (289, 206), (289, 231), (191, 76), (191, 105), (168, 358), (168, 367), (173, 25), (173, 54), (21, 101), (21, 122), (21, 168), (21, 204), (186, 92), (108, 177), (108, 380), (144, 116), (185, 58), (192, 122), (175, 9), (214, 40), (248, 12), (215, 42), (205, 57), (205, 84), (217, 28), (222, 22), (222, 32), (222, 79), (222, 84), (222, 88), (198, 78), (198, 86), (198, 88), (190, 74), (87, 20), (235, 81), (187, 82), (187, 102), (212, 4), (241, 19), (236, 12), (236, 21), (238, 25), (238, 35), (237, 21), (85, 21), (224, 14), (75, 8), (75, 39), (112, 14), (112, 35), (112, 158), (165, 246), (165, 307), (83, 21), (83, 58), (84, 21), (84, 58), (208, 38), (208, 73), (102, 164), (250, 108), (250, 145), (166, 187), (166, 315), (166, 338), (169, 178), (169, 186), (169, 189), (304, 416), (304, 467), (304, 475), (304, 478), (304, 544))),
     ('paper/transport_theory.tex', '3'):
-        ('math-constant', 2, _u((111, 52), (111, 161))),
+        ('math-constant', 2, _u((112, 52), (112, 161))),
     ('paper/transport_theory.tex', '4'):
-        ('math-constant', 9, _u((140, 780), (234, 12), (111, 49), (111, 150), (102, 212), (143, 214), (166, 114), (166, 150), (301, 440))),
+        ('math-constant', 9, _u((143, 780), (237, 12), (112, 49), (112, 150), (102, 212), (146, 214), (169, 114), (169, 150), (304, 440))),
     # submissions/tmlr_2026/main.tex
     ('submissions/tmlr_2026/main.tex', '1'):
-        ('math-constant', 2, _u((108, 902), (108, 906))),
+        ('math-constant', 2, _u((109, 902), (109, 906))),
     # submissions/tmlr_2026/supplement_README.md
     ('submissions/tmlr_2026/supplement_README.md', '1.15.2'):
-        ('environment-version', 1, _u((130, 43))),
+        ('environment-version', 1, _u((133, 43))),
     ('submissions/tmlr_2026/supplement_README.md', '2.2.3'):
-        ('environment-version', 1, _u((130, 27))),
+        ('environment-version', 1, _u((133, 27))),
     ('submissions/tmlr_2026/supplement_README.md', '3.12'):
-        ('environment-version', 1, _u((130, 11))),
+        ('environment-version', 1, _u((133, 11))),
 }
 
 #: path -> SHA-256 of the whole normalized auditable text
@@ -1310,7 +1373,7 @@ FILE_PINS: dict[str, str] = {
     'README.md':
         '27d3ebdcbb6837d77545890cee27ec7a87442c415987e9a4f6723279176ecb47',
     'paper/availability.tex':
-        'd06a96adcacfd87aef0a8cfee6b1ba4649a70ff05f90a97a17e3378db23b1713',
+        '31ffb125f4256b024c38a4539ea83f8fddc397880c938bf15f715f82bc69c7c5',
     'paper/body_conclusion.tex':
         '18c9c7824d1bf9b76fad6b2f51b940c73ca3ebad553455a126df8c9b962bbeb0',
     'paper/body_intro.tex':
@@ -1336,19 +1399,21 @@ FILE_PINS: dict[str, str] = {
     'paper/transport_experiment_appendix.tex':
         'f399e3e3a5f7fb00e4d2fe5bb046203d8e00b397908dc643f5ef95edb91e8bf4',
     'paper/transport_followup.tex':
-        'd6846da8abbb7c6e1223681f46e8f2b8685218861ded2a404315fcbc959be25e',
+        '636693acab43620349a6502ccab528ba00ee8d14a6a3d64994ff4cc11e687472',
     'paper/transport_followup_appendix.tex':
         '01658436e268c31115b4c9abc466afb62920dc95c5f604a422496cf323d92da7',
     'paper/transport_proofs.tex':
         '5f3a15ce498c6be8b4f4df9bee4ec603e87c41b7226a4ba928915030f23099d8',
     'paper/transport_protocol_appendix.tex':
         'ecfbee9ffb6097694da077b2df248d107b5a77f375c3a6323df1c5d4d4fbd77f',
+    'paper/transport_realizable.tex':
+        '72927045f218d99ab3a1e4268ba8522217babe1bbf4025b4fbdf7ce29095593a',
     'paper/transport_support_appendix.tex':
         '61edf07be22f52c88170913ec9126a9dd4390bd9b02e5ab39f9321aa07e87278',
     'paper/transport_theory.tex':
-        '114d84baa7a603ee35dc3eced72c2ce9f8ad54c0c63e57dec31ab53c8665b5b0',
+        '0cfb28b735203c065a7f324b3006def4435114e7f43e33e21e04f85b3c77f890',
     'submissions/tmlr_2026/main.tex':
         'e01d34bef713e071582c4a1a173b6878334b54afbaa93feb9c5a0c4a3ae2838e',
     'submissions/tmlr_2026/supplement_README.md':
-        'e74859310ff43502ef86ff48e74ff8d808b8ac4c16f9fc02ab167751cb6ef9d5',
+        '748d26cb99a49c87d579085063c95562e4e8a74c27decda0de9db18dea75b341',
 }
