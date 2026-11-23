@@ -70,13 +70,13 @@ state. No material has been uploaded or submitted.
 
 | Artifact | Bytes | Members | Unpacked bytes |
 |---|---:|---:|---:|
-| `main.pdf` | 544,117 | n/a | n/a |
-| `source.zip` | 2,994,407 | 84 | 2,984,025 |
-| `supplement.zip` | 99,285,440 | 210 | 99,247,508 |
+| `main.pdf` | 544,204 | n/a | n/a |
+| `source.zip` | 2,994,486 | 84 | 2,984,104 |
+| `supplement.zip` | 99,285,598 | 210 | 99,247,666 |
 | `release_manifest.json` | 115,307 | n/a | n/a |
 
 The supplement uses 99.3% of the 100,000,000-byte limit,
-leaving 714,560 bytes. Both ZIPs use deterministic `ZIP_STORED`
+leaving 714,402 bytes. Both ZIPs use deterministic `ZIP_STORED`
 entries; the strict size and inventory gates remain required.
 
 The compiled closure has 75 entries. `source.zip` contains all 74 nongenerated compiled inputs:
