@@ -84,8 +84,8 @@ the step lands exactly on theta = 0.
 | Check | Command or source | Result |
 |---|---|---|
 | Unit tests (16) on the frozen snapshot | `pytest experiments/tests/test_relin_coverage.py` | 16 passed, exit 0 |
-| Unit tests (22) after the review fixes | same | 22 passed, exit 0 |
-| Analysis failure paths: NaN in `mu_star`, `beta_original` or `b_original`; record without its arrays; crash record; record or seed plan that disagrees with the manifest; secondary NaN and missing runs; resume refusal | test (6 cases, added after the review) | pass; the five analysis cases fail against the pre-fix analysis |
+| Unit tests (23) after the review fixes | same | 23 passed, exit 0 |
+| Analysis failure paths: NaN in `mu_star`, `beta_original`, `b_original` or an observed reward; record without its arrays; crash record; record or seed plan that disagrees with the manifest; a second record for one seed or run; secondary NaN and missing runs; resume refusal of partial, truncated or mismatched records | test (7 cases, added after the review) | pass; the analysis cases fail against the pre-fix analysis |
 | Analysis re-run with the fixed code on all five saved run directories | analysis CLI | evaluation CSVs and tables byte-identical; summaries gain only completeness fields; no value changed |
 | Envelope vs independent numerical supremum (dense grid plus bounded refinement), 160 random (W, A, x), W in {0.25, 1, 6.25, 100} | test | formula never below numerical sup by more than 1e-12 and never above it by more than 1e-9 |
 | Envelope never exceeds the manuscript's envelope; zero for phi = 0; rejects parameters outside the region | test | pass |
@@ -218,8 +218,9 @@ tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
 3. Report text edits. No run, seed, configuration, tolerance or outcome
    definition changed.
 4. Fixes from the independent Codex review of `ca511361` (four findings):
-   - The primary analysis now treats a seed as nonfinite if any stored array
-     other than the final, intentionally unobserved reward is nonfinite.
+   - The primary analysis now treats a seed as nonfinite if any stored value
+     is nonfinite, except the reward at round n + 1, which is scored before
+     any reward is observed and is NaN by design.
      Before, NaN in `mu_star` or in the original-envelope arrays made every
      comparison false and so looked like coverage.
    - The secondary analysis now counts crashed, missing and nonfinite runs as
@@ -229,11 +230,13 @@ tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
      and listed crashes without counting them.
    - Both analyses now read the seed plan from the run directory's manifests,
      require all manifests to agree on configuration, source and protocol,
-     check every record against them, count a planned seed or run with no
+     check every record against them, require one record per seed or run
+     (file name matching its identity), count a planned seed or run with no
      complete record as missing (control failure; classification invalid or
      incomplete), and accept `--seeds` to assert the exact planned range.
-   - Both runners now resume only from complete records written with the
-     same seed, configuration and phase, and refuse to add a manifest that
+   - Both runners now resume only from records written with the same seed,
+     configuration and phase whose arrays load in full and include every
+     array the runner stores, and refuse to add a manifest that
      disagrees with an existing one. Manifest file names use nanoseconds so
      two runs started in the same second cannot overwrite each other's
      manifest. This keeps the protocol's rule that no seed is rerun.
@@ -245,4 +248,8 @@ tree and protocol SHA-256 `742c3f1a...d2c3`. After evaluation:
    On every saved run directory the fixed analysis reproduces the evaluation
    CSVs and tables byte for byte; the committed summary JSONs were
    regenerated and differ only by the added completeness fields.
-   `REVISION_VALIDATION.md` now states 793 collected tests (6 added).
+   `REVISION_VALIDATION.md` now states 794 collected tests (7 added).
+   A second Codex review of these fixes found three gaps (a duplicate record
+   could be counted twice against the planned denominator; the NaN exemption
+   covered every reward instead of only round n + 1; resume accepted any
+   existing `.npz`), all fixed here and covered by the tests above.

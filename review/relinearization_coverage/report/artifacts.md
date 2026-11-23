@@ -8,7 +8,7 @@
 | `experiments/relin_policy.py` | secondary study: own-history policies on the `transport_v3` environment |
 | `experiments/analyze_relin_coverage.py` | analysis from saved run records only |
 | `experiments/plot_relin_coverage.py` | figures from the analysis CSV/JSON (matplotlib venv) |
-| `experiments/tests/test_relin_coverage.py` | 22 verification tests |
+| `experiments/tests/test_relin_coverage.py` | 23 verification tests |
 | `review/relinearization_coverage/DEVELOPMENT_PLAN.md` | written before development runs |
 | `review/relinearization_coverage/PROTOCOL.md`, `PROTOCOL.sha256` | frozen before evaluation |
 | `review/relinearization_coverage/report/development.md` | every development candidate and result |

@@ -44,6 +44,9 @@ CONSTRUCTIONS = ("frozen", "naive", "endpoint")
 ENVELOPES = ("sharp", "original")
 CHECKPOINTS = (1, 2, 10, 100, 1000, 4096, 8192, 8193)
 RESERVED = ((30000, 30249), (41200, 41249))
+RECORD_ARRAYS = ("theta", "d_th", "vbar", "vcur", "gamma", "beta_sharp", "beta_original", "vcur_suff_rel",
+                 "vbar_dense_rel", "center", "q", "sbar", "s", "b_sharp", "b_original", "action", "reward",
+                 "remainder_current", "argmax_agree", "mu_star")  # what run_seed stores; a test pins the match
 
 
 @dataclass(frozen=True)
@@ -283,14 +286,20 @@ def write_manifest(output: Path, manifest: dict) -> None:
     (output / f"manifest_{time.time_ns()}.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
 
 
-def resume_done(stem: Path, expected: dict) -> bool:
+def resume_done(stem: Path, expected: dict, arrays: tuple[str, ...]) -> bool:
     """True if this run already has a complete record written with `expected`; refuse partial or mismatched ones."""
     for suffix, companion in ((".json", ".npz"), (".crash.json", None)):
         path = Path(f"{stem}{suffix}")
         if not path.exists():
             continue
-        if companion and not Path(f"{stem}{companion}").exists():
-            raise SystemExit(f"{path} has no {companion}; remove it and rerun")
+        if companion:
+            try:  # reading every array decompresses it, so a truncated archive fails here
+                with np.load(f"{stem}{companion}") as z:
+                    absent = [k for k in arrays if k not in z.files or z[k].size == 0]
+            except Exception as exc:
+                raise SystemExit(f"{stem}{companion} is unreadable ({exc}); remove the record and rerun")
+            if absent:
+                raise SystemExit(f"{stem}{companion} lacks arrays {absent}; remove the record and rerun")
         recorded = json.loads(path.read_text())
         diff = {k: (recorded.get(k), v) for k, v in expected.items() if recorded.get(k) != v}
         if diff:
@@ -322,7 +331,7 @@ def main() -> None:
     write_manifest(args.output, manifest)
     seeds = [0] if args.phase == "deterministic" else parse_seeds(args.seeds)
     todo = [s for s in seeds if not resume_done(args.output / f"seed_{s}", {
-        "seed": s, "model": asdict(model), "teacher": args.teacher, "phase": args.phase})]
+        "seed": s, "model": asdict(model), "teacher": args.teacher, "phase": args.phase}, RECORD_ARRAYS)]
     jobs = [(s, model, args.teacher, args.output, args.phase, args.phase == "deterministic") for s in todo]
     start = time.perf_counter()
     with Pool(args.workers) as pool:

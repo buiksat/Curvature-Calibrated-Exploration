@@ -33,6 +33,7 @@ from experiments import transport_instantiation as ti
 from experiments import transport_v3 as v3
 
 METHODS = ("frozen_reference", "naive_current", "transport_endpoint")
+RECORD_ARRAYS = ("action", "center", "sbar", "s", "b", "beta", "d_th", "theta_norm", "context")  # run_policy output
 
 
 @dataclass(frozen=True)
@@ -169,7 +170,8 @@ def main() -> None:
         for seed in rc.parse_seeds(args.seeds):
             for m in args.methods:
                 stem = args.output / f"W{W:g}_{m}_{seed}"
-                if not rc.resume_done(stem, {"method": m, "seed": seed, "spec": asdict(spec), "phase": args.phase}):
+                want = {"method": m, "seed": seed, "spec": asdict(spec), "phase": args.phase}
+                if not rc.resume_done(stem, want, RECORD_ARRAYS):
                     jobs.append((m, seed, spec, args.output, args.phase))
     start = time.perf_counter()
     with Pool(args.workers) as pool:

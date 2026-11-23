@@ -31,4 +31,4 @@ to the verification report for the exact source state.
 | Inventory | Count |
 |---|---|
 | Release-package test collection | 571 collected |
-| Repository suite collection | 793 collected |
+| Repository suite collection | 794 collected |

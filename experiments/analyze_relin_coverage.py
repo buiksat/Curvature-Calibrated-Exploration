@@ -81,9 +81,9 @@ def primary_seed(npz: Path, meta: dict) -> dict:
     T, span = model.horizon, 2.0 * float(rc.h(model.radius, model))
     mu, center, action = z["mu_star"], z["center"], z["action"]
     err = np.abs(mu - center)
-    # Every stored array except the reward, which is NaN by design at the unobserved scoring round.
+    # Every stored array; the reward only over the observed block (round n + 1 is scored before any reward).
     finite = (all(np.all(np.isfinite(z[k])) for k in z.files if k != "reward")
-              and math.isfinite(meta["update"]["theta_new"]))
+              and np.all(np.isfinite(z["reward"][:model.block])) and math.isfinite(meta["update"]["theta_new"]))
     row = {"seed": meta["seed"], "finite": finite, "theta_new": meta["update"]["theta_new"],
            "projected": meta["update"]["projected"]}
     opt = mu >= mu.max(axis=1, keepdims=True)
@@ -160,6 +160,8 @@ def primary(run_dir: Path, out: Path, expected: str | None, expected_seeds: int 
         meta = json.loads(meta_path.read_text())
         if meta.get("seed") not in plan["seeds"]:
             raise SystemExit(f"{meta_path}: seed outside the manifest plan")
+        if meta_path.name not in (f"seed_{meta['seed']}.json", f"seed_{meta['seed']}.crash.json"):
+            raise SystemExit(f"{meta_path}: file name does not match its seed")  # one record per seed
         _check_record(meta_path, meta, want)
         if meta_path.name.endswith(".crash.json"):
             crashed.add(meta["seed"])
@@ -345,11 +347,14 @@ def secondary(run_dir: Path, out: Path, expected: str | None, seeds: list[int] |
     planned = {(float(W), m, s) for W in ast.literal_eval(argv["widths"])
                for m in ast.literal_eval(argv["methods"]) for s in plan["seeds"]}
     rows, present = [], set()
+    name = lambda W, m, s: f"W{W:g}_{m}_{s}"
     for meta_path in sorted(run_dir.glob("W*.json")):
         meta = json.loads(meta_path.read_text())
         key = (meta["spec"]["width"], meta["method"], meta["seed"])
         if key not in planned:
             raise SystemExit(f"{meta_path}: run outside the manifest plan")
+        if meta_path.name not in (f"{name(*key)}.json", f"{name(*key)}.crash.json"):
+            raise SystemExit(f"{meta_path}: file name does not match its run")  # one record per run
         _check_record(meta_path, meta, {"spec": asdict(rp.PolicySpec(width=key[0], horizon=int(argv["horizon"]))),
                                         "phase": argv["phase"]})
         if meta_path.name.endswith(".crash.json"):
@@ -360,7 +365,6 @@ def secondary(run_dir: Path, out: Path, expected: str | None, seeds: list[int] |
     crashes = sorted(p.name for p in run_dir.glob("W*.crash.json"))
     if rows:
         _write_csv(out / "secondary_run_level.csv", rows)
-    name = lambda W, m, s: f"W{W:g}_{m}_{s}"
     missing = sorted(name(*k) for k in planned - present)
     nonfinite = sorted(name(r["W"], r["method"], r["seed"]) for r in rows if not r["finite"])
     summary = {"run_dir": str(run_dir), **provenance, "runs_planned": len(planned), "runs": len(rows),

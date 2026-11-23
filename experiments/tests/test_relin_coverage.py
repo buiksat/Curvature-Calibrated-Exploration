@@ -216,7 +216,7 @@ def _poison(npz, key: str) -> None:
     np.savez_compressed(npz, **z)
 
 
-@pytest.mark.parametrize("key", ["mu_star", "beta_original", "b_original"])
+@pytest.mark.parametrize("key", ["mu_star", "beta_original", "b_original", "reward"])  # reward[0] is observed
 def test_analysis_counts_nonfinite_primary_records_against_the_controls(tmp_path, key):
     run = _primary_dir(tmp_path / "run", "52000")
     _poison(run / "seed_52000.npz", key)
@@ -245,6 +245,12 @@ def test_analysis_binds_primary_records_to_the_manifest_plan(tmp_path):
     assert b["frozen_failures"] == 2 + int(good["sharp_frozen_fail_conservative_tau1e-09"])
     with pytest.raises(SystemExit):  # the manifests plan three seeds, not one
         ac.primary(run, tmp_path / "out", None, seeds=[52001])
+    for suffix in (".json", ".npz"):  # a second record for the same seed
+        (run / f"seed_52001_copy{suffix}").write_bytes((run / f"seed_52001{suffix}").read_bytes())
+    with pytest.raises(SystemExit):
+        ac.primary(run, tmp_path / "out", None)
+    for suffix in (".json", ".npz"):
+        (run / f"seed_52001_copy{suffix}").unlink()
     meta = json.loads((run / "seed_52001.json").read_text())
     (run / "seed_52001.json").write_text(json.dumps(meta | {"model": asdict(rc.ModelClass(block=64, width=1.0))}))
     with pytest.raises(SystemExit):  # record written with another configuration
@@ -273,22 +279,34 @@ def test_analysis_counts_invalid_secondary_runs_as_own_coverage_failures(tmp_pat
     assert "incomplete" in (tmp_path / "out" / "secondary_tables.md").read_text()
     with pytest.raises(SystemExit):
         ac.secondary(run, tmp_path / "out", None, seeds=[52010, 52011, 52012])
+    (run / "W10_transport_endpoint_52010_copy.json").write_bytes((run / "W10_transport_endpoint_52010.json").read_bytes())
+    with pytest.raises(SystemExit):  # a second record for the same run
+        ac.secondary(run, tmp_path / "out", None)
 
 
 def test_runner_resume_refuses_partial_or_mismatched_records(tmp_path):
+    assert rc.RECORD_ARRAYS == tuple(rc.run_seed(1, rc.ModelClass(block=8), -1.0)["records"])
+    assert rp.RECORD_ARRAYS == tuple(rp.run_policy(rp.METHODS[0], 1, rp.PolicySpec(width=10.0, horizon=5))["records"])
     want = {"seed": 7, "model": asdict(TINY), "teacher": -1.0, "phase": "development"}
-    stem = tmp_path / "seed_7"
-    assert rc.resume_done(stem, want) is False
+    stem, arrays = tmp_path / "seed_7", ("x", "y")
+    assert rc.resume_done(stem, want, arrays) is False
     (tmp_path / "seed_7.json").write_text(json.dumps(want))
     with pytest.raises(SystemExit):  # json without its npz
-        rc.resume_done(stem, want)
-    np.savez_compressed(tmp_path / "seed_7.npz", x=np.zeros(1))
-    assert rc.resume_done(stem, want) is True
+        rc.resume_done(stem, want, arrays)
+    np.savez_compressed(tmp_path / "seed_7.npz", x=np.zeros(3))
+    with pytest.raises(SystemExit):  # npz without a required array
+        rc.resume_done(stem, want, arrays)
+    np.savez_compressed(tmp_path / "seed_7.npz", x=np.zeros(3), y=np.ones(3))
+    assert rc.resume_done(stem, want, arrays) is True
     with pytest.raises(SystemExit):
-        rc.resume_done(stem, want | {"teacher": -0.5})
+        rc.resume_done(stem, want | {"teacher": -0.5}, arrays)
+    data = (tmp_path / "seed_7.npz").read_bytes()
+    (tmp_path / "seed_7.npz").write_bytes(data[: len(data) // 2])
+    with pytest.raises(SystemExit):  # truncated archive
+        rc.resume_done(stem, want, arrays)
     crash = tmp_path / "seed_8"
     (tmp_path / "seed_8.crash.json").write_text(json.dumps(want | {"seed": 8, "crashed": True}))
-    assert rc.resume_done(crash, want | {"seed": 8}) is True
+    assert rc.resume_done(crash, want | {"seed": 8}, arrays) is True
     manifest = {"argv": {"phase": "development", "seeds": "7", "workers": "1"}, "model": asdict(TINY),
                 "source_sha256": {"experiments/relin_coverage.py": "a"}}
     rc.write_manifest(tmp_path, manifest)
