@@ -1,0 +1,42 @@
+\subsection{A realizable trajectory on which the naive width fails}
+\label{sec:transport-realizable}
+
+The remark after \Cref{prop:reference-width-floor} is an abstract band
+instance. A controlled scaled-tanh learner shows the same failure on a realizable
+trajectory. Take $\mu_\theta(\phi)=h(\phi\theta)$ with
+$h(u)=\sqrt W\tanh(u/\sqrt W)$, $W=6.25$, actions $\phi\in\{-1,+1\}$, $R=1$,
+teacher $\theta^\star=-R$, $\lambda=1$, $\sigma=0.25$ and $\delta=0.05$. The
+learner holds $\theta_t=R$ for $n=8192$ rounds of frozen-reference UCB with the
+corrected center of \Cref{cor:corrected-center-new}, then takes one projected
+batch gradient step of the squared loss, which moves $\theta$ to within $0.004$
+of zero, and scores round $n+1$ before observing another reward. The Taylor
+allowances use the exact supremum of the remainder over the radius-$R$ ball,
+$\max_{v\in\{-A,A,-x,x\}}|h(v)-h(x)-h'(x)(v-x)|$ with $x=\phi^\top\theta$ and
+$A=R\|\phi\|_2$, which is sharper than the envelope of the two studies above.
+At the post-update query the current width is $0.856$ of the reference width,
+the corrected center is off by $0.262$--$0.277$, the naive half-width is
+$0.253$ and the reference half-width is $0.287$. In 256 held-out seeds, run
+under a protocol fixed before evaluation, the naive-current band failed
+simultaneous coverage in all 256 seeds and the frozen-reference and
+endpoint-transported bands in none (one-sided Clopper--Pearson bounds at level
+$0.05/3$: naive failure probability at least $0.984$, frozen and endpoint
+failure probabilities at most $0.016$). The covering intervals span $0.30$ of
+the feasible mean range $2h(R)$.
+
+This is a constructed example: it shows that the failure can occur on a
+realizable trajectory, not how often it occurs under ordinary training. Three
+further restrictions apply. In one dimension with $\bV_t\succeq\bVbar_t$,
+endpoint transport reproduces the reference width exactly, so the example does
+not distinguish the two. With the envelope of the two studies above, the naive
+half-width is $0.784$--$0.785$ and no seed fails. Both actions receive equal
+bonuses within each construction, so all three scores select the same actions;
+every naive failure occurs at round $n+1$ and violates the upper bound only at
+the suboptimal action, and the example says nothing about regret.
+
+In the six-dimensional model of \Cref{sec:transport-v3} at $W=100$, with the
+same sharper envelope, the three policies run on their own histories over 64
+seeds had mean regrets within $0.7$ of one another (paired 95\% bootstrap
+intervals for naive and endpoint minus frozen include zero) and no coverage
+failure, and their current and reference widths differed by at most $0.25\%$.
+With this envelope the cell's frozen bound is below the cap, but its current
+and reference widths nearly coincide, so it does not test the failure above.
